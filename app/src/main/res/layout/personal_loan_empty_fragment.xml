@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:src="@color/black"
+        android:id="@+id/topLine"
+        tools:ignore="ContentDescription" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/applyNowLayout"
+        android:layout_below="@+id/topLine"
+        android:layout_marginTop="8dp"
+        android:layout_alignParentTop="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical">
+
+
+            <ImageView
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/img_personal_loan"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:src="@color/light_gray"
+                tools:ignore="ContentDescription" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                app:WTextView_font="light"
+                android:layout_marginTop="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:textSize="@dimen/text_medium"
+                android:text="@string/personal_loan_line_one" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:drawableLeft="@drawable/ic_caret"
+                android:drawablePadding="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                app:WTextView_font="light"
+                android:textSize="@dimen/text_small"
+                android:layout_marginTop="24dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:text="@string/personal_loan_line_two" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:drawableLeft="@drawable/ic_caret"
+                android:drawablePadding="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                app:WTextView_font="light"
+                android:textSize="@dimen/text_small"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:text="@string/personal_loan_line_three" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:drawableLeft="@drawable/ic_caret"
+                android:drawablePadding="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                app:WTextView_font="light"
+                android:textSize="@dimen/text_small"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:text="@string/personal_loan_line_four" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:drawableLeft="@drawable/ic_caret"
+                android:drawablePadding="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                app:WTextView_font="light"
+                android:textSize="@dimen/text_small"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:text="@string/personal_loan_line_five" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:drawableLeft="@drawable/ic_caret"
+                android:drawablePadding="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                app:WTextView_font="light"
+                android:textSize="@dimen/text_small"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:text="@string/personal_loan_line_six" />
+
+
+        </LinearLayout>
+    </ScrollView>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:background="@drawable/personal_loan_selector"
+    android:onClick="applyNow"
+    android:id="@+id/applyNowLayout"
+    android:orientation="vertical">
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/applyNow"
+            android:onClick="applyNow"
+            android:layout_width="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_small"
+            android:background="@drawable/personal_loan_selector"
+            android:text="@string/drawer_apply_now"
+            android:drawableRight="@drawable/ic_caret_white"
+            android:layout_gravity="center"/>
+</LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

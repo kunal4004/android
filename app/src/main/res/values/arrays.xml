@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   <string-array name="fonts">
+       <item>fonts/WFutura-Light.ttf</item>
+       <item>fonts/WFutura-Medium.ttf</item>
+       <item>fonts/WFutura-SemiBold.ttf</item>
+       <item>fonts/WFutura-Bold.ttf</item>
+       <item>fonts/MyriadPro-Regular.otf</item>
+       <item>fonts/MyriadPro-Semibold.otf</item>
+   </string-array>
+    <integer-array name="months_default">
+        <item>12</item>
+        <item>24</item>
+        <item>36</item>
+    </integer-array>
+    <integer-array name="months_max">
+        <item>12</item>
+        <item>24</item>
+        <item>36</item>
+        <item>48</item>
+        <item>60</item>
+    </integer-array>
+    <!-- navigation drawer item labels  -->
+    <string-array name="nav_drawer_labels">
+        <item>@string/nav_item_today</item>
+        <item>@string/nav_item_products</item>
+        <item>@string/nav_item_store</item>
+        <item>@string/nav_item_wrewards</item>
+         <item>@string/nav_item_accounts</item>
+    </string-array>
+
+    <integer-array name="nav_drawer_images">
+        <item>@drawable/ic_drw_tww</item>
+        <item>@drawable/ic_drw_products</item>
+        <item>@drawable/ic_drw_stores</item>
+        <item>@drawable/ic_drw_wrewards</item>
+        <item>@drawable/ic_drw_accounts</item>
+    </integer-array>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<za.co.woolworths.financial.services.android.ui.views.WTextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="15sp"
+    android:textColor="@color/black"
+    android:id="@+id/openingHours"
+    app:WTextView_font="myriadpro_regular">
+
+</za.co.woolworths.financial.services.android.ui.views.WTextView>

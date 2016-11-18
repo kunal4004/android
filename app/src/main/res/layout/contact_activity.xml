@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+  <!--  <Spinner
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginLeft="8dp"
+        android:spinnerMode="dropdown"
+        android:id="@+id/contact_spinner"
+        android:layout_marginRight="8dp" />-->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="16dp"
+        android:layout_alignParentTop="true"
+        android:text="SEND US AN EMAIL"
+        android:textSize="14.5sp"
+        android:textStyle="bold"
+        android:background="@color/light_gray"
+        android:id="@+id/title"/>
+
+    <ImageView
+        android:layout_below="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_gray"/>
+
+    <ListView
+        android:layout_below="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/contact_call"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:id="@+id/contactList"></ListView>
+
+
+    <LinearLayout
+
+        android:id="@+id/contact_call"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+
+        android:clickable="true"
+
+        android:background="@drawable/rewards_selector"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        >
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="16dp"
+            android:src="@drawable/ic_contact"/>
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="0dp"
+            app:WTextView_font="medium"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="@dimen/text_medium"
+            android:text="@string/call_centre"
+            android:textColor="@color/indicator_selected"
+          />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:WTextView_font="medium_bold"
+            android:textSize="@dimen/text_medium"
+            tools:text="0215541234"
+            android:gravity="right"
+
+            android:textColor="@color/indicator_selected"
+            android:layout_marginRight="16dp"
+            android:drawableRight="@drawable/ic_caret"
+            android:drawablePadding="16dp"
+            android:id="@+id/contact_us_call_centre_number"/>
+    </LinearLayout>
+
+    <!--<za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/contact_action"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/login_font_color"
+        android:text="@string/send"
+        android:background="@drawable/rewards_selector" />-->
+
+</RelativeLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rewards_terms_and_conditions_url">http://www.woolworths.co.za/store/fragments/corporate/corporate-index.jsp?content=corporate-content&amp;contentId=cmp205288</string>
+    <string name="login_terms_and_conditions_url">http://m.wfs.co.za/ramp_wfs/http/wng/tandc?back=landing</string>
+    <string name="vip_url">http://qa.wigroup.co/wigroup/wfs/mobi/Index.php?url=MyWRewards/Upgrade</string>
+    <string name="how_to_save_url">http://qa.wigroup.co/wigroup/wfs/mobi/Index.php?url=MyWRewards/HowToSave</string>
+    <string name="how_it_works_url">http://www.woolworths.co.za/store/fragments/wrewards/wrewards-index.jsp?content=how-it-works</string>
+    <string name="settings_faq_url">https://m.wfs.co.za/ramp_wfs/http/wng/faq</string>
+    <string name="app_label">Woolworths</string>
+    <string name="api_endpoint">http://dev.wigroup.co:8080/wfs/app</string>
+
+    <string name="api_id">ANDROID</string>
+    <string name="sha1_password">a94a8fe5ccb19ba61c4c0873d391e987982fbbd3</string>
+    <string name="mint_id">87e1e034</string>
+    <string name="crittercism_app_id">55dd92eecb114f1000e34bf6</string>
+    <integer name="account_time_to_live">600000</integer>
+    <!--<string name="config_endpoint">http://mobileconfig.wigroup.co:8080/config-server/rest/mobile/android/</string>-->
+    <string name="config_endpoint">https://admin.wigroup.co/server/api/v1/config-server/dev/config/</string>
+    <string name="app_token">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJHVUlEIjoiOTkxNDhiZDQtYzA3NS00YTFmLTg1NmItYmM3MDRlMGZmMTIxIn0.-lU4OqRnnhDQZ2VKx9qWTFMro_XDv21wm2-23jmJPjE</string>
+
+</resources>

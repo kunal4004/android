@@ -1,0 +1,100 @@
+apply plugin: 'com.android.application'
+
+android {
+
+    def major = "4"
+    def minor = "7"
+    def env = System.getenv()
+    def job = env['BUILD_NUMBER']
+    if (job == null) {
+        job = "0";
+    }
+
+    def buildNumber = major + "." + minor + "." + job
+
+    signingConfigs {
+        woolworths {
+            keyAlias 'woolworths'
+            keyPassword 'H]|{0*[\'C[Y\\jze'
+            storeFile file('key/Woolworths.keystore.jks')
+            storePassword 'H]|{0*[\'C[Y\\jze'
+        }
+    }
+
+    compileSdkVersion 23
+    buildToolsVersion '23.0.1'
+
+    defaultConfig {
+        applicationId "com.awfs.coordination"
+        minSdkVersion 15
+        targetSdkVersion 22
+        multiDexEnabled true
+        versionCode job.toInteger()
+    }
+    buildTypes {
+        debug {
+            debuggable true
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        development {
+            versionName = buildNumber + "-development"
+            applicationId "com.awfs.coordination.development"
+        }
+
+        qa {
+            versionName = buildNumber + "-qa"
+            job + "-qa"
+            applicationId "com.awfs.coordination.staging"
+        }
+
+        production {
+            versionName = buildNumber
+            signingConfig signingConfigs.woolworths
+        }
+
+        blackberryDev {
+            versionName = buildNumber + "-dev"
+            applicationId "com.awfs.coordination.development"
+        }
+
+        blackberryQa {
+            versionName = buildNumber + "-qa"
+            applicationId "com.awfs.coordination.qa"
+        }
+
+        blackberryProduction {
+            versionName = buildNumber
+            signingConfig signingConfigs.woolworths
+        }
+        dexOptions {
+            incremental true
+            javaMaxHeapSize "2048M"
+        }
+    }
+}
+
+dependencies {
+    compile 'za.co.wigroup.android:MenuDrawer:1.0.8'
+    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'za.co.wigroup.android:utils:1.1.8'
+    compile 'uk.co.chrisjenx:calligraphy:1.2.0'
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'za.co.wigroup.android:Logger:1'
+    compile 'com.google.android.gms:play-services:9.6.1'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
+    compile 'me.dm7.barcodescanner:zxing:1.7.2'
+    compile 'com.crittercism:crittercism-android-agent:+'
+    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:cardview-v7:23.4.0'
+    compile 'com.android.support:support-annotations:23.4.0'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile 'com.daimajia.swipelayout:library:1.2.0'
+    compile 'com.google.firebase:firebase-messaging:9.6.1'
+}
+apply plugin: 'com.google.gms.google-services'

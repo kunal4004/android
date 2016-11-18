@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="TypographyDashes">
+    <integer name="ga_sessionTimeout">300</integer>
+
+    <!-- Enable automatic Activity measurement -->
+    <bool name="ga_autoActivityTracking">true</bool>
+
+    <screenName name="za.co.woolworths.financial.services.android.ui.activities.SplashActivity">
+        Splash
+    </screenName>
+    <screenName name="za.co.woolworths.financial.services.android.ui.activities.WRewardsActivity">
+       Rewards
+    </screenName>
+    <screenName name="za.co.woolworths.financial.services.android.ui.activities.AccountsActivity">
+        Accounts
+    </screenName>
+    <screenName name="za.co.woolworths.financial.services.android.ui.activities.ContactUsActivity">
+       Contact Us
+    </screenName>
+    <screenName name="za.co.woolworths.financial.services.android.ui.activities.LoginActivity">
+       Login
+    </screenName>
+    <screenName name="za.co.woolworths.financial.services.android.ui.activities.TransactionHistoryActivity">
+       Transaction History
+    </screenName>
+    <screenName name="za.co.woolworths.financial.services.android.ui.activities.PersonalLoanWithdrawalActivity">
+       Personal Loan Withdrawal
+    </screenName>
+    <screenName name="za.co.woolworths.financial.services.android.ui.activities.PersonalLoanWithdrawalConfirmationActivity">
+     Personal Loan Withdrawal Confirmation
+    </screenName>
+    <screenName name="za.co.woolworths.financial.services.android.ui.activities.WRewardDetailActivity">
+      Rewards detail
+    </screenName>
+    <string name="ga_trackingId">UA-61422193-6</string>
+</resources>

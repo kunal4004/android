@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+				xmlns:app="http://schemas.android.com/apk/res-auto"
+				xmlns:tools="http://schemas.android.com/tools"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_above="@+id/w_reward_detail_bottom_bar"
+		android:layout_alignParentTop="true"
+        android:fadeScrollbars="false"
+		android:fillViewport="true">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center"
+			android:orientation="vertical"
+			android:paddingLeft="16dp"
+			android:paddingRight="16dp"
+			android:weightSum="2">
+
+			<za.co.woolworths.financial.services.android.ui.views.WTextView
+				android:id="@+id/w_rewards_fragment_description"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="16dp"
+				android:layout_marginTop="16dp"
+				android:gravity="center"
+				android:textSize="@dimen/text_large"
+				tools:text="BUY ANY 3 GOLF SHIRTS AND ONLY PAY FOR 2"/>
+
+			<ImageView
+				android:layout_width="match_parent"
+				android:layout_height="1dp"
+				android:src="@color/medium_grey"/>
+
+			<View
+				android:id="@+id/w_reward_detail_whitespace0"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="1"/>
+
+			<za.co.woolworths.financial.services.android.ui.views.WTextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="16dp"
+				android:layout_marginTop="16dp"
+				android:background="@android:color/transparent"
+				android:gravity="center"
+				android:paddingLeft="16dp"
+				android:paddingRight="16dp"
+				android:text="@string/w_reward_use_code"
+				android:textColor="#000000"
+				android:textSize="@dimen/text_small"
+				app:WTextView_font="medium"/>
+
+			<za.co.woolworths.financial.services.android.ui.views.WTextView
+				android:id="@+id/w_reward_detail_barcode_text"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="16dp"
+				android:layout_marginTop="0dp"
+				android:background="@android:color/transparent"
+				android:gravity="center"
+				android:paddingLeft="16dp"
+				android:paddingRight="16dp"
+				android:text=""
+				android:textColor="#000000"
+				android:textSize="@dimen/text_large"
+				app:WTextView_font="medium"/>
+
+			<ImageView
+				android:id="@+id/w_reward_detail_barcode_img"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"/>
+
+			<View
+				android:id="@+id/w_reward_detail_whitespace1"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="1"/>
+
+			<za.co.woolworths.financial.services.android.ui.views.WTextView
+				android:id="@+id/w_reward_detail_terms"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="16dp"
+				android:layout_marginTop="24dp"
+				android:background="@drawable/terms_selector"
+				android:gravity="center"
+				android:paddingLeft="16dp"
+				android:paddingRight="16dp"
+				android:text="@string/view_terms"
+				android:textColor="#CCCCCC"
+				android:textSize="@dimen/text_small"
+				app:WTextView_font="medium"
+				android:drawableRight="@drawable/ic_caret_grey"/>
+
+		</LinearLayout>
+	</ScrollView>
+
+	<LinearLayout
+		android:id="@+id/w_reward_detail_bottom_bar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:background="@color/light_gray"
+		android:orientation="vertical">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:minHeight="72dp">
+
+			<LinearLayout
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="1">
+
+				<LinearLayout
+					android:layout_width="0dp"
+					android:layout_height="match_parent"
+					android:layout_marginLeft="@dimen/grey_block_margin"
+					android:layout_weight="1"
+					android:gravity="center_vertical"
+					android:orientation="vertical">
+
+					<za.co.woolworths.financial.services.android.ui.views.WTextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/voucher_value"
+						android:textSize="@dimen/text_micro"
+						app:WTextView_font="medium"/>
+
+					<za.co.woolworths.financial.services.android.ui.views.WTextView
+						android:id="@+id/w_rewards_fragment_value"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:textSize="@dimen/text_large"
+						tools:text="R320.00"/>
+				</LinearLayout>
+			</LinearLayout>
+
+			<ImageView
+				android:layout_width="@dimen/accounts_divider_width"
+				android:layout_height="match_parent"
+				android:layout_marginTop="4dp"
+				android:src="@color/white"
+				tools:ignore="ContentDescription"/>
+
+			<LinearLayout
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_weight="1">
+
+				<LinearLayout
+					android:layout_width="0dp"
+					android:layout_height="match_parent"
+					android:layout_marginLeft="@dimen/grey_block_margin"
+					android:layout_weight="1"
+					android:gravity="center_vertical"
+					android:orientation="vertical">
+
+					<za.co.woolworths.financial.services.android.ui.views.WTextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:text="@string/minimum_spent"
+						android:textSize="@dimen/text_micro"
+						app:WTextView_font="medium"/>
+
+					<za.co.woolworths.financial.services.android.ui.views.WTextView
+						android:id="@+id/w_rewards_fragment_minimum_spend"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:textSize="@dimen/text_large"
+						tools:text="R320.00"/>
+				</LinearLayout>
+			</LinearLayout>
+		</LinearLayout>
+
+		<ImageView
+			android:layout_width="match_parent"
+			android:layout_height="@dimen/accounts_divider_width"
+			android:layout_marginLeft="16dp"
+			android:layout_marginRight="16dp"
+			android:src="@color/white"
+			tools:ignore="ContentDescription"/>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:minHeight="72dp">
+
+			<LinearLayout
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_marginLeft="@dimen/grey_block_margin"
+				android:layout_weight="1"
+				android:gravity="center_vertical"
+				android:orientation="vertical">
+
+				<za.co.woolworths.financial.services.android.ui.views.WTextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/valid_from"
+					android:textSize="@dimen/text_micro"
+					app:WTextView_font="medium"/>
+
+				<za.co.woolworths.financial.services.android.ui.views.WTextView
+					android:id="@+id/w_rewards_fragment_valid_from"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:textSize="@dimen/text_large"
+					tools:text="01/07/2015"/>
+			</LinearLayout>
+
+			<ImageView
+				android:layout_width="@dimen/accounts_divider_width"
+				android:layout_height="match_parent"
+				android:layout_marginBottom="4dp"
+				android:src="@color/white"
+				tools:ignore="ContentDescription"/>
+
+			<LinearLayout
+				android:layout_width="0dp"
+				android:layout_height="match_parent"
+				android:layout_marginLeft="@dimen/grey_block_margin"
+				android:layout_weight="1"
+				android:gravity="center_vertical"
+				android:orientation="vertical">
+
+				<za.co.woolworths.financial.services.android.ui.views.WTextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/valid_until"
+					android:textSize="@dimen/text_micro"
+					app:WTextView_font="medium"/>
+
+				<za.co.woolworths.financial.services.android.ui.views.WTextView
+					android:id="@+id/w_rewards_fragment_valid_to"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:textSize="@dimen/text_large"
+					tools:text="01/07/2015"/>
+			</LinearLayout>
+		</LinearLayout>
+	</LinearLayout>
+</RelativeLayout>

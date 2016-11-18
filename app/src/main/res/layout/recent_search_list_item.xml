@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<za.co.woolworths.financial.services.android.ui.views.WTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:minHeight="50dp"
+    android:id="@+id/recentSerachListItem"
+    android:paddingLeft="16dp"
+    android:gravity="center_vertical"
+    android:background="@drawable/stores_details_background"
+    android:drawableLeft="@drawable/ic_search_dark"
+    android:drawablePadding="36dp"
+    app:WTextView_font="myriadpro_regular"
+    android:textSize="16sp"
+    android:textColor="#4d000000" />

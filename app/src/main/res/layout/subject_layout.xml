@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<za.co.woolworths.financial.services.android.ui.views.WTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:minHeight="48dp"
+    android:gravity="center_vertical"
+    android:id="@+id/subject_text_view" />

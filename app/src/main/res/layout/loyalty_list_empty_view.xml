@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<za.co.woolworths.financial.services.android.ui.views.WTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/loyalty_list_empty_text"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:text="@string/loyalty_list_empty_string"
+    android:visibility="visible" />

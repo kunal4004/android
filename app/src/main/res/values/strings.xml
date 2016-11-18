@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <string name="app_name">WOOLWORTHS</string>
+    <string name="drawer_accounts">MY ACCOUNTS</string>
+    <string name="drawer_rewards">MY|!b| W|!?|REWARDS</string>
+    <string name="drawer_faq">FAQ</string>
+    <string name="drawer_contact">CONTACT US</string>
+    <string name="drawer_apply_now">APPLY NOW</string>
+    <string name="log_in">LOG IN</string>
+    <string name="id_number">ID NUMBER</string>
+    <string name="acc_number">ACCOUNT NUMBER</string>
+    <string name="acc_number_info">Your 16 digit card / account number is located on your |!b|W|!?|Rewards, MySchool, Store or Credit Cards.</string>
+    <string name="terms">BY LOGGING IN YOU AGREE TO OUR \n|!s|TERMS AND CONDITIONS|!?|</string>
+    <string name="store_card">STORE CARD</string>
+    <string name="credit_card">CREDIT CARD</string>
+    <string name="personal_loan">PERSONAL LOAN</string>
+    <string name="credit_card_line_one">|!b|GET THE CREDIT CARD THAT REWARDS YOU EACH AND EVERY TIME YOU SWIPE.|!?|</string>
+    <string name="credit_card_line_two">With a Woolworths Credit Card you earn |!b|W|!?|Rewards quarterly vouchers each and every time you shop with your card. As a Woolworths Credit Cardholder, you\'re automatically part of our great |!b|W|!?|Rewards programme that gives you the opportunity to save from 10% instantly on thousands of items throughout the store.</string>
+    <string name="my_accounts">MY ACCOUNTS</string>
+    <string name="last_transactions">VIEW PREVIOUS TRANSACTIONS</string>
+    <string name="credit_limit">CREDIT LIMIT</string>
+    <string name="available_funds">AVAILABLE FUNDS</string>
+    <string name="next_payment_date">NEXT PAYMENT DUE</string>
+    <string name="minimum_payment">MINIMUM AMOUNT DUE</string>
+    <string name="withdrawal">WITHDRAWAL</string>
+    <string name="personal_loan_withdrawal_button_text">LOANS WITHDRAWAL</string>
+    <string name="personal_loan_withdrawal">PERSONAL LOAN WITHDRAWAL</string>
+    <string name="hide_transactions">HIDE PREVIOUS TRANSACTIONS</string>
+    <string name="next">NEXT</string>
+    <string name="current_balance">CURRENT BALANCE</string>
+    <string name="withdraw_amount">HOW MUCH DO YOU WANT TO WITHDRAW?</string>
+    <string name="withdraw_repayment_period">SELECT YOUR PAYMENT PERIOD</string>
+    <string name="withdraw_months">%d MONTHS</string>
+    <string name="cancel" tools:ignore="ButtonCase">CANCEL</string>
+    <string name="submit">SUBMIT</string>
+    <string name="withdrawal_confirmation_amount_label">YOU HAVE REQUESTED TO WITHDRAW</string>
+    <string name="withdrawal_confirmation_months_label">TO BE REPAID OVER</string>
+    <string name="withdrawal_fee">YOUR ADDITIONAL MONTHLY REPAYMENT WILL BE</string>
+    <string name="tier_status">TIER STATUS</string>
+    <string name="active_vouchers">ACTIVE VOUCHERS %s</string>
+    <string name="view_terms">VIEW TERMS &amp; CONDITIONS</string>
+    <string name="voucher_value">VOUCHER VALUE</string>
+    <string name="minimum_spent">MINIMUM SPEND</string>
+    <string name="valid_from">VALID FROM</string>
+    <string name="valid_until">VALID UNTIL</string>
+    <string name="w_reward_use_code">USE VOUCHER CODE:</string>
+    <string name="personal_loan_line_one">|!b|THERE ARE TIMES WHEN ALL OF US COULD USE SOME EXTRA CASH TO COVER UNFORESEEN EXPENSES.|!?|</string>
+    <string name="personal_loan_line_two">Flexible repayment terms of up to 60 months</string>
+    <string name="personal_loan_line_three">Cash within 48 hours</string>
+    <string name="personal_loan_line_four">Re-use all the money that has been repaid</string>
+    <string name="personal_loan_line_five">Low initiation and monthly service fees</string>
+    <string name="personal_loan_line_six">Convenience of accessing cash through our interactive voice message system or mobile app.</string>
+    <string name="call_centre">CALL CENTRE</string>
+    <string name="send">SEND</string>
+    <string name="logging_in">LOGGING IN…</string>
+    <string name="error">ERROR</string>
+    <string name="ok">OK</string>
+    <string name="getting_accounts">GETTING ACCOUNTS…</string>
+    <string name="history_loading">LOADING TRANSACTIONS…</string>
+    <string name="transaction_history_empty_string">NO TRANSACTIONS TO DISPLAY</string>
+    <string name="loyalty_list_empty_string">NO VOUCHERS TO DISPLAY</string>
+    <string name="vouchers_loading">LOADING VOUCHERS…</string>
+    <string name="retry">RETRY</string>
+    <string name="contact_loading">GETTING CONTACT INFO…</string>
+
+    <string name="err_002">We apologise, the system is unavailable. Please try again later.</string>
+    <string name="err_003">In order to proceed, please enter a valid South African ID Number in the relevant field.</string>
+    <string name="err_004">In order to proceed, please enter a valid Account/Card Number in the relevant field.</string>
+    <string name="w_rewards_info_title">|!b|W|!?|REWARDS INFO</string>
+    <string name="w_rewards_info"> |!b|W|!?|REWARDS is a tiered programme, the tier you\'re on depends on how much you spend. The more you spend, the more rewards you\'ll enjoy. All your purchases at woolworths and at www.woolworths.co.za count - just remember to swipe your card upfront with every purchase and include your cards number on your online orders</string>
+    <string name="w_rewards_terms">TERMS AND CONDITIONS</string>
+    <string name="new_account_body">I would like to apply for a Woolworths Store Card! Please contact me on:\n\nMobile:\n\nLandline:</string>
+    <string name="issue_loan">ISSUING LOAN…</string>
+    <string name="issue_loan_confirmation_months">%s Months</string>
+    <string name="authorising_loan">AUTHORISING LOAN…</string>
+    <string name="success">SUCCESS</string>
+    <string name="session_expired">YOUR SESSION HAS EXPIRED.  YOU WILL NEED TO LOGIN</string>
+    <string name="to_apply">To apply, visit a Woolies store.</string>
+    <string name="success_person_loan_draw_down">Thank you for using our self service withdrawal facility. The money will be transferred to your account within 48 hours.</string>
+    <string name="tier_info">|!b|W|!?|REWARDS STATEMENT</string>
+    <string name="rewards_saving">|!b|W|!?|REWARDS SAVINGS</string>
+    <string name="current_status">YOUR CURRENT TIER STATUS IS</string>
+    <string name="your_current_status">YOUR CURRENT TIER STATUS</string>
+    <string name="valued">VALUED</string>
+    <string name="loyal">LOYAL</string>
+    <string name="saved">YOU\'VE SAVED</string>
+    <string name="spend">YOU ARE</string>
+    <string name="since">SINCE %s</string>
+    <string name="get_vip">AWAY FROM THE VIP TIER</string>
+    <string name="get_loyal">AWAY FROM THE LOYAL TIER</string>
+    <string name="show_barcode">VIEW BARCODE</string>
+    <string name="back">BACK</string>
+    <string name="get_vip_status">THE MOST REWARDING WAY TO SHOP</string>
+    <string name="how_to_save">HOW TO |!b|SAVE|!?|</string>
+    <string name="statement">STATEMENT</string>
+    <string name="summary">SUMMARY</string>
+    <string name="year_earn">YEAR TO DATE WREWARDS INSTANT SAVINGS</string>
+    <string name="year_spend">YEAR TO DATE SPEND</string>
+    <string name="year_green">YEAR TO DATE WREWARDS GREEN EARNED</string>
+    <string name="year_wearn">QUARTERLY VOUCHER – YEAR TO DATE VALUE EARNED</string>
+    <string name="monthly_spend">MONTHLY SPEND</string>
+    <string name="monthly_earn">MONTHLY EARN</string>
+    <string name="monthly_wearn">QUARTERLY VOUCHER – MONTHLY VALUE EARNED</string>
+    <string name="loyalty_period">LOYALTY PERIOD</string>
+    <string name="monthly_green">MONTHLY WREWARDS GREEN EARNED</string>
+    <string name="month_number">MONTH %s</string>
+    <string name="month_description">YOUR TIER STATUS FOR THE MONTH</string>
+    <string name="information">INFORMATION</string>
+    <string name="voucher_terms_button_text">VIEW GENERAL TERMS &amp; CONDITIONS</string>
+    <string name="reward_status_info_1">Instant |!b|W|!?|Rewards savings on more than 1000 items, plus an additional 5% off when paying with your Woolies Credit or Store Card</string>
+    <string name="reward_status_info_2">Invitations to preview sales</string>
+    <string name="reward_status_info_3">|!b|W|!?|Rewards Green</string>
+    <string name="reward_status_info_4">Free |!b|W|!?|Magazine</string>
+    <string name="reward_status_info_5">Exclusive |!b|W|!?|Rewards savings vouchers throughout the year</string>
+    <string name="reward_status_info_6">Birthday savings voucher</string>
+    <string name="w_reward_line_1">The |!s|W|!?|Rewards year is calculated from the first Monday of each financial year of Woolworths which commences at the end of June or at the beginning of July and comes to an end on the last Sunday of the Woolworths financial year 12 (twelve) months later.</string>
+    <string name="w_reward_line_2">Your spend updates are refreshed on the 12th day after each specified month end date.</string>
+    <string name="w_reward_line_3">Your |!b|W|!?|Rewards tier status is updated at the end of each month.</string>
+    <string name="loyal_spend">SPEND BETWEEN %1$s AND %2$s PER YEAR AT WOOLWORTHS</string>
+    <string name="vip_spend">SPEND OVER %1$s PER YEAR AT WOOLWORTHS</string>
+    <string name="my_vouchers">MY VOUCHERS</string>
+    <string name="stores_nearby">STORES NEARBY</string>
+    <string name="recent_search">RECENT SEARCHES</string>
+    <string name="google_maps">GOOGLE MAPS</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="km">km</string>
+    <string name="linked_cards">LINKED CARDS</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="submit_query">Submit Query</string>
+    <string name="faqs">FAQs</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="brands">Brands</string>
+    <string name="why_we_need_location_services">Why we need Location Services</string>
+    <string name="location_off_message">Message for user who does not have location services switched on. It will prompt them to go to settings and turn it on. Still to be designed. Alternatively, you can search by Store or Location in the top right corner.</string>
+    <string name="go_to_settings">GO TO SETTINGS</string>
+    <string name="title_activity_wmain">WMainActivity</string>
+
+
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+    <string name="nav_item_today">TODAY</string>
+    <string name="nav_item_products">PRODUCTS</string>
+    <string name="nav_item_store">STORES</string>
+    <string name="nav_item_wrewards">WREWARDS</string>
+    <string name="nav_item_accounts">ACCOUNTS</string>
+
+
+
+    <!-- <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+
+    <string name="action_settings">Settings</string>-->
+
+</resources>

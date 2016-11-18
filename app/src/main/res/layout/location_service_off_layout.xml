@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#efefef"
+              android:orientation="vertical"
+              android:paddingLeft="24dp"
+              android:paddingRight="24dp"
+              android:id="@+id/layoutLocationServiceOff"
+
+    >
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/locationservicesdisabled"
+        />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="36dp"
+        android:gravity="center_horizontal"
+        android:text="@string/why_we_need_location_services"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:WTextView_font="medium_bold"
+
+        />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:alpha=".5"
+        android:gravity="center_horizontal"
+        android:text="@string/location_off_message"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        app:WTextView_font="myriadpro_regular"
+
+        />
+
+    <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonLocationOn"
+        android:layout_marginTop="28dp"
+        android:gravity="center"
+        android:minHeight="48dp"
+        android:text="@string/go_to_settings"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        app:WTextView_font="medium_bold"
+        android:background="@color/white"
+        />
+
+
+</LinearLayout>

@@ -1,0 +1,6 @@
+repo: 2fb266ea099b040e8bf45e565acee57817bad413
+node: e2bf5c872222f2c3115e1aedba9adf956ed899da
+branch: WWONE-6
+latesttag: 4.7.72-qa
+latesttagdistance: 4
+changessincelatesttag: 34

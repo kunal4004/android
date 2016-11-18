@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="fontPath" format="string" />
+    <declare-styleable name="WBalanceView">
+        <attr name="OuterCircleColor" format="color" />
+        <attr name="SpentEmptyColor" format="color" />
+        <attr name="SpentFullColor" format="color" />
+        <attr name="CenterCircleColor" format="color" />
+        <attr name="TextColor" format="color" />
+        <attr name="OuterCircleWidth" format="dimension"  />
+        <attr name="MiddleCircleWidth" format="dimension" />
+        <attr name="LabelTextSize" format="dimension" />
+        <attr name="AmountTextSize" format="dimension" />
+        <attr name="Font" format="string" />
+    </declare-styleable>
+    <declare-styleable name="WTextView">
+        <attr name="WTextView_font" format="enum">
+            <enum name="light" value="0" />
+            <enum name="medium" value="1" />
+            <enum name="medium_bold" value="2" />
+            <enum name="bold" value="3" />
+            <enum name="myriadpro_regular" value="4"/>
+            <enum name="myriadpro_semibold" value="5"/>
+        </attr>
+        <attr name="WTextView_spannable_text" format="string" />
+    </declare-styleable>
+    <declare-styleable name="WEditTextView">
+        <attr name="WEditTextView_font" format="enum">
+            <enum name="light" value="0" />
+            <enum name="medium" value="1" />
+            <enum name="medium_bold" value="2" />
+            <enum name="bold" value="3" />
+            <enum name="myriadpro_regular" value="4"/>
+            <enum name="myriadpro_semibold" value="5"/>
+        </attr>
+        <attr name="WEditTextView_spannable_text" format="string" />
+    </declare-styleable>
+    <declare-styleable name="WButton">
+        <attr name="WButton_font" format="enum">
+            <enum name="light" value="0" />
+            <enum name="medium" value="1" />
+            <enum name="medium_bold" value="2" />
+            <enum name="bold" value="3" />
+            <enum name="myriadpro_regular" value="4"/>
+            <enum name="myriadpro_semibold" value="5"/>
+        </attr>
+        <attr name="WButton_spannable_text" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="SlidingUpPanelLayout">
+        <attr name="umanoPanelHeight" format="dimension" />
+        <attr name="umanoShadowHeight" format="dimension" />
+        <attr name="umanoParallaxOffset" format="dimension" />
+        <attr name="umanoFadeColor" format="color" />
+        <attr name="umanoFlingVelocity" format="integer" />
+        <attr name="umanoDragView" format="reference" />
+        <attr name="umanoScrollableView" format="reference" />
+        <attr name="umanoOverlay" format="boolean"/>
+        <attr name="umanoClipPanel" format="boolean"/>
+        <attr name="umanoAnchorPoint" format="float" />
+        <attr name="umanoInitialState" format="enum">
+            <enum name="expanded" value="0" />
+            <enum name="collapsed" value="1" />
+            <enum name="anchored" value="2" />
+            <enum name="hidden" value="3" />
+        </attr>
+        <attr name="umanoScrollInterpolator" format="reference" />
+    </declare-styleable>
+</resources>

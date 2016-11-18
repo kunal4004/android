@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#000</color>
+    <color name="white">#FFF</color>
+    <color name="login_font_color">#686663</color>
+    <color name="drawer_color">#333</color>
+    <color name="store_card">#CD0F69</color>
+    <color name="store_card_pressed">#b00d5a</color>
+    <color name="credit_card">#247EAB</color>
+    <color name="personal_loan">#7E2A80</color>
+    <color name="gray_circle">#CCC</color>
+    <color name="rewards">#CCE226</color>
+    <color name="rewards_pressed">#c0d524</color>
+    <color name="personal_loan_cancel">#666</color>
+    <color name="cancel_pressed">#5b5b5b</color>
+    <color name="personal_loan_disabled">#af95b4</color>
+    <color name="credit_card_pressed">#007699</color>
+    <color name="personal_loan_pressed">#6b3973</color>
+    <color name="reward_separator">#999</color>
+    <color name="light_gray">#EFEFEF</color>
+    <color name="medium_grey">#EFEFEF</color>
+    <color name="dark_grey">#22efefef</color>
+    <color name="indicator_unselected">#CCCCCC</color>
+    <color name="indicator_selected">#686663</color>
+    <color name="indicator_border">#00000000</color>
+    <color name="black_off">#343434</color>
+</resources>

@@ -1,0 +1,54 @@
+id:"531125 0028 087", Account:"6007 8501 0572 0807" SC, PL.
+id:"5506230315088", Account:"6007851104858507" SC(student), PL
+id:"6602250272082", Account:"6007850100089166"
+id:"5512160079082", Account:"6007851101564355"
+id:"7008030479089", Account:"6007850200477519" SC (broken), CC (broken)
+
+
+account 1 (850401 5124 087, 6007 8501 0000 0001) - no products,  no vouchers
+account 2 (850401 5124 087, 6007 8501 0000 0002) - store card, transaction history, no vouchers
+account 3 (850401 5124 087, 6007 8502 0000 0003) - store card, no transaction history, no vouchers
+account 4 (850401 5124 087, 4867 2500 0000 0004) - no store card, credit card, no transaction history, no vouchers
+account 5 (850401 5124 087, 4001 5400 0000 0005) - no store card, credit card, CC transaction history, no vouchers
+account 6 (850401 5124 087, 6007 8503 0000 0006) - store card, credit card, SC + CC transaction history, no vouchers
+account 7 (850401 5124 087, 6007 8504 0000 0007) - store card, credit card, pldd, SC + CC + PLDD transaction history, can do pldd for full amount  over 12 months only!, no vouchers
+account 8 (850401 5124 087, 6007 8505 0000 0008) - store card, no transaction history, vouchers
+account 9 (850401 5124 087, 6007 8506 0000 0009) - store card, no transaction history, vouchers
+account 10 (850401 5124 087, 6007 8507 0000 0010) - store card, no transaction history, vouchers
+account 11 (850401 5124 087, 4103 7400 0000 0011) - no store card, credit card, CC transaction history, no vouchers
+account 12 (850401 5124 087, 4103 7500 0000 0012) - no store card, credit card, CC transaction history, no vouchers
+
+account 13 (850401 5124 087, 6007 8511 0000 0013) - pldd, pldd transaction history, can do pldd for full amount over 24 months only! no vouchers
+account 14 (850401 5124 087, 6007 8515 0000 0014) - pldd, pldd transaction history, can do pldd for full amount over 36 months only! no vouchers
+account 15 (850401 5124 087, 6007 8516 0000 0015) - pldd, pldd transaction history, can do pldd for full amount over 48 months only! no vouchers
+
+account 16 (850401 5124 087, 6007 8528 0000 0016) - no products, no vouchers, tier history
+account 17 (850401 5124 087, 6007 8530 0000 0017) - no products, no vouchers, tier history
+account 18 (850401 5124 087, 6007 8580 0000 0018) - no products, vouchers, tier history
+
+
+account 24 (850401 5124 087, 6007 8580 0000 0024) - vouchers + no tier history
+account 25 (850401 5124 087, 6007 8580 0000 0025) - no vouchers + no tier history
+account 26 (850401 5124 087, 6007 8580 0000 0026) - no vouchers + tier history
+
+account 27 (850401 5124 087, 6007 8580 0000 0027) - valid login followed by invalid session on vouchers call
+account 28 (850401 5124 087, 6007 8580 0000 0028) - vip customer
+account 29 (850401 5124 087, 6007 8580 0000 0029) - tier info + 1 month tier history
+account 30 (850401 5124 087, 6007 8580 0000 0030) - 12 months tier history
+
+
+TODO
+
+account 19 (850401 5124 087, 6007 8580 0000 0019) - no products, vouchers, tier history
+account 20 (850401 5124 087, 6007 8580 0000 0020) - all 3 products, pldd + cc fails with retrievalError = true, SC + CC + PLDD transaction history, pldd always fails with 'vision cannot transact' failure
+
+account 21 (850401 5124 087, 6007 8580 0000 0021) - mySchool card with no permission of data for 3rd parties
+account 22 (850401 5124 087, 6007 8580 0000 0023) - 12 months tier history with upgrading from valued to loyal to vip
+
+account 23 (850401 5124 087, 6007 8580 0000 0023) - account that can login but all other calls say session expired
+
+
+
+
+Voucher with 3k Character T&C
+

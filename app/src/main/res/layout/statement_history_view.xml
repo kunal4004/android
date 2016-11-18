@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/terms_selector"
+        android:id="@+id/statement_history_how_to_save">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="48dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            app:WTextView_font="medium"
+            android:textColor="@color/login_font_color"
+            app:WTextView_spannable_text="INSTANT SAVINGS EVERYDAY" />
+
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_caret" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:src="@color/rewards" />
+
+    <za.co.wigroup.androidutils.views.TabIndicator
+        android:layout_width="200dp"
+        android:layout_height="9dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="center_horizontal"
+        app:selectedColor="@color/indicator_selected"
+        app:unselectedColor="@color/indicator_unselected"
+        app:borderColor="@color/indicator_border"
+        android:id="@+id/statement_history_indicator"
+        />
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/statement_history_view_pager"/>
+</LinearLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/voucher_terms_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:WTextView_font="medium"
+            android:padding="16dp" />
+
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/rewards_selector">
+    <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:layout_width="wrap_content"
+        android:id="@+id/voucher_terms"
+        android:text="@string/voucher_terms_button_text"
+        style="@style/Button.Rewards"
+        android:drawableRight="@drawable/ic_caret"
+        android:layout_gravity="center"
+        android:drawablePadding="10dp"/>
+    </LinearLayout>
+</LinearLayout>
