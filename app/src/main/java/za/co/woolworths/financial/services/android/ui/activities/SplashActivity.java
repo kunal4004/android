@@ -36,6 +36,7 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 
 import za.co.wigroup.androidutils.Util;
+import za.co.wigroup.logger.lib.BuildConfig;
 import za.co.wigroup.logger.lib.WiGroupLogger;
 import za.co.woolworths.financial.services.android.models.ApiInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -108,25 +109,24 @@ public class SplashActivity extends Activity  {
 
                     @Override
                     protected ConfigResponse httpDoInBackground(String... params) {
-                        String appVersion = "4.7-staging";
-                        String versionName="";
+                        final String appName = "woneapp";
+                        String appVersion = "5.0.0";//default to 5.0.0
+                        String environment = "";//default to PROD
                         try {
 
-                            versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+                            appVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+                            environment = com.awfs.coordination.BuildConfig.FLAVOR;
                         } catch (PackageManager.NameNotFoundException e) {
                             e.printStackTrace();
                         }
-                        final String[] versionNames = versionName.split("\\.");
-                         String major = versionNames[0];
-                         String minor = (versionNames[1]);
-                        String patch = (versionNames[2]);
 
-                        String[] temp2 = patch.split("-");
-                        if(temp2.length==2){
-                            appVersion = major+"."+minor+"-"+temp2[1];
-                        }else{
-                            appVersion = major+"."+minor;
-                        }
+                        //MCS expects empty value for PROD
+                        //woneapp-5.0 = PROD
+                        //woneapp-5.0-qa = QA
+                        //woneapp-5.0-dev = DEV
+                        String majorMinorVersion = appVersion.substring(0, 3);
+                        final String mcsAppVersion = (appName + "-" + majorMinorVersion + (environment.equals("production") ? "" : ("-" + environment)));
+                        Log.d("MCS", mcsAppVersion);
                         ApiInterface mApiInterface = new RestAdapter.Builder()
                                 .setEndpoint(getString(R.string.config_endpoint))
                                 .setLogLevel(Util.isDebug(SplashActivity.this) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
@@ -134,7 +134,7 @@ public class SplashActivity extends Activity  {
                                 .create(ApiInterface.class);
 
                         //return mApiInterface.getConfig(getString(R.string.app_token),getDeviceID(),"wfs-"+appVersion);
-                        return mApiInterface.getConfig(getString(R.string.app_token),getDeviceID(),"wfs-3.3");
+                        return mApiInterface.getConfig(getString(R.string.app_token),getDeviceID(), mcsAppVersion);
                     }
 
                     @Override

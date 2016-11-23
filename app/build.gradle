@@ -21,6 +21,14 @@ android {
         }
     }
 
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 22
+        multiDexEnabled true
+        versionCode (job.toInteger() + 1)
+        versionName buildNumber
+    }
+
     compileSdkVersion 23
     buildToolsVersion '23.0.3'
     buildTypes {
@@ -33,7 +41,7 @@ android {
         }
     }
     productFlavors {
-        development {
+        dev {
             applicationId "com.awfs.coordination.development"
         }
 
@@ -42,10 +50,11 @@ android {
         }
 
         production {
+            applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
         }
 
-        blackberryDev {
+        /*blackberryDev {
             applicationId "com.awfs.coordination.development"
         }
 
@@ -55,20 +64,11 @@ android {
 
         blackberryProduction {
             signingConfig signingConfigs.woolworths
-        }
+        }*/
         dexOptions {
             incremental true
             javaMaxHeapSize "2560M"
         }
-    }
-
-    defaultConfig {
-        applicationId "com.awfs.coordination"
-        minSdkVersion 15
-        targetSdkVersion 22
-        multiDexEnabled true
-        versionCode (job.toInteger() + 1)
-        versionName buildNumber
     }
 }
 
