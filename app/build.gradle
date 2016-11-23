@@ -7,7 +7,7 @@ android {
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
-        job = "0";
+        job = "1";
     }
 
     def buildNumber = major + "." + minor + "." + job
