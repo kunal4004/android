@@ -1,28 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
-import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.WFormatter;
-
-import static com.awfs.coordination.R.id.cardItem;
-import static com.awfs.coordination.R.id.storeAddress;
-import static com.awfs.coordination.R.id.storeName;
-import static com.google.android.gms.fitness.data.zzs.Re;
 
 /**
  * Created by W7099877 on 11/10/2016.

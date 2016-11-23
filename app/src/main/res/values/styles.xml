@@ -1,6 +1,4 @@
-<resources
-    xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
@@ -62,20 +60,21 @@
         <item name="android:textColor">@color/login_font_color</item>
     </style>
 
-     <style name="StoreLocator" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="StoreLocator" parent="Theme.AppCompat.Light.NoActionBar">
 
-         <item name="windowNoTitle">true</item>
-         <item name="windowActionBar">false</item>
-
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
 
 
     </style>
+
     <style name="StoreDetails" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_closecircle</item>
 
     </style>
+
     <style name="StoreSearch" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -83,25 +82,30 @@
         <item name="android:homeAsUpIndicator">@drawable/back24</item>
         <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
     </style>
+
     <style name="WSearchViewStyle" parent="Widget.AppCompat.SearchView">
 
         <item name="searchHintIcon">@null</item>
         <item name="queryBackground">@null</item>
 
     </style>
+
     <style name="cursorColor" parent="Widget.AppCompat.AutoCompleteTextView">
         <item name="android:textCursorDrawable">@drawable/cursor</item>
     </style>
+
     <style name="ShoppingList" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
     </style>
+
     <style name="Messages" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:homeAsUpIndicator">@drawable/close_24</item>
 
     </style>
+
     <style name="MyAccountCards" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -113,5 +117,17 @@
     <style name="OneAppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+    </style>
+
+    <style name="FullscreenTheme" parent="AppTheme">
+        <item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="metaButtonBarStyle">?android:attr/buttonBarStyle</item>
+        <item name="metaButtonBarButtonStyle">?android:attr/buttonBarButtonStyle</item>
+    </style>
+
+    <style name="FullscreenActionBarStyle" parent="android:Widget.Holo.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
     </style>
 </resources>

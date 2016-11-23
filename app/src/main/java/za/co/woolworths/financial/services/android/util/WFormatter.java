@@ -6,17 +6,10 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
-
-import static android.R.attr.format;
-import static android.R.attr.value;
-import static com.awfs.coordination.R.id.offerings;
-import static com.google.android.gms.drive.query.SearchableField.MM;
 
 public class WFormatter {
 

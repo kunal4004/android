@@ -43,29 +43,17 @@ android {
     }
     productFlavors {
         dev {
-            applicationId "com.awfs.coordination.development"
+            applicationId "com.awfs.coordination.dev"
         }
 
         qa {
-            applicationId "com.awfs.coordination.staging"
+            applicationId "com.awfs.coordination.qa"
         }
 
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
         }
-
-        /*blackberryDev {
-            applicationId "com.awfs.coordination.development"
-        }
-
-        blackberryQa {
-            applicationId "com.awfs.coordination.qa"
-        }
-
-        blackberryProduction {
-            signingConfig signingConfigs.woolworths
-        }*/
         dexOptions {
             incremental true
             javaMaxHeapSize "2560M"
