@@ -41,7 +41,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.openMessageActivity:
-                startActivity(new Intent(getActivity(), MessagesActivity.class));
+                startActivity(new Intent(getActivity(), MessagesActivity.class).putExtra("fromNotification", false));
                 getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
                 break;
 

@@ -51,7 +51,7 @@ import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
 import static com.google.android.gms.internal.zzsp.Me;
 
-public class SplashActivity extends Activity  {
+public class SplashActivity extends Activity {
 
     private static final String TAG = "SplashActivity";
     private AlertDialog mError;
@@ -87,7 +87,6 @@ public class SplashActivity extends Activity  {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
-
                     }
                 }
                 return result;
@@ -99,7 +98,6 @@ public class SplashActivity extends Activity  {
 
                     @Override
                     protected void onPreExecute() {
-
                     }
 
                     @Override
@@ -113,13 +111,11 @@ public class SplashActivity extends Activity  {
                         String appVersion = "5.0.0";//default to 5.0.0
                         String environment = "";//default to PROD
                         try {
-
                             appVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
                             environment = com.awfs.coordination.BuildConfig.FLAVOR;
                         } catch (PackageManager.NameNotFoundException e) {
                             e.printStackTrace();
                         }
-
                         //MCS expects empty value for PROD
                         //woneapp-5.0 = PROD
                         //woneapp-5.0-qa = QA
@@ -132,15 +128,13 @@ public class SplashActivity extends Activity  {
                                 .setLogLevel(Util.isDebug(SplashActivity.this) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
                                 .build()
                                 .create(ApiInterface.class);
-
                         //return mApiInterface.getConfig(getString(R.string.app_token),getDeviceID(),"wfs-"+appVersion);
-                        return mApiInterface.getConfig(getString(R.string.app_token),getDeviceID(), mcsAppVersion);
+                        return mApiInterface.getConfig(getString(R.string.app_token), getDeviceID(), mcsAppVersion);
                     }
 
                     @Override
                     public ConfigResponse httpError(final String errorMessage, final HttpErrorCode httpErrorCode) {
-                        if (httpErrorCode == HttpErrorCode.NETWORK_UNREACHABLE){
-
+                        if (httpErrorCode == HttpErrorCode.NETWORK_UNREACHABLE) {
                             SplashActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -156,7 +150,6 @@ public class SplashActivity extends Activity  {
                                 }
                             });
                         }
-
                         return null;
                     }
 
@@ -165,8 +158,8 @@ public class SplashActivity extends Activity  {
                         Long CurrentTime = System.currentTimeMillis();
                         Long reminderInterval = Long.valueOf("0");
                         boolean expired = false;
-                        Expiry expires= configResponse.expiry;
-                        if( expires != null) {
+                        Expiry expires = configResponse.expiry;
+                        if (expires != null) {
                             long str_date = expires.getExpiry_date();
                             Date date = new Date(str_date * 1000L); // *1000 is to convert seconds to milliseconds
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z"); // the format of your date
@@ -175,19 +168,16 @@ public class SplashActivity extends Activity  {
                             String expiredMSG = "";
                             String reminderMSG = "";
                             String update_url = "";
-
                             Long lastExpiryNotify = Long.valueOf("0");
                             try {
                                 lastExpiryNotify = WoolworthsApplication.getConfig_expireLastNotify();
                             } catch (Exception e) {
-
                             }
                             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                             // Date date = (Date)formatter.parse(GMTTime);
                             update_url = expires.getUpdate_url();
                             expiredMSG = expires.getExpiry_msg();
                             reminderMSG = expires.getReminder_msg();
-
                             reminderInterval = expires.getReminder_interval();
                             if (date.getTime() < CurrentTime) {
                                 expired = true;
@@ -196,7 +186,6 @@ public class SplashActivity extends Activity  {
                             hasExpiry[0] = true;
                             if (expired) {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(SplashActivity.this);
-
                                 final String finalUpdate_url = update_url;
                                 builder.setMessage(expiredMSG)
                                         .setTitle("ALERT")
@@ -216,7 +205,6 @@ public class SplashActivity extends Activity  {
                                 builder.create();
                                 builder.show();
                             } else {
-
                                 if (lastExpiryNotify + reminderInterval < CurrentTime && hasExpiry[0]) {
                                     WoolworthsApplication.setConfig_expireLastNotify();
                                     final String finalUpdate_url = update_url;
@@ -243,7 +231,7 @@ public class SplashActivity extends Activity  {
                                 }
 
                             }
-                        }else{
+                        } else {
                             openPage(loadingResult);
                         }
                         //JSONObject enviroment = WoolworthsApplication.config().getJSONObject("enviroment");
@@ -264,32 +252,32 @@ public class SplashActivity extends Activity  {
         }.execute();
 
 
-
     }
 
-    private String getDeviceID(){
-        try{
-
-            return  Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        }catch (Exception e){
+    private String getDeviceID() {
+        try {
+            return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        } catch (Exception e) {
             return null;
         }
     }
 
 
-
-public void openPage(LoadingResult loadingResult){
-    switch (loadingResult) {
-        case ERROR:
-            mError.show();
-            break;
-        case LOGIN:
-            startActivity(new Intent(SplashActivity.this, WOneAppBaseActivity.class));
-            finish();
-            break;
-        case SUCCESS:
-            String landingScreen = ((WoolworthsApplication) getApplication()).getUserManager().getLandingScreen();
-            loadWRewards(landingScreen);
+    public void openPage(LoadingResult loadingResult) {
+        switch (loadingResult) {
+            case ERROR:
+                mError.show();
+                break;
+            case LOGIN:
+                if (getIntent().hasExtra("body"))
+                    startActivity(new Intent(SplashActivity.this, MessagesActivity.class).putExtra("fromNotification", true));
+                else
+                    startActivity(new Intent(SplashActivity.this, WOneAppBaseActivity.class));
+                finish();
+                break;
+            case SUCCESS:
+                String landingScreen = ((WoolworthsApplication) getApplication()).getUserManager().getLandingScreen();
+                loadWRewards(landingScreen);
            /* if (landingScreen.equals(WoolworthsApplication.LANDING_STORE_CARD)) {
                 Intent intent = new Intent(SplashActivity.this, AccountsActivity.class);
                 intent.putExtra(AccountsActivity.LANDING_SCREEN, 0);
@@ -309,26 +297,17 @@ public void openPage(LoadingResult loadingResult){
                 startActivity(new Intent(SplashActivity.this, WRewardsActivity.class));
                 finish();
             }*/
-
-            break;
+                break;
+        }
     }
-}
+
     private WoolworthsApplication getWoolworthsApplication() {
         return (WoolworthsApplication) getApplication();
     }
+
     private void loadWRewards(final String landingScreen) {
         String wRewards = getWoolworthsApplication().getUserManager().getWRewards();
         if (wRewards.isEmpty()) {
-
-
-
-
-
-
-
-
-
-
             new HttpAsyncTask<String, String, VoucherResponse>() {
 
                 @Override
@@ -343,24 +322,22 @@ public void openPage(LoadingResult loadingResult){
 
                 @Override
                 public VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-
                     WiGroupLogger.e(SplashActivity.this, TAG, errorMessage);
                     VoucherResponse voucherResponse = new VoucherResponse();
                     voucherResponse.httpCode = 408;
                     voucherResponse.response = new Response();
                     voucherResponse.response.desc = getString(R.string.err_002);
-
                     return voucherResponse;
                 }
 
                 @Override
                 protected void onPreExecute() {
-                   // findViewById(R.id.w_rewards_loading).setVisibility(View.VISIBLE);
+                    // findViewById(R.id.w_rewards_loading).setVisibility(View.VISIBLE);
                 }
 
                 @Override
                 protected void onPostExecute(VoucherResponse voucherResponse) {
-                   // findViewById(R.id.w_rewards_loading).setVisibility(View.GONE);
+                    // findViewById(R.id.w_rewards_loading).setVisibility(View.GONE);
                     switch (voucherResponse.httpCode) {
                         case 200:
                             getWoolworthsApplication().getUserManager().setWRewards(voucherResponse);
@@ -384,9 +361,7 @@ public void openPage(LoadingResult loadingResult){
                                 startActivity(new Intent(SplashActivity.this, WRewardsActivity.class));
                                 finish();
                             }
-
                             break;
-
                         default:
                             if (landingScreen.equals(WoolworthsApplication.LANDING_STORE_CARD)) {
                                 Intent intent = new Intent(SplashActivity.this, AccountsActivity.class);
@@ -434,6 +409,7 @@ public void openPage(LoadingResult loadingResult){
 
         }
     }
+
     private enum LoadingResult {
         LOGIN,
         ERROR,
