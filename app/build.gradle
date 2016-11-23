@@ -4,13 +4,14 @@ android {
 
     def major = "5"
     def minor = "0"
+    def fix = "0"
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
-        job = "0";
+        job = "1";
     }
 
-    def buildNumber = major + "." + minor + "." + job
+    def buildNumber = major + "." + minor + "." + fix
 
     signingConfigs {
         woolworths {
