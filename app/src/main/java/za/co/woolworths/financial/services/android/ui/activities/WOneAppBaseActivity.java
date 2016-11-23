@@ -18,6 +18,7 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener{
 
@@ -38,7 +39,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
         drawerFragment.setDrawerListener(this);
-        displayView(2);
+        displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
     }
 
     @Override
@@ -72,7 +73,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             getSupportActionBar().setTitle("");
         }
     }
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.w_store_locator_menu, menu);
@@ -87,7 +88,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

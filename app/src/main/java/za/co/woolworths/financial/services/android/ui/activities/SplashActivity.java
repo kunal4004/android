@@ -139,17 +139,9 @@ public class SplashActivity extends Activity  {
 
                     @Override
                     public ConfigResponse httpError(final String errorMessage, final HttpErrorCode httpErrorCode) {
-                        ConfigResponse configResponse = null;
-
                         if (httpErrorCode == HttpErrorCode.NETWORK_UNREACHABLE){
 
-                            //while network is unreachable,
-                            //check if previous user config request has been made.
-                            //use cached config if found, else display no internet connection found dialog
-                            configResponse = new Gson().fromJson(WoolworthsApplication.config().toString(), ConfigResponse.class);
-
-                            if(configResponse == null){
-                                SplashActivity.this.runOnUiThread(new Runnable() {
+                            SplashActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     AlertDialog alertDialog = new AlertDialog.Builder(SplashActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
@@ -163,10 +155,9 @@ public class SplashActivity extends Activity  {
                                             }).show();
                                 }
                             });
-                            }
                         }
 
-                        return configResponse;
+                        return null;
                     }
 
                     @Override
@@ -255,16 +246,7 @@ public class SplashActivity extends Activity  {
                         }else{
                             openPage(loadingResult);
                         }
-
-
-                        String configJson = new Gson().toJson(configResponse);
-                        try{
-                            WoolworthsApplication.setConfig(new JSONObject(configJson));
-                        }
-                        catch (JSONException e){
-
-                        }
-
+                        //JSONObject enviroment = WoolworthsApplication.config().getJSONObject("enviroment");
                         WoolworthsApplication.setBaseURL(configResponse.enviroment.getBase_url());
                         WoolworthsApplication.setApiKey(configResponse.enviroment.getApiId());
                         WoolworthsApplication.setSha1Password(configResponse.enviroment.getApiPassword());

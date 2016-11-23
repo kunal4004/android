@@ -64,7 +64,7 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
                 if(retrofitError.getCause() instanceof SocketTimeoutException)
                     result = httpError("Request timed out. Please try again later.", HttpErrorCode.NETWORK_UNREACHABLE);
                 else
-                    result = httpError("Could not establish connectivity. Please check your internet connection.", HttpErrorCode.NETWORK_UNREACHABLE);//using same error message as iOS
+                    result = httpError("Please ensure that your device is connected to the internet", HttpErrorCode.NETWORK_UNREACHABLE);
             }
             else if (retrofitError.getResponse() != null && retrofitError.getResponse().getBody().mimeType().equals("application/json")){
                 try{

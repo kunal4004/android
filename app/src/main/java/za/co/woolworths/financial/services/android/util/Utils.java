@@ -39,6 +39,7 @@ public class Utils {
     public final static float SMALL_SCALE = 1.9f;
     public final static float DIFF_SCALE = BIG_SCALE - SMALL_SCALE;
     public static int FIRST_PAGE=0;
+    public static  int DEFAULT_SELECTED_NAVIGATION_ITEM=4;
 
 
     //Firebase Messaging service

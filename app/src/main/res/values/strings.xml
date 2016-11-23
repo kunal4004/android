@@ -16,7 +16,7 @@
     <string name="credit_card">CREDIT CARD</string>
     <string name="personal_loan">PERSONAL LOAN</string>
     <string name="credit_card_line_one">|!b|GET THE CREDIT CARD THAT REWARDS YOU EACH AND EVERY TIME YOU SWIPE.|!?|</string>
-    <string name="credit_card_line_two">With a Woolworths Credit Card you earn |!b|W|!?|Rewards quarterly vouchers each and every time you shop with your card. As a Woolworths Credit Cardholder, you\'re automatically part of our great |!b|W|!?|Rewards programme that gives you the opportunity to save from 10% instantly on thousands of items throughout the store.</string>
+    <string name="credit_card_line_two">With a Woolworths Credit Card you will earn |!b|W|!?|Vouchers each and every time you shop with your card.  As a Woolworths Credit card holder, you\'re automatically part of our great |!b|W|!?|Rewards programme that gives you the opportunity to save from 10% instantly on thousands of items throughout the store.</string>
     <string name="my_accounts">MY ACCOUNTS</string>
     <string name="last_transactions">VIEW PREVIOUS TRANSACTIONS</string>
     <string name="credit_limit">CREDIT LIMIT</string>
@@ -45,10 +45,10 @@
     <string name="valid_from">VALID FROM</string>
     <string name="valid_until">VALID UNTIL</string>
     <string name="w_reward_use_code">USE VOUCHER CODE:</string>
-    <string name="personal_loan_line_one">|!b|THERE ARE TIMES WHEN ALL OF US COULD USE SOME EXTRA CASH TO COVER UNFORESEEN EXPENSES.|!?|</string>
+    <string name="personal_loan_line_one">|!b|THERE ARE TIMES WHEN ALL OF US COULD USE SOME EXTRA CASH TO COVER INFORESEEN EXPENSES.|!?|</string>
     <string name="personal_loan_line_two">Flexible repayment terms of up to 60 months</string>
     <string name="personal_loan_line_three">Cash within 48 hours</string>
-    <string name="personal_loan_line_four">Re-use all the money that has been repaid</string>
+    <string name="personal_loan_line_four">Re-use all the money that has been re-paid</string>
     <string name="personal_loan_line_five">Low initiation and monthly service fees</string>
     <string name="personal_loan_line_six">Convenience of accessing cash through our interactive voice message system or mobile app.</string>
     <string name="call_centre">CALL CENTRE</string>
@@ -146,7 +146,8 @@
     <string name="nav_item_store">STORES</string>
     <string name="nav_item_wrewards">WREWARDS</string>
     <string name="nav_item_accounts">ACCOUNTS</string>
-
+    <string name="increase_limit">INCREASE LIMIT</string>
+    <string name="transactions">transactions</string>
 
 
     <!-- <string name="title_section1">Section 1</string>
