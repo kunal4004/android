@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 
 android {
 
-    def major = "4"
-    def minor = "7"
+    def major = "5"
+    def minor = "0"
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
@@ -22,15 +22,7 @@ android {
     }
 
     compileSdkVersion 23
-    buildToolsVersion '23.0.1'
-
-    defaultConfig {
-        applicationId "com.awfs.coordination"
-        minSdkVersion 15
-        targetSdkVersion 22
-        multiDexEnabled true
-        versionCode job.toInteger()
-    }
+    buildToolsVersion '23.0.3'
     buildTypes {
         debug {
             debuggable true
@@ -42,39 +34,41 @@ android {
     }
     productFlavors {
         development {
-            versionName = buildNumber + "-development"
             applicationId "com.awfs.coordination.development"
         }
 
         qa {
-            versionName = buildNumber + "-qa"
-            job + "-qa"
             applicationId "com.awfs.coordination.staging"
         }
 
         production {
-            versionName = buildNumber
             signingConfig signingConfigs.woolworths
         }
 
         blackberryDev {
-            versionName = buildNumber + "-dev"
             applicationId "com.awfs.coordination.development"
         }
 
         blackberryQa {
-            versionName = buildNumber + "-qa"
             applicationId "com.awfs.coordination.qa"
         }
 
         blackberryProduction {
-            versionName = buildNumber
             signingConfig signingConfigs.woolworths
         }
         dexOptions {
             incremental true
-            javaMaxHeapSize "2048M"
+            javaMaxHeapSize "2560M"
         }
+    }
+
+    defaultConfig {
+        applicationId "com.awfs.coordination"
+        minSdkVersion 15
+        targetSdkVersion 22
+        multiDexEnabled true
+        versionCode (job.toInteger() + 1)
+        versionName buildNumber
     }
 }
 
