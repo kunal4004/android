@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="match_parent"
+                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_bg"
+            >
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:minHeight="?attr/actionBarSize"
+            app:popupTheme="@style/MyAccountCards"
+            app:theme="@style/MyAccountCards"
+            />
+
+        <za.co.woolworths.financial.services.android.util.WCustomViewPager
+            android:id="@+id/myAccountsCardPager"
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            />
+        </LinearLayout>
+        <za.co.woolworths.financial.services.android.util.WCustomViewPager
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/fragmentpager"
+
+            />
+
+
+</LinearLayout>

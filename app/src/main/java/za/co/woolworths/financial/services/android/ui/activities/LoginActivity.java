@@ -83,10 +83,7 @@ public class LoginActivity extends Activity {
                             LoginResponse loginResponse = new LoginResponse();
                             loginResponse.httpCode = 408;
                             loginResponse.response = new Response();
-                            if(httpErrorCode == HttpErrorCode.UNKOWN_ERROR || errorMessage.isEmpty())
-                                loginResponse.response.desc = getString(R.string.err_002);
-                            else
-                                loginResponse.response.desc = errorMessage;
+                            loginResponse.response.desc = getString(R.string.err_002);
                             return loginResponse;
                         }
 

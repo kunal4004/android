@@ -18,6 +18,9 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -59,6 +62,7 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
+import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity;
 import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter;
@@ -125,6 +129,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
     public StoresNearbyFragment1() {
         // Required empty public constructor
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -315,10 +320,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
     @Override
     public void onLocationChanged(Location location) {
-        Utils.saveLastLocation(location, getActivity());
-        updateMyCurrentLocationOnMap(location);
-        init(location);
-        locationManager.removeUpdates(this);
+        if(getActivity()!=null) {
+            Utils.saveLastLocation(location, getActivity());
+            updateMyCurrentLocationOnMap(location);
+            init(location);
+            locationManager.removeUpdates(this);
+        }
     }
 
     @Override
@@ -629,6 +636,21 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.w_store_locator_menu, menu);
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                startActivity(new Intent(getActivity(), SearchStoresActivity.class));
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
 

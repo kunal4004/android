@@ -14,7 +14,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.CALL_PHONE"/>
 
-    <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true"/>
 
     <supports-screens
         android:anyDensity="true"
@@ -122,7 +124,11 @@
             android:theme="@style/ShoppingList"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MessagesActivity"
+            android:parentActivityName="za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity"
             android:theme="@style/Messages">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity"/>
         </activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity"
@@ -142,7 +148,11 @@
         </service>
         <!-- ./Firebase Notifications -->
 
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity"
+            android:theme="@style/MyAccountCards"
+            >
 
+        </activity>
     </application>
 
 </manifest>

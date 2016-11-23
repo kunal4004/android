@@ -13,6 +13,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.NavListItem;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 /**
  * Created by W7099877 on 17/11/2016.
@@ -21,7 +22,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 public class NavigationDrawerAdapter extends BaseAdapter {
     public Activity mContext;
     private List<NavListItem> navListItems;
-    private int selectedPosition = 2;
+    private int selectedPosition = Utils.DEFAULT_SELECTED_NAVIGATION_ITEM;
 
 
     public NavigationDrawerAdapter(Activity mContext,List<NavListItem> navListItems)

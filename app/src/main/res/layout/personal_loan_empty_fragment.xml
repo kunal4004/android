@@ -14,16 +14,11 @@
         android:layout_width="match_parent"
         android:layout_height="8dp"
         android:src="@color/black"
-        android:id="@+id/topLine"
         tools:ignore="ContentDescription" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/applyNowLayout"
-        android:layout_below="@+id/topLine"
-        android:layout_marginTop="8dp"
-        android:layout_alignParentTop="true">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -134,7 +129,6 @@
     android:layout_alignParentBottom="true"
     android:background="@drawable/personal_loan_selector"
     android:onClick="applyNow"
-    android:id="@+id/applyNowLayout"
     android:orientation="vertical">
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/applyNow"
