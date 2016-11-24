@@ -8,12 +8,24 @@ android {
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
-        job = "1";
+        job = "2";
     }
 
     def buildNumber = major + "." + minor + "." + fix
 
     signingConfigs {
+        woneappDev{
+            keyAlias 'woneapp_dev'
+            keyPassword 'woneapp_dev'
+            storeFile file('key/woneapp_dev-release-key.keystore')
+            storePassword 'woneapp_dev'
+        }
+        woneappQa{
+            keyAlias 'woneapp_qa'
+            keyPassword 'woneapp_qa'
+            storeFile file('key/woneapp_qa-release-key.keystore')
+            storePassword 'woneapp_qa'
+        }
         woolworths {
             keyAlias 'woolworths'
             keyPassword 'H]|{0*[\'C[Y\\jze'
@@ -44,10 +56,12 @@ android {
     productFlavors {
         dev {
             applicationId "com.awfs.coordination.dev"
+            signingConfig signingConfigs.woneappDev
         }
 
         qa {
             applicationId "com.awfs.coordination.qa"
+            signingConfig signingConfigs.woneappQa
         }
 
         production {
@@ -55,7 +69,6 @@ android {
             signingConfig signingConfigs.woolworths
         }
         dexOptions {
-            incremental true
             javaMaxHeapSize "2560M"
         }
     }
