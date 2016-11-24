@@ -148,6 +148,31 @@
     <string name="nav_item_accounts">ACCOUNTS</string>
     <string name="increase_limit">INCREASE LIMIT</string>
     <string name="transactions">transactions</string>
+    <string name="apply_now">APPLY NOW</string>
+    <string name="woolworths_financial_services">Woolworths financial services</string>
+    <string name="the_benefits">The benefits:</string>
+    <string name="free_taste_magazines">Free Taste magazines</string>
+    <string name="free_taste_magazine">Woolworths Black Credit cardholders you’ll receive a monthly voucher for a free TASTE magazine</string>
+    <string name="free_coffee">Free coffee</string>
+    <string name="free_coffee_description">You’ll receive a free coffee or tea at any Woolworths Café, To Go or Tapas Bar twice a month.</string>
+    <string name="free_online_delivery">Free online delivery</string>
+    <string name="free_delivery_description">Woolworths VIP Black Credit cardholders get free online delivery. Simply link your Black Credit Card to your online profile.</string>
+    <string name="shop_anywhere">Shop anywhere</string>
+    <string name="shop_any_where_description">Your Woolworths Credit Card is internationally recognised and accepted at 29 million outlets around the world wherever you see the Visa sign.</string>
+    <string name="cc_to_qualify">To qualify, you have to:</string>
+<string name="points_to_qualify">\u2022Be 18 or older \n\u2022Have a valid RSA ID number \n\u2022Earn over R41 666 per month
+</string>
+    <string name="bring_following_while_collecting">When collecting your credit card, bring the following:</string>
+    <string name="points_bring_following_while_collecting">\u2022Avalid South African ID \n\u2022Your latest three payslips or your last three months’ bank statements \n\u2022Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
+    <string name="cash_when_you_need_it">Cash when you need it:</string>
+    <string name="points_cash_when_you_need_it">\u2022Flexible repayment terms of up to 60 months \n\u2022Re-use the money that’s been paid back towards your loan \n\u2022Low initiation and monthly service fees \n\u2022Easily apply to increase your limit if needed \n\u2022Settle your account early without penalties \n\u2022Make additional payments towards your loan \n\u2022Easily access your cash using our mobi app or our interactive voice message system</string>
+    <string name="funds_within_48_hours">Funds within 48 hours</string>
+    <string name="funds_within_48_hours_description">Once your application has been approved the cash will be in your account within 48 hours.</string>
+    <string name="easy_access">Easy access</string>
+    <string name="easy_access_description">Simply contact our Call Centre on 0861 50 20 20 to apply for additional funds.</string>
+    <string name="interest_changed">Interest charged</string>
+    <string name="interest_changed_description">Interest will be charged according to the National Credit Act (NCA) and will never exceed the maximum allowed by the NCA. The interest rate charged is a variable interest rate that is linked to the Repo Rate, which may change from time to time.</string>
+    <string name="personal_loan_points_to_qualify">\u2022Be 18 or older \n\u2022Have a valid South African ID \n\u2022Earn a minimum of R2 000 per month \n\u2022Provide your latest three payslips or your last three months’ bank statements Have your own bank account</string>
 
 
     <!-- <string name="title_section1">Section 1</string>

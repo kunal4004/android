@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.models;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.multidex.MultiDex;
 
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
@@ -209,5 +210,9 @@ public class WoolworthsApplication extends Application {
         editor.commit();
     }
 
-
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 }
