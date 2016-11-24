@@ -8,7 +8,7 @@ android {
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
-        job = "2";
+        job = "3";
     }
 
     def buildNumber = major + "." + minor + "." + fix
@@ -47,6 +47,7 @@ android {
     buildTypes {
         debug {
             debuggable true
+            signingConfig null // Set to null to override default debug keystore and defer to the product flavor.
         }
         release {
             minifyEnabled false
