@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 
@@ -14,6 +15,7 @@ import com.awfs.coordination.R;
 
 public class MyAccountsCardsAdapter extends PagerAdapter {
     public Activity mContext;
+    int[] cards={R.drawable.w_store_card,R.drawable.w_credi_card,R.drawable.w_personal_loan_card};
     public MyAccountsCardsAdapter(Activity context)
     {
         this.mContext=context;
@@ -30,6 +32,8 @@ public class MyAccountsCardsAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
 
         View cView=mContext.getLayoutInflater().inflate(R.layout.my_accounts_cards_pager_item,container,false);
+        ImageView myaccountsCard=(ImageView)cView.findViewById(R.id.myaccountsCard);
+        myaccountsCard.setBackgroundResource(cards[position]);
 
         container.addView(cView);
         return cView;
@@ -37,7 +41,7 @@ public class MyAccountsCardsAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return cards.length;
     }
 
     @Override

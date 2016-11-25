@@ -272,7 +272,7 @@ public class SplashActivity extends Activity {
                 if (getIntent().hasExtra("body"))
                     startActivity(new Intent(SplashActivity.this, MessagesActivity.class).putExtra("fromNotification", true));
                 else
-                    startActivity(new Intent(SplashActivity.this, WOneAppBaseActivity.class));
+                    startActivity(new Intent(SplashActivity.this, MyAccountCardsActivity.class));
                 finish();
                 break;
             case SUCCESS:

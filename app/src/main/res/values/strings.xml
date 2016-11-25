@@ -160,8 +160,7 @@
     <string name="shop_anywhere">Shop anywhere</string>
     <string name="shop_any_where_description">Your Woolworths Credit Card is internationally recognised and accepted at 29 million outlets around the world wherever you see the Visa sign.</string>
     <string name="cc_to_qualify">To qualify, you have to:</string>
-<string name="points_to_qualify">\u2022Be 18 or older \n\u2022Have a valid RSA ID number \n\u2022Earn over R41 666 per month
-</string>
+    <string name="points_to_qualify">\u2022Be 18 or older \n\u2022Have a valid RSA ID number \n\u2022Earn over R41 666 per month</string>
     <string name="bring_following_while_collecting">When collecting your credit card, bring the following:</string>
     <string name="points_bring_following_while_collecting">\u2022Avalid South African ID \n\u2022Your latest three payslips or your last three months’ bank statements \n\u2022Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
     <string name="cash_when_you_need_it">Cash when you need it:</string>
@@ -173,6 +172,19 @@
     <string name="interest_changed">Interest charged</string>
     <string name="interest_changed_description">Interest will be charged according to the National Credit Act (NCA) and will never exceed the maximum allowed by the NCA. The interest rate charged is a variable interest rate that is linked to the Repo Rate, which may change from time to time.</string>
     <string name="personal_loan_points_to_qualify">\u2022Be 18 or older \n\u2022Have a valid South African ID \n\u2022Earn a minimum of R2 000 per month \n\u2022Provide your latest three payslips or your last three months’ bank statements Have your own bank account</string>
+    <string name="wrewards_gives_more">WRewards gives you more</string>
+    <string name="wrewards_gives_more_description">As a Woolworths Store Cardholder, you’re automatically part of our WRewards programme. That means you’ll get exclusive access to great benefits and special offers on selected WRewards items.</string>
+    <string name="make_difference">Make a difference</string>
+    <string name="make_difference_description">Link your Store Card to our MySchool MyVillage MyPlanet fundraising programme and we\'ll donate up to 1% of the value of every Woolworths purchase you make to the organisation of your choice.</string>
+    <string name="your_in_control">You\'re in control</string>
+    <string name="your_in_control_description">With a Woolworths Store Card you decide how much you want to repay each month and your preferred payment method.</string>
+    <string name="easy_payment_methods">Easy payment methods</string>
+    <string name="easy_payment_methods_description">Your purchases are automatically billed to your account and you’ll get a monthly statement. You could pay your account using any of the below methods:</string>
+    <string name="points_easy_payment_method">\u2022At a Woolies store \n\u2022Debit order \n\u2022At an ABSA ATM \n\u2022Cellphone or internet banking</string>
+    <string name="convenient">Convenient</string>
+    <string name="points_convinent">\u2022Use your Store Card at any Woolies &amp; Woolies \n\u2022Foodstops at Engen \n\u2022Pay your utility bills \n\u2022Buy airtime \n\u2022Shop Woolies online 24/7</string>
+    <string name="sc_points_to_qualify">\u2022Be 18 or older \n\u2022Have a valid RSA ID number \n\u2022Earn a minimum of R2000 per month</string>
+    <string name="sc_points_bring_following_while_collecting">\u2022Avalid South African ID \n\u2022Your latest three payslips or your last three months’ bank statements </string>
 
 
     <!-- <string name="title_section1">Section 1</string>
