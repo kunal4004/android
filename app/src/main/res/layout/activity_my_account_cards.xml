@@ -20,7 +20,17 @@
             android:minHeight="?attr/actionBarSize"
             app:popupTheme="@style/MyAccountCards"
             app:theme="@style/MyAccountCards"
-            />
+            >
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:WTextView_font="medium_bold"
+                    android:textAllCaps="true"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    android:text="Store card"
+                    />
+            </android.support.v7.widget.Toolbar>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/myAccountsCardPager"

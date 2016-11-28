@@ -106,7 +106,7 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:background">@android:color/transparent</item>
-        <item name="android:homeAsUpIndicator">@drawable/close_24</item>
+        <item name="android:homeAsUpIndicator">@drawable/back_white</item>
 
     </style>
 

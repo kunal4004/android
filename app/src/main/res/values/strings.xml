@@ -185,6 +185,8 @@
     <string name="points_convinent">\u2022Use your Store Card at any Woolies &amp; Woolies \n\u2022Foodstops at Engen \n\u2022Pay your utility bills \n\u2022Buy airtime \n\u2022Shop Woolies online 24/7</string>
     <string name="sc_points_to_qualify">\u2022Be 18 or older \n\u2022Have a valid RSA ID number \n\u2022Earn a minimum of R2000 per month</string>
     <string name="sc_points_bring_following_while_collecting">\u2022Avalid South African ID \n\u2022Your latest three payslips or your last three months’ bank statements </string>
+    <string name="please_enter_the_amount">PLEASE ENTER THE AMOUNT YOU WOULD LIKE TO WITHDRAW:</string>
+    <string name="confirm_loan_withdrawal">PLEASE CONFIRM YOUR LOAN REQUEST DETAILS:</string>
 
 
     <!-- <string name="title_section1">Section 1</string>
