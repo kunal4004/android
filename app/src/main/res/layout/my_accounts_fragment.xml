@@ -39,7 +39,7 @@
                     android:id="@+id/openMessageActivity"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/ic_contact"
+                    android:background="@drawable/message_24"
                     />
 
                 <FrameLayout
@@ -65,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:background="@drawable/ic_contact"
+                    android:background="@drawable/shoppinglist_24"
                     />
 
             </RelativeLayout>
@@ -160,7 +160,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/imgSubmitQuery"
-                    android:background="@drawable/ic_time24"
+                    android:background="@drawable/signout_24"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     />
@@ -239,7 +239,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/imgSignOut"
-                android:background="@drawable/ic_directions"
+                android:background="@drawable/signout_24"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 />
