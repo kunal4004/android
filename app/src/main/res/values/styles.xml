@@ -109,6 +109,14 @@
         <item name="android:homeAsUpIndicator">@drawable/back_white</item>
 
     </style>
+    <style name="ContactUs" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:homeAsUpIndicator">@drawable/back24</item>
+
+    </style>
+
 
     <style name="OneAppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
