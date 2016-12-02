@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.models.dto.Expiry;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
 public class SplashActivity extends Activity  {
@@ -223,7 +224,8 @@ public class SplashActivity extends Activity  {
 
                             }
                         }else{
-                            openPage(loadingResult);
+                            ScreenManager.presentOnboarding(SplashActivity.this);
+                            //openPage(loadingResult);
                         }
                         //JSONObject enviroment = WoolworthsApplication.config().getJSONObject("enviroment");
                         WoolworthsApplication.setBaseURL(configResponse.enviroment.getBase_url());
