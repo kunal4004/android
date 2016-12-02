@@ -21,7 +21,7 @@ public class WTodayFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.my_accounts_fragment, container, false);
+        View view=inflater.inflate(R.layout.wtoday_fragment, container, false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("WTODAY");
         webView=(WebView)view.findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
