@@ -7,7 +7,7 @@
         <attr name="SpentFullColor" format="color" />
         <attr name="CenterCircleColor" format="color" />
         <attr name="TextColor" format="color" />
-        <attr name="OuterCircleWidth" format="dimension"  />
+        <attr name="OuterCircleWidth" format="dimension" />
         <attr name="MiddleCircleWidth" format="dimension" />
         <attr name="LabelTextSize" format="dimension" />
         <attr name="AmountTextSize" format="dimension" />
@@ -19,8 +19,8 @@
             <enum name="medium" value="1" />
             <enum name="medium_bold" value="2" />
             <enum name="bold" value="3" />
-            <enum name="myriadpro_regular" value="4"/>
-            <enum name="myriadpro_semibold" value="5"/>
+            <enum name="myriadpro_regular" value="4" />
+            <enum name="myriadpro_semibold" value="5" />
         </attr>
         <attr name="WTextView_spannable_text" format="string" />
     </declare-styleable>
@@ -30,8 +30,8 @@
             <enum name="medium" value="1" />
             <enum name="medium_bold" value="2" />
             <enum name="bold" value="3" />
-            <enum name="myriadpro_regular" value="4"/>
-            <enum name="myriadpro_semibold" value="5"/>
+            <enum name="myriadpro_regular" value="4" />
+            <enum name="myriadpro_semibold" value="5" />
         </attr>
         <attr name="WEditTextView_spannable_text" format="string" />
     </declare-styleable>
@@ -41,8 +41,8 @@
             <enum name="medium" value="1" />
             <enum name="medium_bold" value="2" />
             <enum name="bold" value="3" />
-            <enum name="myriadpro_regular" value="4"/>
-            <enum name="myriadpro_semibold" value="5"/>
+            <enum name="myriadpro_regular" value="4" />
+            <enum name="myriadpro_semibold" value="5" />
         </attr>
         <attr name="WButton_spannable_text" format="string" />
     </declare-styleable>
@@ -55,8 +55,8 @@
         <attr name="umanoFlingVelocity" format="integer" />
         <attr name="umanoDragView" format="reference" />
         <attr name="umanoScrollableView" format="reference" />
-        <attr name="umanoOverlay" format="boolean"/>
-        <attr name="umanoClipPanel" format="boolean"/>
+        <attr name="umanoOverlay" format="boolean" />
+        <attr name="umanoClipPanel" format="boolean" />
         <attr name="umanoAnchorPoint" format="float" />
         <attr name="umanoInitialState" format="enum">
             <enum name="expanded" value="0" />
@@ -65,5 +65,14 @@
             <enum name="hidden" value="3" />
         </attr>
         <attr name="umanoScrollInterpolator" format="reference" />
+    </declare-styleable>
+
+    <!-- Declare custom theme attributes that allow changing which styles are
+         used for button bars depending on the API level.
+         ?android:attr/buttonBarStyle is new as of API 11 so this is
+         necessary to support previous API levels. -->
+    <declare-styleable name="ButtonBarContainerTheme">
+        <attr name="metaButtonBarStyle" format="reference" />
+        <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 </resources>
