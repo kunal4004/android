@@ -86,6 +86,10 @@ public class WFirebaseInstanceIDService extends FirebaseInstanceIdService {
         editor.putString("regId", token);
         editor.commit();
     }
-
+/*@Override
+    public void onCreate() {
+        super.onCreate();
+        android.os.Debug.waitForDebugger();
+    }*/
 }
 

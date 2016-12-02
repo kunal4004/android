@@ -50,7 +50,7 @@ public class MessagesActivity extends AppCompatActivity {
     private boolean mIsLoading = false;
     private boolean mIsLastPage = false;
     private int mCurrentPage = 1;
-    int previousTotal=0;
+    int previousTotal = 0;
     public List<MessageDetails> messageList;
     public ProgressBar mLoadingImageView;
     public int visibleThreshold = 5;
@@ -96,34 +96,26 @@ public class MessagesActivity extends AppCompatActivity {
                 int visibleItemCount = mLayoutManager.getChildCount();
                 int totalItemCount = mLayoutManager.getItemCount();
                 int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
-
                 if (!mIsLoading && !mIsLastPage) {
                     if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                             && firstVisibleItemPosition >= 0
                             && totalItemCount >= PAGE_SIZE) {
-                      loadMoreMessages();
+                        loadMoreMessages();
 
                     }
                 }
             }
         });
-
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-
-               if (intent.getAction().equals(Utils.PUSH_NOTIFICATION)) {
-
-                   loadMessages();
+                if (intent.getAction().equals(Utils.PUSH_NOTIFICATION)) {
+                    loadMessages();
 
                 }
             }
         };
-
-
         loadMessages();
-
-
 
 
     }
@@ -137,8 +129,8 @@ public class MessagesActivity extends AppCompatActivity {
 
             @Override
             protected MessageResponse httpDoInBackground(String... params) {
-                mCurrentPage=1;
-                mIsLastPage=false;
+                mCurrentPage = 1;
+                mIsLastPage = false;
                 return ((WoolworthsApplication) getApplication()).getApi().getMessagesResponse(PAGE_SIZE, mCurrentPage);
             }
 
@@ -158,10 +150,9 @@ public class MessagesActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(MessageResponse messageResponse) {
                 super.onPostExecute(messageResponse);
-                messageList=null;
+                messageList = null;
                 messageList = new ArrayList<>();
                 if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
-
                     messageList = messageResponse.messagesList;
                     bindDataWithUI(messageList);
                     setMeassagesAsRead(messageList);
@@ -309,13 +300,10 @@ public class MessagesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-
         // register new push message receiver
         // by doing this, the activity will be notified each time a new message arrives
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(Utils.PUSH_NOTIFICATION));
-
         // clear the notification area when the app is opened
         NotificationUtils.clearNotifications(getApplicationContext());
 
@@ -323,8 +311,17 @@ public class MessagesActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+        boolean fromNotification = false;
+        if (getIntent().hasExtra("fromNotification"))
+            fromNotification = getIntent().getExtras().getBoolean("fromNotification");
+        if (fromNotification) {
+            startActivity(new Intent(MessagesActivity.this, WOneAppBaseActivity.class));
+            overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+            finish();
+        } else {
+            super.onBackPressed();
+            overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+        }
 
     }
 

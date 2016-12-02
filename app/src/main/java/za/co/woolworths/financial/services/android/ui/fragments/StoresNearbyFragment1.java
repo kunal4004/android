@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -138,6 +139,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_stores_nearby1, container, false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("STORES NEARBY");
+
         pager = (WCustomViewPager) v.findViewById(R.id.cardPager);
         detailsLayout = (LinearLayout) v.findViewById(R.id.detailsView);
         mLayout = (SlidingUpPanelLayout) v.findViewById(R.id.sliding_layout);

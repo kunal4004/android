@@ -15,19 +15,17 @@ import com.awfs.coordination.R;
  * Created by W7099877 on 02/12/2016.
  */
 
-public class WTodayFragment extends Fragment{
+public class WTodayFragment extends Fragment {
 
-    WebView wTodayweb;
-
+    WebView webView;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        View view=inflater.inflate(R.layout.wtoday_fragment, container, false);
+        View view=inflater.inflate(R.layout.my_accounts_fragment, container, false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("WTODAY");
-        wTodayweb=(WebView)view.findViewById(R.id.wTodayWeb);
-        wTodayweb.getSettings().setJavaScriptEnabled(true);
-        wTodayweb.loadUrl("http://today.wfs.qa.wigroup.co/");
+        webView=(WebView)view.findViewById(R.id.webview);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.loadUrl("http://today.wfs.qa.wigroup.co/");
 
         return view;
     }

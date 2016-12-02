@@ -65,6 +65,10 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
                 fragment = new WTodayFragment();
                 title = getString(R.string.nav_item_today);
                 break;
+            case 0:
+                fragment = new WTodayFragment();
+                title = getString(R.string.nav_item_store);
+                break;
 
         }
 
