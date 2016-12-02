@@ -21,13 +21,29 @@ public class OnboardingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onboarding);
 
+        findViewById(R.id.txtSkip).setOnClickListener(this.txtSkip_onClick);
         findViewById(R.id.btnOnboardingLogin).setOnClickListener(this.btnSignin_onClick);
+        findViewById(R.id.btnOnboardingRegister).setOnClickListener(this.btnRegister_onClick);
     }
+
+    private View.OnClickListener txtSkip_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            OnboardingActivity.this.navigateToMain();
+        }
+    };
 
     private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            ScreenManager.presentSSOWebView(OnboardingActivity.this);
+            ScreenManager.presentSSOSignin(OnboardingActivity.this);
+        }
+    };
+
+    private View.OnClickListener btnRegister_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ScreenManager.presentSSORegister(OnboardingActivity.this);
         }
     };
 
@@ -35,6 +51,12 @@ public class OnboardingActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        if(resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()){
+            this.navigateToMain();
+        }
+    }
+
+    private void navigateToMain(){
         startActivity(new Intent(OnboardingActivity.this, WOneAppBaseActivity.class));
         finish();
     }

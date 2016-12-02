@@ -63,20 +63,6 @@ public class SSOActivity extends WebViewActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        try {
-
-            Jwts.parser()
-                    .setSigningKey("FFRELf1q_DP0h5rwfS37enw8FtW2Ej27fxkMSU0AXLwbpO1pucgK6Da-WI8OqHgo2QDq-vtT1qHTBW9TY25bOzCt75pogungdZFiPPKFCyhaa84GUJJqZirreka8AYC-SdlpaUWEbPxxkAKAGGZg-dMfr3x7I7YJO3kiFbKZOHHvVWvxYz7MX_YUgLSToQwY0dhI5So7OG9lxGa2yKlBdRqZvdKONr-KMbrmJ7Y805u7blZ5k3foH4NinsIuN_-pVbSmZ07t8GOaU1dQC4LUsGEkGAJuBcqCGfSegiouBz0sfdJvSWfcspjENse6SUpA7hgDOfbysD0aoFqPG68sUA")
-                    .parseClaimsJws("eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSIsImtpZCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSJ9.eyJpc3MiOiJodHRwczovL3N0cy53b29sd29ydGhzLmNvLnphL2N1c3RvbWVyaWQiLCJhdWQiOiJXV09uZUFwcCIsImV4cCI6MTQ4MDYyNzcyOCwibmJmIjoxNDgwNjI0MTI4LCJub25jZSI6IjkzOTIyNjZhLTljMTMtNDA0NS04ZDM1LTQzMjJiNzQ3NDBlNCIsImlhdCI6MTQ4MDYyNDEyOCwic2lkIjoiZmU0NDQ0MTMzMGUzNGYwMWJmMmFhYjhhNTAzNTQ5YWMiLCJzdWIiOiJiMGNmZjMzZS1iMTMxLTQ5YzUtOGYxMC1jZTE0MjE0NGU4ODgiLCJhdXRoX3RpbWUiOjE0ODA2MjQxMjcsImlkcCI6Imlkc3J2IiwidXBkYXRlZF9hdCI6MTQ4MDYxNjkyNywicHJlZmVycmVkX3VzZXJuYW1lIjoiYTQxOWFiZTEyMDUxNDE5MDhkNzg4ODZmYzIzMzc2MWUiLCJlbWFpbF92ZXJpZmllZCI6ImZhbHNlIiwiZW1haWwiOiJ3b29sd29ydGhzb25lYXBwKzEzODk3NzMzQGdtYWlsLmNvbSIsIm5hbWUiOiJNVEhVVEhVWkVMSSIsImZhbWlseV9uYW1lIjoiTkdVTUJFTEEiLCJBdGdJZCI6IjQxMjkwMDkyIiwiQXRnU2Vzc2lvbiI6IntcIkpTRVNTSU9OSURcIjpcIlcxTzhFenotYWg3REstZ2tob1JOa3M1ZUFqbDRNaXVnMGpHTkw1Wkp0STlnVkc0WXJMYlAhOTMwMDU1NDk4XCJ9IiwiQzJJZCI6IjEzODk3NzMzIiwiYW1yIjpbInBhc3N3b3JkIl19");
-
-
-            //OK, we can trust this JWT
-
-        } catch (Exception e) {
-            System.out.print(e.getStackTrace());
-            //don't trust the JWT!
-        }
-
         this.webView.setWebViewClient(this.webviewClient);
     }
 

@@ -43,10 +43,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.SingleSignOnExampleActivity"
-            android:icon="@drawable/ic_action_bar_logo"
-            android:screenOrientation="portrait" />
-        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardsActivity"
             android:icon="@drawable/ic_action_bar_logo"
             android:screenOrientation="portrait" />
