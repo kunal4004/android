@@ -156,6 +156,9 @@
                   android:theme="@style/ContactUs"
             >
         </activity>
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.OnboardingActivity"/>
     </application>
 
 </manifest>
