@@ -18,6 +18,7 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
+import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener{
@@ -58,7 +59,11 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
                 break;
             case 4:
                 fragment = new MyAccountsFragment();
-                title = getString(R.string.nav_item_store);
+                title = getString(R.string.nav_item_accounts);
+                break;
+            case 0:
+                fragment = new WTodayFragment();
+                title = getString(R.string.nav_item_today);
                 break;
 
         }
