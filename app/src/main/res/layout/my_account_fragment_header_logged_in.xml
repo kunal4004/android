@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        >
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:minHeight="80dp"
+            android:paddingLeft="52dp"
+            android:paddingRight="52dp"
+            >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/openMessageActivity"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/message_24"
+                />
+
+            <FrameLayout
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerInParent="true"
+                android:background="#d8d8d8"
+                >
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="MT"
+                    android:textColor="@color/white"
+                    android:textSize="23sp"
+                    app:WTextView_font="medium_bold"
+                    />
+            </FrameLayout>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/shoppinglist_24"
+                />
+
+        </RelativeLayout>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:text="MATT THOMPSON"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:WTextView_font="medium_bold"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="36dp"
+            android:layout_marginTop="3dp"
+            android:text="MEMBER SINCE AUGUST 2016"
+            android:textAllCaps="true"
+            android:textColor="#999999"
+            android:textSize="12sp"
+            app:WTextView_font="medium"
+            />
+    </LinearLayout>
+
+
+</LinearLayout>

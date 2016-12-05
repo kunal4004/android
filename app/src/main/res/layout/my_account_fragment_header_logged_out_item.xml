@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:paddingLeft="32dp"
+              android:paddingRight="32dp"
+
+    >
+    <ImageView
+        android:layout_width="170dp"
+        android:layout_height="170dp"
+        android:background="#ececec"
+        android:layout_gravity="center_horizontal"
+        />
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GET STARTED"
+        android:textSize="16sp"
+        app:WTextView_font="medium_bold"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:textAllCaps="true"
+        />
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:minHeight="65dp"
+        android:text="Conveniently view your credit balance, next payment due, available funds, apply for a personal loan and more."
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        />
+
+
+
+</LinearLayout>

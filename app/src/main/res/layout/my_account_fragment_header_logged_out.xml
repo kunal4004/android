@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:background="@color/white"
+              android:orientation="vertical"
+              android:paddingBottom="16dp"
+    >
+
+
+    <za.co.woolworths.financial.services.android.util.WCustomViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        />
+
+    <LinearLayout
+        android:layout_marginTop="32dp"
+        android:id="@+id/viewPagerCountDots"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:background="@color/white"
+        >
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/loginAccount"
+            android:text="login"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:background="@color/black"
+            android:textColor="@color/white"
+            app:WButton_font="medium"
+            android:textSize="13sp"
+            android:layout_marginRight="4dp"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/registerAccount"
+            android:text="register"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:background="@drawable/register_button_bg"
+            android:textColor="@color/black"
+            app:WButton_font="medium"
+            android:textSize="13sp"
+            android:layout_marginLeft="4dp"
+            />
+    </LinearLayout>
+
+
+</LinearLayout>
