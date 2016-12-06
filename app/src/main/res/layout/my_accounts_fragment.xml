@@ -20,12 +20,10 @@
             />
         <include
             layout="@layout/my_account_fragment_header_logged_in"
-            android:visibility="gone"
             />
 
        <include
            layout="@layout/account_linked_layout"
-           android:visibility="gone"
            />
         <include
             layout="@layout/account_apply_layout"

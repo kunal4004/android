@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/stores_nearby"
-                android:textSize="18dp"
+                android:textSize="12sp"
                 app:WTextView_font="medium_bold"
                 android:textColor="@color/black"
                 android:layout_gravity="center"
