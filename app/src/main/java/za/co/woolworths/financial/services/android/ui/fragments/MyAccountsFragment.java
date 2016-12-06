@@ -39,7 +39,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.my_accounts_fragment, container, false);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("ACCOUNTS");
+       // ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("ACCOUNTS");
         openMessageActivity=(ImageView)view.findViewById(R.id.openMessageActivity);
         applyNowStoreCard=(WTextView) view.findViewById(R.id.applyNowStoreCard);
         contactUs=(RelativeLayout)view.findViewById(R.id.contactUs);

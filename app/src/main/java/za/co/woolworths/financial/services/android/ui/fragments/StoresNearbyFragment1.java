@@ -138,7 +138,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_stores_nearby1, container, false);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("STORES NEARBY");
+        //((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("STORES NEARBY");
 
         pager = (WCustomViewPager) v.findViewById(R.id.cardPager);
         detailsLayout = (LinearLayout) v.findViewById(R.id.detailsView);

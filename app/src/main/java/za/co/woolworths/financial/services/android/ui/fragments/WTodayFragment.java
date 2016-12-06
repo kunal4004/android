@@ -22,7 +22,7 @@ public class WTodayFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.wtoday_fragment, container, false);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("WTODAY");
+       // ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("WTODAY");
         webView=(WebView)view.findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl("http://today.wfs.qa.wigroup.co/");
