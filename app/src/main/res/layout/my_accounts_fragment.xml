@@ -155,11 +155,13 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/signOutBtn"
             android:background="@drawable/layout_bg_top_bottm_border"
             android:minHeight="48dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:layout_marginTop="16dp"
+            android:visibility="gone"
             >
 
             <ImageView

@@ -4,7 +4,6 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.activities.ContactUsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
@@ -33,7 +30,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     WTextView applyNowStoreCard;
     RelativeLayout contactUs;
     boolean isLoggedIn = false;
-    boolean isCreditCard = false;
+    boolean isCreditCard = true;
     boolean isStoreCard = true;
     boolean isPersonalCard = true;
     CardView applyCreditCardView;
@@ -47,6 +44,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     LinearLayout loggedOutHeaderLayout;
     LinearLayout loggedInHeaderLayout;
     WButton linkAccountsBtn;
+    RelativeLayout signOutBtn;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -72,6 +70,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         loggedOutHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedOutHeaderLayout);
         loggedInHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedInHeaderLayout);
         linkAccountsBtn=(WButton) view.findViewById(R.id.linkAccountsBtn);
+        signOutBtn=(RelativeLayout)view.findViewById(R.id.signOutBtn);
         openMessageActivity.setOnClickListener(this);
         applyNowStoreCard.setOnClickListener(this);
         contactUs.setOnClickListener(this);
@@ -103,10 +102,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         if (isLoggedIn) {
             loggedInHeaderLayout.setVisibility(View.VISIBLE);
             loggedOutHeaderLayout.setVisibility(View.GONE);
-
+            signOutBtn.setVisibility(View.VISIBLE);
 
             if (isCreditCard == false && isStoreCard == false && isPersonalCard == false) {
                linkedAccountsLayout.setVisibility(View.GONE);
+                linkAccountsBtn.setVisibility(View.VISIBLE);
             } else if (isCreditCard == true && isStoreCard == true && isPersonalCard == true) {
                 applyNowAccountsLayout.setVisibility(View.GONE);
             }

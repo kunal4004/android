@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
@@ -21,6 +24,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.ContactUsFinanci
 import za.co.woolworths.financial.services.android.ui.fragments.ContactUsMySchoolFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.ContactUsOnlineFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.ContactUsWRewardsFragment;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 import static android.R.attr.id;
 import static za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.toolbar;
@@ -35,6 +39,7 @@ public class WContactUsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contact_us_activity);
+        Utils.updateStatusBarBackground(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -45,17 +50,16 @@ public class WContactUsActivity extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.setTabTextColors(Color.parseColor("#30000000"),Color.parseColor("#000000"));
         changeTabsFont(tabLayout);
     }
 
     private void setupViewPager(ViewPager viewPager) {
         adapter=new ContactUsFragmentPagerAdapter(getSupportFragmentManager());
-        adapter.addFrag(new ContactUsFinancialServiceFragment(), "Financial Services");
-        adapter.addFrag(new ContactUsOnlineFragment(), "online");
-        adapter.addFrag(new ContactUsCustomerServiceFragment(), "customer service");
-        adapter.addFrag(new ContactUsWRewardsFragment(), "WRewards");
-        adapter.addFrag(new ContactUsMySchoolFragment(), "MySchool");
+        adapter.addFrag(new ContactUsFinancialServiceFragment(), getString(R.string.contact_us_financial_services));
+        adapter.addFrag(new ContactUsOnlineFragment(), getString(R.string.contact_us_online));
+        adapter.addFrag(new ContactUsCustomerServiceFragment(), getString(R.string.contact_us_customer_service));
+        adapter.addFrag(new ContactUsWRewardsFragment(), getString(R.string.contact_us_wrewards));
+        adapter.addFrag(new ContactUsMySchoolFragment(), getString(R.string.contact_us_myschool));
         viewPager.setAdapter(adapter);
     }
 

@@ -152,9 +152,9 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity"
             android:theme="@style/MyAccountCards">
         </activity>
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity"
-                  android:theme="@style/ContactUs"
-            >
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity"
+            android:theme="@style/ContactUs">
         </activity>
     </application>
 

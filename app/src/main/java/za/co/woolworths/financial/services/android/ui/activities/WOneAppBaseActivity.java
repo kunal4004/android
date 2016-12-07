@@ -8,9 +8,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.awfs.coordination.R;
@@ -33,6 +30,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.one_app_base_activity);
+        Utils.updateStatusBarBackground(this);
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbarTitle=(WTextView)findViewById(R.id.toolbar_title);
 
