@@ -14,7 +14,9 @@
         android:scrollbars="none"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:nestedScrollingEnabled="true"
+        >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -205,7 +207,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#ececec"
-                android:minHeight="166dp"
+                android:minHeight="192dp"
                 android:orientation="vertical"
 
                 >
@@ -238,18 +240,18 @@
 
 
             </LinearLayout>
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="60dp"
+                android:text="@string/apply_now"
+                android:textAllCaps="true"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:background="#7a4183"
+                />
         </LinearLayout>
     </ScrollView>
-    <za.co.woolworths.financial.services.android.ui.views.WButton
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="60dp"
-        android:layout_alignParentBottom="true"
-        android:text="@string/apply_now"
-        android:textAllCaps="true"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="13sp"
-        android:background="#7a4183"
-        />
+
 </RelativeLayout>

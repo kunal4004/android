@@ -84,8 +84,9 @@ public class WContactUsActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                return  true;
         }
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     @Override
