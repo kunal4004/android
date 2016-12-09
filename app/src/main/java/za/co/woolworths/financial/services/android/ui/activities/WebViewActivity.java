@@ -28,7 +28,7 @@ public class WebViewActivity extends Activity {
         b= getIntent().getBundleExtra("Bundle");
         getActionBar().setTitle(FontHyperTextParser.getSpannable(b.getString("title"), 1, this));
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        //getActionBar().setDisplayHomeAsUpEnabled(true);
 
         String url = b.getString("link");
         webView.getSettings().setJavaScriptEnabled(true);
@@ -46,7 +46,7 @@ public class WebViewActivity extends Activity {
         return true;
     }
 
-    private class WebViewController extends WebViewClient {
+    protected class WebViewController extends WebViewClient {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {

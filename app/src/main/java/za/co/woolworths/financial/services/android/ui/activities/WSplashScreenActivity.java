@@ -21,23 +21,23 @@ import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 
-public class WSplashScreenActivity extends Activity {
+public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCompletionListener {
 
     private boolean mVideoPlayerShouldPlay = true;
+    private VideoView videoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wsplash_screen);
 
-        final VideoView videoView = (VideoView) findViewById(R.id.activity_wsplash_screen_videoview);
+        this.videoView = (VideoView) findViewById(R.id.activity_wsplash_screen_videoview);
 
         Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.wsplash_screen_video);
-        videoView.setVideoURI(videoUri);
-        videoView.start();
+        this.videoView.setVideoURI(videoUri);
+        this.videoView.start();
 
-        videoView.setOnPreparedListener(this.videoView_onPrepare);
-        videoView.setOnCompletionListener(this.videoView_onComplete);
+        this.videoView.setOnCompletionListener(this);
 
         //Mobile Config Server
         new HttpAsyncTask<String, String, ConfigResponse>() {
@@ -121,23 +121,17 @@ public class WSplashScreenActivity extends Activity {
         }.execute();
     }
 
-    private MediaPlayer.OnPreparedListener videoView_onPrepare = new MediaPlayer.OnPreparedListener() {
-        @Override
-        public void onPrepared(MediaPlayer mp) {
-            mp.setLooping(mVideoPlayerShouldPlay);
-        }
-    };
+    //video player on completion
+    @Override
+    public void onCompletion(MediaPlayer mp) {
 
-    private MediaPlayer.OnCompletionListener videoView_onComplete = new MediaPlayer.OnCompletionListener() {
-        @Override
-        public void onCompletion(MediaPlayer mp) {
-
-            if(!WSplashScreenActivity.this.mVideoPlayerShouldPlay){
-                mp.setLooping(false);
-                ScreenManager.presentOnboarding(WSplashScreenActivity.this);
-            }
+        if(!WSplashScreenActivity.this.mVideoPlayerShouldPlay){
+            mp.stop();
+            ScreenManager.presentOnboarding(WSplashScreenActivity.this);
+        }else{
+            mp.start();
         }
-    };
+    }
 
     private enum LoadingResult {
         LOGIN,
