@@ -1,10 +1,16 @@
 package za.co.woolworths.financial.services.android.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
+import com.awfs.coordination.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.VisibleRegion;
@@ -220,5 +226,15 @@ public class Utils {
         return  String.valueOf(distance);
     }
 
-
+  public static void updateStatusBarBackground(Activity activity)
+   {
+       if (Build.VERSION.SDK_INT >= 21) {
+           Window window = activity.getWindow();
+           window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+           window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+           window.setStatusBarColor(activity.getResources().getColor(R.color.white));
+           View decor = activity.getWindow().getDecorView();
+           decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+       }
+   }
 }

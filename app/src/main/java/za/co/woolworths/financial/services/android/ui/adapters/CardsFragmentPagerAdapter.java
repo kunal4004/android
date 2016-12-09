@@ -3,6 +3,10 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanFragment;
@@ -14,13 +18,16 @@ import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragme
 
 public class CardsFragmentPagerAdapter extends FragmentPagerAdapter {
 
+    private final List<Fragment> mFragmentList = new ArrayList<>();
+
+
     public CardsFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
+       /* switch (position) {
             case 0:
                 WCreditCardFragment fragment1 = new WCreditCardFragment();
                 return fragment1;
@@ -32,13 +39,18 @@ public class CardsFragmentPagerAdapter extends FragmentPagerAdapter {
                 return fragment3;
             default:
                 return null;
-        }
+        }*/
+        return mFragmentList.get(position);
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return mFragmentList.size();
     }
+    public void addFrag(Fragment fragment) {
+        mFragmentList.add(fragment);
+    }
+
 
 
 }

@@ -28,15 +28,15 @@
             android:layout_marginTop="0dp"
             android:minHeight="?attr/actionBarSize"
             >
-          <!--  <za.co.woolworths.financial.services.android.ui.views.WTextView
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/stores_nearby"
-                android:textSize="18dp"
+                android:textSize="12sp"
                 app:WTextView_font="medium_bold"
                 android:textColor="@color/black"
                 android:layout_gravity="center"
-                android:id="@+id/toolbar_title" />-->
+                android:id="@+id/toolbar_title" />
         </android.support.v7.widget.Toolbar>
 
 

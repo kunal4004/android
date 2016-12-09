@@ -228,6 +228,11 @@
     <string name="title_activity_animated_splash_screen">AnimatedSplashScreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="contact_us_financial_services">Financial Services</string>
+    <string name="contact_us_online">online</string>
+    <string name="contact_us_customer_service">customer service</string>
+    <string name="contact_us_wrewards">WRewards</string>
+    <string name="contact_us_myschool">MySchool</string>
 
     <string name="title_activity_onboarding_fullscreen">OnboardingFullscreenActivity</string>
 

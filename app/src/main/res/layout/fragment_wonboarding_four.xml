@@ -1,0 +1,55 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/drawer_color"
+    tools:context="za.co.woolworths.financial.services.android.ui.fragments.WOnboardingOneFragment">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="2">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:src="@drawable/walkthrough4"
+            android:layout_above="@+id/fragment_wonboarding_four_description_layer"
+            android:background="@android:color/transparent">
+        </ImageView>
+
+        <LinearLayout
+            android:id="@+id/fragment_wonboarding_four_description_layer"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:orientation="vertical"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true">
+
+            <TextView
+                android:id="@+id/fragment_wonboarding_four_description_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GET STARTED"
+                android:gravity="center_horizontal"
+                style="@style/TitleWSemiBoldWhite"
+                android:paddingTop="32dp"
+                />
+
+            <TextView
+                android:id="@+id/fragment_wonboarding_four_description_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create an account or use your existing Woolies logins to get started. Your login details will be the same on the app, mobi site and website."
+                android:gravity="center_horizontal"
+                style="@style/CaptionLightGrey"
+                android:paddingTop="16dp"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp"
+                />
+        </LinearLayout>
+    </RelativeLayout>
+
+
+</FrameLayout>

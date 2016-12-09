@@ -5,7 +5,7 @@ import android.content.Intent;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.activities.OnboardingActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 
 /**
@@ -36,7 +36,7 @@ public class ScreenManager {
 
     public static void presentOnboarding(Activity activity){
 
-        Intent intent = new Intent(activity, OnboardingActivity.class);
+        Intent intent = new Intent(activity, WOnboardingActivity.class);
 
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

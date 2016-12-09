@@ -67,7 +67,7 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
         if(messageDetailsList.get(position).isRead)
 
              // viewHolder.cardlayout.getBackground().setAlpha(50);
-            viewHolder.cardlayout.setBackgroundColor(Color.parseColor("#20000000"));
+            viewHolder.cardlayout.setBackgroundColor(Color.parseColor("#1a000000"));
         else
             viewHolder.cardlayout.setBackgroundColor(Color.parseColor("#ffffff"));
 
