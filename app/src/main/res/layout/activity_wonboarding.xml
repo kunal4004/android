@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_onboarding"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="0dp"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingTop="0dp"
+    android:background="@color/drawer_color"
+    tools:context="za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/activity_wonboarding_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/onboardingActionButtonsLayer"></android.support.v4.view.ViewPager>
+
+    <LinearLayout
+        android:id="@+id/onboardingActionButtonsLayer"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="bottom"
+        android:padding="0dp"
+        android:weightSum="2"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/white">
+
+        <Button
+            android:id="@+id/btnOnboardingLogin"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="SIGN IN"
+            android:fontFamily=""
+            android:paddingLeft="-2dp"
+            android:paddingRight="-2dp"
+            android:layout_weight="1"
+            android:background="@color/white"
+            style="@style/Titlenavsection" />
+
+        <View android:layout_height="fill_parent"
+            android:layout_width="2px"
+            android:background="#90909090"/>
+
+        <Button
+            android:id="@+id/btnOnboardingRegister"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="REGISTER"
+            android:paddingLeft="-2dp"
+            android:paddingRight="-2dp"
+            android:layout_weight="1"
+            android:background="@color/white"
+            style="@style/Titlenavsection" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_above="@+id/onboardingActionButtonsLayer"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="16dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:id="@+id/dotimg0"
+            android:src="@drawable/page_control_active" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:id="@+id/dotimg1"
+            android:src="@drawable/page_control_inactive" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:id="@+id/dotimg2"
+            android:src="@drawable/page_control_inactive" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:id="@+id/dotimg3"
+            android:src="@drawable/page_control_inactive" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:gravity="right"
+        android:paddingRight="16dp"
+        android:paddingTop="18dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:text="SKIP"
+            android:textColor="@color/white"
+            android:id="@+id/txtSkip"
+            android:padding="8dp"
+            android:textSize="14sp"
+            style="@style/LabelSkipRight"
+            android:layout_gravity="center_vertical"/>
+
+        <ImageButton
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/_24_white"
+            android:layout_gravity="center_vertical"
+            android:scaleX="-1"/>
+    </LinearLayout>
+
+</RelativeLayout>
