@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.awfs.coordination.R;
 
@@ -17,19 +18,18 @@ import com.awfs.coordination.R;
  * Created by W7099877 on 02/12/2016.
  */
 
-public class WTodayFragment extends Fragment {
+public class WProductsFragment extends Fragment {
 
     WebView webView;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.wtoday_fragment, container, false);
+        View view = inflater.inflate(R.layout.wproducts_fragment, container, false);
 
         //getActivity().getWindow().requestFeature(Window.FEATURE_PROGRESS);
-        webView = (WebView)view.findViewById(R.id.wtoday_fragment_webview);
-        webView.getSettings().setJavaScriptEnabled(true);
-        Log.d("", getString(R.string.link_wtoday));
-        webView.loadUrl(getString(R.string.link_wtoday));
+        this.webView = (WebView)view.findViewById(R.id.wproducts_fragment_webview);
+        Log.d("", getString(R.string.link_products));
+        this.webView.loadUrl(getString(R.string.link_products));
 
         return view;
     }

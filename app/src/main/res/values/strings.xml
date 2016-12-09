@@ -234,7 +234,8 @@
     <string name="contact_us_wrewards">WRewards</string>
     <string name="contact_us_myschool">MySchool</string>
 
-    <string name="title_activity_onboarding_fullscreen">OnboardingFullscreenActivity</string>
+    <string name="link_wtoday">https://woolies.herokuapp.com</string>
+    <string name="link_products">https://woolies.herokuapp.com/products</string>
 
 
     <!-- <string name="title_section1">Section 1</string>
