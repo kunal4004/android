@@ -141,7 +141,7 @@
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
 
-    <string name="nav_item_today">TODAY</string>
+    <string name="nav_item_today">WTODAY</string>
     <string name="nav_item_products">PRODUCTS</string>
     <string name="nav_item_store">STORES</string>
     <string name="nav_item_wrewards">WREWARDS</string>
@@ -233,6 +233,8 @@
     <string name="contact_us_customer_service">customer service</string>
     <string name="contact_us_wrewards">WRewards</string>
     <string name="contact_us_myschool">MySchool</string>
+
+    <string name="title_activity_onboarding_fullscreen">OnboardingFullscreenActivity</string>
 
 
     <!-- <string name="title_section1">Section 1</string>

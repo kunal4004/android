@@ -3,7 +3,7 @@
     <color name="black">#000</color>
     <color name="white">#FFF</color>
     <color name="login_font_color">#686663</color>
-    <color name="drawer_color">#333</color>
+    <color name="drawer_color">#333333</color>
     <color name="store_card">#CD0F69</color>
     <color name="store_card_pressed">#b00d5a</color>
     <color name="credit_card">#247EAB</color>
