@@ -3,3 +3,4 @@ build/*
 .gradle/2.14.1/*
 .idea/*
 app.iml
+library/*

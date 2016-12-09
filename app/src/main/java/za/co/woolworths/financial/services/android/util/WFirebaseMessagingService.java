@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.ui.activities.MessagesActivit
 import static android.R.attr.data;
 import static android.R.attr.id;
 import static android.R.id.message;
+import static za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer.getData;
 
 /**
  * Created by W7099877 on 09/11/2016.
@@ -38,7 +39,6 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.e(TAG, "From: " + remoteMessage.getFrom());
-
         if (remoteMessage == null)
             return;
 
@@ -48,20 +48,20 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
            // handleNotification(remoteMessage.getNotification().getBody());
             showNotification();
         }*/
-
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            Log.e(TAG, "Data Payload: " + remoteMessage.getData().toString());
-
+             Log.e(TAG, "Data Payload: " + remoteMessage.getData().toString());
+            //String message = remoteMessage.getData().get("body");
+            //String title = remoteMessage.getData().get("title");
+           // showNotification(message, title);
             try {
                 JSONObject json = new JSONObject(remoteMessage.getData().toString());
-               handleDataMessage(json);
+              // handleDataMessage(json);
             } catch (Exception e) {
                 Log.e(TAG, "Exception: " + e.getMessage());
             }
         }
-
-       // showNotification();
+        // showNotification();
     }
 
     private void handleNotification(String message) {
@@ -70,42 +70,35 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             Intent pushNotification = new Intent(Utils.PUSH_NOTIFICATION);
             pushNotification.putExtra("message", message);
             LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
-
             // play notification sound
             NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
             notificationUtils.playNotificationSound();
-        }else{
+        } else {
             // If the app is in background, firebase itself handles the notification
         }
     }
 
     private void handleDataMessage(JSONObject json) {
         Log.e(TAG, "push json: " + json.toString());
-
         try {
-          //  JSONObject data = json.getJSONObject("data");
-
+            //  JSONObject data = json.getJSONObject("data");
             String title = json.getString("title");
             String message = json.getString("body");
           /*  boolean isBackground = data.getBoolean("is_background");
             String imageUrl = data.getString("image");
             String timestamp = data.getString("timestamp");
             JSONObject payload = data.getJSONObject("payload");*/
-
             Log.e(TAG, "title: " + title);
             Log.e(TAG, "message: " + message);
            /* Log.e(TAG, "isBackground: " + isBackground);
             Log.e(TAG, "payload: " + payload.toString());
             Log.e(TAG, "imageUrl: " + imageUrl);
             Log.e(TAG, "timestamp: " + timestamp);*/
-
-
             if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
                 // app is in foreground, broadcast the push message
                 Intent pushNotification = new Intent(Utils.PUSH_NOTIFICATION);
                 pushNotification.putExtra("message", message);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
-
                 // play notification sound
                 NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
                 notificationUtils.playNotificationSound();
@@ -122,8 +115,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
                     // image is present, show notification with image
                     showNotificationMessageWithBigImage(getApplicationContext(), title, message, timestamp, resultIntent, imageUrl);
                 }*/
-
-                showNotification(message,title);
+                showNotification(message, title);
             }
         } catch (JSONException e) {
             Log.e(TAG, "Json Exception: " + e.getMessage());
@@ -150,9 +142,8 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         notificationUtils.showNotificationMessage(title, message, timeStamp, intent, imageUrl);
     }
 
-    public void showNotification(String msg,String title)
-    {
-        Intent resultIntent = new Intent(this, MessagesActivity.class);
+    public void showNotification(String msg, String title) {
+        /*Intent resultIntent = new Intent(this, MessagesActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 // Adds the back stack
         stackBuilder.addParentStack(MessagesActivity.class);
@@ -160,13 +151,14 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         stackBuilder.addNextIntent(resultIntent);
 // Gets a PendingIntent containing the entire back stack
         PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*/
+        Intent myIntent = new Intent(this, MessagesActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+                myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-
         inboxStyle.addLine(msg);
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setContentIntent(resultPendingIntent);
+        builder.setContentIntent(contentIntent);
         builder.setContentTitle(title);
         builder.setContentText(msg);
         builder.setSmallIcon(R.drawable.appicon);
@@ -175,9 +167,10 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(id, builder.build());
     }
-    @Override
+
+    /*@Override
     public void onCreate() {
         super.onCreate();
         android.os.Debug.waitForDebugger();
-    }
+    }*/
 }

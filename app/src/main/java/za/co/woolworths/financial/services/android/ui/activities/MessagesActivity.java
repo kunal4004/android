@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,8 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
@@ -50,7 +47,7 @@ public class MessagesActivity extends AppCompatActivity {
     private boolean mIsLoading = false;
     private boolean mIsLastPage = false;
     private int mCurrentPage = 1;
-    int previousTotal=0;
+    int previousTotal = 0;
     public List<MessageDetails> messageList;
     public ProgressBar mLoadingImageView;
     public int visibleThreshold = 5;
@@ -60,14 +57,7 @@ public class MessagesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.messages_activity);
-        if (Build.VERSION.SDK_INT >= 21) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(getResources().getColor(R.color.white));
-            View decor = getWindow().getDecorView();
-            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
+        Utils.updateStatusBarBackground(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -96,34 +86,26 @@ public class MessagesActivity extends AppCompatActivity {
                 int visibleItemCount = mLayoutManager.getChildCount();
                 int totalItemCount = mLayoutManager.getItemCount();
                 int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
-
                 if (!mIsLoading && !mIsLastPage) {
                     if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                             && firstVisibleItemPosition >= 0
                             && totalItemCount >= PAGE_SIZE) {
-                      loadMoreMessages();
+                        loadMoreMessages();
 
                     }
                 }
             }
         });
-
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-
-               if (intent.getAction().equals(Utils.PUSH_NOTIFICATION)) {
-
-                   loadMessages();
+                if (intent.getAction().equals(Utils.PUSH_NOTIFICATION)) {
+                    loadMessages();
 
                 }
             }
         };
-
-
         loadMessages();
-
-
 
 
     }
@@ -137,8 +119,8 @@ public class MessagesActivity extends AppCompatActivity {
 
             @Override
             protected MessageResponse httpDoInBackground(String... params) {
-                mCurrentPage=1;
-                mIsLastPage=false;
+                mCurrentPage = 1;
+                mIsLastPage = false;
                 return ((WoolworthsApplication) getApplication()).getApi().getMessagesResponse(PAGE_SIZE, mCurrentPage);
             }
 
@@ -158,10 +140,9 @@ public class MessagesActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(MessageResponse messageResponse) {
                 super.onPostExecute(messageResponse);
-                messageList=null;
+                messageList = null;
                 messageList = new ArrayList<>();
                 if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
-
                     messageList = messageResponse.messagesList;
                     bindDataWithUI(messageList);
                     setMeassagesAsRead(messageList);
@@ -309,13 +290,10 @@ public class MessagesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-
         // register new push message receiver
         // by doing this, the activity will be notified each time a new message arrives
         LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
                 new IntentFilter(Utils.PUSH_NOTIFICATION));
-
         // clear the notification area when the app is opened
         NotificationUtils.clearNotifications(getApplicationContext());
 
@@ -323,8 +301,17 @@ public class MessagesActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+        boolean fromNotification = false;
+        if (getIntent().hasExtra("fromNotification"))
+            fromNotification = getIntent().getExtras().getBoolean("fromNotification");
+        if (fromNotification) {
+            startActivity(new Intent(MessagesActivity.this, WOneAppBaseActivity.class));
+            overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+            finish();
+        } else {
+            super.onBackPressed();
+            overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+        }
 
     }
 
@@ -333,7 +320,8 @@ public class MessagesActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                return  true;
         }
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 }
