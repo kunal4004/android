@@ -7,16 +7,22 @@
     android:layout_height="match_parent"
     android:background="#efefef"
     android:orientation="vertical">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/appbar"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/actionbar_background"
+        android:background="@color/white"
         app:popupTheme="@style/StoreSearch"
         app:theme="@style/StoreSearch"
         android:layout_marginTop="0dp"
         android:minHeight="?attr/actionBarSize"
         />
+    </android.support.design.widget.AppBarLayout>
     <include
         layout="@layout/recent_serachs_layout"
         android:id="@+id/recentSearchLayout"

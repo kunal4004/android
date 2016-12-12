@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -22,6 +23,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener{
 
     public static Toolbar mToolbar;
+    public static AppBarLayout appbar;
     private WFragmentDrawer drawerFragment;
     public StoresNearbyFragment1 frag;
     public WTextView mToolbarTitle;
@@ -34,6 +36,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbarTitle=(WTextView)findViewById(R.id.toolbar_title);
+        appbar=(AppBarLayout)findViewById(R.id.appbar);
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

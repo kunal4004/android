@@ -19,7 +19,7 @@ import static com.awfs.coordination.R.id.myaccountsCard;
 public class MyAccountOverViewPagerAdapter extends PagerAdapter {
 
     public Activity mContext;
-    //int[] images={R.drawable.walkthrough1,R.drawable.walkthrough2,R.drawable.walkthrough3};
+    int[] images={R.drawable.walkthrough1,R.drawable.walkthrough2,R.drawable.walkthrough3};
 
    public  MyAccountOverViewPagerAdapter(Activity context)
     {
@@ -38,8 +38,8 @@ public class MyAccountOverViewPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         View cView=mContext.getLayoutInflater().inflate(R.layout.my_account_fragment_header_logged_out_item,container,false);
-       // ImageView boardingImage=(ImageView)cView.findViewById(R.id.boardingImage);
-       // boardingImage.setBackgroundResource(images[position]);
+        ImageView boardingImage=(ImageView)cView.findViewById(R.id.boardingImage);
+        boardingImage.setBackgroundResource(images[position]);
 
         container.addView(cView);
         return cView;
