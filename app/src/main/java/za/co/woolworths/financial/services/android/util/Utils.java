@@ -25,15 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
-import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 
 import static android.Manifest.permission_group.STORAGE;
-import static android.R.attr.key;
-import static android.R.attr.type;
-import static android.R.id.edit;
-import static android.webkit.ConsoleMessage.MessageLevel.LOG;
-import static com.awfs.coordination.R.id.offerings;
-import static com.google.zxing.qrcode.decoder.ErrorCorrectionLevel.L;
 
 /**
  * Created by W7099877 on 26/10/2016.

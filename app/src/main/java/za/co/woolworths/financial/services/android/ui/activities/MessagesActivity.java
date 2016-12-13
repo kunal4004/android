@@ -27,9 +27,11 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
 public class MessagesActivity extends AppCompatActivity {
     public RecyclerView messsageListview;
@@ -49,6 +51,7 @@ public class MessagesActivity extends AppCompatActivity {
     public List<MessageDetails> messageList;
     //public ProgressBar mLoadingImageView;
     public int visibleThreshold = 5;
+    ConnectionDetector  connectionDetector;
 
 
     @Override
@@ -59,6 +62,7 @@ public class MessagesActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        connectionDetector = new ConnectionDetector();
         mLayoutManager = new LinearLayoutManager(MessagesActivity.this);
         messsageListview = (RecyclerView) findViewById(R.id.messsageListView);
         //mLoadingImageView = (ProgressBar) findViewById(R.id.loadingBar);
@@ -69,7 +73,12 @@ public class MessagesActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
-                loadMessages();
+                if(connectionDetector.isOnline()){
+                    loadMessages();
+                }else {
+                    WErrorDialog.getErrConnectToServer(MessagesActivity.this);
+                    hideRefreshView();
+                }
             }
         });
         messsageListview.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -102,9 +111,12 @@ public class MessagesActivity extends AppCompatActivity {
                 }
             }
         };
-        loadMessages();
 
-
+        if (connectionDetector.isOnline()) {
+            loadMessages();
+        }else {
+            WErrorDialog.getErrConnectToServer(MessagesActivity.this);
+        }
     }
 
     public void loadMessages() {
@@ -306,7 +318,6 @@ public class MessagesActivity extends AppCompatActivity {
             super.onBackPressed();
             overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
         }
-
     }
 
     @Override
