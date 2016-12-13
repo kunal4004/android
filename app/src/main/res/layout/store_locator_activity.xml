@@ -33,7 +33,7 @@
             android:textSize="18dp"
             app:WTextView_font="medium_bold"
             android:textColor="@color/black"
-            android:layout_gravity="center"
+            android:layout_gravity="left"
             android:id="@+id/toolbar_title" />
         </android.support.v7.widget.Toolbar>
 

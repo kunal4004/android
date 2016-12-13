@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.awfs.coordination.R;
@@ -100,7 +99,6 @@ public class MessagesActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(Utils.PUSH_NOTIFICATION)) {
                     loadMessages();
-
                 }
             }
         };
@@ -143,7 +141,6 @@ public class MessagesActivity extends AppCompatActivity {
                 messageList = new ArrayList<>();
                 if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
                     messageList = messageResponse.messagesList;
-                    Log.e("messageResponse",messageList.toString());
                     bindDataWithUI(messageList);
                     setMeassagesAsRead(messageList);
                     mIsLastPage = false;
@@ -151,8 +148,6 @@ public class MessagesActivity extends AppCompatActivity {
                     mIsLoading = false;
                 }
                 hideRefreshView();
-
-
             }
         }.execute();
     }
