@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -144,6 +145,7 @@ public class MessagesActivity extends AppCompatActivity {
                 messageList = new ArrayList<>();
                 if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
                     messageList = messageResponse.messagesList;
+                    Log.e("messageResponse",messageList.toString());
                     bindDataWithUI(messageList);
                     setMeassagesAsRead(messageList);
                     mIsLastPage = false;
@@ -204,7 +206,6 @@ public class MessagesActivity extends AppCompatActivity {
                 if (moreMessageList != null && moreMessageList.size() != 0) {
                     if (moreMessageList.size() < PAGE_SIZE) {
                         mIsLastPage = true;
-
                     }
                     messageList.addAll(moreMessageList);
                     adapter.notifyDataSetChanged();
