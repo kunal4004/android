@@ -15,11 +15,9 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
-import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivityTest;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 
 /**
@@ -102,12 +100,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 startActivity(new Intent(getActivity(), WContactUsActivity.class));
                 getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
                 break;
-
-
         }
     }
 
     public void setUpView() {
+        isLoggedIn = true;
         if (isLoggedIn) {
             loggedInHeaderLayout.setVisibility(View.VISIBLE);
             loggedOutHeaderLayout.setVisibility(View.GONE);
