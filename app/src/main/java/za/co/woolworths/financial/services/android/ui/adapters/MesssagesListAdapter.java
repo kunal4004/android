@@ -101,8 +101,6 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-
-
             }
 
             @Override
@@ -135,10 +133,7 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
                    notifyDataSetChanged();
                    mItemManger.closeAllItems();
                }
-
-
             }
         }.execute();
-
     }
 }
