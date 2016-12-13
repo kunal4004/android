@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 
 import com.awfs.coordination.R;
 
@@ -54,6 +55,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     }
 
     private void displayView(int position) {
+        WOneAppBaseActivity.appbar.animate().translationY(WOneAppBaseActivity.appbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
         Fragment fragment = null;
         String title = getString(R.string.app_name);
         switch (position) {

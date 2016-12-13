@@ -7,9 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.webkit.WebView;
 
 import com.awfs.coordination.R;
+
+import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 
 /**
  * Created by W7099877 on 02/12/2016.

@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.activities.MessagesActivit
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivityTest;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountsCardsAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.TestViewpagerAdapter;
@@ -33,6 +34,7 @@ import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 public class MyAccountsFragment extends Fragment implements View.OnClickListener,ViewPager.OnPageChangeListener {
 
     ImageView openMessageActivity;
+    ImageView openShoppingList;
     RelativeLayout contactUs;
     boolean isLoggedIn = true;
     boolean isCreditCard = true;
@@ -68,6 +70,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         View view = inflater.inflate(R.layout.my_accounts_fragment, container, false);
         // ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("ACCOUNTS");
         openMessageActivity = (ImageView) view.findViewById(R.id.openMessageActivity);
+        openShoppingList=(ImageView) view.findViewById(R.id.openShoppingList);
         contactUs = (RelativeLayout) view.findViewById(R.id.contactUs);
         applyStoreCardView = (CardView) view.findViewById(R.id.applyStoreCard);
         applyCreditCardView = (CardView) view.findViewById(R.id.applyCrediCard);
@@ -90,6 +93,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         applyPersonalCardView.setOnClickListener(this);
         applyStoreCardView.setOnClickListener(this);
         applyCreditCardView.setOnClickListener(this);
+        openShoppingList.setOnClickListener(this);
 
         adapter=new MyAccountOverViewPagerAdapter(getActivity());
         viewPager.addOnPageChangeListener(this);
@@ -120,6 +124,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             case R.id.contactUs:
                 startActivity(new Intent(getActivity(), WContactUsActivity.class));
                 getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
+                break;
+            case R.id.openShoppingList:
+                startActivity(new Intent(getActivity(), WTransactionsActivity.class));
                 break;
 
 

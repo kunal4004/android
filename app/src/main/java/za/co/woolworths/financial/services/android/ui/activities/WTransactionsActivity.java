@@ -7,7 +7,14 @@ import android.widget.ExpandableListView;
 
 import com.awfs.coordination.R;
 
+import java.util.ArrayList;
+
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
+import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WTransactionsActivity extends AppCompatActivity {
@@ -25,6 +32,42 @@ public class WTransactionsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
         transactionListview=(ExpandableListView)findViewById(R.id.transactionListView);
-        transactionListview.setAdapter(new WTransactionsAdapter(this));
+
+        loadTransactionHistory();
     }
+
+    public void loadTransactionHistory() {
+        new HttpAsyncTask<String, String, TransactionHistoryResponse>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected TransactionHistoryResponse httpDoInBackground(String... params) {
+
+                return ((WoolworthsApplication) getApplication()).getApi().getAccountTransactionHistory("20");
+            }
+
+            @Override
+            protected Class<TransactionHistoryResponse> httpDoInBackgroundReturnType() {
+                return TransactionHistoryResponse.class;
+            }
+
+            @Override
+            protected TransactionHistoryResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                TransactionHistoryResponse transactionHistoryResponse = new TransactionHistoryResponse();
+                transactionHistoryResponse.response = new Response();
+                return transactionHistoryResponse;
+            }
+
+            @Override
+            protected void onPostExecute(TransactionHistoryResponse transactionHistoryResponse) {
+                super.onPostExecute(transactionHistoryResponse);
+                if(transactionHistoryResponse.transactions!=null)
+                  transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this,Utils.getdata(transactionHistoryResponse.transactions)));
+            }
+        }.execute();
+    }
+
 }
