@@ -236,6 +236,7 @@
 
     <string name="link_wtoday">https://woolies.herokuapp.com</string>
     <string name="link_products">https://woolies.herokuapp.com/products</string>
+    <string name="withdraw_cash_now">WITHDRAW CASH NOW</string>
 
 
     <!-- <string name="title_section1">Section 1</string>

@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.ExpandableListView;
 
 import com.awfs.coordination.R;
@@ -21,6 +22,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 
     public Toolbar toolbar;
     public ExpandableListView transactionListview;
+    public String productOfferingId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +34,12 @@ public class WTransactionsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
         transactionListview=(ExpandableListView)findViewById(R.id.transactionListView);
+        productOfferingId=getIntent().getStringExtra("productOfferingId");
 
-        loadTransactionHistory();
+        loadTransactionHistory(productOfferingId);
     }
 
-    public void loadTransactionHistory() {
+    public void loadTransactionHistory(final String prOfferId) {
         new HttpAsyncTask<String, String, TransactionHistoryResponse>() {
             @Override
             protected void onPreExecute() {
@@ -46,7 +49,7 @@ public class WTransactionsActivity extends AppCompatActivity {
             @Override
             protected TransactionHistoryResponse httpDoInBackground(String... params) {
 
-                return ((WoolworthsApplication) getApplication()).getApi().getAccountTransactionHistory("20");
+                return ((WoolworthsApplication) getApplication()).getApi().getAccountTransactionHistory(prOfferId);
             }
 
             @Override
@@ -68,6 +71,22 @@ public class WTransactionsActivity extends AppCompatActivity {
                   transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this,Utils.getdata(transactionHistoryResponse.transactions)));
             }
         }.execute();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return  true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+
     }
 
 }

@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
@@ -11,17 +12,35 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.Account;
+import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountsCardsAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.BaseAccountFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.CreditCardEmptyFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.CreditCardFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.PersonalLoanEmptyFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.PersonalLoanFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.StoreCardEmptyFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.StoreCardFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardEmptyFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanEmptyFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardEmptyFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragment;
 import za.co.woolworths.financial.services.android.ui.views.WFragmentViewPager;
@@ -64,7 +83,9 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
         pager.setAdapter(new MyAccountsCardsAdapter(MyAccountCardsActivityTest.this));
         pager.setPageMargin(16);
         fragmentPager.setPagingEnabled(false);
-        setUpFragmentPager(fragmentPager);
+        pager.setCurrentItem(getIntent().getIntExtra("position",0));
+        //fragmentPager.setCurrentItem(getIntent().getIntExtra("position",0));
+        changeViewPagerAndActionBarBackground(getIntent().getIntExtra("position",0));
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -81,7 +102,20 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
             }
         });
         // dynamicToolbarColor();
-        dynamicToolbarColor("#4f5051");
+       // dynamicToolbarColor("#4f5051");
+        if(getIntent().hasExtra("accounts"))
+        {
+            AccountsResponse accountsResponse=new Gson().fromJson(getIntent().getExtras().getString("accounts"),AccountsResponse.class);
+            handleAccountsResponse(accountsResponse);
+        }
+        else {
+            fragmentsAdapter = new CardsFragmentPagerAdapter(getSupportFragmentManager());
+            fragmentsAdapter.addFrag(new WStoreCardEmptyFragment());
+            fragmentsAdapter.addFrag( new WCreditCardEmptyFragment());
+            fragmentsAdapter.addFrag( new WPersonalLoanEmptyFragment());
+            fragmentPager.setAdapter(fragmentsAdapter);
+            fragmentPager.setCurrentItem(getIntent().getIntExtra("position",0));
+        }
 
     }
 
@@ -111,14 +145,7 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
         }
     }
 
-    public void setUpFragmentPager(ViewPager viewPager) {
-        fragmentsAdapter = new CardsFragmentPagerAdapter(getSupportFragmentManager());
-        fragmentsAdapter.addFrag(isStoreCard ? new WStoreCardFragment() : new WStoreCardEmptyFragment());
-        fragmentsAdapter.addFrag(isCreditCard ? new WCreditCardFragment() : new WCreditCardEmptyFragment());
-        fragmentsAdapter.addFrag(isPersonalCard ? new WStoreCardFragment() : new WPersonalLoanEmptyFragment());
-        viewPager.setAdapter(fragmentsAdapter);
 
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -135,5 +162,67 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 
+    }
+
+    private void handleAccountsResponse(AccountsResponse accountsResponse) {
+        switch (accountsResponse.httpCode) {
+            case 200:
+
+                ((WoolworthsApplication) getApplication()).getUserManager().setAccounts(accountsResponse);
+                ArrayList<BaseAccountFragment> baseAccountFragments = new ArrayList<BaseAccountFragment>();
+                List<Account> accountList = accountsResponse.accountList;
+                boolean containsStoreCard = false, containsCreditCard = false, containsPersonalLoan = false;
+                if (accountList != null) {
+                    for (Account p : accountList) {
+                        if ("SC".equals(p.productGroupCode)) {
+                            containsStoreCard = true;
+                        } else if ("CC".equals(p.productGroupCode)) {
+                            containsCreditCard = true;
+                        } else if ("PL".equals(p.productGroupCode)) {
+                            containsPersonalLoan = true;
+                        }
+                    }
+                }
+                Bundle bundle = new Bundle();
+                bundle.putString("accounts", Utils.objectToJson(accountsResponse));
+                fragmentsAdapter = new CardsFragmentPagerAdapter(getSupportFragmentManager());
+                if (containsStoreCard) {
+                    WStoreCardFragment fragment = new WStoreCardFragment();
+                    fragment.setArguments(bundle);
+                    fragmentsAdapter.addFrag(fragment);
+                } else {
+                    fragmentsAdapter.addFrag(new WStoreCardEmptyFragment());
+                }
+                if (containsCreditCard) {
+                    WCreditCardFragment fragment = new WCreditCardFragment();
+                    fragment.setArguments(bundle);
+                    fragmentsAdapter.addFrag(fragment);
+                } else {
+                    fragmentsAdapter.addFrag(new WCreditCardEmptyFragment());
+                }
+                if (containsPersonalLoan) {
+                    WPersonalLoanFragment fragment = new WPersonalLoanFragment();
+                    fragment.setArguments(bundle);
+                    fragmentsAdapter.addFrag(fragment);
+                } else {
+                    fragmentsAdapter.addFrag(new WPersonalLoanEmptyFragment());
+                }
+                fragmentPager.setAdapter(fragmentsAdapter);
+                fragmentPager.setCurrentItem(getIntent().getIntExtra("position",0));
+
+                break;
+            case 400:
+                if ("0619".equals(accountsResponse.response.code) || "0618".equals(accountsResponse.response.code)) {
+
+                    break;
+
+                }
+            case 502:
+                Log.i("Handling 502","Handled a 502 error from the server");
+                break;
+            default:
+                ((TextView) findViewById(R.id.no_internet_message)).setText(accountsResponse.response.desc);
+                findViewById(R.id.no_internet).setVisibility(View.VISIBLE);
+        }
     }
 }

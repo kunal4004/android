@@ -56,9 +56,9 @@ public class WfsApi {
     public AccountResponse getAccount(String productOfferingId) {
         return mApiInterface.getAccount(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSession(), productOfferingId);
     }
-
+    // Session token hardcoded for test purpose
     public AccountsResponse getAccounts() {
-        return mApiInterface.getAccounts(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSession());
+        return mApiInterface.getAccounts(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", "9178d4a6-24a6-412e-822d-b426acd2df1d");
     }
 
     public AuthoriseLoanResponse authoriseLoan(AuthoriseLoanRequest authoriseLoanRequest) {

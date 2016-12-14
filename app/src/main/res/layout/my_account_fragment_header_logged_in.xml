@@ -29,14 +29,14 @@
                 android:id="@+id/openMessageActivity"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:background="@drawable/message_24"
+                android:background="@drawable/messages"
                 />
 
             <FrameLayout
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:background="#d8d8d8"
+                android:background="@drawable/oval"
                 >
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -56,7 +56,7 @@
                 android:id="@+id/openShoppingList"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:background="@drawable/shoppinglist_24"
+                android:background="@drawable/shoppinglist"
                 />
 
         </RelativeLayout>

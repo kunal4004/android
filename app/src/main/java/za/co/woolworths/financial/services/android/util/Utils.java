@@ -298,4 +298,15 @@ public class Utils {
 
         return transactionParentObjList;
     }
+
+    public static String objectToJson(Object object)
+    {
+        Gson gson=new Gson();
+
+        String response=gson.toJson(object);
+
+        return response;
+    }
+
+
 }
