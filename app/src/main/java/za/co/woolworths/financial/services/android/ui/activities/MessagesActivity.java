@@ -13,8 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.util.Attributes;
@@ -50,7 +48,7 @@ public class MessagesActivity extends AppCompatActivity {
     private int mCurrentPage = 1;
     int previousTotal = 0;
     public List<MessageDetails> messageList;
-    public ProgressBar mLoadingImageView;
+    //public ProgressBar mLoadingImageView;
     public int visibleThreshold = 5;
 
 
@@ -64,7 +62,7 @@ public class MessagesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mLayoutManager = new LinearLayoutManager(MessagesActivity.this);
         messsageListview = (RecyclerView) findViewById(R.id.messsageListView);
-        mLoadingImageView = (ProgressBar) findViewById(R.id.loadingBar);
+        //mLoadingImageView = (ProgressBar) findViewById(R.id.loadingBar);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
         messsageListview.setHasFixedSize(true);
         messsageListview.setLayoutManager(mLayoutManager);
@@ -170,7 +168,7 @@ public class MessagesActivity extends AppCompatActivity {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                mLoadingImageView.setVisibility(View.VISIBLE);
+                //mLoadingImageView.setVisibility(View.VISIBLE);
                 mIsLoading = true;
                 mCurrentPage += 1;
 
@@ -190,7 +188,7 @@ public class MessagesActivity extends AppCompatActivity {
             protected MessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 MessageResponse messageResponse = new MessageResponse();
                 messageResponse.response = new Response();
-                mLoadingImageView.setVisibility(View.GONE);
+                //mLoadingImageView.setVisibility(View.GONE);
                 mIsLoading = false;
                 return messageResponse;
             }
@@ -198,7 +196,7 @@ public class MessagesActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(MessageResponse messageResponse) {
                 super.onPostExecute(messageResponse);
-                mLoadingImageView.setVisibility(View.GONE);
+                //mLoadingImageView.setVisibility(View.GONE);
                 mIsLoading = false;
                 List<MessageDetails> moreMessageList = null;
                 moreMessageList = new ArrayList<MessageDetails>();
