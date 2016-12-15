@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -35,7 +34,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         super.onCreate(savedInstanceState);
         setContentView(R.layout.one_app_base_activity);
         Utils.updateStatusBarBackground(this);
-
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbarTitle=(WTextView)findViewById(R.id.toolbar_title);
         appbar=(AppBarLayout)findViewById(R.id.appbar);
@@ -67,7 +65,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             case 2:
                 fragment = new StoresNearbyFragment1();
                 frag=(StoresNearbyFragment1) fragment;
-                title = getString(R.string.nav_item_store);
+                title = getString(R.string.stores_nearby);
                 break;
             case 4:
                 fragment = new MyAccountsFragment();

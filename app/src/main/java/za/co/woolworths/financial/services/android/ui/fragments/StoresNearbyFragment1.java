@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -133,11 +134,18 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         setHasOptionsMenu(true);
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_stores_nearby1, container, false);
-        //((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("STORES NEARBY");
+        try {
+           // ((WOneAppBaseActivity) getActivity()).getSupportActionBar().setTitle("NEARBY STORES");
+            Toolbar toolbar = (Toolbar) getView().findViewById(R.id.toolbar);
+            WTextView mToolbarTitle=(WTextView)getView().findViewById(R.id.toolbar_title);
+            mToolbarTitle.setText("TEXT");
+        }catch (Exception ex){ex.printStackTrace();}
 
         pager = (WCustomViewPager) v.findViewById(R.id.cardPager);
         detailsLayout = (LinearLayout) v.findViewById(R.id.detailsView);
