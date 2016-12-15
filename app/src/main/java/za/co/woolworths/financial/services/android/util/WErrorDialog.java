@@ -50,6 +50,7 @@ public class WErrorDialog {
     public static AlertDialog getErrConnectToServer(final Activity c){
         return  new AlertDialog.Builder(c)
                 .setTitle(FontHyperTextParser.getSpannable(c.getString(R.string.error), 2, c))
+                .setCancelable(false)
                 .setMessage(FontHyperTextParser.getSpannable(c.getString(R.string.connect_to_server), 0, c))
                 .setPositiveButton(FontHyperTextParser.getSpannable(c.getString(R.string.ok), 1, c), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
