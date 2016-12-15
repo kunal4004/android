@@ -246,6 +246,7 @@
     <string name="accounts_walkthrough_title_2">WRewards at a glance</string>
     <string name="accounts_walkthrough_title_3">Financial services</string>
     <string name="accounts_walkthrough_title_4">GET STARTED</string>
+    <string name="connect_to_server">Cannot connect to server</string>
 
     <!-- <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
