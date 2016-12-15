@@ -1,13 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -20,17 +19,14 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
@@ -41,9 +37,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.StoreSearchListAd
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
+import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static za.co.woolworths.financial.services.android.util.Utils.getRecentSearchedHistory;
 
 
 public class SearchStoresActivity extends AppCompatActivity implements View.OnClickListener {
@@ -134,13 +129,11 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         inflater.inflate(R.menu.w_search_store_menu, menu);
         MenuItem searchViewItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchViewItem);
-
         searchView.setIconified(false);
-        searchView.setQueryHint("Search by Store or Location");
-      /*  ImageView searchClose = (ImageView) searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
-        searchClose.setImageResource(R.drawable.close);*/
-        //searchView.clearFocus();
-        //searchView.setIconifiedByDefault(false);
+        SpannableMenuOption spannableMenuOption = new SpannableMenuOption(this);
+        searchView.setQueryHint(spannableMenuOption.customSpannableSearch(getString(R.string.search_by_store_loc)));
+        ImageView searchCloseIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+        searchCloseIcon.setImageResource(R.drawable.close_24);
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
@@ -152,8 +145,6 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //searchViewAndroidActionBar.clearFocus();
-
-
                 return true;
             }
 
@@ -252,16 +243,14 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onBackPressed() {
-
         super.onBackPressed();
        // overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
-
-
-
     }
     public void showRecentSearchHistoryView(boolean status)
     {
         recentSearchList.removeAllViews();
+        View storeItem=getLayoutInflater().inflate(R.layout.stores_recent_search_header_row,null);
+        recentSearchList.addView(storeItem);
       List<SearchHistory> searchHistories=Utils.getRecentSearchedHistory(SearchStoresActivity.this);
         if(status)
         {

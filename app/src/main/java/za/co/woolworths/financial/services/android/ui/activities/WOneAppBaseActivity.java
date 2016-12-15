@@ -33,10 +33,11 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         setContentView(R.layout.one_app_base_activity);
         Utils.updateStatusBarBackground(this);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolbarTitle=(WTextView)findViewById(R.id.toolbar_title);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        mToolbar.setNavigationIcon(R.drawable.ic_drawer_menu);
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(false); // false for hiding the title from actoinBar
+        getSupportActionBar().setElevation(0);
+        mToolbarTitle=(WTextView)findViewById(R.id.toolbar_title);
         drawerFragment = (WFragmentDrawer)
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);

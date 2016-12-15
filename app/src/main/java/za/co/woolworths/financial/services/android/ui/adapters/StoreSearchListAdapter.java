@@ -56,12 +56,7 @@ public class StoreSearchListAdapter extends RecyclerView.Adapter<StoreSearchList
              holder.storeOfferings.setText(WFormatter.formatOfferingString(storeDetailsList.get(position).offerings));
         if(storeDetailsList.get(position).times!=null  )
             holder.storeTimeing.setText("Open until "+WFormatter.formatOpenUntilTime(storeDetailsList.get(position).times.get(0).hours));
-
-
     }
-
-
-
     @Override
     public int getItemCount() {
         return storeDetailsList.size();
@@ -73,5 +68,4 @@ public class StoreSearchListAdapter extends RecyclerView.Adapter<StoreSearchList
                 .inflate(R.layout.search_store_nearby_item, parent, false);
         return new SearchViewHolder(v);
     }
-
 }

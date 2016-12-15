@@ -3,10 +3,11 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 import android.app.Activity;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.AbsoluteSizeSpan;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
@@ -15,6 +16,8 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+
+import static android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE;
 
 /**
  * Created by W7099877 on 10/10/2016.
@@ -49,7 +52,14 @@ public class CardsOnMapAdapter extends PagerAdapter
         WTextView storeTimeing=(WTextView)cView.findViewById(R.id.timeing);
         storeName.setText(storeDetailsList.get(position).name);
         storeAddress.setText(storeDetailsList.get(position).address);
-        storeDistance.setText(WFormatter.formatMeter(storeDetailsList.get(position).distance));
+
+        int mKmDistance = mContext.getResources().getDimensionPixelSize(R.dimen.distance_km);
+        SpannableString ssDistance = new SpannableString(WFormatter.formatMeter(storeDetailsList.get(position).distance));
+        SpannableString mSpanKm = new SpannableString(mContext.getResources().getString(R.string.distance_in_km));
+        mSpanKm.setSpan(new AbsoluteSizeSpan(mKmDistance), 0, mSpanKm.length(), SPAN_INCLUSIVE_INCLUSIVE);
+        CharSequence mDistancekM = TextUtils.concat(ssDistance, "\n", mSpanKm);
+        storeDistance.setText(mDistancekM);
+
         if(storeDetailsList.get(position).offerings!=null)
             storeOfferings.setText(WFormatter.formatOfferingString(storeDetailsList.get(position).offerings));
         if(storeDetailsList.get(position).times!=null  )
@@ -58,8 +68,6 @@ public class CardsOnMapAdapter extends PagerAdapter
         container.addView(cView);
         return cView;
     }
-
-
 
     @Override
     public int getCount() {

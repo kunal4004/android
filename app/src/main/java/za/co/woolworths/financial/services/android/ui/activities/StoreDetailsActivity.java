@@ -4,6 +4,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +12,8 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -33,10 +36,8 @@ import java.util.Locale;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
 import za.co.woolworths.financial.services.android.util.WFormatter;
-
-import static com.awfs.coordination.R.id.brandsLayout;
-import static com.awfs.coordination.R.id.storeNumber;
 
 public class StoreDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -51,6 +52,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 
     RelativeLayout direction;
     RelativeLayout makeCall;
+    RelativeLayout relBrandLayout;
     WTextView storeName;
     WTextView storeOfferings;
     WTextView storeAddress;
@@ -60,10 +62,19 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
     WTextView cancel;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+        if (Build.VERSION.SDK_INT >= 21) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(getResources().getColor(R.color.white));
+            View decor = getWindow().getDecorView();
+            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
         setContentView(R.layout.store_details_activity);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         storeName = (WTextView) findViewById(R.id.storeName);
@@ -75,6 +86,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
         direction = (RelativeLayout) findViewById(R.id.direction);
         storeNumber=(WTextView)findViewById(R.id.storeNumber);
         makeCall = (RelativeLayout) findViewById(R.id.call);
+        relBrandLayout = (RelativeLayout)findViewById(R.id.relBrandLayout);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
@@ -132,25 +144,31 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
         storeAddress.setText(storeDetail.address);
         if(storeDetail.phoneNumber!=null)
             storeNumber.setText(storeDetail.phoneNumber);
-        storeDistance.setText(WFormatter.formatMeter(storeDetail.distance));
+        SpannableMenuOption spannableMenuOption = new SpannableMenuOption(this);
+        storeDistance.setText(spannableMenuOption.distanceKm(WFormatter.formatMeter(storeDetail.distance)));
         if (storeDetail.offerings != null)
         {
             storeOfferings.setText(WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department")));
-
             List<StoreOfferings> brandslist=getOfferingByType(storeDetail.offerings,"Brand");
             if(brandslist!=null)
             {
-                WTextView textView;
-                for (int i = 0; i < brandslist.size(); i++) {
-
-                    View v = getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
-                    textView = (WTextView) v.findViewById(R.id.openingHours);
-                    textView.setText(brandslist.get(i).offering);
-                    brandsLayout.addView(textView);
+                if (brandslist.size()>0) {
+                    WTextView textView;
+                    relBrandLayout.setVisibility(View.VISIBLE);
+                    for (int i = 0; i < brandslist.size(); i++) {
+                        View v = getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
+                        textView = (WTextView) v.findViewById(R.id.openingHours);
+                        textView.setText(brandslist.get(i).offering);
+                        brandsLayout.addView(textView);
+                    }
+                }else {
+                    relBrandLayout.setVisibility(View.GONE);
                 }
+            }else {
+                relBrandLayout.setVisibility(View.GONE);
             }
-
-
+        }else {
+            relBrandLayout.setVisibility(View.GONE);
         }
         WTextView textView;
         if (storeDetail.times != null) {
@@ -225,7 +243,6 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
             if(d.type != null && d.type.contains(type))
                 list.add(d);
         }
-
         return list;
     }
 
