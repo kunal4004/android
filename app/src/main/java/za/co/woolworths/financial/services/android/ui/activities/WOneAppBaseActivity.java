@@ -35,6 +35,10 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         setContentView(R.layout.one_app_base_activity);
         Utils.updateStatusBarBackground(this);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(false); // false for hiding the title from actoinBar
+        getSupportActionBar().setElevation(0);
         mToolbarTitle=(WTextView)findViewById(R.id.toolbar_title);
         appbar=(AppBarLayout)findViewById(R.id.appbar);
 

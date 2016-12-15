@@ -15,7 +15,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -72,6 +71,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.LocationTracker;
+import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -119,6 +119,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     //Location Service Layouts
     LinearLayout layoutLocationServiceOff;
     RelativeLayout layoutLocationServiceOn;
+    RelativeLayout relBrandLayout;
+
     WButton btnOnLocationService;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     private final int DURATION = 2000;
@@ -140,13 +142,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_stores_nearby1, container, false);
-        try {
-           // ((WOneAppBaseActivity) getActivity()).getSupportActionBar().setTitle("NEARBY STORES");
-            Toolbar toolbar = (Toolbar) getView().findViewById(R.id.toolbar);
-            WTextView mToolbarTitle=(WTextView)getView().findViewById(R.id.toolbar_title);
-            mToolbarTitle.setText("TEXT");
-        }catch (Exception ex){ex.printStackTrace();}
-
         pager = (WCustomViewPager) v.findViewById(R.id.cardPager);
         detailsLayout = (LinearLayout) v.findViewById(R.id.detailsView);
         mLayout = (SlidingUpPanelLayout) v.findViewById(R.id.sliding_layout);
@@ -158,6 +153,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         storeNumber = (WTextView) v.findViewById(R.id.storeNumber);
         timeingsLayout = (LinearLayout) v.findViewById(R.id.timeingsLayout);
         brandsLayout = (LinearLayout) v.findViewById(R.id.brandsLayout);
+        relBrandLayout= (RelativeLayout)v.findViewById(R.id.relBrandLayout);
         direction = (RelativeLayout) v.findViewById(R.id.direction);
         makeCall = (RelativeLayout) v.findViewById(R.id.call);
         layoutLocationServiceOff = (LinearLayout) v.findViewById(R.id.layoutLocationServiceOff);
@@ -400,10 +396,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                     drawMarker(new LatLng(storeDetailsList.get(i).latitude, storeDetailsList.get(i).longitude), unSelectedIcon, i);
             }
             pager.setAdapter(new CardsOnMapAdapter(getActivity(), storeDetailsList));
-
         }
-
-
     }
 
     public void initStoreDetailsView(final StoreDetails storeDetail) {
@@ -413,21 +406,29 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         storeAddress.setText(storeDetail.address);
         if (storeDetail.phoneNumber != null)
             storeNumber.setText(storeDetail.phoneNumber);
-        storeDistance.setText(WFormatter.formatMeter(storeDetail.distance));
+        SpannableMenuOption spannableMenuOption = new SpannableMenuOption(getActivity());
+        storeDistance.setText(spannableMenuOption.distanceKm(WFormatter.formatMeter(storeDetail.distance)));
         if (storeDetail.offerings != null) {
             storeOfferings.setText(WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department")));
             List<StoreOfferings> brandslist = getOfferingByType(storeDetail.offerings, "Brand");
             if (brandslist != null) {
-                WTextView textView;
-                for (int i = 0; i < brandslist.size(); i++) {
-                    View v = getActivity().getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
-                    textView = (WTextView) v.findViewById(R.id.openingHours);
-                    textView.setText(brandslist.get(i).offering);
-                    brandsLayout.addView(textView);
+                if (brandslist.size()>0) {
+                    WTextView textView;
+                    relBrandLayout.setVisibility(View.VISIBLE);
+                    for (int i = 0; i < brandslist.size(); i++) {
+                        View v = getActivity().getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
+                        textView = (WTextView) v.findViewById(R.id.openingHours);
+                        textView.setText(brandslist.get(i).offering);
+                        brandsLayout.addView(textView);
+                    }
+                }else {
+                    relBrandLayout.setVisibility(View.GONE);
                 }
+            }else {
+                relBrandLayout.setVisibility(View.GONE);
             }
-
-
+        }else {
+            relBrandLayout.setVisibility(View.GONE);
         }
         if (storeDetail.times != null) {
             WTextView textView;
