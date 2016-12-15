@@ -12,7 +12,7 @@
 
     <ImageView
         android:id="@+id/boardingImage"
-        android:layout_width="180dp"
+        android:layout_width="wrap_content"
         android:layout_height="180dp"
         android:layout_gravity="center_horizontal"
         />
@@ -20,7 +20,7 @@
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="GET STARTED"
+        android:id="@+id/accountsWalkthroughTitle"
         android:textSize="16sp"
         app:WTextView_font="medium_bold"
         android:layout_gravity="center_horizontal"
@@ -31,9 +31,9 @@
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/accountsWalkthroughDescription"
         android:layout_marginTop="22dp"
         android:minHeight="65dp"
-        android:text="Conveniently view your credit balance, next payment due, available funds, apply for a personal loan and more."
         android:textColor="@color/black"
         android:textSize="14sp"
         android:layout_gravity="center_horizontal"

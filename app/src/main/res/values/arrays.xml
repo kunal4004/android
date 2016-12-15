@@ -29,6 +29,25 @@
          <item>@string/nav_item_accounts</item>
     </string-array>
 
+    <string-array name="accounts_walkthrough_descriptions">
+        <item>@string/accounts_walkthrough_desc_1</item>
+        <item>@string/accounts_walkthrough_desc_2</item>
+        <item>@string/accounts_walkthrough_desc_3</item>
+        <item>@string/accounts_walkthrough_desc_4</item>
+    </string-array>
+    <string-array name="accounts_walkthrough_titles">
+        <item>@string/accounts_walkthrough_title_1</item>
+        <item>@string/accounts_walkthrough_title_2</item>
+        <item>@string/accounts_walkthrough_title_3</item>
+        <item>@string/accounts_walkthrough_title_4</item>
+    </string-array>
+    <integer-array name="accounts_walkthrough_images">
+        <item>@drawable/accounts_walkthrough_1</item>
+        <item>@drawable/accounts_walkthrough_2</item>
+        <item>@drawable/accounts_walkthrough_3</item>
+        <item>@drawable/accounts_walkthrough_4</item>
+    </integer-array>
+
     <integer-array name="nav_drawer_images">
         <item>@drawable/ic_drw_tww</item>
         <item>@drawable/ic_drw_products</item>

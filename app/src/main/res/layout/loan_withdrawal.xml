@@ -25,51 +25,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:minHeight="92dp"
-        android:gravity="center"
-        android:layout_below="@+id/txtWithdrawAmount"
-        >
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            >
-
-            <za.co.woolworths.financial.services.android.ui.views.WEditTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:gravity="center"
-                android:text="2300"
-                android:paddingLeft="8dp"
-                android:textColor="@color/white"
-                android:textSize="45sp"
-                app:WEditTextView_font="light"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/currencyType"
-                android:layout_toEndOf="@+id/currencyType"/>
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/currencyType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="R"
-                android:textColor="@color/white"
-                android:textSize="45sp"
-                app:WEditTextView_font="light"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                />
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:minHeight="80dp"
         android:background="#10FFFFFF"
         android:layout_alignParentBottom="true"
@@ -131,6 +86,55 @@
                 app:WTextView_font="medium_bold"
                 />
         </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:minHeight="92dp"
+        android:gravity="center"
+        android:layout_below="@+id/txtWithdrawAmount"
+        android:layout_alignParentStart="true">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            >
+
+            <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:text="2300"
+                android:paddingLeft="8dp"
+                android:textColor="@color/white"
+                android:textSize="45sp"
+                app:WEditTextView_font="light"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/currencyType"
+                android:layout_toEndOf="@+id/currencyType"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                android:id="@+id/currencyType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="R"
+                android:textColor="@color/white"
+                android:textSize="45sp"
+                app:WEditTextView_font="light"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:inputType="none"
+                />
+        </RelativeLayout>
+
     </LinearLayout>
 
 </RelativeLayout>
