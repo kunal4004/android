@@ -54,7 +54,6 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
     SearchHistory search;
     String[] recentSearchData={"Cape Town","PineLand","SeaPoint","Wellington"};
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -226,8 +225,6 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 
             }
         }.execute();
-
-
     }
 
     @Override
@@ -251,7 +248,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         recentSearchList.removeAllViews();
         View storeItem=getLayoutInflater().inflate(R.layout.stores_recent_search_header_row,null);
         recentSearchList.addView(storeItem);
-      List<SearchHistory> searchHistories=Utils.getRecentSearchedHistory(SearchStoresActivity.this);
+        List<SearchHistory> searchHistories=Utils.getRecentSearchedHistory(SearchStoresActivity.this);
         if(status)
         {
 
@@ -261,7 +258,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
                 recentSearchListitem=(WTextView)v.findViewById(R.id.recentSerachListItem);
                 recentSearchListitem.setText(searchHistories.get(i).searchedValue);
                 recentSearchList.addView(v);
-                int position=recentSearchList.indexOfChild(v);
+                int position=recentSearchList.indexOfChild(v)-1;
                 v.setTag(position);
                 v.setOnClickListener(this);
             }
