@@ -30,6 +30,8 @@ public class WProductsFragment extends Fragment {
         this.webView = (WebView)view.findViewById(R.id.wproducts_fragment_webview);
         Log.d("", getString(R.string.link_products));
         this.webView.loadUrl(getString(R.string.link_products));
+             webView.getSettings().setJavaScriptEnabled(true);
+
 
         return view;
     }

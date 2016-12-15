@@ -21,13 +21,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
+import za.co.woolworths.financial.services.android.models.dto.Transaction;
+import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 
 import static android.Manifest.permission_group.STORAGE;
+import static android.R.attr.format;
 import static android.R.attr.key;
 import static android.R.attr.type;
 import static android.R.id.edit;
@@ -237,4 +245,68 @@ public class Utils {
            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
        }
    }
+
+    public static  List<TransactionParentObj> getdata(List<Transaction> transactions)
+    {
+        List<TransactionParentObj> transactionParentObjList=new ArrayList<>();
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat outputFormat = new SimpleDateFormat("MMMM");
+        TransactionParentObj transactionParentObj;
+
+        for(int i=0;i<transactions.size();i++)
+        {
+            try {
+                Date date = inputFormat.parse(transactions.get(i).date);
+                String month=outputFormat.format(date);
+                boolean monthFound=false;
+                List<Transaction> transactionList =null;
+                if(transactionParentObjList.size()==0)
+                {
+                    transactionList=new ArrayList<>();
+                    transactionParentObj=new TransactionParentObj();
+                    transactionParentObj.setMonth(month);
+                    transactionList.add(transactions.get(i));
+                    transactionParentObj.setTransactionList(transactionList);
+                    transactionParentObjList.add(transactionParentObj);
+                }
+                else {
+                        for(int j=0;j<transactionParentObjList.size();j++)
+                        {
+                            if(transactionParentObjList.get(j).getMonth().equals(month))
+                            {
+                                monthFound=true;
+                                transactionParentObjList.get(j).getTransactionList().add(transactions.get(i));
+                                break;
+                            }
+                        }
+
+                    if(monthFound==false)
+                    {
+                        transactionList=new ArrayList<>();
+                        transactionParentObj=new TransactionParentObj();
+                        transactionParentObj.setMonth(month);
+                        transactionList.add(transactions.get(i));
+                        transactionParentObj.setTransactionList(transactionList);
+                        transactionParentObjList.add(transactionParentObj);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        return transactionParentObjList;
+    }
+
+    public static String objectToJson(Object object)
+    {
+        Gson gson=new Gson();
+
+        String response=gson.toJson(object);
+
+        return response;
+    }
+
+
 }

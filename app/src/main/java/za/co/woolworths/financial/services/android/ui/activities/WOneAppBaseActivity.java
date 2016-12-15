@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 
 import com.awfs.coordination.R;
 
@@ -23,6 +25,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener{
 
     public static Toolbar mToolbar;
+    public static AppBarLayout appbar;
     private WFragmentDrawer drawerFragment;
     public StoresNearbyFragment1 frag;
     public WTextView mToolbarTitle;
@@ -35,6 +38,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbarTitle=(WTextView)findViewById(R.id.toolbar_title);
+        appbar=(AppBarLayout)findViewById(R.id.appbar);
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -52,6 +56,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     }
 
     private void displayView(int position) {
+        WOneAppBaseActivity.appbar.animate().translationY(WOneAppBaseActivity.appbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
         Fragment fragment = null;
         String title = getString(R.string.app_name);
         switch (position) {

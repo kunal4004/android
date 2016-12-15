@@ -347,7 +347,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     public void backToAllStoresPage(int position) {
         googleMap.getUiSettings().setScrollGesturesEnabled(true);
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markers.get(position).getPosition(), 13), 500, null);
-        WOneAppBaseActivity.mToolbar.animate().translationY(WOneAppBaseActivity.mToolbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
+        WOneAppBaseActivity.appbar.animate().translationY(WOneAppBaseActivity.appbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
         showAllMarkers(markers);
 
     }
@@ -363,7 +363,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         googleMap.animateCamera(centerCam, CAMERA_ANIMATION_SPEED, null);
         googleMap.getUiSettings().setScrollGesturesEnabled(false);
         if (mLayout.getAnchorPoint() == 1.0f) {
-            WOneAppBaseActivity.mToolbar.animate().translationY(-WOneAppBaseActivity.mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
+            WOneAppBaseActivity.appbar.animate().translationY(-WOneAppBaseActivity.appbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
             mLayout.setAnchorPoint(0.7f);
             mLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
 

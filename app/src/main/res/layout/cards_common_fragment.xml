@@ -28,9 +28,9 @@
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/available_funds"
                 android:layout_toLeftOf="@+id/txtTransactions"
                 android:layout_marginRight="10dp"
-                android:text="R 20000.00"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 app:WTextView_font="medium_bold"
@@ -77,9 +77,9 @@
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/creditLimit"
                 android:layout_toLeftOf="@+id/txtIncreseLimit"
                 android:layout_marginRight="10dp"
-                android:text="R 30000.00"
                 android:textColor="@color/black"
                 android:textSize="25sp"
                 app:WTextView_font="medium"
@@ -125,7 +125,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/dueDate"
-            android:text="01/10/15"
             android:textColor="#4d000000"
             android:textSize="14sp"
             app:WTextView_font="myriadpro_regular"
@@ -155,7 +154,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/minAmountDue"
-            android:text="R 500.00"
             android:textColor="#4d000000"
             android:textSize="14sp"
             app:WTextView_font="myriadpro_regular"
@@ -186,13 +184,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/currentBalance"
-            android:text="R 7500.00"
             android:textColor="#4d000000"
             android:textSize="14sp"
             app:WTextView_font="myriadpro_regular"
             android:layout_alignParentRight="true"
             />
     </RelativeLayout>
-
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/withdrawCashNow"
+        android:visibility="gone"
+        android:background="@color/purple"
+        android:minHeight="60dp"
+        app:WTextView_font="medium"
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:text="@string/withdraw_cash_now"
+        />
 
 </LinearLayout>

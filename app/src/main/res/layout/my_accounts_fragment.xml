@@ -6,7 +6,9 @@
             android:layout_marginTop="?attr/actionBarSize"
             android:background="@color/white"
             android:scrollbars="none"
-            tools:context="za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment">
+            android:fillViewport="true"
+            android:orientation="vertical"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,9 +17,74 @@
         android:paddingBottom="20dp"
         android:background="#d8d8d8"
         >
-        <include
+        <!--<include
             layout="@layout/my_account_fragment_header_logged_out"
-            />
+            />-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/loggedOutHeaderLayout"
+            android:background="@color/white"
+            android:paddingBottom="16dp"
+            >
+
+            <android.support.v4.view.ViewPager
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:id="@+id/pager"
+                />
+
+            <LinearLayout
+                android:layout_marginTop="32dp"
+                android:id="@+id/viewPagerCountDots"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/loginRegisterBtnLayout"
+                android:minHeight="48dp"
+                android:layout_marginTop="28dp"
+                android:orientation="horizontal"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:background="@color/white"
+                >
+                <za.co.woolworths.financial.services.android.ui.views.WButton
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/loginAccount"
+                    android:text="login"
+                    android:textAllCaps="true"
+                    android:gravity="center"
+                    android:background="@color/black"
+                    android:textColor="@color/white"
+                    app:WButton_font="medium"
+                    android:textSize="13sp"
+                    android:layout_marginRight="4dp"
+                    />
+
+                <za.co.woolworths.financial.services.android.ui.views.WButton
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:id="@+id/registerAccount"
+                    android:text="register"
+                    android:textAllCaps="true"
+                    android:gravity="center"
+                    android:background="@drawable/register_button_bg"
+                    android:textColor="@color/black"
+                    app:WButton_font="medium"
+                    android:textSize="13sp"
+                    android:layout_marginLeft="4dp"
+                    />
+            </LinearLayout>
+        </LinearLayout>
         <include
             layout="@layout/my_account_fragment_header_logged_in"
             />
