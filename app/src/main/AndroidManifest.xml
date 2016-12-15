@@ -112,27 +112,33 @@
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity"
-            android:theme="@style/StoreDetails"/>
+            android:theme="@style/StoreDetails"
+            android:screenOrientation="portrait"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity"
-            android:theme="@style/StoreSearch"/>
+            android:theme="@style/StoreSearch"
+            android:screenOrientation="portrait"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity"
-            android:theme="@style/ShoppingList"/>
+            android:theme="@style/ShoppingList"
+            android:screenOrientation="portrait"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountTestActivity"
-            android:theme="@style/ShoppingList"/>
+            android:theme="@style/ShoppingList"
+            android:screenOrientation="portrait"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MessagesActivity"
             android:parentActivityName="za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity"
-            android:theme="@style/Messages">
+            android:theme="@style/Messages"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity"/>
         </activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity"
-            android:theme="@style/OneAppBaseTheme">
+            android:theme="@style/OneAppBaseTheme"
+            android:screenOrientation="portrait">
         </activity>
 
         <!-- Firebase Notifications -->
@@ -150,11 +156,13 @@
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity"
-            android:theme="@style/MyAccountCards">
+            android:theme="@style/MyAccountCards"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity"
-            android:theme="@style/ContactUs">
+            android:theme="@style/ContactUs"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivityTest"

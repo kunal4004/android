@@ -31,7 +31,6 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.AccountsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
-import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivityTest;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;

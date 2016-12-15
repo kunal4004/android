@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
     <item
+        android:id="@+id/action_locate"
+        android:icon="@drawable/locate_me"
+        app:showAsAction="always"
+        android:title="" />
+    <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
         app:showAsAction="always"

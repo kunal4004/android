@@ -15,8 +15,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -50,6 +48,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -65,7 +64,6 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity;
-import za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -122,6 +120,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     RelativeLayout layoutLocationServiceOn;
     WButton btnOnLocationService;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+    private final int DURATION = 2000;
 
     //Location Listner
     private LocationManager locationManager;
@@ -515,8 +514,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 if (storeDetailsList != null && storeDetailsList.size() != 0) {
                     bindDataWithUI(storeDetailsList);
                 }
-
-
             }
         }.execute();
 
@@ -624,7 +621,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     public void serachForCurrentLocation() {
         checkLocationServiceAndSetLayout(true);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 1, this);
-
     }
 
     public void updateMyCurrentLocationOnMap(Location location) {
@@ -652,9 +648,41 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         switch (item.getItemId()) {
             case R.id.action_search:
                 startActivity(new Intent(getActivity(), SearchStoresActivity.class));
-                return true;
+                break;
+            case R.id.action_locate:
+                if (Utils.getLastSavedLocation(getActivity()) != null) {
+                    Location location = Utils.getLastSavedLocation(getActivity());
+                    CameraPosition mLocation =
+                            new CameraPosition.Builder().target(new LatLng(location.getLatitude(),location.getLongitude()))
+                                    .zoom(13f)
+                                    .bearing(0)
+                                    .tilt(25)
+                                    .build();
+                    goToUser(mLocation);
+                }
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void goToUser(CameraPosition mLocation) {
+        changeCamera(CameraUpdateFactory.newCameraPosition(mLocation), new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+            }
+            @Override
+            public void onCancel() {
+            }
+        });
+    }
+
+    /**
+     * Change the camera position by moving or animating the camera depending on the state of the
+     * animate toggle button.
+     */
+    private void changeCamera(CameraUpdate update, GoogleMap.CancelableCallback callback) {
+                // The duration must be strictly positive so we make it at least 1.
+        googleMap.animateCamera(update, Math.max(DURATION, 1), callback);
     }
 }
 
