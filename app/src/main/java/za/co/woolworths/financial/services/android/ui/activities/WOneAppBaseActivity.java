@@ -45,6 +45,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle(null);
         mToolbar.setNavigationIcon(R.drawable.ic_drawer_menu);
         drawerFragment = (WFragmentDrawer)
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
@@ -70,7 +71,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             case 2:
                 fragment = new StoresNearbyFragment1();
                 frag=(StoresNearbyFragment1) fragment;
-                title = getString(R.string.stores_nearby);
+                title = getString(R.string.nav_item_store);
                 break;
             case 4:
                 fragment = new MyAccountsFragment();

@@ -143,9 +143,9 @@
 
     <string name="nav_item_today">WTODAY</string>
     <string name="nav_item_products">PRODUCTS</string>
-    <string name="nav_item_store">STORES</string>
+    <string name="nav_item_store">STORES NEARBY</string>
     <string name="nav_item_wrewards">WREWARDS</string>
-    <string name="nav_item_accounts">ACCOUNTS</string>
+    <string name="nav_item_accounts">MY ACCOUNTS</string>
     <string name="increase_limit">INCREASE LIMIT</string>
     <string name="transactions">transactions</string>
     <string name="apply_now">APPLY NOW</string>
