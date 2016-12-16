@@ -41,6 +41,7 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
         WTextView txtBody;
         ImageView imgdelete;
         RelativeLayout cardlayout;
+        View tranparentView;
 
         public SimpleViewHolder(View itemView) {
             super(itemView);
@@ -50,7 +51,7 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
             txtBody=(WTextView)itemView.findViewById(R.id.bodyMessage);
             imgdelete=(ImageView)itemView.findViewById(R.id.msgDelete);
             cardlayout=(RelativeLayout)itemView.findViewById(R.id.cardLayout);
-
+            tranparentView=(View)itemView.findViewById(R.id.transparentview);
         }
     }
 
@@ -58,11 +59,13 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
     public void onBindViewHolder(final SimpleViewHolder viewHolder, final int position) {
         viewHolder.txtTitle.setText(messageDetailsList.get(position).title);
         viewHolder.txtBody.setText(messageDetailsList.get(position).content);
-        if(messageDetailsList.get(position).isRead)
-             // viewHolder.cardlayout.getBackground().setAlpha(50);
-            viewHolder.cardlayout.setBackgroundColor(Color.parseColor("#1a000000"));
-        else
-            viewHolder.cardlayout.setBackgroundColor(Color.parseColor("#ffffff"));
+        if(messageDetailsList.get(position).isRead) {
+            // viewHolder.cardlayout.getBackground().setAlpha(50);
+            viewHolder.tranparentView.setVisibility(View.VISIBLE);
+        }
+        else {
+            viewHolder.tranparentView.setVisibility(View.INVISIBLE);
+        }
         try{
             viewHolder.txtDate.setText(WFormatter.formatMessagingDate(messageDetailsList.get(position).createDate));
         }catch (ParseException e){}
