@@ -9,5 +9,6 @@ import java.util.List;
 public class MessageResponse {
     public int httpCode;
     public Response response;
+    public int unreadCount;
     public List<MessageDetails> messagesList;
 }

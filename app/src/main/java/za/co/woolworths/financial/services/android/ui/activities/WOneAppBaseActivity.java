@@ -7,9 +7,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.os.Bundle;
 import android.view.animation.AccelerateInterpolator;
 
 import com.awfs.coordination.R;
@@ -35,13 +35,17 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         super.onCreate(savedInstanceState);
         setContentView(R.layout.one_app_base_activity);
         Utils.updateStatusBarBackground(this);
-
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(false); // false for hiding the title from actoinBar
+        getSupportActionBar().setElevation(0);
         mToolbarTitle=(WTextView)findViewById(R.id.toolbar_title);
         appbar=(AppBarLayout)findViewById(R.id.appbar);
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle(null);
         mToolbar.setNavigationIcon(R.drawable.ic_drawer_menu);
         drawerFragment = (WFragmentDrawer)
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);

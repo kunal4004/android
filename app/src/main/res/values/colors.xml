@@ -24,6 +24,6 @@
     <color name="indicator_selected">#686663</color>
     <color name="indicator_border">#00000000</color>
     <color name="black_off">#343434</color>
-
     <color name="black_overlay">#66000000</color>
+    <color name="recent_search_bg">#EFEFEF</color>
 </resources>

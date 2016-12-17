@@ -10,12 +10,16 @@
         android:layout_height="wrap_content"
         android:background="@drawable/stores_details_background"
         android:minHeight="95dp"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
         android:orientation="vertical"
-        android:padding="16dp">
+       >
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/storeName"
@@ -23,9 +27,11 @@
                 android:layout_height="wrap_content"
                 android:layout_toLeftOf="@+id/distance"
                 android:paddingRight="10dp"
+                android:layout_marginRight="2dp"
                 android:textAllCaps="true"
+                android:letterSpacing="0.02"
                 android:textColor="@color/black"
-                android:textSize="20dp"
+                android:textSize="17sp"
                 app:WTextView_font="medium_bold" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -34,7 +40,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:textColor="#ABABAB"
-                android:textSize="15dp"
+                android:textSize="15sp"
+                android:layout_marginRight="4dp"
                 app:WTextView_font="medium" />
         </RelativeLayout>
 
@@ -42,10 +49,12 @@
             android:id="@+id/offerings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="8dp"
             android:textAllCaps="true"
-            android:textColor="#ABABAB"
-            android:textSize="18dp"
+            android:letterSpacing="0.04"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            android:lineSpacingExtra="2dp"
             app:WTextView_font="medium"
 
 
@@ -65,11 +74,9 @@
             <RelativeLayout
                 android:id="@+id/direction"
                 android:layout_width="match_parent"
-                android:layout_height="71dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/stores_details_background"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="10dp">
+                android:padding="16dp">
 
                 <ImageView
                     android:id="@+id/imgDirection"
@@ -82,12 +89,12 @@
                     android:id="@+id/storeAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="@dimen/default_width"
                     android:layout_marginRight="10dp"
                     android:layout_toLeftOf="@+id/imgcaret1"
                     android:layout_toRightOf="@+id/imgDirection"
                     android:textColor="@color/black"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     app:WTextView_font="myriadpro_regular" />
 
                 <ImageView
@@ -102,10 +109,10 @@
             <RelativeLayout
                 android:id="@+id/call"
                 android:layout_width="match_parent"
-                android:layout_height="71dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/stores_details_background"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp">
+                android:padding="16dp"
+                >
 
                 <ImageView
                     android:id="@+id/imgCall"
@@ -120,12 +127,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="@dimen/default_width"
+                    android:layout_marginRight="16dp"
                     android:layout_toLeftOf="@+id/imgcaret2"
                     android:layout_toRightOf="@+id/imgCall"
                     android:textColor="@color/black"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     app:WTextView_font="myriadpro_regular" />
 
                 <ImageView
@@ -141,11 +148,12 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/stores_details_background"
+                android:background="@color/white"
                 android:paddingBottom="19dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="10dp">
+                android:paddingTop="10dp"
+                android:paddingLeft="@dimen/default_margin"
+                android:paddingRight="@dimen/default_margin"
+                >
 
                 <ImageView
                     android:id="@+id/imgTime"
@@ -158,18 +166,19 @@
                     android:id="@+id/timeingsLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="@dimen/default_width"
                     android:layout_toRightOf="@+id/imgTime"
                     android:orientation="vertical"></LinearLayout>
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/relBrandLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
+                android:background="@drawable/store_details_background_border_on_top"
                 android:paddingBottom="19dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
+                android:paddingLeft="@dimen/default_margin"
+                android:paddingRight="@dimen/default_margin"
                 android:paddingTop="10dp">
 
                 <ImageView
@@ -190,6 +199,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="15sp"
+                        android:paddingLeft="@dimen/default_width"
                         android:textColor="@color/black"
                         android:text="@string/brands"
                         app:WTextView_font="myriadpro_semibold"

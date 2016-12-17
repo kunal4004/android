@@ -4,28 +4,22 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 import android.app.Activity;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.DeleteMessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageDetails;
-import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -47,6 +41,7 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
         WTextView txtBody;
         ImageView imgdelete;
         RelativeLayout cardlayout;
+        View tranparentView;
 
         public SimpleViewHolder(View itemView) {
             super(itemView);
@@ -56,7 +51,7 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
             txtBody=(WTextView)itemView.findViewById(R.id.bodyMessage);
             imgdelete=(ImageView)itemView.findViewById(R.id.msgDelete);
             cardlayout=(RelativeLayout)itemView.findViewById(R.id.cardLayout);
-
+            tranparentView=(View)itemView.findViewById(R.id.transparentview);
         }
     }
 
@@ -64,20 +59,16 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
     public void onBindViewHolder(final SimpleViewHolder viewHolder, final int position) {
         viewHolder.txtTitle.setText(messageDetailsList.get(position).title);
         viewHolder.txtBody.setText(messageDetailsList.get(position).content);
-        if(messageDetailsList.get(position).isRead)
-
-             // viewHolder.cardlayout.getBackground().setAlpha(50);
-            viewHolder.cardlayout.setBackgroundColor(Color.parseColor("#1a000000"));
-        else
-            viewHolder.cardlayout.setBackgroundColor(Color.parseColor("#ffffff"));
-
-
+        if(messageDetailsList.get(position).isRead) {
+            // viewHolder.cardlayout.getBackground().setAlpha(50);
+            viewHolder.tranparentView.setVisibility(View.VISIBLE);
+        }
+        else {
+            viewHolder.tranparentView.setVisibility(View.INVISIBLE);
+        }
         try{
             viewHolder.txtDate.setText(WFormatter.formatMessagingDate(messageDetailsList.get(position).createDate));
-
-        }catch (ParseException e){
-
-        }
+        }catch (ParseException e){}
 
         mItemManger.bindView(viewHolder.itemView, position);
         viewHolder.imgdelete.setOnClickListener(new View.OnClickListener() {
@@ -113,8 +104,6 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-
-
             }
 
             @Override
@@ -147,10 +136,7 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
                    notifyDataSetChanged();
                    mItemManger.closeAllItems();
                }
-
-
             }
         }.execute();
-
     }
 }

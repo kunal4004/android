@@ -12,8 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.util.Attributes;
@@ -29,9 +27,11 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
 public class MessagesActivity extends AppCompatActivity {
     public RecyclerView messsageListview;
@@ -49,8 +49,9 @@ public class MessagesActivity extends AppCompatActivity {
     private int mCurrentPage = 1;
     int previousTotal = 0;
     public List<MessageDetails> messageList;
-    public ProgressBar mLoadingImageView;
+    //public ProgressBar mLoadingImageView;
     public int visibleThreshold = 5;
+    ConnectionDetector  connectionDetector;
 
 
     @Override
@@ -61,9 +62,11 @@ public class MessagesActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(null);
+        connectionDetector = new ConnectionDetector();
         mLayoutManager = new LinearLayoutManager(MessagesActivity.this);
         messsageListview = (RecyclerView) findViewById(R.id.messsageListView);
-        mLoadingImageView = (ProgressBar) findViewById(R.id.loadingBar);
+        //mLoadingImageView = (ProgressBar) findViewById(R.id.loadingBar);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
         messsageListview.setHasFixedSize(true);
         messsageListview.setLayoutManager(mLayoutManager);
@@ -71,7 +74,12 @@ public class MessagesActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
-                loadMessages();
+                if(connectionDetector.isOnline()){
+                    loadMessages();
+                }else {
+                    WErrorDialog.getErrConnectToServer(MessagesActivity.this);
+                    hideRefreshView();
+                }
             }
         });
         messsageListview.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -101,13 +109,15 @@ public class MessagesActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(Utils.PUSH_NOTIFICATION)) {
                     loadMessages();
-
                 }
             }
         };
-        loadMessages();
 
-
+        if (connectionDetector.isOnline()) {
+            loadMessages();
+        }else {
+            WErrorDialog.getErrConnectToServer(MessagesActivity.this);
+        }
     }
 
     public void loadMessages() {
@@ -151,8 +161,6 @@ public class MessagesActivity extends AppCompatActivity {
                     mIsLoading = false;
                 }
                 hideRefreshView();
-
-
             }
         }.execute();
     }
@@ -168,7 +176,7 @@ public class MessagesActivity extends AppCompatActivity {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                mLoadingImageView.setVisibility(View.VISIBLE);
+                //mLoadingImageView.setVisibility(View.VISIBLE);
                 mIsLoading = true;
                 mCurrentPage += 1;
 
@@ -188,7 +196,7 @@ public class MessagesActivity extends AppCompatActivity {
             protected MessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 MessageResponse messageResponse = new MessageResponse();
                 messageResponse.response = new Response();
-                mLoadingImageView.setVisibility(View.GONE);
+                //mLoadingImageView.setVisibility(View.GONE);
                 mIsLoading = false;
                 return messageResponse;
             }
@@ -196,7 +204,7 @@ public class MessagesActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(MessageResponse messageResponse) {
                 super.onPostExecute(messageResponse);
-                mLoadingImageView.setVisibility(View.GONE);
+                //mLoadingImageView.setVisibility(View.GONE);
                 mIsLoading = false;
                 List<MessageDetails> moreMessageList = null;
                 moreMessageList = new ArrayList<MessageDetails>();
@@ -204,7 +212,6 @@ public class MessagesActivity extends AppCompatActivity {
                 if (moreMessageList != null && moreMessageList.size() != 0) {
                     if (moreMessageList.size() < PAGE_SIZE) {
                         mIsLastPage = true;
-
                     }
                     messageList.addAll(moreMessageList);
                     adapter.notifyDataSetChanged();
@@ -312,7 +319,6 @@ public class MessagesActivity extends AppCompatActivity {
             super.onBackPressed();
             overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
         }
-
     }
 
     @Override

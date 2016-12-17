@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -25,7 +26,7 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
 
     private boolean mVideoPlayerShouldPlay = true;
     private VideoView videoView;
-
+    private boolean isMinimized = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,6 +146,23 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
             return  Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         }catch (Exception e){
             return null;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isMinimized=true;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(isMinimized)
+        {
+            startActivity(new Intent(this , WSplashScreenActivity.class));
+            isMinimized = false;
+            finish();
         }
     }
 }

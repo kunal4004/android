@@ -143,9 +143,9 @@
 
     <string name="nav_item_today">WTODAY</string>
     <string name="nav_item_products">PRODUCTS</string>
-    <string name="nav_item_store">STORES</string>
+    <string name="nav_item_store">STORES NEARBY</string>
     <string name="nav_item_wrewards">WREWARDS</string>
-    <string name="nav_item_accounts">ACCOUNTS</string>
+    <string name="nav_item_accounts">MY ACCOUNTS</string>
     <string name="increase_limit">INCREASE LIMIT</string>
     <string name="transactions">transactions</string>
     <string name="apply_now">APPLY NOW</string>
@@ -246,6 +246,9 @@
     <string name="accounts_walkthrough_title_2">WRewards at a glance</string>
     <string name="accounts_walkthrough_title_3">Financial services</string>
     <string name="accounts_walkthrough_title_4">GET STARTED</string>
+    <string name="connect_to_server">Cannot connect to server</string>
+    <string name="distance_in_km">km</string>
+    <string name="search_by_store_loc">Search by Store or Location</string>
 
     <!-- <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>

@@ -21,7 +21,19 @@
         android:minHeight="?attr/actionBarSize"
         app:popupTheme="@style/Messages"
         app:theme="@style/Messages"
-        app:title="Messages" />
+        app:title="" >
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/toolbarText"
+            app:WTextView_font="medium_bold"
+            android:textAllCaps="true"
+            android:gravity="left"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:text="MESSAGES"
+            />
+        </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 <FrameLayout
     android:layout_width="match_parent"

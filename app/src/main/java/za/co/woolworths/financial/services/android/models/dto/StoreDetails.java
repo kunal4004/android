@@ -15,6 +15,7 @@ public class StoreDetails {
     public double distance;
     public String address;
     public String phoneNumber;
+    public int isHeader;
     public List<StoreOfferings> offerings;
     public List<StoreTimeings> times;
 }
