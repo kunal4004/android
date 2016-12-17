@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -39,6 +41,8 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
 import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static java.security.AccessController.getContext;
 
 
 public class SearchStoresActivity extends AppCompatActivity implements View.OnClickListener {
@@ -131,8 +135,12 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         searchView.setIconified(false);
         SpannableMenuOption spannableMenuOption = new SpannableMenuOption(this);
         searchView.setQueryHint(spannableMenuOption.customSpannableSearch(getString(R.string.search_by_store_loc)));
-        ImageView searchCloseIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
-        searchCloseIcon.setImageResource(R.drawable.close_24);
+       // ImageView searchCloseIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+       // searchCloseIcon.setImageResource(R.drawable.close_24);
+        TextView searchText = (TextView)
+                searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Regular.otf");
+        searchText.setTypeface(font);
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {

@@ -28,6 +28,7 @@ import za.co.wigroup.logger.lib.WiGroupLogger;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
+import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.AccountsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
@@ -80,6 +81,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     WTextView sc_available_funds;
     WTextView cc_available_funds;
     WTextView pl_available_funds;
+    WTextView messageCounter;
 
     private ProgressDialog mGetAccountsProgressDialog;
     private ProgressBar scProgressBar;
@@ -124,6 +126,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         scProgressBar=(ProgressBar)view.findViewById(R.id.scProgressBar);
         ccProgressBar=(ProgressBar)view.findViewById(R.id.ccProgressBar);
         plProgressBar=(ProgressBar)view.findViewById(R.id.plProgressBar);
+        messageCounter=(WTextView)view.findViewById(R.id.messageCounter);
 
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
@@ -374,5 +377,51 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
     }
+    public void loadMessages() {
+        new HttpAsyncTask<String, String, MessageResponse>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
 
+            @Override
+            protected MessageResponse httpDoInBackground(String... params) {
+
+                return ((WoolworthsApplication) getActivity().getApplication()).getApi().getMessagesResponse(5, 1);
+            }
+
+            @Override
+            protected Class<MessageResponse> httpDoInBackgroundReturnType() {
+                return MessageResponse.class;
+            }
+
+            @Override
+            protected MessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                MessageResponse messageResponse = new MessageResponse();
+                messageResponse.response = new Response();
+                return messageResponse;
+            }
+
+            @Override
+            protected void onPostExecute(MessageResponse messageResponse) {
+
+                super.onPostExecute(messageResponse);
+               if( messageResponse.unreadCount>0)
+               {
+                   messageCounter.setVisibility(View.VISIBLE);
+                  messageCounter.setText(String.valueOf(messageResponse.unreadCount));
+               }else {
+                   messageCounter.setVisibility(View.GONE);
+               }
+
+
+            }
+        }.execute();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadMessages();
+    }
 }

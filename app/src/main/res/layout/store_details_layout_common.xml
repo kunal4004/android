@@ -74,11 +74,9 @@
             <RelativeLayout
                 android:id="@+id/direction"
                 android:layout_width="match_parent"
-                android:layout_height="71dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/stores_details_background"
-                android:paddingLeft="@dimen/default_margin"
-                android:paddingRight="@dimen/default_margin"
-                android:paddingTop="10dp">
+                android:padding="16dp">
 
                 <ImageView
                     android:id="@+id/imgDirection"
@@ -111,10 +109,9 @@
             <RelativeLayout
                 android:id="@+id/call"
                 android:layout_width="match_parent"
-                android:layout_height="71dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/stores_details_background"
-                android:paddingLeft="@dimen/default_margin"
-                android:paddingRight="@dimen/default_margin"
+                android:padding="16dp"
                 >
 
                 <ImageView
@@ -151,7 +148,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/stores_details_background"
+                android:background="@color/white"
                 android:paddingBottom="19dp"
                 android:paddingTop="10dp"
                 android:paddingLeft="@dimen/default_margin"
@@ -178,7 +175,7 @@
                 android:id="@+id/relBrandLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
+                android:background="@drawable/store_details_background_border_on_top"
                 android:paddingBottom="19dp"
                 android:paddingLeft="@dimen/default_margin"
                 android:paddingRight="@dimen/default_margin"
