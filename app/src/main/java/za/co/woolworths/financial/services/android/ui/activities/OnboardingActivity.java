@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 
 import com.awfs.coordination.R;
 
@@ -26,7 +25,7 @@ public class OnboardingActivity extends Activity {
         findViewById(R.id.btnOnboardingRegister).setOnClickListener(this.btnRegister_onClick);
     }
 
-    private View.OnClickListener txtSkip_onClick = new View.OnClickListener() {
+    private View.OnClickListener txtSkip_onClick =  new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             OnboardingActivity.this.navigateToMain();

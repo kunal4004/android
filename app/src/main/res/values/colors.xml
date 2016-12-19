@@ -26,4 +26,5 @@
     <color name="black_off">#343434</color>
     <color name="black_overlay">#66000000</color>
     <color name="recent_search_bg">#EFEFEF</color>
+    <color name="walkthrough_statusbar">#352F30</color>
 </resources>

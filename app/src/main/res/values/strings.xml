@@ -249,6 +249,7 @@
     <string name="connect_to_server">Cannot connect to server</string>
     <string name="distance_in_km">km</string>
     <string name="search_by_store_loc">Search by Store or Location</string>
+    <string name="skip">SKIP</string>
 
     <!-- <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
