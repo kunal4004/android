@@ -14,19 +14,25 @@ import android.widget.VideoView;
 
 import com.awfs.coordination.R;
 
+import java.io.IOException;
+
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.ApiInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
+import za.co.woolworths.financial.services.android.util.DatabaseHelper;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+
+import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCompletionListener {
 
     private boolean mVideoPlayerShouldPlay = true;
     private VideoView videoView;
     private boolean isMinimized = false;
+    DatabaseHelper dbHelper= null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +45,15 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
         this.videoView.start();
 
         this.videoView.setOnCompletionListener(this);
+
+        dbHelper = new DatabaseHelper(this, getFilesDir().getAbsolutePath());
+        try {
+            dbHelper.prepareDatabase();
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
+        dbHelper.getApirequest();
+
 
         //Mobile Config Server
         new HttpAsyncTask<String, String, ConfigResponse>() {
