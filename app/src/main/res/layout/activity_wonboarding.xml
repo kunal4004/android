@@ -111,7 +111,9 @@
             android:text="@string/skip"
             android:textColor="@color/white"
             android:id="@+id/txtSkip"
-            android:padding="8dp"
+            android:paddingLeft="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             android:textSize="14sp"
             style="@style/LabelSkipRight"
             android:layout_gravity="center_vertical"/>
