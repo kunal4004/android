@@ -250,6 +250,28 @@
     <string name="distance_in_km">km</string>
     <string name="search_by_store_loc">Search by Store or Location</string>
 
+    <string name="cli_continue">continue</string>
+    <string name="cli_credit_limit_increase">credit limit increase</string>
+    <string name="cli_before_we_get_started">before we get started</string>
+    <string name="cli_store_card_content">To help us calculate how much additional credit you can qualify for, please submit proof of income and answer a few quick and easy questions</string>
+
+    <string name="cli_gold_crd_credit_limit_increase">credit limit increase</string>
+    <string name="cli_gold_crd_before_we_get_started">before we get started</string>
+    <string name="cli_gold_crd_credit_card_content">To help us calculate how much additional credit you can qualify for, please submit proof of income and answer a few quick and easy questions</string>
+
+    <string name="cli_crd_credit_limit_increase">credit limit increase</string>
+    <string name="cli_crd_before_we_get_started">before we get started</string>
+    <string name="cli_crd_credit_card_content">To help us calculate how much additional credit you can qualify for, please submit proof of income and answer a few quick and easy questions</string>
+
+    <string name="cli_psl_credit_limit_increase">credit limit increase</string>
+    <string name="cli_psl_before_we_get_started">before we get started</string>
+    <string name="cli_psl_content">To help us calculate how much additional credit you can qualify for, please submit proof of income and answer a few quick and easy questions</string>
+
+
+    <string name="title_activity_cli">CLIActivity</string>
+    <string name="action_settings">Settings</string>
+
+
     <!-- <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>

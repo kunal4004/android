@@ -39,9 +39,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/toolbarText"
+                    android:letterSpacing="0.09"
                     app:WTextView_font="medium_bold"
                     android:textAllCaps="true"
                     android:textSize="12sp"
+                    android:layout_gravity="center"
                     android:textColor="@color/white"
                     android:text="Store card"
                     />
@@ -61,11 +63,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             >
-        <za.co.woolworths.financial.services.android.ui.views.WFragmentViewPager
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/fragmentpager"
-            />
+<TextView android:id="@+id/txStoreId"  android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="45dp" android:text="@string/accounts_walkthrough_desc_1"/>
+
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

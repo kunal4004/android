@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -16,10 +15,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,23 +27,17 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.ui.activities.AccountsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
-import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivityTest;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
-import za.co.woolworths.financial.services.android.ui.adapters.MyAccountsCardsAdapter;
-import za.co.woolworths.financial.services.android.ui.adapters.TestViewpagerAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-import static android.R.attr.id;
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 
@@ -58,7 +49,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     ImageView openMessageActivity;
     ImageView openShoppingList;
     RelativeLayout contactUs;
-    boolean isLoggedIn = false;
+    boolean isLoggedIn = true;
     boolean isCreditCard = false;
     boolean isStoreCard = false;
     boolean isPersonalCard = false;
@@ -143,6 +134,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         setUiPageViewController();
         setUpView(isLoggedIn,isStoreCard,isCreditCard,isPersonalCard);
         loadAccounts();
+
         return view;
     }
 
@@ -367,7 +359,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
     public void redirectToMyAccountsCardsActivity(int position)
     {
-        Intent intent=new Intent(getActivity(),MyAccountCardsActivityTest.class);
+        Intent intent=new Intent(getActivity(),CLIActivity.class);
         intent.putExtra("position",position);
         if(accounts!=null)
         {
@@ -413,8 +405,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                }else {
                    messageCounter.setVisibility(View.GONE);
                }
-
-
             }
         }.execute();
     }

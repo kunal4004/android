@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -27,21 +28,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
-import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 
 import static android.Manifest.permission_group.STORAGE;
-import static android.R.attr.format;
-import static android.R.attr.key;
-import static android.R.attr.type;
-import static android.R.id.edit;
-import static android.webkit.ConsoleMessage.MessageLevel.LOG;
-import static com.awfs.coordination.R.id.offerings;
-import static com.google.zxing.qrcode.decoder.ErrorCorrectionLevel.L;
 
 /**
  * Created by W7099877 on 26/10/2016.
@@ -240,11 +232,23 @@ public class Utils {
            Window window = activity.getWindow();
            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-           window.setStatusBarColor(activity.getResources().getColor(R.color.white));
+           window.setStatusBarColor(ContextCompat.getColor(activity, R.color.white));
            View decor = activity.getWindow().getDecorView();
            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
        }
    }
+
+    public static void updateStatusBarBackground(Activity activity, int color)
+    {
+        if (Build.VERSION.SDK_INT >= 21) {
+            Window window = activity.getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(ContextCompat.getColor(activity, color));
+            View decor = activity.getWindow().getDecorView();
+            decor.setSystemUiVisibility(0);
+        }
+    }
 
     public static  List<TransactionParentObj> getdata(List<Transaction> transactions)
     {
