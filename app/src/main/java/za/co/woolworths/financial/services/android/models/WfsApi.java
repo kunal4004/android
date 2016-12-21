@@ -4,14 +4,24 @@ import android.content.Context;
 import android.provider.Settings;
 
 import com.awfs.coordination.R;
+import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Protocol;
+import com.squareup.okhttp.ResponseBody;
 
-import org.json.JSONObject;
+import java.io.IOException;
+import java.util.ArrayList;
 
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
+
 import retrofit.RestAdapter;
 
 
+import retrofit.client.Client;
+import retrofit.client.Header;
+import retrofit.client.OkClient;
+import retrofit.client.Request;
+import retrofit.mime.TypedByteArray;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
@@ -32,21 +42,48 @@ import za.co.woolworths.financial.services.android.models.dto.ReadMessagesRespon
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 
+import static android.R.attr.value;
+
 public class WfsApi {
 
     private Context mContext;
     private ApiInterface mApiInterface;
+    String responseString="{}";
+
 
     protected WfsApi(Context mContext) {
         this.mContext = mContext;
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+       // HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        //interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient();
+        client.interceptors().add(new Interceptor() {
+            @Override
+            public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
+                com.squareup.okhttp.Request request=chain.request();
+              // com.squareup.okhttp.Response response = chain.proceed(request);
+                responseString="{\\\"accountList\\\": [ ],\\\"response\\\": {\\\"code\\\": \\\"-1\\\",\\\"desc\\\": \\\"Success\\\" }, \\\"httpCode\\\": 200}";
+                com.squareup.okhttp.Response res=null;
+                res=new com.squareup.okhttp.Response.Builder()
+                        .code(200)
+                        .message(responseString)
+                        .request(chain.request())
+                        .protocol(Protocol.HTTP_1_0)
+                        .body(ResponseBody.create(MediaType.parse("application/json"), responseString.getBytes()))
+                        .addHeader("content-type", "application/json")
+                        .build();
+             return res;
+            }
+        });
+
         mApiInterface = new RestAdapter.Builder()
+
+                .setClient(new OkClient(client))
                 .setEndpoint(WoolworthsApplication.getBaseURL())
                 .setLogLevel(Util.isDebug(mContext) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
                 .build()
                 .create(ApiInterface.class);
+
+
     }
 
     public LoginResponse login(LoginRequest loginRequest) {

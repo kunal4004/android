@@ -125,4 +125,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         while(cursor.moveToNext());
     }
+    public boolean addApiRequest()
+    {
+        return false;
+    }
+    public boolean addApiResponse()
+    {
+        return false;
+    }
+    public boolean addSession()
+    {
+        return false;
+    }
 }

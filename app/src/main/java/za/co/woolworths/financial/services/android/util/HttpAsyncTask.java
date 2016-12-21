@@ -56,7 +56,9 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
     private Result getResultFromDoInBackground(Params... params) throws Exception{
         Result result = null;
         try{
+
             result = httpDoInBackground(params);
+
         }
         catch (RetrofitError retrofitError){
             if(retrofitError.getKind() == RetrofitError.Kind.NETWORK){
