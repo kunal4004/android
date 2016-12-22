@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
@@ -40,7 +41,7 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
         WTextView txtDate;
         WTextView txtBody;
         ImageView imgdelete;
-        RelativeLayout cardlayout;
+        LinearLayout cardlayout;
         View tranparentView;
 
         public SimpleViewHolder(View itemView) {
@@ -50,21 +51,22 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
             txtDate=(WTextView)itemView.findViewById(R.id.date);
             txtBody=(WTextView)itemView.findViewById(R.id.bodyMessage);
             imgdelete=(ImageView)itemView.findViewById(R.id.msgDelete);
-            cardlayout=(RelativeLayout)itemView.findViewById(R.id.cardLayout);
+            cardlayout=(LinearLayout)itemView.findViewById(R.id.cardLayout);
             tranparentView=(View)itemView.findViewById(R.id.transparentview);
         }
     }
 
     @Override
     public void onBindViewHolder(final SimpleViewHolder viewHolder, final int position) {
+
         viewHolder.txtTitle.setText(messageDetailsList.get(position).title);
         viewHolder.txtBody.setText(messageDetailsList.get(position).content);
         if(messageDetailsList.get(position).isRead) {
-            // viewHolder.cardlayout.getBackground().setAlpha(50);
-            viewHolder.tranparentView.setVisibility(View.VISIBLE);
+            viewHolder.cardlayout.setAlpha(0.5f);
         }
         else {
-            viewHolder.tranparentView.setVisibility(View.INVISIBLE);
+            viewHolder.cardlayout.setAlpha(1f);
+
         }
         try{
             viewHolder.txtDate.setText(WFormatter.formatMessagingDate(messageDetailsList.get(position).createDate));
