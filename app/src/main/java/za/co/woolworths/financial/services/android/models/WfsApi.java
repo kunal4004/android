@@ -70,19 +70,39 @@ public class WfsApi {
             @Override
             public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
                 com.squareup.okhttp.Request request=chain.request();
-              // com.squareup.okhttp.Response response = chain.proceed(request);
-                //responseString="{\\\"accountList\\\": [ ],\\\"response\\\": {\\\"code\\\": \\\"-1\\\",\\\"desc\\\": \\\"Success\\\" }, \\\"httpCode\\\": 200}";
-               responseString=dbHelper.getApiResponse(3);
-                com.squareup.okhttp.Response res=null;
-                res=new com.squareup.okhttp.Response.Builder()
-                        .code(200)
-                        .message(responseString)
-                        .request(chain.request())
-                        .protocol(Protocol.HTTP_1_0)
-                        .body(ResponseBody.create(MediaType.parse("application/json"), responseString.getBytes()))
-                        .addHeader("content-type", "application/json")
-                        .build();
-             return res;
+                String endpoint=request.urlString().replace(WoolworthsApplication.getBaseURL(),"");
+
+                if(true){
+                    //user does no have cache
+                    //this means that there is
+                    //no cache and that we have to make the
+                    //service call
+                    //1. make service call
+                    com.squareup.okhttp.Response response = chain.proceed(request);
+
+                    //2.save new apirequest whici returns an id
+
+
+                    //3.create response with requestid
+
+                    //4.return service call data
+                    return response;
+                }else{
+
+                    //cache exists, send cache response
+                    //back to user
+                    responseString=dbHelper.getApiResponse(3);
+                    com.squareup.okhttp.Response res=null;
+                    res=new com.squareup.okhttp.Response.Builder()
+                            .code(200)
+                            .message(endpoint)
+                            .request(chain.request())
+                            .protocol(Protocol.HTTP_1_0)
+                            .body(ResponseBody.create(MediaType.parse("application/json"), responseString.getBytes()))
+                            .addHeader("content-type", "application/json")
+                            .build();
+                    return res;
+                }
             }
         });
 
