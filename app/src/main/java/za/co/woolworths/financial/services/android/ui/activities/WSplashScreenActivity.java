@@ -49,6 +49,7 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
         dbHelper = new DatabaseHelper(this, getFilesDir().getAbsolutePath());
         try {
             dbHelper.prepareDatabase();
+
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }

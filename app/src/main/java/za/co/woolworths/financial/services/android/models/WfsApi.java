@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.models;
 
 import android.content.Context;
 import android.provider.Settings;
+import android.util.Log;
 
 import com.awfs.coordination.R;
 import com.squareup.okhttp.Interceptor;
@@ -41,18 +42,27 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.util.DatabaseHelper;
 
 import static android.R.attr.value;
+import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class WfsApi {
 
     private Context mContext;
     private ApiInterface mApiInterface;
     String responseString="{}";
+    DatabaseHelper dbHelper;
 
 
     protected WfsApi(Context mContext) {
         this.mContext = mContext;
+        dbHelper=new DatabaseHelper(mContext,mContext.getFilesDir().getAbsolutePath());
+        try {
+            dbHelper.prepareDatabase();
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage());
+        }
        // HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         //interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient();
@@ -61,7 +71,8 @@ public class WfsApi {
             public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
                 com.squareup.okhttp.Request request=chain.request();
               // com.squareup.okhttp.Response response = chain.proceed(request);
-                responseString="{\\\"accountList\\\": [ ],\\\"response\\\": {\\\"code\\\": \\\"-1\\\",\\\"desc\\\": \\\"Success\\\" }, \\\"httpCode\\\": 200}";
+                //responseString="{\\\"accountList\\\": [ ],\\\"response\\\": {\\\"code\\\": \\\"-1\\\",\\\"desc\\\": \\\"Success\\\" }, \\\"httpCode\\\": 200}";
+               responseString=dbHelper.getApiResponse(3);
                 com.squareup.okhttp.Response res=null;
                 res=new com.squareup.okhttp.Response.Builder()
                         .code(200)

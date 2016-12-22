@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created by W7099877 on 19/12/2016.
@@ -22,6 +23,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private final Context myContext;
     private static final String DATABASE_NAME = "OneApp.db";
     private static final int DATABASE_VERSION = 1;
+    //=======TABLES=========
+    private static final String API_REQUEST_TABLE= "ApiRequest";
+    private static final String API_RESPONSE_TABLE= "ApiResponse";
+    private static final String SESSION_TABLE= "Session";
+
+    //======API_REQUEST Table Columns names=====
+    private static final String REQUEST_ID="id";
+    private static final String REQUEST_ENDPOINT="endpoint";
+    private static final String REQUEST_TYPE="requestType";
+    private static final String REQUEST_HEADERS="headers";
+    private static final String REQUEST_PARAMETERS="parameters";
+    private static final String REQUEST_DATE_CREATED="dateCreated";
+    private static final String REQUEST_DATE_UPDATED="dateUpdated";
+    private static final String REQUEST_DATE_EXPIRES="dateExpires";
+
+    //======API_RESPONSE Table Columns names=====
+    private static final String RESPONSE_ID="id";
+    private static final String RESPONSE_REQUEST_ID="apiRequestId";
+    private static final String RESPONSE_HANDLER="responseHandler";
+    private static final String RESPONSE_OBJECT="responseObject";
+    private static final String RESPONSE_DATE_CREATED="dateCreated";
+    private static final String RESPONSE_DATE_UPDATED="dateUpdated";
+
+    //======SESSION Table Columns names=====
+    private static final String SESSION_ID="id";
+    private static final String SESSION_KEY="key";
+    private static final String SESSION_VALUE="value";
+    private static final String SESSION_DATA="data";
+    private static final String SESSION_DATE_CREATED="dateCreated";
+    private static final String SESSION_DATE_UPDATED="dateUpdated";
+
+
+
+
+
     private String pathToSaveDBFile;
     public DatabaseHelper(Context context, String filePath) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -101,17 +137,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         while(cursor.moveToNext());
 
     }
-    public void getApiResponse()
+    public String getApiResponse(int requestId)
     {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
-        String query = "SELECT * FROM ApiResponse";
+        String query = "SELECT * FROM " +API_RESPONSE_TABLE+ " WHERE " +RESPONSE_REQUEST_ID+" = "+requestId;
         Cursor cursor = db.rawQuery(query, null);
-        cursor.moveToFirst();
-        do{
-            System.out.println("AAAAAAAAAAAAAAAAAAAA"+cursor.getString(0));
-
+        if (cursor!=null)
+              cursor.moveToFirst();
+        String response="";
+        try {
+            response=new String (cursor.getBlob(cursor.getColumnIndex(RESPONSE_OBJECT)),"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
-        while(cursor.moveToNext());
+        return  response;
+
     }
 
     public void getSession()
