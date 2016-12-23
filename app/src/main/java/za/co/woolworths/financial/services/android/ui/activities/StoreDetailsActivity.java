@@ -132,6 +132,9 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 
     @Override
     public void onBackPressed() {
+        //Expected result: Switch to previous state
+        //Previous result: The app exits
+        //New Result: Switches back to previous state
         super.onBackPressed();
         overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
         this.finish();
