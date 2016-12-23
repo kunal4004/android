@@ -117,6 +117,12 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StoreSearch" />
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StoreSearch" />
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity"
             android:screenOrientation="portrait"
@@ -173,6 +179,10 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity"
             android:theme="@style/WTransaction"></activity>
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.CLISupplyInfoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/StoreSearch" />
     </application>
 
 </manifest>

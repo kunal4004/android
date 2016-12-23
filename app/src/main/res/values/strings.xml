@@ -267,20 +267,47 @@
     <string name="cli_psl_before_we_get_started">before we get started</string>
     <string name="cli_psl_content">To help us calculate how much additional credit you can qualify for, please submit proof of income and answer a few quick and easy questions</string>
 
-
     <string name="title_activity_cli">CLIActivity</string>
     <string name="action_settings">Settings</string>
 
-
-    <!-- <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string name="action_example">Example action</string>
-
-    <string name="action_settings">Settings</string>-->
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="cli_credit_limit_amount">Credit Limit Amount</string>
+    <string name="cli_select_your_bank">Select your bank</string>
+    <string name="cli_rand_60000">R60 000</string>
+    <string name="cli_others">Others</string>
+    <string name="cli_apply_insolvency">Have you applied for insolvency, debt counselling or an administration order or are you currently insolvent or under debt councelling or administration? </string>
+    <string name="cli_solvency_agreement">I agree that Woolworths Financial Services may request and receive any of my confidential consumer credit information from any credit bureau or third party at any time, including obtaining a bureau score to determine my creditworthiness. </string>
+    <string name="cli_proof_income">I agree that Woolworths Financial Services may request and receive three months of my bank statements from my bank or any third party at any time as proof of income.</string>
+    <string name="cli_confirm_information">DO YOU CONFIRM THAT ALL INFORMATION SUPPLIED IS CORRECT?</string>
+    <string name="cli_other_expenses">Other Expenses</string>
+    <string name="cli_monthly_credit_payment">Monthly Credit Payments</string>
+    <string name="cli_maintenance_expenses">Maintenance Expenses</string>
+    <string name="cli_rental_payments">Rental Payments</string>
+    <string name="cli_mortgage_payments">Mortgage Payments</string>
+    <string name="cli_additional_monthly_income">Additional Monthly Income</string>
+    <string name="cli_net_monthly_income">Net Monthly Income</string>
+    <string name="cli_monthly_income">Gross Monthly Income</string>
+    <string name="cli_yes">YES</string>
+    <string name="cli_no">No</string>
+    <string name="cli_account_type">ACCOUNT TYPE</string>
+    <string name="cli_complete_process">COMPLETE PROCESS</string>
+    <string name="cli_credit_limit_received">Credit limit increase\nrequest received</string>
+    <string name="cli_contact_delay">We will be in contact with the outcome of our review in approximately 2-3 business days.</string>
+    <string name="cli_back_to_acc">Back to my accounts</string>
+    <string name="cli_income_proof">proof of income</string>
+    <string name="cli_require_document">In order to complete your application we require some documents from you. There are 3 ways to supply this to us.</string>
+    <string name="cli_send_document_title">%s ways to send your documents</string>
+    <string name="cli_option_one">OPTION ONe</string>
+    <string name="cli_option_two">OPTION two</string>
+    <string name="cli_option_three">OPTION three</string>
+    <string name="cli_option_one_desc">Take a photo of your latest 3 month bank statement or last 3 payslips, attach to email include Full Name and reference as subject line.</string>
+    <string name="cli_option_two_desc">Select documents from your drive attach to email include Full name and reference as the subject line.</string>
+    <string name="cli_option_three_desc">Fax documents to 021 407 93 43 with Full name and reference number.</string>
+    <string name="cli_send_mail">SEND MAIL</string>
+    <string name="loading">LOADING…</string>
+    <string name="cli_select_bank_error">Please select a bank</string>
+    <string name="cli_enter_acc_number_error">Please enter your account number</string>
+    <string name="cli_select_acc_type">Please select your account type</string>
+    <string name="cli_email_address">We will send further instructions to your email:\n<b>xxxx@xxxx.com</b></string>
 
 </resources>

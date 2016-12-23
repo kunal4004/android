@@ -83,8 +83,15 @@
         <item name="android:homeAsUpIndicator">@drawable/back24</item>
         <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
     </style>
-    <style name="WSearchViewStyle" parent="Widget.AppCompat.SearchView">
 
+    <style name="CLI" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="searchViewStyle">@style/WSearchViewStyle</item>
+        <item name="android:homeAsUpIndicator">@drawable/back24</item>
+    </style>
+
+    <style name="WSearchViewStyle" parent="Widget.AppCompat.SearchView">
         <item name="searchHintIcon">@null</item>
         <item name="queryBackground">@null</item>
 

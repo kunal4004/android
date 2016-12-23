@@ -55,4 +55,39 @@
         <item>@drawable/ic_drw_wrewards</item>
         <item>@drawable/ic_drw_accounts</item>
     </integer-array>
+    <string-array name="cl_amount">
+        <item>R60 000</item>
+        <item>R45 000</item>
+        <item>R15 000</item>
+        <item>R20 000</item>
+        <item>R12 000</item>
+        <item>R7 000</item>
+        <item>R10 000</item>
+        <item>R14 000</item>
+    </string-array>
+    <string-array name="cl_label">
+        <item>@string/cli_monthly_income</item>
+        <item>@string/cli_net_monthly_income</item>
+        <item>@string/cli_additional_monthly_income</item>
+        <item>@string/cli_mortgage_payments</item>
+        <item>@string/cli_rental_payments</item>
+        <item>@string/cli_maintenance_expenses</item>
+        <item>@string/cli_monthly_credit_payment</item>
+        <item>@string/cli_other_expenses</item>
+    </string-array>
+    <string-array name="cli_option">
+        <item>@string/cli_option_one</item>
+        <item>@string/cli_option_two</item>
+        <item>@string/cli_option_three</item>
+    </string-array>
+    <string-array name="cli_option_desc">
+        <item>@string/cli_option_one_desc</item>
+        <item>@string/cli_option_two_desc</item>
+        <item>@string/cli_option_three_desc</item>
+    </string-array>
+    <array name="cli_drawable">
+        <item>@drawable/icon_paperclip</item>
+        <item>@drawable/icon_clip</item>
+        <item>@drawable/icon_fax</item>
+    </array>
 </resources>

@@ -50,9 +50,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     ImageView openShoppingList;
     RelativeLayout contactUs;
     boolean isLoggedIn = true;
-    boolean isCreditCard = false;
-    boolean isStoreCard = false;
-    boolean isPersonalCard = false;
+    boolean isCreditCard = true;
+    boolean isStoreCard = true;
+    boolean isPersonalCard = true;
     CardView applyCreditCardView;
     CardView applyStoreCardView;
     CardView applyPersonalCardView;
@@ -133,7 +133,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         viewPager.addOnPageChangeListener(this);
         setUiPageViewController();
         setUpView(isLoggedIn,isStoreCard,isCreditCard,isPersonalCard);
-        loadAccounts();
+        //loadAccounts();
 
         return view;
     }

@@ -17,10 +17,12 @@ import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanResponse;
+import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
+import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeleteMessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse;
@@ -241,6 +243,36 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Body CreateUpdateDevice device
     );
-
-
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @GET("/user/cli/DEABanks")
+    DeaBanks getDeaBanks(
+            @Header("apiId") String apiId,
+            @Header("sha1Password") String sha1Password,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("deviceModel") String deviceModel,
+            @Header("network") String network,
+            @Header("os") String os,
+            @Header("osVersion") String osVersion,
+            @Header("userAgent") String userAgent,
+            @Header("userAgentVersion") String userAgentVersion,
+            @Header("sessionToken") String sessionToken,
+            @Query("pageSize") int pageSize,
+            @Query("pageNumber") int pageNumber
+    );
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @GET("/user/cli/DEABankAccountTypes")
+    BankAccountTypes getBankAccountTypes(
+            @Header("apiId") String apiId,
+            @Header("sha1Password") String sha1Password,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("deviceModel") String deviceModel,
+            @Header("network") String network,
+            @Header("os") String os,
+            @Header("osVersion") String osVersion,
+            @Header("userAgent") String userAgent,
+            @Header("userAgentVersion") String userAgentVersion,
+            @Header("sessionToken") String sessionToken,
+            @Query("pageSize") int pageSize,
+            @Query("pageNumber") int pageNumber
+    );
 }

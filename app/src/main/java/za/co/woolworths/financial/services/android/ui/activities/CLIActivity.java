@@ -2,7 +2,9 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -51,6 +53,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         setListener();
         setActionBar();
         setPagerCard();
+        setAppBarDragging(false);
     }
 
     public void setCurrentIndex(){
@@ -149,6 +152,21 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         return arrCLI;
     }
 
+    private void setAppBarDragging(final boolean newValue) {
+        AppBarLayout mAppBarLayout = (AppBarLayout) findViewById(R.id.mAppBarLayout);
+        CoordinatorLayout.LayoutParams params =
+                (CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams();
+        AppBarLayout.Behavior behavior = new AppBarLayout.Behavior();
+        behavior.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
+            @Override
+            public boolean canDrag(AppBarLayout appBarLayout) {
+                return newValue;
+            }
+        });
+        params.setBehavior(behavior);
+    }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -169,7 +187,20 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.btnContinue:
-                Toast.makeText(this,"continue",Toast.LENGTH_SHORT).show();
+                switch (mPosition){
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                }
+                Intent openCLIStepIndicator = new Intent(CLIActivity.this,CLISupplyInfoActivity.class);
+                startActivity(openCLIStepIndicator);
+                finish();
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
         }
     }

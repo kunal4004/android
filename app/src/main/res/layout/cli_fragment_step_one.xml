@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sliding_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    sothree:umanoDragView="@+id/detailsView"
+    sothree:umanoOverlay="true"
+    sothree:umanoPanelHeight="0dp"
+    sothree:umanoParallaxOffset="100dp"
+    sothree:umanoScrollableView="@+id/list"
+    sothree:umanoShadowHeight="4dp">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+    <include layout="@layout/horizontal_divider"/>
+
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/mNestedScrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+<LinearLayout
+    android:id="@+id/llNestedDeoBank"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_width="wrap_content">
+
+    <include layout="@layout/cli_info_contents"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycleList"
+        android:layout_width="match_parent"
+        android:clipToPadding="false"
+        android:layout_height="wrap_content"/>
+
+    <include layout="@layout/cli_button_wrap"/>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+</LinearLayout>
+    <LinearLayout
+        android:id="@+id/llNestedDoBank"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_width="wrap_content">
+        <include layout="@layout/cli_footer_binder"/>
+        </LinearLayout>
+    </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>

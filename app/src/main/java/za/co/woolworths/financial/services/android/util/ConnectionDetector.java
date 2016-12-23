@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.util;
 
+import android.os.Handler;
+
 import java.io.IOException;
 
 /**

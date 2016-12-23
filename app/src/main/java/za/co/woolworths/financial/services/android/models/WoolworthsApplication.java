@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 
 
 public class WoolworthsApplication extends Application {
@@ -43,6 +44,8 @@ public class WoolworthsApplication extends Application {
     private static String sha1Password;
 
     private static int NumVouchers =0;
+
+    public UpdateBankDetail updateBankDetail;
 
     public static void setSha1Password(String sha1Password) {
         WoolworthsApplication.sha1Password = sha1Password;
@@ -135,6 +138,7 @@ public class WoolworthsApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        updateBankDetail = new UpdateBankDetail();
         WoolworthsApplication.context = this.getApplicationContext();
         Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
         CalligraphyConfig.initDefault("fonts/WFutura-medium.ttf", R.attr.fontPath);

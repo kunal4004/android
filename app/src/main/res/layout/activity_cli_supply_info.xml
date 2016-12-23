@@ -1,0 +1,118 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    xmlns:sothree="http://schemas.android.com/tools"
+    android:background="@color/white"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:contentScrim="@color/white"
+            app:statusBarScrim="@null"
+            app:titleEnabled="false"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin" >
+                <include layout="@layout/cli_custom_step"/>
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.CollapsingToolbarLayout>
+        </android.support.design.widget.AppBarLayout>
+
+    <za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:id="@+id/mSlideUpPanel"
+        sothree:umanoDragView="@+id/llSlideUp"
+        sothree:umanoOverlay="true"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:clipToPadding="false"
+        app:umanoClipPanel="true"
+        app:umanoPanelHeight="300dp"
+        sothree:umanoParallaxOffset="100dp"
+        sothree:umanoScrollableView="@+id/list"
+        sothree:umanoShadowHeight="4dp">
+    <LinearLayout
+            android:id="@+id/linStepIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <include layout="@layout/horizontal_divider"/>
+
+            <android.support.v4.widget.NestedScrollView
+                android:id="@+id/mNestedScrollview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                <LinearLayout
+                    android:id="@+id/llNestedDeoBank"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content">
+
+                    <include layout="@layout/cli_info_contents"/>
+
+                    <include layout="@layout/cli_yes_no_row"/>
+
+                    <include layout="@layout/cli_yes_no_confidential_credit_row"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycleList"
+                        android:layout_width="match_parent"
+                        android:clipToPadding="false"
+                        android:layout_height="wrap_content"/>
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/textConfirmInformation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="0.04"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:layout_marginTop="@dimen/bank_spacing_width"
+                        app:WTextView_font="medium_bold"
+                        android:lineSpacingExtra="10dp"
+                        android:textColor="@color/black"
+                        android:text="@string/cli_confirm_information"
+                        />
+
+                    <include layout="@layout/cli_footer_binder"/>
+
+                </LinearLayout>
+
+            </android.support.v4.widget.NestedScrollView>
+
+        </LinearLayout>
+        <LinearLayout android:id="@+id/llSlideUp"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="50"
+            android:layout_height="match_parent">
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.04"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/bank_spacing_width"
+                app:WTextView_font="medium_bold"
+                android:lineSpacingExtra="10dp"
+                android:textColor="@color/black"
+                android:text="@string/cli_confirm_information"
+                />
+        </LinearLayout>
+    </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
+</android.support.design.widget.CoordinatorLayout>
