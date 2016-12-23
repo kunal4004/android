@@ -20,7 +20,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -163,10 +162,14 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-
                         if(newText.isEmpty()) {
-                            storeDetailsList.clear();
-                          showRecentSearchHistoryView(true);
+                            //if storeDetailsList is null before clearing it we get NullPointerException
+                            //Therefore we check if it is null before clearing it
+                            if (storeDetailsList != null) {
+                                storeDetailsList.clear();
+                            }
+
+                            showRecentSearchHistoryView(true);
                         }
                         else {
                             showRecentSearchHistoryView(false);
