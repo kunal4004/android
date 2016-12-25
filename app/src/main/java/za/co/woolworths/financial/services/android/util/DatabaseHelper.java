@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.util;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,12 +8,23 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.squareup.okhttp.Headers;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.internal.framed.Header;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import retrofit.http.Body;
+
+import static com.awfs.coordination.R.drawable.cursor;
 
 /**
  * Created by W7099877 on 19/12/2016.
@@ -124,18 +136,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public void getApirequest()
+    public int checkApirequest(String endpoint, String requestType, String heardes, String body)
     {
+        int requestId=0;
+        String[] columns = {REQUEST_ID};
+        String selection=REQUEST_ENDPOINT+"=? and "+REQUEST_TYPE+"=? and "+REQUEST_HEADERS+"=? and "+REQUEST_PARAMETERS+"=? and "+REQUEST_DATE_EXPIRES+">?";
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
-        String query = "SELECT * FROM ApiRequest";
-        Cursor cursor = db.rawQuery(query, null);
-        cursor.moveToFirst();
-        do{
-            System.out.println("AAAAAAAAAAAAAAAAAAAA"+cursor.getString(0));
+       // String query = "SELECT * FROM "+API_REQUEST_TABLE+" WHERE "+REQUEST_ENDPOINT+" = "+endpoint+" AND "+REQUEST_TYPE+" = "+requestType+" AND "+REQUEST_HEADERS+" = "+heardes.toString()+" AND "+REQUEST_PARAMETERS+" = "+body+" AND "+REQUEST_DATE_EXPIRES+" > "+getCurrentTime();
+        //String query = "SELECT * FROM "+API_REQUEST_TABLE+" WHERE "+REQUEST_ENDPOINT+" = "+endpoint;
+       // Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor=db.query(API_REQUEST_TABLE,columns,selection, new String[] { endpoint,requestType,heardes,body,getCurrentTime() }, null, null, null);
+         if(cursor != null && cursor.moveToFirst()) {
+             requestId = cursor.getInt(cursor.getColumnIndex(REQUEST_ID));
 
-        }
-        while(cursor.moveToNext());
+         }
 
+         return requestId;
     }
     public String getApiResponse(int requestId)
     {
@@ -153,6 +169,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return  response;
 
     }
+    public int addApIRequest(String endpoint, String requestType, String heardes, String body)
+    {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+        ContentValues row = new ContentValues();
+        row.put(REQUEST_ENDPOINT,endpoint);
+        row.put(REQUEST_TYPE,requestType);
+        row.put(REQUEST_HEADERS,heardes);
+        row.put(REQUEST_PARAMETERS,body);
+        row.put(REQUEST_DATE_CREATED,getCurrentTime());
+        row.put(REQUEST_DATE_EXPIRES,getExpireTime());
+        long id=db.insert(API_REQUEST_TABLE,null,row);
+      //  String query="INSERT INTO "+API_REQUEST_TABLE+" VALUES "+" ( "+endpoint+" , "+requestType+" , "+heardes+" , "+body+"  , "+endpoint+" , "+endpoint+" , "+" ) ";
+         return (int) id;
+    }
+    public void addApIResponse(String response,int requestId,int responseHandler )
+    {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+        ContentValues row = new ContentValues();
+        row.put(RESPONSE_REQUEST_ID,requestId);
+        row.put(RESPONSE_OBJECT,response);
+        row.put(RESPONSE_HANDLER,responseHandler);
+        db.insert(API_RESPONSE_TABLE,null,row);
+
+    }
+     public boolean checkResponseHandler(int requestId)
+     {
+         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+         String query = "SELECT * FROM " +API_RESPONSE_TABLE+ " WHERE " +RESPONSE_REQUEST_ID+" = "+requestId;
+         Cursor cursor = db.rawQuery(query, null);
+         if(cursor!=null)
+               cursor.moveToFirst();
+
+         int responseHandler=cursor.getInt(cursor.getColumnIndex(RESPONSE_HANDLER));
+         if(responseHandler==0)
+             return false;
+         else
+             return true;
+     }
 
     public void getSession()
     {
@@ -165,16 +219,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         while(cursor.moveToNext());
     }
-    public boolean addApiRequest()
+
+
+
+    public String getCurrentTime()
     {
-        return false;
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:MM:SS");
+        Date date = new Date(System.currentTimeMillis());
+        String value=dateFormat.format(date);
+        return value;
     }
-    public boolean addApiResponse()
+
+    public String getExpireTime()
     {
-        return false;
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:MM:SS");
+        Date date = new Date(System.currentTimeMillis()+10*60*1000);
+        String value=dateFormat.format(date);
+        return value;
     }
-    public boolean addSession()
+
+    public void show()
     {
-        return false;
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
+        String query = "SELECT * FROM " +API_RESPONSE_TABLE;
+        Cursor cursor = db.rawQuery(query, null);
+        if(cursor!=null) {
+            cursor.moveToFirst();
+            do {
+                int id=cursor.getInt(cursor.getColumnIndex("id"));
+                Log.d(TAG, "RESPONSE TABLE "+id);
+                int j=id;
+
+            }
+            while (cursor.moveToNext());
+        }
     }
 }

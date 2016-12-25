@@ -53,8 +53,6 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
-        dbHelper.getApirequest();
-
 
         //Mobile Config Server
         new HttpAsyncTask<String, String, ConfigResponse>() {

@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -9,12 +10,15 @@ import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Protocol;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 
+import okio.Buffer;
 import retrofit.RestAdapter;
 
 
@@ -45,13 +49,14 @@ import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.util.DatabaseHelper;
 
 import static android.R.attr.value;
+import static com.awfs.coordination.R.drawable.cursor;
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class WfsApi {
 
     private Context mContext;
     private ApiInterface mApiInterface;
-    String responseString="{}";
+    String responseString="{\"accountList\": [ ],\"response\": {  \"code\": \"-1\", \"desc\": \"Success\" }, \"httpCode\": 200}";
     DatabaseHelper dbHelper;
 
 
@@ -63,46 +68,75 @@ public class WfsApi {
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
-       // HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        //interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+
+
         OkHttpClient client = new OkHttpClient();
         client.interceptors().add(new Interceptor() {
             @Override
             public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
-                com.squareup.okhttp.Request request=chain.request();
-                String endpoint=request.urlString().replace(WoolworthsApplication.getBaseURL(),"");
+                boolean isCached=false;
+                int requestId=0;
+                com.squareup.okhttp.Request request = chain.request();
+                String endpoint = request.urlString().replace(WoolworthsApplication.getBaseURL(), "");
 
-                if(true){
-                    //user does no have cache
-                    //this means that there is
-                    //no cache and that we have to make the
-                    //service call
-                    //1. make service call
-                    com.squareup.okhttp.Response response = chain.proceed(request);
+                int id = dbHelper.checkApirequest(endpoint, request.method(), request.headers().toString(), bodyToString(request.body()));
+                if (id>0) {
 
-                    //2.save new apirequest whici returns an id
-
-
-                    //3.create response with requestid
-
-                    //4.return service call data
-                    return response;
-                }else{
-
-                    //cache exists, send cache response
-                    //back to user
-                    responseString=dbHelper.getApiResponse(3);
-                    com.squareup.okhttp.Response res=null;
-                    res=new com.squareup.okhttp.Response.Builder()
-                            .code(200)
-                            .message(endpoint)
-                            .request(chain.request())
-                            .protocol(Protocol.HTTP_1_0)
-                            .body(ResponseBody.create(MediaType.parse("application/json"), responseString.getBytes()))
-                            .addHeader("content-type", "application/json")
-                            .build();
-                    return res;
+                    requestId = id;
+                    isCached = true;
                 }
+                if (isCached) {
+                    if (dbHelper.checkResponseHandler(requestId)) {
+                        responseString = dbHelper.getApiResponse(requestId);
+                        Response res = null;
+                        res = new Response.Builder()
+                                  .code(200)
+                                  .message(responseString)
+                                .request(chain.request())
+                                .protocol(Protocol.HTTP_1_0)
+                                .body(ResponseBody.create(MediaType.parse("application/json"), responseString.getBytes()))
+                                .addHeader("content-type", "application/json")
+                                .build();
+                        return res;
+                    } else {
+                        Response response = chain.proceed(request);
+                        int code=0;
+                        if(response.code()==200)
+                            code=1;
+
+                        int requestID= dbHelper.addApIRequest(endpoint,request.method(),request.headers().toString(),bodyToString(request.body()));
+                        dbHelper.addApIResponse(response.body().string(),requestID,code);
+                        return response;
+
+                    }
+
+
+                } else {
+                    //return proceedRequest(endpoint, chain, request);
+                    com.squareup.okhttp.Response response  = chain.proceed(request);
+
+
+                    int code=0;
+                    if(response.code()==200)
+                        code=1;
+                    int requestID= dbHelper.addApIRequest(endpoint,request.method(),request.headers().toString(),bodyToString(request.body()));
+                    dbHelper.addApIResponse(response.body().string(),requestID,code);
+
+                    return response;
+                }
+
+             /*   Response res = null;
+                res = new Response.Builder()
+                          .code(200)
+                          .message(responseString)
+                        .request(chain.request())
+                        .protocol(Protocol.HTTP_1_0)
+                        .body(ResponseBody.create(MediaType.parse("application/json"), responseString.getBytes()))
+                        .addHeader("content-type", "application/json")
+                        .build();
+                return res;*/
+
             }
         });
 
@@ -113,6 +147,7 @@ public class WfsApi {
                 .setLogLevel(Util.isDebug(mContext) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
                 .build()
                 .create(ApiInterface.class);
+
 
 
     }
@@ -222,4 +257,37 @@ public class WfsApi {
                 .create(ApiInterface.class);
         return mApiInterface.getConfig("wfsAndroid",getDeviceID());
     }*/
+
+    public Response proceedRequest(String endpoint,Interceptor.Chain chain, com.squareup.okhttp.Request request)
+    {
+        Response response = null;
+        final int SUCCESS_CODE=200;
+        try {
+            response = chain.proceed(request);
+            int code=0;
+            if(response.code()==SUCCESS_CODE)
+                code=1;
+            int requestID= dbHelper.addApIRequest(endpoint,request.method(),request.headers().toString(),request.body().toString());
+            dbHelper.addApIResponse(response.body().string(),requestID,code);
+            return response;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    private String bodyToString(final RequestBody request) {
+        try {
+            final RequestBody copy = request;
+            final Buffer buffer = new Buffer();
+            if (copy != null)
+                copy.writeTo(buffer);
+            else
+                return "";
+            return buffer.readUtf8();
+        } catch (final IOException e) {
+            return "did not work";
+        }
+    }
 }
