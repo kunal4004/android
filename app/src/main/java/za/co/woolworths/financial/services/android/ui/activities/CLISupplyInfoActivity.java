@@ -1,9 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,10 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -24,17 +23,21 @@ import com.awfs.coordination.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
+import za.co.woolworths.financial.services.android.models.dto.CreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreditLimit;
+import za.co.woolworths.financial.services.android.models.dto.OfferResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.CLICreditLimitAdapter;
-import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.StepIndicator;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICreditLimitContentBinder;
 
-import static com.google.android.gms.wearable.DataMap.TAG;
-import static za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity.mToolbar;
 
 /**
  * Created by dimitrij on 2016/12/20.
@@ -56,11 +59,13 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     private RadioButton mRadioYesConfidentialCredit;
     private RadioButton mRadioNoConfidentialCredit;
     private WTextView mTextApplySolvency;
-    private SlidingUpPanelLayout mSlideUpPanel;
     private ActionBar mActionBar;
-    private AppBarLayout mAppBarLatout;
     private ImageView mImageCreditAmount;
-    private LinearLayout mLinSlideUp;
+    private Toolbar mToolbar;
+    private List<CreditLimit> mArrCreditLimit;
+    public CreateOfferResponse createOffer;
+    final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
+    private ProgressDialog mCreateOfferProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,34 +77,8 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         setActionBar();
         setListener();
         setCLIContent();
-        setRecycleView(getCreditLimitInfo());
-        slideUpPanel();
-
-    }
-
-    private void slideUpPanel(){
-        mSlideUpPanel.setFadeOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mSlideUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-            }
-        });
-        mSlideUpPanel.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
-            @Override
-            public void onPanelSlide(View panel, float slideOffset) {
-                if (slideOffset == 0.0) {
-                    mSlideUpPanel.setAnchorPoint(4.0f);
-                    mAppBarLatout.animate().translationY(mAppBarLatout.getTop()).setInterpolator(new AccelerateInterpolator()).start();
-                }
-            }
-
-            @Override
-            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
-                if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
-                    mSlideUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-                }
-            }
-        });
+        mArrCreditLimit = getCreditLimitInfo();
+        setRecycleView(mArrCreditLimit);
     }
 
     private void initViews() {
@@ -115,10 +94,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mRadioYesConfidentialCredit = (RadioButton)findViewById(R.id.radioYesConfidentialCredit);
         mRadioNoConfidentialCredit = (RadioButton)findViewById(R.id.radioNoConfidentialCredit);
         mTextApplySolvency = (WTextView)findViewById(R.id.textApplySolvency);
-        mSlideUpPanel = (SlidingUpPanelLayout)findViewById(R.id.mSlideUpPanel);
-        mAppBarLatout = (AppBarLayout)findViewById(R.id.appbar);
         mImageCreditAmount = (ImageView)findViewById(R.id.imgInfo);
-        mLinSlideUp = (LinearLayout)findViewById(R.id.llSlideUp);
     }
 
     private void setActionBar(){
@@ -143,10 +119,9 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     private void setCLIContent(){
         mStepIndicator.setDefaultView(0);
         mStepIndicator.setEnabled(false);
-        mTextAmount.setVisibility(View.VISIBLE);
         mTextApplySolvency.setText(getString(R.string.cli_apply_insolvency));
-
-
+        mTextAmount.setVisibility(View.VISIBLE);
+        mImageCreditAmount.setVisibility(View.GONE);
     }
 
     private void setRecycleView(List<CreditLimit> creditLimit){
@@ -169,15 +144,13 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btnContinue:
-                Intent openCLIStepIndicatorActivity = new Intent(CLISupplyInfoActivity.this,CLIStepIndicatorActivity.class);
-                startActivity(openCLIStepIndicatorActivity);
-                finish();
-                overridePendingTransition(0,0);
+                mBtnContinue.startAnimation(buttonClick);
+                String selectedRadSolvency = selectedRadioGroup(mRadApplySolvency);
+                String selectedRadConfidential = selectedRadioGroup(mRadConfidentialCredit);
+
+                 createOfferRequest();
                 break;
-            case R.id.imgInfo:
-                mLinSlideUp.setVisibility(View.VISIBLE);
-                mSlideUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
-                break;
+            default:
         }
     }
 
@@ -187,8 +160,10 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
             creditLimits.clear();
         String[] clAmountArray = getResources().getStringArray(R.array.cl_amount);
         String[] clArrayName = getResources().getStringArray(R.array.cl_label);
+        String[] clArrayDescription = getResources().getStringArray(R.array.cl_overlay_label);
+
         for (int x=0;x<clAmountArray.length;x++){
-            creditLimits.add(new CreditLimit(clArrayName[x],clAmountArray[x]));
+            creditLimits.add(new CreditLimit(clArrayName[x],clAmountArray[x],clArrayDescription[x]));
         }
         return creditLimits;
     }
@@ -205,7 +180,12 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     }
 
     @Override
-    public void onClick(View v, int position) {}
+    public void onClick(View v, int position) {
+        SlidingUpViewLayout slidingUpViewLayout = new SlidingUpViewLayout(this);
+        if (mArrCreditLimit!=null) {
+            slidingUpViewLayout.openOverlayGotIT(mArrCreditLimit.get(position).getDescription());
+        }
+    }
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -230,4 +210,94 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         }
         return false;
     }
+
+    public String selectedRadioGroup(RadioGroup radioGroup){
+        int radioID = radioGroup.getCheckedRadioButtonId();
+        RadioButton radioButton = (RadioButton) radioGroup.findViewById(radioID);
+        String selectedConfidentialCredit = (String) radioButton.getText();
+        return selectedConfidentialCredit;
+    }
+
+    public void createOfferRequest(){
+        new HttpAsyncTask<String, String, CreateOfferResponse>() {
+            @Override
+            protected CreateOfferResponse httpDoInBackground(String... params) {
+               CreateOfferRequest createOfferRequest = new CreateOfferRequest(1,
+                        60000,
+                        getNumbers(0),
+                        getNumbers(1),
+                        getNumbers(2),
+                        getNumbers(3),
+                        getNumbers(4),
+                        getNumbers(5),
+                        getNumbers(6),
+                        getNumbers(7));
+                return ((WoolworthsApplication) getApplication()).getApi().createOfferRequest(createOfferRequest);
+            }
+
+            @Override
+            protected CreateOfferResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                CreateOfferResponse offerResponse = new CreateOfferResponse();
+                offerResponse.response = new OfferResponse();
+                stopProgressDialog();
+                return offerResponse;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                mCreateOfferProgressDialog = new ProgressDialog(CLISupplyInfoActivity.this);
+                mCreateOfferProgressDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.cli_creating_offer), 1, CLISupplyInfoActivity.this));
+                mCreateOfferProgressDialog.setCancelable(false);
+                mCreateOfferProgressDialog.show();
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(CreateOfferResponse createOfferResponse) {
+                super.onPostExecute(createOfferResponse);
+                if(createOfferResponse!=null) {
+                    String response_code = createOfferResponse.response.code;
+                    if (response_code!=null) {
+                        switch (Integer.valueOf(response_code)) {
+                            case 200:
+                                Log.e("insideOnPostExecute", "success");
+                                break;
+                            default:
+                              //  WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this, createOfferResponse.response.desc);
+                                break;
+                        }
+                    }
+                }
+                stopProgressDialog();
+                openBankDetails();
+            }
+
+            @Override
+            protected Class<CreateOfferResponse> httpDoInBackgroundReturnType() {
+                return CreateOfferResponse.class;
+            }
+        }.execute();
+    }
+
+    public int getNumbers(int position){
+        if(mArrCreditLimit!=null){
+            return Integer.valueOf(mArrCreditLimit.get(position).getAmount().replace("R","").replace(" ",""));
+        }else {
+            return 0;
+        }
+    }
+
+    public void stopProgressDialog(){
+        if(mCreateOfferProgressDialog != null && mCreateOfferProgressDialog.isShowing()){
+            mCreateOfferProgressDialog.dismiss();
+        }
+    }
+
+    public void openBankDetails(){
+        Intent openCLIStepIndicatorActivity = new Intent(CLISupplyInfoActivity.this,CLIStepIndicatorActivity.class);
+        startActivity(openCLIStepIndicatorActivity);
+        finish();
+        overridePendingTransition(0,0);
+    }
 }
+

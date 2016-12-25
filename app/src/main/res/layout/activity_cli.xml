@@ -84,7 +84,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="24dp"
                 android:textColor="@color/black"
-                android:textSize="20sp"
+                android:textSize="@dimen/bold_title"
                 android:letterSpacing="0.1"
                 app:WTextView_font="medium_bold" />
 
@@ -98,7 +98,7 @@
                 android:textColor="@color/semi_transparent_black"
                 android:lineSpacingExtra="2dp"
                 android:layout_below="@+id/textBeforeStart"
-                android:textSize="15sp"
+                android:textSize="@dimen/text_desc_15sp"
                 app:WTextView_font="myriadpro_regular" />
 
             <za.co.woolworths.financial.services.android.ui.views.WButton

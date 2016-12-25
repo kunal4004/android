@@ -121,7 +121,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/StoreSearch" />
+            android:theme="@style/CLI" />
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity"
@@ -182,7 +182,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CLISupplyInfoActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/StoreSearch" />
+            android:theme="@style/CLI" />
     </application>
 
 </manifest>

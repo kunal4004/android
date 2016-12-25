@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:id="@+id/linRootView"
     android:layout_marginLeft="@dimen/bank_spacing_width"
     android:layout_marginRight="@dimen/bank_spacing_width"
     android:layout_marginTop="@dimen/default_margin"
@@ -35,6 +36,7 @@
             android:layout_height="26dp"
             android:layout_alignParentEnd="true"
             android:src="@drawable/icon_info"
+            android:visibility="gone"
             android:id="@+id/imgInfo"
             />
     </RelativeLayout>

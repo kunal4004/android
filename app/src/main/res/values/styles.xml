@@ -1,6 +1,4 @@
-<resources
-    xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
@@ -84,11 +82,13 @@
         <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
     </style>
 
-    <style name="CLI" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="CLI" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="searchViewStyle">@style/WSearchViewStyle</item>
         <item name="android:homeAsUpIndicator">@drawable/back24</item>
+        <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
+        <item name="android:windowActionBarOverlay">true</item>
     </style>
 
     <style name="WSearchViewStyle" parent="Widget.AppCompat.SearchView">

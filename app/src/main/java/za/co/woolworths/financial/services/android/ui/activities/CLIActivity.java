@@ -12,8 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 
@@ -42,6 +42,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     private Intent mIntent;
     private int mPosition=0;
     private WButton mBtnContinue;
+    final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,10 +184,15 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
+
     @Override
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.btnContinue:
+
+                mBtnContinue.startAnimation(buttonClick);
+
+
                 switch (mPosition){
                     case 0:
                         break;

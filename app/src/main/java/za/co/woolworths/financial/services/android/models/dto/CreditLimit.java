@@ -5,12 +5,15 @@ package za.co.woolworths.financial.services.android.models.dto;
  */
 
 public class CreditLimit {
+
     private String title;
+    private String description;
     private String amount;
 
-    public CreditLimit(String title, String amount) {
+    public CreditLimit(String title, String amount,String description) {
         this.title = title;
         this.amount = amount;
+        this.description = description;
     }
 
     public String getTitle() {
@@ -19,5 +22,9 @@ public class CreditLimit {
 
     public String getAmount() {
         return amount;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

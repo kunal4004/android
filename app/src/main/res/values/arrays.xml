@@ -75,6 +75,16 @@
         <item>@string/cli_monthly_credit_payment</item>
         <item>@string/cli_other_expenses</item>
     </string-array>
+    <string-array name="cl_overlay_label">
+        <item>@string/cli_overlay_monthly_income</item>
+        <item>@string/cli_overlay_gross_income</item>
+        <item>@string/cli_overlay_per_income</item>
+        <item>@string/cli_overlay_monthly_home</item>
+        <item>@string/cli_overlay_rental_payment</item>
+        <item>@string/cli_overlay_monthly_obliged</item>
+        <item>@string/cli_overlay_monthly_installment</item>
+        <item>@string/cli_overlay_other_expenses</item>
+    </string-array>
     <string-array name="cli_option">
         <item>@string/cli_option_one</item>
         <item>@string/cli_option_two</item>

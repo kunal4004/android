@@ -309,5 +309,17 @@
     <string name="cli_enter_acc_number_error">Please enter your account number</string>
     <string name="cli_select_acc_type">Please select your account type</string>
     <string name="cli_email_address">We will send further instructions to your email:\n<b>xxxx@xxxx.com</b></string>
-
+    <string name="cli_cancel_application">SORRY, WE CAN NO PROCEED WITH YOUR APPLICATION</string>
+    <string name="cli_lorem_ipsum">Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum </string>
+    <string name="cli_got_it">GOT IT</string>
+    <string name="cli_overlay_monthly_income">Gross Monthly Income is your income before Tax/ Deductions.</string>
+    <string name="cli_overlay_gross_income">Net Monthly Income is your personal income after tax/deductions as reflected on your payslip.</string>
+    <string name="cli_overlay_per_income">Monthly personal income earned over and above your salary, i.e: rental, maintenance and spousal allowances etc.</string>
+    <string name="cli_overlay_monthly_home">Your Monthly Home Loan Repayment.</string>
+    <string name="cli_overlay_rental_payment">Rental Payment — Cost of Renting Accommodation.</string>
+    <string name="cli_overlay_monthly_obliged">Monthly obligation to pay statutory child and/or spousal support etc.</string>
+    <string name="cli_overlay_monthly_installment">Monthly Installment of creditor account i.e.: Credit Card, Personal Loan, Furniture Accounts etc.</string>
+    <string name="cli_overlay_other_expenses">All Other Expenses, i.e.: groceries, transport, telephone/cellphone etc.</string>
+    <string name="cli_overlay_all_expenses">All Other Expenses, i.e.: groceries,transport, telephone/cellphone etc.</string>
+    <string name="cli_creating_offer">Creating offer...</string>
 </resources>

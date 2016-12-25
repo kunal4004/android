@@ -11,13 +11,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
@@ -27,17 +26,16 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanksResponse;
+import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.OfferActiveResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
-import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIDeaBankMapAdapter;
-import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
-import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICbxContentBinder;
 
@@ -45,6 +43,7 @@ import za.co.woolworths.financial.services.android.util.binder.view.CLICbxConten
 public class CLIFirstStepFragment extends Fragment implements View.OnClickListener, CLICbxContentBinder.OnCheckboxClickListener {
 
     private StepNavigatorCallback stepNavigatorCallback;
+    private int mSelectedPosition=-1;
 
     public interface StepNavigatorCallback{
         void openNextFragment(int index);
@@ -58,7 +57,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     private LinearLayoutManager mLayoutManager;
     private WButton mBtnContinue;
     private ImageView mImgInfo;
-    private SlidingUpPanelLayout mSlidingUpLayout;
     private List<Bank> mBanks;
     private CLIFirstStepFragment mContext;
     private ProgressDialog mGetDeaBanksProgressDialog;
@@ -79,29 +77,30 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         initUI();
         setListener();
         setText();
-        setSlidingUpPanel();
         setDeaBanks();
+        setOfferActiveRequest();
         return view;
     }
 
-    private void setSlidingUpPanel() {
-        mSlidingUpLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+    private void setOfferActiveRequest() {
+        new HttpAsyncTask<String, String, OfferActive>() {
             @Override
-            public void onPanelSlide(View panel, float slideOffset) {
-                Log.i("TAG", "onPanelSlide, offset " + slideOffset);
-                if (slideOffset == 0.0) {
-                    mSlidingUpLayout.setAnchorPoint(1.0f);
-                   /// backToAllStoresPage(currentStorePostion);
-                }
+            protected OfferActive httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getActivity().getApplication()).getApi().getActiveOffer();
             }
 
             @Override
-            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
-                //Log.i(TAG, "onPanelStateChanged " + newState);
-                if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
-                }
+            protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                OfferActive offerActive = new OfferActive();
+                offerActive.response = new OfferActiveResponse();
+                return offerActive;
             }
-        });
+
+            @Override
+            protected Class<OfferActive> httpDoInBackgroundReturnType() {
+                return OfferActive.class;
+            }
+        };
     }
 
     private void initUI() {
@@ -110,7 +109,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         relButtonCLIDeaBank = (RelativeLayout)view.findViewById(R.id.relButtonCLIDeaBank);
         mBtnContinue=(WButton)view.findViewById(R.id.btnContinue);
         mImgInfo = (ImageView)view.findViewById(R.id.imgInfo);
-        mSlidingUpLayout = (SlidingUpPanelLayout) view.findViewById(R.id.sliding_layout);
+
     }
 
     private void setListener(){
@@ -199,8 +198,12 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
             case R.id.btnContinue:
                 if(mUpdateBankDetail!=null){
                     if(mUpdateBankDetail.getBankName()!=null){
-                        stepNavigatorCallback.openNextFragment(1);
-                    }else {
+                        if (mSelectedPosition==lastPosition()){ //others position clicked
+                            WErrorDialog.setErrorMessage(getActivity(),"others");
+                        }else {
+                            stepNavigatorCallback.openNextFragment(1);
+                        }
+                        }else {
                         WErrorDialog.setErrorMessage(getActivity(),getString(R.string.cli_select_bank_error));
                     }
                 }else{
@@ -211,12 +214,10 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                      }
                 }
                 break;
+
             case R.id.imgInfo:
-                if (mSlidingUpLayout.getAnchorPoint() == 1.0f) {
-                    CLIStepIndicatorActivity.mAppBarLayout.animate().translationY(-WOneAppBaseActivity.appbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
-                    mSlidingUpLayout.setAnchorPoint(0.7f);
-                    mSlidingUpLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
-                }
+                SlidingUpViewLayout slidingUpPanelLayout = new SlidingUpViewLayout(getActivity());
+                slidingUpPanelLayout.openOverlayView();
                 break;
         }
     }
@@ -233,6 +234,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onCheckboxViewClick(View v, int position) {
+        mSelectedPosition = position;
         if (mBanks!=null){
             mUpdateBankDetail=mWoolworthsApplication.updateBankDetail;
             if(mUpdateBankDetail!=null) {
@@ -250,5 +252,12 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     @SuppressLint("ValidFragment")
     public CLIFirstStepFragment(StepNavigatorCallback stepNavigatorCallback) {
         this.stepNavigatorCallback = stepNavigatorCallback;
+    }
+
+    public int lastPosition(){
+        if (mBanks!=null)
+            return mBanks.size()-1;
+        else
+            return 0;
     }
 }

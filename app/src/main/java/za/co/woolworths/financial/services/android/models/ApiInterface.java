@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.models;
 
 
-import org.json.JSONObject;
-
 import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
@@ -12,7 +10,6 @@ import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Path;
 import retrofit.http.Query;
-
 import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRequest;
@@ -20,6 +17,8 @@ import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRespo
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
+import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
+import za.co.woolworths.financial.services.android.models.dto.CreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
@@ -31,11 +30,10 @@ import za.co.woolworths.financial.services.android.models.dto.LoginRequest;
 import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
+import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
-
-import static android.R.attr.id;
 
 public interface ApiInterface {
 
@@ -275,4 +273,35 @@ public interface ApiInterface {
             @Query("pageSize") int pageSize,
             @Query("pageNumber") int pageNumber
     );
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @POST("/user/cli/offer")
+    CreateOfferResponse createOfferRequest(
+            @Header("apiId") String apiId,
+            @Header("sha1Password") String sha1Password,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("deviceModel") String deviceModel,
+            @Header("network") String network,
+            @Header("os") String os,
+            @Header("osVersion") String osVersion,
+            @Header("userAgent") String userAgent,
+            @Header("userAgentVersion") String userAgentVersion,
+            @Body CreateOfferRequest createOfferRequest);
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @GET("/user/cli/DEABankAccountTypes")
+    OfferActive getActiveOffer(
+            @Header("apiId") String apiId,
+            @Header("sha1Password") String sha1Password,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("deviceModel") String deviceModel,
+            @Header("network") String network,
+            @Header("os") String os,
+            @Header("osVersion") String osVersion,
+            @Header("userAgent") String userAgent,
+            @Header("userAgentVersion") String userAgentVersion,
+            @Header("sessionToken") String sessionToken,
+            int size, @Query("pageSize") int pageSize
+    );
+
 }

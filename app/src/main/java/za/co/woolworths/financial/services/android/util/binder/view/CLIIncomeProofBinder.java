@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.awfs.coordination.R;
 
@@ -38,7 +37,7 @@ public class CLIIncomeProofBinder extends DataBinder<CLIIncomeProofBinder.ViewHo
         if (incomeProof!=null) {
             holder.mTextOptionTitle.setText(incomeProof.getTitle());
             holder.mTextOptionDesc.setText(incomeProof.getDescription());
-            holder.mImgIcon.setBackgroundResource(incomeProof.getDrawable());
+            holder.mImgIcon.setImageResource(incomeProof.getDrawable());
         }
     }
 

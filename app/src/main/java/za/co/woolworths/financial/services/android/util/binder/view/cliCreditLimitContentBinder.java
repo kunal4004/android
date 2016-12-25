@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.awfs.coordination.R;
 
@@ -39,14 +40,19 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
     }
 
     @Override
-    public void bindViewHolder(final ViewHolder holder, int position) {
+    public void bindViewHolder(final ViewHolder holder, final int position) {
         CreditLimit creditLimit = mDataSet.get(position);
           if (creditLimit!=null) {
                 holder.mTxtACreditLimit.setText(creditLimit.getTitle());
                 holder.mTextAmount.setText(creditLimit.getAmount());
                 holder.mTextAmount.setVisibility(View.VISIBLE);
           }
-
+        holder.mLinRootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickListener.onClick(view,position);
+            }
+        });
     }
 
     @Override
@@ -69,12 +75,14 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
         WTextView mTxtACreditLimit;
         WTextView mTextAmount;
         ImageView mImgInfo;
+        LinearLayout mLinRootView;
 
         public ViewHolder(View view) {
             super(view);
             mTxtACreditLimit = (WTextView) view.findViewById(R.id.textACreditLimit);
             mTextAmount= (WTextView) view.findViewById(R.id.textAmount);
             mImgInfo=(ImageView)view.findViewById(R.id.imgInfo);
+            mLinRootView=(LinearLayout)view.findViewById(R.id.linRootView);
          }
     }
 

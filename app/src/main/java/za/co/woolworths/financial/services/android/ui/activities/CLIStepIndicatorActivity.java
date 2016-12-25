@@ -45,6 +45,12 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
         initViews();
         setActionBar();
         setCLIContent();
+        offerActive();
+    }
+
+    private void offerActive() {
+
+
     }
 
     private void initViews() {
@@ -103,7 +109,7 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
             Fragment fragment = null;
             switch (position) {
                 case 0:
-                    fragment = new CLIFirstStepFragment();
+                    fragment = new CLIIncomeProofFragment();
                     break;
                 case 1:
                     fragment = new CLISecondStepFragment();

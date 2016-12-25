@@ -1,7 +1,6 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    xmlns:sothree="http://schemas.android.com/tools"
     android:background="@color/white"
     android:layout_height="match_parent">
 
@@ -30,25 +29,12 @@
         </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>
 
-    <za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom"
-        android:id="@+id/mSlideUpPanel"
-        sothree:umanoDragView="@+id/llSlideUp"
-        sothree:umanoOverlay="true"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:clipToPadding="false"
-        app:umanoClipPanel="true"
-        app:umanoPanelHeight="300dp"
-        sothree:umanoParallaxOffset="100dp"
-        sothree:umanoScrollableView="@+id/list"
-        sothree:umanoShadowHeight="4dp">
-    <LinearLayout
+     <LinearLayout
             android:id="@+id/linStepIndicator"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+        android:layout_marginTop="?attr/actionBarSize"
+        android:orientation="vertical">
             <include layout="@layout/horizontal_divider"/>
 
             <android.support.v4.widget.NestedScrollView
@@ -81,6 +67,8 @@
                         android:layout_height="wrap_content"
                         android:letterSpacing="0.04"
                         android:textSize="14sp"
+                        android:layout_marginLeft="@dimen/bank_spacing_width"
+                        android:layout_marginRight="@dimen/bank_spacing_width"
                         android:gravity="center"
                         android:layout_marginTop="@dimen/bank_spacing_width"
                         app:WTextView_font="medium_bold"
@@ -94,25 +82,5 @@
                 </LinearLayout>
 
             </android.support.v4.widget.NestedScrollView>
-
-        </LinearLayout>
-        <LinearLayout android:id="@+id/llSlideUp"
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="50"
-            android:layout_height="match_parent">
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:letterSpacing="0.04"
-                android:textSize="14sp"
-                android:gravity="center"
-                android:layout_marginTop="@dimen/bank_spacing_width"
-                app:WTextView_font="medium_bold"
-                android:lineSpacingExtra="10dp"
-                android:textColor="@color/black"
-                android:text="@string/cli_confirm_information"
-                />
-        </LinearLayout>
-    </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
+    </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

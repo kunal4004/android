@@ -4,16 +4,13 @@ package za.co.woolworths.financial.services.android.ui.fragments;
  * Created by DimitriJ on 2016/12/20.
  */
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
@@ -22,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.IncomeProof;
-import za.co.woolworths.financial.services.android.ui.adapters.CLIBankAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIIncomeProofAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -110,10 +106,10 @@ public class CLIIncomeProofFragment extends Fragment implements View.OnClickList
         List<IncomeProof>arrIncomeProof = new ArrayList<>();
         String[] mOptionTitle = getResources().getStringArray(R.array.cli_option);
         String[] mOptionDesc = getResources().getStringArray(R.array.cli_option_desc);
-        int[] mOptionDrawable = getResources().getIntArray(R.array.cli_drawable);
+        int[] myImageList = new int[]{R.drawable.icon_paperclip, R.drawable.icon_clip,R.drawable.icon_fax};
         int index=0;
         for (String option: mOptionTitle){
-            arrIncomeProof.add(new IncomeProof(option,mOptionDesc[index],mOptionDrawable[index]));
+            arrIncomeProof.add(new IncomeProof(option,mOptionDesc[index],myImageList[index]));
             index++;
         }
         return arrIncomeProof;
