@@ -402,6 +402,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                {
                    messageCounter.setVisibility(View.VISIBLE);
                   messageCounter.setText(String.valueOf(messageResponse.unreadCount));
+
                }else {
                    messageCounter.setVisibility(View.GONE);
                }
