@@ -142,9 +142,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String[] columns = {REQUEST_ID};
         String selection=REQUEST_ENDPOINT+"=? and "+REQUEST_TYPE+"=? and "+REQUEST_HEADERS+"=? and "+REQUEST_PARAMETERS+"=? and "+REQUEST_DATE_EXPIRES+">?";
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
-       // String query = "SELECT * FROM "+API_REQUEST_TABLE+" WHERE "+REQUEST_ENDPOINT+" = "+endpoint+" AND "+REQUEST_TYPE+" = "+requestType+" AND "+REQUEST_HEADERS+" = "+heardes.toString()+" AND "+REQUEST_PARAMETERS+" = "+body+" AND "+REQUEST_DATE_EXPIRES+" > "+getCurrentTime();
-        //String query = "SELECT * FROM "+API_REQUEST_TABLE+" WHERE "+REQUEST_ENDPOINT+" = "+endpoint;
-       // Cursor cursor = db.rawQuery(query, null);
+
         Cursor cursor=db.query(API_REQUEST_TABLE,columns,selection, new String[] { endpoint,requestType,heardes,body,getCurrentTime() }, null, null, null);
          if(cursor != null && cursor.moveToFirst()) {
              requestId = cursor.getInt(cursor.getColumnIndex(REQUEST_ID));
@@ -180,32 +178,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         row.put(REQUEST_DATE_CREATED,getCurrentTime());
         row.put(REQUEST_DATE_EXPIRES,getExpireTime());
         long id=db.insert(API_REQUEST_TABLE,null,row);
-      //  String query="INSERT INTO "+API_REQUEST_TABLE+" VALUES "+" ( "+endpoint+" , "+requestType+" , "+heardes+" , "+body+"  , "+endpoint+" , "+endpoint+" , "+" ) ";
          return (int) id;
     }
     public void addApIResponse(String response,int requestId,int responseHandler )
     {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
-        ContentValues row = new ContentValues();
-        row.put(RESPONSE_REQUEST_ID,requestId);
-        row.put(RESPONSE_OBJECT,response);
-        row.put(RESPONSE_HANDLER,responseHandler);
-        db.insert(API_RESPONSE_TABLE,null,row);
+        byte[] contentByte = response.getBytes();
+        db.execSQL("insert into "+API_RESPONSE_TABLE+" ("+RESPONSE_REQUEST_ID+","+RESPONSE_OBJECT+","+RESPONSE_HANDLER+") values(?,?,?)",new Object[]{requestId,contentByte,responseHandler});
 
     }
      public boolean checkResponseHandler(int requestId)
      {
+
          SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
          String query = "SELECT * FROM " +API_RESPONSE_TABLE+ " WHERE " +RESPONSE_REQUEST_ID+" = "+requestId;
          Cursor cursor = db.rawQuery(query, null);
-         if(cursor!=null)
-               cursor.moveToFirst();
+         if(cursor!=null && cursor.moveToFirst()) {
 
-         int responseHandler=cursor.getInt(cursor.getColumnIndex(RESPONSE_HANDLER));
-         if(responseHandler==0)
-             return false;
-         else
-             return true;
+             int responseHandler = cursor.getInt(cursor.getColumnIndex(RESPONSE_HANDLER));
+             if (responseHandler == 0)
+                 return false;
+             else
+                 return true;
+         }
+         else return false;
      }
 
     public void getSession()
@@ -233,7 +229,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public String getExpireTime()
     {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:MM:SS");
-        Date date = new Date(System.currentTimeMillis()+10*60*1000);
+        Date date = new Date(System.currentTimeMillis()+30*1000);
         String value=dateFormat.format(date);
         return value;
     }

@@ -6,6 +6,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -14,11 +15,20 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 
 import okio.Buffer;
+import okio.BufferedSource;
 import retrofit.RestAdapter;
 
 
@@ -26,6 +36,7 @@ import retrofit.client.Client;
 import retrofit.client.Header;
 import retrofit.client.OkClient;
 import retrofit.client.Request;
+import retrofit.http.Streaming;
 import retrofit.mime.TypedByteArray;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
@@ -72,12 +83,15 @@ public class WfsApi {
 
 
         OkHttpClient client = new OkHttpClient();
+        client.setReadTimeout(60, TimeUnit.SECONDS);
+        client.setConnectTimeout(60, TimeUnit.SECONDS);
         client.interceptors().add(new Interceptor() {
             @Override
             public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
                 boolean isCached=false;
                 int requestId=0;
                 com.squareup.okhttp.Request request = chain.request();
+                com.squareup.okhttp.Response response=null;
                 String endpoint = request.urlString().replace(WoolworthsApplication.getBaseURL(), "");
 
                 int id = dbHelper.checkApirequest(endpoint, request.method(), request.headers().toString(), bodyToString(request.body()));
@@ -89,42 +103,45 @@ public class WfsApi {
                 if (isCached) {
                     if (dbHelper.checkResponseHandler(requestId)) {
                         responseString = dbHelper.getApiResponse(requestId);
-                        Response res = null;
-                        res = new Response.Builder()
+                        Log.d("APIRESPONSEBODY",responseString);
+
+                        response = new Response.Builder()
                                   .code(200)
-                                  .message(responseString)
+                                  .message("")
                                 .request(chain.request())
                                 .protocol(Protocol.HTTP_1_0)
                                 .body(ResponseBody.create(MediaType.parse("application/json"), responseString.getBytes()))
                                 .addHeader("content-type", "application/json")
                                 .build();
-                        return res;
+
                     } else {
-                        Response response = chain.proceed(request);
+                        response = chain.proceed(request);
                         int code=0;
                         if(response.code()==200)
                             code=1;
-
+                        String body=getResponseBodyString(response);
                         int requestID= dbHelper.addApIRequest(endpoint,request.method(),request.headers().toString(),bodyToString(request.body()));
-                        dbHelper.addApIResponse(response.body().string(),requestID,code);
-                        return response;
+                        dbHelper.addApIResponse(body,requestID,code);
 
                     }
 
 
                 } else {
                     //return proceedRequest(endpoint, chain, request);
-                    com.squareup.okhttp.Response response  = chain.proceed(request);
 
-
-                    int code=0;
+                     response  = chain.proceed(request);
+                    String body=getResponseBodyString(response);
+                   int code=0;
                     if(response.code()==200)
                         code=1;
-                    int requestID= dbHelper.addApIRequest(endpoint,request.method(),request.headers().toString(),bodyToString(request.body()));
-                    dbHelper.addApIResponse(response.body().string(),requestID,code);
 
-                    return response;
+                    int requestID= dbHelper.addApIRequest(endpoint,request.method(),request.headers().toString(),bodyToString(request.body()));
+                    dbHelper.addApIResponse(body,requestID,code);
+
+
                 }
+
+                return response;
 
              /*   Response res = null;
                 res = new Response.Builder()
@@ -147,7 +164,6 @@ public class WfsApi {
                 .setLogLevel(Util.isDebug(mContext) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
                 .build()
                 .create(ApiInterface.class);
-
 
 
     }
@@ -289,5 +305,15 @@ public class WfsApi {
         } catch (final IOException e) {
             return "did not work";
         }
+    }
+
+    public String getResponseBodyString(Response response) throws IOException
+    {
+        ResponseBody responseBody = response.body();
+        BufferedSource source = responseBody.source();
+        source.request(Long.MAX_VALUE); // Buffer the entire body.
+        Buffer buffer = source.buffer();
+        String responseBodyString = buffer.clone().readString(Charset.forName("UTF-8"));
+        return responseBodyString;
     }
 }
