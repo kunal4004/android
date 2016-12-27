@@ -80,8 +80,15 @@ public class WfsApi {
     public ContactUsConfigResponse getContactUsConfig() {
         return mApiInterface.getContactUsConfig(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "");
     }
-    public LocationResponse getLocations(String lat,String lon,String searchString,String radious){
-        return  mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "",getSession(),lat,lon,searchString,radious);
+    public LocationResponse getLocations(String lat,String lon,String searchString ,String radius){
+
+        if(radius != null && radius.equals("")) {
+            //This should never happen for now
+            return mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "",getSession(),lat,lon,searchString ,radius);
+        }else{
+
+            return mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "",getSession(),lat,lon,searchString);
+        }
     }
     public MessageResponse getMessagesResponse(int pageSize, int pageNumber){
 

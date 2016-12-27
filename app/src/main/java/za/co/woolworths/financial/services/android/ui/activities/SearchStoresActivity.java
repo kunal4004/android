@@ -202,7 +202,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
                 Location location=Utils.getLastSavedLocation(SearchStoresActivity.this);
                 if(location!=null)
                 {
-                    return ((WoolworthsApplication) getApplication()).getApi().getLocations(String.valueOf(location.getLatitude()),String.valueOf(location.getLongitude()),query,"50000");
+                    return ((WoolworthsApplication) getApplication()).getApi().getLocations(String.valueOf(location.getLatitude()),String.valueOf(location.getLongitude()),query, "50000");
 
                 }else {
                     return ((WoolworthsApplication) getApplication()).getApi().getLocations(null,null,query,null);
