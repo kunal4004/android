@@ -17,9 +17,11 @@ import com.awfs.coordination.R;
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.ApiInterface;
+import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 
 public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCompletionListener {
@@ -127,8 +129,17 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
     public void onCompletion(MediaPlayer mp) {
 
         if(!WSplashScreenActivity.this.mVideoPlayerShouldPlay){
+            String jwt = this.getSharedPreferences("User", MODE_PRIVATE).getString(SSOActivity.TAG_JWT, "");
+            JWTDecodedModel jwtDecodedModel = JWTHelper.decode(jwt);
+
+
+            if(jwtDecodedModel != null){
+                ScreenManager.presentMain(WSplashScreenActivity.this);
+            }else{
+                ScreenManager.presentOnboarding(WSplashScreenActivity.this);
+            }
             mp.stop();
-            ScreenManager.presentOnboarding(WSplashScreenActivity.this);
+
         }else{
             mp.start();
         }
