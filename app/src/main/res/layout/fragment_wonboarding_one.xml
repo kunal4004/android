@@ -43,7 +43,7 @@
                 android:id="@+id/fragment_wonboarding_one_description_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="The new Woolies app gives you easy access to fashion trends, recipes, store locators and more."
+                android:text="The new Woolies app gives you access to everything you love in the palm of your hand. Simply scroll, tap and enjoy!"
                 android:gravity="center_horizontal"
                 style="@style/CaptionLightGrey"
                 app:WTextView_font="myriadpro_regular"
