@@ -251,10 +251,6 @@ public class SSOActivity extends WebViewActivity {
                         if (SSOActivity.this.state.equals(webviewState)) {
 
                             String jwt = list.get(1);
-                            JWTHelper.decode(jwt);
-
-
-
                             intent.putExtra(SSOActivity.TAG_JWT, jwt);
 
                             setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
