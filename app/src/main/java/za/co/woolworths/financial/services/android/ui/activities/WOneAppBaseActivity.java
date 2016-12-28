@@ -14,12 +14,17 @@ import android.view.animation.AccelerateInterpolator;
 
 import com.awfs.coordination.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
 import za.co.woolworths.financial.services.android.ui.fragments.WProductsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener{
@@ -27,8 +32,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     public static Toolbar mToolbar;
     public static AppBarLayout appbar;
     private WFragmentDrawer drawerFragment;
-    public StoresNearbyFragment1 frag;
     public WTextView mToolbarTitle;
+    private List<Fragment> fragmentList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         getSupportActionBar().setElevation(0);
         mToolbarTitle=(WTextView)findViewById(R.id.toolbar_title);
         appbar=(AppBarLayout)findViewById(R.id.appbar);
+        fragmentList = new ArrayList<>();
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -64,22 +70,21 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         Fragment fragment = null;
         String title = getString(R.string.app_name);
         switch (position) {
+            case 0:
+                fragment = new WTodayFragment();
+                title = getString(R.string.nav_item_today);
+                break;
             case 1:
                 fragment = new WProductsFragment();
                 title = getString(R.string.nav_item_products);
                 break;
             case 2:
                 fragment = new StoresNearbyFragment1();
-                frag=(StoresNearbyFragment1) fragment;
                 title = getString(R.string.nav_item_store);
                 break;
             case 4:
                 fragment = new MyAccountsFragment();
                 title = getString(R.string.nav_item_accounts);
-                break;
-            case 0:
-                fragment = new WTodayFragment();
-                title = getString(R.string.nav_item_today);
                 break;
 
         }
@@ -92,7 +97,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 
             // set the toolbar title
             mToolbarTitle.setText(title);
-
+            fragmentList.add(fragment);
         }
     }
     /*@Override
@@ -115,6 +120,16 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        frag.onActivityResult(requestCode,resultCode,data);
+
+        for(Fragment fragment : fragmentList){
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    public JWTDecodedModel getJWTDecoded(){
+
+        //TODO: implement sqllite jwt reading persisted values
+        String jwt = this.getSharedPreferences("User", MODE_PRIVATE).getString(SSOActivity.TAG_JWT, "");
+        return JWTHelper.decode(jwt);
     }
 }

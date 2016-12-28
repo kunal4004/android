@@ -58,6 +58,7 @@ import za.co.woolworths.financial.services.android.models.dto.ReadMessagesRespon
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.util.DatabaseHelper;
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 
 import static android.R.attr.value;
 import static com.awfs.coordination.R.drawable.cursor;
@@ -156,7 +157,7 @@ public class WfsApi {
 
     // Session token hardcoded for test purpose
     public AccountsResponse getAccounts() {
-        return mApiInterface.getAccounts(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", "9178d4a6-24a6-412e-822d-b426acd2df1d");
+        return mApiInterface.getAccounts(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken());
     }
 
     public AuthoriseLoanResponse authoriseLoan(AuthoriseLoanRequest authoriseLoanRequest) {
@@ -165,7 +166,7 @@ public class WfsApi {
 
     // Session token hardcoded for test purpose
     public TransactionHistoryResponse getAccountTransactionHistory(String productOfferingId) {
-        return mApiInterface.getAccountTransactionHistory(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", "9178d4a6-24a6-412e-822d-b426acd2df1d", productOfferingId);
+        return mApiInterface.getAccountTransactionHistory(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId);
     }
 
     public VoucherResponse getVouchers() {
@@ -184,24 +185,18 @@ public class WfsApi {
         return mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSession(), lat, lon, searchString, radious);
     }
 
-    public MessageResponse getMessagesResponse(int pageSize, int pageNumber) {
-        // Session token hardcoded for test purpose
-        return mApiInterface.getMessages(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSIsImtpZCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSJ9.eyJpc3MiOiJodHRwczovL3N0cy53b29sd29ydGhzLmNvLnphL2N1c3RvbWVyaWQiLCJhdWQiOiJXV09uZUFwcCIsImV4cCI6MTQ3NTc2NjEyNywibmJmIjoxNDc1NzY1ODI3LCJub25jZSI6ImFjM2UyIiwiaWF0IjoxNDc1NzY1ODI3LCJzaWQiOiI2NjFlNmM1NTdjZWM4MDNiMWU5YmE2YjA1MGFiMTVlZCIsInN1YiI6ImM2YjcyZTYwLTY1ZjgtNGY3ZS1hNWRmLTJiYjgyMWQ5NDZhNyIsImF1dGhfdGltZSI6MTQ3NTc2NTgyNSwiaWRwIjoiV1ctT05MSU5FIiwiZ2l2ZW5fbmFtZSI6IlRFU1QiLCJmYW1pbHlfbmFtZSI6IlBBR0UiLCJBdGdJZCI6IjE3OTEwMDQ1IiwiQXRnU2Vzc2lvbiI6IlZlMmFmMWVUa3pDX2dEak1RcmxmbTFTQVYxNldvWlVTdEwtdzU4emZTNU05ZnFNZVJTQ1IhMTY5MDY0ODc0NCIsImVtYWlsIjoiemFoaXJzaWVyc0B3b29sd29ydGhzLmNvLnphIiwiQzJJZCI6IjQzMzc4MzkiLCJhbXIiOlsiZXh0ZXJuYWwiXX0.bNMe1vvnzjaxO6iLbWQIC-Xi5x7Q6h4b7OZpfDeaMlj8noqnaVvkvmrvLggoypvv33_y0XhiJ6DtBC5MVQiuyU9K1U9w5uzNc2oTBzr5f65l4JbemEKoK4A0FpzM4rTroBDX8p3x_ubtYPa0Toluu9nzpIFeEnsQXNzU-2OGkaZ0nxWvYkJ0wsGeDXZlY0Lsix_OxdO6sgReDf9nL5f9hm6ekBE7oEMKlNAjZkB8TIvhCZXxumad_3SSVEhYDCfZzW-hoIOViUXFkqelVtdQmiRZei2-x65PZMu4EwkF-EYpNI9TNC6N35bYc3HrfK39H7hW979rX8CN-Aj9jOoyXg", pageSize, pageNumber);
+        return  mApiInterface.getMessages(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "",getSessionToken() ,pageSize,pageNumber);
     }
 
-    public DeleteMessageResponse getDeleteMessagesResponse(String id) {
-        // Session token hardcoded for test purpose
-        return mApiInterface.getDeleteresponse(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSIsImtpZCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSJ9.eyJpc3MiOiJodHRwczovL3N0cy53b29sd29ydGhzLmNvLnphL2N1c3RvbWVyaWQiLCJhdWQiOiJXV09uZUFwcCIsImV4cCI6MTQ3NTc2NjEyNywibmJmIjoxNDc1NzY1ODI3LCJub25jZSI6ImFjM2UyIiwiaWF0IjoxNDc1NzY1ODI3LCJzaWQiOiI2NjFlNmM1NTdjZWM4MDNiMWU5YmE2YjA1MGFiMTVlZCIsInN1YiI6ImM2YjcyZTYwLTY1ZjgtNGY3ZS1hNWRmLTJiYjgyMWQ5NDZhNyIsImF1dGhfdGltZSI6MTQ3NTc2NTgyNSwiaWRwIjoiV1ctT05MSU5FIiwiZ2l2ZW5fbmFtZSI6IlRFU1QiLCJmYW1pbHlfbmFtZSI6IlBBR0UiLCJBdGdJZCI6IjE3OTEwMDQ1IiwiQXRnU2Vzc2lvbiI6IlZlMmFmMWVUa3pDX2dEak1RcmxmbTFTQVYxNldvWlVTdEwtdzU4emZTNU05ZnFNZVJTQ1IhMTY5MDY0ODc0NCIsImVtYWlsIjoiemFoaXJzaWVyc0B3b29sd29ydGhzLmNvLnphIiwiQzJJZCI6IjQzMzc4MzkiLCJhbXIiOlsiZXh0ZXJuYWwiXX0.bNMe1vvnzjaxO6iLbWQIC-Xi5x7Q6h4b7OZpfDeaMlj8noqnaVvkvmrvLggoypvv33_y0XhiJ6DtBC5MVQiuyU9K1U9w5uzNc2oTBzr5f65l4JbemEKoK4A0FpzM4rTroBDX8p3x_ubtYPa0Toluu9nzpIFeEnsQXNzU-2OGkaZ0nxWvYkJ0wsGeDXZlY0Lsix_OxdO6sgReDf9nL5f9hm6ekBE7oEMKlNAjZkB8TIvhCZXxumad_3SSVEhYDCfZzW-hoIOViUXFkqelVtdQmiRZei2-x65PZMu4EwkF-EYpNI9TNC6N35bYc3HrfK39H7hW979rX8CN-Aj9jOoyXg", id);
+        return  mApiInterface.getDeleteresponse(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken() ,id);
     }
 
-    public ReadMessagesResponse getReadMessagesResponse(MessageReadRequest readMessages) {
-        // Session token hardcoded for test purpose
-        return mApiInterface.setReadMessages(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSIsImtpZCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSJ9.eyJpc3MiOiJodHRwczovL3N0cy53b29sd29ydGhzLmNvLnphL2N1c3RvbWVyaWQiLCJhdWQiOiJXV09uZUFwcCIsImV4cCI6MTQ3NTc2NjEyNywibmJmIjoxNDc1NzY1ODI3LCJub25jZSI6ImFjM2UyIiwiaWF0IjoxNDc1NzY1ODI3LCJzaWQiOiI2NjFlNmM1NTdjZWM4MDNiMWU5YmE2YjA1MGFiMTVlZCIsInN1YiI6ImM2YjcyZTYwLTY1ZjgtNGY3ZS1hNWRmLTJiYjgyMWQ5NDZhNyIsImF1dGhfdGltZSI6MTQ3NTc2NTgyNSwiaWRwIjoiV1ctT05MSU5FIiwiZ2l2ZW5fbmFtZSI6IlRFU1QiLCJmYW1pbHlfbmFtZSI6IlBBR0UiLCJBdGdJZCI6IjE3OTEwMDQ1IiwiQXRnU2Vzc2lvbiI6IlZlMmFmMWVUa3pDX2dEak1RcmxmbTFTQVYxNldvWlVTdEwtdzU4emZTNU05ZnFNZVJTQ1IhMTY5MDY0ODc0NCIsImVtYWlsIjoiemFoaXJzaWVyc0B3b29sd29ydGhzLmNvLnphIiwiQzJJZCI6IjQzMzc4MzkiLCJhbXIiOlsiZXh0ZXJuYWwiXX0.bNMe1vvnzjaxO6iLbWQIC-Xi5x7Q6h4b7OZpfDeaMlj8noqnaVvkvmrvLggoypvv33_y0XhiJ6DtBC5MVQiuyU9K1U9w5uzNc2oTBzr5f65l4JbemEKoK4A0FpzM4rTroBDX8p3x_ubtYPa0Toluu9nzpIFeEnsQXNzU-2OGkaZ0nxWvYkJ0wsGeDXZlY0Lsix_OxdO6sgReDf9nL5f9hm6ekBE7oEMKlNAjZkB8TIvhCZXxumad_3SSVEhYDCfZzW-hoIOViUXFkqelVtdQmiRZei2-x65PZMu4EwkF-EYpNI9TNC6N35bYc3HrfK39H7hW979rX8CN-Aj9jOoyXg", readMessages);
+    public ReadMessagesResponse getReadMessagesResponse(MessageReadRequest readMessages){
+
+        return  mApiInterface.setReadMessages(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(),readMessages);
     }
 
-    public CreateUpdateDeviceResponse getResponseOnCreateUpdateDevice(CreateUpdateDevice device) {
-        // Session token hardcoded for test purpose
-        return mApiInterface.createUpdateDevice(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSIsImtpZCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSJ9.eyJpc3MiOiJodHRwczovL3N0cy53b29sd29ydGhzLmNvLnphL2N1c3RvbWVyaWQiLCJhdWQiOiJXV09uZUFwcCIsImV4cCI6MTQ3NTc2NjEyNywibmJmIjoxNDc1NzY1ODI3LCJub25jZSI6ImFjM2UyIiwiaWF0IjoxNDc1NzY1ODI3LCJzaWQiOiI2NjFlNmM1NTdjZWM4MDNiMWU5YmE2YjA1MGFiMTVlZCIsInN1YiI6ImM2YjcyZTYwLTY1ZjgtNGY3ZS1hNWRmLTJiYjgyMWQ5NDZhNyIsImF1dGhfdGltZSI6MTQ3NTc2NTgyNSwiaWRwIjoiV1ctT05MSU5FIiwiZ2l2ZW5fbmFtZSI6IlRFU1QiLCJmYW1pbHlfbmFtZSI6IlBBR0UiLCJBdGdJZCI6IjE3OTEwMDQ1IiwiQXRnU2Vzc2lvbiI6IlZlMmFmMWVUa3pDX2dEak1RcmxmbTFTQVYxNldvWlVTdEwtdzU4emZTNU05ZnFNZVJTQ1IhMTY5MDY0ODc0NCIsImVtYWlsIjoiemFoaXJzaWVyc0B3b29sd29ydGhzLmNvLnphIiwiQzJJZCI6IjQzMzc4MzkiLCJhbXIiOlsiZXh0ZXJuYWwiXX0.bNMe1vvnzjaxO6iLbWQIC-Xi5x7Q6h4b7OZpfDeaMlj8noqnaVvkvmrvLggoypvv33_y0XhiJ6DtBC5MVQiuyU9K1U9w5uzNc2oTBzr5f65l4JbemEKoK4A0FpzM4rTroBDX8p3x_ubtYPa0Toluu9nzpIFeEnsQXNzU-2OGkaZ0nxWvYkJ0wsGeDXZlY0Lsix_OxdO6sgReDf9nL5f9hm6ekBE7oEMKlNAjZkB8TIvhCZXxumad_3SSVEhYDCfZzW-hoIOViUXFkqelVtdQmiRZei2-x65PZMu4EwkF-EYpNI9TNC6N35bYc3HrfK39H7hW979rX8CN-Aj9jOoyXg", device);
+        return  mApiInterface.createUpdateDevice(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken() ,device);
     }
 
     private String getSession() {
@@ -243,6 +238,10 @@ public class WfsApi {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private String getSessionToken(){
+        return mContext.getSharedPreferences("User", Context.MODE_PRIVATE).getString(SSOActivity.TAG_JWT, "");
     }
 /*   public ConfigResponse getConfig(){
         ApiInterface mApiInterface = new RestAdapter.Builder()

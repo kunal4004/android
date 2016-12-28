@@ -28,7 +28,7 @@
             android:id="@+id/loggedOutHeaderLayout"
             android:background="@color/white"
             android:paddingBottom="16dp"
-            >
+            android:visibility="visible">
 
             <android.support.v4.view.ViewPager
                 android:layout_width="match_parent"
@@ -87,21 +87,21 @@
         </LinearLayout>
         <include
             layout="@layout/my_account_fragment_header_logged_in"
-            />
+            android:visibility="visible" />
 
        <include
            layout="@layout/account_linked_layout"
-           />
+           android:visibility="visible" />
         <include
             layout="@layout/account_apply_layout"
-            />
+            android:visibility="visible" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/layout_bg_top_bottm_border"
             android:orientation="vertical"
-            >
+            android:visibility="visible">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -228,7 +228,7 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:layout_marginTop="16dp"
-            android:visibility="gone"
+            android:visibility="visible"
             >
 
             <ImageView
