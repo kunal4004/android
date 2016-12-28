@@ -322,4 +322,10 @@
     <string name="cli_overlay_other_expenses">All Other Expenses, i.e.: groceries, transport, telephone/cellphone etc.</string>
     <string name="cli_overlay_all_expenses">All Other Expenses, i.e.: groceries,transport, telephone/cellphone etc.</string>
     <string name="cli_creating_offer">Creating offer...</string>
+    <string name="cli_process_error_content">Are you sure you want to log out? You will need to re-enter your username and password to log in again.</string>
+    <string name="cli_process_email_content">To upload your Proof of Income Documents, follow the instructions we’ve sent to your email. If you didn’t receive the password reset, please check your spam folder.</string>
+    <string name="cli_send_to_title">EMAIL SENT TO</string>
+    <string name="cli_loading">LOADING...</string>
+    <string name="cli_yes_continue">YES-CONTINUE</string>
+
 </resources>

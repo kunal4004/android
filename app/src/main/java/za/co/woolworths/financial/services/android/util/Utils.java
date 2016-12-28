@@ -32,6 +32,7 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
+import za.co.woolworths.financial.services.android.ui.fragments.CLISecondStepFragment;
 
 import static android.Manifest.permission_group.STORAGE;
 
@@ -46,7 +47,6 @@ public class Utils {
     public final static float DIFF_SCALE = BIG_SCALE - SMALL_SCALE;
     public static int FIRST_PAGE=0;
     public static  int DEFAULT_SELECTED_NAVIGATION_ITEM=0;
-
 
     //Firebase Messaging service
 

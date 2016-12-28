@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:id="@+id/linRootView"
+    android:focusableInTouchMode="true"
     android:layout_marginLeft="@dimen/bank_spacing_width"
     android:layout_marginRight="@dimen/bank_spacing_width"
     android:layout_marginTop="@dimen/default_margin"
@@ -21,6 +22,8 @@
             android:layout_height="wrap_content"
             android:text="@string/cli_credit_limit_amount"
             android:letterSpacing="0.1"
+            android:imeOptions="actionNext"
+            android:inputType="number"
             android:gravity="center|start"
             android:textColor="@color/semi_transparent_black"
             android:textSize="12sp"
@@ -40,14 +43,15 @@
             />
     </RelativeLayout>
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:text="@string/cli_rand_60000"
+    <za.co.woolworths.financial.services.android.ui.views.WEditTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:digits="0123456789"
         android:id="@+id/textAmount"
-        android:visibility="gone"
-        app:WTextView_font="medium"
+        android:backgroundTint="@color/recent_search_bg"
+        android:inputType="number"
+        android:imeOptions="actionNext"
+        app:WEditTextView_font="medium"
         android:textColor="@color/black"
         android:textSize="20sp"/>
-    <include layout="@layout/horizontal_divider"/>
 </LinearLayout>

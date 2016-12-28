@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
+import android.util.Log;
 
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
@@ -42,6 +43,7 @@ public class WoolworthsApplication extends Application {
     private static String baseURL;
     private static String apiKey;
     private static String sha1Password;
+    private boolean isDEABank = false;
 
     private static int NumVouchers =0;
 
@@ -253,6 +255,15 @@ public class WoolworthsApplication extends Application {
         SharedPreferences.Editor editor = settings.edit();
         editor.putString("Config_expireLastNotify", Long.toString(System.currentTimeMillis()));
         editor.commit();
+    }
+
+    public  boolean isDEABank() {
+        return isDEABank;
+    }
+
+    public  void setDEABank(boolean DEABank) {
+        Log.e("SETDEABANK",String.valueOf(DEABank));
+        this.isDEABank = DEABank;
     }
 
     @Override

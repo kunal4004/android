@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.models.dto.LoginRequest;
 import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
+import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
@@ -289,7 +290,7 @@ public interface ApiInterface {
             @Body CreateOfferRequest createOfferRequest);
 
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
-    @GET("/user/cli/DEABankAccountTypes")
+    @GET("/user/cli/offerActive")
     OfferActive getActiveOffer(
             @Header("apiId") String apiId,
             @Header("sha1Password") String sha1Password,
@@ -298,10 +299,6 @@ public interface ApiInterface {
             @Header("network") String network,
             @Header("os") String os,
             @Header("osVersion") String osVersion,
-            @Header("userAgent") String userAgent,
-            @Header("userAgentVersion") String userAgentVersion,
             @Header("sessionToken") String sessionToken,
-            int size, @Query("pageSize") int pageSize
-    );
-
+            @Query("productOfferingId") String productOfferingId);
 }

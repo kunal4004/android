@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_height="match_parent"
+    android:id="@+id/linProofLayout"
+    android:visibility="gone"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <include layout="@layout/horizontal_divider"/>
 
@@ -82,7 +84,7 @@
 
 
         <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycleList"
+        android:id="@+id/recycleProofIncome"
         android:layout_width="match_parent"
         android:clipToPadding="false"
             android:layout_marginLeft="@dimen/bank_spacing_width"
@@ -107,8 +109,26 @@
             app:WTextView_font="medium" />
 
 
-        <include layout="@layout/cli_button_wrap"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_marginRight="@dimen/bank_spacing_width"
+            android:layout_marginLeft="@dimen/bank_spacing_width"
+            android:layout_marginTop="@dimen/bank_spacing_width"
+            android:layout_height="wrap_content">
 
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:id="@+id/btnSendMail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp" android:layout_marginBottom="@dimen/cli_bottom_margin"
+                android:textAllCaps="true"
+                android:background="@color/black"
+                android:textColor="@color/white"
+                android:text="@string/cli_continue"
+                app:WButton_font="medium_bold"
+                android:textSize="12sp"
+                android:letterSpacing="0.2" />
+        </RelativeLayout>
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

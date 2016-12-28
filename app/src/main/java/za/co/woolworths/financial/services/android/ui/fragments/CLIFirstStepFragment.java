@@ -26,9 +26,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanksResponse;
-import za.co.woolworths.financial.services.android.models.dto.OfferActive;
-import za.co.woolworths.financial.services.android.models.dto.OfferActiveResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
+import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIDeaBankMapAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -44,10 +43,11 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 
     private StepNavigatorCallback stepNavigatorCallback;
     private int mSelectedPosition=-1;
+    private CLIStepIndicatorActivity mStepIndicatorActivity;
+    private CLIStepIndicatorActivity.OnFragmentRefresh onFragmentRefresh;
 
     public interface StepNavigatorCallback{
         void openNextFragment(int index);
-        void openPreviousFragment(int index);
     }
 
     private RecyclerView mRecycleList;
@@ -78,29 +78,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         setListener();
         setText();
         setDeaBanks();
-        setOfferActiveRequest();
         return view;
-    }
-
-    private void setOfferActiveRequest() {
-        new HttpAsyncTask<String, String, OfferActive>() {
-            @Override
-            protected OfferActive httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getActivity().getApplication()).getApi().getActiveOffer();
-            }
-
-            @Override
-            protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                OfferActive offerActive = new OfferActive();
-                offerActive.response = new OfferActiveResponse();
-                return offerActive;
-            }
-
-            @Override
-            protected Class<OfferActive> httpDoInBackgroundReturnType() {
-                return OfferActive.class;
-            }
-        };
     }
 
     private void initUI() {
@@ -119,6 +97,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     }
 
     private void setText(){
+        mImgInfo.setVisibility(View.GONE);
         mTextCreditLimit.setText(getActivity().getResources().getString(R.string.cli_select_your_bank));
     }
 
@@ -126,6 +105,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     public void onAttach(Context context) {
         super.onAttach(context);
         stepNavigatorCallback = (StepNavigatorCallback)getActivity();
+        mStepIndicatorActivity = (CLIStepIndicatorActivity) context;
     }
 
     public void setDeaBanks() {
@@ -199,8 +179,10 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                 if(mUpdateBankDetail!=null){
                     if(mUpdateBankDetail.getBankName()!=null){
                         if (mSelectedPosition==lastPosition()){ //others position clicked
-                            WErrorDialog.setErrorMessage(getActivity(),"others");
+                            mWoolworthsApplication.setDEABank(false);
+                            stepNavigatorCallback.openNextFragment(2);
                         }else {
+                            mWoolworthsApplication.setDEABank(true);
                             stepNavigatorCallback.openNextFragment(1);
                         }
                         }else {
@@ -260,4 +242,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         else
             return 0;
     }
+
+
 }

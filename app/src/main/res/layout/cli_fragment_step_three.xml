@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="match_parent"
-    android:gravity="bottom"
-    sothree:umanoDragView="@+id/detailsView"
-    sothree:umanoOverlay="true"
-    sothree:umanoPanelHeight="0dp"
-    sothree:umanoParallaxOffset="100dp"
-    sothree:umanoScrollableView="@+id/list"
-    sothree:umanoShadowHeight="4dp">
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
+        android:id="@+id/linBankLayout"
         android:layout_height="match_parent">
         <include layout="@layout/horizontal_divider"/>
 
@@ -71,6 +67,7 @@
                         android:id="@+id/wEditAccountNumber"
                         app:WTextView_font="medium"
                         android:digits="0123456789 "
+                        android:maxLength="14"
                         android:inputType="number"
                         android:textColor="@color/black"
                         android:textSize="20sp"/>
@@ -84,4 +81,6 @@
         </android.support.v4.widget.NestedScrollView>
 
     </LinearLayout>
+
+    <include layout="@layout/cli_fragment_income_proof" />
     </LinearLayout>

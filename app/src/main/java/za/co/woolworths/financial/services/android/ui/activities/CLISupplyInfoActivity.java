@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -9,12 +10,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -31,6 +37,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.CLICreditLimitAdapter;
 import za.co.woolworths.financial.services.android.ui.views.StepIndicator;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -46,7 +53,7 @@ import za.co.woolworths.financial.services.android.util.binder.view.CLICreditLim
 public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnClickListener,CLICreditLimitContentBinder.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private StepIndicator mStepIndicator;
-    private WTextView mTextAmount;
+    private WEditTextView mTextAmount;
     private WButton mBtnContinue;
     private LinearLayoutManager mLayoutManager;
     private RecyclerView mRecycleList;
@@ -66,6 +73,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     public CreateOfferResponse createOffer;
     final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
     private ProgressDialog mCreateOfferProgressDialog;
+    private PopupWindow slidingUpView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,20 +92,20 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     private void initViews() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mStepIndicator = (StepIndicator) findViewById(R.id.step_indicator);
-        mTextAmount = (WTextView) findViewById(R.id.textAmount);
-        mBtnContinue=(WButton)findViewById(R.id.btnContinue);
-        mRecycleList=(RecyclerView)findViewById(R.id.recycleList);
-        mRadApplySolvency =(RadioGroup)findViewById(R.id.radApplySolvency);
-        mRadioYesSolvency = (RadioButton)findViewById(R.id.radioYesSolvency);
-        mRadioNoSolvency = (RadioButton)findViewById(R.id.radioNoSolvency);
-        mRadConfidentialCredit =(RadioGroup)findViewById(R.id.radConfidentialCredit);
-        mRadioYesConfidentialCredit = (RadioButton)findViewById(R.id.radioYesConfidentialCredit);
-        mRadioNoConfidentialCredit = (RadioButton)findViewById(R.id.radioNoConfidentialCredit);
-        mTextApplySolvency = (WTextView)findViewById(R.id.textApplySolvency);
-        mImageCreditAmount = (ImageView)findViewById(R.id.imgInfo);
+        mTextAmount = (WEditTextView) findViewById(R.id.textAmount);
+        mBtnContinue = (WButton) findViewById(R.id.btnContinue);
+        mRecycleList = (RecyclerView) findViewById(R.id.recycleList);
+        mRadApplySolvency = (RadioGroup) findViewById(R.id.radApplySolvency);
+        mRadioYesSolvency = (RadioButton) findViewById(R.id.radioYesSolvency);
+        mRadioNoSolvency = (RadioButton) findViewById(R.id.radioNoSolvency);
+        mRadConfidentialCredit = (RadioGroup) findViewById(R.id.radConfidentialCredit);
+        mRadioYesConfidentialCredit = (RadioButton) findViewById(R.id.radioYesConfidentialCredit);
+        mRadioNoConfidentialCredit = (RadioButton) findViewById(R.id.radioNoConfidentialCredit);
+        mTextApplySolvency = (WTextView) findViewById(R.id.textApplySolvency);
+        mImageCreditAmount = (ImageView) findViewById(R.id.imgInfo);
     }
 
-    private void setActionBar(){
+    private void setActionBar() {
         setSupportActionBar(mToolbar);
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -107,7 +115,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mActionBar.setHomeAsUpIndicator(R.drawable.close_24);
     }
 
-    public void setListener(){
+    public void setListener() {
         mBtnContinue.setOnClickListener(this);
         mRadioYesSolvency.setOnCheckedChangeListener(this);
         mRadioNoSolvency.setOnCheckedChangeListener(this);
@@ -116,16 +124,18 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mImageCreditAmount.setOnClickListener(this);
     }
 
-    private void setCLIContent(){
+    private void setCLIContent() {
         mStepIndicator.setDefaultView(0);
+        mBtnContinue.setText(getString(R.string.cli_yes_continue));
         mStepIndicator.setEnabled(false);
         mTextApplySolvency.setText(getString(R.string.cli_apply_insolvency));
         mTextAmount.setVisibility(View.VISIBLE);
         mImageCreditAmount.setVisibility(View.GONE);
+        mImageCreditAmount.setVisibility(View.GONE);
     }
 
-    private void setRecycleView(List<CreditLimit> creditLimit){
-        mCLICreditLimitAdapter = new CLICreditLimitAdapter(creditLimit,this);
+    private void setRecycleView(List<CreditLimit> creditLimit) {
+        mCLICreditLimitAdapter = new CLICreditLimitAdapter(creditLimit, this);
         mLayoutManager = new LinearLayoutManager(this);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecycleList.setLayoutManager(mLayoutManager);
@@ -135,55 +145,56 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mRecycleList.setFocusable(false);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-    }
-
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btnContinue:
                 mBtnContinue.startAnimation(buttonClick);
                 String selectedRadSolvency = selectedRadioGroup(mRadApplySolvency);
                 String selectedRadConfidential = selectedRadioGroup(mRadConfidentialCredit);
 
-                 createOfferRequest();
+                openBankDetails();
+
+
+                //  createOfferRequest();
                 break;
             default:
         }
     }
 
-    public List<CreditLimit> getCreditLimitInfo(){
-        ArrayList<CreditLimit>creditLimits = new ArrayList<>();
-        if(creditLimits!=null)
+    public List<CreditLimit> getCreditLimitInfo() {
+        ArrayList<CreditLimit> creditLimits = new ArrayList<>();
+        if (creditLimits != null)
             creditLimits.clear();
         String[] clAmountArray = getResources().getStringArray(R.array.cl_amount);
         String[] clArrayName = getResources().getStringArray(R.array.cl_label);
         String[] clArrayDescription = getResources().getStringArray(R.array.cl_overlay_label);
 
-        for (int x=0;x<clAmountArray.length;x++){
-            creditLimits.add(new CreditLimit(clArrayName[x],clAmountArray[x],clArrayDescription[x]));
+        for (int x = 0; x < clAmountArray.length; x++) {
+            creditLimits.add(new CreditLimit(clArrayName[x], clAmountArray[x], clArrayDescription[x]));
         }
         return creditLimits;
     }
 
-    public void setRadioButtonBold(){
+    public void setRadioButtonBold() {
         try {
             RadioButton checked = (RadioButton) findViewById(mRadApplySolvency.getCheckedRadioButtonId());
             checked.setTypeface(Typeface.DEFAULT_BOLD);
-        }catch (NullPointerException ex){}
+        } catch (NullPointerException ex) {
+        }
         try {
             RadioButton checked = (RadioButton) findViewById(mRadConfidentialCredit.getCheckedRadioButtonId());
             checked.setTypeface(Typeface.DEFAULT_BOLD);
-        }catch (NullPointerException ex){}
+        } catch (NullPointerException ex) {
+        }
     }
 
     @Override
     public void onClick(View v, int position) {
+
         SlidingUpViewLayout slidingUpViewLayout = new SlidingUpViewLayout(this);
-        if (mArrCreditLimit!=null) {
-            slidingUpViewLayout.openOverlayGotIT(mArrCreditLimit.get(position).getDescription());
+        if (mArrCreditLimit != null) {
+            slidingUpView = slidingUpViewLayout.openOverlayView(mArrCreditLimit.get(position).getDescription(),
+                    SlidingUpViewLayout.OVERLAY_TYPE.INFO);
         }
     }
 
@@ -198,32 +209,47 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         setRadioButtonBold();
     }
 
+
+    @Override
+    public void onBackPressed() {
+        if (slidingUpView != null) {
+            if (slidingUpView.isShowing()) {
+                slidingUpView.dismiss();
+            } else {
+                canGoBack();
+            }
+        } else {
+            canGoBack();
+        }
+    }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent openPreviousActivity = new Intent(CLISupplyInfoActivity.this,CLIActivity.class);
+                Intent openPreviousActivity = new Intent(CLISupplyInfoActivity.this, CLIActivity.class);
                 startActivity(openPreviousActivity);
                 finish();
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                return  true;
+                return true;
         }
         return false;
     }
 
-    public String selectedRadioGroup(RadioGroup radioGroup){
+    public String selectedRadioGroup(RadioGroup radioGroup) {
         int radioID = radioGroup.getCheckedRadioButtonId();
         RadioButton radioButton = (RadioButton) radioGroup.findViewById(radioID);
         String selectedConfidentialCredit = (String) radioButton.getText();
         return selectedConfidentialCredit;
     }
 
-    public void createOfferRequest(){
+    public void createOfferRequest() {
         new HttpAsyncTask<String, String, CreateOfferResponse>() {
             @Override
             protected CreateOfferResponse httpDoInBackground(String... params) {
-               CreateOfferRequest createOfferRequest = new CreateOfferRequest(1,
-                        60000,
+                CreateOfferRequest createOfferRequest = new CreateOfferRequest(1,
+                        getCreditLimitAmount(mTextAmount),
                         getNumbers(0),
                         getNumbers(1),
                         getNumbers(2),
@@ -255,15 +281,15 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
             @Override
             protected void onPostExecute(CreateOfferResponse createOfferResponse) {
                 super.onPostExecute(createOfferResponse);
-                if(createOfferResponse!=null) {
+                if (createOfferResponse != null) {
                     String response_code = createOfferResponse.response.code;
-                    if (response_code!=null) {
+                    if (response_code != null) {
                         switch (Integer.valueOf(response_code)) {
                             case 200:
                                 Log.e("insideOnPostExecute", "success");
                                 break;
                             default:
-                              //  WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this, createOfferResponse.response.desc);
+                                //  WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this, createOfferResponse.response.desc);
                                 break;
                         }
                     }
@@ -279,25 +305,38 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         }.execute();
     }
 
-    public int getNumbers(int position){
-        if(mArrCreditLimit!=null){
-            return Integer.valueOf(mArrCreditLimit.get(position).getAmount().replace("R","").replace(" ",""));
-        }else {
+    public int getNumbers(int position) {
+        if (mArrCreditLimit != null) {
+            return Integer.valueOf(mArrCreditLimit.get(position).getAmount().replace("R", "").replace(" ", ""));
+        } else {
             return 0;
         }
     }
 
-    public void stopProgressDialog(){
-        if(mCreateOfferProgressDialog != null && mCreateOfferProgressDialog.isShowing()){
+    public void stopProgressDialog() {
+        if (mCreateOfferProgressDialog != null && mCreateOfferProgressDialog.isShowing()) {
             mCreateOfferProgressDialog.dismiss();
         }
     }
 
-    public void openBankDetails(){
-        Intent openCLIStepIndicatorActivity = new Intent(CLISupplyInfoActivity.this,CLIStepIndicatorActivity.class);
+    public void openBankDetails() {
+        Intent openCLIStepIndicatorActivity = new Intent(CLISupplyInfoActivity.this, CLIStepIndicatorActivity.class);
         startActivity(openCLIStepIndicatorActivity);
         finish();
-        overridePendingTransition(0,0);
+        overridePendingTransition(0, 0);
+    }
+
+    public void canGoBack() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    public int getCreditLimitAmount(EditText editText){
+        int editTextValue = Integer.valueOf(editText.getText().toString());
+        if (editTextValue==0){
+            return 0;
+        }else
+            return editTextValue;
     }
 }
 

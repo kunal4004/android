@@ -34,4 +34,6 @@ public class CLICreditLimitAdapter extends EnumMapBindAdapter<CLICreditLimitAdap
     public SampleViewType getEnumFromOrdinal(int ordinal) {
         return SampleViewType.values()[ordinal];
     }
+
+
 }
