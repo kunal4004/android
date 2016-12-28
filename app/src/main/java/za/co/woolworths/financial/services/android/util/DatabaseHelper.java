@@ -21,10 +21,12 @@ import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import retrofit.http.Body;
 
 import static com.awfs.coordination.R.drawable.cursor;
+import static com.google.zxing.qrcode.decoder.ErrorCorrectionLevel.L;
 
 /**
  * Created by W7099877 on 19/12/2016.
@@ -220,7 +222,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public String getCurrentTime()
     {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:MM:SS");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         Date date = new Date(System.currentTimeMillis());
         String value=dateFormat.format(date);
         return value;
@@ -228,26 +230,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public String getExpireTime()
     {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:MM:SS");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
         Date date = new Date(System.currentTimeMillis()+30*1000);
         String value=dateFormat.format(date);
         return value;
     }
 
-    public void show()
-    {
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READONLY);
-        String query = "SELECT * FROM " +API_RESPONSE_TABLE;
-        Cursor cursor = db.rawQuery(query, null);
-        if(cursor!=null) {
-            cursor.moveToFirst();
-            do {
-                int id=cursor.getInt(cursor.getColumnIndex("id"));
-                Log.d(TAG, "RESPONSE TABLE "+id);
-                int j=id;
 
-            }
-            while (cursor.moveToNext());
-        }
-    }
 }
