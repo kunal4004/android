@@ -1,12 +1,10 @@
 package za.co.woolworths.financial.services.android.models;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.provider.Settings;
 import android.util.Log;
 
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -15,29 +13,14 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-
 
 import okio.Buffer;
 import okio.BufferedSource;
 import retrofit.RestAdapter;
-
-
-import retrofit.client.Client;
-import retrofit.client.Header;
 import retrofit.client.OkClient;
-import retrofit.client.Request;
-import retrofit.http.Streaming;
-import retrofit.mime.TypedByteArray;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
@@ -57,11 +40,9 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
-import za.co.woolworths.financial.services.android.util.DatabaseHelper;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.util.DatabaseHelper;
 
-import static android.R.attr.value;
-import static com.awfs.coordination.R.drawable.cursor;
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class WfsApi {
@@ -129,8 +110,6 @@ public class WfsApi {
                         code = 1;
                     int requestID = dbHelper.addApIRequest(endpoint, request.method(), request.headers().toString(), bodyToString(request.body()));
                     dbHelper.addApIResponse(body, requestID, code);
-
-
                 }
                 return response;
 
@@ -143,8 +122,6 @@ public class WfsApi {
                 .setLogLevel(Util.isDebug(mContext) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
                 .build()
                 .create(ApiInterface.class);
-
-
     }
 
     public LoginResponse login(LoginRequest loginRequest) {
@@ -152,29 +129,27 @@ public class WfsApi {
     }
 
     public AccountResponse getAccount(String productOfferingId) {
-        return mApiInterface.getAccount(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSession(), productOfferingId);
+        return mApiInterface.getAccount(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId);
     }
 
-    // Session token hardcoded for test purpose
     public AccountsResponse getAccounts() {
         return mApiInterface.getAccounts(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken());
     }
 
     public AuthoriseLoanResponse authoriseLoan(AuthoriseLoanRequest authoriseLoanRequest) {
-        return mApiInterface.authoriseLoan(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSession(), authoriseLoanRequest);
+        return mApiInterface.authoriseLoan(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), authoriseLoanRequest);
     }
 
-    // Session token hardcoded for test purpose
     public TransactionHistoryResponse getAccountTransactionHistory(String productOfferingId) {
         return mApiInterface.getAccountTransactionHistory(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId);
     }
 
     public VoucherResponse getVouchers() {
-        return mApiInterface.getVouchers(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSession());
+        return mApiInterface.getVouchers(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken());
     }
 
     public IssueLoanResponse issueLoan(IssueLoanRequest issueLoanRequest) {
-        return mApiInterface.issueLoan(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSession(), issueLoanRequest);
+        return mApiInterface.issueLoan(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), issueLoanRequest);
     }
 
     public ContactUsConfigResponse getContactUsConfig() {
@@ -182,25 +157,23 @@ public class WfsApi {
     }
 
     public LocationResponse getLocations(String lat, String lon, String searchString, String radious) {
-        return mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSession(), lat, lon, searchString, radious);
+        return mApiInterface.getStoresLocation(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), lat, lon, searchString, radious);
     }
 
-        return  mApiInterface.getMessages(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "",getSessionToken() ,pageSize,pageNumber);
+    public MessageResponse getMessagesResponse(int pageSize, int pageNumber) {
+        return mApiInterface.getMessages(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), pageSize, pageNumber);
     }
 
-        return  mApiInterface.getDeleteresponse(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken() ,id);
+    public DeleteMessageResponse getDeleteMessagesResponse(String id) {
+        return mApiInterface.getDeleteresponse(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), id);
     }
 
-    public ReadMessagesResponse getReadMessagesResponse(MessageReadRequest readMessages){
-
-        return  mApiInterface.setReadMessages(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(),readMessages);
+    public ReadMessagesResponse getReadMessagesResponse(MessageReadRequest readMessages) {
+        return mApiInterface.setReadMessages(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), readMessages);
     }
-
-        return  mApiInterface.createUpdateDevice(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken() ,device);
-    }
-
-    private String getSession() {
-        return ((WoolworthsApplication) mContext).getUserManager().getSession();
+    
+    public CreateUpdateDeviceResponse getResponseOnCreateUpdateDevice(CreateUpdateDevice device) {
+        return mApiInterface.createUpdateDevice(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), device);
     }
 
     private String getOsVersion() {
