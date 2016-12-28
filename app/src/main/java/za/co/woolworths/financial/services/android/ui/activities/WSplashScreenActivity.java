@@ -143,6 +143,27 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
     public void onCompletion(MediaPlayer mp) {
 
         if(!WSplashScreenActivity.this.mVideoPlayerShouldPlay){
+
+            //SessionDao sessionDoa = new SessionDao(SessionDao.USER_TOKEN);// this in essence makes a SessionDoa GET from SQL matching the key
+            //if !sessionDao.value.equals(""){
+            //this means that the token exists
+            // }
+
+
+            /*
+            * When creating a SessionDao with a key where the entry doesn't exist
+            * in SQL lite, return a new SessionDao where the key is equal to the
+            * key that's passed in the constructor e.g
+            *
+            * SessionDoa sessionDao = SessionDao(SessionDao.USER_TOKEN) //and the record doesn't exist
+            * print(sessionDao.value) //null or empty
+            * print(sessionDao.key) //SessionDao.USER_TOKEN
+            *
+            * sessionDoa.key = SessionDao.USER_TOKEN
+            * sessionDao.save()
+            *
+            *
+            * */
             String jwt = this.getSharedPreferences("User", MODE_PRIVATE).getString(SSOActivity.TAG_JWT, "");
             JWTDecodedModel jwtDecodedModel = JWTHelper.decode(jwt);
 

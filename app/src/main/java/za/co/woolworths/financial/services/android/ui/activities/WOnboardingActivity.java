@@ -171,8 +171,12 @@ public class WOnboardingActivity extends FragmentActivity implements WOnboarding
 
         if(resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()){
             //Save JWT
-
-            this.getSharedPreferences("User", MODE_PRIVATE).edit().putString(SSOActivity.TAG_JWT, data.getStringExtra(SSOActivity.TAG_JWT)).commit();
+            //SessionDao sessionDao = new SessionDoa();
+            //sessionDoa.key = SessionDoa.USER_TOKEN //"USER_TOKEN";
+            //sessionDoa.value = jwt;
+            //sessionDao.save();
+            String jwt = data.getStringExtra(SSOActivity.TAG_JWT);
+            this.getSharedPreferences("User", MODE_PRIVATE).edit().putString(SSOActivity.TAG_JWT, jwt).commit();
 
             this.navigateToMain();
         }
