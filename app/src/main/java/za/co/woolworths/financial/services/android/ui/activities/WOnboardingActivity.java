@@ -21,6 +21,7 @@ import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WOnboardingOnFragmentInteractionListener;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.fragments.WOnboardingFourFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WOnboardingOneFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WOnboardingThreeFragment;
@@ -171,12 +172,14 @@ public class WOnboardingActivity extends FragmentActivity implements WOnboarding
 
         if(resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()){
             //Save JWT
-            //SessionDao sessionDao = new SessionDoa();
-            //sessionDoa.key = SessionDoa.USER_TOKEN //"USER_TOKEN";
-            //sessionDoa.value = jwt;
-            //sessionDao.save();
-            String jwt = data.getStringExtra(SSOActivity.TAG_JWT);
-            this.getSharedPreferences("User", MODE_PRIVATE).edit().putString(SSOActivity.TAG_JWT, jwt).commit();
+            SessionDao sessionDao = new SessionDao(WOnboardingActivity.this);
+            sessionDao.key = SessionDao.KEY.USER_TOKEN;
+            sessionDao.value = data.getStringExtra(SSOActivity.TAG_JWT);
+            try {
+                sessionDao.save();
+            }catch(Exception e){
+                Log.e(TAG, e.getMessage());
+            }
 
             this.navigateToMain();
         }

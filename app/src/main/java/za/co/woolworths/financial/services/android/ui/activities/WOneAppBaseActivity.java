@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.os.Bundle;
 import android.view.animation.AccelerateInterpolator;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
@@ -34,6 +36,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     private WFragmentDrawer drawerFragment;
     public WTextView mToolbarTitle;
     private List<Fragment> fragmentList;
+    public static final String TAG = "WOneAppBaseActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,9 +130,15 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     }
 
     public JWTDecodedModel getJWTDecoded(){
-
-        //TODO: implement sqllite jwt reading persisted values
-        String jwt = this.getSharedPreferences("User", MODE_PRIVATE).getString(SSOActivity.TAG_JWT, "");
-        return JWTHelper.decode(jwt);
+        JWTDecodedModel result = new JWTDecodedModel();
+        try{
+            SessionDao sessionDao = new SessionDao(WOneAppBaseActivity.this, SessionDao.KEY.USER_TOKEN).get();
+            if (sessionDao.value != null && !sessionDao.value.equals("")){
+                result = JWTHelper.decode(sessionDao.value);
+            }
+        }catch(Exception e){
+            Log.e(TAG, e.getMessage());
+        }
+        return result;
     }
 }

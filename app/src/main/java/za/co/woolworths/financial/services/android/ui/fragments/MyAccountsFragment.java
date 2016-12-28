@@ -30,6 +30,7 @@ import java.util.Map;
 import za.co.wigroup.logger.lib.WiGroupLogger;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
@@ -39,6 +40,7 @@ import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsA
 import za.co.woolworths.financial.services.android.ui.activities.PersonalLoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -228,7 +230,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     private void configureAndLayoutTopLayerView() {
 
         JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity)getActivity()).getJWTDecoded();
-        if(jwtDecodedModel != null){
+        if(jwtDecodedModel.AtgSession != null){
             loggedInHeaderLayout.setVisibility(View.VISIBLE);
 
             if(jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")){
@@ -412,9 +414,12 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                         mError.setMessage("Your session expired. You've been signed out.");
                         mError.show();
 
-                        SharedPreferences preferences = getActivity().getSharedPreferences("User", 0);
-                        preferences.edit().remove(SSOActivity.TAG_JWT).commit();
-                        MyAccountsFragment.this.initialize();
+                        try{
+                            new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
+                            MyAccountsFragment.this.initialize();
+                        } catch (Exception e){
+                            Log.e(TAG, e.getMessage());
+                        }
 
                         break;
                     default:
@@ -487,8 +492,14 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
         if(resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()){
             //Save JWT
+            SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN);
+            sessionDao.value = data.getStringExtra(SSOActivity.TAG_JWT);
+            try {
+                sessionDao.save();
+            }catch(Exception e){
+                Log.e(TAG, e.getMessage());
+            }
 
-            getActivity().getSharedPreferences("User", Context.MODE_PRIVATE).edit().putString(SSOActivity.TAG_JWT, data.getStringExtra(SSOActivity.TAG_JWT)).commit();
             initialize();
         }
     }

@@ -21,6 +21,7 @@ import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.ApiInterface;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.util.DatabaseHelper;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -47,14 +48,6 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
         this.videoView.start();
 
         this.videoView.setOnCompletionListener(this);
-
-        dbHelper = new DatabaseHelper(this, getFilesDir().getAbsolutePath());
-        try {
-            dbHelper.prepareDatabase();
-
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
 
         //Mobile Config Server
         new HttpAsyncTask<String, String, ConfigResponse>() {
@@ -143,13 +136,6 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
     public void onCompletion(MediaPlayer mp) {
 
         if(!WSplashScreenActivity.this.mVideoPlayerShouldPlay){
-
-            //SessionDao sessionDoa = new SessionDao(SessionDao.USER_TOKEN);// this in essence makes a SessionDoa GET from SQL matching the key
-            //if !sessionDao.value.equals(""){
-            //this means that the token exists
-            // }
-
-
             /*
             * When creating a SessionDao with a key where the entry doesn't exist
             * in SQL lite, return a new SessionDao where the key is equal to the
@@ -164,15 +150,16 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
             *
             *
             * */
-            String jwt = this.getSharedPreferences("User", MODE_PRIVATE).getString(SSOActivity.TAG_JWT, "");
-            JWTDecodedModel jwtDecodedModel = JWTHelper.decode(jwt);
-
-
-            if(jwtDecodedModel != null){
-                ScreenManager.presentMain(WSplashScreenActivity.this);
-            }else{
-                ScreenManager.presentOnboarding(WSplashScreenActivity.this);
+            try{
+                SessionDao sessionDao = new SessionDao(WSplashScreenActivity.this, SessionDao.KEY.USER_TOKEN).get();
+                if (sessionDao.value != null && !sessionDao.value.equals("")){
+                    ScreenManager.presentMain(WSplashScreenActivity.this);
+                    return;
+                }
+            }catch(Exception e){
+                Log.e(TAG, e.getMessage());
             }
+            ScreenManager.presentOnboarding(WSplashScreenActivity.this);
             mp.stop();
 
         }else{

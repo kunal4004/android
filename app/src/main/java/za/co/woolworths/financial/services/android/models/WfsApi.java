@@ -5,10 +5,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 import com.awfs.coordination.R;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Protocol;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
@@ -22,6 +19,7 @@ import okio.BufferedSource;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRequest;
@@ -43,28 +41,20 @@ import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.util.DatabaseHelper;
 
-import static com.google.android.gms.plus.PlusOneDummyView.TAG;
-
 public class WfsApi {
 
     private Context mContext;
     private ApiInterface mApiInterface;
     String responseString = "";
-    DatabaseHelper dbHelper;
+    public static final String TAG = "WfsApi";
 
 
     protected WfsApi(Context mContext) {
         this.mContext = mContext;
-        dbHelper = new DatabaseHelper(mContext, mContext.getFilesDir().getAbsolutePath());
-        try {
-            dbHelper.prepareDatabase();
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
         OkHttpClient client = new OkHttpClient();
         client.setReadTimeout(60, TimeUnit.SECONDS);
         client.setConnectTimeout(60, TimeUnit.SECONDS);
-        client.interceptors().add(new Interceptor() {
+        /*client.interceptors().add(new Interceptor() {
             @Override
             public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
                 boolean isCached = false;
@@ -115,7 +105,7 @@ public class WfsApi {
 
 
             }
-        });
+        });*/
         mApiInterface = new RestAdapter.Builder()
                 .setClient(new OkClient(client))
                 .setEndpoint(WoolworthsApplication.getBaseURL())
@@ -214,7 +204,15 @@ public class WfsApi {
     }
 
     private String getSessionToken(){
-        return mContext.getSharedPreferences("User", Context.MODE_PRIVATE).getString(SSOActivity.TAG_JWT, "");
+        try{
+            SessionDao sessionDao = new SessionDao(mContext, SessionDao.KEY.USER_TOKEN).get();
+            if (sessionDao.value != null && !sessionDao.value.equals("")){
+                return sessionDao.value;
+            }
+        }catch(Exception e){
+            Log.e(TAG, e.getMessage());
+        }
+        return "";
     }
 /*   public ConfigResponse getConfig(){
         ApiInterface mApiInterface = new RestAdapter.Builder()

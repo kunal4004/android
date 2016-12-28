@@ -8,10 +8,6 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.internal.framed.Header;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,12 +17,9 @@ import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
-
-import retrofit.http.Body;
-
-import static com.awfs.coordination.R.drawable.cursor;
-import static com.google.zxing.qrcode.decoder.ErrorCorrectionLevel.L;
+import java.util.Map;
 
 /**
  * Created by W7099877 on 19/12/2016.
@@ -68,12 +61,57 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String SESSION_DATE_CREATED="dateCreated";
     private static final String SESSION_DATE_UPDATED="dateUpdated";
 
+    private static DatabaseHelper instance;
 
+    public static DatabaseHelper getInstance(Context context){
+        if (instance == null){
+            instance = new DatabaseHelper(context, context.getFilesDir().getAbsolutePath());
+            try {
+                instance.prepareDatabase();
+            } catch (IOException e) {
+                instance = null;
+                e.printStackTrace();
+            }
+        }
 
+        return instance;
+    }
 
+    public void executeVoidQuery(String query, String[] arguments) throws Exception {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+        Cursor cursor = db.rawQuery(query, arguments);
+
+        if(cursor.getCount() == 0){//consider this as a failure as no rows were updated
+            throw new SQLiteException("Updated row count was 0. This is considered as a failed ' SQL UPDATE' transaction.");
+        }
+    }
+
+    public Map<String, String> executeReturnableQuery(String query, String[] arguments) throws IOException {
+        HashMap<String, String> result = new HashMap<String, String>();
+
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+
+        try{
+            Cursor cursor = db.rawQuery(query, arguments);
+            cursor.moveToFirst();
+            Log.e(TAG, "" + cursor.getCount());
+            //if(cursor.getCount() != -1) TODO cursor check for rows that's returned
+
+            for(String columnName : cursor.getColumnNames()){
+                int index = cursor.getColumnIndex(columnName);
+                String value = cursor.getString(index);
+
+                result.put(columnName, value);
+            }
+        }catch(Exception e){
+            Log.e("Some Error", "");
+        }
+
+        return result;
+    }
 
     private String pathToSaveDBFile;
-    public DatabaseHelper(Context context, String filePath) {
+    private DatabaseHelper(Context context, String filePath) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.myContext = context;
         pathToSaveDBFile = new StringBuffer(filePath).append("/").append(DATABASE_NAME).toString();
