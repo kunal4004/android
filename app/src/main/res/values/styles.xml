@@ -132,8 +132,8 @@
         <item name="windowActionBar">false</item>
         <item name="android:homeAsUpIndicator">@drawable/close_24</item>
     </style>
-    <style name="PopUpWindowAnim">
-        <item name="android:windowEnterAnimation">@anim/fade_in</item>
-        <item name="android:windowExitAnimation">@anim/fade_out</item>
+    <style name="popwindow_style">
+        <item name="android:windowEnterAnimation">@anim/pop_fade_in</item>
+        <item name="android:windowExitAnimation">@anim/pop_fade_out</item>
     </style>
 </resources>

@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -23,11 +24,17 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Currency;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
@@ -313,5 +320,18 @@ public class Utils {
         return response;
     }
 
+    public static String replaceEmailAddress(Context context,String email){
+        return context.getResources().getString(R.string.cli_email_address).replace("xxxx@xxxx.com",email);
+    }
 
+    public static String formatCurrency(Double amount){
+        if (amount!=null) {
+            NumberFormat formatter = NumberFormat.getCurrencyInstance();
+            String moneyString = formatter.format(amount).replace("$", "R").replace(",", " ");
+            String newAmount = moneyString.substring(0, moneyString.indexOf("."));
+            return newAmount;
+        }else {
+            return String.valueOf(0);
+        }
+    }
 }

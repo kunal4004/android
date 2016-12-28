@@ -12,46 +12,31 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import retrofit.RetrofitError;
-import za.co.wigroup.logger.lib.WiGroupLogger;
 import za.co.woolworths.financial.services.android.models.UserManager;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
-import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
-import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.CLI;
-import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
-import za.co.woolworths.financial.services.android.models.dto.OfferActiveResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static com.google.android.gms.plus.PlusOneDummyView.TAG;
+import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
 public class CLIActivity extends AppCompatActivity implements View.OnClickListener {
 
     private WTextView mTextToolbar;
-    private LinearLayout mCardsLayoutBackground;
-    boolean isCreditCard = false;
-    boolean isStoreCard = false;
-    boolean isPersonalCard = false;
     private Toolbar mToolbar;
     private CollapsingToolbarLayout mCollapsingToolbarLayout = null;
     private WTextView mTextCreditLimit;
@@ -63,19 +48,22 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
     private ImageView mImageAccount;
     private ProgressDialog mGetActiveOfferProgressDialog;
+    private WoolworthsApplication woolworthsApplication;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cli);
+         woolworthsApplication = (WoolworthsApplication)getApplication();
         Utils.updateStatusBarBackground(CLIActivity.this);
         initViews();
         setCurrentIndex();
         setListener();
         setActionBar();
-        setPagerCard();
+        setPagerCard(woolworthsApplication.getCliCardPosition());
         setAppBarDragging(false);
-      //  getActiveOffer();
+
+        //getActiveOffer();
         //loadOffer();
     }
 
@@ -111,10 +99,10 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         mActionBar.setHomeAsUpIndicator(R.drawable.close_white);
     }
 
-    private void setPagerCard() {
+    private void setPagerCard(int id) {
         int[] cards={R.drawable.w_store_card,R.drawable.w_credi_card,R.drawable.w_personal_loan_card};
-        mImageAccount.setBackgroundResource(cards[mPosition]);
-       setCLIContent(mPosition);
+        mImageAccount.setBackgroundResource(cards[id]);
+       setCLIContent(id);
     }
 
     public void setCLIContent(int position){
@@ -205,7 +193,6 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
 
                 mBtnContinue.startAnimation(buttonClick);
 
-
                 switch (mPosition){
                     case 0:
                         break;
@@ -220,7 +207,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
                 startActivity(openCLIStepIndicator);
                 finish();
                // overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
                 break;
         }
@@ -237,7 +224,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
             @Override
             protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 OfferActive offerActive = new OfferActive();
-                offerActive.response = new OfferActiveResponse();
+                offerActive.response = new Response();
                 stopProgressDialog();
                 return offerActive;
             }
@@ -254,7 +241,17 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
             @Override
             protected void onPostExecute(OfferActive offerActive) {
                 super.onPostExecute(offerActive);
-                OfferActive offerAct = offerActive;
+                int httpCode = offerActive.httpCode;
+                String httpDesc =offerActive.response.desc;
+                if(httpCode==200){
+                    if (offerActive.offerActive){
+                        //open CLIActivity.java
+                    }else {
+                        WErrorDialog.setErrorMessage(CLIActivity.this,getString(R.string.cli_cannot_proceed_error));
+                    }
+                }else {
+                    WErrorDialog.setErrorMessage(CLIActivity.this,httpDesc);
+                }
                 stopProgressDialog();
             }
 
@@ -271,34 +268,4 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    public void loadOffer(){
-        new AsyncTask<Integer, String, OfferActive>() {
-            @Override
-            protected OfferActive doInBackground(Integer... params) {
-                try {
-                    return ((WoolworthsApplication) getApplication()).getApi().getActiveOffer("3");
-                } catch (RetrofitError e) {
-                    try {
-                        retrofit.client.Response response = e.getResponse();
-                        if (response != null) {
-                            return new Gson().fromJson(new InputStreamReader(response.getBody().in()), OfferActive.class);
-                        } else {
-                            OfferActive accountResponse = new OfferActive();
-                            accountResponse.httpCode = 408;
-                            accountResponse.response = new OfferActiveResponse();
-                            accountResponse.response.desc = getString(R.string.err_002);
-                            return accountResponse;
-                        }
-                    } catch (IOException e1) {
-                        return null;
-                    }
-                }
-            }
-
-            @Override
-            protected void onPostExecute(OfferActive accountResponse) {
-            super.onPostExecute(accountResponse);
-            }
-        }.execute();
-    }
 }

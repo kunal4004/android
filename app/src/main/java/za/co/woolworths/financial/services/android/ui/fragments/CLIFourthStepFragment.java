@@ -89,6 +89,6 @@ public class CLIFourthStepFragment extends Fragment implements View.OnClickListe
 
     public void closeActivity(){
         getActivity().finish();
-        getActivity().overridePendingTransition(0,0);
+        getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

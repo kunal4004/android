@@ -10,11 +10,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WOnboardingOnFragmentInteractionListener;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIFirstStepFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIFourthStepFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.CLISecondStepFragment;
@@ -33,6 +35,7 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
         CLIFirstStepFragment.StepNavigatorCallback{
 
     private OnFragmentRefresh onFragmentRefresh;
+    private WoolworthsApplication mWoolworthApplication;
 
     public interface OnFragmentRefresh{
         void refreshFragment();
@@ -47,6 +50,7 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cli_step);
         Utils.updateStatusBarBackground(CLIStepIndicatorActivity.this);
+        mWoolworthApplication = (WoolworthsApplication)getApplication();
         initViews();
         setActionBar();
         setCLIContent();
@@ -186,11 +190,16 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
                 moveToPage(0);
                 break;
             case 2:
-                moveToPage(1);
+                if (mWoolworthApplication.isOther()){
+                    mViewPStepIndicator.setCurrentItem(0);
+                    mStepIndicator.setOtherState();
+                }else {
+                    moveToPage(1);
+                }
                 break;
             case 3:
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                 break;
         }
     }

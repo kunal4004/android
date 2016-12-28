@@ -21,6 +21,7 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
 public class CLISecondStepFragment extends Fragment implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
@@ -103,12 +104,17 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btnContinue:
+                if (mRadApplySolvency.getCheckedRadioButtonId() == -1) {
+                    WErrorDialog.setErrorMessage(getActivity(),getString(R.string.cli_check_field));
+                    return;
+                }
+
                 String selectedRadSolvency = selectedRadioGroup(mRadApplySolvency);
-                if(selectedRadSolvency.equalsIgnoreCase("YES")){
+                if (selectedRadSolvency.equalsIgnoreCase("YES")) {
                     mWoolworthsApplication.setDEABank(true);
                     mMain.refresh();
                     stepNavigatorCallback.openNextFragment(2);
-                }else{
+                } else {
                     mWoolworthsApplication.setDEABank(false);
                     mMain.refresh();
                     stepNavigatorCallback.openNextFragment(2);

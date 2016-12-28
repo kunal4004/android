@@ -180,9 +180,11 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                     if(mUpdateBankDetail.getBankName()!=null){
                         if (mSelectedPosition==lastPosition()){ //others position clicked
                             mWoolworthsApplication.setDEABank(false);
+                            mWoolworthsApplication.setOther(true);
                             stepNavigatorCallback.openNextFragment(2);
                         }else {
                             mWoolworthsApplication.setDEABank(true);
+                            mWoolworthsApplication.setOther(false);
                             stepNavigatorCallback.openNextFragment(1);
                         }
                         }else {

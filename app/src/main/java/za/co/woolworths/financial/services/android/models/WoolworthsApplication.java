@@ -31,7 +31,7 @@ public class WoolworthsApplication extends Application {
     private UserManager mUserManager;
     private WfsApi mWfsApi;
     private Tracker mTracker;
-
+    private boolean swapSecondFragment=false;
     private static String applyNowLink;
     private static String registrationTCLink;
     private static String faqLink;
@@ -40,10 +40,12 @@ public class WoolworthsApplication extends Application {
     private static String howToSaveLink;
     private static String wrewardsTCLink;
 
+    private int cliCardPosition;
     private static String baseURL;
     private static String apiKey;
     private static String sha1Password;
     private boolean isDEABank = false;
+    private boolean isOther=false;
 
     private static int NumVouchers =0;
 
@@ -262,7 +264,6 @@ public class WoolworthsApplication extends Application {
     }
 
     public  void setDEABank(boolean DEABank) {
-        Log.e("SETDEABANK",String.valueOf(DEABank));
         this.isDEABank = DEABank;
     }
 
@@ -270,5 +271,21 @@ public class WoolworthsApplication extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+    public int getCliCardPosition() {
+        return cliCardPosition;
+    }
+
+    public void setCliCardPosition(int cliCardPosition) {
+        this.cliCardPosition = cliCardPosition;
+    }
+
+    public boolean isOther() {
+        return isOther;
+    }
+
+    public void setOther(boolean other) {
+        isOther = other;
     }
 }

@@ -2,6 +2,10 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.ContextCompatApi24;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,9 +89,11 @@ public class SlidingUpViewLayout {
         }
 
         final PopupWindow pWindow = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        pWindow.setAnimationStyle(R.style.PopUpWindowAnim);
+        pWindow.setAnimationStyle(R.style.popwindow_style);
         pWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-        pWindow.setOutsideTouchable(false);
+        pWindow.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(mContext,R.color.store_card)));
+        pWindow.setOutsideTouchable(true);
+
         mOverlayBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

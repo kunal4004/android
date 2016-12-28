@@ -10,15 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
@@ -26,6 +25,7 @@ import android.widget.RadioGroup;
 
 import com.awfs.coordination.R;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.WErrorDialog;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICreditLimitContentBinder;
 
 
@@ -50,7 +51,8 @@ import za.co.woolworths.financial.services.android.util.binder.view.CLICreditLim
  * Created by dimitrij on 2016/12/20.
  */
 
-public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnClickListener,CLICreditLimitContentBinder.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnClickListener,
+        CLICreditLimitContentBinder.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private StepIndicator mStepIndicator;
     private WEditTextView mTextAmount;
@@ -58,7 +60,6 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     private LinearLayoutManager mLayoutManager;
     private RecyclerView mRecycleList;
     private CLICreditLimitAdapter mCLICreditLimitAdapter;
-    private CLISupplyInfoActivity mActivity;
     private RadioGroup mRadApplySolvency;
     private RadioButton mRadioYesSolvency;
     private RadioButton mRadioNoSolvency;
@@ -70,16 +71,17 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     private ImageView mImageCreditAmount;
     private Toolbar mToolbar;
     private List<CreditLimit> mArrCreditLimit;
-    public CreateOfferResponse createOffer;
     final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
     private ProgressDialog mCreateOfferProgressDialog;
     private PopupWindow slidingUpView;
+    private int mCreditLimitAmount=0;
+    private CreateOfferRequest mCreateOfferRequest;
+    private String current="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cli_supply_info);
-        mActivity = this;
         Utils.updateStatusBarBackground(CLISupplyInfoActivity.this);
         initViews();
         setActionBar();
@@ -133,6 +135,39 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mTextAmount.setVisibility(View.VISIBLE);
         mImageCreditAmount.setVisibility(View.GONE);
         mImageCreditAmount.setVisibility(View.GONE);
+        mTextAmount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                if (!s.toString().equals(current)) {
+                    mTextAmount.removeTextChangedListener(this);
+
+                    String replaceable = String.format("[%s .\\s]", NumberFormat.getCurrencyInstance().getCurrency().getSymbol());
+                    String cleanString = s.toString().replaceAll(replaceable, "").replace("R","").replace(",","");
+                    double parsed;
+                    try {
+                        parsed = Double.parseDouble(cleanString);
+                    } catch (NumberFormatException e) {
+                        parsed = 0.00;
+                    }
+
+                    String formatted = Utils.formatCurrency(parsed);
+
+                    current = formatted;
+                    mTextAmount.setText(formatted);
+                    mTextAmount.setSelection(formatted.length());
+
+                    // Do whatever you want with position
+                    mTextAmount.addTextChangedListener(this);
+                }
+            }
+        });
     }
 
     private void setRecycleView(List<CreditLimit> creditLimit) {
@@ -150,15 +185,48 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         switch (view.getId()) {
             case R.id.btnContinue:
                 mBtnContinue.startAnimation(buttonClick);
-                String selectedRadSolvency = selectedRadioGroup(mRadApplySolvency);
-                String selectedRadConfidential = selectedRadioGroup(mRadConfidentialCredit);
+                String creditAmount = mTextAmount.getText().toString();
+                if(TextUtils.isEmpty(creditAmount)){
+                    WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this,
+                            getString(R.string.cli_solvency_error));
+                } else {
+                    mCreditLimitAmount = Integer.valueOf(creditAmount.replace(" ", "").replace("R", "").replace(",", ""));
+                    if (mRadApplySolvency.getCheckedRadioButtonId() == -1) {
+                        WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this,
+                                getString(R.string.cli_solvency_error));
+                    } else {
+                        if (mRadConfidentialCredit.getCheckedRadioButtonId() == -1) {
+                            WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this,
+                                    getString(R.string.cli_solvency_error));
+                        } else {
+                            mCreateOfferRequest = new CreateOfferRequest(3,
+                                    mCreditLimitAmount,
+                                    getNumbers(0),
+                                    getNumbers(1),
+                                    getNumbers(2),
+                                    getNumbers(3),
+                                    getNumbers(4),
+                                    getNumbers(5),
+                                    getNumbers(6),
+                                    getNumbers(7));
 
-                openBankDetails();
-
-
-                //  createOfferRequest();
+                            for (int index = 0; index < mArrCreditLimit.size(); index++) {
+                                String amount = mArrCreditLimit.get(index).getAmount();
+                                if (TextUtils.isEmpty(amount) || amount.equalsIgnoreCase("0")) {
+                                    WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this,
+                                            getString(R.string.cli_solvency_error));
+                                    return;
+                                }
+                            }
+                            String selectedRadSolvency = selectedRadioGroup(mRadApplySolvency);
+                            String selectedRadConfidential = selectedRadioGroup(mRadConfidentialCredit);
+                            createOfferRequest(selectedRadSolvency, selectedRadConfidential);
+                        }
+                    }
+                }
                 break;
             default:
+                break;
         }
     }
 
@@ -245,21 +313,11 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         return selectedConfidentialCredit;
     }
 
-    public void createOfferRequest() {
+    public void createOfferRequest(String solvency,String confidential) {
         new HttpAsyncTask<String, String, CreateOfferResponse>() {
             @Override
             protected CreateOfferResponse httpDoInBackground(String... params) {
-                CreateOfferRequest createOfferRequest = new CreateOfferRequest(1,
-                        getCreditLimitAmount(mTextAmount),
-                        getNumbers(0),
-                        getNumbers(1),
-                        getNumbers(2),
-                        getNumbers(3),
-                        getNumbers(4),
-                        getNumbers(5),
-                        getNumbers(6),
-                        getNumbers(7));
-                return ((WoolworthsApplication) getApplication()).getApi().createOfferRequest(createOfferRequest);
+            return ((WoolworthsApplication) getApplication()).getApi().createOfferRequest(mCreateOfferRequest);
             }
 
             @Override
@@ -287,10 +345,10 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                     if (response_code != null) {
                         switch (Integer.valueOf(response_code)) {
                             case 200:
-                                Log.e("insideOnPostExecute", "success");
+                               openBankDetails();
                                 break;
                             default:
-                                //  WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this, createOfferResponse.response.desc);
+                               //   WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this, createOfferResponse.response.desc);
                                 break;
                         }
                     }
@@ -330,14 +388,6 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     public void canGoBack() {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-    }
-
-    public int getCreditLimitAmount(EditText editText){
-        int editTextValue = Integer.valueOf(editText.getText().toString());
-        if (editTextValue==0){
-            return 0;
-        }else
-            return editTextValue;
     }
 }
 

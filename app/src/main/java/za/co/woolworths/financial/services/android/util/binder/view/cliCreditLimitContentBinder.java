@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util.binder.view;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import java.util.Locale;
 import za.co.woolworths.financial.services.android.models.dto.CreditLimit;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.DataBindAdapter;
 import za.co.woolworths.financial.services.android.util.binder.DataBinder;
 
@@ -82,7 +84,6 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
         ImageView mImgInfo;
         LinearLayout mLinRootView;
         private String current;
-
         public ViewHolder(View view) {
             super(view);
             mTxtACreditLimit = (WTextView) view.findViewById(R.id.textACreditLimit);
@@ -91,24 +92,10 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
             mLinRootView = (LinearLayout) view.findViewById(R.id.linRootView);
             mTextAmount.addTextChangedListener(new TextWatcher() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    if(!s.toString().equals(current))
-                    {
-                        if(mTextAmount.getText().toString().trim().length()>0)
-                        {
-                            mTextAmount.removeTextChangedListener(this);
-                            String formated = mTextAmount.getText().toString().trim().replace("R", "");
-                            current = formated;
-                            mTextAmount.setText("R"+formated);
-                            mTextAmount.setSelection(formated.length()+1);
-                        }
-                    }
-
-                }
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
                 @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                }
+                public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
                 @Override
                 public void afterTextChanged(Editable s) {
@@ -117,18 +104,16 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
                     if (!s.toString().equals(current)) {
                         mTextAmount.removeTextChangedListener(this);
 
-                        String replaceable = String.format("[%s,.\\s]", NumberFormat.getCurrencyInstance().getCurrency().getSymbol());
-                        String cleanString = s.toString().replaceAll(replaceable, "");
-
+                        String replaceable = String.format("[%s .\\s]", NumberFormat.getCurrencyInstance().getCurrency().getSymbol());
+                        String cleanString = s.toString().replaceAll(replaceable, "").replace("R","").replace(",","");
                         double parsed;
                         try {
                             parsed = Double.parseDouble(cleanString);
                         } catch (NumberFormatException e) {
                             parsed = 0.00;
                         }
-                        NumberFormat formatter = NumberFormat.getCurrencyInstance();
-                        formatter.setMaximumFractionDigits(0);
-                        String formatted = formatter.format((parsed));
+
+                        String formatted = Utils.formatCurrency(parsed);
 
                         current = formatted;
                         mTextAmount.setText(formatted);

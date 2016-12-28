@@ -548,6 +548,11 @@ public class StepIndicator extends View {
         invalidate();
     }
 
+    public void setOtherState(){
+        setCurrentStepPosition(0);
+        invalidate();
+    }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev){
         return true;//consume

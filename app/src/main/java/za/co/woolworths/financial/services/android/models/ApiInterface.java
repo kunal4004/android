@@ -15,6 +15,7 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanResponse;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
+import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
@@ -34,6 +35,8 @@ import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
+import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
+import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 
 public interface ApiInterface {
@@ -291,7 +294,7 @@ public interface ApiInterface {
 
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @GET("/user/cli/offerActive")
-    OfferActive getActiveOffer(
+    OfferActive getActiveOfferRequest(
             @Header("apiId") String apiId,
             @Header("sha1Password") String sha1Password,
             @Header("deviceVersion") String deviceVersion,
@@ -301,4 +304,31 @@ public interface ApiInterface {
             @Header("osVersion") String osVersion,
             @Header("sessionToken") String sessionToken,
             @Query("productOfferingId") String productOfferingId);
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @POST("/user/cli/offer/email")
+    CLIEmailResponse cliSendEmailRquest(
+            @Header("apiId") String apiId,
+            @Header("sha1Password") String sha1Password,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("deviceModel") String deviceModel,
+            @Header("network") String network,
+            @Header("os") String os,
+            @Header("sessionToken") String sessionToken,
+            @Header("osVersion") String osVersion,
+            @Body String email);
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @POST("/user/cli/offer/email")
+    UpdateBankDetailResponse cliUpdateBankRequest(
+            @Header("apiId") String apiId,
+            @Header("sha1Password") String sha1Password,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("deviceModel") String deviceModel,
+            @Header("network") String network,
+            @Header("os") String os,
+            @Header("sessionToken") String sessionToken,
+            @Header("osVersion") String osVersion,
+            @Body UpdateBankDetail updateBankDetail);
+
 }

@@ -26,7 +26,7 @@
             android:inputType="number"
             android:gravity="center|start"
             android:textColor="@color/semi_transparent_black"
-            android:textSize="12sp"
+            android:textSize="13sp"
             android:textAllCaps="true"
             app:WTextView_font="medium"
             android:layout_alignParentStart="true"
@@ -50,7 +50,6 @@
         android:id="@+id/textAmount"
         android:backgroundTint="@color/recent_search_bg"
         android:inputType="number"
-        android:imeOptions="actionNext"
         app:WEditTextView_font="medium"
         android:textColor="@color/black"
         android:textSize="20sp"/>
