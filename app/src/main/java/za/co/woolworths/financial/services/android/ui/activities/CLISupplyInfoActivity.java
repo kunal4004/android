@@ -87,6 +87,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         setCLIContent();
         mArrCreditLimit = getCreditLimitInfo();
         setRecycleView(mArrCreditLimit);
+
     }
 
     private void initViews() {
