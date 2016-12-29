@@ -32,6 +32,7 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
 
     public interface OnClickListener {
          void onClick(View v, int position);
+         void scrollToBottom();
     }
 
     private OnClickListener onClickListener;
@@ -68,17 +69,17 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
 
         if (position==7){
             holder.mTextAmount.setImeOptions(EditorInfo.IME_ACTION_DONE);
-            holder.mTextAmount.setOnKeyListener(new View.OnKeyListener() {
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                            //handle done button
-                        Log.e("TEST_PHASE","TEST_PHASE");
+
+            holder.mTextAmount.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        onClickListener.scrollToBottom();
                         return true;
                     }
                     return false;
                 }
             });
-
         }
     }
 

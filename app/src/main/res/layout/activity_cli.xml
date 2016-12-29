@@ -67,7 +67,7 @@
                 android:textAllCaps="true"
                 android:letterSpacing="0.05"
                 android:textColor="@color/semi_per_black"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:WTextView_font="medium" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView

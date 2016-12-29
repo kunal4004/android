@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -22,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
 
@@ -79,6 +82,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     private int mCreditLimitAmount=0;
     private CreateOfferRequest mCreateOfferRequest;
     private String current="";
+    private NestedScrollView mNestedScrollview;
 
     WoolworthsApplication mWoolworthsApplication;
     private UpdateBankDetail mUpdateBankDetail;
@@ -108,6 +112,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mTextAmount = (WEditTextView) findViewById(R.id.textAmount);
         mBtnContinue = (WButton) findViewById(R.id.btnContinue);
         mRecycleList = (RecyclerView) findViewById(R.id.recycleList);
+        mNestedScrollview =(NestedScrollView)findViewById(R.id.mNestedScrollview);
         mRadApplySolvency = (RadioGroup) findViewById(R.id.radApplySolvency);
         mRadioYesSolvency = (RadioButton) findViewById(R.id.radioYesSolvency);
         mRadioNoSolvency = (RadioButton) findViewById(R.id.radioNoSolvency);
@@ -281,6 +286,12 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     }
 
     @Override
+    public void scrollToBottom() {
+        mNestedScrollview.fullScroll(View.FOCUS_DOWN);
+        hideSoftKeyboard();
+    }
+
+    @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         buttonView.setTypeface(isChecked ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
     }
@@ -327,7 +338,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     }
 
     public void createOfferRequest(String solvency,String confidential) {
-        if (connectionDetector.isOnline()) {
+        if (connectionDetector.isOnline(CLISupplyInfoActivity.this)) {
             new HttpAsyncTask<String, String, CreateOfferResponse>() {
                 @Override
                 protected CreateOfferResponse httpDoInBackground(String... params) {

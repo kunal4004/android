@@ -74,7 +74,7 @@ public class MessagesActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
-                if(connectionDetector.isOnline()){
+                if(connectionDetector.isOnline(MessagesActivity.this)){
                     loadMessages();
                 }else {
                     WErrorDialog.getErrConnectToServer(MessagesActivity.this);
@@ -113,7 +113,7 @@ public class MessagesActivity extends AppCompatActivity {
             }
         };
 
-        if (connectionDetector.isOnline()) {
+        if (connectionDetector.isOnline(MessagesActivity.this)) {
             loadMessages();
         }else {
             WErrorDialog.getErrConnectToServer(MessagesActivity.this);

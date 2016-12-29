@@ -126,7 +126,7 @@ public class WPersonalLoanFragment extends Fragment implements View.OnClickListe
     }
 
     private void getActiveOffer() {
-        if (connectionDetector.isOnline()) {
+        if (connectionDetector.isOnline(getActivity())) {
             new HttpAsyncTask<String, String, OfferActive>() {
                 @Override
                 protected OfferActive httpDoInBackground(String... params) {

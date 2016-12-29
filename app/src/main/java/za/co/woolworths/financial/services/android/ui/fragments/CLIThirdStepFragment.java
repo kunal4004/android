@@ -145,7 +145,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     }
 
     public void getBankAccountTypes() {
-        if (mConnectionDetector.isOnline()) {
+        if (mConnectionDetector.isOnline(getActivity())) {
             new HttpAsyncTask<String, String, BankAccountTypes>() {
 
                 @Override
@@ -215,7 +215,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                         WErrorDialog.setErrorMessage(getActivity(), getString(R.string.cli_select_acc_type));
                     }
                 } else {
-                    if (mConnectionDetector.isOnline()) {
+                    if (mConnectionDetector.isOnline(getActivity())) {
                         WErrorDialog.setErrorMessage(getActivity(), getString(R.string.cli_select_acc_type));
                     } else {
                         WErrorDialog.getErrConnectToServer(getActivity());
@@ -313,7 +313,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     }
 
     public void sendEmail(final String userEmail) {
-        if (mConnectionDetector.isOnline()) {
+        if (mConnectionDetector.isOnline(getActivity())) {
             new HttpAsyncTask<String, String, CLIEmailResponse>() {
                 @Override
                 protected CLIEmailResponse httpDoInBackground(String... params) {
@@ -368,7 +368,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
     public void updateBankDetail() {
 
-        if (mConnectionDetector.isOnline()) {
+        if (mConnectionDetector.isOnline(getActivity())) {
             new HttpAsyncTask<String, String, UpdateBankDetailResponse>() {
                 @Override
                 protected UpdateBankDetailResponse httpDoInBackground(String... params) {

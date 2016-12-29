@@ -123,7 +123,7 @@ public class WStoreCardFragment extends Fragment implements View.OnClickListener
     }
 
     private void getActiveOffer() {
-        if (connectionDetector.isOnline()) {
+        if (connectionDetector.isOnline(getActivity())) {
             new HttpAsyncTask<String, String, OfferActive>() {
                 @Override
                 protected OfferActive httpDoInBackground(String... params) {

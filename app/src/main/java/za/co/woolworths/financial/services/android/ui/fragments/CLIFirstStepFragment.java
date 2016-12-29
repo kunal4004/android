@@ -109,7 +109,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     }
 
     public void setDeaBanks() {
-        if(mConnectionDetector.isOnline()) {
+        if(mConnectionDetector.isOnline(getActivity())) {
 
             new HttpAsyncTask<String, String, DeaBanks>() {
 
@@ -191,7 +191,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                         WErrorDialog.setErrorMessage(getActivity(),getString(R.string.cli_select_bank_error));
                     }
                 }else{
-                     if(mConnectionDetector.isOnline()){
+                     if(mConnectionDetector.isOnline(getActivity())){
                          WErrorDialog.setErrorMessage(getActivity(),getString(R.string.cli_select_bank_error));
                      }else{
                          WErrorDialog.getErrConnectToServer(getActivity());
