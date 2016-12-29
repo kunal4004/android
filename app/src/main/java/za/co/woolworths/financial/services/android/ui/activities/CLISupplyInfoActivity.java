@@ -15,7 +15,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
@@ -26,7 +25,6 @@ import android.widget.RadioGroup;
 
 import com.awfs.coordination.R;
 
-import java.lang.reflect.Method;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +40,7 @@ import za.co.woolworths.financial.services.android.ui.views.StepIndicator;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
@@ -83,12 +82,14 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
 
     WoolworthsApplication mWoolworthsApplication;
     private UpdateBankDetail mUpdateBankDetail;
+    ConnectionDetector connectionDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cli_supply_info);
         Utils.updateStatusBarBackground(CLISupplyInfoActivity.this);
+        connectionDetector = new ConnectionDetector();
         mWoolworthsApplication = (WoolworthsApplication)getApplication();
         mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
 
@@ -324,54 +325,58 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     }
 
     public void createOfferRequest(String solvency,String confidential) {
-        new HttpAsyncTask<String, String, CreateOfferResponse>() {
-            @Override
-            protected CreateOfferResponse httpDoInBackground(String... params) {
-            return ((WoolworthsApplication) getApplication()).getApi().createOfferRequest(mCreateOfferRequest);
-            }
+        if (connectionDetector.isOnline()) {
+            new HttpAsyncTask<String, String, CreateOfferResponse>() {
+                @Override
+                protected CreateOfferResponse httpDoInBackground(String... params) {
+                    return ((WoolworthsApplication) getApplication()).getApi().createOfferRequest(mCreateOfferRequest);
+                }
 
-            @Override
-            protected CreateOfferResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                CreateOfferResponse offerResponse = new CreateOfferResponse();
-                offerResponse.response = new OfferResponse();
-                stopProgressDialog();
-                return offerResponse;
-            }
+                @Override
+                protected CreateOfferResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                    CreateOfferResponse offerResponse = new CreateOfferResponse();
+                    offerResponse.response = new OfferResponse();
+                    stopProgressDialog();
+                    return offerResponse;
+                }
 
-            @Override
-            protected void onPreExecute() {
-                mCreateOfferProgressDialog = new ProgressDialog(CLISupplyInfoActivity.this);
-                mCreateOfferProgressDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.cli_creating_offer), 1, CLISupplyInfoActivity.this));
-                mCreateOfferProgressDialog.setCancelable(false);
-                mCreateOfferProgressDialog.show();
-                super.onPreExecute();
-            }
+                @Override
+                protected void onPreExecute() {
+                    mCreateOfferProgressDialog = new ProgressDialog(CLISupplyInfoActivity.this);
+                    mCreateOfferProgressDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.cli_creating_offer), 1, CLISupplyInfoActivity.this));
+                    mCreateOfferProgressDialog.setCancelable(false);
+                    mCreateOfferProgressDialog.show();
+                    super.onPreExecute();
+                }
 
-            @Override
-            protected void onPostExecute(CreateOfferResponse createOfferResponse) {
-                super.onPostExecute(createOfferResponse);
-                if (createOfferResponse != null) {
-                    int httpCode = createOfferResponse.httpCode;
+                @Override
+                protected void onPostExecute(CreateOfferResponse createOfferResponse) {
+                    super.onPostExecute(createOfferResponse);
                     if (createOfferResponse != null) {
-                        switch (httpCode) {
-                            case 200:
-                                mUpdateBankDetail.setCliOfferID(createOfferResponse.cliOfferId);
-                                openBankDetails();
-                                break;
-                            default:
-                                 WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this, createOfferResponse.response.desc);
-                                break;
+                        int httpCode = createOfferResponse.httpCode;
+                        if (createOfferResponse != null) {
+                            switch (httpCode) {
+                                case 200:
+                                    mUpdateBankDetail.setCliOfferID(createOfferResponse.cliOfferId);
+                                    openBankDetails();
+                                    break;
+                                default:
+                                    WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this, createOfferResponse.response.desc);
+                                    break;
+                            }
                         }
                     }
+                    stopProgressDialog();
                 }
-                stopProgressDialog();
-            }
 
-            @Override
-            protected Class<CreateOfferResponse> httpDoInBackgroundReturnType() {
-                return CreateOfferResponse.class;
-            }
-        }.execute();
+                @Override
+                protected Class<CreateOfferResponse> httpDoInBackgroundReturnType() {
+                    return CreateOfferResponse.class;
+                }
+            }.execute();
+        }else{
+            WErrorDialog.getErrConnectToServer(CLISupplyInfoActivity.this);
+        }
     }
 
     public int getNumbers(int position) {

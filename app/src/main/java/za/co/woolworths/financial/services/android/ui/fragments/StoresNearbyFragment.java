@@ -427,6 +427,4 @@ public class StoresNearbyFragment extends Fragment implements OnMapReadyCallback
             }
         });
     }
-
-
 }
