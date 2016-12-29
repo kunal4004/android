@@ -414,19 +414,26 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                         mError.setMessage("Your session expired. You've been signed out.");
                         mError.show();
 
-                        try{
-                            new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
-                            MyAccountsFragment.this.initialize();
-                        } catch (Exception e){
-                            Log.e(TAG, e.getMessage());
-                        }
+                        new android.os.AsyncTask<Void, Void, String>(){
+
+                            @Override
+                            protected String doInBackground(Void... params) {
+                                try {
+                                    new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                return "";
+                            }
+
+                            @Override
+                            protected void onPostExecute(String s) {
+                                MyAccountsFragment.this.initialize();
+                            }
+                        }.execute();
 
                         break;
-                    default:
-                        AlertDialog dError = WErrorDialog.getSimplyErrorDialog(getActivity());
-                        dError.setMessage(FontHyperTextParser.getSpannable(accountsResponse.response.desc, 0, getActivity()));
-                        dError.show();
-                        break;
+                    default:break;
                 }
             }
         }.execute();

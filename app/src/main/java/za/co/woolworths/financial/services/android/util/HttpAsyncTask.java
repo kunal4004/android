@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
  * Created by eesajacobs on 2016/07/25.
  */
 public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result>{
+    public static final String TAG = "HttpAsyncTask";
 
     public static enum HttpErrorCode {
         NETWORK_UNREACHABLE,
@@ -90,7 +91,7 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
                     result = new Gson().fromJson(is, this.httpDoInBackgroundReturnType());
                 }
                 catch (IOException e){
-
+                    Log.e(TAG, e.getMessage());
                 }
                 finally {
                     if(result == null){

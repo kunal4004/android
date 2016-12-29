@@ -3,9 +3,9 @@ package za.co.woolworths.financial.services.android.models.dao;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import za.co.woolworths.financial.services.android.util.DatabaseHelper;
 import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 
 /**
@@ -76,7 +76,7 @@ public class SessionDao extends BaseDao {
 
     public SessionDao get() throws Exception{
         String query = "SELECT * FROM Session WHERE [key] = ? ORDER BY id ASC LIMIT 1;";
-        Map<String, String> result = DatabaseHelper.getInstance(mContext).executeReturnableQuery(query, new String[]{
+        Map<String, String> result = PersistenceLayer.getInstance(mContext).executeReturnableQuery(query, new String[]{
                 this.key.toString()
         });
 
@@ -106,18 +106,22 @@ public class SessionDao extends BaseDao {
         String query = "DELETE FROM Session" +
                 " WHERE [key] = ?";
 
-        DatabaseHelper.getInstance(mContext).executeVoidQuery(query, new String[]{
+        PersistenceLayer.getInstance(mContext).executeVoidQuery(query, new String[]{
                 this.key.toString()
         });
     }
 
     private void insert() throws Exception{
-        String query = "INSERT INTO Session ([key], value)" +
-                " VALUES (?, ?);";
+        String query = "INSERT INTO Session ([key], value) VALUES (?, ?);";
 
-        DatabaseHelper.getInstance(mContext).executeReturnableQuery(query, new String[]{
-                this.key.toString(), this.value
-        });
+        Map<String, String> arguments = new HashMap<>();
+        arguments.put("key", this.key.toString());
+        arguments.put("value", this.value);
+
+        long rowid = PersistenceLayer.getInstance(mContext).executeInsertQuery(this.getTableName(), arguments);
+        if(rowid == 0 || rowid == -1){
+            throw new RuntimeException("You Attempted to insert a new SessionDao record but not row id was returned. Insert failed!");
+        }
     }
 
     private void update() throws Exception{
@@ -126,7 +130,7 @@ public class SessionDao extends BaseDao {
                 " dateUpdated = datetime()" +
                 " WHERE [key] = ?";
 
-        DatabaseHelper.getInstance(mContext).executeVoidQuery(query, new String[]{
+        PersistenceLayer.getInstance(mContext).executeVoidQuery(query, new String[]{
                 this.value, this.key.toString()
         });
     }

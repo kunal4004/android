@@ -43,7 +43,6 @@ public class WfsApi {
 
     private Context mContext;
     private ApiInterface mApiInterface;
-    String responseString = "";
     public static final String TAG = "WfsApi";
 
 
@@ -53,58 +52,6 @@ public class WfsApi {
         client.setReadTimeout(60, TimeUnit.SECONDS);
         client.setConnectTimeout(60, TimeUnit.SECONDS);
         client.interceptors().add(new WfsApiInterceptor(mContext));
-        /*client.interceptors().add(new Interceptor() {
-            @Override
-            public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {
-                boolean isCached = false;
-                int requestId = 0;
-                com.squareup.okhttp.Request request = chain.request();
-                com.squareup.okhttp.Response response = null;
-                String endpoint = request.urlString().replace(WoolworthsApplication.getBaseURL(), "");
-                int id = dbHelper.checkApirequest(endpoint, request.method(), request.headers().toString(), bodyToString(request.body()));
-                if (id > 0) {
-                    requestId = id;
-                    isCached = true;
-                }
-                if (isCached) {
-                    if (dbHelper.checkResponseHandler(requestId)) {
-                        responseString = dbHelper.getApiResponse(requestId);
-                        Log.d("APIRESPONSEBODY", responseString);
-                        response = new Response.Builder()
-                                .code(200)
-                                .message("")
-                                .request(chain.request())
-                                .protocol(Protocol.HTTP_1_0)
-                                .body(ResponseBody.create(MediaType.parse("application/json"), responseString.getBytes()))
-                                .addHeader("content-type", "application/json")
-                                .build();
-
-                    } else {
-                        response = chain.proceed(request);
-                        int code = 0;
-                        if (response.code() == 200)
-                            code = 1;
-                        String body = getResponseBodyString(response);
-                        int requestID = dbHelper.addApIRequest(endpoint, request.method(), request.headers().toString(), bodyToString(request.body()));
-                        dbHelper.addApIResponse(body, requestID, code);
-
-                    }
-
-
-                } else {
-                    response = chain.proceed(request);
-                    String body = getResponseBodyString(response);
-                    int code = 0;
-                    if (response.code() == 200)
-                        code = 1;
-                    int requestID = dbHelper.addApIRequest(endpoint, request.method(), request.headers().toString(), bodyToString(request.body()));
-                    dbHelper.addApIResponse(body, requestID, code);
-                }
-                return response;
-
-
-            }
-        });*/
         mApiInterface = new RestAdapter.Builder()
                 .setClient(new OkClient(client))
                 .setEndpoint(WoolworthsApplication.getBaseURL())
@@ -221,28 +168,4 @@ public class WfsApi {
                 .create(ApiInterface.class);
         return mApiInterface.getConfig("wfsAndroid",getDeviceID());
     }*/
-
-
-    private String bodyToString(final RequestBody request) {
-        try {
-            final RequestBody copy = request;
-            final Buffer buffer = new Buffer();
-            if (copy != null)
-                copy.writeTo(buffer);
-            else
-                return "";
-            return buffer.readUtf8();
-        } catch (final IOException e) {
-            return "did not work";
-        }
-    }
-
-    public String getResponseBodyString(Response response) throws IOException {
-        ResponseBody responseBody = response.body();
-        BufferedSource source = responseBody.source();
-        source.request(Long.MAX_VALUE); // Buffer the entire body.
-        Buffer buffer = source.buffer();
-        String responseBodyString = buffer.clone().readString(Charset.forName("UTF-8"));
-        return responseBodyString;
-    }
 }

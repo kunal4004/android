@@ -6,12 +6,10 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import za.co.woolworths.financial.services.android.util.DatabaseHelper;
+import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 
 /**
  * Created by eesajacobs on 2016/12/29.
@@ -20,18 +18,20 @@ import za.co.woolworths.financial.services.android.util.DatabaseHelper;
 public class ApiRequestDao extends BaseDao {
     public static final String TAG = "ApiRequestDao";
 
-    int requestType = 0;
+    String requestType = "";
     String endpoint = "";
     String headers;
     String parameters;
     String dateExpires = "";
 
     private Gson gson;
+    private final long cacheTime;
 
-    public ApiRequestDao(Context mContext) {
+    public ApiRequestDao(Context mContext, long cacheTime) {
         super(mContext);
 
         this.gson = new GsonBuilder().create();
+        this.cacheTime = cacheTime;
     }
 
     @Override
@@ -39,20 +39,15 @@ public class ApiRequestDao extends BaseDao {
         return "ApiRequest";
     }
 
-    public ApiRequestDao get(int _requestType, String _endpoint, String _headers, String _parameters) {
-        //String headersJson = (headers == null ? "{}" : this.gson.toJson(headers));
-        //String parametersJson = (parameters == null ? "{}" : this.gson.toJson(parameters));
-
-        //Log.d(TAG, headers);
-        //Log.d(TAG, parameters);
+    public ApiRequestDao get(String _requestType, String _endpoint, String _headers, String _parameters) {
 
         String query = "SELECT * FROM ApiRequest WHERE endpoint=? AND requestType=? AND headers=? AND parameters=? AND dateExpires > datetime() ORDER BY id ASC LIMIT 1;";
         Map<String, String> result = new HashMap<>();
         try {
-            result = DatabaseHelper.getInstance(mContext).executeReturnableQuery(query, new String[]{
+            result = PersistenceLayer.getInstance(mContext).executeReturnableQuery(query, new String[]{
                     _endpoint, ("" + _requestType), _headers, _parameters
             });
-        } catch (IOException e) {
+        } catch (Exception e) {
             //record does not exist.
             this.endpoint = _endpoint;
             this.requestType = _requestType;
@@ -80,26 +75,25 @@ public class ApiRequestDao extends BaseDao {
         return this;
     }
 
-    public int save(){
+    public void save(){
         //ApiRequest will never be updated, only new records will be inserted.
-        String query = "INSERT INTO ApiRequest (endpoint, requestType, headers, parameters, dateExpires) VALUES (?, ?, ?, ?, ?);";
-        Map<String, String> result = new HashMap<>();
         try {
-            result = DatabaseHelper.getInstance(mContext).executeReturnableQuery(query, new String[]{
-                    this.endpoint, "" + this.requestType, this.headers, this.parameters, this.dateExpires
-            });
-        } catch (IOException e) {
+             this.dateExpires = PersistenceLayer.getInstance(mContext).executeReturnableQuery("SELECT DATETIME(datetime(), '+"+ this.cacheTime +" seconds') as cacheTime",
+                    new String[]{}).get("cacheTime");
+
+            Log.d(TAG, dateExpires);
+
+            Map<String, String> arguments = new HashMap<>();
+            arguments.put("endpoint", this.endpoint);
+            arguments.put("requestType", "" + this.requestType);
+            arguments.put("headers", this.headers);
+            arguments.put("parameters", this.parameters);
+            arguments.put("dateExpires", this.dateExpires);
+
+            long rowid = PersistenceLayer.getInstance(mContext).executeInsertQuery(getTableName(), arguments);
+            this.id =  "" + rowid;
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
-
-        for(Map.Entry<String, String> entry: result.entrySet()){
-
-            if(entry.getKey().equals("id")){
-                this.id = entry.getValue();
-                return Integer.valueOf(entry.getValue());
-            }
-        }
-
-        return -1;
     }
 }

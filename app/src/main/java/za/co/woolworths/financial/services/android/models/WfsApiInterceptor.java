@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Protocol;
@@ -17,6 +16,7 @@ import java.io.IOException;
 
 import okio.Buffer;
 import za.co.woolworths.financial.services.android.models.dao.ApiRequestDao;
+import za.co.woolworths.financial.services.android.models.dao.ApiResponseDao;
 
 /**
  * Created by eesajacobs on 2016/12/29.
@@ -42,15 +42,19 @@ public class WfsApiInterceptor implements Interceptor{
         String requestLog = String.format("Sending request %s on %s%n%s", request.url(), chain.connection(), request.headers());
         Log.d(TAG, "request" + "\n" + requestLog);
 
+        String cacheTimeHeaderValue = request.header("cacheTime");
+        final long cacheTime = Integer.parseInt(cacheTimeHeaderValue == null ? "0" : cacheTimeHeaderValue);//cache time in seconds
+
+        if(cacheTime == 0){
+            return chain.proceed(request);
+        }
+
         final String endpoint = request.url().toString();
         final String headers = request.headers().toString();
         final String parametersJson = (request.method().compareToIgnoreCase("post") == 0 ? bodyToString(request) : "{}");
 
-        int requestType = request.method().compareToIgnoreCase("post");
-
-        ApiRequestDao apiRequestDao = new ApiRequestDao(mContext).get(requestType, endpoint, headers, parametersJson);
+        ApiRequestDao apiRequestDao = new ApiRequestDao(mContext, cacheTime).get(request.method(), endpoint, headers, parametersJson);
         ApiResponseDao apiResponseDao = new ApiResponseDao(this.mContext).getByApiRequestId(apiRequestDao.id);
-
         if(apiResponseDao.id != null){  //cache exists. return cached response
 
             return new Response.Builder()
