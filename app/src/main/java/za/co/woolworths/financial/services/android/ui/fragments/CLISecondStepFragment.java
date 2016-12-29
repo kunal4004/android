@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
@@ -31,6 +32,7 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
     private RadioButton mRadioYesSolvency;
     private RadioButton mRadioNoSolvency;
     private Button mBtnContinue;
+    final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
 
     WoolworthsApplication mWoolworthsApplication;
     private CLIStepIndicatorActivity mMain;
@@ -104,6 +106,7 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btnContinue:
+                mBtnContinue.startAnimation(buttonClick);
                 if (mRadApplySolvency.getCheckedRadioButtonId() == -1) {
                     WErrorDialog.setErrorMessage(getActivity(),getString(R.string.cli_check_field));
                     return;

@@ -145,8 +145,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     }
 
     public void getBankAccountTypes() {
-        ConnectionDetector connectionDetector = new ConnectionDetector();
-        if (connectionDetector.isOnline()) {
+        if (mConnectionDetector.isOnline()) {
             new HttpAsyncTask<String, String, BankAccountTypes>() {
 
                 @Override

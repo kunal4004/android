@@ -191,9 +191,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.btnContinue:
-
                 mBtnContinue.startAnimation(buttonClick);
-
                 switch (mPosition){
                     case 0:
                         break;

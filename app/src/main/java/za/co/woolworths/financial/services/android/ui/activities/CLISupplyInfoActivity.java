@@ -277,6 +277,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                     SlidingUpViewLayout.OVERLAY_TYPE.INFO);
             slidingUpViewLayout.setPopupWindowTouchModal(slidingUpView,true);
         }
+
     }
 
     @Override
@@ -410,7 +411,6 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
      * Hides the soft keyboard
      */
     public void hideSoftKeyboard() {
-
         try {
             if (getCurrentFocus() != null) {
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);

@@ -68,6 +68,17 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
 
         if (position==7){
             holder.mTextAmount.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            holder.mTextAmount.setOnKeyListener(new View.OnKeyListener() {
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                            //handle done button
+                        Log.e("TEST_PHASE","TEST_PHASE");
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
         }
     }
 

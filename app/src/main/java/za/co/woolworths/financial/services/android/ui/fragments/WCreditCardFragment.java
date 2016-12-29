@@ -2,13 +2,17 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -66,6 +70,8 @@ public class WCreditCardFragment extends Fragment implements View.OnClickListene
         currentBalance=(WTextView)view.findViewById(R.id.currentBalance);
         transactions=(WTextView)view.findViewById(R.id.txtTransactions);
         txtIncreseLimit = (WTextView)view.findViewById(R.id.txtIncreseLimit);
+
+        txtIncreseLimit.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.ripple_effect_black));
 
         transactions.setOnClickListener(this);
         txtIncreseLimit.setOnClickListener(this);
