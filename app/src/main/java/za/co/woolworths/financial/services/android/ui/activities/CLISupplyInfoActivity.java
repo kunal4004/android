@@ -195,6 +195,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         switch (view.getId()) {
             case R.id.btnContinue:
                 mBtnContinue.startAnimation(buttonClick);
+                hideSoftKeyboard();
                 String creditAmount = mTextAmount.getText().toString();
                 if(TextUtils.isEmpty(creditAmount)){
                     WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this,
@@ -409,10 +410,13 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
      * Hides the soft keyboard
      */
     public void hideSoftKeyboard() {
-        if(getCurrentFocus()!=null) {
-            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-        }
+
+        try {
+            if (getCurrentFocus() != null) {
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            }
+        }catch (NullPointerException ex){}
     }
 
 
