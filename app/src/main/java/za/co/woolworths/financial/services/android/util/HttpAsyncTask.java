@@ -38,25 +38,37 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
     @Override
     protected Result doInBackground(Params... params) {
         Result result = null;
-        try{
-            result = getResultFromDoInBackground(params);
-        }
-        catch (Exception e){
-            result = httpError("An unknown error occured.", HttpErrorCode.UNKOWN_ERROR);
-        }
-        finally {
-            if(result == null){
-                cancel(false);
-            }
-        }
+        //get request from sqllite
+        int apiRequestDaoId = -1;
 
+        // httpUriRequest = params[0];
+        //persist doesn't exist, proceed with service call
+        if(apiRequestDaoId == 0 || apiRequestDaoId == -1){
+            try{
+                result = getResultFromDoInBackground(params);
+            }
+            catch (Exception e){
+                result = httpError("An unknown error occured.", HttpErrorCode.UNKOWN_ERROR);
+            }
+            finally {
+                if(result == null){
+                    cancel(false);
+                }
+            }
+
+            //save the respose
+        }else{
+            //get persistence record from sqllite
+        }
         return result;
     }
 
     private Result getResultFromDoInBackground(Params... params) throws Exception{
         Result result = null;
         try{
+
             result = httpDoInBackground(params);
+
         }
         catch (RetrofitError retrofitError){
             if(retrofitError.getKind() == RetrofitError.Kind.NETWORK){

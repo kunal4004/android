@@ -8,12 +8,15 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.ContextCompatApi24;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.awfs.coordination.R;
+
+import java.lang.reflect.Method;
 
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -56,7 +59,6 @@ public class SlidingUpViewLayout {
     }
 
     public PopupWindow openOverlayView(final String description, final OVERLAY_TYPE overlay_type) {
-
         LayoutInflater layoutInflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         final View view =  layoutInflater.inflate(R.layout.open_overlay_got_it, null);
         final WButton mOverlayBtn = (WButton) view.findViewById(R.id.btnOverlay);
@@ -83,6 +85,7 @@ public class SlidingUpViewLayout {
                 mOverlayTitle.setVisibility(View.GONE);
                 mOverlayDescription.setText(getString(R.string.cli_process_email_content));
                 mOverlayBtn.setText(getString(R.string.ok));
+                textEmailContent.setText(description);
                 break;
             default:
                 break;
@@ -91,8 +94,13 @@ public class SlidingUpViewLayout {
         final PopupWindow pWindow = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         pWindow.setAnimationStyle(R.style.popwindow_style);
         pWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-        pWindow.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(mContext,R.color.store_card)));
-        pWindow.setOutsideTouchable(true);
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pWindow.dismiss();
+            }
+        });
 
         mOverlayBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,5 +130,27 @@ public class SlidingUpViewLayout {
 
     public String getString(int id){
         return  mContext.getResources().getString(id);
+    }
+
+
+    public void setPopupWindowTouchModal(PopupWindow popupWindow, boolean touchModal)
+    {
+        if (null == popupWindow)
+        {
+            return;
+        }
+        Method method;
+        try
+        {
+            method = PopupWindow.class.getDeclaredMethod("setTouchModal", boolean.class);
+            method.setAccessible(true);
+            method.invoke(popupWindow, touchModal);
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
     }
 }

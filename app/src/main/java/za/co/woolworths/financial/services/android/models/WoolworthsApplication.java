@@ -46,6 +46,7 @@ public class WoolworthsApplication extends Application {
     private static String sha1Password;
     private boolean isDEABank = false;
     private boolean isOther=false;
+    private int productOfferingId;
 
     private static int NumVouchers =0;
 
@@ -287,5 +288,13 @@ public class WoolworthsApplication extends Application {
 
     public void setOther(boolean other) {
         isOther = other;
+    }
+
+    public int getProductOfferingId() {
+        return productOfferingId;
+    }
+
+    public void setProductOfferingId(int productOfferingId) {
+        this.productOfferingId = productOfferingId;
     }
 }

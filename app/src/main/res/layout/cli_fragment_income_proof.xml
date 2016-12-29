@@ -95,7 +95,6 @@
         android:layout_height="wrap_content"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/textEmailAdress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/cli_email_address"
@@ -104,11 +103,27 @@
             android:layout_marginRight="@dimen/bank_spacing_width"
             android:layout_marginLeft="@dimen/bank_spacing_width"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="@dimen/default_width"
             android:textColor="@color/black"
             android:textSize="14sp"
             android:lineSpacingExtra="8dp"
             app:WTextView_font="medium" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/textEmailAdress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cli_email_address"
+            android:letterSpacing="0.1"
+            android:gravity="center"
+            android:layout_marginRight="@dimen/bank_spacing_width"
+            android:layout_marginLeft="@dimen/bank_spacing_width"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="@dimen/default_width"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:lineSpacingExtra="8dp"
+            app:WTextView_font="medium_bold" />
+
 
 
         <RelativeLayout

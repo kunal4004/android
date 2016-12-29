@@ -162,7 +162,8 @@ public interface ApiInterface {
             @Header("Authorization-X") String AuthorizationX,
             @Header("UUID") String UUID,
             @Path("appVersion") String appVersion
-          );
+    );
+
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @GET("/user/locations")
     LocationResponse getStoresLocation(
@@ -176,11 +177,11 @@ public interface ApiInterface {
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion,
             @Header("sessionToken") String sessionToken,
-            @Query("lat") String lat ,
+            @Query("lat") String lat,
             @Query("lon") String lon,
             @Query("searchString") String searchString,
             @Query("radius") String radius
-            );
+    );
 
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @GET("/user/messages")
@@ -215,6 +216,7 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Path("id") String id
     );
+
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @PUT("/user/messages")
     ReadMessagesResponse setReadMessages(
@@ -230,6 +232,7 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Body MessageReadRequest readMessages
     );
+
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @POST("/user/devices")
     CreateUpdateDeviceResponse createUpdateDevice(
@@ -245,6 +248,7 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Body CreateUpdateDevice device
     );
+
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @GET("/user/cli/DEABanks")
     DeaBanks getDeaBanks(
@@ -261,6 +265,7 @@ public interface ApiInterface {
             @Query("pageSize") int pageSize,
             @Query("pageNumber") int pageNumber
     );
+
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @GET("/user/cli/DEABankAccountTypes")
     BankAccountTypes getBankAccountTypes(
@@ -278,6 +283,7 @@ public interface ApiInterface {
             @Query("pageNumber") int pageNumber
     );
 
+
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @POST("/user/cli/offer")
     CreateOfferResponse createOfferRequest(
@@ -290,6 +296,7 @@ public interface ApiInterface {
             @Header("osVersion") String osVersion,
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion,
+            @Header("sessionToken") String sessionToken,
             @Body CreateOfferRequest createOfferRequest);
 
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
@@ -302,8 +309,11 @@ public interface ApiInterface {
             @Header("network") String network,
             @Header("os") String os,
             @Header("osVersion") String osVersion,
+            @Header("userAgent") String userAgent,
+            @Header("userAgentVersion") String userAgentVersion,
             @Header("sessionToken") String sessionToken,
             @Query("productOfferingId") String productOfferingId);
+
 
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @POST("/user/cli/offer/email")
@@ -318,8 +328,9 @@ public interface ApiInterface {
             @Header("osVersion") String osVersion,
             @Body String email);
 
+
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
-    @POST("/user/cli/offer/email")
+    @POST("/user/cli/offer/bankingDetails")
     UpdateBankDetailResponse cliUpdateBankRequest(
             @Header("apiId") String apiId,
             @Header("sha1Password") String sha1Password,
@@ -327,8 +338,10 @@ public interface ApiInterface {
             @Header("deviceModel") String deviceModel,
             @Header("network") String network,
             @Header("os") String os,
-            @Header("sessionToken") String sessionToken,
             @Header("osVersion") String osVersion,
+            @Header("userAgent") String userAgent,
+            @Header("userAgentVersion") String userAgentVersion,
+            @Header("sessionToken") String sessionToken,
             @Body UpdateBankDetail updateBankDetail);
 
 }

@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.UserManager;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
@@ -213,59 +214,5 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    private void getActiveOffer() {
-        final Account account = new Gson().fromJson(((WoolworthsApplication)getApplication()).getUserManager().getAccount(UserManager.CREDIT_CARD), Account.class);
-        new HttpAsyncTask<String, String, OfferActive>() {
-            @Override
-            protected OfferActive httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().getActiveOffer("3");
-            }
-
-            @Override
-            protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                OfferActive offerActive = new OfferActive();
-                offerActive.response = new Response();
-                stopProgressDialog();
-                return offerActive;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                mGetActiveOfferProgressDialog = new ProgressDialog(CLIActivity.this);
-                mGetActiveOfferProgressDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.cli_loading), 1, CLIActivity.this));
-                mGetActiveOfferProgressDialog.setCancelable(false);
-                mGetActiveOfferProgressDialog.show();
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(OfferActive offerActive) {
-                super.onPostExecute(offerActive);
-                int httpCode = offerActive.httpCode;
-                String httpDesc =offerActive.response.desc;
-                if(httpCode==200){
-                    if (offerActive.offerActive){
-                        //open CLIActivity.java
-                    }else {
-                        WErrorDialog.setErrorMessage(CLIActivity.this,getString(R.string.cli_cannot_proceed_error));
-                    }
-                }else {
-                    WErrorDialog.setErrorMessage(CLIActivity.this,httpDesc);
-                }
-                stopProgressDialog();
-            }
-
-            @Override
-            protected Class<OfferActive> httpDoInBackgroundReturnType() {
-                return OfferActive.class;
-            }
-        }.execute();
-    }
-
-    public void stopProgressDialog(){
-        if(mGetActiveOfferProgressDialog != null && mGetActiveOfferProgressDialog.isShowing()){
-            mGetActiveOfferProgressDialog.dismiss();
-        }
-    }
 
 }

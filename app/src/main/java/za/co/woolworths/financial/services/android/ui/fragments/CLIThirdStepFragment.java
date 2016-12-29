@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.DividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
@@ -90,8 +91,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
         mConnectionDetector = new ConnectionDetector();
         view = inflater.inflate(R.layout.cli_fragment_step_three, container, false);
-        mEmail = "DimitriJ@wigroupinternational.com";
-
+        mEmail = SharePreferenceHelper.getInstance().getValue(getActivity(),"email");
         mStepIndicator = (CLIStepIndicatorActivity) getActivity();
         mStepIndicator.setOnFragmentRefresh(this);
         mSlidingUpViewLayout = new SlidingUpViewLayout(getActivity());
@@ -206,7 +206,8 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                     if (mUpdateBankDetail.getAccountType() != null) {
                         String accountNumber = mEditAccountNumber.getText().toString();
                         if (!TextUtils.isEmpty(accountNumber)) {
-                            mUpdateBankDetail.setAccountNumber(accountNumber);
+                            String newAccount = accountNumber.replaceAll(" ","");
+                            mUpdateBankDetail.setAccountNumber(newAccount);
                             updateBankDetail();
                         } else {
                             WErrorDialog.setErrorMessage(getActivity(), getString(R.string.cli_enter_acc_number_error));
@@ -291,7 +292,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mTextIncomeProof.setText(getActivity().getResources().getString(R.string.cli_income_proof));
         mBtnSendMail.setText(getString(R.string.cli_send_mail));
         mTextProofIncomeSize.setText(getString(R.string.cli_send_document_title).replace("%s", String.valueOf(arrIncomeProof().size())));
-        mTextEmailAdress.setText(Utils.replaceEmailAddress(getActivity(), mEmail));
+        mTextEmailAdress.setText(mEmail);
     }
 
     public void populateList() {
@@ -349,7 +350,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                     int httpCode = cliEmailResponse.httpCode;
                     String desc = cliEmailResponse.response.desc;
                     if (httpCode == 200) {
-                        mSlidingUpViewLayout.openOverlayView("", SlidingUpViewLayout.OVERLAY_TYPE.EMAIL);
+                        mSlidingUpViewLayout.openOverlayView(mEmail, SlidingUpViewLayout.OVERLAY_TYPE.EMAIL);
                     } else {
                         WErrorDialog.setErrorMessage(getActivity(), desc);
                     }

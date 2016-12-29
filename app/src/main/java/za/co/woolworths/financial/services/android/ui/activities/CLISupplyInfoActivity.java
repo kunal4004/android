@@ -13,10 +13,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -25,6 +26,7 @@ import android.widget.RadioGroup;
 
 import com.awfs.coordination.R;
 
+import java.lang.reflect.Method;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreditLimit;
 import za.co.woolworths.financial.services.android.models.dto.OfferResponse;
+import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.CLICreditLimitAdapter;
 import za.co.woolworths.financial.services.android.ui.views.StepIndicator;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -78,18 +81,24 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     private CreateOfferRequest mCreateOfferRequest;
     private String current="";
 
+    WoolworthsApplication mWoolworthsApplication;
+    private UpdateBankDetail mUpdateBankDetail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cli_supply_info);
         Utils.updateStatusBarBackground(CLISupplyInfoActivity.this);
+        mWoolworthsApplication = (WoolworthsApplication)getApplication();
+        mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
+
         initViews();
         setActionBar();
         setListener();
         setCLIContent();
         mArrCreditLimit = getCreditLimitInfo();
         setRecycleView(mArrCreditLimit);
-
+        hideSoftKeyboard();
     }
 
     private void initViews() {
@@ -199,7 +208,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                             WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this,
                                     getString(R.string.cli_solvency_error));
                         } else {
-                            mCreateOfferRequest = new CreateOfferRequest(3,
+                            mCreateOfferRequest = new CreateOfferRequest(mWoolworthsApplication.getProductOfferingId(),
                                     mCreditLimitAmount,
                                     getNumbers(0),
                                     getNumbers(1),
@@ -264,6 +273,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         if (mArrCreditLimit != null) {
             slidingUpView = slidingUpViewLayout.openOverlayView(mArrCreditLimit.get(position).getDescription(),
                     SlidingUpViewLayout.OVERLAY_TYPE.INFO);
+            slidingUpViewLayout.setPopupWindowTouchModal(slidingUpView,true);
         }
     }
 
@@ -341,20 +351,20 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
             protected void onPostExecute(CreateOfferResponse createOfferResponse) {
                 super.onPostExecute(createOfferResponse);
                 if (createOfferResponse != null) {
-                    String response_code = createOfferResponse.response.code;
-                    if (response_code != null) {
-                        switch (Integer.valueOf(response_code)) {
+                    int httpCode = createOfferResponse.httpCode;
+                    if (createOfferResponse != null) {
+                        switch (httpCode) {
                             case 200:
-                               openBankDetails();
+                                mUpdateBankDetail.setCliOfferID(createOfferResponse.cliOfferId);
+                                openBankDetails();
                                 break;
                             default:
-                               //   WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this, createOfferResponse.response.desc);
+                                 WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this, createOfferResponse.response.desc);
                                 break;
                         }
                     }
                 }
                 stopProgressDialog();
-                openBankDetails();
             }
 
             @Override
@@ -389,5 +399,17 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
+
+    /**
+     * Hides the soft keyboard
+     */
+    public void hideSoftKeyboard() {
+        if(getCurrentFocus()!=null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+    }
+
+
 }
 

@@ -1,7 +1,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 android:layout_width="match_parent"
-                                                 android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -39,15 +39,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/toolbarText"
-                    android:letterSpacing="0.09"
                     app:WTextView_font="medium_bold"
                     android:textAllCaps="true"
                     android:textSize="12sp"
-                    android:layout_gravity="center"
                     android:textColor="@color/white"
                     android:text="Store card"
                     />
-                </android.support.v7.widget.Toolbar>
+            </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
@@ -63,8 +61,11 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             >
-<TextView android:id="@+id/txStoreId"  android:layout_width="match_parent"
-    android:layout_height="wrap_content" android:minHeight="45dp" android:text="@string/accounts_walkthrough_desc_1"/>
+            <za.co.woolworths.financial.services.android.ui.views.WFragmentViewPager
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/fragmentpager"
+                />
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

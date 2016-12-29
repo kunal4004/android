@@ -14,5 +14,8 @@ public class CreateOfferResponse {
     @SerializedName("httpCode")
     @Expose
     public Integer httpCode;
+    @SerializedName("cliOfferId")
+    @Expose
+    public int cliOfferId;
 
 }

@@ -36,7 +36,7 @@ android {
 
     defaultConfig {
         minSdkVersion 19 //kitkat 4.4
-        targetSdkVersion 22
+        targetSdkVersion 24
         multiDexEnabled true
         versionCode(job.toInteger() + 1)
         versionName buildNumber
@@ -96,9 +96,9 @@ dependencies {
     compile 'za.co.wigroup.android:utils:1.1.8'
     compile 'uk.co.chrisjenx:calligraphy:1.2.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.squareup.okhttp:okhttp:2.7.2'
     compile 'za.co.wigroup.android:Logger:1'
     compile 'com.google.android.gms:play-services:10.0.0'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
     compile 'me.dm7.barcodescanner:zxing:1.7.2'
     compile 'com.crittercism:crittercism-android-agent:+'
     compile 'com.android.support:design:23.4.0'

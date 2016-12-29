@@ -308,7 +308,7 @@
     <string name="cli_select_bank_error">Please select a bank</string>
     <string name="cli_enter_acc_number_error">Please enter your account number</string>
     <string name="cli_select_acc_type">Please select your account type</string>
-    <string name="cli_email_address">We will send further instructions to your email:\n<b>xxxx@xxxx.com</b></string>
+    <string name="cli_email_address">We will send further instructions to your email:</string>
     <string name="cli_cancel_application">SORRY, WE CAN NO PROCEED WITH YOUR APPLICATION</string>
     <string name="cli_lorem_ipsum">Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum </string>
     <string name="cli_got_it">GOT IT</string>
@@ -326,11 +326,13 @@
     <string name="cli_process_email_content">To upload your Proof of Income Documents, follow the instructions we’ve sent to your email. If you didn’t receive the password reset, please check your spam folder.</string>
     <string name="cli_send_to_title">EMAIL SENT TO</string>
     <string name="cli_loading">LOADING...</string>
+    <string name="cli_loading_active_offer">GETTING ACTIVE OFFER...</string>
     <string name="cli_yes_continue">YES-CONTINUE</string>
     <string name="cli_cannot_proceed_error">Sorry, we can no proceed with your application</string>
     <string name="cli_sending_email">SENDING EMAIL...</string>
     <string name="cli_updating_bank_detail">UPDATING BANK DETAIL...</string>
     <string name="cli_solvency_error">Please make sure all required fields are filled out correctly</string>
     <string name="cli_check_field">Please make sure all required fields are filled out correctly</string>
+    <string name="cli_amount_hint">R0</string>
 
 </resources>

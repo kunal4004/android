@@ -1,8 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -19,25 +22,40 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import za.co.wigroup.logger.lib.WiGroupLogger;
+import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivityTest;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
+import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.PersonalLoanWithdrawalActivity;
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.WErrorDialog;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
@@ -51,10 +69,12 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     ImageView openMessageActivity;
     ImageView openShoppingList;
     RelativeLayout contactUs;
+
     boolean isLoggedIn = true;
-    boolean isCreditCard = true;
-    boolean isStoreCard = true;
-    boolean isPersonalCard = true;
+    boolean isCreditCard = false;
+    boolean isStoreCard = false;
+    boolean isPersonalCard = false;
+
     CardView applyCreditCardView;
     CardView applyStoreCardView;
     CardView applyPersonalCardView;
@@ -81,13 +101,18 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     private ProgressBar ccProgressBar;
     private ProgressBar plProgressBar;
 
-    public AccountsResponse accounts=null;
+    Map<String, Account> accounts;
+    List<String> unavailableAccounts;
+    private AccountsResponse accountsResponse; //purely referenced to be passed forward as Intent Extra
 
 
     private int dotsCount;
     private ImageView[] dots;
     public MyAccountsFragment() {
         // Required empty public constructor
+        this.accounts = new HashMap<>();
+        this.unavailableAccounts = new ArrayList<>();
+        this.accountsResponse = null;
     }
 
     WoolworthsApplication woolworthsApplication;
@@ -136,11 +161,156 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         adapter=new MyAccountOverViewPagerAdapter(getActivity());
         viewPager.addOnPageChangeListener(this);
         setUiPageViewController();
-        setUpView(isLoggedIn,isStoreCard,isCreditCard,isPersonalCard);
+       // setUpView(isLoggedIn,isStoreCard,isCreditCard,isPersonalCard);
         //loadAccounts();
 
+        view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
+        view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
+
+        //hide all views, load accounts may occur
+        this.initialize();
         return view;
     }
+
+    private void initialize() {
+        this.hideAllLayers();
+        this.accounts.clear();
+        this.unavailableAccounts.clear();
+        this.unavailableAccounts.addAll(Arrays.asList("SC", "CC", "PL"));
+
+        JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity)getActivity()).getJWTDecoded();
+        if(jwtDecodedModel != null && jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")){
+            this.loadAccounts();
+        } else{
+            this.configureView();
+        }
+    }
+
+    private void configureView() {
+        this.configureAndLayoutTopLayerView();
+
+        //show content for all available products
+        for(Map.Entry<String, Account> item : accounts.entrySet()){
+            Account account = item.getValue();
+            if(account.productGroupCode.equals("SC")){
+                linkedStoreCardView.setVisibility(View.VISIBLE);
+                applyStoreCardView.setVisibility(View.GONE);
+
+                sc_available_funds.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity()));
+                scProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
+
+            } else if(account.productGroupCode.equals("CC")){
+                linkedCreditCardView.setVisibility(View.VISIBLE);
+                applyCreditCardView.setVisibility(View.GONE);
+
+                cc_available_funds.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity()));
+                ccProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
+
+            } else if(account.productGroupCode.equals("PL")){
+                linkedPersonalCardView.setVisibility(View.VISIBLE);
+                applyPersonalCardView.setVisibility(View.GONE);
+
+                pl_available_funds.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity()));
+                plProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
+            }
+        }
+
+        //hide content for unavailable products
+        for(String s : unavailableAccounts){
+            if(s.equals("SC")){
+                applyStoreCardView.setVisibility(View.VISIBLE);
+                linkedStoreCardView.setVisibility(View.GONE);
+            } else if(s.equals("CC")){
+                applyCreditCardView.setVisibility(View.VISIBLE);
+                linkedCreditCardView.setVisibility(View.GONE);
+            } else if(s.equals("PL")){
+                applyPersonalCardView.setVisibility(View.VISIBLE);
+                linkedPersonalCardView.setVisibility(View.GONE);
+            }
+        }
+
+        if(unavailableAccounts.size() == 0){
+            //all accounts are shown/linked
+            applyNowAccountsLayout.setVisibility(View.GONE);
+        } else{
+            applyNowAccountsLayout.setVisibility(View.VISIBLE);
+        }
+
+        contactUs.setVisibility(View.VISIBLE);
+        viewPager.setAdapter(adapter);
+        viewPager.setCurrentItem(0);
+    }
+
+    private void configureAndLayoutTopLayerView() {
+
+        JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity)getActivity()).getJWTDecoded();
+        if(jwtDecodedModel.AtgSession != null){
+            loggedInHeaderLayout.setVisibility(View.VISIBLE);
+
+            if(jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")){
+                //user is linked and signed in
+                linkedAccountsLayout.setVisibility(View.VISIBLE);
+                signOutBtn.setVisibility(View.VISIBLE);
+            } else{
+                //user is not linked
+                //but signed in
+                linkAccountsBtn.setVisibility(View.VISIBLE);
+                setUiPageViewController();
+            }
+        }else{
+            //user is signed out
+            loggedOutHeaderLayout.setVisibility(View.VISIBLE);
+            setUiPageViewController();
+        }
+    }
+
+    private void hideAllLayers(){
+
+        loggedInHeaderLayout.setVisibility(View.GONE);
+        loggedOutHeaderLayout.setVisibility(View.GONE);
+        signOutBtn.setVisibility(View.GONE);
+        linkedAccountsLayout.setVisibility(View.GONE);
+        applyNowAccountsLayout.setVisibility(View.GONE);
+        contactUs.setVisibility(View.GONE);
+        linkAccountsBtn.setVisibility(View.GONE);
+    }
+
+    private void setUiPageViewController() {
+
+        pager_indicator.removeAllViews();
+        dotsCount = adapter.getCount();
+        dots = new ImageView[dotsCount];
+
+        for (int i = 0; i < dotsCount; i++) {
+            dots[i] = new ImageView(getActivity());
+            dots[i].setImageDrawable(getResources().getDrawable(R.drawable.page_control_inactive));
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+
+            params.setMargins(4, 0, 4, 0);
+
+            pager_indicator.addView(dots[i], params);
+        }
+
+        dots[0].setImageDrawable(getResources().getDrawable(R.drawable.page_control_active));
+    }
+
+    private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ScreenManager.presentSSOSignin(getActivity());
+        }
+    };
+
+    private View.OnClickListener btnRegister_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ScreenManager.presentSSORegister(getActivity());
+        }
+    };
 
     @Override
     public void onClick(View v) {
@@ -174,32 +344,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             case R.id.openShoppingList:
                 break;
 
-
         }
-    }
-
-
-
-    private void setUiPageViewController() {
-
-        dotsCount = adapter.getCount();
-        dots = new ImageView[dotsCount];
-
-        for (int i = 0; i < dotsCount; i++) {
-            dots[i] = new ImageView(getActivity());
-            dots[i].setImageDrawable(getResources().getDrawable(R.drawable.page_control_inactive));
-
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-
-            params.setMargins(4, 0, 4, 0);
-
-            pager_indicator.addView(dots[i], params);
-        }
-
-        dots[0].setImageDrawable(getResources().getDrawable(R.drawable.page_control_active));
     }
 
     @Override
@@ -213,12 +358,12 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         }
 
         dots[position].setImageDrawable(getResources().getDrawable(R.drawable.page_control_active));
-
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
     }
+
     private void loadAccounts() {
         mGetAccountsProgressDialog = new ProgressDialog(getActivity());
         mGetAccountsProgressDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.getting_accounts), 1, getActivity()));
@@ -254,121 +399,62 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
             @Override
             protected void onPostExecute(AccountsResponse accountsResponse) {
-                accounts=accountsResponse;
-                handleAccountsResponse(accountsResponse);
                 mGetAccountsProgressDialog.dismiss();
+
+                switch (accountsResponse.httpCode) {
+                    case 200:
+                        MyAccountsFragment.this.accountsResponse = accountsResponse;
+                        ArrayList<BaseAccountFragment> baseAccountFragments = new ArrayList<BaseAccountFragment>();
+                        List<Account> accountList = accountsResponse.accountList;
+                        for (Account p : accountList) {
+                            accounts.put(p.productGroupCode.toUpperCase(), p);
+
+                            int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
+                            if(indexOfUnavailableAccount > -1){
+                                try{
+                                    unavailableAccounts.remove(indexOfUnavailableAccount);
+                                }
+                                catch(Exception e){
+                                    Log.e("", e.getMessage());
+                                }
+                            }
+                        }
+
+                        configureView();
+
+                        break;
+                    case 440:
+                        AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
+                        mError.setTitle("Authentication Error");
+                        mError.setMessage("Your session expired. You've been signed out.");
+                        mError.show();
+
+                        try{
+                            new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
+                            MyAccountsFragment.this.initialize();
+                        } catch (Exception e){
+                            Log.e(TAG, e.getMessage());
+                        }
+
+                        break;
+                    default:
+                        //AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
+                        //mError.setMessage(FontHyperTextParser.getSpannable(accountsResponse.response.desc, 0, getActivity()));
+                        //mError.show();
+                        break;
+                }
             }
         }.execute();
-    }
-    private void handleAccountsResponse(AccountsResponse accountsResponse) {
-        switch (accountsResponse.httpCode) {
-            case 200:
-                 isLoggedIn=true;
-                ((WoolworthsApplication) getActivity().getApplication()).getUserManager().setAccounts(accountsResponse);
-                ArrayList<BaseAccountFragment> baseAccountFragments = new ArrayList<BaseAccountFragment>();
-                List<Account> accountList = accountsResponse.accountList;
-                boolean containsStoreCard = false, containsCreditCard = false, containsPersonalLoan = false;
-                if (accountList != null) {
-                    for (Account p : accountList) {
-                        if ("SC".equals(p.productGroupCode)) {
-                            containsStoreCard = true;
-                            sc_available_funds.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.availableFunds), 1, getActivity()));
-                            scProgressBar.setProgress(Math.round(100 - ((float) p.availableFunds / (float) p.creditLimit * 100f)));
-                        } else if ("CC".equals(p.productGroupCode)) {
-                            containsCreditCard = true;
-                            cc_available_funds.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.availableFunds), 1, getActivity()));
-                            ccProgressBar.setProgress(Math.round(100 - ((float) p.availableFunds / (float) p.creditLimit * 100f)));
-
-                        } else if ("PL".equals(p.productGroupCode)) {
-                            containsPersonalLoan = true;
-                            pl_available_funds.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.availableFunds), 1, getActivity()));
-                            plProgressBar.setProgress(Math.round(100 - ((float) p.availableFunds / (float) p.creditLimit * 100f)));
-
-                        }
-                    }
-                }
-                setUpView(isLoggedIn,containsStoreCard,containsCreditCard,containsPersonalLoan);
-
-                break;
-            case 400:
-                if ("0619".equals(accountsResponse.response.code) || "0618".equals(accountsResponse.response.code)) {
-
-                    break;
-
-                }
-            case 502:
-                Log.i("Handling 502","Handled a 502 error from the server");
-                break;
-            default:
-
-        }
-    }
-
-    public void setUpView(boolean isLoggedIn,boolean isStoreCard,boolean isCreditCard,boolean isPersonalCard) {
-        if (isLoggedIn) {
-            loggedInHeaderLayout.setVisibility(View.VISIBLE);
-            loggedOutHeaderLayout.setVisibility(View.GONE);
-            signOutBtn.setVisibility(View.VISIBLE);
-
-            if (isCreditCard == false && isStoreCard == false && isPersonalCard == false) {
-                linkedAccountsLayout.setVisibility(View.GONE);
-                linkAccountsBtn.setVisibility(View.VISIBLE);
-            } else if (isCreditCard == true && isStoreCard == true && isPersonalCard == true) {
-                applyNowAccountsLayout.setVisibility(View.GONE);
-            }else if(isCreditCard == true || isStoreCard == true || isPersonalCard == true)
-            {
-                linkedAccountsLayout.setVisibility(View.VISIBLE);
-            }
-
-
-
-            if(isCreditCard) {
-                linkedCreditCardView.setVisibility(View.VISIBLE);
-                applyCreditCardView.setVisibility(View.GONE);
-            }
-            else {
-                applyCreditCardView.setVisibility(View.VISIBLE);
-                linkedCreditCardView.setVisibility(View.GONE);
-            }
-
-            if(isStoreCard) {
-                linkedStoreCardView.setVisibility(View.VISIBLE);
-                applyStoreCardView.setVisibility(View.GONE);
-            }
-            else {
-                applyStoreCardView.setVisibility(View.VISIBLE);
-                linkedStoreCardView.setVisibility(View.GONE);
-            }
-
-            if(isPersonalCard) {
-                linkedPersonalCardView.setVisibility(View.VISIBLE);
-                applyPersonalCardView.setVisibility(View.GONE);
-            }
-            else {
-                applyPersonalCardView.setVisibility(View.VISIBLE);
-                linkedPersonalCardView.setVisibility(View.GONE);
-            }
-
-        }
-        else {
-            loggedInHeaderLayout.setVisibility(View.GONE);
-            linkedAccountsLayout.setVisibility(View.GONE);
-            applyCreditCardView.setVisibility(View.VISIBLE);
-            applyStoreCardView.setVisibility(View.VISIBLE);
-            applyPersonalCardView.setVisibility(View.VISIBLE);
-            viewPager.setAdapter(adapter);
-            viewPager.setCurrentItem(0);
-        }
     }
 
     public void redirectToMyAccountsCardsActivity(int position)
     {
         woolworthsApplication.setCliCardPosition(position);
-        Intent intent=new Intent(getActivity(),CLIActivity.class);
+        Intent intent=new Intent(getActivity(),MyAccountCardsActivity.class);
+
         intent.putExtra("position",position);
-        if(accounts!=null)
-        {
-            intent.putExtra("accounts",Utils.objectToJson(accounts));
+        if(accounts != null) {
+            intent.putExtra("accounts", Utils.objectToJson(accountsResponse));
         }
         startActivity(intent);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -416,8 +502,26 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()){
+            //Save JWT
+            SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN);
+            sessionDao.value = data.getStringExtra(SSOActivity.TAG_JWT);
+            try {
+                sessionDao.save();
+            }catch(Exception e){
+                Log.e(TAG, e.getMessage());
+            }
+
+            initialize();
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        loadMessages();
+       // loadMessages();
     }
 }

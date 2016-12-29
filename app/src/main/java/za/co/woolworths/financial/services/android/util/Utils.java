@@ -320,9 +320,6 @@ public class Utils {
         return response;
     }
 
-    public static String replaceEmailAddress(Context context,String email){
-        return context.getResources().getString(R.string.cli_email_address).replace("xxxx@xxxx.com",email);
-    }
 
     public static String formatCurrency(Double amount){
         if (amount!=null) {

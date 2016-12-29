@@ -4,11 +4,15 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
@@ -51,15 +55,20 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
           if (creditLimit!=null) {
                 holder.mTxtACreditLimit.setText(creditLimit.getTitle());
                 holder.mTextAmount.setTag(position);
-                holder.mTextAmount.setHint(creditLimit.getAmount());
+                holder.mTextAmount.setHint("R"+creditLimit.getAmount());
                 holder.mTextAmount.setVisibility(View.VISIBLE);
           }
+
         holder.mImgInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onClickListener.onClick(view,position);
             }
         });
+
+        if (position==7){
+            holder.mTextAmount.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        }
     }
 
     @Override
@@ -90,6 +99,7 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
             mTextAmount = (WEditTextView) view.findViewById(R.id.textAmount);
             mImgInfo = (ImageView) view.findViewById(R.id.imgInfo);
             mLinRootView = (LinearLayout) view.findViewById(R.id.linRootView);
+
             mTextAmount.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -127,9 +137,7 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
 
                     }
                 }
-
             });
-
         }
     }
 
@@ -144,5 +152,4 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
             return "0";
         }
     }
-
 }
