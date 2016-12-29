@@ -38,8 +38,6 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
-import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-import za.co.woolworths.financial.services.android.util.DatabaseHelper;
 
 public class WfsApi {
 
@@ -54,6 +52,7 @@ public class WfsApi {
         OkHttpClient client = new OkHttpClient();
         client.setReadTimeout(60, TimeUnit.SECONDS);
         client.setConnectTimeout(60, TimeUnit.SECONDS);
+        client.interceptors().add(new WfsApiInterceptor(mContext));
         /*client.interceptors().add(new Interceptor() {
             @Override
             public com.squareup.okhttp.Response intercept(Chain chain) throws IOException {

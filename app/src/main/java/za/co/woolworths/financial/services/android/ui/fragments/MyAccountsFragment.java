@@ -378,7 +378,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 AccountsResponse accountResponse = new AccountsResponse();
                 accountResponse.httpCode = 408;
                 accountResponse.response = new Response();
-                accountResponse.response.desc = getString(R.string.err_002);
+                accountResponse.response.desc = errorMessage;
                 return accountResponse;
             }
 
@@ -423,9 +423,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
                         break;
                     default:
-                        //AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
-                        //mError.setMessage(FontHyperTextParser.getSpannable(accountsResponse.response.desc, 0, getActivity()));
-                        //mError.show();
+                        AlertDialog dError = WErrorDialog.getSimplyErrorDialog(getActivity());
+                        dError.setMessage(FontHyperTextParser.getSpannable(accountsResponse.response.desc, 0, getActivity()));
+                        dError.show();
                         break;
                 }
             }

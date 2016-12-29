@@ -10,8 +10,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 
 /**
@@ -25,10 +29,17 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
     }
 
     private Class type;
+    private final List<String> jsonMimeTypes;
     protected abstract Result httpDoInBackground(Params... params);
     protected abstract Result httpError(String errorMessage, HttpErrorCode httpErrorCode);
     protected abstract Class<Result> httpDoInBackgroundReturnType();
 
+    protected HttpAsyncTask() {
+        jsonMimeTypes = Arrays.asList(new String[]{
+                "application/json",
+                "application/json; charset=utf-8"
+        });
+    }
 
     @Override
     protected void onPreExecute() {
@@ -38,27 +49,16 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
     @Override
     protected Result doInBackground(Params... params) {
         Result result = null;
-        //get request from sqllite
-        int apiRequestDaoId = -1;
-
-        // httpUriRequest = params[0];
-        //persist doesn't exist, proceed with service call
-        if(apiRequestDaoId == 0 || apiRequestDaoId == -1){
-            try{
-                result = getResultFromDoInBackground(params);
+        try{
+            result = getResultFromDoInBackground(params);
+        }
+        catch (Exception e){
+            result = httpError("An unknown error occured.", HttpErrorCode.UNKOWN_ERROR);
+        }
+        finally {
+            if(result == null){
+                cancel(false);
             }
-            catch (Exception e){
-                result = httpError("An unknown error occured.", HttpErrorCode.UNKOWN_ERROR);
-            }
-            finally {
-                if(result == null){
-                    cancel(false);
-                }
-            }
-
-            //save the respose
-        }else{
-            //get persistence record from sqllite
         }
         return result;
     }
@@ -71,14 +71,18 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
 
         }
         catch (RetrofitError retrofitError){
-            if(retrofitError.getKind() == RetrofitError.Kind.NETWORK){
+            final RetrofitError.Kind kind = retrofitError.getKind();
+            final Response response = retrofitError.getResponse();
+            final Throwable cause = retrofitError.getCause();
+
+            if(kind == RetrofitError.Kind.NETWORK){
 
                 if(retrofitError.getCause() instanceof SocketTimeoutException)
                     result = httpError("Request timed out. Please try again later.", HttpErrorCode.NETWORK_UNREACHABLE);
                 else
                     result = httpError("Please ensure that your device is connected to the internet", HttpErrorCode.NETWORK_UNREACHABLE);
             }
-            else if (retrofitError.getResponse() != null && retrofitError.getResponse().getBody().mimeType().equals("application/json")){
+            else if (response != null && this.jsonMimeTypes.contains(response.getBody().mimeType())){
                 try{
                     //check if retrofitError is kind of error object.
                     //if error object, return error description instead of Result's json
@@ -93,6 +97,9 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
                         result = httpError(retrofitError.getMessage(), HttpErrorCode.UNKOWN_ERROR);
                     }
                 }
+            }
+            else{
+                throw new RuntimeException("Retrofit Error not being handled!");
             }
         }
 

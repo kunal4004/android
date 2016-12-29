@@ -14,11 +14,8 @@ import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 
 public class SessionDao extends BaseDao {
     private final String TAG = "SessionDao";
-    public String id;
     public KEY key;
     public String value;
-    public String dateCreated;
-    public String dateUpdated;
 
 
     public enum KEY{
