@@ -393,7 +393,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 AccountsResponse accountResponse = new AccountsResponse();
                 accountResponse.httpCode = 408;
                 accountResponse.response = new Response();
-                accountResponse.response.desc = getString(R.string.err_002);
+                accountResponse.response.desc = errorMessage;
                 return accountResponse;
             }
 
@@ -429,19 +429,26 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                         mError.setMessage("Your session expired. You've been signed out.");
                         mError.show();
 
-                        try{
-                            new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
-                            MyAccountsFragment.this.initialize();
-                        } catch (Exception e){
-                            Log.e(TAG, e.getMessage());
-                        }
+                        new android.os.AsyncTask<Void, Void, String>(){
+
+                            @Override
+                            protected String doInBackground(Void... params) {
+                                try {
+                                    new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                return "";
+                            }
+
+                            @Override
+                            protected void onPostExecute(String s) {
+                                MyAccountsFragment.this.initialize();
+                            }
+                        }.execute();
 
                         break;
-                    default:
-                        //AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
-                        //mError.setMessage(FontHyperTextParser.getSpannable(accountsResponse.response.desc, 0, getActivity()));
-                        //mError.show();
-                        break;
+                    default:break;
                 }
             }
         }.execute();
