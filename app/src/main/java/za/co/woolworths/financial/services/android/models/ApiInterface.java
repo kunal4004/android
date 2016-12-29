@@ -52,7 +52,7 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Query("productOfferingId") String productOfferingId);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime: 60"})
     @GET("/user/accounts")
     AccountsResponse getAccounts(
             @Header("apiId") String apiId,
@@ -65,6 +65,7 @@ public interface ApiInterface {
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion,
             @Header("sessionToken") String sessionToken);
+
 
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @GET("/user/account/{productOfferingId}/history")

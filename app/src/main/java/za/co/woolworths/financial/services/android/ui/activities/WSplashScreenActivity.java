@@ -14,18 +14,14 @@ import android.widget.VideoView;
 
 import com.awfs.coordination.R;
 
-import java.io.IOException;
-
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.ApiInterface;
-import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
-import za.co.woolworths.financial.services.android.util.DatabaseHelper;
+import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
@@ -35,7 +31,7 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
     private boolean mVideoPlayerShouldPlay = true;
     private VideoView videoView;
     private boolean isMinimized = false;
-    DatabaseHelper dbHelper= null;
+    PersistenceLayer dbHelper= null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

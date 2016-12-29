@@ -10,6 +10,10 @@ public abstract class BaseDao {
 
     protected Context mContext;
 
+    public String id;
+    public String dateCreated;
+    public String dateUpdated;
+
     public BaseDao(){ }
 
     public BaseDao(Context mContext){
@@ -18,6 +22,11 @@ public abstract class BaseDao {
 
     //subclass must override
     public String getTableName(){
-        throw new RuntimeException("[BaseDao]: method getTableName was not overriden!");
+        throw new RuntimeException("[BaseDao]: method getTableName() was not overridden!");
+    }
+
+    //subclass must override
+    public BaseDao get() throws Exception{
+        throw new RuntimeException("[BaseDao]: method get() was not overridden!");
     }
 }
