@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.WProductsFragmen
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
+import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener{
@@ -135,6 +136,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             SessionDao sessionDao = new SessionDao(WOneAppBaseActivity.this, SessionDao.KEY.USER_TOKEN).get();
             if (sessionDao.value != null && !sessionDao.value.equals("")){
                 result = JWTHelper.decode(sessionDao.value);
+                SharePreferenceHelper.getInstance().save(WOneAppBaseActivity.this,result.email,"email");
             }
         }catch(Exception e){
             Log.e(TAG, e.getMessage());

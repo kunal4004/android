@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.models;
 
 import android.content.Context;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.awfs.coordination.R;
@@ -10,6 +11,8 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 
+
+import retrofit.RestAdapter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
@@ -24,9 +27,14 @@ import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanResponse;
+import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
+import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
+import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
+import za.co.woolworths.financial.services.android.models.dto.CreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
+import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeleteMessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse;
@@ -35,8 +43,12 @@ import za.co.woolworths.financial.services.android.models.dto.LoginRequest;
 import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
+import za.co.woolworths.financial.services.android.models.dto.Offer;
+import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
+import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
+import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 
 public class WfsApi {
@@ -100,6 +112,22 @@ public class WfsApi {
         return mApiInterface.getMessages(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), pageSize, pageNumber);
     }
 
+    public CreateOfferResponse createOfferRequest(CreateOfferRequest offerRequest) {
+        return mApiInterface.createOfferRequest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), offerRequest);
+    }
+
+    public DeaBanks getDeaBanks(){
+        return  mApiInterface.getDeaBanks(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "",getSessionToken(),0,0);
+    }
+
+    public BankAccountTypes getBankAccountTypes(){
+        return  mApiInterface.getBankAccountTypes(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "","eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSIsImtpZCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSJ9.eyJpc3MiOiJodHRwczovL3N0cy53b29sd29ydGhzLmNvLnphL2N1c3RvbWVyaWQiLCJhdWQiOiJXV09uZUFwcCIsImV4cCI6MTQ3NTc2NjEyNywibmJmIjoxNDc1NzY1ODI3LCJub25jZSI6ImFjM2UyIiwiaWF0IjoxNDc1NzY1ODI3LCJzaWQiOiI2NjFlNmM1NTdjZWM4MDNiMWU5YmE2YjA1MGFiMTVlZCIsInN1YiI6ImM2YjcyZTYwLTY1ZjgtNGY3ZS1hNWRmLTJiYjgyMWQ5NDZhNyIsImF1dGhfdGltZSI6MTQ3NTc2NTgyNSwiaWRwIjoiV1ctT05MSU5FIiwiZ2l2ZW5fbmFtZSI6IlRFU1QiLCJmYW1pbHlfbmFtZSI6IlBBR0UiLCJBdGdJZCI6IjE3OTEwMDQ1IiwiQXRnU2Vzc2lvbiI6IlZlMmFmMWVUa3pDX2dEak1RcmxmbTFTQVYxNldvWlVTdEwtdzU4emZTNU05ZnFNZVJTQ1IhMTY5MDY0ODc0NCIsImVtYWlsIjoiemFoaXJzaWVyc0B3b29sd29ydGhzLmNvLnphIiwiQzJJZCI6IjQzMzc4MzkiLCJhbXIiOlsiZXh0ZXJuYWwiXX0.bNMe1vvnzjaxO6iLbWQIC-Xi5x7Q6h4b7OZpfDeaMlj8noqnaVvkvmrvLggoypvv33_y0XhiJ6DtBC5MVQiuyU9K1U9w5uzNc2oTBzr5f65l4JbemEKoK4A0FpzM4rTroBDX8p3x_ubtYPa0Toluu9nzpIFeEnsQXNzU-2OGkaZ0nxWvYkJ0wsGeDXZlY0Lsix_OxdO6sgReDf9nL5f9hm6ekBE7oEMKlNAjZkB8TIvhCZXxumad_3SSVEhYDCfZzW-hoIOViUXFkqelVtdQmiRZei2-x65PZMu4EwkF-EYpNI9TNC6N35bYc3HrfK39H7hW979rX8CN-Aj9jOoyXg",0,0);
+    }
+
+    public OfferActive getActiveOfferRequest(String productOfferingId) {
+        return mApiInterface.getActiveOfferRequest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), productOfferingId);
+    }
+
     public DeleteMessageResponse getDeleteMessagesResponse(String id) {
         return mApiInterface.getDeleteresponse(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), id);
     }
@@ -107,13 +135,28 @@ public class WfsApi {
     public ReadMessagesResponse getReadMessagesResponse(MessageReadRequest readMessages) {
         return mApiInterface.setReadMessages(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), readMessages);
     }
-    
+
+    public CLIEmailResponse cliEmailResponse(String email){
+        return mApiInterface.cliSendEmailRquest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), email);
+    }
+
+
+    public UpdateBankDetailResponse cliUpdateBankDetail(UpdateBankDetail updateBankDetail) {
+        return mApiInterface.cliUpdateBankRequest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), updateBankDetail);
+    }
+
     public CreateUpdateDeviceResponse getResponseOnCreateUpdateDevice(CreateUpdateDevice device) {
         return mApiInterface.createUpdateDevice(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), device);
     }
 
     private String getOsVersion() {
-        return Util.getOsVersion();
+        String osVersion = Util.getOsVersion();
+        if (TextUtils.isEmpty(osVersion)){
+            String myVersion = android.os.Build.VERSION.RELEASE; // e.g. myVersion := "1.6"
+            int sdkVersion = android.os.Build.VERSION.SDK_INT; // e.g. sdkVersion := 8;
+            osVersion= String.valueOf(sdkVersion);
+        }
+        return osVersion;
     }
 
     private String getOS() {

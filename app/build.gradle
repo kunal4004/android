@@ -36,7 +36,7 @@ android {
 
     defaultConfig {
         minSdkVersion 19 //kitkat 4.4
-        targetSdkVersion 22
+        targetSdkVersion 24
         multiDexEnabled true
         versionCode(job.toInteger() + 1)
         versionName buildNumber

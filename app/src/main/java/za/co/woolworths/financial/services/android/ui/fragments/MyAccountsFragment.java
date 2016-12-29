@@ -35,6 +35,12 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+
+import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
+import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
+import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivityTest;
+import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.PersonalLoanWithdrawalActivity;
@@ -64,9 +70,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     ImageView openShoppingList;
     RelativeLayout contactUs;
 
+    boolean isLoggedIn = true;
     boolean isCreditCard = false;
     boolean isStoreCard = false;
     boolean isPersonalCard = false;
+
     CardView applyCreditCardView;
     CardView applyStoreCardView;
     CardView applyPersonalCardView;
@@ -107,11 +115,14 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         this.accountsResponse = null;
     }
 
+    WoolworthsApplication woolworthsApplication;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.my_accounts_fragment, container, false);
         // ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("ACCOUNTS");
+        woolworthsApplication = (WoolworthsApplication)getActivity().getApplication();
         openMessageActivity = (ImageView) view.findViewById(R.id.openMessageActivity);
         openShoppingList=(ImageView) view.findViewById(R.id.openShoppingList);
         contactUs = (RelativeLayout) view.findViewById(R.id.contactUs);
@@ -149,6 +160,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
         adapter=new MyAccountOverViewPagerAdapter(getActivity());
         viewPager.addOnPageChangeListener(this);
+        setUiPageViewController();
+       // setUpView(isLoggedIn,isStoreCard,isCreditCard,isPersonalCard);
+        //loadAccounts();
 
         view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
         view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
@@ -329,6 +343,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 break;
             case R.id.openShoppingList:
                 break;
+
         }
     }
 
@@ -441,7 +456,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
     public void redirectToMyAccountsCardsActivity(int position)
     {
+        woolworthsApplication.setCliCardPosition(position);
         Intent intent=new Intent(getActivity(),MyAccountCardsActivity.class);
+
         intent.putExtra("position",position);
         if(accounts != null) {
             intent.putExtra("accounts", Utils.objectToJson(accountsResponse));
@@ -487,8 +504,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                }else {
                    messageCounter.setVisibility(View.GONE);
                }
-
-
             }
         }.execute();
     }

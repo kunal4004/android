@@ -137,7 +137,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -693,5 +692,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 // The duration must be strictly positive so we make it at least 1.
         googleMap.animateCamera(update, Math.max(DURATION, 1), callback);
     }
+
 }
+
 
