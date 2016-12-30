@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.awfs.coordination.R;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Defaults;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 
@@ -30,7 +31,7 @@ public class WPersonalLoanEmptyFragment extends Fragment{
         applyNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(new Defaults().getFaqLink())));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getFaqLink())));
             }
         });
 
