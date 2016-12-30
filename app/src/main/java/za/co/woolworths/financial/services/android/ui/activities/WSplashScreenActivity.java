@@ -36,7 +36,6 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wsplash_screen);
-
         this.videoView = (VideoView) findViewById(R.id.activity_wsplash_screen_videoview);
 
         Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.wsplash_screen_video);

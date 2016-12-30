@@ -334,5 +334,6 @@
     <string name="cli_solvency_error">Please make sure all required fields are filled out correctly</string>
     <string name="cli_check_field">Please make sure all required fields are filled out correctly</string>
     <string name="cli_amount_hint">R0</string>
+    <string name="loan_withdrawal_title">loan withdrawal</string>
 
 </resources>
