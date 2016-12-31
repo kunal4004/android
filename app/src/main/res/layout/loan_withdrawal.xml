@@ -15,6 +15,8 @@
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginTop="24dp"
+        android:letterSpacing="0.1"
+        android:lineSpacingExtra="1.2dp"
         android:gravity="center_horizontal"
         android:text="@string/please_enter_the_amount"
         android:textAllCaps="true"
@@ -74,6 +76,7 @@
                 android:layout_height="wrap_content"
                 android:text="Credit Limit"
                 android:textColor="#99ffffff"
+                android:letterSpacing="0.05"
                 android:textSize="15sp"
                 app:WTextView_font="myriadpro_regular"
                 />
@@ -84,6 +87,7 @@
                 android:text="R30 000.00"
                 android:textColor="@color/white"
                 android:textSize="20sp"
+                android:letterSpacing="0.05"
                 app:WTextView_font="medium_bold"
                 android:id="@+id/textCreditLimit" />
         </LinearLayout>
@@ -113,8 +117,10 @@
                 android:hint="R0"
                 android:inputType="numberDecimal"
                 android:paddingLeft="8dp"
+                android:textColorHint="@color/recent_search_bg"
                 android:imeOptions="actionDone"
                 android:textColor="@color/white"
+                android:textCursorDrawable="@drawable/colorcursor"
                 android:textSize="45sp"
                 app:WEditTextView_font="light"
                 android:layout_centerVertical="true"

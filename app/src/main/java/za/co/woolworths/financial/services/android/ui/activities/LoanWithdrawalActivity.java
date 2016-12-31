@@ -1,16 +1,22 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.Selection;
+import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
@@ -20,6 +26,7 @@ import java.text.NumberFormat;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.MoneyTextWatcher;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class LoanWithdrawalActivity extends AppCompatActivity {
@@ -32,6 +39,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
     private MenuItem menuItem;
     private boolean isNextArrow  = false;
     private String current;
+    private Menu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,39 +84,22 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
             }
         });
 
-        mEditWithdrawalAmount.addTextChangedListener(new TextWatcher() {
+        /**
+         * Set cursor to end of text in edittext when user clicks Next on Keyboard.
+         */
+        View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-                if (!s.toString().equals(current)) {
-                    mEditWithdrawalAmount.removeTextChangedListener(this);
-
-                    String replaceable = String.format("[%s \\s]", NumberFormat.getCurrencyInstance().getCurrency().getSymbol());
-                    String cleanString = s.toString().replaceAll(replaceable, "").replace("R","").replace(",","");
-                    double parsed;
-                    try {
-                        parsed = Double.parseDouble(cleanString);
-                    } catch (NumberFormatException e) {
-                        parsed = 0.00;
+            public void onFocusChange(View view, boolean b) {
+                if (b) {
+                    if (!TextUtils.isEmpty(mEditWithdrawalAmount.getText().toString())){
+                        ((EditText) view).setSelection(2);
                     }
-
-                    String formatted = Utils.formatCurrency(parsed);
-
-                    current = formatted;
-                    mEditWithdrawalAmount.setText(formatted);
-                    mEditWithdrawalAmount.setSelection(formatted.length());
-
-                    // Do whatever you want with position
-                    mEditWithdrawalAmount.addTextChangedListener(this);
                 }
             }
-        });
+        };
+
+        mEditWithdrawalAmount.addTextChangedListener(new MoneyTextWatcher(mEditWithdrawalAmount));
+        mEditWithdrawalAmount.setOnFocusChangeListener(onFocusChangeListener);
     }
 
     @Override
@@ -120,7 +111,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-
+        this.mMenu = menu;
         menuItemVisible(menu,isNextArrow);
         return true;
     }
