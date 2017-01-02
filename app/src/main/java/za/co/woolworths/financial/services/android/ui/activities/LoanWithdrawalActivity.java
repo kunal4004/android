@@ -1,15 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.content.res.Configuration;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.Selection;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,47 +15,50 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
+import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.Currency;
+import java.util.Locale;
 
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.MoneyTextWatcher;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class LoanWithdrawalActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
-    private WoolworthsApplication woolworthsApplication;
     private WEditTextView mEditWithdrawalAmount;
-    private WTextView mTextAvailableFund;
-    private WTextView mTextCreditLimit;
     private MenuItem menuItem;
     private boolean isNextArrow  = false;
-    private String current;
+    private WeakReference<WEditTextView> mEditTextWeakReference;
+    private WTextView mTextAvailableFund;
+    private WTextView mTextCreditLimit;
+    private WEditTextView mEditText;
     private Menu mMenu;
+    private RelativeLayout mRelLoanWithdrawal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.updateStatusBarBackground(LoanWithdrawalActivity.this,R.color.purple);
         setContentView(R.layout.loan_withdrawal_activity);
-        woolworthsApplication = (WoolworthsApplication)getApplication();
         setActionBar();
         initViews();
         setContent();
-    }
+        }
 
     private void initViews() {
         mTextAvailableFund = (WTextView)findViewById(R.id.textAvailableFunds);
         mTextCreditLimit = (WTextView)findViewById(R.id.textCreditLimit);
         mEditWithdrawalAmount = (WEditTextView)findViewById(R.id.editWithdrawAmount);
+        mRelLoanWithdrawal = (RelativeLayout)findViewById(R.id.relLoanWithdrawal);
     }
-
 
     private void setActionBar(){
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -71,6 +72,8 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
     }
 
     private void setContent(){
+        mRelLoanWithdrawal.setVisibility(View.VISIBLE);
+        mEditWithdrawalAmount.setText("R ");
         mEditWithdrawalAmount.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -98,7 +101,57 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
             }
         };
 
-        mEditWithdrawalAmount.addTextChangedListener(new MoneyTextWatcher(mEditWithdrawalAmount));
+        /*
+           Add Click listener and on put your code that will keep cursor on right side
+         */
+        mEditWithdrawalAmount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEditWithdrawalAmount.setSelection(mEditWithdrawalAmount.getText().length());
+            }
+        });
+
+        mEditWithdrawalAmount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                mEditTextWeakReference = new WeakReference<>(mEditWithdrawalAmount);
+                mEditText = mEditTextWeakReference.get();
+                if (mEditText == null) return;
+                String s = editable.toString();
+                mEditText.removeTextChangedListener(this);
+                String cleanString = s.toString().replaceAll("[$,.]", "").replace(" ", "").replace("R ", "").replace("R", "");
+                BigDecimal parsed = new BigDecimal(cleanString).setScale(2, BigDecimal.ROUND_FLOOR).divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR);
+                String formatted = NumberFormat.getCurrencyInstance().format(parsed);
+                String newFormat = formatted.replace(",", " ");
+                Currency currency = Currency.getInstance(Locale.getDefault());
+                String symbol = currency.getSymbol();
+                int checkAmount =0;
+                if (!TextUtils.isEmpty(newFormat)) {
+                    checkAmount = Double.valueOf(newFormat.replace(symbol, "").replace(" ","")).intValue();
+                }
+                if (newFormat.length() > 0) {
+                    newFormat = newFormat.replace(symbol, "R ");
+                }
+                if (checkAmount==0){
+                    menuItemVisible(mMenu,false);
+                }else {
+                    menuItemVisible(mMenu,true);
+                }
+                mEditText.setText(newFormat);
+                if (newFormat.length() > 6 && !newFormat.equalsIgnoreCase("R 0.00")) {
+                    mEditText.setSelection(newFormat.length());
+                } else {
+                    mEditText.setSelection(newFormat.length());
+                }
+                mEditText.addTextChangedListener(this);
+            }
+        });
         mEditWithdrawalAmount.setOnFocusChangeListener(onFocusChangeListener);
     }
 
@@ -120,8 +173,13 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                    onBackPressed();
                 return true;
+            case R.id.itemNextArrow:
+                Intent openLoanWithdrawal = new Intent(LoanWithdrawalActivity.this,LoanWithdrawalConfirmActivity.class);
+                startActivity(openLoanWithdrawal);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                break;
         }
         return false;
     }
@@ -154,5 +212,4 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
             }
         }catch (NullPointerException ex){}
     }
-
 }

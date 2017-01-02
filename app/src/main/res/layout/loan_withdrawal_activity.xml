@@ -43,5 +43,6 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/loan_withdrawal"/>
+    <include layout="@layout/loan_withdrawal_confirmation"/>
 
 </android.support.design.widget.CoordinatorLayout>
