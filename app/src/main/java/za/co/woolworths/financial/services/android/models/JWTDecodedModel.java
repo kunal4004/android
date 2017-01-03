@@ -22,10 +22,10 @@ public class JWTDecodedModel {
     public String preferred_username;
     public Boolean email_verified;
     public String email;
-    public ArrayList<String> name; //this is sometimes an array
-    public ArrayList<String> family_name; //this is sometimes an array
-    public ArrayList<String> AtgId;
-    public ArrayList<String> AtgSession;
+    public String name; //this is sometimes an array
+    public String family_name; //this is sometimes an array
+    public String AtgId; //this is sometimes an array
+    public String AtgSession; //json
     public String C2Id;
     public ArrayList<String> amr;
 }

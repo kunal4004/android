@@ -118,59 +118,6 @@ public class Utils {
 
     }
 
-    public static void addToRecentSearchedHistory(SearchHistory searchHistory, Context mContext)
-    {
-        List<SearchHistory> histories=null;
-        histories=new ArrayList<>();
-        histories=getRecentSearchedHistory(mContext);
-        SharedPreferences mPrefs = mContext.getSharedPreferences("history", mContext.MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = mPrefs.edit();
-        Gson gson = new Gson();
-        boolean isExist=false;
-        if(histories==null)
-        {
-            histories.add(0,searchHistory);
-            String json = gson.toJson(histories);
-            prefsEditor.putString("myJson", json);
-            prefsEditor.commit();
-        }
-        else {
-            for (SearchHistory s : histories) {
-                if ( s.searchedValue.equalsIgnoreCase(searchHistory.searchedValue))
-                {
-                     isExist=true;
-                }
-            }
-            if(!isExist)
-            {
-                histories.add(0,searchHistory);
-                if(histories.size()>5)
-                    histories.remove(5);
-
-                String json = gson.toJson(histories);
-                prefsEditor.putString("myJson", json);
-                prefsEditor.commit();
-            }
-        }
-
-
-
-    }
-    public static List<SearchHistory> getRecentSearchedHistory(Context mContext)
-    {
-        List<SearchHistory> historyList ;
-        SharedPreferences mPrefs = mContext.getSharedPreferences("history", mContext.MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = mPrefs.getString("myJson", "");
-        if (json.isEmpty()) {
-            historyList = new ArrayList<>();
-        } else {
-            Type type = new TypeToken<List<SearchHistory>>() {
-            }.getType();
-            historyList = gson.fromJson(json, type);
-        }
-        return historyList;
-    }
 
     public static boolean isLocationServiceEnabled( Context context){
         LocationManager locationManager = null;

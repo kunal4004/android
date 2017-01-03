@@ -1,25 +1,23 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WOnboardingOnFragmentInteractionListener;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class WOnboardingOneFragment extends Fragment {
 
     private WOnboardingOnFragmentInteractionListener mListener;
-    private TextView descriptionTitle;
-    private TextView descriptionText;
+    private WTextView descriptionTitle;
+    private WTextView descriptionText;
 
     public WOnboardingOneFragment() {
         // Required empty public constructor
@@ -28,11 +26,8 @@ public class WOnboardingOneFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_wonboarding_one, container, false);
-        this.descriptionTitle = (TextView)view.findViewById(R.id.fragment_wonboarding_one_description_title);
-        this.descriptionText = (TextView)view.findViewById(R.id.fragment_wonboarding_one_description_text);
-
-        this.descriptionTitle.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/WFutura-SemiBold.ttf"));
-        this.descriptionText.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Regular.otf"));
+        this.descriptionTitle = (WTextView)view.findViewById(R.id.fragment_wonboarding_one_description_title);
+        this.descriptionText = (WTextView)view.findViewById(R.id.fragment_wonboarding_one_description_text);
         return view;
     }
 
