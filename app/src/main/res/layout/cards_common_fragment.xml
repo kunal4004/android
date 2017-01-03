@@ -91,6 +91,7 @@
                 android:id="@+id/txtIncreseLimit"
                 android:text="@string/increase_limit"
                 android:textColor="@color/black"
+                android:background="@drawable/ripple_effect_gray"
                 android:textSize="14sp"
                 app:WTextView_font="medium_bold"
                 android:textAllCaps="true"

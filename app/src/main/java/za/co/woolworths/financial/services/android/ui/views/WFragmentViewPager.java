@@ -35,5 +35,4 @@ public class WFragmentViewPager extends ViewPager
     public void setPagingEnabled(boolean b) {
         this.isPagingEnabled = b;
     }
-
 }

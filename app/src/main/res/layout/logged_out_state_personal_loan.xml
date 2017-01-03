@@ -243,6 +243,7 @@
             <za.co.woolworths.financial.services.android.ui.views.WButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/applynow"
                 android:minHeight="60dp"
                 android:text="@string/apply_now"
                 android:textAllCaps="true"

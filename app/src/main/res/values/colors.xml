@@ -26,4 +26,18 @@
     <color name="black_off">#343434</color>
     <color name="black_overlay">#66000000</color>
     <color name="recent_search_bg">#EFEFEF</color>
+    <color name="walkthrough_statusbar">#352F30</color>
+    <color name="cli_store_card">#4f5051</color>
+    <color name="cli_credit_card">#2e353b</color>
+    <color name="cli_personal_loan">#312439</color>
+    <color name="semi_transparent_black">#50000000</color>
+    <color name="semi_per_black">#30000000</color>
+
+    <!-- step indicator -->
+    <color name="background_default">#A5D6A7</color>
+    <color name="step_default">#4CAF50</color>
+    <color name="current_step_default">#ffffff</color>
+    <color name="text_default">#000000</color>
+    <color name="secondary_text_default">#ffffff</color>
+
 </resources>

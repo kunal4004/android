@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
+import android.util.Log;
 
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 
 
 public class WoolworthsApplication extends Application {
@@ -29,7 +31,7 @@ public class WoolworthsApplication extends Application {
     private UserManager mUserManager;
     private WfsApi mWfsApi;
     private Tracker mTracker;
-
+    private boolean swapSecondFragment=false;
     private static String applyNowLink;
     private static String registrationTCLink;
     private static String faqLink;
@@ -38,11 +40,17 @@ public class WoolworthsApplication extends Application {
     private static String howToSaveLink;
     private static String wrewardsTCLink;
 
+    private int cliCardPosition;
     private static String baseURL;
     private static String apiKey;
     private static String sha1Password;
+    private boolean isDEABank = false;
+    private boolean isOther=false;
+    private int productOfferingId;
 
     private static int NumVouchers =0;
+
+    public UpdateBankDetail updateBankDetail;
 
     public static void setSha1Password(String sha1Password) {
         WoolworthsApplication.sha1Password = sha1Password;
@@ -135,6 +143,7 @@ public class WoolworthsApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        updateBankDetail = new UpdateBankDetail();
         WoolworthsApplication.context = this.getApplicationContext();
         Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
         CalligraphyConfig.initDefault("fonts/WFutura-medium.ttf", R.attr.fontPath);
@@ -251,9 +260,41 @@ public class WoolworthsApplication extends Application {
         editor.commit();
     }
 
+    public  boolean isDEABank() {
+        return isDEABank;
+    }
+
+    public  void setDEABank(boolean DEABank) {
+        this.isDEABank = DEABank;
+    }
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+    public int getCliCardPosition() {
+        return cliCardPosition;
+    }
+
+    public void setCliCardPosition(int cliCardPosition) {
+        this.cliCardPosition = cliCardPosition;
+    }
+
+    public boolean isOther() {
+        return isOther;
+    }
+
+    public void setOther(boolean other) {
+        isOther = other;
+    }
+
+    public int getProductOfferingId() {
+        return productOfferingId;
+    }
+
+    public void setProductOfferingId(int productOfferingId) {
+        this.productOfferingId = productOfferingId;
     }
 }

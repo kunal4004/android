@@ -1,7 +1,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 android:layout_width="match_parent"
-                                                 android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -45,7 +45,7 @@
                     android:textColor="@color/white"
                     android:text="Store card"
                     />
-                </android.support.v7.widget.Toolbar>
+            </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
@@ -61,11 +61,11 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             >
-        <za.co.woolworths.financial.services.android.ui.views.WFragmentViewPager
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/fragmentpager"
-            />
+            <za.co.woolworths.financial.services.android.ui.views.WFragmentViewPager
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/fragmentpager"
+                />
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
