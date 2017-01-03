@@ -1,9 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.Location;
@@ -13,7 +15,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
@@ -29,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -100,6 +105,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     private SlidingUpPanelLayout mLayout;
     public List<StoreDetails> storeDetailsList;
 
+    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
+
     RelativeLayout direction;
     RelativeLayout makeCall;
 
@@ -152,7 +159,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         storeNumber = (WTextView) v.findViewById(R.id.storeNumber);
         timeingsLayout = (LinearLayout) v.findViewById(R.id.timeingsLayout);
         brandsLayout = (LinearLayout) v.findViewById(R.id.brandsLayout);
-        relBrandLayout= (RelativeLayout)v.findViewById(R.id.relBrandLayout);
+        relBrandLayout = (RelativeLayout) v.findViewById(R.id.relBrandLayout);
         direction = (RelativeLayout) v.findViewById(R.id.direction);
         makeCall = (RelativeLayout) v.findViewById(R.id.call);
         layoutLocationServiceOff = (LinearLayout) v.findViewById(R.id.layoutLocationServiceOff);
@@ -227,8 +234,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 }
             }
         });
-        if(Utils.isLocationServiceEnabled(getActivity())&& Utils.getLastSavedLocation(getActivity())==null)
-        {
+        if (Utils.isLocationServiceEnabled(getActivity()) && Utils.getLastSavedLocation(getActivity()) == null) {
             checkLocationServiceAndSetLayout(false);
         }
         settingsrequest();
@@ -248,14 +254,28 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         }
     }
 
+//    Function to request permission
+    public void requestLocationPermission(){
+        requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
+                REQUEST_CODE_ASK_PERMISSIONS);
+        requestPermissions(new  String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
+
+    }
+
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
-        googleMap.setMyLocationEnabled(false);
-        googleMap.setOnMarkerClickListener(this);
-        unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
-        selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
-        //Current location
+        //If permission is not granted, request permission.
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationPermission();
+        } else {
+            googleMap.setMyLocationEnabled(false);
+            googleMap.setOnMarkerClickListener(this);
+            unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
+            selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
+            //Current location
+        }
+
 
 /*
         googleMap.addMarker(new MarkerOptions().position(new LatLng(lTracker.getLatitude(), lTracker.getLongitude()))
@@ -337,14 +357,18 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     }
     //Location Listner
 
-
     @Override
     public void onLocationChanged(Location location) {
         if (getActivity() != null) {
             Utils.saveLastLocation(location, getActivity());
             updateMyCurrentLocationOnMap(location);
             init(location);
-            locationManager.removeUpdates(this);
+            //If permission is not granted, request permission.
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestLocationPermission();
+            } else {
+                locationManager.removeUpdates(this);
+            }
         }
     }
 
@@ -642,7 +666,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
     public void serachForCurrentLocation() {
         checkLocationServiceAndSetLayout(true);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 1, this);
+        //If permission is not granted, request permission.
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationPermission();
+        } else {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 1, this);
+        }
     }
 
     public void updateMyCurrentLocationOnMap(Location location) {

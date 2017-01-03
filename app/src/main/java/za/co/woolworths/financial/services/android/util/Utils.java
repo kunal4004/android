@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -22,26 +24,24 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Currency;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
-import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
+import za.co.woolworths.financial.services.android.ui.fragments.CLISecondStepFragment;
 
 import static android.Manifest.permission_group.STORAGE;
-import static android.R.attr.format;
-import static android.R.attr.key;
-import static android.R.attr.type;
-import static android.R.id.edit;
-import static android.webkit.ConsoleMessage.MessageLevel.LOG;
-import static com.awfs.coordination.R.id.offerings;
-import static com.google.zxing.qrcode.decoder.ErrorCorrectionLevel.L;
 
 /**
  * Created by W7099877 on 26/10/2016.
@@ -54,7 +54,6 @@ public class Utils {
     public final static float DIFF_SCALE = BIG_SCALE - SMALL_SCALE;
     public static int FIRST_PAGE=0;
     public static  int DEFAULT_SELECTED_NAVIGATION_ITEM=0;
-
 
     //Firebase Messaging service
 
@@ -119,59 +118,6 @@ public class Utils {
 
     }
 
-    public static void addToRecentSearchedHistory(SearchHistory searchHistory, Context mContext)
-    {
-        List<SearchHistory> histories=null;
-        histories=new ArrayList<>();
-        histories=getRecentSearchedHistory(mContext);
-        SharedPreferences mPrefs = mContext.getSharedPreferences("history", mContext.MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = mPrefs.edit();
-        Gson gson = new Gson();
-        boolean isExist=false;
-        if(histories==null)
-        {
-            histories.add(0,searchHistory);
-            String json = gson.toJson(histories);
-            prefsEditor.putString("myJson", json);
-            prefsEditor.commit();
-        }
-        else {
-            for (SearchHistory s : histories) {
-                if ( s.searchedValue.equalsIgnoreCase(searchHistory.searchedValue))
-                {
-                     isExist=true;
-                }
-            }
-            if(!isExist)
-            {
-                histories.add(0,searchHistory);
-                if(histories.size()>5)
-                    histories.remove(5);
-
-                String json = gson.toJson(histories);
-                prefsEditor.putString("myJson", json);
-                prefsEditor.commit();
-            }
-        }
-
-
-
-    }
-    public static List<SearchHistory> getRecentSearchedHistory(Context mContext)
-    {
-        List<SearchHistory> historyList ;
-        SharedPreferences mPrefs = mContext.getSharedPreferences("history", mContext.MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = mPrefs.getString("myJson", "");
-        if (json.isEmpty()) {
-            historyList = new ArrayList<>();
-        } else {
-            Type type = new TypeToken<List<SearchHistory>>() {
-            }.getType();
-            historyList = gson.fromJson(json, type);
-        }
-        return historyList;
-    }
 
     public static boolean isLocationServiceEnabled( Context context){
         LocationManager locationManager = null;
@@ -240,11 +186,24 @@ public class Utils {
            Window window = activity.getWindow();
            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-           window.setStatusBarColor(activity.getResources().getColor(R.color.white));
+           window.setStatusBarColor(ContextCompat.getColor(activity, R.color.white));
            View decor = activity.getWindow().getDecorView();
            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
        }
    }
+
+    public static void updateStatusBarBackground(Activity activity, int color)
+    {
+
+        if (Build.VERSION.SDK_INT >= 21) {
+            Window window = activity.getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(ContextCompat.getColor(activity, color));
+            View decor = activity.getWindow().getDecorView();
+            decor.setSystemUiVisibility(0);
+        }
+    }
 
     public static  List<TransactionParentObj> getdata(List<Transaction> transactions)
     {
@@ -309,4 +268,14 @@ public class Utils {
     }
 
 
+    public static String formatCurrency(Double amount){
+        if (amount!=null) {
+            NumberFormat formatter = NumberFormat.getCurrencyInstance();
+            String moneyString = formatter.format(amount).replace("$", "R").replace(",", " ");
+            String newAmount = moneyString.substring(0, moneyString.indexOf("."));
+            return newAmount;
+        }else {
+            return String.valueOf(0);
+        }
+    }
 }
