@@ -7,12 +7,22 @@ import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 
 /**
  * Created by eesajacobs on 2016/11/30.
  */
 
 public class ScreenManager {
+
+    public static void presentMain(Activity activity){
+
+        Intent intent = new Intent(activity, WOneAppBaseActivity.class);
+
+        activity.startActivity(intent);
+        activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        activity.finish();
+    }
 
     public static void presentSSOSignin(Activity activity){
 

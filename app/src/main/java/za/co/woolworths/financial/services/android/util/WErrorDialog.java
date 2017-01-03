@@ -58,4 +58,16 @@ public class WErrorDialog {
                 })
                 .show();
     }
+
+    public static AlertDialog setErrorMessage(final Activity c,String message){
+        return  new AlertDialog.Builder(c)
+                .setTitle(FontHyperTextParser.getSpannable(c.getString(R.string.error), 2, c))
+                .setCancelable(false)
+                .setMessage(FontHyperTextParser.getSpannable(message, 0, c))
+                .setPositiveButton(FontHyperTextParser.getSpannable(c.getString(R.string.ok), 1, c), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .show();
+    }
 }

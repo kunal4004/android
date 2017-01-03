@@ -21,20 +21,16 @@ public class MyAccountsCardsAdapter extends PagerAdapter {
         this.mContext=context;
     }
 
-
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-
         container.removeView((View) object);
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-
         View cView=mContext.getLayoutInflater().inflate(R.layout.my_accounts_cards_pager_item,container,false);
         ImageView myaccountsCard=(ImageView)cView.findViewById(R.id.myaccountsCard);
         myaccountsCard.setBackgroundResource(cards[position]);
-
         container.addView(cView);
         return cView;
     }

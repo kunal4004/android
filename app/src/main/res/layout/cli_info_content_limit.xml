@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:id="@+id/linRootView"
+    android:layout_marginLeft="@dimen/bank_spacing_width"
+    android:layout_marginRight="@dimen/bank_spacing_width"
+    android:layout_marginTop="@dimen/default_margin"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="44dp">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/textACreditLimit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cli_credit_limit_amount"
+            android:letterSpacing="0.1"
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            android:gravity="center|start"
+            android:textColor="@color/semi_transparent_black"
+            android:textSize="13sp"
+            android:textAllCaps="true"
+            app:WTextView_font="medium"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/imgInfo"
+            android:layout_alignBottom="@+id/imgInfo"
+            android:layout_alignTop="@+id/imgInfo" />
+
+        <ImageView
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/icon_info"
+            android:id="@+id/imgInfo"
+            />
+    </RelativeLayout>
+
+    <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:digits="0123456789"
+        android:id="@+id/textAmount"
+        android:backgroundTint="@color/recent_search_bg"
+        android:inputType="number"
+        android:maxLines="1"
+        android:imeOptions="actionNext"
+        android:hint="@string/cli_amount_hint"
+        app:WEditTextView_font="medium"
+        android:textColor="@color/black"
+        android:textSize="20sp"/>
+</LinearLayout>

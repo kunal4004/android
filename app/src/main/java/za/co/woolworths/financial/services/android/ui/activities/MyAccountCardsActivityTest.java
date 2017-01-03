@@ -1,19 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -31,12 +26,6 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountsCardsAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.BaseAccountFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.CreditCardEmptyFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.CreditCardFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.PersonalLoanEmptyFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.PersonalLoanFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.StoreCardEmptyFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.StoreCardFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardEmptyFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanEmptyFragment;
@@ -47,8 +36,6 @@ import za.co.woolworths.financial.services.android.ui.views.WFragmentViewPager;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WCustomViewPager;
-
-import static com.awfs.coordination.R.id.pager;
 
 public class MyAccountCardsActivityTest extends AppCompatActivity {
 
@@ -73,7 +60,11 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(null);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setDefaultDisplayHomeAsUpEnabled(false);
+        actionBar.setHomeAsUpIndicator(R.drawable.close_white);
+
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
         pager = (WCustomViewPager) findViewById(R.id.myAccountsCardPager);
@@ -82,7 +73,7 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
         scrollView.setFillViewport(true);
         pager.setAdapter(new MyAccountsCardsAdapter(MyAccountCardsActivityTest.this));
         pager.setPageMargin(16);
-        fragmentPager.setPagingEnabled(false);
+        fragmentPager.setPagingEnabled(true);
         pager.setCurrentItem(getIntent().getIntExtra("position",0));
         //fragmentPager.setCurrentItem(getIntent().getIntExtra("position",0));
         changeViewPagerAndActionBarBackground(getIntent().getIntExtra("position",0));
@@ -122,25 +113,27 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
 
     private void dynamicToolbarColor(String colorString) {
         collapsingToolbarLayout.setContentScrimColor(Color.parseColor(colorString));
-
     }
 
     public void changeViewPagerAndActionBarBackground(int position) {
         switch (position) {
             case 0:
-                toolbarTextView.setText("STORE CARD");
+                toolbarTextView.setText(getString(R.string.store_card));
                 collapsingToolbarLayout.setBackgroundResource(R.drawable.accounts_storecard_background);
                 dynamicToolbarColor("#4f5051");
+                Utils.updateStatusBarBackground(MyAccountCardsActivityTest.this,R.color.cli_store_card);
                 break;
             case 1:
-                toolbarTextView.setText("CREDIT CARD");
+                toolbarTextView.setText(getString(R.string.credit_card));
                 collapsingToolbarLayout.setBackgroundResource(R.drawable.accounts_blackcreditcard_background);
                 dynamicToolbarColor("#2e353b");
+                Utils.updateStatusBarBackground(MyAccountCardsActivityTest.this,R.color.cli_credit_card);
                 break;
             case 2:
-                toolbarTextView.setText("PERSONAL LOAN");
+                toolbarTextView.setText(getString(R.string.personal_loan));
                 collapsingToolbarLayout.setBackgroundResource(R.drawable.accounts_personalloancard_background);
                 dynamicToolbarColor("#312439");
+                Utils.updateStatusBarBackground(MyAccountCardsActivityTest.this,R.color.cli_personal_loan);
                 break;
         }
     }

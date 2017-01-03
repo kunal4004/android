@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -12,17 +14,20 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WOnboardingOnFragmentInteractionListener;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.fragments.WOnboardingFourFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WOnboardingOneFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WOnboardingThreeFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WOnboardingTwoFragment;
-import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 
 public class WOnboardingActivity extends FragmentActivity implements WOnboardingOnFragmentInteractionListener {
@@ -30,8 +35,8 @@ public class WOnboardingActivity extends FragmentActivity implements WOnboarding
     private static final String TAG = "WOnboardingActivity";
 
     private ViewPager mPager;
-    private WButton btnLogin;
-    private WButton btnRegister;
+    private Button btnLogin;
+    private Button btnRegister;
     private WTextView txtSkip;
 
     @Override
@@ -50,12 +55,13 @@ public class WOnboardingActivity extends FragmentActivity implements WOnboarding
         mPager.setOnPageChangeListener(this.mPageChangeListener);
 
         this.txtSkip = (WTextView) findViewById(R.id.txtSkip);
-        this.btnLogin = (WButton) findViewById(R.id.btnOnboardingLogin);
-        this.btnRegister = (WButton) findViewById(R.id.btnOnboardingRegister);
+        this.btnLogin = (Button) findViewById(R.id.btnOnboardingLogin);
+        this.btnRegister = (Button) findViewById(R.id.btnOnboardingRegister);
 
         this.txtSkip.setOnClickListener(this.txtSkip_onClick);
         this.btnLogin.setOnClickListener(this.btnSignin_onClick);
         this.btnRegister.setOnClickListener(this.btnRegister_onClick);
+
         Typeface buttonTypeface = Typeface.createFromAsset(getAssets(), "fonts/WFutura-SemiBold.ttf");
         this.btnLogin.setTypeface(buttonTypeface, 12);
         this.btnRegister.setTypeface(buttonTypeface, 12);
@@ -165,6 +171,16 @@ public class WOnboardingActivity extends FragmentActivity implements WOnboarding
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()){
+            //Save JWT
+            SessionDao sessionDao = new SessionDao(WOnboardingActivity.this);
+            sessionDao.key = SessionDao.KEY.USER_TOKEN;
+            sessionDao.value = data.getStringExtra(SSOActivity.TAG_JWT);
+            try {
+                sessionDao.save();
+            }catch(Exception e){
+                Log.e(TAG, e.getMessage());
+            }
+
             this.navigateToMain();
         }
     }

@@ -14,8 +14,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
 
+import io.jsonwebtoken.Jwts;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 
@@ -247,9 +249,10 @@ public class SSOActivity extends WebViewActivity {
                         Intent intent = new Intent();
 
                         if (SSOActivity.this.state.equals(webviewState)) {
+
                             String jwt = list.get(1);
-                            JWTHelper.decode(jwt);
                             intent.putExtra(SSOActivity.TAG_JWT, jwt);
+
                             setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
                         } else {
                             setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
