@@ -49,6 +49,7 @@ public class MyAccountCardsActivity extends AppCompatActivity {
     boolean isPersonalCard = false;
     CardsFragmentPagerAdapter fragmentsAdapter;
     private CollapsingToolbarLayout collapsingToolbarLayout = null;
+    private WoolworthsApplication mWoolworthsApplication;
 
 
     @Override
@@ -61,6 +62,7 @@ public class MyAccountCardsActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
+        mWoolworthsApplication = (WoolworthsApplication)getApplication();
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
         pager = (WCustomViewPager) findViewById(R.id.myAccountsCardPager);
@@ -80,6 +82,7 @@ public class MyAccountCardsActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
+                mWoolworthsApplication.setCliCardPosition(position);
                 fragmentPager.setCurrentItem(position);
                 changeViewPagerAndActionBarBackground(position);
             }
