@@ -56,10 +56,8 @@ public class StoreLocatorActivity extends AppCompatActivity {
     private void setupTabIcons() {
         int[] tabIcons = {
                 R.drawable.appicon,
-
         };
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
-
     }
 
     private void setupViewPager(ViewPager viewPager) {
