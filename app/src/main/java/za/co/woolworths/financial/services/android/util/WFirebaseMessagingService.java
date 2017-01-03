@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.util;
 
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -19,7 +20,10 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Map;
+
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity;
 
 import static android.R.attr.data;
 import static android.R.attr.id;
@@ -42,29 +46,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage == null)
             return;
 
-       /* // Check if message contains a notification payload.
-        if (remoteMessage.getNotification() != null) {
-            Log.e(TAG, "Notification Body: " + remoteMessage.getNotification().getBody());
-           // handleNotification(remoteMessage.getNotification().getBody());
-            showNotification();
-        }*/
-        // Check if message contains a data payload.
-        if (remoteMessage.getData().size() > 0) {
-             Log.e(TAG, "Data Payload: " + remoteMessage.getData().toString());
-            //String message = remoteMessage.getData().get("body");
-            //String title = remoteMessage.getData().get("title");
-           // showNotification(message, title);
-            try {
-                JSONObject json = new JSONObject(remoteMessage.getData().toString());
-              // handleDataMessage(json);
-            } catch (Exception e) {
-                Log.e(TAG, "Exception: " + e.getMessage());
-            }
-        }
-        // showNotification();
-    }
-
-    private void handleNotification(String message) {
+        Map<String, String> data = remoteMessage.getData();
         if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
             // app is in foreground, broadcast the push message
             Intent pushNotification = new Intent(Utils.PUSH_NOTIFICATION);
@@ -73,104 +55,34 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             // play notification sound
             NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
             notificationUtils.playNotificationSound();
-        } else {
-            // If the app is in background, firebase itself handles the notification
+
+        }else if (data.size() > 0) {// Check if message contains a data payload.
+
+            Intent myIntent = new Intent(this, WSplashScreenActivity.class);
+            myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+            //Intent myIntent = new Intent(this, WSplashScreenActivity.class);
+            myIntent.setAction(Intent.ACTION_MAIN);
+            myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+
+            Notification notification = new Notification()
+
+            NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+            inboxStyle.addLine(data.get("body"));
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+            builder.setContentIntent(contentIntent);
+            builder.setContentTitle(data.get("title"));
+            builder.setContentText(data.get("body"));
+            builder.setSmallIcon(R.drawable.appicon);
+            builder.setStyle(inboxStyle);
+            builder.setPriority(Notification.PRIORITY_HIGH);
+            builder.setDefaults(Notification.DEFAULT_ALL);
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(id, builder.build());
         }
     }
-
-    private void handleDataMessage(JSONObject json) {
-        Log.e(TAG, "push json: " + json.toString());
-        try {
-            //  JSONObject data = json.getJSONObject("data");
-            String title = json.getString("title");
-            String message = json.getString("body");
-          /*  boolean isBackground = data.getBoolean("is_background");
-            String imageUrl = data.getString("image");
-            String timestamp = data.getString("timestamp");
-            JSONObject payload = data.getJSONObject("payload");*/
-            Log.e(TAG, "title: " + title);
-            Log.e(TAG, "message: " + message);
-           /* Log.e(TAG, "isBackground: " + isBackground);
-            Log.e(TAG, "payload: " + payload.toString());
-            Log.e(TAG, "imageUrl: " + imageUrl);
-            Log.e(TAG, "timestamp: " + timestamp);*/
-            if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
-                // app is in foreground, broadcast the push message
-                Intent pushNotification = new Intent(Utils.PUSH_NOTIFICATION);
-                pushNotification.putExtra("message", message);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
-                // play notification sound
-                NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
-                notificationUtils.playNotificationSound();
-
-            } else {
-               /* // app is in background, show the notification in notification tray
-                Intent resultIntent = new Intent(getApplicationContext(), MessagesActivity.class);
-                resultIntent.putExtra("message", message);
-
-                // check for image attachment
-                if (TextUtils.isEmpty(imageUrl)) {
-                    showNotificationMessage(getApplicationContext(), title, message, timestamp, resultIntent);
-                } else {
-                    // image is present, show notification with image
-                    showNotificationMessageWithBigImage(getApplicationContext(), title, message, timestamp, resultIntent, imageUrl);
-                }*/
-                showNotification(message, title);
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "Json Exception: " + e.getMessage());
-        } catch (Exception e) {
-            Log.e(TAG, "Exception: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Showing notification with text only
-     */
-    private void showNotificationMessage(Context context, String title, String message, String timeStamp, Intent intent) {
-        notificationUtils = new NotificationUtils(context);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        notificationUtils.showNotificationMessage(title, message, timeStamp, intent);
-    }
-
-    /**
-     * Showing notification with text and image
-     */
-    private void showNotificationMessageWithBigImage(Context context, String title, String message, String timeStamp, Intent intent, String imageUrl) {
-        notificationUtils = new NotificationUtils(context);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        notificationUtils.showNotificationMessage(title, message, timeStamp, intent, imageUrl);
-    }
-
-    public void showNotification(String msg, String title) {
-        /*Intent resultIntent = new Intent(this, MessagesActivity.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-// Adds the back stack
-        stackBuilder.addParentStack(MessagesActivity.class);
-// Adds the Intent to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-// Gets a PendingIntent containing the entire back stack
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);*/
-        Intent myIntent = new Intent(this, MessagesActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-        inboxStyle.addLine(msg);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setContentIntent(contentIntent);
-        builder.setContentTitle(title);
-        builder.setContentText(msg);
-        builder.setSmallIcon(R.drawable.appicon);
-        builder.setStyle(inboxStyle);
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(id, builder.build());
-    }
-
-    /*@Override
-    public void onCreate() {
-        super.onCreate();
-        android.os.Debug.waitForDebugger();
-    }*/
 }
