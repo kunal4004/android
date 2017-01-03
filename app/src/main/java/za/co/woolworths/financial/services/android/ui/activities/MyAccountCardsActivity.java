@@ -68,7 +68,7 @@ public class MyAccountCardsActivity extends AppCompatActivity {
         NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nest_scrollview);
         scrollView.setFillViewport(true);
         pager.setAdapter(new MyAccountsCardsAdapter(MyAccountCardsActivity.this));
-        pager.setPageMargin(16);
+        pager.setPageMargin(50);
         fragmentPager.setPagingEnabled(false);
         pager.setCurrentItem(getIntent().getIntExtra("position",0));
         //fragmentPager.setCurrentItem(getIntent().getIntExtra("position",0));

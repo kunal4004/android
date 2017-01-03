@@ -460,7 +460,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         Intent intent=new Intent(getActivity(),MyAccountCardsActivity.class);
 
         intent.putExtra("position",position);
-        if(accounts != null) {
+        if(accountsResponse != null) {
             intent.putExtra("accounts", Utils.objectToJson(accountsResponse));
         }
         startActivity(intent);
