@@ -21,6 +21,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -143,7 +144,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         setHasOptionsMenu(true);
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -178,7 +178,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 currentStorePostion = position;
                 showStoreDetails(currentStorePostion);
 
-
             }
         });
         lTracker = new LocationTracker(getActivity());
@@ -212,16 +211,32 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             }
 
             @Override
-            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+            public void onPanelStateChanged(final View panel, SlidingUpPanelLayout.PanelState previousState, final SlidingUpPanelLayout.PanelState newState) {
                 Log.i(TAG, "onPanelStateChanged " + newState);
-                if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
+
+                if (newState != SlidingUpPanelLayout.PanelState.COLLAPSED) {
+                        /*
+                        * Previous result: Application would exit completely when back button is pressed
+                        * New result: Panel just returns to its previous position (Panel collapses)
+                         */
+                    mLayout.setFocusableInTouchMode(true);
+                    mLayout.setOnKeyListener(new View.OnKeyListener() {
+                        @Override
+                        public boolean onKey(View v, int keyCode, KeyEvent event) {
+                            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                                mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                                mLayout.setFocusable(false);
+                                return true;
+                            }
+                            return true;
+                        }
+                    });
                 }
             }
         });
         if (Utils.isLocationServiceEnabled(getActivity()) && Utils.getLastSavedLocation(getActivity()) == null) {
             checkLocationServiceAndSetLayout(false);
         }
-
         settingsrequest();
         initMap();
 /*
@@ -229,7 +244,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 */
         return v;
     }
-
 
     public void initMap() {
         if (googleMap == null) {
@@ -690,7 +704,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 if (Utils.getLastSavedLocation(getActivity()) != null) {
                     Location location = Utils.getLastSavedLocation(getActivity());
                     CameraPosition mLocation =
-                            new CameraPosition.Builder().target(new LatLng(location.getLatitude(),location.getLongitude()))
+                            new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude()))
                                     .zoom(13f)
                                     .bearing(0)
                                     .tilt(25)
@@ -718,10 +732,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
      * animate toggle button.
      */
     private void changeCamera(CameraUpdate update, GoogleMap.CancelableCallback callback) {
-                // The duration must be strictly positive so we make it at least 1.
+        // The duration must be strictly positive so we make it at least 1.
         googleMap.animateCamera(update, Math.max(DURATION, 1), callback);
     }
-
 }
-
-
