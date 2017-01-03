@@ -3,8 +3,10 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.util.Log;
+import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -64,6 +66,8 @@ public class SSOActivity extends WebViewActivity {
         super.onCreate(savedInstanceState);
 
         this.webView.setWebViewClient(this.webviewClient);
+        this.webView.getSettings().setUseWideViewPort(true);
+        this.webView.getSettings().setLoadWithOverviewMode(true);
     }
 
     //override intent to return expected link that's to be used in the WebViewActivity
@@ -234,6 +238,8 @@ public class SSOActivity extends WebViewActivity {
         public void onPageStarted(WebView view, final String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
 
+            Log.d(TAG, url);
+
             if (url.equals(SSOActivity.this.redirectURIString)) {
                 //get state and scope from webview posted form
                 view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
@@ -261,6 +267,13 @@ public class SSOActivity extends WebViewActivity {
                     }
                 });
             }
+        }
+
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            //super.onReceivedSslError(view, handler, error);
+            Log.e(TAG, "[onReceivedSslError]: " + error.toString());
+            handler.proceed();
         }
     };
 }
