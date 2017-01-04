@@ -39,7 +39,6 @@ import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 
 public class MyAccountCardsActivity extends AppCompatActivity {
 
-
     WCustomViewPager pager;
     WFragmentViewPager fragmentPager;
     public WTextView toolbarTextView;
@@ -51,12 +50,10 @@ public class MyAccountCardsActivity extends AppCompatActivity {
     private CollapsingToolbarLayout collapsingToolbarLayout = null;
     private WoolworthsApplication mWoolworthsApplication;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_account_cards_test);
-        Utils.updateStatusBarBackground(MyAccountCardsActivity.this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -73,6 +70,7 @@ public class MyAccountCardsActivity extends AppCompatActivity {
         pager.setPageMargin(50);
         fragmentPager.setPagingEnabled(false);
         pager.setCurrentItem(getIntent().getIntExtra("position",0));
+        setStatusBarColor(getIntent().getIntExtra("position",0));
         //fragmentPager.setCurrentItem(getIntent().getIntExtra("position",0));
         changeViewPagerAndActionBarBackground(getIntent().getIntExtra("position",0));
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -85,6 +83,7 @@ public class MyAccountCardsActivity extends AppCompatActivity {
                 mWoolworthsApplication.setCliCardPosition(position);
                 fragmentPager.setCurrentItem(position);
                 changeViewPagerAndActionBarBackground(position);
+                setStatusBarColor(position);
             }
 
             @Override
@@ -107,7 +106,6 @@ public class MyAccountCardsActivity extends AppCompatActivity {
         }
 
     }
-
 
     private void dynamicToolbarColor(String colorString) {
         collapsingToolbarLayout.setContentScrimColor(Color.parseColor(colorString));
@@ -212,6 +210,22 @@ public class MyAccountCardsActivity extends AppCompatActivity {
             default:
                 ((TextView) findViewById(R.id.no_internet_message)).setText(accountsResponse.response.desc);
                 findViewById(R.id.no_internet).setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void setStatusBarColor(int position){
+        switch (position){
+            case 0:
+                Utils.updateStatusBarBackground(MyAccountCardsActivity.this,R.color.cli_store_card);
+                break;
+            case 1:
+                Utils.updateStatusBarBackground(MyAccountCardsActivity.this,R.color.cli_credit_card);
+                break;
+            case 2:
+                Utils.updateStatusBarBackground(MyAccountCardsActivity.this,R.color.cli_personal_loan);
+                break;
+            default:
+                break;
         }
     }
 }
