@@ -238,7 +238,7 @@
     <string name="link_products">https://woolies.herokuapp.com/products</string>
     <string name="withdraw_cash_now">WITHDRAW CASH NOW</string>
 
-    <string name="accounts_walkthrough_desc_1">The new Woolies app gives you easy access to fashion trends, recipes, store locators and more</string>
+    <string name="accounts_walkthrough_desc_1">The new Woolies app gives you access to everything you love in the palm of your hand. Simply scroll, tap and enjoy!</string>
     <string name="accounts_walkthrough_desc_2">See how much you’ve saved, track your tier status and access your exclusive vouchers.</string>
     <string name="accounts_walkthrough_desc_3">Conveniently view your credit balance, next payment due, available funds, apply for a personal loan and more.</string>
     <string name="accounts_walkthrough_desc_4">Create an account or use your existing Woolies logins to get started. Your login details will be the same on the app, mobi site and website.</string>
@@ -249,6 +249,7 @@
     <string name="connect_to_server">Cannot connect to server</string>
     <string name="distance_in_km">km</string>
     <string name="search_by_store_loc">Search by Store or Location</string>
+    <string name="skip">SKIP</string>
 
     <string name="cli_continue">continue</string>
     <string name="cli_credit_limit_increase">credit limit increase</string>
