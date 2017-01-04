@@ -1,11 +1,19 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -49,7 +57,7 @@ public class SSOActivity extends WebViewActivity {
     public static final String TAG_PATH = "TAG_PATH";
     public static final String TAG_JWT = "TAG_JWT";
 
-
+    private static final int REQUEST_RUNTIME_PERMISSION = 1;
     // TODO: This redirectURIString be pulled from MCS.
     private String redirectURIString = "http://wfs-appserver-dev.wigroup.co:8080/wfs/app/v4/sso/redirect/successful";
     private Protocol protocol;
@@ -63,7 +71,44 @@ public class SSOActivity extends WebViewActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        this.instantiateWithPermissionsCheck();
+    }
+
+    private void instantiateWithPermissionsCheck() {
+        final String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+        if (ContextCompat.checkSelfPermission(SSOActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(SSOActivity.this, permission)) {
+            } else {
+                ActivityCompat.requestPermissions(SSOActivity.this, new String[]{permission}, REQUEST_RUNTIME_PERMISSION);
+            }
+        } else {
+            this.instantiateWebView();
+        }
+    }
+
+    private void instantiateWebView(){
         this.webView.setWebViewClient(this.webviewClient);
+        this.webView.getSettings().setAllowContentAccess(true);
+        if (Build.VERSION.SDK_INT >= 21) {
+            this.webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW );
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_RUNTIME_PERMISSION:
+                final int numOfRequest = grantResults.length;
+                final boolean isGranted = numOfRequest == 1 && PackageManager.PERMISSION_GRANTED == grantResults[numOfRequest - 1];
+                if (isGranted) {
+                    this.instantiateWebView();
+                } else {
+                    // you dont have permission show toast
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     //override intent to return expected link that's to be used in the WebViewActivity
@@ -229,6 +274,11 @@ public class SSOActivity extends WebViewActivity {
     }
 
     private final WebViewClient webviewClient = new WebViewClient() {
+
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            handler.proceed();
+        }
 
         @Override
         public void onPageStarted(WebView view, final String url, Bitmap favicon) {

@@ -49,6 +49,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         Map<String, String> data = remoteMessage.getData();
         if (data.size() > 0 && NotificationUtils.isAppIsInBackground(getApplicationContext())) {// Check if message contains a data payload.
             Intent myIntent = new Intent(this, WSplashScreenActivity.class);
+
             myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             myIntent.setAction(Intent.ACTION_MAIN);
             myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
