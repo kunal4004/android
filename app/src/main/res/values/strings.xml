@@ -335,5 +335,21 @@
     <string name="cli_solvency_error">Please make sure all required fields are filled out correctly</string>
     <string name="cli_check_field">Please make sure all required fields are filled out correctly</string>
     <string name="cli_amount_hint">R0</string>
+    <string name="wrewards_tag_line">|!b|W|!?|Rewards is our way of rewarding customers INSTANTLY.WRewards members save millions every week.</string>
+    <string name="register">REGISTER</string>
+    <string name="link_account">link account</string>
+    <string name="apply_for_wrewards">apply for WREWARDS</string>
+    <string name="get_more">Get more</string>
+    <string name="wrewards_three_levels">There are three levels to |!b|W|!?|Rewards - the more you spend, the more guaranteed rewards you\'ll enjoy. You\'ll start out on the Valued level, and we\'ll review your status every quarter, upgrading your status automatically as you qualify for a higher level.</string>
+    <string name="member">MEMBER</string>
+    <string name="swipe_and_save_instantly">SWIPE AND SAVE INSTANTLY</string>
+    <string name="spend_30000">SPEND R30 000 OR MORE ANNUALLY</string>
+    <string name="vip">VIP</string>
+    <string name="spend_between_10000_29000annually">SPEND BETWEEN R10 000 - R29 999 ANNUALLY</string>
+    <string name="savings">SAVINGS</string>
+    <string name="to_next_tier">TO NEXT TIER</string>
+    <string name="info_valued_header">SWIPE AND SAVE INSTANTLY</string>
+    <string name="info_loyal_header">SPEND BETWEEN R9 000 AND R27 000 PER YEAR at woolworths</string>
+    <string name="info_vip_header">SPEND OVER R27 000 PER YEAR AT WOOLWORTHS</string>
 
 </resources>
