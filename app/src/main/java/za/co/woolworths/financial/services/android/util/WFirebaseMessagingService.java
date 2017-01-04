@@ -47,30 +47,12 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             return;
 
         Map<String, String> data = remoteMessage.getData();
-        if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
-            // app is in foreground, broadcast the push message
-            Intent pushNotification = new Intent(Utils.PUSH_NOTIFICATION);
-            pushNotification.putExtra("message", message);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
-            // play notification sound
-            NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
-            notificationUtils.playNotificationSound();
-
-        }else if (data.size() > 0) {// Check if message contains a data payload.
-
+        if (data.size() > 0 && NotificationUtils.isAppIsInBackground(getApplicationContext())) {// Check if message contains a data payload.
             Intent myIntent = new Intent(this, WSplashScreenActivity.class);
             myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-            //Intent myIntent = new Intent(this, WSplashScreenActivity.class);
             myIntent.setAction(Intent.ACTION_MAIN);
             myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-
             PendingIntent contentIntent = PendingIntent.getActivity(this, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-
-            Notification notification = new Notification()
-
             NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
             inboxStyle.addLine(data.get("body"));
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
