@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -214,16 +215,25 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
     }
 
     public void openNativeMapWindow(final double lat, final double lon) {
+        //darken the current screen
         View view = getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
-        nativeMap = (WTextView) view.findViewById(R.id.nativeGoogleMap);
-        cancel = (WTextView) view.findViewById(R.id.cancel);
-        final PopupWindow pWindow = new PopupWindow(view, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        pWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+        final PopupWindow darkenScreen = new PopupWindow(view, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        darkenScreen.showAtLocation(view, Gravity.FILL, 0, 0);
+
+        //Then popup window appears
+        View popupView = getLayoutInflater().inflate(R.layout.popup_view, null);
+        nativeMap = (WTextView) popupView.findViewById(R.id.nativeGoogleMap);
+        cancel = (WTextView) popupView.findViewById(R.id.cancel);
+        final PopupWindow pWindow = new PopupWindow(popupView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        pWindow.setAnimationStyle(R.style.Animations_popup);
+        pWindow.showAtLocation(popupView, Gravity.FILL, 0, 0);
+        darkenScreen.setOutsideTouchable(false);
         pWindow.setOutsideTouchable(false);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pWindow.dismiss();
+                darkenScreen.dismiss();
             }
         });
         nativeMap.setOnClickListener(new View.OnClickListener() {

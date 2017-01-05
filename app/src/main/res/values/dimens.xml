@@ -12,7 +12,7 @@
     <dimen name="search_store">17sp</dimen>
     <dimen name="default_margin">16dp</dimen>
     <dimen name="default_width">30dp</dimen>
-    <dimen name="recent_search_margin">18dp</dimen>
+    <dimen name="recent_search_margin">15dp</dimen>
 
 
     <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:

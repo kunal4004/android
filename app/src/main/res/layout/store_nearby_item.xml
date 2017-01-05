@@ -3,9 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/transparent"
+    android:layout_marginTop="5dp"
     android:orientation="vertical"
-    android:paddingBottom="11dp"
-    android:paddingLeft="8dp"
+    android:paddingRight="11dp"
+    android:paddingLeft="11dp"
     >
 
 
@@ -109,7 +110,6 @@
                 android:minHeight="79dp"
                 android:paddingLeft="16dp"
                 android:paddingTop="8dp"
-                android:paddingBottom="10dp"
                 >
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -122,7 +122,6 @@
                     android:paddingRight="42dp"
                     android:textColor="@color/black"
                     android:textSize="13sp"
-                    android:paddingTop="2dp"
                     app:WTextView_font="myriadpro_regular"
 
 
@@ -135,7 +134,7 @@
                     android:layout_alignParentBottom="true"
                     android:paddingRight="16dp"
                     android:textColor="#ABABAB"
-                    android:paddingTop="3sp"
+                    android:paddingBottom="10dp"
                     android:textSize="13sp"
                     app:WTextView_font="myriadpro_regular" />
             </RelativeLayout>
