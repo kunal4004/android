@@ -7,6 +7,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -54,14 +56,17 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             myIntent.setAction(Intent.ACTION_MAIN);
             myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
             PendingIntent contentIntent = PendingIntent.getActivity(this, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-            inboxStyle.addLine(data.get("body"));
+
+            Bitmap bitmap_image = BitmapFactory.decodeResource(this.getResources(), R.drawable.appicon);
+            NotificationCompat.BigPictureStyle style = new NotificationCompat.BigPictureStyle().bigPicture(bitmap_image);
+            style.setSummaryText(data.get("body"));
+
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
             builder.setContentIntent(contentIntent);
             builder.setContentTitle(data.get("title"));
             builder.setContentText(data.get("body"));
             builder.setSmallIcon(R.drawable.appicon);
-            builder.setStyle(inboxStyle);
+            builder.setStyle(style);
             builder.setPriority(Notification.PRIORITY_HIGH);
             builder.setDefaults(Notification.DEFAULT_ALL);
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
