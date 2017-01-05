@@ -51,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:textAllCaps="true"
-            android:letterSpacing="0.04"
+            android:letterSpacing="0.1"
             android:textColor="@color/black"
             android:textSize="13sp"
             android:lineSpacingExtra="2dp"

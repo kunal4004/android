@@ -63,7 +63,6 @@
     </style>
 
      <style name="StoreLocator" parent="Theme.AppCompat.Light.NoActionBar">
-
          <item name="windowNoTitle">true</item>
          <item name="windowActionBar">false</item>
 
