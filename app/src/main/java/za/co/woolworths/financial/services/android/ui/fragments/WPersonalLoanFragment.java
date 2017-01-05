@@ -56,7 +56,7 @@ public class WPersonalLoanFragment extends Fragment implements View.OnClickListe
     private WoolworthsApplication woolworthsApplication;
     private ConnectionDetector connectionDetector;
     private WebView mProgressCreditLimit;
-    private boolean isOfferActive = false;
+    private boolean isOfferActive = true;
     private ImageView mImageArrow;
 
     @Nullable
@@ -125,12 +125,10 @@ public class WPersonalLoanFragment extends Fragment implements View.OnClickListe
 
 
             case R.id.txtIncreseLimit:
-                if (isOfferActive) {
+                if (!isOfferActive) {
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
                     startActivity(openCLIIncrease);
                     getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                } else {
-                    WErrorDialog.setErrorMessage(getActivity(), getString(R.string.cli_cannot_proceed_error));
                 }
                 break;
 
@@ -169,7 +167,11 @@ public class WPersonalLoanFragment extends Fragment implements View.OnClickListe
                     String httpDesc = offerActive.response.desc;
                     if (httpCode == 200) {
                         isOfferActive = offerActive.offerActive;
-                        enableIncreaseLimit();
+                        if(isOfferActive){
+                            disableIncreaseLimit();
+                        }else {
+                            enableIncreaseLimit();
+                        }
                     } else {
                         disableIncreaseLimit();
                         WErrorDialog.setErrorMessage(getActivity(), httpDesc);

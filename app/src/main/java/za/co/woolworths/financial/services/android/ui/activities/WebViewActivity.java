@@ -3,8 +3,12 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.widget.ContentLoadingProgressBar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -53,6 +57,7 @@ public class WebViewActivity extends Activity {
             view.loadUrl(url);
             return true;
         }
+
         @Override
         public void onPageFinished(WebView view, String url) {
             // do your stuff here

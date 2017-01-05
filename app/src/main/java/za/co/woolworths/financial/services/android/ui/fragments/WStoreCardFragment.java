@@ -54,7 +54,7 @@ public class WStoreCardFragment extends Fragment implements View.OnClickListener
     WoolworthsApplication woolworthsApplication;
     ConnectionDetector connectionDetector;
     private WebView mProgressCreditLimit;
-    private boolean isOfferActive=false;
+    private boolean isOfferActive=true;
     private ImageView mImageArrow;
 
     @Nullable
@@ -119,12 +119,10 @@ public class WStoreCardFragment extends Fragment implements View.OnClickListener
 
 
             case R.id.txtIncreseLimit:
-                if (isOfferActive) {
+                if (!isOfferActive) {
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
                     startActivity(openCLIIncrease);
                     getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                } else {
-                    WErrorDialog.setErrorMessage(getActivity(), getString(R.string.cli_cannot_proceed_error));
                 }
                 break;
 
@@ -164,7 +162,11 @@ public class WStoreCardFragment extends Fragment implements View.OnClickListener
                     String httpDesc = offerActive.response.desc;
                     if (httpCode == 200) {
                         isOfferActive = offerActive.offerActive;
-                        enableIncreaseLimit();
+                        if(isOfferActive){
+                            disableIncreaseLimit();
+                        }else {
+                            enableIncreaseLimit();
+                        }
                     } else {
                         disableIncreaseLimit();
                         WErrorDialog.setErrorMessage(getActivity(), httpDesc);

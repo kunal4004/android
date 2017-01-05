@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
@@ -274,6 +275,11 @@ public class SSOActivity extends WebViewActivity {
             //super.onReceivedSslError(view, handler, error);
             Log.e(TAG, "[onReceivedSslError]: " + error.toString());
             handler.proceed();
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
         }
     };
 }

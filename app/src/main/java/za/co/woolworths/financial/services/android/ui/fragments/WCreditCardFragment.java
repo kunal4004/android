@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -116,7 +117,11 @@ public class WCreditCardFragment extends Fragment implements View.OnClickListene
                break;
 
            case R.id.txtIncreseLimit:
-               getActiveOffer();
+               if(!isOfferActive){
+                   Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
+                   startActivity(openCLIIncrease);
+                   getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+               }
                break;
        }
     }
@@ -154,7 +159,11 @@ public class WCreditCardFragment extends Fragment implements View.OnClickListene
                     String httpDesc = offerActive.response.desc;
                     if (httpCode == 200) {
                         isOfferActive = offerActive.offerActive;
-                        enableIncreaseLimit();
+                        if(isOfferActive){
+                            disableIncreaseLimit();
+                        }else {
+                            enableIncreaseLimit();
+                        }
                     } else {
                         disableIncreaseLimit();
                         WErrorDialog.setErrorMessage(getActivity(), httpDesc);
