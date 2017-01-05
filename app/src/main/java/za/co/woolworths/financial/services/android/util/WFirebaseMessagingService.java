@@ -57,16 +57,13 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
             PendingIntent contentIntent = PendingIntent.getActivity(this, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            Bitmap bitmap_image = BitmapFactory.decodeResource(this.getResources(), R.drawable.appicon);
-            NotificationCompat.BigPictureStyle style = new NotificationCompat.BigPictureStyle().bigPicture(bitmap_image);
-            style.setSummaryText(data.get("body"));
-
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
             builder.setContentIntent(contentIntent);
             builder.setContentTitle(data.get("title"));
             builder.setContentText(data.get("body"));
             builder.setSmallIcon(R.drawable.appicon);
-            builder.setStyle(style);
+            builder.setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.appicon));
+            //builder.setStyle(style);
             builder.setPriority(Notification.PRIORITY_HIGH);
             builder.setDefaults(Notification.DEFAULT_ALL);
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
