@@ -18,7 +18,8 @@
             android:src="@drawable/walkthrough_4"
             android:layout_above="@+id/fragment_wonboarding_four_description_layer"
             android:background="@android:color/transparent"
-            android:layout_alignParentEnd="true">
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true">
         </ImageView>
 
         <LinearLayout
