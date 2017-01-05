@@ -104,6 +104,22 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
                                     }).show();
                         }
                     });
+                } else if (httpErrorCode == HttpErrorCode.UNKOWN_ERROR){
+
+                    WSplashScreenActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog alertDialog = new AlertDialog.Builder(WSplashScreenActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
+                                    .setTitle("Service Error")
+                                    .setMessage(errorMessage)
+                                    .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            finish();
+                                        }
+                                    }).show();
+                        }
+                    });
                 }
 
                 return null;
