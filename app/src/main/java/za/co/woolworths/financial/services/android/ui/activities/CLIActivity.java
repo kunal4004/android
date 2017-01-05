@@ -102,7 +102,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
 
     private void setPagerCard(int id) {
         int[] cards={R.drawable.w_store_card,R.drawable.w_credi_card,R.drawable.w_personal_loan_card};
-        mImageAccount.setBackgroundResource(cards[id]);
+        mImageAccount.setImageResource(cards[id]);
        setCLIContent(id);
     }
 
@@ -192,25 +192,11 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         switch(view.getId()){
             case R.id.btnContinue:
                 mBtnContinue.startAnimation(buttonClick);
-                switch (mPosition){
-                    case 0:
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        break;
-                }
                 Intent openCLIStepIndicator = new Intent(CLIActivity.this,CLISupplyInfoActivity.class);
                 startActivity(openCLIStepIndicator);
                 finish();
-               // overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-
                 break;
         }
     }
-
-
 }

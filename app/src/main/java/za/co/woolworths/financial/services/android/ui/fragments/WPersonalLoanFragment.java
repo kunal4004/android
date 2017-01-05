@@ -2,17 +2,16 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.Build;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
+import android.webkit.WebView;
+import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -56,6 +55,9 @@ public class WPersonalLoanFragment extends Fragment implements View.OnClickListe
     private ProgressDialog mGetActiveOfferProgressDialog;
     private WoolworthsApplication woolworthsApplication;
     private ConnectionDetector connectionDetector;
+    private WebView mProgressCreditLimit;
+    private boolean isOfferActive = true;
+    private ImageView mImageArrow;
 
     @Nullable
     @Override
@@ -71,15 +73,19 @@ public class WPersonalLoanFragment extends Fragment implements View.OnClickListe
         withdrawCashNow = (WTextView) view.findViewById(R.id.withdrawCashNow);
         transactions = (WTextView) view.findViewById(R.id.txtTransactions);
         txtIncreseLimit = (WTextView) view.findViewById(R.id.txtIncreseLimit);
-
+        mProgressCreditLimit = (WebView)view.findViewById(R.id.progressCreditLimit);
+        mImageArrow = (ImageView)view.findViewById(R.id.imgArrow);
+        mProgressCreditLimit.loadUrl("file:///android_asset/web/pulse.html");
         withdrawCashNow.setVisibility(View.VISIBLE);
         withdrawCashNow.setOnClickListener(this);
         txtIncreseLimit.setOnClickListener(this);
         transactions.setOnClickListener(this);
-
         txtIncreseLimit.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.ripple_effect_purple));
         AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
         bindData(accountsResponse);
+        disableIncreaseLimit();
+        hideProgressBar();
+        getActiveOffer();
         return view;
     }
 
@@ -119,7 +125,11 @@ public class WPersonalLoanFragment extends Fragment implements View.OnClickListe
 
 
             case R.id.txtIncreseLimit:
-                getActiveOffer();
+                if (!isOfferActive) {
+                    Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
+                    startActivity(openCLIIncrease);
+                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                }
                 break;
 
         }
@@ -137,16 +147,16 @@ public class WPersonalLoanFragment extends Fragment implements View.OnClickListe
                 protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                     OfferActive offerActive = new OfferActive();
                     offerActive.response = new Response();
-                    stopProgressDialog();
+                    isOfferActive = false;
+                    hideProgressBar();
                     return offerActive;
                 }
 
                 @Override
                 protected void onPreExecute() {
-                    mGetActiveOfferProgressDialog = new ProgressDialog(getActivity());
-                    mGetActiveOfferProgressDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.cli_loading_active_offer), 1, getActivity()));
-                    mGetActiveOfferProgressDialog.setCancelable(false);
-                    mGetActiveOfferProgressDialog.show();
+                    mProgressCreditLimit.setVisibility(View.VISIBLE);
+                    mImageArrow.setVisibility(View.GONE);
+                    txtIncreseLimit.setVisibility(View.GONE);
                     super.onPreExecute();
                 }
 
@@ -156,17 +166,17 @@ public class WPersonalLoanFragment extends Fragment implements View.OnClickListe
                     int httpCode = offerActive.httpCode;
                     String httpDesc = offerActive.response.desc;
                     if (httpCode == 200) {
-                        if (offerActive.offerActive) {
-                            Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
-                            startActivity(openCLIIncrease);
-                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                        } else {
-                            WErrorDialog.setErrorMessage(getActivity(), getString(R.string.cli_cannot_proceed_error));
+                        isOfferActive = offerActive.offerActive;
+                        if(isOfferActive){
+                            disableIncreaseLimit();
+                        }else {
+                            enableIncreaseLimit();
                         }
                     } else {
+                        disableIncreaseLimit();
                         WErrorDialog.setErrorMessage(getActivity(), httpDesc);
                     }
-                    stopProgressDialog();
+                    hideProgressBar();
                 }
 
                 @Override
@@ -175,13 +185,26 @@ public class WPersonalLoanFragment extends Fragment implements View.OnClickListe
                 }
             }.execute();
         } else {
+            hideProgressBar();
             WErrorDialog.getErrConnectToServer(getActivity());
         }
     }
 
-    public void stopProgressDialog() {
-        if (mGetActiveOfferProgressDialog != null && mGetActiveOfferProgressDialog.isShowing()) {
-            mGetActiveOfferProgressDialog.dismiss();
-        }
+    public void hideProgressBar() {
+        mProgressCreditLimit.setVisibility(View.GONE);
+        mImageArrow.setVisibility(View.VISIBLE);
+        txtIncreseLimit.setVisibility(View.VISIBLE);
+    }
+
+    public void enableIncreaseLimit(){
+        txtIncreseLimit.setEnabled(true);
+        txtIncreseLimit.setTextColor(Color.BLACK);
+        mImageArrow.setImageAlpha(255);
+    }
+
+    public void disableIncreaseLimit(){
+        txtIncreseLimit.setEnabled(false);
+        txtIncreseLimit.setTextColor(Color.GRAY);
+        mImageArrow.setImageAlpha(50);
     }
 }
