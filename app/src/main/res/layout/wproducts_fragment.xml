@@ -3,11 +3,10 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-
-    <WebView
+ <WebView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/wproducts_fragment_webview"
-        ></WebView>
+        />
 
 </LinearLayout>
