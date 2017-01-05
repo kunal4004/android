@@ -61,11 +61,11 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             builder.setContentIntent(contentIntent);
             builder.setContentTitle(data.get("title"));
             builder.setContentText(data.get("body"));
-            builder.setSmallIcon(R.drawable.appicon);
+            builder.setSmallIcon(R.drawable.ic_notification);
             builder.setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.appicon));
-            //builder.setStyle(style);
             builder.setPriority(Notification.PRIORITY_HIGH);
             builder.setDefaults(Notification.DEFAULT_ALL);
+            builder.setAutoCancel(true);
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.notify(id, builder.build());
         }
