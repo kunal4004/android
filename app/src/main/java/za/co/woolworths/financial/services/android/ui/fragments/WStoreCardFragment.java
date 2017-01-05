@@ -195,10 +195,12 @@ public class WStoreCardFragment extends Fragment implements View.OnClickListener
     public void enableIncreaseLimit(){
         txtIncreseLimit.setEnabled(true);
         txtIncreseLimit.setTextColor(Color.BLACK);
+        mImageArrow.setImageAlpha(255);
     }
 
     public void disableIncreaseLimit(){
         txtIncreseLimit.setEnabled(false);
         txtIncreseLimit.setTextColor(Color.GRAY);
+        mImageArrow.setImageAlpha(50);
     }
 }
