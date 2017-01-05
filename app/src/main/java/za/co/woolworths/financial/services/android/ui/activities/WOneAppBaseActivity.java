@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragme
 import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
 import za.co.woolworths.financial.services.android.ui.fragments.WProductsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
@@ -85,6 +86,10 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             case 2:
                 fragment = new StoresNearbyFragment1();
                 title = getString(R.string.nav_item_store);
+                break;
+            case 3:
+                fragment = new WRewardsFragment();
+                title = getString(R.string.nav_item_wrewards);
                 break;
             case 4:
                 fragment = new MyAccountsFragment();

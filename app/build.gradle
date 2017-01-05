@@ -99,7 +99,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.7.2'
     compile 'com.squareup.okhttp3:logging-interceptor:3.3.0'
     compile 'za.co.wigroup.android:Logger:1'
-    compile 'com.google.android.gms:play-services:10.0.0'
+    compile 'com.google.android.gms:play-services:10.0.1'
     compile 'me.dm7.barcodescanner:zxing:1.7.2'
     compile 'com.crittercism:crittercism-android-agent:+'
     compile 'com.android.support:design:23.4.0'
@@ -107,6 +107,6 @@ dependencies {
     compile 'com.android.support:support-annotations:23.4.0'
     compile 'com.android.support:recyclerview-v7:23.4.0'
     compile 'com.daimajia.swipelayout:library:1.2.0'
-    compile 'com.google.firebase:firebase-messaging:10.0.0'
+    compile 'com.google.firebase:firebase-messaging:10.0.1'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -351,5 +351,7 @@
     <string name="info_valued_header">SWIPE AND SAVE INSTANTLY</string>
     <string name="info_loyal_header">SPEND BETWEEN R9 000 AND R27 000 PER YEAR at woolworths</string>
     <string name="info_vip_header">SPEND OVER R27 000 PER YEAR AT WOOLWORTHS</string>
+    <string name="overview">OVERVIEW</string>
+    <string name="vouchers">VOUCHERS</string>
 
 </resources>

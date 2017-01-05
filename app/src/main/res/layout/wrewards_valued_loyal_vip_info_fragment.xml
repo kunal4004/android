@@ -1,24 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/white"
               android:orientation="vertical"
+              android:nestedScrollingEnabled="true"
+              android:fillViewport="true"
+              android:scrollbars="none"
     >
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/shadow_on_wrewards"
+        />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical"
-        android:padding="32dp">
+        android:paddingBottom="32dp"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        android:paddingTop="16dp"
+
+        >
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/spendAmount"
-            android:text="@string/info_vip_header"
+            android:id="@+id/infoHeaderText"
             android:textColor="@color/black"
             android:textSize="20sp"
             app:WTextView_font="medium_bold"
@@ -229,5 +245,5 @@
             app:WTextView_font="myriadpro_regular"
             />
     </LinearLayout>
-
 </LinearLayout>
+</ScrollView>
