@@ -71,19 +71,7 @@ public class SSOActivity extends WebViewActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.instantiateWithPermissionsCheck();
-    }
-
-    private void instantiateWithPermissionsCheck() {
-        final String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-        if (ContextCompat.checkSelfPermission(SSOActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(SSOActivity.this, permission)) {
-            } else {
-                ActivityCompat.requestPermissions(SSOActivity.this, new String[]{permission}, REQUEST_RUNTIME_PERMISSION);
-            }
-        } else {
-            this.instantiateWebView();
-        }
+        this.instantiateWebView();
     }
 
     private void instantiateWebView(){
@@ -91,23 +79,6 @@ public class SSOActivity extends WebViewActivity {
         this.webView.getSettings().setAllowContentAccess(true);
         if (Build.VERSION.SDK_INT >= 21) {
             this.webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW );
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_RUNTIME_PERMISSION:
-                final int numOfRequest = grantResults.length;
-                final boolean isGranted = numOfRequest == 1 && PackageManager.PERMISSION_GRANTED == grantResults[numOfRequest - 1];
-                if (isGranted) {
-                    this.instantiateWebView();
-                } else {
-                    // you dont have permission show toast
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
