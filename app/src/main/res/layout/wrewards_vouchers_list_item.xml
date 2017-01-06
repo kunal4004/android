@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/card_shadow"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:orientation="horizontal"
+        >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="16dp"
+            >
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/value"
+                android:textColor="#40000000"
+                android:textSize="12sp"
+                app:WTextView_font="medium"
+                />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/voucherValue"
+                android:text="100%"
+                android:textColor="@color/green"
+                android:textSize="24sp"
+                app:WTextView_font="bold"
+                />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:padding="16dp"
+            >
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/voucherMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/expireDateLayout"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="Get your FREE WooliesCoffee valued at R29."
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:WTextView_font="medium_bold"
+                />
+
+            <LinearLayout
+                android:id="@+id/expireDateLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/vouchers_badge"
+                    />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/voucherExpireDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:text="Expires: 12/10/16"
+                    android:textColor="#80000000"
+                    android:textSize="12sp"
+                    app:WTextView_font="myriadpro_regular"
+
+                    />
+            </LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

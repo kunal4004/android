@@ -186,6 +186,9 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity"
             android:theme="@style/WRewardsInfo"/>
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardsVoucherDetailsActivity"
+            android:theme="@style/WRewardsVoucherDetails"/>
+
     </application>
 
 </manifest>

@@ -142,4 +142,14 @@
         <item name="android:homeAsUpIndicator">@drawable/close_white</item>
 
     </style>
+    <style name="WRewardsVoucherDetails" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:homeAsUpIndicator">@drawable/close_white</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+
+    </style>
 </resources>

@@ -353,5 +353,15 @@
     <string name="info_vip_header">SPEND OVER R27 000 PER YEAR AT WOOLWORTHS</string>
     <string name="overview">OVERVIEW</string>
     <string name="vouchers">VOUCHERS</string>
+    <string name="year">YEAR</string>
+    <string name="to_date">TO DATE</string>
+    <string name="tier_status1">Tier Status</string>
+    <string name="wrewards_instant_savings">WRewards Instant Savings</string>
+    <string name="wrewards_green_earned">WRewards Green Earned</string>
+    <string name="quarterly_voucher_earned">Quarterly Voucher Earned</string>
+    <string name="year_to_date_spend">Year to Date Spend</string>
+    <string name="value">VALUE</string>
+    <string name="minimum_spend">Minimum Spend</string>
+    <string name="view_terms_conditions">VIEW TERMS &amp; CONDITIONS</string>
 
 </resources>
