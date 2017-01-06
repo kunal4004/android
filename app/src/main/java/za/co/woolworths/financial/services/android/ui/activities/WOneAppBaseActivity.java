@@ -84,7 +84,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
                 break;
             case 2:
                 fragment = new StoresNearbyFragment1();
-                frag=(StoresNearbyFragment1) fragment;
                 title = getString(R.string.screen_title_store);
                 title = getString(R.string.nav_item_store);
                 break;
