@@ -5,7 +5,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.location.Criteria;
@@ -14,13 +13,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
@@ -36,7 +33,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -625,7 +621,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                             Location location = Utils.getLastSavedLocation(getActivity());
                             updateMyCurrentLocationOnMap(location);
                         }
-                        serachForCurrentLocation();
+                        searchForCurrentLocation();
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         // Location settings are not satisfied. But could be fixed by showing the user
@@ -658,7 +654,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         // startLocationUpdates();
-                        serachForCurrentLocation();
+                        searchForCurrentLocation();
                         break;
                     case Activity.RESULT_CANCELED:
                         settingsrequest();//keep asking if imp or do whatever
@@ -668,7 +664,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         }
     }
 
-    public void serachForCurrentLocation() {
+    public void searchForCurrentLocation() {
         checkLocationServiceAndSetLayout(true);
         //If permission is not granted, request permission.
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -749,8 +745,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             if (Utils.getLastSavedLocation(getActivity()) != null) {
                 Location location = Utils.getLastSavedLocation(getActivity());
                 updateMyCurrentLocationOnMap(location);
+                searchForCurrentLocation();
             }
-            serachForCurrentLocation();
         }
     }
 }
