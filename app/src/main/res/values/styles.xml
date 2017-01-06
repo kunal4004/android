@@ -61,7 +61,6 @@
     </style>
 
      <style name="StoreLocator" parent="Theme.AppCompat.Light.NoActionBar">
-
          <item name="windowNoTitle">true</item>
          <item name="windowActionBar">false</item>
 
@@ -131,6 +130,16 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:homeAsUpIndicator">@drawable/close_24</item>
+    </style>
+
+    <style name="Animations_popup">
+        <item name="android:windowEnterAnimation">@anim/popup_enter</item>
+        <item name="android:windowExitAnimation">@anim/popup_exit</item>
+    </style>
+
+    <style name="Darken_Screen">
+        <item name="android:windowEnterAnimation">@anim/alpha_anim</item>
+        <item name="android:windowExitAnimation">@anim/alpha_anim_exit</item>
     </style>
     <style name="popwindow_style">
         <item name="android:windowEnterAnimation">@anim/pop_fade_in</item>
