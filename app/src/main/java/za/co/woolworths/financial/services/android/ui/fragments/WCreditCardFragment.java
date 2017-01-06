@@ -2,17 +2,16 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.Build;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
+import android.webkit.WebView;
+import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -27,7 +26,6 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
-import za.co.woolworths.financial.services.android.ui.activities.TransactionHistoryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -36,8 +34,6 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-import static com.awfs.coordination.R.id.swipe;
-import static com.awfs.coordination.R.id.txtTransactions;
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 /**
@@ -56,6 +52,9 @@ public class WCreditCardFragment extends Fragment implements View.OnClickListene
     private ProgressDialog mGetActiveOfferProgressDialog;
     private ConnectionDetector connectionDetector;
     private WoolworthsApplication woolworthsApplication;
+    private WebView mProgressCreditLimit;
+    private boolean isOfferActive=false;
+    private ImageView mImageArrow;
 
     @Nullable
     @Override
@@ -70,13 +69,17 @@ public class WCreditCardFragment extends Fragment implements View.OnClickListene
         currentBalance=(WTextView)view.findViewById(R.id.currentBalance);
         transactions=(WTextView)view.findViewById(R.id.txtTransactions);
         txtIncreseLimit = (WTextView)view.findViewById(R.id.txtIncreseLimit);
-
+        mProgressCreditLimit = (WebView)view.findViewById(R.id.progressCreditLimit);
+        mImageArrow = (ImageView)view.findViewById(R.id.imgArrow);
+        mProgressCreditLimit.loadUrl("file:///android_asset/web/pulse.html");
         txtIncreseLimit.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.ripple_effect_black));
-
         transactions.setOnClickListener(this);
         txtIncreseLimit.setOnClickListener(this);
         AccountsResponse accountsResponse=new Gson().fromJson(getArguments().getString("accounts"),AccountsResponse.class);
         bindData(accountsResponse);
+        disableIncreaseLimit();
+        hideProgressBar();
+        getActiveOffer();
         return view;
     }
 
@@ -98,7 +101,6 @@ public class WCreditCardFragment extends Fragment implements View.OnClickListene
                         dueDate.setText(p.paymentDueDate);
                         WiGroupLogger.e(getActivity(), TAG, e.getMessage(), e);
                     }
-
                 }
             }
         }
@@ -115,10 +117,15 @@ public class WCreditCardFragment extends Fragment implements View.OnClickListene
                break;
 
            case R.id.txtIncreseLimit:
-               getActiveOffer();
+               if(!isOfferActive){
+                   Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
+                   startActivity(openCLIIncrease);
+                   getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+               }
                break;
        }
     }
+
 
     private void getActiveOffer() {
         if (connectionDetector.isOnline(getActivity())) {
@@ -132,16 +139,16 @@ public class WCreditCardFragment extends Fragment implements View.OnClickListene
                 protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                     OfferActive offerActive = new OfferActive();
                     offerActive.response = new Response();
-                    stopProgressDialog();
+                    isOfferActive = false;
+                    hideProgressBar();
                     return offerActive;
                 }
 
                 @Override
                 protected void onPreExecute() {
-                    mGetActiveOfferProgressDialog = new ProgressDialog(getActivity());
-                    mGetActiveOfferProgressDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.cli_loading_active_offer), 1, getActivity()));
-                    mGetActiveOfferProgressDialog.setCancelable(false);
-                    mGetActiveOfferProgressDialog.show();
+                    mProgressCreditLimit.setVisibility(View.VISIBLE);
+                    mImageArrow.setVisibility(View.GONE);
+                    txtIncreseLimit.setVisibility(View.GONE);
                     super.onPreExecute();
                 }
 
@@ -151,17 +158,17 @@ public class WCreditCardFragment extends Fragment implements View.OnClickListene
                     int httpCode = offerActive.httpCode;
                     String httpDesc = offerActive.response.desc;
                     if (httpCode == 200) {
-                        if (offerActive.offerActive) {
-                            Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
-                            startActivity(openCLIIncrease);
-                            getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                        } else {
-                            WErrorDialog.setErrorMessage(getActivity(), getString(R.string.cli_cannot_proceed_error));
+                        isOfferActive = offerActive.offerActive;
+                        if(isOfferActive){
+                            disableIncreaseLimit();
+                        }else {
+                            enableIncreaseLimit();
                         }
                     } else {
+                        disableIncreaseLimit();
                         WErrorDialog.setErrorMessage(getActivity(), httpDesc);
                     }
-                    stopProgressDialog();
+                    hideProgressBar();
                 }
 
                 @Override
@@ -169,15 +176,27 @@ public class WCreditCardFragment extends Fragment implements View.OnClickListene
                     return OfferActive.class;
                 }
             }.execute();
-        }else {
+        } else {
+            hideProgressBar();
             WErrorDialog.getErrConnectToServer(getActivity());
         }
     }
 
-    public void stopProgressDialog(){
-        if(mGetActiveOfferProgressDialog != null && mGetActiveOfferProgressDialog.isShowing()){
-            mGetActiveOfferProgressDialog.dismiss();
-        }
+    public void hideProgressBar() {
+        mProgressCreditLimit.setVisibility(View.GONE);
+        mImageArrow.setVisibility(View.VISIBLE);
+        txtIncreseLimit.setVisibility(View.VISIBLE);
     }
 
+    public void enableIncreaseLimit(){
+        txtIncreseLimit.setEnabled(true);
+        txtIncreseLimit.setTextColor(Color.BLACK);
+        mImageArrow.setImageAlpha(255);
+    }
+
+    public void disableIncreaseLimit(){
+        txtIncreseLimit.setEnabled(false);
+        txtIncreseLimit.setTextColor(Color.GRAY);
+        mImageArrow.setImageAlpha(50);
+    }
 }

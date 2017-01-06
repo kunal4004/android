@@ -53,6 +53,7 @@
         </RelativeLayout>
 
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -71,20 +72,25 @@
             />
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:gravity="top|right"
             android:layout_marginTop="12dp"
-            >
+            android:id="@+id/linIncreaseLimit"
+            android:layout_height="wrap_content">
+
             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/creditLimit"
-                android:layout_toLeftOf="@+id/txtIncreseLimit"
-                android:layout_marginRight="10dp"
+                android:text="creditLimit"
                 android:textColor="@color/black"
                 android:textSize="25sp"
+                android:layout_gravity="left"
                 app:WTextView_font="medium"
-                android:layout_alignParentLeft="true"
+                android:gravity="top|left"
+                android:layout_centerVertical="true"
                 />
+
+
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -93,16 +99,43 @@
                 android:textColor="@color/black"
                 android:background="@drawable/ripple_effect_gray"
                 android:textSize="14sp"
-                app:WTextView_font="medium_bold"
+                app:WTextView_font="medium"
+                android:letterSpacing="0.05"
                 android:textAllCaps="true"
-                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:gravity="center_vertical"
-                android:drawableRight="@drawable/ic_caret_black"
-                />
-        </RelativeLayout>
+                android:layout_toStartOf="@+id/linContainer" />
 
+            <LinearLayout
+                android:id="@+id/linContainer"
+                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="right|center_vertical"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true">
+
+                <ImageView
+                    android:id="@+id/imgArrow"
+                    android:layout_width="wrap_content"
+                    android:src="@drawable/ic_caret_black"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="1dp"
+                    android:layout_height="wrap_content" />
+
+                <WebView
+                    android:id="@+id/progressCreditLimit"
+                    android:layout_width="60dp"
+                    android:visibility="visible"
+                    android:scrollbars="none"
+                    android:layout_height="60dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_toStartOf="@+id/imgArrow" />
+            </LinearLayout>
+
+
+        </RelativeLayout>
     </LinearLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -132,6 +165,7 @@
             android:layout_alignParentRight="true"
             />
     </RelativeLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -170,17 +204,7 @@
         android:gravity="center_vertical"
         android:background="@drawable/border_bottomside_only"
         >
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/currentBalance"
-            android:layout_marginRight="10dp"
-            android:text="@string/current_balance"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            app:WTextView_font="myriadpro_regular"
-            android:layout_alignParentLeft="true"
-            />
+
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -190,6 +214,17 @@
             app:WTextView_font="myriadpro_regular"
             android:layout_alignParentRight="true"
             />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:text="@string/current_balance"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:WTextView_font="myriadpro_regular"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
     </RelativeLayout>
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:layout_width="match_parent"
