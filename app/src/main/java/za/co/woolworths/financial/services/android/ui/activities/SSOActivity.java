@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
@@ -26,7 +27,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.jsonwebtoken.Jwts;
-import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 
 public class SSOActivity extends WebViewActivity {
@@ -276,11 +276,6 @@ public class SSOActivity extends WebViewActivity {
     private final WebViewClient webviewClient = new WebViewClient() {
 
         @Override
-        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-            handler.proceed();
-        }
-
-        @Override
         public void onPageStarted(WebView view, final String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
 
@@ -312,5 +307,26 @@ public class SSOActivity extends WebViewActivity {
                 });
             }
         }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            hideProgressBar();
+            super.onPageFinished(view, url);
+        }
+
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            //super.onReceivedSslError(view, handler, error);
+            hideProgressBar();
+            handler.proceed();
+        }
     };
+
+    public void hideProgressBar(){
+        if (progressBar!=null){
+            if(progressBar.getVisibility()==View.VISIBLE){
+                progressBar.setVisibility(View.GONE);
+            }
+        }
+    }
 }

@@ -4,6 +4,8 @@
     <color name="white">#FFF</color>
     <color name="login_font_color">#686663</color>
     <color name="drawer_color">#333333</color>
+    <color name="onboarding_bg">#242529</color>
+    <color name="onboarding_desc_text">#65ffffff</color>
     <color name="store_card">#CD0F69</color>
     <color name="store_card_pressed">#b00d5a</color>
     <color name="credit_card">#247EAB</color>
@@ -40,4 +42,5 @@
     <color name="text_default">#000000</color>
     <color name="secondary_text_default">#ffffff</color>
 
+    <color name="page_indicator_default">#10ffffff</color>
 </resources>
