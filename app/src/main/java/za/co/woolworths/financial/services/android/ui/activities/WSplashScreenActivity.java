@@ -18,15 +18,20 @@ import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.ApiInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
+import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+
+import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCompletionListener {
 
     private boolean mVideoPlayerShouldPlay = true;
     private VideoView videoView;
     private boolean isMinimized = false;
+    PersistenceLayer dbHelper= null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +104,22 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
                                     }).show();
                         }
                     });
+                } else if (httpErrorCode == HttpErrorCode.UNKOWN_ERROR){
+
+                    WSplashScreenActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog alertDialog = new AlertDialog.Builder(WSplashScreenActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
+                                    .setTitle("Service Error")
+                                    .setMessage(errorMessage)
+                                    .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            finish();
+                                        }
+                                    }).show();
+                        }
+                    });
                 }
 
                 return null;
@@ -127,8 +148,32 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
     public void onCompletion(MediaPlayer mp) {
 
         if(!WSplashScreenActivity.this.mVideoPlayerShouldPlay){
-            mp.stop();
+            /*
+            * When creating a SessionDao with a key where the entry doesn't exist
+            * in SQL lite, return a new SessionDao where the key is equal to the
+            * key that's passed in the constructor e.g
+            *
+            * SessionDoa sessionDao = SessionDao(SessionDao.USER_TOKEN) //and the record doesn't exist
+            * print(sessionDao.value) //null or empty
+            * print(sessionDao.key) //SessionDao.USER_TOKEN
+            *
+            * sessionDoa.key = SessionDao.USER_TOKEN
+            * sessionDao.save()
+            *
+            *
+            * */
+            try{
+                SessionDao sessionDao = new SessionDao(WSplashScreenActivity.this, SessionDao.KEY.USER_TOKEN).get();
+                if (sessionDao.value != null && !sessionDao.value.equals("")){
+                    ScreenManager.presentMain(WSplashScreenActivity.this);
+                    return;
+                }
+            }catch(Exception e){
+                Log.e(TAG, e.getMessage());
+            }
             ScreenManager.presentOnboarding(WSplashScreenActivity.this);
+            mp.stop();
+
         }else{
             mp.start();
         }

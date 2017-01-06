@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,11 +26,14 @@ import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
@@ -41,6 +45,7 @@ import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
 import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static android.R.attr.data;
 import static java.security.AccessController.getContext;
 
 
@@ -55,7 +60,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
     LinearLayout recentSearchList;
     WTextView recentSearchListitem;
     SearchHistory search;
-    String[] recentSearchData={"Cape Town","PineLand","SeaPoint","Wellington"};
+    public static final String TAG = "SearchStoresActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +125,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         int pos=(Integer) v.getTag();
         showRecentSearchHistoryView(false);
-        searchView.setQuery(Utils.getRecentSearchedHistory(SearchStoresActivity.this).get(pos).searchedValue,true);
+        searchView.setQuery(getRecentSearch().get(pos).searchedValue,true);
         //Toast.makeText(getApplicationContext(),recentSearchData[pos],Toast.LENGTH_SHORT).show();
     }
 
@@ -194,7 +199,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
                 super.onPreExecute();
                 search=new SearchHistory();
                 search.searchedValue=query;
-                Utils.addToRecentSearchedHistory(search,SearchStoresActivity.this);
+                saveRecentSearch(search);
             }
 
             @Override
@@ -202,7 +207,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
                 Location location=Utils.getLastSavedLocation(SearchStoresActivity.this);
                 if(location!=null)
                 {
-                    return ((WoolworthsApplication) getApplication()).getApi().getLocations(String.valueOf(location.getLatitude()),String.valueOf(location.getLongitude()),query,"50000");
+                    return ((WoolworthsApplication) getApplication()).getApi().getLocations(String.valueOf(location.getLatitude()),String.valueOf(location.getLongitude()),query, "50000");
 
                 }else {
                     return ((WoolworthsApplication) getApplication()).getApi().getLocations(null,null,query,null);
@@ -259,8 +264,8 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         recentSearchList.removeAllViews();
         View storeItem=getLayoutInflater().inflate(R.layout.stores_recent_search_header_row,null);
         recentSearchList.addView(storeItem);
-        List<SearchHistory> searchHistories=Utils.getRecentSearchedHistory(SearchStoresActivity.this);
-        if(status)
+        List<SearchHistory> searchHistories=getRecentSearch();
+        if(status && searchHistories!=null)
         {
 
             for(int i=0;i<searchHistories.size();i++)
@@ -286,5 +291,73 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
+    }
+
+    public void saveRecentSearch(SearchHistory searchHistory)
+    {
+        List<SearchHistory> histories=null;
+        histories=new ArrayList<>();
+        histories=getRecentSearch();
+        SessionDao sessionDao=new SessionDao(SearchStoresActivity.this);
+        sessionDao.key=SessionDao.KEY.STORES_USER_SEARCH;
+        Gson gson = new Gson();
+        boolean isExist=false;
+        if(histories==null)
+        {
+            histories=new ArrayList<>();
+            histories.add(0,searchHistory);
+            String json = gson.toJson(histories);
+            sessionDao.value = json;
+            try {
+                sessionDao.save();
+            }catch(Exception e){
+                Log.e(TAG, e.getMessage());
+            }
+        }
+        else {
+            for (SearchHistory s : histories) {
+                if ( s.searchedValue.equalsIgnoreCase(searchHistory.searchedValue))
+                {
+                    isExist=true;
+                }
+            }
+            if(!isExist)
+            {
+                histories.add(0,searchHistory);
+                if(histories.size()>5)
+                    histories.remove(5);
+
+                String json = gson.toJson(histories);
+                sessionDao.value = json;
+                try {
+                    sessionDao.save();
+                }catch(Exception e){
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        }
+
+
+
+    }
+    public List<SearchHistory> getRecentSearch()
+    {
+        List<SearchHistory> historyList=null ;
+        try {
+            SessionDao sessionDao = new SessionDao(SearchStoresActivity.this, SessionDao.KEY.STORES_USER_SEARCH).get();
+            if (sessionDao.value==null)
+            {
+                historyList = new ArrayList<>();
+            }
+            else {
+                Gson gson = new Gson();
+                Type type = new TypeToken<List<SearchHistory>>() {
+                }.getType();
+                historyList = gson.fromJson(sessionDao.value, type);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return historyList;
     }
 }

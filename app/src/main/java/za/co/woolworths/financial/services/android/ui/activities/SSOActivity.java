@@ -1,11 +1,20 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
+import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -18,7 +27,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.jsonwebtoken.Jwts;
-import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 
 public class SSOActivity extends WebViewActivity {
@@ -49,7 +57,7 @@ public class SSOActivity extends WebViewActivity {
     public static final String TAG_PATH = "TAG_PATH";
     public static final String TAG_JWT = "TAG_JWT";
 
-
+    private static final int REQUEST_RUNTIME_PERMISSION = 1;
     // TODO: This redirectURIString be pulled from MCS.
     private String redirectURIString = "http://wfs-appserver-dev.wigroup.co:8080/wfs/app/v4/sso/redirect/successful";
     private Protocol protocol;
@@ -63,7 +71,15 @@ public class SSOActivity extends WebViewActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        this.instantiateWebView();
+    }
+
+    private void instantiateWebView(){
         this.webView.setWebViewClient(this.webviewClient);
+        this.webView.getSettings().setAllowContentAccess(true);
+        if (Build.VERSION.SDK_INT >= 21) {
+            this.webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW );
+        }
     }
 
     //override intent to return expected link that's to be used in the WebViewActivity
@@ -251,10 +267,6 @@ public class SSOActivity extends WebViewActivity {
                         if (SSOActivity.this.state.equals(webviewState)) {
 
                             String jwt = list.get(1);
-                            JWTHelper.decode(jwt);
-
-
-
                             intent.putExtra(SSOActivity.TAG_JWT, jwt);
 
                             setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
@@ -266,5 +278,26 @@ public class SSOActivity extends WebViewActivity {
                 });
             }
         }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            hideProgressBar();
+            super.onPageFinished(view, url);
+        }
+
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            //super.onReceivedSslError(view, handler, error);
+            hideProgressBar();
+            handler.proceed();
+        }
     };
+
+    public void hideProgressBar(){
+        if (progressBar!=null){
+            if(progressBar.getVisibility()==View.VISIBLE){
+                progressBar.setVisibility(View.GONE);
+            }
+        }
+    }
 }

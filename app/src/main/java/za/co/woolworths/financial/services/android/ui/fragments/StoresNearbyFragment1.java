@@ -1,9 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.Location;
@@ -11,8 +13,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -100,6 +104,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     private SlidingUpPanelLayout mLayout;
     public List<StoreDetails> storeDetailsList;
 
+    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
+
     RelativeLayout direction;
     RelativeLayout makeCall;
 
@@ -125,11 +131,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     WButton btnOnLocationService;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     private final int DURATION = 2000;
-
+    private boolean updateMap=false;
     //Location Listner
     private LocationManager locationManager;
     private String provider;
     Marker myLocation;
+    private Status status;
 
 
     public StoresNearbyFragment1() {
@@ -152,7 +159,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         storeNumber = (WTextView) v.findViewById(R.id.storeNumber);
         timeingsLayout = (LinearLayout) v.findViewById(R.id.timeingsLayout);
         brandsLayout = (LinearLayout) v.findViewById(R.id.brandsLayout);
-        relBrandLayout= (RelativeLayout)v.findViewById(R.id.relBrandLayout);
+        relBrandLayout = (RelativeLayout) v.findViewById(R.id.relBrandLayout);
         direction = (RelativeLayout) v.findViewById(R.id.direction);
         makeCall = (RelativeLayout) v.findViewById(R.id.call);
         layoutLocationServiceOff = (LinearLayout) v.findViewById(R.id.layoutLocationServiceOff);
@@ -227,15 +234,24 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 }
             }
         });
-        if(Utils.isLocationServiceEnabled(getActivity())&& Utils.getLastSavedLocation(getActivity())==null)
-        {
+        if (Utils.isLocationServiceEnabled(getActivity()) && Utils.getLastSavedLocation(getActivity()) == null) {
             checkLocationServiceAndSetLayout(false);
         }
         settingsrequest();
         initMap();
+
 /*
         init();
 */
+        btnOnLocationService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateMap=true;
+                Intent locIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                getActivity().startActivity(locIntent);
+                getActivity().overridePendingTransition(0,0);
+            }
+        });
         return v;
     }
 
@@ -248,14 +264,28 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         }
     }
 
+//    Function to request permission
+    public void requestLocationPermission(){
+        requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
+                REQUEST_CODE_ASK_PERMISSIONS);
+        requestPermissions(new  String[] {Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
+
+    }
+
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
-        googleMap.setMyLocationEnabled(false);
-        googleMap.setOnMarkerClickListener(this);
-        unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
-        selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
-        //Current location
+        //If permission is not granted, request permission.
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationPermission();
+        } else {
+            googleMap.setMyLocationEnabled(false);
+            googleMap.setOnMarkerClickListener(this);
+            unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
+            selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
+            //Current location
+        }
+
 
 /*
         googleMap.addMarker(new MarkerOptions().position(new LatLng(lTracker.getLatitude(), lTracker.getLongitude()))
@@ -337,14 +367,18 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     }
     //Location Listner
 
-
     @Override
     public void onLocationChanged(Location location) {
         if (getActivity() != null) {
             Utils.saveLastLocation(location, getActivity());
             updateMyCurrentLocationOnMap(location);
             init(location);
-            locationManager.removeUpdates(this);
+            //If permission is not granted, request permission.
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestLocationPermission();
+            } else {
+                locationManager.removeUpdates(this);
+            }
         }
     }
 
@@ -577,7 +611,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
             @Override
             public void onResult(LocationSettingsResult result) {
-                final Status status = result.getStatus();
+                  status = result.getStatus();
                 final LocationSettingsStates state = result.getLocationSettingsStates();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
@@ -587,30 +621,19 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                             Location location = Utils.getLastSavedLocation(getActivity());
                             updateMyCurrentLocationOnMap(location);
                         }
-                        serachForCurrentLocation();
+                        searchForCurrentLocation();
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         // Location settings are not satisfied. But could be fixed by showing the user
                         // a dialog.
                         if (Utils.getLastSavedLocation(getActivity()) == null) {
                             checkLocationServiceAndSetLayout(false);
-                            btnOnLocationService.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    //  Intent locIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                    //startActivity(locIntent);
-                                    try {
-                                        // Show the dialog by calling startResolutionForResult(),
-                                        // and check the result in onActivityResult().
-                                        status.startResolutionForResult(getActivity(), REQUEST_CHECK_SETTINGS);
-                                    } catch (IntentSender.SendIntentException e) {
-                                        // Ignore the error.
-                                    }
-                                }
-                            });
+                            try{
+                                status.startResolutionForResult(getActivity(),REQUEST_CHECK_SETTINGS);
+                            }catch (IntentSender.SendIntentException e){;}
+
                         } else {
                             onLocationChanged(Utils.getLastSavedLocation(getActivity()));
-
                         }
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
@@ -624,13 +647,14 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("RequestSETTINGRESULT",String.valueOf(requestCode));
         switch (requestCode) {
 // Check for the integer request code originally supplied to startResolutionForResult().
             case REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         // startLocationUpdates();
-                        serachForCurrentLocation();
+                        searchForCurrentLocation();
                         break;
                     case Activity.RESULT_CANCELED:
                         settingsrequest();//keep asking if imp or do whatever
@@ -640,9 +664,14 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         }
     }
 
-    public void serachForCurrentLocation() {
+    public void searchForCurrentLocation() {
         checkLocationServiceAndSetLayout(true);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 1, this);
+        //If permission is not granted, request permission.
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestLocationPermission();
+        } else {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 1, this);
+        }
     }
 
     public void updateMyCurrentLocationOnMap(Location location) {
@@ -706,4 +735,19 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         // The duration must be strictly positive so we make it at least 1.
         googleMap.animateCamera(update, Math.max(DURATION, 1), callback);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(updateMap) {
+            // All location settings are satisfied. The client can initialize location
+            // requests here.
+            if (Utils.getLastSavedLocation(getActivity()) != null) {
+                Location location = Utils.getLastSavedLocation(getActivity());
+                updateMyCurrentLocationOnMap(location);
+                searchForCurrentLocation();
+            }
+        }
+    }
 }
+

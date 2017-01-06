@@ -9,7 +9,6 @@
     android:paddingLeft="11dp"
     >
 
-
         <LinearLayout
             android:id="@+id/cardItem"
             android:layout_width="match_parent"

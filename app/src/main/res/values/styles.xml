@@ -1,6 +1,4 @@
-<resources
-    xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
@@ -82,8 +80,17 @@
         <item name="android:homeAsUpIndicator">@drawable/back24</item>
         <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
     </style>
-    <style name="WSearchViewStyle" parent="Widget.AppCompat.SearchView">
 
+    <style name="CLI" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="searchViewStyle">@style/WSearchViewStyle</item>
+        <item name="android:homeAsUpIndicator">@drawable/back24</item>
+        <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
+        <item name="android:windowActionBarOverlay">true</item>
+    </style>
+
+    <style name="WSearchViewStyle" parent="Widget.AppCompat.SearchView">
         <item name="searchHintIcon">@null</item>
         <item name="queryBackground">@null</item>
 
@@ -115,8 +122,6 @@
         <item name="android:homeAsUpIndicator">@drawable/back24</item>
 
     </style>
-
-
     <style name="OneAppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -125,7 +130,6 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:homeAsUpIndicator">@drawable/close_24</item>
-
     </style>
 
     <style name="Animations_popup">
@@ -136,5 +140,9 @@
     <style name="Darken_Screen">
         <item name="android:windowEnterAnimation">@anim/alpha_anim</item>
         <item name="android:windowExitAnimation">@anim/alpha_anim_exit</item>
+    </style>
+    <style name="popwindow_style">
+        <item name="android:windowEnterAnimation">@anim/pop_fade_in</item>
+        <item name="android:windowExitAnimation">@anim/pop_fade_out</item>
     </style>
 </resources>

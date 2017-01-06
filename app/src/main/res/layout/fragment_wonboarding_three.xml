@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/drawer_color"
     tools:context="za.co.woolworths.financial.services.android.ui.fragments.WOnboardingOneFragment">
 
@@ -14,9 +15,11 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:src="@drawable/walkthrough3"
+            android:src="@drawable/walkthrough_3"
             android:layout_above="@+id/fragment_wonboarding_three_description_layer"
-            android:background="@android:color/transparent">
+            android:background="@android:color/transparent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true">
         </ImageView>
 
         <LinearLayout
@@ -27,23 +30,27 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true">
 
-            <TextView
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/fragment_wonboarding_three_description_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="FINANCIAL SERVICES"
+                android:letterSpacing="0.1"
                 android:gravity="center_horizontal"
+                android:lineSpacingExtra="1.3dp"
+                app:WTextView_font="medium_bold"
                 style="@style/TitleWSemiBoldWhite"
-                android:paddingTop="32dp"
                 />
 
-            <TextView
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/fragment_wonboarding_three_description_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Conveniently view your credit balance, next payment due, available funds, apply for a personal loan and more."
+                android:text="@string/onboarding_desc_screen_3"
                 android:gravity="center_horizontal"
                 style="@style/CaptionLightGrey"
+                android:lineSpacingExtra="1.2dp"
+                app:WTextView_font="myriadpro_regular"
                 android:paddingTop="16dp"
                 android:paddingLeft="32dp"
                 android:paddingRight="32dp"
