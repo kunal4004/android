@@ -276,11 +276,6 @@ public class SSOActivity extends WebViewActivity {
     private final WebViewClient webviewClient = new WebViewClient() {
 
         @Override
-        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-            handler.proceed();
-        }
-
-        @Override
         public void onPageStarted(WebView view, final String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
 
