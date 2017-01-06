@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompatApi24;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
     }
 
     public static class SimpleViewHolder extends RecyclerView.ViewHolder {
+        private final RelativeLayout relContainer;
         SwipeLayout swipeLayout;
         WTextView txtTitle;
         WTextView txtDate;
@@ -53,6 +55,7 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
             imgdelete=(ImageView)itemView.findViewById(R.id.msgDelete);
             cardlayout=(LinearLayout)itemView.findViewById(R.id.cardLayout);
             tranparentView=(View)itemView.findViewById(R.id.transparentview);
+            relContainer = (RelativeLayout)itemView.findViewById(R.id.relContainer);
         }
     }
 
@@ -62,11 +65,14 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
         viewHolder.txtTitle.setText(messageDetailsList.get(position).title);
         viewHolder.txtBody.setText(messageDetailsList.get(position).content);
         if(messageDetailsList.get(position).isRead) {
+            viewHolder.relContainer.setBackgroundColor(mContext.getResources().getColor(R.color.recent_search_bg));
             viewHolder.cardlayout.setAlpha(0.5f);
+            viewHolder.txtBody.setTextColor(Color.GRAY);
         }
         else {
+            viewHolder.relContainer.setBackgroundColor(Color.WHITE);
             viewHolder.cardlayout.setAlpha(1f);
-
+            viewHolder.txtBody.setTextColor(Color.BLACK);
         }
         try{
             viewHolder.txtDate.setText(WFormatter.formatMessagingDate(messageDetailsList.get(position).createDate));
