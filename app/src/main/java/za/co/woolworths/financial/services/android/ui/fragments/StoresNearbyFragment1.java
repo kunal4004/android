@@ -5,6 +5,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.location.Criteria;
@@ -13,6 +14,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -132,11 +135,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     WButton btnOnLocationService;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     private final int DURATION = 2000;
-
+    private boolean updateMap=false;
     //Location Listner
     private LocationManager locationManager;
     private String provider;
     Marker myLocation;
+    private Status status;
 
 
     public StoresNearbyFragment1() {
@@ -239,9 +243,19 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         }
         settingsrequest();
         initMap();
+
 /*
         init();
 */
+        btnOnLocationService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateMap=true;
+                Intent locIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                getActivity().startActivity(locIntent);
+                getActivity().overridePendingTransition(0,0);
+            }
+        });
         return v;
     }
 
@@ -601,7 +615,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
             @Override
             public void onResult(LocationSettingsResult result) {
-                final Status status = result.getStatus();
+                  status = result.getStatus();
                 final LocationSettingsStates state = result.getLocationSettingsStates();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
@@ -618,23 +632,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                         // a dialog.
                         if (Utils.getLastSavedLocation(getActivity()) == null) {
                             checkLocationServiceAndSetLayout(false);
-                            btnOnLocationService.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    //  Intent locIntent = new Intent( Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                    //startActivity(locIntent);
-                                    try {
-                                        // Show the dialog by calling startResolutionForResult(),
-                                        // and check the result in onActivityResult().
-                                        status.startResolutionForResult(getActivity(), REQUEST_CHECK_SETTINGS);
-                                    } catch (IntentSender.SendIntentException e) {
-                                        // Ignore the error.
-                                    }
-                                }
-                            });
+                            try{
+                                status.startResolutionForResult(getActivity(),REQUEST_CHECK_SETTINGS);
+                            }catch (IntentSender.SendIntentException e){;}
+
                         } else {
                             onLocationChanged(Utils.getLastSavedLocation(getActivity()));
-
                         }
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
@@ -648,6 +651,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("RequestSETTINGRESULT",String.valueOf(requestCode));
         switch (requestCode) {
 // Check for the integer request code originally supplied to startResolutionForResult().
             case REQUEST_CHECK_SETTINGS:
@@ -735,4 +739,19 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         // The duration must be strictly positive so we make it at least 1.
         googleMap.animateCamera(update, Math.max(DURATION, 1), callback);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(updateMap) {
+            // All location settings are satisfied. The client can initialize location
+            // requests here.
+            if (Utils.getLastSavedLocation(getActivity()) != null) {
+                Location location = Utils.getLastSavedLocation(getActivity());
+                updateMyCurrentLocationOnMap(location);
+            }
+            serachForCurrentLocation();
+        }
+    }
 }
+
