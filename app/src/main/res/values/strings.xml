@@ -336,4 +336,9 @@
     <string name="cli_check_field">Please make sure all required fields are filled out correctly</string>
     <string name="cli_amount_hint">R0</string>
 
+    <string name="onboarding_desc_screen_1">The new Woolies app gives you access to everything you love in the palm of your hand. Simply scroll, tap and enjoy!</string>
+    <string name="onboarding_desc_screen_2">See how much you’ve saved, track your tier status and access your exclusive vouchers.</string>
+    <string name="onboarding_desc_screen_3">Conveniently view your credit balance, next payment due, available funds, apply for a personal loan and more.</string>
+    <string name="onboarding_desc_screen_4">Create an account or use your existing Woolies logins to get started. Your login details will be the same on the app, mobi site and website.</string>
+
 </resources>

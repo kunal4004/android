@@ -29,15 +29,14 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/txtSkip"
         android:gravity="bottom"
-        android:background="@color/drawer_color">
+        android:background="@color/drawer_color"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="220dp"
+            android:layout_height="20dp"
             android:orientation="vertical"
             android:gravity="bottom"
             android:background="@color/place_autocomplete_prediction_primary_text">
@@ -53,26 +52,26 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:id="@+id/dotimg0"
-                    android:src="@drawable/page_control_active" />
+                    android:src="@drawable/page_indicator_selected" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:id="@+id/dotimg1"
-                    android:src="@drawable/page_control_inactive" />
+                    android:src="@drawable/page_indicator_default" />
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:id="@+id/dotimg2"
-                    android:src="@drawable/page_control_inactive" />
+                    android:src="@drawable/page_indicator_default" />
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:id="@+id/dotimg3"
-                    android:src="@drawable/page_control_inactive" />
+                    android:src="@drawable/page_indicator_default" />
             </LinearLayout>
         </LinearLayout>
 
