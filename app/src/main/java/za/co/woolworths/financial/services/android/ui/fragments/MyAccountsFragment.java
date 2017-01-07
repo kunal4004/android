@@ -95,6 +95,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     WTextView cc_available_funds;
     WTextView pl_available_funds;
     WTextView messageCounter;
+    WTextView userName;
 
     private ProgressDialog mGetAccountsProgressDialog;
     private ProgressBar scProgressBar;
@@ -147,6 +148,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         ccProgressBar=(ProgressBar)view.findViewById(R.id.ccProgressBar);
         plProgressBar=(ProgressBar)view.findViewById(R.id.plProgressBar);
         messageCounter=(WTextView)view.findViewById(R.id.messageCounter);
+        userName = (WTextView) view.findViewById(R.id.user_name);
 
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
@@ -246,7 +248,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity)getActivity()).getJWTDecoded();
         if(jwtDecodedModel.AtgSession != null){
             loggedInHeaderLayout.setVisibility(View.VISIBLE);
-
+            //logged in user's name will be displayed on the page
+            userName.setText(jwtDecodedModel.name);
             if(jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")){
                 //user is linked and signed in
                 linkedAccountsLayout.setVisibility(View.VISIBLE);

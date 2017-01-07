@@ -86,25 +86,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:text="MATT THOMPSON"
-            android:textAllCaps="true"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            app:WTextView_font="medium_bold"
-            />
-
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="36dp"
-            android:layout_marginTop="3dp"
-            android:text="MEMBER SINCE AUGUST 2016"
+            android:layout_marginBottom="6dp"
+            android:layout_marginTop="34dp"
+            android:text="@string/welcome_back"
             android:textAllCaps="true"
             android:textColor="#999999"
             android:textSize="12sp"
             app:WTextView_font="medium"
+            />
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="39dp"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:WTextView_font="medium_bold"
             />
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:layout_width="match_parent"
