@@ -254,8 +254,7 @@
     <string name="cli_continue">continue</string>
     <string name="cli_credit_limit_increase">credit limit increase</string>
     <string name="cli_before_we_get_started">before we get started</string>
-    <string name="cli_store_card_content">To help us calculate how much additional credit you can qualify for, please submit proof of income and answer a few quick and easy questions</string>
-
+<string name="cli_store_card_content">To help us calculate how much additional credit you can qualify for, please answer a few quick and easy questions.  Once you have completed this, you will need to submit proof of income in order for us to proceed with your application.</string>
     <string name="cli_gold_crd_credit_limit_increase">credit limit increase</string>
     <string name="cli_gold_crd_before_we_get_started">before we get started</string>
     <string name="cli_gold_crd_credit_card_content">To help us calculate how much additional credit you can qualify for, please submit proof of income and answer a few quick and easy questions</string>

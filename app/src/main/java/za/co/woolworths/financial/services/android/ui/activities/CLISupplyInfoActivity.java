@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -20,17 +19,20 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
@@ -150,39 +152,8 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mTextAmount.setVisibility(View.VISIBLE);
         mImageCreditAmount.setVisibility(View.GONE);
         mImageCreditAmount.setVisibility(View.GONE);
-        mTextAmount.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-                if (!s.toString().equals(current)) {
-                    mTextAmount.removeTextChangedListener(this);
-
-                    String replaceable = String.format("[%s .\\s]", NumberFormat.getCurrencyInstance().getCurrency().getSymbol());
-                    String cleanString = s.toString().replaceAll(replaceable, "").replace("R","").replace(",","");
-                    double parsed;
-                    try {
-                        parsed = Double.parseDouble(cleanString);
-                    } catch (NumberFormatException e) {
-                        parsed = 0.00;
-                    }
-
-                    String formatted = Utils.formatCurrency(parsed);
-
-                    current = formatted;
-                    mTextAmount.setText(formatted);
-                    mTextAmount.setSelection(formatted.length());
-
-                    // Do whatever you want with position
-                    mTextAmount.addTextChangedListener(this);
-                }
-            }
-        });
+        mTextAmount.addTextChangedListener(new NumberTextWatcher(mTextAmount));
     }
 
     private void setRecycleView(List<CreditLimit> creditLimit) {
@@ -206,7 +177,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                     WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this,
                             getString(R.string.cli_solvency_error));
                 } else {
-                    mCreditLimitAmount = Integer.valueOf(creditAmount.replace(" ", "").replace("R", "").replace(",", ""));
+                    mCreditLimitAmount = Integer.valueOf(creditAmount.replaceAll("[^0-9.]", ""));
                     if (mRadApplySolvency.getCheckedRadioButtonId() == -1) {
                         WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this,
                                 getString(R.string.cli_solvency_error));
@@ -394,7 +365,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
 
     public int getNumbers(int position) {
         if (mArrCreditLimit != null) {
-            return Integer.valueOf(mArrCreditLimit.get(position).getAmount().replace("R", "").replace(" ", ""));
+            return Integer.valueOf(mArrCreditLimit.get(position).getAmount().replaceAll("[^0-9.]", ""));
         } else {
             return 0;
         }
@@ -430,6 +401,80 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         }catch (NullPointerException ex){}
     }
 
+    public class NumberTextWatcher implements TextWatcher {
 
+        private DecimalFormat df;
+        private DecimalFormat dfnd;
+        private boolean hasFractionalPart;
+
+        private EditText et;
+
+        public NumberTextWatcher(EditText et)
+        {
+            df = new DecimalFormat("#,###.##");
+            df.setDecimalSeparatorAlwaysShown(true);
+            dfnd = new DecimalFormat("#,###");
+            this.et = et;
+            hasFractionalPart = false;
+        }
+
+        @SuppressWarnings("unused")
+        private static final String TAG = "NumberTextWatcher";
+
+        @Override
+        public void afterTextChanged(Editable s)
+        {
+            et.removeTextChangedListener(this);
+
+            try {
+                int inilen, endlen;
+                inilen = et.getText().length();
+                String v = s.toString().replace(String.valueOf(df.getDecimalFormatSymbols().getGroupingSeparator()), "").replace(" ", "").replace("R ", "").replace("R", "");
+                Number n = null;
+                if (TextUtils.isEmpty(v)) {
+                    et.setText("");
+                } else {
+                    try {
+                        n = df.parse(v);
+                    } catch (ParseException e) {
+                    }
+                    int cp = et.getSelectionStart();
+                    String finalAmount="";
+                    if (hasFractionalPart) {
+                        finalAmount = "R " + df.format(n).replace(".", " ").replace(","," ");
+                    } else {
+                        finalAmount = "R " + dfnd.format(n).replace(".", " ").replace(","," ");
+                    }
+                    et.setText(finalAmount);
+                    endlen = et.getText().length();
+                    int sel = (cp + (endlen - inilen));
+                    if (sel > 0 && sel <= et.getText().length()) {
+                        et.setSelection(sel);
+                    } else {
+                        // place cursor at the end?
+                        et.setSelection(et.getText().length());
+                    }
+                }
+            }catch(NumberFormatException nfe){
+            }
+            et.addTextChangedListener(this);
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after)
+        {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count)
+        {
+            if (s.toString().contains(String.valueOf(df.getDecimalFormatSymbols().getDecimalSeparator())))
+            {
+                hasFractionalPart = true;
+            } else {
+                hasFractionalPart = false;
+            }
+        }
+
+    }
 }
-

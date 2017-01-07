@@ -51,6 +51,7 @@
         android:inputType="number"
         android:maxLines="1"
         android:imeOptions="actionNext"
+        android:maxLength="21"
         android:hint="@string/cli_amount_hint"
         app:WEditTextView_font="medium"
         android:textColor="@color/black"
