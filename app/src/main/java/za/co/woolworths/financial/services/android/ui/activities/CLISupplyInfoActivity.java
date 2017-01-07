@@ -89,6 +89,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     WoolworthsApplication mWoolworthsApplication;
     private UpdateBankDetail mUpdateBankDetail;
     ConnectionDetector connectionDetector;
+    private WTextView mTextACreditLimit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +123,9 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mRadioYesConfidentialCredit = (RadioButton) findViewById(R.id.radioYesConfidentialCredit);
         mRadioNoConfidentialCredit = (RadioButton) findViewById(R.id.radioNoConfidentialCredit);
         mTextApplySolvency = (WTextView) findViewById(R.id.textApplySolvency);
+        mTextACreditLimit = (WTextView) findViewById(R.id.textACreditLimit);
         mImageCreditAmount = (ImageView) findViewById(R.id.imgInfo);
+
     }
 
     private void setActionBar() {
@@ -152,7 +155,8 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mTextAmount.setVisibility(View.VISIBLE);
         mImageCreditAmount.setVisibility(View.GONE);
         mImageCreditAmount.setVisibility(View.GONE);
-
+        mTextACreditLimit.setText(getString(R.string.cli_additional_credit_amount));
+        mTextACreditLimit.setAllCaps(true);
         mTextAmount.addTextChangedListener(new NumberTextWatcher(mTextAmount));
     }
 
@@ -475,6 +479,5 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                 hasFractionalPart = false;
             }
         }
-
     }
 }

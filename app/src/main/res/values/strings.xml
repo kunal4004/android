@@ -275,8 +275,6 @@
     <string name="cli_select_your_bank">Select your bank</string>
     <string name="cli_rand_60000">R60 000</string>
     <string name="cli_others">Others</string>
-    <string name="cli_apply_insolvency">Have you applied for insolvency, debt counselling or an administration order or are you currently insolvent or under debt councelling or administration? </string>
-    <string name="cli_solvency_agreement">I agree that Woolworths Financial Services may request and receive any of my confidential consumer credit information from any credit bureau or third party at any time, including obtaining a bureau score to determine my creditworthiness. </string>
     <string name="cli_proof_income">I agree that Woolworths Financial Services may request and receive three months of my bank statements from my bank or any third party at any time as proof of income.</string>
     <string name="cli_confirm_information">DO YOU CONFIRM THAT ALL INFORMATION SUPPLIED IS CORRECT?</string>
     <string name="cli_other_expenses">Other Expenses</string>
@@ -295,14 +293,11 @@
     <string name="cli_contact_delay">We will be in contact with the outcome of our review in approximately 2-3 business days.</string>
     <string name="cli_back_to_acc">Back to my accounts</string>
     <string name="cli_income_proof">proof of income</string>
-    <string name="cli_require_document">In order to complete your application we require some documents from you. There are 3 ways to supply this to us.</string>
-    <string name="cli_send_document_title">%s ways to send your documents</string>
-    <string name="cli_option_one">OPTION ONe</string>
-    <string name="cli_option_two">OPTION two</string>
-    <string name="cli_option_three">OPTION three</string>
+    <string name="cli_send_document_title">submit your documents via:</string>
+    <string name="cli_option_one">EMAIL</string>
+    <string name="cli_option_two">FAX US</string>
     <string name="cli_option_one_desc">Take a photo of your latest 3 month bank statement or last 3 payslips, attach to email include Full Name and reference as subject line.</string>
-    <string name="cli_option_two_desc">Select documents from your drive attach to email include Full name and reference as the subject line.</string>
-    <string name="cli_option_three_desc">Fax documents to 021 407 93 43 with Full name and reference number.</string>
+    <string name="cli_option_two_desc">Simply fax your documents to us at 021 407 9343. Your ID number will be your reference.</string>
     <string name="cli_send_mail">SEND MAIL</string>
     <string name="loading">LOADING…</string>
     <string name="cli_select_bank_error">Please select a bank</string>
@@ -334,5 +329,15 @@
     <string name="cli_solvency_error">Please make sure all required fields are filled out correctly</string>
     <string name="cli_check_field">Please make sure all required fields are filled out correctly</string>
     <string name="cli_amount_hint">R0</string>
-
+    <string name="cli_additional_credit_amount">How much additional credit would you\nlike to apply for?</string>
+    <string name="cli_apply_insolvency">DO ANY OF THE FOLLOWING APPLY TO YOU?</string>
+    <string name="cli_text_with_bullet">•    I’ve applied for insolvency debt counseling\n•    I’ve applied for debt administration\n•    I’m currently insolvent\n•    I’m currently under debt review</string>
+    <string name="cli_solvency_agreement">I agree that Woolworths Financial Services may request and receive my confidential consumer credit information from any credit bureau or third party at any time, including obtaining a bureau score to determine my credit worthiness</string>
+    <string name="cli_require_document">In order to complete your application, we\nrequire your latest 3 months’ bank statements or last 3 months payslips.</string>
+    <string name="cli_email_required_email">Don’t have the required documents right now or need more detailed instructions?</string>
+    <string name="cli_email_required_email_desc">Simply click below and we will send an email to you, so you can complete the process</string>
+    <string name="cli_take_a_photo">a) Take a photo</string>
+    <string name="cli_take_a_photo_desc">Take clear photos of your documents and email it to us at cliproofofincome@wfs.co.za. Your ID number will be your reference. </string>
+    <string name="cli_attach_drive_desc"> Select your existing saved documents from your device and email it to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.</string>
+    <string name="cli_attach">b) Attach from a drive</string>
 </resources>

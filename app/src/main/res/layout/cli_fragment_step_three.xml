@@ -5,12 +5,14 @@
     android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
     android:orientation="vertical"
+    android:visibility="visible"
     android:layout_height="match_parent"
     >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
+        android:visibility="gone"
         android:id="@+id/linBankLayout"
         android:layout_height="match_parent">
         <include layout="@layout/horizontal_divider"/>
@@ -75,7 +77,6 @@
 
                 <include layout="@layout/cli_button_wrap"/>
 
-
             </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>
@@ -83,4 +84,4 @@
     </LinearLayout>
 
     <include layout="@layout/cli_fragment_income_proof" />
-    </LinearLayout>
+</LinearLayout>

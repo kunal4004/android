@@ -73,7 +73,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     private WTextView mTextProofIncomeSize;
     private LinearLayout mLinProofLayout;
     private LinearLayout mLinBankLayout;
-    private RecyclerView mRecycleProofIncome;
     private CLIStepIndicatorActivity mStepIndicator;
     private WButton mBtnSendMail;
     private SlidingUpViewLayout mSlidingUpViewLayout;
@@ -115,6 +114,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
     public void loadView() {
         isDeaBank = mWoolworthsApplication.isDEABank();
+        isDeaBank=false;
         if (isDeaBank) {
             mLinBankLayout.setVisibility(View.VISIBLE);
             mLinProofLayout.setVisibility(View.GONE);
@@ -266,7 +266,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         List<IncomeProof> arrIncomeProof = new ArrayList<>();
         String[] mOptionTitle = getResources().getStringArray(R.array.cli_option);
         String[] mOptionDesc = getResources().getStringArray(R.array.cli_option_desc);
-        int[] myImageList = new int[]{R.drawable.icon_paperclip, R.drawable.icon_clip, R.drawable.icon_fax};
+        int[] myImageList = new int[]{R.drawable.icon_paperclip, R.drawable.icon_fax};
         int index = 0;
         for (String option : mOptionTitle) {
             arrIncomeProof.add(new IncomeProof(option, mOptionDesc[index], myImageList[index]));
@@ -276,7 +276,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     }
 
     private void initProofUI() {
-        mRecycleProofIncome = (RecyclerView) view.findViewById(R.id.recycleProofIncome);
         mTextIncomeProof = (WTextView) view.findViewById(R.id.textProofIncome);
         mTextProofIncomeSize = (WTextView) view.findViewById(R.id.textProofIncomeSize);
         mTextEmailAdress = (WTextView) view.findViewById(R.id.textEmailAdress);
@@ -290,8 +289,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     private void setProofContent() {
         mTextIncomeProof.setText(getActivity().getResources().getString(R.string.cli_income_proof));
         mBtnSendMail.setText(getString(R.string.cli_send_mail));
-        mTextProofIncomeSize.setText(getString(R.string.cli_send_document_title).replace("%s", String.valueOf(arrIncomeProof().size())));
-        mTextEmailAdress.setText(mEmail);
     }
 
     public void populateList() {
@@ -299,12 +296,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mClIIncomeProofAdapter = new CLIIncomeProofAdapter(mArrIncomeProof);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecycleProofIncome.setLayoutManager(mLayoutManager);
-        mRecycleProofIncome.setNestedScrollingEnabled(false);
-        mRecycleProofIncome.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
-        mRecycleProofIncome.setAdapter(mClIIncomeProofAdapter);
         mClIIncomeProofAdapter.setCLIContent();
-
     }
 
     @Override
