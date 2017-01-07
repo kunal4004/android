@@ -339,7 +339,6 @@
     <string name="cli_email_required_email_desc">Simply click below and we will send an email to you, so you can complete the process</string>
     <string name="cli_take_a_photo">a) Take a photo</string>
     <string name="cli_take_a_photo_desc">Take clear photos of your documents and email it to us at cliproofofincome@wfs.co.za. Your ID number will be your reference. </string>
-    <string name="cli_attach_drive_desc"> Select your existing saved documents from your device and email it to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.</string>
     <string name="cli_attach">b) Attach from a drive</string>
     <string name="cli_cannot_proceed_desc">Unfortunately we can\'t proceed until you no longer have any of these conditions in place.</string>
     <string name="cli_proceed_to_permission">Permission to proceed</string>
@@ -352,5 +351,5 @@
     <string name="onboarding_desc_screen_2">See how much you’ve saved, track your tier status and access your exclusive vouchers.</string>
     <string name="onboarding_desc_screen_3">Conveniently view your credit balance, next payment due, available funds, apply for a personal loan and more.</string>
     <string name="onboarding_desc_screen_4">Create an account or use your existing Woolies logins to get started. Your login details will be the same on the app, mobi site and website.</string>
-
+    <string name="cli_attach_drive_desc">Select your existing saved documents from your device and email it to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.</string>
 </resources>
