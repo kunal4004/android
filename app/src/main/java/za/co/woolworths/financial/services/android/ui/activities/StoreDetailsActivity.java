@@ -3,13 +3,17 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
@@ -214,16 +218,37 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
     }
 
     public void openNativeMapWindow(final double lat, final double lon) {
+        //darken the current screen
         View view = getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
-        nativeMap = (WTextView) view.findViewById(R.id.nativeGoogleMap);
-        cancel = (WTextView) view.findViewById(R.id.cancel);
-        final PopupWindow pWindow = new PopupWindow(view, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        pWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
-        pWindow.setOutsideTouchable(false);
+        final PopupWindow darkenScreen = new PopupWindow(view, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        darkenScreen.setAnimationStyle(R.style.Darken_Screen);
+        darkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
+        darkenScreen.setOutsideTouchable(false);
+        //Then popup window appears
+        View popupView = getLayoutInflater().inflate(R.layout.popup_view, null);
+        nativeMap = (WTextView) popupView.findViewById(R.id.nativeGoogleMap);
+        cancel = (WTextView) popupView.findViewById(R.id.cancel);
+        final PopupWindow pWindow = new PopupWindow(popupView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        pWindow.setAnimationStyle(R.style.Animations_popup);
+        pWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+        pWindow.setOutsideTouchable(true);
+        //Dismiss popup when touch outside
+        pWindow.setTouchable(true);
+        pWindow.setBackgroundDrawable(new BitmapDrawable());
+        pWindow.setTouchInterceptor(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                pWindow.dismiss();
+                darkenScreen.dismiss();
+                return true;
+            }
+        });
+
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pWindow.dismiss();
+                darkenScreen.dismiss();
             }
         });
         nativeMap.setOnClickListener(new View.OnClickListener() {

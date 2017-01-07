@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.jsonwebtoken.Jwts;
-import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 
 public class SSOActivity extends WebViewActivity {
@@ -72,19 +71,7 @@ public class SSOActivity extends WebViewActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.instantiateWithPermissionsCheck();
-    }
-
-    private void instantiateWithPermissionsCheck() {
-        final String permission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-        if (ContextCompat.checkSelfPermission(SSOActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(SSOActivity.this, permission)) {
-            } else {
-                ActivityCompat.requestPermissions(SSOActivity.this, new String[]{permission}, REQUEST_RUNTIME_PERMISSION);
-            }
-        } else {
-            this.instantiateWebView();
-        }
+        this.instantiateWebView();
     }
 
     private void instantiateWebView(){
@@ -92,23 +79,6 @@ public class SSOActivity extends WebViewActivity {
         this.webView.getSettings().setAllowContentAccess(true);
         if (Build.VERSION.SDK_INT >= 21) {
             this.webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW );
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_RUNTIME_PERMISSION:
-                final int numOfRequest = grantResults.length;
-                final boolean isGranted = numOfRequest == 1 && PackageManager.PERMISSION_GRANTED == grantResults[numOfRequest - 1];
-                if (isGranted) {
-                    this.instantiateWebView();
-                } else {
-                    // you dont have permission show toast
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
@@ -277,11 +247,6 @@ public class SSOActivity extends WebViewActivity {
     private final WebViewClient webviewClient = new WebViewClient() {
 
         @Override
-        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-            handler.proceed();
-        }
-
-        @Override
         public void onPageStarted(WebView view, final String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
 
@@ -313,5 +278,26 @@ public class SSOActivity extends WebViewActivity {
                 });
             }
         }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            hideProgressBar();
+            super.onPageFinished(view, url);
+        }
+
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            //super.onReceivedSslError(view, handler, error);
+            hideProgressBar();
+            handler.proceed();
+        }
     };
+
+    public void hideProgressBar(){
+        if (progressBar!=null){
+            if(progressBar.getVisibility()==View.VISIBLE){
+                progressBar.setVisibility(View.GONE);
+            }
+        }
+    }
 }
