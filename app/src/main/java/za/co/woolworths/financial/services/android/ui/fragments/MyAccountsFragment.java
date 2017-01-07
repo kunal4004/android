@@ -252,6 +252,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             loggedInHeaderLayout.setVisibility(View.VISIBLE);
             //logged in user's name and family name will be displayed on the page
             userName.setText(jwtDecodedModel.name + " " + jwtDecodedModel.family_name);
+            //initials of the logged in user will be displayed on the page
             String initials = jwtDecodedModel.name.substring(0, 1).concat(" ").concat(jwtDecodedModel.family_name.substring(0, 1));
             userInitials.setText(initials);
             if(jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")){
