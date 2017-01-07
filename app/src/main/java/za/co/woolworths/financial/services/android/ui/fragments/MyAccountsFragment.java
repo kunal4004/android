@@ -248,8 +248,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity)getActivity()).getJWTDecoded();
         if(jwtDecodedModel.AtgSession != null){
             loggedInHeaderLayout.setVisibility(View.VISIBLE);
-            //logged in user's name will be displayed on the page
-            userName.setText(jwtDecodedModel.name);
+            //logged in user's name and family name will be displayed on the page
+            userName.setText(jwtDecodedModel.name + " " + jwtDecodedModel.family_name);
             if(jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")){
                 //user is linked and signed in
                 linkedAccountsLayout.setVisibility(View.VISIBLE);
