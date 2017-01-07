@@ -190,6 +190,7 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
                 moveToPage(0);
                 break;
             case 2:
+                Log.e("mWooworthApplication",String.valueOf(mWoolworthApplication.isOther()));
                 if (mWoolworthApplication.isOther()){
                     mViewPStepIndicator.setCurrentItem(0);
                     mStepIndicator.setOtherState();

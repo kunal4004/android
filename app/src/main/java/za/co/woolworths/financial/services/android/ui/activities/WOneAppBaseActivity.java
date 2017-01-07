@@ -62,9 +62,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
         drawerFragment.setDrawerListener(this);
         displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
-
-        Intent intent = new Intent(WOneAppBaseActivity.this,CLIStepIndicatorActivity.class);
-        startActivity(intent);
     }
 
     @Override
