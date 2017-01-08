@@ -537,6 +537,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
-       // loadMessages();
+        loadMessages();
     }
 }
