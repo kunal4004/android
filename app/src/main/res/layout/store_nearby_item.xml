@@ -3,15 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/transparent"
+    android:layout_marginTop="5dp"
     android:orientation="vertical"
-    android:paddingBottom="11dp"
-    android:paddingLeft="8dp"
+    android:paddingRight="11dp"
+    android:paddingLeft="11dp"
     >
 
         <LinearLayout
             android:id="@+id/cardItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:elevation="7dp"
             android:background="@drawable/card_shadow"
             android:orientation="vertical">
 
@@ -53,7 +55,7 @@
                         android:layout_gravity="start"
                         android:layout_marginTop="4dp"
                         android:maxLines="1"
-                        android:letterSpacing="0.02"
+                        android:letterSpacing="0.1"
                         android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="13sp"
@@ -107,7 +109,6 @@
                 android:minHeight="79dp"
                 android:paddingLeft="16dp"
                 android:paddingTop="8dp"
-                android:paddingBottom="16dp"
                 >
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -115,11 +116,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
+                    android:lineSpacingExtra="4sp"
                     android:maxLines="2"
                     android:paddingRight="42dp"
                     android:textColor="@color/black"
                     android:textSize="13sp"
-                    android:paddingTop="2dp"
                     app:WTextView_font="myriadpro_regular"
 
 
@@ -132,6 +133,7 @@
                     android:layout_alignParentBottom="true"
                     android:paddingRight="16dp"
                     android:textColor="#ABABAB"
+                    android:paddingBottom="10dp"
                     android:textSize="13sp"
                     app:WTextView_font="myriadpro_regular" />
             </RelativeLayout>

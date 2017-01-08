@@ -62,11 +62,11 @@ public class NavigationDrawerAdapter extends BaseAdapter {
         listViewHolder.textInListView.setText(navListItems.get(position).getName());
         listViewHolder.imageInListView.setImageResource(navListItems.get(position).getImage());
 
-        if (position == selectedPosition)
-            convertView.setBackgroundResource(R.drawable.selected_list_bg);
-        else
+        if (position == selectedPosition) {
+            convertView.setBackgroundResource(R.drawable.vertical_line);
+        }else {
             convertView.setBackgroundColor(Color.parseColor("#ffffff"));
-
+        }
         return convertView;
     }
 

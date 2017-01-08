@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
@@ -55,6 +57,8 @@ public class WCreditCardFragment extends Fragment implements View.OnClickListene
     private WebView mProgressCreditLimit;
     private boolean isOfferActive=false;
     private ImageView mImageArrow;
+    private LayoutInflater mLayoutInflater;
+    private SlidingUpViewLayout mSlidingUpViewLayout;
 
     @Nullable
     @Override
@@ -64,6 +68,8 @@ public class WCreditCardFragment extends Fragment implements View.OnClickListene
         connectionDetector = new ConnectionDetector();
         availableBalance=(WTextView)view.findViewById(R.id.available_funds);
         creditLimit=(WTextView)view.findViewById(R.id.creditLimit);
+        mLayoutInflater = (LayoutInflater)getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        mSlidingUpViewLayout = new SlidingUpViewLayout(getActivity(),mLayoutInflater);
         dueDate=(WTextView)view.findViewById(R.id.dueDate);
         minAmountDue=(WTextView)view.findViewById(R.id.minAmountDue);
         currentBalance=(WTextView)view.findViewById(R.id.currentBalance);
@@ -166,7 +172,8 @@ public class WCreditCardFragment extends Fragment implements View.OnClickListene
                         }
                     } else {
                         disableIncreaseLimit();
-                        WErrorDialog.setErrorMessage(getActivity(), httpDesc);
+                        mSlidingUpViewLayout.openOverlayView(httpDesc,
+                                SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
                     }
                     hideProgressBar();
                 }
@@ -178,7 +185,8 @@ public class WCreditCardFragment extends Fragment implements View.OnClickListene
             }.execute();
         } else {
             hideProgressBar();
-            WErrorDialog.getErrConnectToServer(getActivity());
+            mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
+                    SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
         }
     }
 
