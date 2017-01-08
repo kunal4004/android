@@ -45,6 +45,8 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     private int mSelectedPosition=-1;
     private CLIStepIndicatorActivity mStepIndicatorActivity;
     private CLIStepIndicatorActivity.OnFragmentRefresh onFragmentRefresh;
+    private LayoutInflater mLayoutInflater;
+    private SlidingUpViewLayout mSlidingUpViewLayout;
 
     public interface StepNavigatorCallback{
         void openNextFragment(int index);
@@ -73,6 +75,8 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         mContext = this;
         mWoolworthsApplication = (WoolworthsApplication)getActivity().getApplication();
         mConnectionDetector = new ConnectionDetector();
+        mLayoutInflater = (LayoutInflater)getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        mSlidingUpViewLayout = new SlidingUpViewLayout(getActivity(),mLayoutInflater);
 
         initUI();
         setListener();
@@ -143,25 +147,33 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                 @Override
                 protected void onPostExecute(DeaBanks deaBanks) {
                     super.onPostExecute(deaBanks);
+
                     if (deaBanks.banks!=null) {
-                        mBanks = deaBanks.banks;
-                        otherChecked(deaBanks.banks);
-                        mCLIDeaBankMapAdapter = new CLIDeaBankMapAdapter(deaBanks.banks,mContext);
-                        mLayoutManager = new LinearLayoutManager(getActivity());
-                        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                        mRecycleList.setLayoutManager(mLayoutManager);
-                        mRecycleList.setNestedScrollingEnabled(false);
-                        mRecycleList.setAdapter(mCLIDeaBankMapAdapter);
-                        mCLIDeaBankMapAdapter.setCLIContent();
-                        relButtonCLIDeaBank.setVisibility(View.VISIBLE);
+                        if (deaBanks.httpCode == 200) {
+
+                            mBanks = deaBanks.banks;
+                            otherChecked(deaBanks.banks);
+                            mCLIDeaBankMapAdapter = new CLIDeaBankMapAdapter(deaBanks.banks, mContext);
+                            mLayoutManager = new LinearLayoutManager(getActivity());
+                            mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                            mRecycleList.setLayoutManager(mLayoutManager);
+                            mRecycleList.setNestedScrollingEnabled(false);
+                            mRecycleList.setAdapter(mCLIDeaBankMapAdapter);
+                            mCLIDeaBankMapAdapter.setCLIContent();
+                            relButtonCLIDeaBank.setVisibility(View.VISIBLE);
+                        } else {
+                            relButtonCLIDeaBank.setVisibility(View.GONE);
+                        }
                     }else {
-                        relButtonCLIDeaBank.setVisibility(View.GONE);
+                        mSlidingUpViewLayout.openOverlayView(deaBanks.response.desc,
+                                SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
                     }
                     stopProgressDialog();
                 }
             }.execute();
         }else{
-            WErrorDialog.getErrConnectToServer(getActivity());
+            mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
+                    SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
         }
     }
 
@@ -188,20 +200,21 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                             stepNavigatorCallback.openNextFragment(1);
                         }
                         }else {
-                        WErrorDialog.setErrorMessage(getActivity(),getString(R.string.cli_select_bank_error));
+                        mSlidingUpViewLayout.openOverlayView(getString(R.string.cli_select_bank_error),
+                                SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
                     }
                 }else{
                      if(mConnectionDetector.isOnline(getActivity())){
-                         WErrorDialog.setErrorMessage(getActivity(),getString(R.string.cli_select_bank_error));
+                         mSlidingUpViewLayout.openOverlayView(getString(R.string.cli_select_bank_error),
+                                 SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
                      }else{
-                         WErrorDialog.getErrConnectToServer(getActivity());
+                         mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
+                                 SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
                      }
                 }
                 break;
 
             case R.id.imgInfo:
-                SlidingUpViewLayout slidingUpPanelLayout = new SlidingUpViewLayout(getActivity());
-                slidingUpPanelLayout.openOverlayView();
                 break;
         }
     }
