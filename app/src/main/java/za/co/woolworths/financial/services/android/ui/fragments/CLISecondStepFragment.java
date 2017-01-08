@@ -22,6 +22,7 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
 public class CLISecondStepFragment extends Fragment implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
@@ -36,6 +37,8 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
 
     WoolworthsApplication mWoolworthsApplication;
     private CLIStepIndicatorActivity mMain;
+    private LayoutInflater mLayoutInflater;
+    private SlidingUpViewLayout mSlidingUpViewLayout;
 
     public CLISecondStepFragment() {}
     View view;
@@ -43,9 +46,12 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
          view = inflater.inflate(R.layout.cli_fragment_step_two, container, false);
          mWoolworthsApplication = (WoolworthsApplication)getActivity().getApplication();
+        mLayoutInflater = (LayoutInflater)getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        mSlidingUpViewLayout = new SlidingUpViewLayout(getActivity(),mLayoutInflater);
+
         initUI();
         setListener();
-         setText();
+        setText();
         return view;
     }
 
@@ -108,7 +114,8 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
             case R.id.btnContinue:
                 mBtnContinue.startAnimation(buttonClick);
                 if (mRadApplySolvency.getCheckedRadioButtonId() == -1) {
-                    WErrorDialog.setErrorMessage(getActivity(),getString(R.string.cli_check_field));
+                    mSlidingUpViewLayout.openOverlayView(getString(R.string.cli_check_field),
+                            SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
                     return;
                 }
 
@@ -132,6 +139,4 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
         stepNavigatorCallback = (CLIFirstStepFragment.StepNavigatorCallback)getActivity();
         mMain = (CLIStepIndicatorActivity) getActivity();
     }
-
-
 }

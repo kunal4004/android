@@ -2,8 +2,8 @@ package za.co.woolworths.financial.services.android.util.binder.view;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,15 +16,14 @@ import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
-import java.text.NumberFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import za.co.woolworths.financial.services.android.models.dto.CreditLimit;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.DataBindAdapter;
 import za.co.woolworths.financial.services.android.util.binder.DataBinder;
 
@@ -56,7 +55,6 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
           if (creditLimit!=null) {
                 holder.mTxtACreditLimit.setText(creditLimit.getTitle());
                 holder.mTextAmount.setTag(position);
-                holder.mTextAmount.setHint("R"+creditLimit.getAmount());
                 holder.mTextAmount.setVisibility(View.VISIBLE);
           }
 
@@ -111,45 +109,7 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
             mTextAmount = (WEditTextView) view.findViewById(R.id.textAmount);
             mImgInfo = (ImageView) view.findViewById(R.id.imgInfo);
             mLinRootView = (LinearLayout) view.findViewById(R.id.linRootView);
-
-            mTextAmount.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    int position = (int) mTextAmount.getTag();
-
-                    if (!s.toString().equals(current)) {
-                        mTextAmount.removeTextChangedListener(this);
-
-                        String replaceable = String.format("[%s .\\s]", NumberFormat.getCurrencyInstance().getCurrency().getSymbol());
-                        String cleanString = s.toString().replaceAll(replaceable, "").replace("R","").replace(",","");
-                        double parsed;
-                        try {
-                            parsed = Double.parseDouble(cleanString);
-                        } catch (NumberFormatException e) {
-                            parsed = 0.00;
-                        }
-
-                        String formatted = Utils.formatCurrency(parsed);
-
-                        current = formatted;
-                        mTextAmount.setText(formatted);
-                        mTextAmount.setSelection(formatted.length());
-
-                        if (mDataSet != null) {
-                            mDataSet.get(position).setAmount(newAmount(String.valueOf(s)));
-                        }
-                        // Do whatever you want with position
-                        mTextAmount.addTextChangedListener(this);
-
-                    }
-                }
-            });
+            mTextAmount.addTextChangedListener(new NumberTextWatcher(mTextAmount));
         }
     }
 
@@ -159,9 +119,91 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
 
     public String newAmount(String amount){
         if(amount.length()>0) {
-            return amount.replace(" ", "").replace("R", "").replace(",","");
+            return amount.replaceAll("[^0-9.]", "");
         }else {
             return "0";
         }
     }
+
+    public class NumberTextWatcher implements TextWatcher {
+
+        private DecimalFormat df;
+        private DecimalFormat dfnd;
+        private boolean hasFractionalPart;
+
+        private EditText et;
+
+        public NumberTextWatcher(EditText et)
+        {
+            df = new DecimalFormat("#,###.##");
+            df.setDecimalSeparatorAlwaysShown(true);
+            dfnd = new DecimalFormat("#,###");
+            this.et = et;
+            hasFractionalPart = false;
+        }
+
+        @SuppressWarnings("unused")
+        private static final String TAG = "NumberTextWatcher";
+
+        @Override
+        public void afterTextChanged(Editable s)
+        {
+            int position = (int) et.getTag();
+            et.removeTextChangedListener(this);
+
+            try {
+                int inilen, endlen;
+                inilen = et.getText().length();
+                String v = s.toString().replace(String.valueOf(df.getDecimalFormatSymbols().getGroupingSeparator()), "").replace(" ", "").replace("R ", "").replace("R", "");
+                Number n = null;
+                if (TextUtils.isEmpty(v)) {
+                    et.setText("");
+                } else {
+                    try {
+                        n = df.parse(v);
+                    } catch (ParseException e) {
+                    }
+                    int cp = et.getSelectionStart();
+                    String finalAmount="";
+                    if (hasFractionalPart) {
+                        finalAmount = "R " + df.format(n).replace(".", " ").replace(","," ");
+                    } else {
+                        finalAmount = "R " + dfnd.format(n).replace(".", " ").replace(","," ");
+                    }
+                    et.setText(finalAmount);
+                    if (mDataSet != null) {
+                            mDataSet.get(position).setAmount(newAmount(String.valueOf(s)));
+                    }
+                    endlen = et.getText().length();
+                    int sel = (cp + (endlen - inilen));
+                    if (sel > 0 && sel <= et.getText().length()) {
+                        et.setSelection(sel);
+                    } else {
+                        // place cursor at the end?
+                        et.setSelection(et.getText().length());
+                    }
+                }
+            }catch(NumberFormatException nfe){
+            }
+            et.addTextChangedListener(this);
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after)
+        {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count)
+        {
+            if (s.toString().contains(String.valueOf(df.getDecimalFormatSymbols().getDecimalSeparator())))
+            {
+                hasFractionalPart = true;
+            } else {
+                hasFractionalPart = false;
+            }
+        }
+
+    }
+
 }

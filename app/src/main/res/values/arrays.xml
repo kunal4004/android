@@ -88,16 +88,13 @@
     <string-array name="cli_option">
         <item>@string/cli_option_one</item>
         <item>@string/cli_option_two</item>
-        <item>@string/cli_option_three</item>
     </string-array>
     <string-array name="cli_option_desc">
         <item>@string/cli_option_one_desc</item>
         <item>@string/cli_option_two_desc</item>
-        <item>@string/cli_option_three_desc</item>
     </string-array>
     <array name="cli_drawable">
         <item>@drawable/icon_paperclip</item>
-        <item>@drawable/icon_clip</item>
         <item>@drawable/icon_fax</item>
     </array>
 </resources>
