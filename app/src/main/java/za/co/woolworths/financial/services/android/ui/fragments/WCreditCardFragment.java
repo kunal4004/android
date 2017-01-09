@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
+import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -42,7 +43,7 @@ import static com.google.android.gms.plus.PlusOneDummyView.TAG;
  * Created by W7099877 on 22/11/2016.
  */
 
-public class WCreditCardFragment extends Fragment implements View.OnClickListener {
+public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener {
     public WTextView availableBalance;
     public WTextView creditLimit;
     public WTextView dueDate;

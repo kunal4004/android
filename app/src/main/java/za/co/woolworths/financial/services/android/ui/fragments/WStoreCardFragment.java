@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
+import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -41,7 +42,7 @@ import static com.google.android.gms.plus.PlusOneDummyView.TAG;
  * Created by W7099877 on 22/11/2016.
  */
 
-public class WStoreCardFragment extends Fragment implements View.OnClickListener{
+public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener{
 
     public WTextView availableBalance;
     public WTextView creditLimit;
@@ -118,9 +119,9 @@ public class WStoreCardFragment extends Fragment implements View.OnClickListener
         switch (v.getId())
         {
             case R.id.txtTransactions:
-                Intent intent =new Intent(getActivity(), WTransactionsActivity.class);
-                intent.putExtra("productOfferingId",productOfferingId);
-                startActivity(intent);
+                Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
+                intent.putExtra("productOfferingId", productOfferingId);
+                startActivityForResult(intent, 0);
                 break;
 
 
