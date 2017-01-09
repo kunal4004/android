@@ -34,6 +34,7 @@
     <color name="cli_personal_loan">#312439</color>
     <color name="semi_transparent_black">#50000000</color>
     <color name="semi_per_black">#30000000</color>
+    <color name="description_color">#80000000</color>
 
     <!-- step indicator -->
     <color name="background_default">#A5D6A7</color>

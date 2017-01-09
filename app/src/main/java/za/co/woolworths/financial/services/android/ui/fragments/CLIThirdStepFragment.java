@@ -441,18 +441,10 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
         mDarkenScreen.setOutsideTouchable(false);
         //Then popup window appears
-        final View popupView = getActivity().getLayoutInflater().inflate(R.layout.open_overlay_got_it, null);
-        mOverlayBtn = (WButton) popupView.findViewById(R.id.btnOverlay);
-        mOverlayTitle = (WTextView)popupView.findViewById(R.id.textApplicationNotProceed);
-        mOverlayDescription = (WTextView)popupView.findViewById(R.id.overlayDescription);
-        textEmailContent = (WTextView)popupView.findViewById(R.id.textEmailContent);
-        mLinEmail =(LinearLayout)popupView.findViewById(R.id.linEmail);
-        mLinEmail.setVisibility(View.VISIBLE);
-        mOverlayTitle.setVisibility(View.GONE);
-        mOverlayDescription.setText(getString(R.string.cli_process_email_content));
-        mOverlayBtn.setText(getString(R.string.ok));
-        textEmailContent.setText(description);
-
+        final View popupView = getActivity().getLayoutInflater().inflate(R.layout.cli_email_layout, null);
+        mOverlayBtn = (WButton) popupView.findViewById(R.id.btnOk);
+        textEmailContent = (WTextView)popupView.findViewById(R.id.textEmailAddress);
+        textEmailContent.setText(mEmail);
         mPopWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mPopWindow.setAnimationStyle(R.style.Animations_popup);
         mPopWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);

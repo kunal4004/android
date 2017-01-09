@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.view.ViewPager;
@@ -26,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountsCardsAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.BaseAccountFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.CLIFourthStepFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardEmptyFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanEmptyFragment;
@@ -49,11 +51,13 @@ public class MyAccountCardsActivity extends AppCompatActivity {
     CardsFragmentPagerAdapter fragmentsAdapter;
     private CollapsingToolbarLayout collapsingToolbarLayout = null;
     private WoolworthsApplication mWoolworthsApplication;
+    public static Activity myAccountCardsActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_account_cards_test);
+        myAccountCardsActivity = this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
