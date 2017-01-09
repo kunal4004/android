@@ -211,7 +211,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     }
 
     public void disableIncreaseLimit(){
-        txtIncreseLimit.setEnabled(true);
+        txtIncreseLimit.setEnabled(false);
         txtIncreseLimit.setTextColor(Color.GRAY);
         mImageArrow.setImageAlpha(50);
     }

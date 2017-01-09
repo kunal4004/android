@@ -26,6 +26,7 @@
         android:layout_marginTop="36dp"
         android:gravity="center_horizontal"
         android:text="@string/why_we_need_location_services"
+        android:textAllCaps="true"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:WTextView_font="medium_bold"
@@ -56,7 +57,7 @@
         android:text="@string/go_to_settings"
         android:textColor="@color/black"
         android:textSize="15sp"
-        app:WTextView_font="medium_bold"
+        app:WButton_font="medium_bold"
         android:background="@color/white"
         />
 
