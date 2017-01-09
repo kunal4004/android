@@ -143,30 +143,27 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                 switch (checkedId){
                     case R.id.radioNoSolvency:
                         isConfidential=true;
+                        Log.e("SolvencyYes","isSolvencyTrue");
                         break;
                     case R.id.radioYesSolvency:
                         isConfidential = false;
+                        Log.e("SolvencyYes","isSolvencyFalse");
                         displayConfidentialPopUp();
                         break;
                 }
                 hideSoftKeyboard();
             }
         });
+
         mRadConfidentialCredit.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId){
                     case R.id.radioYesConfidentialCredit:
-                        if (!isConfidential)
-                            displaySolvencyPopUp();
                         break;
                     case R.id.radioNoConfidentialCredit:
-                        if(!isConfidential){
-                            displayCannotProceed();
-                        }else{
-                            displaySolvencyPopUp();
-                        }
+                           displaySolvencyPopUp();
                         break;
                 }
                 hideSoftKeyboard();
@@ -269,7 +266,15 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                                 }else{
                                     isSolvency=false;
                                 }
-                                if (isConfidential&&isSolvency) {
+                                if (isConfidential&&!isSolvency) {
+
+                                    displaySolvencyPopUp();
+
+                                } else if (!isConfidential&&isSolvency){
+                                    displayConfidentialPopUp();
+                                } else if (!isConfidential&&!isSolvency){
+                                    displayConfidentialPopUp();
+                                } else {
                                     mCreateOfferRequest = new CreateOfferRequest(mWoolworthsApplication.getProductOfferingId(),
                                             mCreditLimitAmount,
                                             getNumbers(0),
@@ -290,8 +295,6 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
 ////                                    }
                                     //}
                                     createOfferRequest();
-                                }else{
-                                    displayCannotProceed();
                                 }
                             }
                 }
@@ -439,7 +442,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                 }
             }.execute();
         }else{
-            WErrorDialog.getErrConnectToServer(CLISupplyInfoActivity.this);
+            slidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server), SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
         }
     }
 
@@ -664,66 +667,10 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                 mDarkenScreen.dismiss();
             }
         });
-        return darkenScreen;
-    }
 
-
-    public PopupWindow displayCannotProceed() {
-        //darken the current screen
-        View view = getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
-        mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
-        mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
-        mDarkenScreen.setOutsideTouchable(false);
-        //Then popup window appears
-        final View popupView = getLayoutInflater().inflate(R.layout.cli_confidential_popup, null);
-        mBtnCancel = (WButton) popupView.findViewById(R.id.btnCancel);
-        mBtnContinue = (WButton) popupView.findViewById(R.id.btnContinue);
-        mTextApplicationNotProceed = (WTextView) popupView.findViewById(R.id.textApplicationNotProceed);
-        mTextOverlayDescription = (WTextView) popupView.findViewById(R.id.overlayDescription);
-        mTextApplicationNotProceed.setText(getString(R.string.cli_pop_insolvency_title));
-        mTextOverlayDescription.setText(getString(R.string.cli_pop_confidential_desc));
-        mPopWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mPopWindow.setAnimationStyle(R.style.Animations_popup);
-        mPopWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
-        mPopWindow.setOutsideTouchable(false);
-        //Dismiss popup when touch outside
-        mPopWindow.setTouchable(false);
         mBtnCancel.setText("YES");
         mBtnContinue.setText("NO");
-        mBtnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPopWindow.dismiss();
-                    }
-                }, 200);
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDarkenScreen.dismiss();
-                    }
-                }, 300);
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                    }
-                }, 400);
 
-            }
-        });
-
-        mBtnContinue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopWindow.dismiss();
-                 mDarkenScreen.dismiss();
-            }
-        });
         return darkenScreen;
     }
 }

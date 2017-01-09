@@ -1,7 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.Intent;
+import android.app.Activity;
 import android.graphics.Color;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
@@ -26,6 +29,7 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountsCardsAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.BaseAccountFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.CLIFourthStepFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardEmptyFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanEmptyFragment;
@@ -49,11 +53,13 @@ public class MyAccountCardsActivity extends AppCompatActivity {
     CardsFragmentPagerAdapter fragmentsAdapter;
     private CollapsingToolbarLayout collapsingToolbarLayout = null;
     private WoolworthsApplication mWoolworthsApplication;
+    public static Activity myAccountCardsActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_account_cards_test);
+        myAccountCardsActivity = this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -226,6 +232,26 @@ public class MyAccountCardsActivity extends AppCompatActivity {
                 break;
             default:
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()){
+            setResult(resultCode);
+            finish();
+        }
+    }
+
+    public static class MyAccountCardsFragment extends Fragment{
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+
+            getActivity().setResult(resultCode);
         }
     }
 }

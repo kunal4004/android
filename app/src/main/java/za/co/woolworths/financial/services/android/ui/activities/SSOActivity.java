@@ -31,7 +31,8 @@ public class SSOActivity extends WebViewActivity {
         NO_CACHED_NONCE(3),
         STATE_MISMATCH(4),
         NONCE_MISMATCH(5),
-        SUCCESS(6);
+        SUCCESS(6),
+        EXPIRED(7);
 
         private int result;
 
