@@ -353,6 +353,6 @@
     <string name="onboarding_desc_screen_3">Conveniently view your credit balance, next payment due, available funds, apply for a personal loan and more.</string>
     <string name="onboarding_desc_screen_4">Create an account or use your existing Woolies logins to get started. Your login details will be the same on the app, mobi site and website.</string>
     <string name="welcome_back">Welcome back</string>
-
+    <string name="cli_activity_desc">To help us calculate how much additional credit you can qualify for, please answer a few quick and easy questions.  Once you have completed this, you will need to submit proof of income in order for us to proceed with your application.</string>
     <string name="cli_attach_drive_desc">Select your existing saved documents from your device and email it to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.</string>
 </resources>
