@@ -25,6 +25,11 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 
 public class CLIFourthStepFragment extends Fragment implements View.OnClickListener {
 
+    public interface CloseActivity{
+        public void closeActivity();
+    }
+
+
     private View view;
     private WButton mBtnBackToAccounts;
 
@@ -35,7 +40,7 @@ public class CLIFourthStepFragment extends Fragment implements View.OnClickListe
          view = inflater.inflate(R.layout.cli_fragment_step_four, container, false);
          setHasOptionsMenu(true);
          MyAccountCardsActivity.myAccountCardsActivity.finish();
-        initUI();
+         initUI();
          setListener();
          setContent();
         return view;
