@@ -170,6 +170,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
         view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
         view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
+        view.findViewById(R.id.linkAccountsBtn).setOnClickListener(this.btnLinkAccounts_onClick);
+
+
 
         //hide all views, load accounts may occur
         this.initialize();
@@ -317,6 +320,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         @Override
         public void onClick(View v) {
             ScreenManager.presentSSORegister(getActivity());
+        }
+    };
+
+    private View.OnClickListener btnLinkAccounts_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ScreenManager.presentSSOLinkAccounts(getActivity());
         }
     };
 

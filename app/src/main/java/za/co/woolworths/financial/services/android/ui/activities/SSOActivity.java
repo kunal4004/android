@@ -50,6 +50,7 @@ public class SSOActivity extends WebViewActivity {
     public static final String TAG_HOST = "TAG_HOST";
     public static final String TAG_PATH = "TAG_PATH";
     public static final String TAG_JWT = "TAG_JWT";
+    public static final String TAG_SCOPE = "TAG_SCOPE";
 
 
     // TODO: This redirectURIString be pulled from MCS.
@@ -83,8 +84,9 @@ public class SSOActivity extends WebViewActivity {
         this.protocol = Protocol.getProtocolByRawValue(bundle.getString(SSOActivity.TAG_PROTOCOL));
         this.host = Host.getHostByRawValue(bundle.getString(SSOActivity.TAG_HOST));
         this.path = Path.getPathByRawValue(bundle.getString(SSOActivity.TAG_PATH));
+        String scope = bundle.getString(SSOActivity.TAG_SCOPE);
 
-        String link = this.constructAndGetAuthorisationRequestURL();
+        String link = this.constructAndGetAuthorisationRequestURL(scope);
 
         Log.d(SSOActivity.TAG, String.format("Authorization Link: %s", link));
 
@@ -165,8 +167,11 @@ public class SSOActivity extends WebViewActivity {
         }
     }
 
-    private String constructAndGetAuthorisationRequestURL() {
-        String scope = "openid email profile";//default scope
+    private String constructAndGetAuthorisationRequestURL(String scope) {
+        if(scope == null){
+            scope = "";
+        }
+        scope = scope.concat(" openid email profile");//default scope
 
 
         Uri.Builder builder = new Uri.Builder();
