@@ -475,13 +475,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     public void redirectToMyAccountsCardsActivity(int position)
     {
         woolworthsApplication.setCliCardPosition(position);
-        Intent intent=new Intent(getActivity(),MyAccountCardsActivity.class);
+        Intent intent = new Intent(getActivity(), MyAccountCardsActivity.class);
 
         intent.putExtra("position",position);
         if(accountsResponse != null) {
             intent.putExtra("accounts", Utils.objectToJson(accountsResponse));
         }
-        startActivity(intent);
+        startActivityForResult(intent, 0);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
     }
@@ -540,6 +540,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 Log.e(TAG, e.getMessage());
             }
 
+            initialize();
+        } else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()){
             initialize();
         }
     }
