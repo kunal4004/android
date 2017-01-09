@@ -141,7 +141,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
     private void setListener() {
         mBtnContinue.setOnClickListener(this);
-        mEditAccountNumber.addTextChangedListener(new AccountNumberFormatWatcher(getActivity(), mEditAccountNumber));
+       // mEditAccountNumber.addTextChangedListener(new AccountNumberFormatWatcher(getActivity(), mEditAccountNumber));
     }
 
     private void setContent() {
