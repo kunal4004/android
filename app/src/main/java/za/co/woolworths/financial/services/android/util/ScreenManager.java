@@ -52,4 +52,15 @@ public class ScreenManager {
         activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         activity.finish();
     }
+
+    public static void presentSSOLinkAccounts(Activity activity) {
+
+        Intent intent = new Intent(activity, SSOActivity.class);
+        intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
+        intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
+        intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
+        intent.putExtra(SSOActivity.TAG_SCOPE, "C2Id");
+
+        activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
+    }
 }
