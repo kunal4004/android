@@ -155,29 +155,6 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
             }
         });
 
-//        mRadConfidentialCredit.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//
-//            @Override
-//            public void onCheckedChanged(RadioGroup group, int checkedId) {
-//                switch (checkedId){
-//                    case R.id.radioYesConfidentialCredit:
-//                        if (!isConfidential)
-//                            displaySolvencyPopUp();
-//                        Log.e("SolvencyYes","isConfidentialTrue");
-//                        break;
-//                    case R.id.radioNoConfidentialCredit:
-//                        if(!isConfidential){
-//                            Log.e("SolvencyYes","isConfidentialfalse");
-//                            displayCannotProceed();
-//                        }else{
-//                            displaySolvencyPopUp();
-//                        }
-//                        break;
-//                }
-//                hideSoftKeyboard();
-//            }
-//        });
-
         mRadConfidentialCredit.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
@@ -186,13 +163,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                     case R.id.radioYesConfidentialCredit:
                         break;
                     case R.id.radioNoConfidentialCredit:
-                      //  if(!isConfidential){
-                          //  Log.e("SolvencyYes","isConfidentialfalse");
                            displaySolvencyPopUp();
-                       // }else{
-                        //    displayCannotProceed();
-                       // }
-                      //  Log.e("SolvencyYes","radio3");
                         break;
                 }
                 hideSoftKeyboard();
