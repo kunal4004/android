@@ -210,7 +210,7 @@ public class WPersonalLoanFragment extends Fragment implements View.OnClickListe
     }
 
     public void disableIncreaseLimit(){
-        txtIncreseLimit.setEnabled(true);
+        txtIncreseLimit.setEnabled(false);
         txtIncreseLimit.setTextColor(Color.GRAY);
         mImageArrow.setImageAlpha(50);
     }
