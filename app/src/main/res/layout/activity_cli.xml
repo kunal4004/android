@@ -101,7 +101,7 @@
                 android:gravity="center_horizontal|bottom"
                 android:letterSpacing="0.05"
                 android:layout_marginBottom="58dp"
-                android:textColor="@color/semi_transparent_black"
+                android:textColor="@color/cli_content_color_desc"
                 android:lineSpacingExtra="4dp"
                 android:layout_below="@+id/textBeforeStart"
                 android:textSize="@dimen/text_desc_15sp"
