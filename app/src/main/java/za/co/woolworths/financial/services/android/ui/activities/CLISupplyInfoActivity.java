@@ -442,7 +442,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                 }
             }.execute();
         }else{
-            WErrorDialog.getErrConnectToServer(CLISupplyInfoActivity.this);
+            slidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server), SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
         }
     }
 
