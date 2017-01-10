@@ -111,7 +111,6 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
             new HttpAsyncTask<String, String, AuthoriseLoanResponse>() {
                 @Override
                 protected AuthoriseLoanResponse httpDoInBackground(String... params) {
-                    // public AuthoriseLoanRequest(int productOfferingId, int drawDownAmount, int repaymentPeriod, int installmentAmount, int creditLimit) {
                     int productOfferingId = Integer.valueOf(mSharePreferenceHelper.getValue("lw_product_offering_id"));
                     int drawDownAmount = Integer.valueOf(mSharePreferenceHelper.getValue("lw_amount_drawn_cent"));
                     int repaymentPeriod = Integer.valueOf(mSharePreferenceHelper.getValue("lw_months"));
