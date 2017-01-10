@@ -48,5 +48,8 @@
         android:textColor="@color/black"
         android:text="@string/cli_contact_delay"
         />
-    <include layout="@layout/cli_footer_binder" />
+
+    <include layout="@layout/cli_footer_binder"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/textOrderDelay" />
 </RelativeLayout>

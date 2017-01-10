@@ -27,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
+import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -74,6 +75,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         mLayoutInflater = (LayoutInflater)getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         mSlidingUpViewLayout = new SlidingUpViewLayout(getActivity(),mLayoutInflater);
         creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
+
         dueDate = (WTextView) view.findViewById(R.id.dueDate);
         minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
         currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
@@ -123,14 +125,16 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.withdrawCashNow:
+                Intent openWithdrawCashNow = new Intent(getActivity(), LoanWithdrawalActivity.class);
+                startActivity(openWithdrawCashNow);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
             case R.id.txtTransactions:
                 Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
                 intent.putExtra("productOfferingId", productOfferingId);
                 startActivity(intent);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
-
-
             case R.id.txtIncreseLimit:
                 if (!isOfferActive) {
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
