@@ -107,7 +107,7 @@
         android:layout_alignParentStart="true">
 
 
-        <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+        <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
@@ -127,7 +127,9 @@
         app:WEditTextView_font="light"
         android:id="@+id/editWithdrawAmount"
             android:layout_centerVertical="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true" >
+            <requestFocus />
+        </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
 
     </RelativeLayout>
 

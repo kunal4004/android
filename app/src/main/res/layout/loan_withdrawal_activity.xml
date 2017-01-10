@@ -23,6 +23,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:background="@color/purple"
                 app:layout_collapseMode="pin" >
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:layout_width="wrap_content"
@@ -44,5 +45,6 @@
 
     <include layout="@layout/loan_withdrawal"/>
     <include layout="@layout/loan_withdrawal_confirmation"/>
+    <include layout="@layout/loan_withdrawal_success"/>
 
 </android.support.design.widget.CoordinatorLayout>

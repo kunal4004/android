@@ -9,16 +9,13 @@
     android:layout_marginTop="?attr/actionBarSize"
     android:id="@+id/scrollLoanWithdrawal"
             android:orientation="vertical"
-            android:scrollbars="none"
-    >
+            android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingBottom="32dp"
-
-        >
+        android:paddingBottom="32dp">
 
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -78,7 +75,6 @@
             android:minHeight="50dp"
             android:padding="16dp"
             >
-
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -97,6 +93,7 @@
                 android:text="36 Months"
                 android:textColor="#4dffffff"
                 android:textSize="15sp"
+                android:id="@+id/textMonths"
                 app:WTextView_font="myriadpro_regular"
                 />
         </RelativeLayout>
@@ -133,6 +130,7 @@
                 android:text="R105.00"
                 android:textColor="#4dffffff"
                 android:textSize="15sp"
+                android:id="@+id/textAdditionalMonthAmount"
                 app:WTextView_font="myriadpro_regular"
                 />
         </RelativeLayout>
@@ -143,6 +141,10 @@
             android:background="#1affffff"
             />
 
+        <RelativeLayout android:id="@+id/relConfirmLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom">
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -157,7 +159,8 @@
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="12sp"
-            />
+            android:id="@+id/btnConfirm" />
+        </RelativeLayout>
     </LinearLayout>
 
 </ScrollView>

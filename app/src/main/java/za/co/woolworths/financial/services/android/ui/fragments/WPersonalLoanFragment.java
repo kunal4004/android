@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -57,7 +58,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     public WTextView txtIncreseLimit;
 
     String productOfferingId;
-    private ProgressDialog mGetActiveOfferProgressDialog;
     private WoolworthsApplication woolworthsApplication;
     private ConnectionDetector connectionDetector;
     private WebView mProgressCreditLimit;
@@ -65,6 +65,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     private ImageView mImageArrow;
     private LayoutInflater mLayoutInflater;
     private SlidingUpViewLayout mSlidingUpViewLayout;
+    private SharePreferenceHelper mSharePreferenceHelper;
 
     @Nullable
     @Override
@@ -72,11 +73,11 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         View view = inflater.inflate(R.layout.cards_common_fragment, container, false);
         woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
         connectionDetector = new ConnectionDetector();
+        mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
         availableBalance = (WTextView) view.findViewById(R.id.available_funds);
         mLayoutInflater = (LayoutInflater)getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         mSlidingUpViewLayout = new SlidingUpViewLayout(getActivity(),mLayoutInflater);
         creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
-
         dueDate = (WTextView) view.findViewById(R.id.dueDate);
         minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
         currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
@@ -115,8 +116,11 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 if ("PL".equals(p.productGroupCode)) {
                     productOfferingId = String.valueOf(p.productOfferingId);
                     woolworthsApplication.setProductOfferingId(p.productOfferingId);
+                    mSharePreferenceHelper.save(String.valueOf(p.productOfferingId),"lw_product_offering_id");
                     availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.availableFunds), 1, getActivity())));
+                    mSharePreferenceHelper.save(availableBalance.getText().toString(),"lw_available_fund");
                     creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.creditLimit), 1, getActivity())));
+                    mSharePreferenceHelper.save(creditLimit.getText().toString(),"lw_credit_limit");
                     minAmountDue.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.minimumAmountDue), 1, getActivity())));
                     currentBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.currentBalance), 1, getActivity())));
                     try {
@@ -125,7 +129,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                         dueDate.setText(p.paymentDueDate);
                         WiGroupLogger.e(getActivity(), TAG, e.getMessage(), e);
                     }
-
                 }
             }
         }
@@ -135,6 +138,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.withdrawCashNow:
+                mSharePreferenceHelper.save("","lw_amount_drawn_cent");
                 Intent openWithdrawCashNow = new Intent(getActivity(), LoanWithdrawalActivity.class);
                 startActivity(openWithdrawCashNow);
                 getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

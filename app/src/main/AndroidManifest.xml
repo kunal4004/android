@@ -71,6 +71,9 @@
             android:icon="@drawable/ic_action_bar_logo"
             android:label="@string/personal_loan_withdrawal"
             android:screenOrientation="portrait" />
+
+
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.PersonalLoanWithdrawalConfirmationActivity"
             android:icon="@drawable/ic_action_bar_logo"
@@ -141,6 +144,13 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/LoanWithdrawal" />
+
+        <activity
+        android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalSuccessActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/LoanWithdrawal" />
+
+
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalConfirmActivity"

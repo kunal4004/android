@@ -357,4 +357,7 @@
     <string name="cli_process_email_content">To upload your Proof of Income Documents, follow the instructions we’ve sent to your email. If you didn’t receive the password reset, please check your spam folder.</string>
     <string name="loan_withdrawal_title">loan withdrawal</string>
     <string name="your_cash_will_be_in_your_account">Your cash will be in your account in 48 hours</string>
+    <string name="loan_withdrawal_popup_error">Loan request too high</string>
+    <string name="loan_withdrawal_popup_desc_err">Unfortunately you do need meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>
+    <string name="issueing_loan">Processing your loan...</string>
 </resources>
