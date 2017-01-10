@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/white"
-              android:orientation="vertical">
+              android:scrollbars="none"
+              >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
 
     <ImageView
         android:layout_width="wrap_content"
@@ -34,12 +40,14 @@
         android:textColor="#e6000000"
         android:textSize="17.5sp"
         app:WTextView_font="medium"
+        android:layout_marginBottom="48dp"
         />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
+        android:id="@+id/layoutLoginLogout"
+        android:layout_marginTop="16dp"
         android:minHeight="48dp"
         android:orientation="horizontal"
         android:paddingLeft="32dp"
@@ -142,7 +150,6 @@
             android:paddingLeft="32dp"
             android:paddingRight="32dp"
             android:text="@string/wrewards_three_levels"
-            android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="15sp"
             app:WTextView_font="myriadpro_regular"/>
@@ -356,4 +363,5 @@
             android:layout_height="0.5dp"
             android:background="#1a000000"/>
     </LinearLayout>
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>
