@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,6 +99,15 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         return view;
     }
 
+    //To remove negative signs from negative balance and add "CR" after the negative balance
+    public String removeNegativeSymbol(SpannableString amount){
+        String currentAmount = amount.toString();
+        if(currentAmount.contains("-")){
+            currentAmount = currentAmount.replace("-","")+" CR";
+        }
+        return currentAmount;
+    }
+
     public void bindData(AccountsResponse response) {
         List<Account> accountList = response.accountList;
         if (accountList != null) {
@@ -105,10 +115,10 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 if ("PL".equals(p.productGroupCode)) {
                     productOfferingId = String.valueOf(p.productOfferingId);
                     woolworthsApplication.setProductOfferingId(p.productOfferingId);
-                    availableBalance.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.availableFunds), 1, getActivity()));
-                    creditLimit.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.creditLimit), 1, getActivity()));
-                    minAmountDue.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.minimumAmountDue), 1, getActivity()));
-                    currentBalance.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.currentBalance), 1, getActivity()));
+                    availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.availableFunds), 1, getActivity())));
+                    creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.creditLimit), 1, getActivity())));
+                    minAmountDue.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.minimumAmountDue), 1, getActivity())));
+                    currentBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.currentBalance), 1, getActivity())));
                     try {
                         dueDate.setText(FontHyperTextParser.getSpannable(WFormatter.formatDate(p.paymentDueDate), 1, getActivity()));
                     } catch (ParseException e) {

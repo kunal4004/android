@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -193,6 +194,15 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    //To remove negative signs from negative balance and add "CR" after the negative balance
+    public String removeNegativeSymbol(SpannableString amount){
+        String currentAmount = amount.toString();
+        if(currentAmount.contains("-")){
+            currentAmount = currentAmount.replace("-","")+" CR";
+        }
+        return currentAmount;
+    }
+
     private void configureView() {
         this.configureAndLayoutTopLayerView();
 
@@ -203,21 +213,21 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 linkedStoreCardView.setVisibility(View.VISIBLE);
                 applyStoreCardView.setVisibility(View.GONE);
 
-                sc_available_funds.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity()));
+                sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
                 scProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
 
             } else if(account.productGroupCode.equals("CC")){
                 linkedCreditCardView.setVisibility(View.VISIBLE);
                 applyCreditCardView.setVisibility(View.GONE);
 
-                cc_available_funds.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity()));
+                cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
                 ccProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
 
             } else if(account.productGroupCode.equals("PL")){
                 linkedPersonalCardView.setVisibility(View.VISIBLE);
                 applyPersonalCardView.setVisibility(View.GONE);
 
-                pl_available_funds.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity()));
+                pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
                 plProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
             }
         }
