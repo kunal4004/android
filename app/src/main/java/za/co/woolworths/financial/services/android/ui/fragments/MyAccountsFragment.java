@@ -471,7 +471,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             }
         }.execute();
     }
-
     public void redirectToMyAccountsCardsActivity(int position)
     {
         woolworthsApplication.setCliCardPosition(position);

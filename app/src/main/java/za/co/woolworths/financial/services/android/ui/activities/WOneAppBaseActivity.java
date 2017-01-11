@@ -44,6 +44,12 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         super.onCreate(savedInstanceState);
         setContentView(R.layout.one_app_base_activity);
         Utils.updateStatusBarBackground(this);
+
+
+        Intent intent = new Intent(WOneAppBaseActivity.this,LoanWithdrawalActivity.class);
+        startActivity(intent);
+
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
