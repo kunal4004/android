@@ -5,6 +5,10 @@ import android.content.Intent;
 
 import com.awfs.coordination.R;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
@@ -60,6 +64,26 @@ public class ScreenManager {
         intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
         intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
         intent.putExtra(SSOActivity.TAG_SCOPE, "C2Id");
+
+        activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
+    }
+
+    public static void presentSSOLogout(Activity activity) {
+        HashMap<String, String> params = new HashMap<String, String>();
+
+        try {
+            SessionDao sessionDao = new SessionDao(activity, SessionDao.KEY.USER_TOKEN);
+            params.put("id_token_hint", sessionDao.value);
+            params.put("post_logout_redirect_uri", "http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4/sso/redirect/logout\n");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Intent intent = new Intent(activity, SSOActivity.class);
+        intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
+        intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
+        intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.LOGOUT.rawValue());
+        intent.putExtra(SSOActivity.TAG_EXTRA_QUERYSTRING_PARAMS, params);
 
         activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
     }
