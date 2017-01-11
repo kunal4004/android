@@ -4,18 +4,22 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 
+import jp.wasabeef.recyclerview.animators.adapters.AlphaInAnimationAdapter;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
+import za.co.woolworths.financial.services.android.ui.adapters.PSRootCategoryAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -34,6 +38,8 @@ public class WProductFragment extends Fragment {
     private ImageView mImBarcodeScanner;
     private WEditTextView mEditProductSearch;
     private RecyclerView mRecycleProductSearch;
+    private PSRootCategoryAdapter mPSRootCategoryAdapter;
+    private LinearLayoutManager mLayoutManager;
 
     @Nullable
     @Override
@@ -82,6 +88,27 @@ public class WProductFragment extends Fragment {
             @Override
             protected void onPostExecute(RootCategories rootCategories) {
                 super.onPostExecute(rootCategories);
+
+                switch (rootCategories.httpCode){
+                    case 200:
+                        if(rootCategories.rootCategories!=null) {
+                            mPSRootCategoryAdapter = new PSRootCategoryAdapter(rootCategories.rootCategories);
+                            mLayoutManager = new LinearLayoutManager(getActivity());
+                            mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                            mRecycleProductSearch.setLayoutManager(mLayoutManager);
+                            mRecycleProductSearch.setNestedScrollingEnabled(false);
+                            mRecycleProductSearch.setAdapter(mPSRootCategoryAdapter);
+                            mPSRootCategoryAdapter.setCLIContent();
+                        }
+                        break;
+
+                    default:
+                        mSlidingUpViewLayout.openOverlayView(rootCategories.response.desc,
+                                SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                        break;
+                }
+
+                Log.e("rootCategories",String.valueOf(rootCategories));
             }
 
         }.execute();

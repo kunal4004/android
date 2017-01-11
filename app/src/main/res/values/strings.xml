@@ -356,5 +356,5 @@
     <string name="cli_attach_drive_desc">Select your existing saved documents from your device and email it to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.</string>
     <string name="cli_process_email_content">To upload your Proof of Income Documents, follow the instructions we’ve sent to your email. If you didn’t receive the password reset, please check your spam folder.</string>
 
-    <string name="product_search_hint">Search Products, Brands</string>
+    <string name="product_search_hint">Search products, brands</string>
 </resources>

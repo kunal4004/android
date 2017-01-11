@@ -158,7 +158,7 @@ public class WfsApi {
     }
 
     public RootCategories getRootCategory() {
-        return mApiInterface.getRootCategories(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken());
+        return mApiInterface.getRootCategories(getOsVersion(),getApiId(),getOS(), getSha1Password(),getDeviceModel(),getNetworkCarrier(),getOsVersion(),"Android");
     }
 
     private String getOsVersion() {

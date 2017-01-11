@@ -31,11 +31,9 @@ import za.co.woolworths.financial.services.android.models.dto.LoginRequest;
 import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
-import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
-import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
@@ -198,7 +196,7 @@ public interface ApiInterface {
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion,
             @Header("sessionToken") String sessionToken,
-            @Query("lat") String lat ,
+            @Query("lat") String lat,
             @Query("lon") String lon,
             @Query("searchString") String searchString,
             @Query("radius") String radius
@@ -335,7 +333,6 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Query("productOfferingId") String productOfferingId);
 
-
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @POST("/user/cli/offer/email")
     CLIEmailResponse cliSendEmailRquest(
@@ -348,7 +345,6 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Header("osVersion") String osVersion,
             @Body String email);
-
 
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @POST("/user/cli/offer/bankingDetails")
@@ -365,18 +361,16 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Body UpdateBankDetail updateBankDetail);
 
-
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
-    @GET("/wfs/app/v4/categories")
+    @GET("/categories")
     RootCategories getRootCategories(
+            @Header("osVersion") String osVersion,
             @Header("apiId") String apiId,
+            @Header("os") String os,
             @Header("sha1Password") String sha1Password,
-            @Header("deviceVersion") String deviceVersion,
             @Header("deviceModel") String deviceModel,
             @Header("network") String network,
-            @Header("os") String os,
-            @Header("osVersion") String osVersion,
-            @Header("userAgent") String userAgent,
-            @Header("userAgentVersion") String userAgentVersion,
-            @Header("sessionToken") String sessionToken);
+            @Header("deviceVersion") String deviceVersion,
+            @Header("apiKey") String userAgent);
+
 }
+
