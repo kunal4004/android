@@ -49,12 +49,236 @@
                     android:orientation="vertical"
                     android:layout_width="wrap_content">
 
-                    <include layout="@layout/cli_info_content_limit"/>
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:id="@+id/linRootView"
+                        android:layout_marginLeft="@dimen/bank_spacing_width"
+                        android:layout_marginRight="@dimen/bank_spacing_width"
+                        android:layout_marginTop="@dimen/default_margin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                    <include layout="@layout/cli_yes_no_row"/>
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:minHeight="44dp">
 
-                    <include layout="@layout/cli_yes_no_confidential_credit_row"/>
+                            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                android:id="@+id/textACreditLimit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/cli_credit_limit_amount"
+                                android:letterSpacing="0.1"
+                                android:gravity="center|start"
+                                android:lineSpacingExtra="1.3dp"
+                                android:textColor="@color/semi_transparent_black"
+                                android:textSize="13sp"
+                                android:textAllCaps="true"
+                                android:maxLines="2"
+                                app:WTextView_font="medium"
+                                android:layout_alignParentStart="true"
+                                android:layout_toStartOf="@+id/imgInfo"
+                                android:layout_alignBottom="@+id/imgInfo"
+                                android:layout_alignTop="@+id/imgInfo" />
 
+                            <ImageView
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:layout_alignParentEnd="true"
+                                android:src="@drawable/icon_info"
+                                android:id="@+id/imgInfo"
+                                />
+                        </RelativeLayout>
+
+                        <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:digits="0123456789"
+                            android:id="@+id/textAmount"
+                            android:backgroundTint="@color/recent_search_bg"
+                            android:inputType="number"
+                            android:maxLines="1"
+                            android:imeOptions="actionNext"
+                            android:maxLength="21"
+                            android:hint="@string/cli_amount_hint"
+                            app:WEditTextView_font="medium"
+                            android:textColor="@color/black"
+                            android:textSize="20sp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_marginRight="@dimen/bank_spacing_width"
+                        android:layout_marginLeft="@dimen/bank_spacing_width"
+                        android:layout_marginTop="@dimen/bank_spacing_width"
+                        android:layout_height="wrap_content">
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/textApplySolvency"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cli_solvency_agreement"
+                            android:letterSpacing="0.08"
+                            android:gravity="center|start"
+                            android:textColor="@color/semi_transparent_black"
+                            android:textSize="12sp"
+                            android:lineSpacingExtra="4dp"
+                            app:WTextView_font="medium"
+                            android:layout_alignParentStart="true"
+                            android:layout_toStartOf="@+id/imgInfo"
+                            android:layout_alignBottom="@+id/imgInfo"
+                            android:layout_alignTop="@+id/imgInfo" />
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/textApplySolvencyDescription"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cli_text_with_bullet"
+                            android:letterSpacing="0.06"
+                            android:gravity="center|start"
+                            android:textColor="@color/semi_transparent_black"
+                            android:layout_marginTop="@dimen/default_margin"
+                            android:textSize="15sp"
+                            android:lineSpacingExtra="4dp"
+                            app:WTextView_font="myriadpro_regular"
+                            android:layout_alignParentStart="true"
+                            android:layout_toStartOf="@+id/imgInfo"
+                            android:layout_alignBottom="@+id/imgInfo"
+                            android:layout_alignTop="@+id/imgInfo" />
+
+                        <RadioGroup
+                            android:id="@+id/radApplySolvency"
+                            android:layout_width="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="start"
+                            android:layout_marginTop="@dimen/default_margin"
+                            android:layout_marginBottom="@dimen/default_margin"
+                            android:layout_height="wrap_content" >
+                            <za.co.woolworths.financial.services.android.ui.views.WRadioButton
+                                android:id="@+id/radioYesSolvency"
+                                android:layout_width="wrap_content"
+                                android:button="@null"
+                                android:layout_height="wrap_content"
+                                android:text="@string/cli_yes"
+                                android:gravity="right|center"
+                                android:textSize="12sp"
+                                android:checked="false"
+                                android:letterSpacing="0.2"
+                                android:background="@android:color/transparent"
+                                android:textAllCaps="true"
+                                android:drawableLeft="@drawable/cli_radio_selector"
+                                android:drawablePadding="10dp"
+
+                                />
+                            <za.co.woolworths.financial.services.android.ui.views.WRadioButton
+                                android:id="@+id/radioNoSolvency"
+                                android:layout_width="wrap_content"
+                                android:layout_marginLeft="36dp"
+                                android:button="@null"
+                                android:drawablePadding="10dp"
+                                android:drawableLeft="@drawable/cli_radio_selector"
+                                android:background="@android:color/transparent"
+                                android:gravity="right|center"
+                                android:textSize="12sp"
+                                android:letterSpacing="0.2"
+                                app:WTextView_font="medium_bold"
+                                android:textAllCaps="true"
+                                android:layout_height="wrap_content"
+                                android:text="@string/cli_no"
+                                />
+                        </RadioGroup>
+
+                        <include layout="@layout/horizontal_divider"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_marginRight="@dimen/bank_spacing_width"
+                        android:layout_marginLeft="@dimen/bank_spacing_width"
+                        android:layout_marginTop="@dimen/bank_spacing_width"
+                        android:layout_height="match_parent">
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/textProceedToSolvency"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cli_proceed_to_permission"
+                            android:letterSpacing="0.09"
+                            android:gravity="center|start"
+                            android:layout_marginTop="5dp"
+                            android:visibility="gone"
+                            android:layout_marginBottom="@dimen/default_margin"
+                            android:textAllCaps="true"
+                            android:textColor="@color/semi_transparent_black"
+                            android:textSize="14sp"
+                            android:lineSpacingExtra="4dp"
+                            app:WTextView_font="medium"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignTop="@+id/imgInfo" />
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/textConfidentialCredit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cli_solvency_agreement"
+                            android:letterSpacing="0.06"
+                            android:gravity="center|start"
+                            android:textColor="@color/semi_transparent_black"
+                            android:textSize="15sp"
+                            android:lineSpacingExtra="4dp"
+                            app:WTextView_font="myriadpro_regular"
+                            android:layout_alignParentStart="true"
+                            android:layout_toStartOf="@+id/imgInfo"
+                            android:layout_alignBottom="@+id/imgInfo"
+                            android:layout_alignTop="@+id/imgInfo" />
+
+
+                        <RadioGroup android:id="@+id/radConfidentialCredit"
+                            android:orientation="horizontal"
+                            android:gravity="start"
+                            android:layout_marginTop="@dimen/default_margin"
+                            android:layout_marginBottom="@dimen/default_margin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+                            <za.co.woolworths.financial.services.android.ui.views.WRadioButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:textAllCaps="true"
+                                android:text="@string/cli_yes"
+                                android:drawablePadding="10dp"
+                                android:button="@null"
+                                android:gravity="right|center"
+                                android:drawableLeft="@drawable/cli_radio_selector"
+                                android:id="@+id/radioYesConfidentialCredit"
+                                android:letterSpacing="0.2"
+                                android:checked="false"
+                                android:textSize="12sp"
+                                />
+
+                            <za.co.woolworths.financial.services.android.ui.views.WRadioButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:textAllCaps="true"
+                                android:button="@null"
+                                android:layout_marginLeft="36dp"
+                                android:textSize="12sp"
+                                android:drawablePadding="10dp"
+                                android:letterSpacing="0.2"
+                                android:drawableLeft="@drawable/cli_radio_selector"
+                                android:id="@+id/radioNoConfidentialCredit"
+                                android:text="@string/cli_no"
+                                android:gravity="right|center"
+                                android:checked="false"
+                            />
+                        </RadioGroup>
+
+
+                        <include layout="@layout/horizontal_divider"/>
+                    </LinearLayout>
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/recycleList"
                         android:layout_width="match_parent"

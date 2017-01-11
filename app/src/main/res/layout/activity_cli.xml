@@ -1,6 +1,7 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 android:layout_width="match_parent"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:background="@color/white"
     android:layout_height="match_parent">
 
@@ -15,10 +16,11 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+
             app:contentScrim="@color/black"
             app:statusBarScrim="@null"
             app:titleEnabled="false"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
             <include layout="@layout/my_accounts_cards_pager_item"
                 android:paddingLeft="30dp"
                 android:paddingRight="30dp"
@@ -49,13 +51,18 @@
 
     </android.support.design.widget.AppBarLayout>
 
-        <RelativeLayout
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:layout_marginRight="32dp"
+        android:layout_marginLeft="32dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="32dp"
-            android:layout_marginTop="80dp"
-            android:layout_marginRight="32dp"
-            android:layout_marginBottom="32dp">
+            android:orientation="vertical">
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/textCreditLimit"
@@ -63,9 +70,10 @@
                 android:layout_height="wrap_content"
                 android:text="@string/cli_credit_limit_increase"
                 android:gravity="center"
+                android:layout_marginTop="44dp"
                 android:layout_centerInParent="true"
                 android:textAllCaps="true"
-                android:letterSpacing="0.05"
+                android:letterSpacing="0.07"
                 android:textColor="@color/semi_per_black"
                 android:textSize="14sp"
                 app:WTextView_font="medium" />
@@ -76,7 +84,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/cli_before_we_get_started"
                 android:gravity="center"
-                android:layout_below="@+id/textCreditLimit"
                 android:textAllCaps="true"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="24dp"
@@ -85,18 +92,26 @@
                 android:letterSpacing="0.1"
                 app:WTextView_font="medium_bold" />
 
+
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/textClIContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/cli_store_card_content"
-                android:gravity="center"
+                android:gravity="center_horizontal|bottom"
                 android:letterSpacing="0.05"
-                android:textColor="@color/semi_transparent_black"
-                android:lineSpacingExtra="2dp"
+                android:layout_marginBottom="58dp"
+                android:textColor="@color/cli_content_color_desc"
+                android:lineSpacingExtra="4dp"
                 android:layout_below="@+id/textBeforeStart"
                 android:textSize="@dimen/text_desc_15sp"
                 app:WTextView_font="myriadpro_regular" />
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textClIContent"
+                android:gravity="bottom">
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
                 android:id="@+id/btnContinue"
@@ -111,7 +126,8 @@
                 app:WButton_font="medium_bold"
                 android:textSize="12sp"
                 android:letterSpacing="0.2"/>
-        </RelativeLayout>
-
+            </RelativeLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 
 </android.support.design.widget.CoordinatorLayout>

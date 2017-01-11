@@ -5,14 +5,17 @@
     <permission
         android:name="com.awfs.coordination.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.GET_TASKS"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="com.awfs.coordination.permission.MAPS_RECEIVE"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.awfs.coordination.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
@@ -102,7 +105,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/StoreLocator"></activity>
+            android:theme="@style/StoreLocator" />
         <!-- Goolge Maps API Key -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
@@ -116,13 +119,11 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity"
             android:screenOrientation="portrait"
             android:theme="@style/StoreSearch" />
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CLI"
             android:windowSoftInputMode="stateHidden" />
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity"
             android:screenOrientation="portrait"
@@ -135,7 +136,6 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.CLIActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingList" />
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity"
             android:screenOrientation="portrait"
@@ -159,7 +159,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/OneAppBaseTheme"></activity>
+            android:theme="@style/OneAppBaseTheme" />
 
         <!-- Firebase Notifications -->
         <service android:name="za.co.woolworths.financial.services.android.util.WFirebaseMessagingService">
@@ -177,23 +177,25 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/MyAccountCards"></activity>
+            android:theme="@style/MyAccountCards" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/ContactUs"></activity>
+            android:theme="@style/ContactUs" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivityTest"
-            android:theme="@style/MyAccountCards"></activity>
+            android:theme="@style/MyAccountCards" />
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity" />
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity"
-            android:theme="@style/WTransaction"></activity>
+            android:theme="@style/WTransaction" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CLISupplyInfoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CLI"
-            android:windowSoftInputMode="stateHidden"  />
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name="za.co.woolworths.financial.services.android.ui.OneAppActivity"></activity>
     </application>
+
 </manifest>

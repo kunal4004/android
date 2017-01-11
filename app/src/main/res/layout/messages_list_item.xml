@@ -55,6 +55,7 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
+                    android:id="@+id/relContainer"
                     android:layout_height="wrap_content"
                     android:minHeight="80dp"
                     android:padding="16dp"
@@ -116,12 +117,13 @@
 
             </LinearLayout>
                 </FrameLayout>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/transparentview"
                     android:visibility="gone"
-                    android:background="@drawable/card_transparent_shadow"
+                    android:background="@color/recent_search_bg"
                     />
             </FrameLayout>
         </LinearLayout>

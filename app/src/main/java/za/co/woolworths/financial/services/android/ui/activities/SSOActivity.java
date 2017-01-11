@@ -3,8 +3,11 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -18,7 +21,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.jsonwebtoken.Jwts;
-import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 
 public class SSOActivity extends WebViewActivity {
@@ -29,7 +31,8 @@ public class SSOActivity extends WebViewActivity {
         NO_CACHED_NONCE(3),
         STATE_MISMATCH(4),
         NONCE_MISMATCH(5),
-        SUCCESS(6);
+        SUCCESS(6),
+        EXPIRED(7);
 
         private int result;
 
@@ -48,6 +51,7 @@ public class SSOActivity extends WebViewActivity {
     public static final String TAG_HOST = "TAG_HOST";
     public static final String TAG_PATH = "TAG_PATH";
     public static final String TAG_JWT = "TAG_JWT";
+    public static final String TAG_SCOPE = "TAG_SCOPE";
 
 
     // TODO: This redirectURIString be pulled from MCS.
@@ -63,7 +67,13 @@ public class SSOActivity extends WebViewActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        this.instantiateWebView();
+    }
+
+    private void instantiateWebView(){
         this.webView.setWebViewClient(this.webviewClient);
+        this.webView.getSettings().setUseWideViewPort(true);
+        this.webView.getSettings().setLoadWithOverviewMode(true);
     }
 
     //override intent to return expected link that's to be used in the WebViewActivity
@@ -75,8 +85,9 @@ public class SSOActivity extends WebViewActivity {
         this.protocol = Protocol.getProtocolByRawValue(bundle.getString(SSOActivity.TAG_PROTOCOL));
         this.host = Host.getHostByRawValue(bundle.getString(SSOActivity.TAG_HOST));
         this.path = Path.getPathByRawValue(bundle.getString(SSOActivity.TAG_PATH));
+        String scope = bundle.getString(SSOActivity.TAG_SCOPE);
 
-        String link = this.constructAndGetAuthorisationRequestURL();
+        String link = this.constructAndGetAuthorisationRequestURL(scope);
 
         Log.d(SSOActivity.TAG, String.format("Authorization Link: %s", link));
 
@@ -157,8 +168,11 @@ public class SSOActivity extends WebViewActivity {
         }
     }
 
-    private String constructAndGetAuthorisationRequestURL() {
-        String scope = "openid email profile";//default scope
+    private String constructAndGetAuthorisationRequestURL(String scope) {
+        if(scope == null){
+            scope = "";
+        }
+        scope = scope.concat(" openid email profile");//default scope
 
 
         Uri.Builder builder = new Uri.Builder();
@@ -234,6 +248,8 @@ public class SSOActivity extends WebViewActivity {
         public void onPageStarted(WebView view, final String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
 
+            Log.d(TAG, url);
+
             if (url.equals(SSOActivity.this.redirectURIString)) {
                 //get state and scope from webview posted form
                 view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
@@ -262,5 +278,26 @@ public class SSOActivity extends WebViewActivity {
                 });
             }
         }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            hideProgressBar();
+            super.onPageFinished(view, url);
+        }
+
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+            //super.onReceivedSslError(view, handler, error);
+            hideProgressBar();
+            handler.proceed();
+        }
     };
+
+    public void hideProgressBar(){
+        if (progressBar!=null){
+            if(progressBar.getVisibility()==View.VISIBLE){
+                progressBar.setVisibility(View.GONE);
+            }
+        }
+    }
 }

@@ -1,10 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,22 +18,30 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
@@ -87,6 +98,21 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     WoolworthsApplication mWoolworthsApplication;
     private UpdateBankDetail mUpdateBankDetail;
     ConnectionDetector connectionDetector;
+    private WTextView mTextACreditLimit;
+    private SlidingUpViewLayout slidingUpViewLayout;
+    private WTextView mTextProceedToSolvency;
+    private LayoutInflater mLayoutInflater;
+    private WButton mBtnCancel;
+    private PopupWindow pWindow;
+
+    Handler handler = new Handler();
+    private PopupWindow darkenScreen;
+    private PopupWindow mDarkenScreen;
+    private PopupWindow mPopWindow;
+    private boolean isConfidential=true;
+    private WTextView mTextApplicationNotProceed;
+    private WTextView mTextOverlayDescription;
+    private boolean isSolvency;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +122,8 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         connectionDetector = new ConnectionDetector();
         mWoolworthsApplication = (WoolworthsApplication)getApplication();
         mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
+        mLayoutInflater = (LayoutInflater) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        slidingUpViewLayout = new SlidingUpViewLayout(this,mLayoutInflater);
 
         initViews();
         setActionBar();
@@ -104,6 +132,43 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mArrCreditLimit = getCreditLimitInfo();
         setRecycleView(mArrCreditLimit);
         hideSoftKeyboard();
+        radioCheckStateChanged();
+    }
+
+    private void radioCheckStateChanged() {
+        mRadApplySolvency.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.radioNoSolvency:
+                        isConfidential=true;
+                        Log.e("SolvencyYes","isSolvencyTrue");
+                        break;
+                    case R.id.radioYesSolvency:
+                        isConfidential = false;
+                        Log.e("SolvencyYes","isSolvencyFalse");
+                        displayConfidentialPopUp();
+                        break;
+                }
+                hideSoftKeyboard();
+            }
+        });
+
+        mRadConfidentialCredit.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.radioYesConfidentialCredit:
+                        break;
+                    case R.id.radioNoConfidentialCredit:
+                           displaySolvencyPopUp();
+                        break;
+                }
+                hideSoftKeyboard();
+            }
+        });
     }
 
     private void initViews() {
@@ -120,6 +185,8 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mRadioYesConfidentialCredit = (RadioButton) findViewById(R.id.radioYesConfidentialCredit);
         mRadioNoConfidentialCredit = (RadioButton) findViewById(R.id.radioNoConfidentialCredit);
         mTextApplySolvency = (WTextView) findViewById(R.id.textApplySolvency);
+        mTextACreditLimit = (WTextView) findViewById(R.id.textACreditLimit);
+        mTextProceedToSolvency = (WTextView) findViewById(R.id.textProceedToSolvency);
         mImageCreditAmount = (ImageView) findViewById(R.id.imgInfo);
     }
 
@@ -150,39 +217,10 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mTextAmount.setVisibility(View.VISIBLE);
         mImageCreditAmount.setVisibility(View.GONE);
         mImageCreditAmount.setVisibility(View.GONE);
-        mTextAmount.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-                if (!s.toString().equals(current)) {
-                    mTextAmount.removeTextChangedListener(this);
-
-                    String replaceable = String.format("[%s .\\s]", NumberFormat.getCurrencyInstance().getCurrency().getSymbol());
-                    String cleanString = s.toString().replaceAll(replaceable, "").replace("R","").replace(",","");
-                    double parsed;
-                    try {
-                        parsed = Double.parseDouble(cleanString);
-                    } catch (NumberFormatException e) {
-                        parsed = 0.00;
-                    }
-
-                    String formatted = Utils.formatCurrency(parsed);
-
-                    current = formatted;
-                    mTextAmount.setText(formatted);
-                    mTextAmount.setSelection(formatted.length());
-
-                    // Do whatever you want with position
-                    mTextAmount.addTextChangedListener(this);
-                }
-            }
-        });
+        mTextACreditLimit.setText(getString(R.string.cli_additional_credit_amount));
+        mTextACreditLimit.setAllCaps(true);
+        mTextAmount.addTextChangedListener(new NumberTextWatcher(mTextAmount));
+        mTextProceedToSolvency.setVisibility(View.VISIBLE);
     }
 
     private void setRecycleView(List<CreditLimit> creditLimit) {
@@ -201,48 +239,67 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
             case R.id.btnContinue:
                 mBtnContinue.startAnimation(buttonClick);
                 hideSoftKeyboard();
-                String creditAmount = mTextAmount.getText().toString();
-                if(TextUtils.isEmpty(creditAmount)){
-                    WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this,
-                            getString(R.string.cli_solvency_error));
-                } else {
-                    mCreditLimitAmount = Integer.valueOf(creditAmount.replace(" ", "").replace("R", "").replace(",", ""));
-                    if (mRadApplySolvency.getCheckedRadioButtonId() == -1) {
-                        WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this,
-                                getString(R.string.cli_solvency_error));
-                    } else {
-                        if (mRadConfidentialCredit.getCheckedRadioButtonId() == -1) {
-                            WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this,
-                                    getString(R.string.cli_solvency_error));
-                        } else {
-                            mCreateOfferRequest = new CreateOfferRequest(mWoolworthsApplication.getProductOfferingId(),
-                                    mCreditLimitAmount,
-                                    getNumbers(0),
-                                    getNumbers(1),
-                                    getNumbers(2),
-                                    getNumbers(3),
-                                    getNumbers(4),
-                                    getNumbers(5),
-                                    getNumbers(6),
-                                    getNumbers(7));
+                    String creditAmount = mTextAmount.getText().toString();
 
-                            for (int index = 0; index < mArrCreditLimit.size(); index++) {
-                                String amount = mArrCreditLimit.get(index).getAmount();
-                                if (TextUtils.isEmpty(amount) || amount.equalsIgnoreCase("0")) {
-                                    WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this,
-                                            getString(R.string.cli_solvency_error));
-                                    return;
+                        if(!TextUtils.isEmpty(creditAmount))
+                            mCreditLimitAmount = Integer.valueOf(creditAmount.replaceAll("[^0-9.]", ""));
+                        else
+                            mCreditLimitAmount=0;
+                        if (mRadApplySolvency.getCheckedRadioButtonId() == -1) {
+                            slidingUpViewLayout.openOverlayView(getString(R.string.cli_solvency_error), SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                        } else {
+                            if (mRadConfidentialCredit.getCheckedRadioButtonId() == -1) {
+                                slidingUpViewLayout.openOverlayView(getString(R.string.cli_solvency_error), SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                            } else {
+
+                                String selectedRadSolvency = selectedRadioGroup(mRadApplySolvency);
+                                String selectedRadConfidential = selectedRadioGroup(mRadConfidentialCredit);
+
+                                if (selectedRadSolvency.equalsIgnoreCase("NO")){
+                                    isConfidential=true;
+                                }else{
+                                    isConfidential=false;
+                                }
+
+                                if (selectedRadConfidential.equalsIgnoreCase("YES")){
+                                    isSolvency=true;
+                                }else{
+                                    isSolvency=false;
+                                }
+                                if (isConfidential&&!isSolvency) {
+
+                                    displaySolvencyPopUp();
+
+                                } else if (!isConfidential&&isSolvency){
+                                    displayConfidentialPopUp();
+                                } else if (!isConfidential&&!isSolvency){
+                                    displayConfidentialPopUp();
+                                } else {
+                                    mCreateOfferRequest = new CreateOfferRequest(mWoolworthsApplication.getProductOfferingId(),
+                                            mCreditLimitAmount,
+                                            getNumbers(0),
+                                            getNumbers(1),
+                                            getNumbers(2),
+                                            getNumbers(3),
+                                            getNumbers(4),
+                                            getNumbers(5),
+                                            getNumbers(6),
+                                            getNumbers(7));
+
+//                                for (int index = 0; index < mArrCreditLimit.size(); index++) {
+//                                    String amount = mArrCreditLimit.get(index).getAmount();
+////                                    if (TextUtils.isEmpty(amount) || amount.equalsIgnoreCase("0")) {
+////                                        WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this,
+////                                                getString(R.string.cli_solvency_error));
+////                                        return;
+////                                    }
+                                    //}
+                                    createOfferRequest();
                                 }
                             }
-                            String selectedRadSolvency = selectedRadioGroup(mRadApplySolvency);
-                            String selectedRadConfidential = selectedRadioGroup(mRadConfidentialCredit);
-                            createOfferRequest(selectedRadSolvency, selectedRadConfidential);
-                        }
-                    }
                 }
                 break;
-            default:
-                break;
+
         }
     }
 
@@ -276,7 +333,6 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onClick(View v, int position) {
 
-        SlidingUpViewLayout slidingUpViewLayout = new SlidingUpViewLayout(this);
         if (mArrCreditLimit != null) {
             slidingUpView = slidingUpViewLayout.openOverlayView(mArrCreditLimit.get(position).getDescription(),
                     SlidingUpViewLayout.OVERLAY_TYPE.INFO);
@@ -302,12 +358,11 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         setRadioButtonBold();
     }
 
-
     @Override
     public void onBackPressed() {
         if (slidingUpView != null) {
             if (slidingUpView.isShowing()) {
-                slidingUpView.dismiss();
+                slidingUpViewLayout.dismissLayout();
             } else {
                 canGoBack();
             }
@@ -315,7 +370,6 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
             canGoBack();
         }
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -337,7 +391,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         return selectedConfidentialCredit;
     }
 
-    public void createOfferRequest(String solvency,String confidential) {
+    public void createOfferRequest() {
         if (connectionDetector.isOnline(CLISupplyInfoActivity.this)) {
             new HttpAsyncTask<String, String, CreateOfferResponse>() {
                 @Override
@@ -374,7 +428,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                                     openBankDetails();
                                     break;
                                 default:
-                                    WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this, createOfferResponse.response.desc);
+                                    slidingUpViewLayout.openOverlayView(createOfferResponse.response.desc, SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
                                     break;
                             }
                         }
@@ -388,13 +442,13 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                 }
             }.execute();
         }else{
-            WErrorDialog.getErrConnectToServer(CLISupplyInfoActivity.this);
+            slidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server), SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
         }
     }
 
     public int getNumbers(int position) {
         if (mArrCreditLimit != null) {
-            return Integer.valueOf(mArrCreditLimit.get(position).getAmount().replace("R", "").replace(" ", ""));
+            return Integer.valueOf(mArrCreditLimit.get(position).getAmount().replaceAll("[^0-9.]", ""));
         } else {
             return 0;
         }
@@ -430,6 +484,193 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         }catch (NullPointerException ex){}
     }
 
+    public class NumberTextWatcher implements TextWatcher {
 
+        private DecimalFormat df;
+        private DecimalFormat dfnd;
+        private boolean hasFractionalPart;
+
+        private EditText et;
+
+        public NumberTextWatcher(EditText et)
+        {
+            df = new DecimalFormat("#,###.##");
+            df.setDecimalSeparatorAlwaysShown(true);
+            dfnd = new DecimalFormat("#,###");
+            this.et = et;
+            hasFractionalPart = false;
+        }
+
+        @SuppressWarnings("unused")
+        private static final String TAG = "NumberTextWatcher";
+
+        @Override
+        public void afterTextChanged(Editable s)
+        {
+            et.removeTextChangedListener(this);
+
+            try {
+                int inilen, endlen;
+                inilen = et.getText().length();
+                String v = s.toString().replace(String.valueOf(df.getDecimalFormatSymbols().getGroupingSeparator()), "").replace(" ", "").replace("R ", "").replace("R", "");
+                Number n = null;
+                if (TextUtils.isEmpty(v)) {
+                    et.setText("");
+                } else {
+                    try {
+                        n = df.parse(v);
+                    } catch (ParseException e) {
+                    }
+                    int cp = et.getSelectionStart();
+                    String finalAmount="";
+                    if (hasFractionalPart) {
+                        finalAmount = "R " + df.format(n).replace(".", " ").replace(","," ");
+                    } else {
+                        finalAmount = "R " + dfnd.format(n).replace(".", " ").replace(","," ");
+                    }
+                    et.setText(finalAmount);
+                    endlen = et.getText().length();
+                    int sel = (cp + (endlen - inilen));
+                    if (sel > 0 && sel <= et.getText().length()) {
+                        et.setSelection(sel);
+                    } else {
+                        // place cursor at the end?
+                        et.setSelection(et.getText().length());
+                    }
+                }
+            }catch(NumberFormatException nfe){
+            }
+            et.addTextChangedListener(this);
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after)
+        {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count)
+        {
+            if (s.toString().contains(String.valueOf(df.getDecimalFormatSymbols().getDecimalSeparator())))
+            {
+                hasFractionalPart = true;
+            } else {
+                hasFractionalPart = false;
+            }
+        }
+    }
+
+    public PopupWindow displaySolvencyPopUp() {
+        //darken the current screen
+        View view = getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
+        darkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        darkenScreen.setAnimationStyle(R.style.Darken_Screen);
+        darkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
+        darkenScreen.setOutsideTouchable(false);
+        //Then popup window appears
+        final View popupView = getLayoutInflater().inflate(R.layout.cli_insolvency_popup, null);
+        mBtnCancel = (WButton) popupView.findViewById(R.id.btnCancel);
+        mBtnContinue = (WButton) popupView.findViewById(R.id.btnContinue);
+        pWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        pWindow.setAnimationStyle(R.style.Animations_popup);
+        pWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+        pWindow.setOutsideTouchable(false);
+        //Dismiss popup when touch outside
+        pWindow.setTouchable(false);
+        mBtnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        pWindow.dismiss();
+                    }
+                }, 200);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        darkenScreen.dismiss();
+                    }
+                }, 300);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    }
+                }, 400);
+
+            }
+        });
+        mBtnContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pWindow.dismiss();
+                darkenScreen.dismiss();
+            }
+        });
+        return darkenScreen;
+    }
+
+    public PopupWindow displayConfidentialPopUp() {
+        //darken the current screen
+        View view = getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
+        mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
+        mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
+        mDarkenScreen.setOutsideTouchable(false);
+        //Then popup window appears
+        final View popupView = getLayoutInflater().inflate(R.layout.cli_confidential_popup, null);
+        mBtnCancel = (WButton) popupView.findViewById(R.id.btnCancel);
+        mBtnContinue = (WButton) popupView.findViewById(R.id.btnContinue);
+        mTextApplicationNotProceed = (WTextView) popupView.findViewById(R.id.textApplicationNotProceed);
+        mTextOverlayDescription = (WTextView) popupView.findViewById(R.id.overlayDescription);
+        mTextApplicationNotProceed.setText(getString(R.string.cli_cancel_application));
+        mTextOverlayDescription.setText(getString(R.string.cli_cancel_application_desc));
+        mPopWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mPopWindow.setAnimationStyle(R.style.Animations_popup);
+        mPopWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+        mPopWindow.setOutsideTouchable(false);
+        //Dismiss popup when touch outside
+        mPopWindow.setTouchable(false);
+        mBtnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPopWindow.dismiss();
+                    }
+                }, 200);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDarkenScreen.dismiss();
+                    }
+                }, 300);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                    }
+                }, 400);
+
+            }
+        });
+
+
+        mBtnContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopWindow.dismiss();
+                mDarkenScreen.dismiss();
+            }
+        });
+
+        mBtnCancel.setText("YES");
+        mBtnContinue.setText("NO");
+
+        return darkenScreen;
+    }
 }
-

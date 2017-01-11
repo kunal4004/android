@@ -95,6 +95,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     WTextView cc_available_funds;
     WTextView pl_available_funds;
     WTextView messageCounter;
+    WTextView userName;
+    WTextView userInitials;
 
     private ProgressDialog mGetAccountsProgressDialog;
     private ProgressBar scProgressBar;
@@ -147,6 +149,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         ccProgressBar=(ProgressBar)view.findViewById(R.id.ccProgressBar);
         plProgressBar=(ProgressBar)view.findViewById(R.id.plProgressBar);
         messageCounter=(WTextView)view.findViewById(R.id.messageCounter);
+        userName = (WTextView) view.findViewById(R.id.user_name);
+        userInitials = (WTextView) view.findViewById(R.id.initials);
 
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
@@ -166,6 +170,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
         view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
         view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
+        view.findViewById(R.id.linkAccountsBtn).setOnClickListener(this.btnLinkAccounts_onClick);
+
+
 
         //hide all views, load accounts may occur
         this.initialize();
@@ -246,7 +253,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity)getActivity()).getJWTDecoded();
         if(jwtDecodedModel.AtgSession != null){
             loggedInHeaderLayout.setVisibility(View.VISIBLE);
-
+            //logged in user's name and family name will be displayed on the page
+            userName.setText(jwtDecodedModel.name + " " + jwtDecodedModel.family_name);
+            //initials of the logged in user will be displayed on the page
+            String initials = jwtDecodedModel.name.substring(0, 1).concat(" ").concat(jwtDecodedModel.family_name.substring(0, 1));
+            userInitials.setText(initials);
             if(jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")){
                 //user is linked and signed in
                 linkedAccountsLayout.setVisibility(View.VISIBLE);
@@ -309,6 +320,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         @Override
         public void onClick(View v) {
             ScreenManager.presentSSORegister(getActivity());
+        }
+    };
+
+    private View.OnClickListener btnLinkAccounts_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ScreenManager.presentSSOLinkAccounts(getActivity());
         }
     };
 
@@ -456,13 +474,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     public void redirectToMyAccountsCardsActivity(int position)
     {
         woolworthsApplication.setCliCardPosition(position);
-        Intent intent=new Intent(getActivity(),MyAccountCardsActivity.class);
+        Intent intent = new Intent(getActivity(), MyAccountCardsActivity.class);
 
         intent.putExtra("position",position);
-        if(accounts != null) {
+        if(accountsResponse != null) {
             intent.putExtra("accounts", Utils.objectToJson(accountsResponse));
         }
-        startActivity(intent);
+        startActivityForResult(intent, 0);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
     }
@@ -522,12 +540,14 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             }
 
             initialize();
+        } else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()){
+            initialize();
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-       // loadMessages();
+        loadMessages();
     }
 }

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingRight="@dimen/bank_spacing_width"
+        android:paddingLeft="@dimen/bank_spacing_width"
+        android:paddingTop="@dimen/bank_spacing_width"
+        android:background="@color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textApplicationNotProceed"
+            android:letterSpacing="0.09"
+            android:layout_marginBottom="@dimen/cli_eleven_dp"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:background="@color/white"
+            android:textSize="16sp"
+            android:text="@string/cli_proceed_to_permission"
+            app:WTextView_font="medium_bold"
+            android:textColor="@color/black" />
+
+        <LinearLayout
+            android:id="@+id/linEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/overlayDescription"
+            android:letterSpacing="0.06"
+            android:gravity="center|top"
+            android:lineSpacingExtra="1.3dp"
+            android:background="@color/white"
+            android:textSize="15sp"
+            android:layout_marginBottom="@dimen/default_margin"
+            android:text="@string/cli_pop_insolvency_desc"
+            app:WTextView_font="myriadpro_regular"
+            android:textColor="@color/semi_transparent_black"
+            />
+
+        <LinearLayout android:id="@+id/linYesNoContainer"
+            android:layout_width="match_parent"
+            android:weightSum="1"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/default_margin"
+            android:layout_marginBottom="@dimen/default_margin"
+            android:layout_height="@dimen/cli_button_height_popup"
+            android:orientation="horizontal">
+
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnCancel"
+                android:layout_marginRight="@dimen/default_margin"
+                android:layout_weight="0.5"
+                android:background="@drawable/white_button_bg"
+                android:gravity="center"
+                android:textAllCaps="true"
+                android:letterSpacing="0.12"
+                app:WButton_font="medium_bold"
+                android:textSize="12sp"
+                android:text="@string/cancel"
+                app:WTextView_font="medium_bold"
+                android:textColor="@color/black" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnContinue"
+                android:layout_weight="0.5"
+                android:background="@color/black"
+                android:gravity="center"
+                android:letterSpacing="0.12"
+                android:textAllCaps="true"
+                app:WButton_font="medium_bold"
+                android:textSize="12sp"
+                android:text="@string/cli_continue"
+                app:WTextView_font="medium_bold"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
