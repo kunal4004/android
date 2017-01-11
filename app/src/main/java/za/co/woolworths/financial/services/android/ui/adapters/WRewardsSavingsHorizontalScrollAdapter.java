@@ -9,6 +9,9 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
+import java.util.List;
+
+import za.co.woolworths.financial.services.android.models.dto.TierHistory;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 /**
@@ -19,9 +22,11 @@ public class WRewardsSavingsHorizontalScrollAdapter extends RecyclerView.Adapter
     Activity context;
     public int selectedPosition = 1;
     public final int  HEADER_POSITION = 0;
+    List<TierHistory> tierHistoryList;
 
-    public WRewardsSavingsHorizontalScrollAdapter(Activity context) {
+    public WRewardsSavingsHorizontalScrollAdapter(Activity context, List<TierHistory> tierHistoryList) {
         this.context = context;
+        this.tierHistoryList=tierHistoryList;
     }
 
     @Override
@@ -33,11 +38,15 @@ public class WRewardsSavingsHorizontalScrollAdapter extends RecyclerView.Adapter
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+
         if (position == HEADER_POSITION) {
             holder.listItem.setAlpha(0.3f);
             holder.monthText.setText(context.getString(R.string.year));
             holder.yearText.setText(context.getString(R.string.to_date));
         } else {
+            String[] monthAndYear=tierHistoryList.get(position-1).finMonthDescription.trim().split(" ");
+            holder.monthText.setText(monthAndYear[0].substring(0,3));
+            holder.yearText.setText(monthAndYear[1]);
             if (position == selectedPosition)
                 holder.listItem.setAlpha(1f);
             else
@@ -48,7 +57,7 @@ public class WRewardsSavingsHorizontalScrollAdapter extends RecyclerView.Adapter
     @Override
     public int getItemCount() {
         //return size()+1 for header view
-        return 5;
+        return tierHistoryList.size()+1;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

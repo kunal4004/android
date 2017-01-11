@@ -26,6 +26,10 @@ public class WFormatter {
         }
         return String.format("R%s.%02d", stringBuilder.reverse().toString(), amount % 100);
     }
+    public static String formatAmountNoDecimal(int amount) {
+
+        return String.format("R%d", amount / 100);
+    }
 
     public static String formatPercent(int amount) {
         return String.format("%d%%", amount / 100);

@@ -3,21 +3,26 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:background="@drawable/card_shadow"
-              android:orientation="vertical">
+              android:background="@color/grey_bg"
+              android:orientation="vertical"
+              android:paddingLeft="10dp"
+              android:paddingRight="10dp"
+    >
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="130dp"
         android:orientation="horizontal"
+        android:background="@drawable/voucher_shadow"
         >
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:id="@+id/leftpart"
             android:orientation="vertical"
             android:padding="16dp"
+            android:background="@drawable/voucherspart_left_part"
             >
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -33,7 +38,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/voucherValue"
-                android:text="100%"
                 android:textColor="@color/green"
                 android:textSize="24sp"
                 app:WTextView_font="bold"
@@ -41,9 +45,10 @@
         </LinearLayout>
 
         <RelativeLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_toRightOf="@+id/leftpart"
+            android:background="@color/white"
             android:padding="16dp"
             >
 
@@ -54,8 +59,9 @@
                 android:layout_above="@+id/expireDateLayout"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:text="Get your FREE WooliesCoffee valued at R29."
                 android:textColor="@color/black"
+                android:maxLines="4"
+                android:ellipsize="end"
                 android:textSize="14sp"
                 app:WTextView_font="medium_bold"
                 />
@@ -83,7 +89,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="5dp"
-                    android:text="Expires: 12/10/16"
                     android:textColor="#80000000"
                     android:textSize="12sp"
                     app:WTextView_font="myriadpro_regular"
@@ -92,6 +97,6 @@
             </LinearLayout>
         </RelativeLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

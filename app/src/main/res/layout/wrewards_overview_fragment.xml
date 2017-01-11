@@ -10,7 +10,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@drawable/rewardsoverviewcardbg"
         android:paddingTop="40dp"
         >
 
@@ -41,19 +41,20 @@
             android:text="@string/tier_status"
             android:textColor="#4d000000"
             android:textSize="12sp"
+            android:textAllCaps="true"
             app:WTextView_font="medium"
             />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/memberType"
+            android:id="@+id/tireStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
             android:layout_toLeftOf="@+id/infoImage"
-            android:text="LOYAL MEMBER"
             android:textColor="@color/green"
             android:textSize="15sp"
+            android:textAllCaps="true"
             app:WTextView_font="medium_bold"
             />
 
@@ -89,15 +90,16 @@
             android:text="@string/savings"
             android:textColor="#4d000000"
             android:textSize="12sp"
+            android:textAllCaps="true"
             app:WTextView_font="medium"
             />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/savings"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="R534.00"
             android:textColor="@color/black"
             android:textSize="15sp"
             app:WTextView_font="medium_bold"
@@ -112,6 +114,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/toNextTireLayout"
+        android:visibility="gone"
         android:background="@color/white"
         android:minHeight="56dp"
         android:paddingLeft="16dp"
@@ -124,6 +128,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:text="@string/to_next_tier"
+            android:textAllCaps="true"
             android:textColor="#4d000000"
             android:textSize="12sp"
             app:WTextView_font="medium"
@@ -132,9 +137,9 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/toNextTire"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="R1465.00"
             android:textColor="@color/black"
             android:textSize="15sp"
             app:WTextView_font="medium_bold"

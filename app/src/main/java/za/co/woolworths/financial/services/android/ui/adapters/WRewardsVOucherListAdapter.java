@@ -4,11 +4,16 @@ import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import java.text.ParseException;
+import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dto.Voucher;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.WFormatter;
 
 
 /**
@@ -17,10 +22,12 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class WRewardsVoucherListAdapter extends RecyclerView.Adapter<WRewardsVoucherListAdapter.VouchersViewHolder> {
 
-    Activity context;
-    public WRewardsVoucherListAdapter(Activity context)
+    public Activity context;
+    public List<Voucher> vouchers;
+    public WRewardsVoucherListAdapter(Activity context, List<Voucher> vouchers)
     {
         this.context=context;
+        this.vouchers=vouchers;
     }
     @Override
     public VouchersViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -31,11 +38,33 @@ public class WRewardsVoucherListAdapter extends RecyclerView.Adapter<WRewardsVou
 
     @Override
     public void onBindViewHolder(VouchersViewHolder holder, int position) {
+        Voucher mVoucher=vouchers.get(position);
+
+        holder.voucherMessage.setText(mVoucher.description);
+        if ("PERCENTAGE".equals(mVoucher.type))
+        {
+            holder.voucherValue.setText(String.valueOf(WFormatter.formatPercent(mVoucher.amount)));
+        }
+        else
+        {
+            holder.voucherValue.setText(String.valueOf(WFormatter.formatAmountNoDecimal(mVoucher.amount)));
+        }
+
+        try
+        {
+            holder.voucherExpireDate.setText("Expires: "+String.valueOf(WFormatter.formatDate(mVoucher.validToDate)));
+        }
+        catch (ParseException e)
+        {
+
+            holder.voucherExpireDate.setText("Expires: "+String.valueOf(mVoucher.validToDate));
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return 10;
+        return vouchers.size();
     }
 
     public  class VouchersViewHolder extends RecyclerView.ViewHolder{

@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -29,8 +30,10 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ContactUsFragmentPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
 import static com.google.android.gms.wearable.DataMap.TAG;
@@ -43,7 +46,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 
     public TabLayout tabLayout;
     public ViewPager viewPager;
-    ContactUsFragmentPagerAdapter adapter;
+    WRewardsFragmentPagerAdapter adapter;
     ProgressBar progressBar;
     LinearLayout fragmentView;
 
@@ -56,40 +59,52 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         fragmentView=(LinearLayout) view.findViewById(R.id.fragmentView);
 
         tabLayout = (TabLayout) view.findViewById(R.id.tabs);
+        viewPager.setOffscreenPageLimit(3);
 
         getWrewards();
         return view;
     }
 
-    private void setupViewPager(ViewPager viewPager) {
-        adapter=new ContactUsFragmentPagerAdapter(getActivity().getSupportFragmentManager());
+    private void setupViewPager(ViewPager viewPager,VoucherResponse voucherResponse) {
+        Bundle bundle=new Bundle();
+        bundle.putString("WREWARDS", Utils.objectToJson(voucherResponse));
+        adapter=new WRewardsFragmentPagerAdapter(getChildFragmentManager(),bundle);
         adapter.addFrag(new WRewardsOverviewFragment(), getString(R.string.overview));
         adapter.addFrag(new WRewardsVouchersFragment(), getString(R.string.vouchers));
         adapter.addFrag(new WRewardsSavingsFragment(), getString(R.string.savings));
         viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
+        try
+        {
+            setupTabIcons(voucherResponse.voucherCollection.vouchers.size());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
-    private void setupTabIcons()
+    private void setupTabIcons(int activeVoucherCount)
     {
         String[] tabTitle={getActivity().getString(R.string.overview),getActivity().getString(R.string.vouchers),getActivity().getString(R.string.savings)};
 
 
         for(int i=0;i<tabTitle.length;i++)
         {
-            tabLayout.getTabAt(i).setCustomView(prepareTabView(i,tabTitle));
+            tabLayout.getTabAt(i).setCustomView(prepareTabView(i,tabTitle,activeVoucherCount));
         }
     }
 
 
-    private View prepareTabView(int pos,String[] tabTitle) {
+    private View prepareTabView(int pos,String[] tabTitle,int activeVoucherCount) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.wrewards_custom_tab,null);
         TextView tv_title = (TextView) view.findViewById(R.id.tv_title);
         TextView tv_count = (TextView) view.findViewById(R.id.tv_count);
         tv_title.setText(tabTitle[pos]);
-        if(pos==1)
+        if(pos==1 && activeVoucherCount>0)
         {
             tv_count.setVisibility(View.VISIBLE);
-            tv_count.setText("2");
+            tv_count.setText(""+activeVoucherCount);
         }
         else
             tv_count.setVisibility(View.GONE);
@@ -139,16 +154,9 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
     {
         switch (voucherResponse.httpCode) {
             case 200:
-                setupViewPager(viewPager);
-                tabLayout.setupWithViewPager(viewPager);
-                try
-                {
-                    setupTabIcons();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                setupViewPager(viewPager,voucherResponse);
+
+
                 break;
             case 440:
                 AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
@@ -170,7 +178,6 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 
                     @Override
                     protected void onPostExecute(String s) {
-                        //WRewardsLoggedinAndLinkedFragment.this.initialize();
                         Intent intent = new Intent();
                         getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
                         getFragmentManager().popBackStack();

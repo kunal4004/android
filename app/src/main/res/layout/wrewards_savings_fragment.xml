@@ -9,9 +9,10 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/grey_bg"
+        android:layout_gravity="center_horizontal"
         />
     <View
         android:layout_width="match_parent"
@@ -43,7 +44,6 @@
             android:id="@+id/tireStatus"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="LOYAL"
             android:textColor="@color/green"
             android:textSize="15sp"
             android:textAllCaps="true"
@@ -87,7 +87,6 @@
             android:id="@+id/wrewardsInstantSavings"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="R74.07"
             android:textColor="#4d000000"
             android:textSize="15sp"
             android:textAllCaps="true"
@@ -125,7 +124,6 @@
             android:id="@+id/wrewardsGreenEarned"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="R74.07"
             android:textColor="#4d000000"
             android:textSize="15sp"
             android:textAllCaps="true"
@@ -163,7 +161,6 @@
             android:id="@+id/quarterlyVouchersEarned"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="R74.07"
             android:textColor="#4d000000"
             android:textSize="15sp"
             android:textAllCaps="true"
@@ -201,7 +198,6 @@
             android:id="@+id/yearToDateSpend"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="R825.00"
             android:textColor="#4d000000"
             android:textSize="15sp"
             android:textAllCaps="true"
