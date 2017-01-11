@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
+import za.co.woolworths.financial.services.android.ui.fragments.WProductFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WProductsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -79,7 +80,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
                 title = getString(R.string.nav_item_today);
                 break;
             case 1:
-                fragment = new WProductsFragment();
+                fragment = new WProductFragment();
                 title = getString(R.string.nav_item_products);
                 break;
             case 2:

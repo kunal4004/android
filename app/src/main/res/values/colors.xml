@@ -44,4 +44,6 @@
     <color name="secondary_text_default">#ffffff</color>
     <color name="cli_content_color_desc">#80000000</color>
     <color name="page_indicator_default">#10ffffff</color>
+
+    <color name="product_search_hint">#20000000</color>
 </resources>
