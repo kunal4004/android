@@ -88,6 +88,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     private WTextView mOverlayTitle;
     private WTextView mOverlayDescription;
     private LinearLayout mLinEmail;
+    private SharePreferenceHelper mSharePreferenceHelper;
 
     public CLIThirdStepFragment() {
     }
@@ -98,7 +99,8 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
         mConnectionDetector = new ConnectionDetector();
         view = inflater.inflate(R.layout.cli_fragment_step_three, container, false);
-        mEmail = SharePreferenceHelper.getInstance().getValue(getActivity(),"email");
+        mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
+        mEmail = mSharePreferenceHelper.getValue("email");
         mStepIndicator = (CLIStepIndicatorActivity) getActivity();
         mStepIndicator.setOnFragmentRefresh(this);
         mLayoutInflater = (LayoutInflater)getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
