@@ -52,12 +52,12 @@ public class WRewardsVoucherListAdapter extends RecyclerView.Adapter<WRewardsVou
 
         try
         {
-            holder.voucherExpireDate.setText("Expires: "+String.valueOf(WFormatter.formatDate(mVoucher.validToDate)));
+            holder.voucherExpireDate.setText(context.getString(R.string.expires)+String.valueOf(WFormatter.formatDate(mVoucher.validToDate)));
         }
         catch (ParseException e)
         {
 
-            holder.voucherExpireDate.setText("Expires: "+String.valueOf(mVoucher.validToDate));
+            holder.voucherExpireDate.setText(context.getString(R.string.expires)+String.valueOf(mVoucher.validToDate));
         }
 
     }

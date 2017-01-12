@@ -93,6 +93,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         {
             tabLayout.getTabAt(i).setCustomView(prepareTabView(i,tabTitle,activeVoucherCount));
         }
+        tabLayout.getTabAt(0).getCustomView().setSelected(true);
     }
 
 

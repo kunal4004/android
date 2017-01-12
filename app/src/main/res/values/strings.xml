@@ -363,5 +363,6 @@
     <string name="value">VALUE</string>
     <string name="minimum_spend">Minimum Spend</string>
     <string name="view_terms_conditions">VIEW TERMS &amp; CONDITIONS</string>
+    <string name="expires">"Expires: "</string>
 
 </resources>

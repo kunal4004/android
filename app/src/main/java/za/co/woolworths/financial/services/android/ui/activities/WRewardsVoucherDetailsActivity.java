@@ -12,12 +12,21 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
+
+import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
+import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.ui.adapters.WRewardsVouchersAdapter;
+import za.co.woolworths.financial.services.android.ui.views.SwipeStack;
 
 import static za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.toolbar;
 
-public class WRewardsVoucherDetailsActivity extends AppCompatActivity {
+public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements SwipeStack.SwipeStackListener{
 
     public Toolbar toolbar;
+    private SwipeStack mSwipeStack;
+    WRewardsVouchersAdapter mAdapter;
+    VoucherCollection voucherCollection;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -32,9 +41,14 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity {
         }
         setContentView(R.layout.wrewards_voucher_details);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mSwipeStack = (SwipeStack) findViewById(R.id.swipeStack);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
+        voucherCollection=new Gson().fromJson(getIntent().getStringExtra("VOUCHERS"),VoucherCollection.class);
+        mAdapter = new WRewardsVouchersAdapter(WRewardsVoucherDetailsActivity.this,voucherCollection.vouchers);
+        mSwipeStack.setAdapter(mAdapter);
+        mSwipeStack.setListener(this);
     }
 
     @Override
@@ -52,5 +66,25 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
 
+    }
+
+    @Override
+    public void onViewSwipedToLeft(int position) {
+    }
+
+    @Override
+    public void onViewSwipedToRight(int position) {
+    }
+
+    @Override
+    public void onViewSwipedToTop(int position) {
+    }
+
+    @Override
+    public void onViewSwipedToBottom(int position) {
+    }
+
+    @Override
+    public void onStackEmpty() {
     }
 }

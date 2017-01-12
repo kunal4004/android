@@ -18,6 +18,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WRewardsVoucher
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsSavingsHorizontalScrollAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsVoucherListAdapter;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 /**
  * Created by W7099877 on 05/01/2017.
@@ -48,7 +49,9 @@ public class WRewardsVouchersFragment extends Fragment {
         recyclerView.addOnItemTouchListener(new RecycleViewClickListner(getActivity(),recyclerView, new RecycleViewClickListner.ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                startActivity(new Intent(getActivity(), WRewardsVoucherDetailsActivity.class));
+                Intent intent=new Intent(getActivity(),WRewardsVoucherDetailsActivity.class);
+                intent.putExtra("VOUCHERS", Utils.objectToJson(voucherResponse.voucherCollection));
+                startActivity(intent);
 
             }
 
