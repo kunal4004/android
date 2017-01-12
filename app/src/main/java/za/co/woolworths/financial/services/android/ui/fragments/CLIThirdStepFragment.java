@@ -16,6 +16,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -208,6 +209,18 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
             mSlidingUpViewLayout.openOverlayView(getString(R.string.cli_enter_acc_number_error),
                     SlidingUpViewLayout.OVERLAY_TYPE.ERROR);        }
     }
+    //Method to hide keyboard
+    public static void hideKeyboard(Context context) {
+        InputMethodManager inputManager = (InputMethodManager) context
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        // check if no view has focus:
+        View v = ((Activity) context).getCurrentFocus();
+        if (v == null)
+            return;
+
+        inputManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+    }
 
     @Override
     public void onClick(View view) {
@@ -220,6 +233,8 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                             String newAccount = accountNumber.replaceAll(" ","");
                             mUpdateBankDetail.setAccountNumber(newAccount);
                             updateBankDetail();
+                            //If everything is ok then hide the keyboard
+                            hideKeyboard(getContext());
                         } else {
                             mSlidingUpViewLayout.openOverlayView(getString(R.string.cli_enter_acc_number_error),
                                     SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
