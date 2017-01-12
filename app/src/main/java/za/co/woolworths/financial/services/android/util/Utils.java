@@ -267,17 +267,4 @@ public class Utils {
 
         return response;
     }
-
-
-    public static String formatCurrency(Double amount){
-        if (amount!=null) {
-            NumberFormat formatter = NumberFormat.getCurrencyInstance();
-            String moneyString = formatter.format(amount).replace("$", "R ").replace(",", " ");
-            //String newAmount = moneyString.substring(0, moneyString.indexOf("."));
-            return moneyString;
-        }else {
-            return String.valueOf(0);
-        }
-    }
-
 }
