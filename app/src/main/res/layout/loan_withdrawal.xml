@@ -2,18 +2,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="#7a4183"
-              android:orientation="vertical"
-    >
+              android:layout_height="wrap_content"
+            android:visibility="visible"
+                android:id="@+id/relLoanWithdrawal"
+          android:layout_marginTop="?attr/actionBarSize"
+                android:background="@color/purple"
+              android:orientation="vertical">
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/txtWithdrawAmount"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginTop="24dp"
+        android:letterSpacing="0.1"
+        android:lineSpacingExtra="1.2dp"
         android:gravity="center_horizontal"
         android:text="@string/please_enter_the_amount"
         android:textAllCaps="true"
@@ -29,6 +33,7 @@
         android:background="#10FFFFFF"
         android:layout_alignParentBottom="true"
         >
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -36,7 +41,7 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:padding="16dp"
-            >
+            android:id="@+id/LinAvailableFunds">
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -53,8 +58,9 @@
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 app:WTextView_font="medium_bold"
-                />
+                android:id="@+id/textAvailableFunds" />
         </LinearLayout>
+
         <View
             android:layout_width="2dp"
             android:layout_height="match_parent"
@@ -67,12 +73,13 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:padding="16dp"
-            >
+            android:id="@+id/LinCreditLimit">
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Credit Limit"
                 android:textColor="#99ffffff"
+                android:letterSpacing="0.05"
                 android:textSize="15sp"
                 app:WTextView_font="myriadpro_regular"
                 />
@@ -83,58 +90,47 @@
                 android:text="R30 000.00"
                 android:textColor="@color/white"
                 android:textSize="20sp"
+                android:letterSpacing="0.05"
                 app:WTextView_font="medium_bold"
-                />
+                android:id="@+id/textCreditLimit" />
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="21dp"
         android:minHeight="92dp"
         android:gravity="center"
+        android:id="@+id/relWithdrawalAmount"
         android:layout_below="@+id/txtWithdrawAmount"
         android:layout_alignParentStart="true">
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            >
 
-            <za.co.woolworths.financial.services.android.ui.views.WEditTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:gravity="center"
-                android:text="2300"
-                android:paddingLeft="8dp"
-                android:textColor="@color/white"
-                android:textSize="45sp"
-                app:WEditTextView_font="light"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/currencyType"
-                android:layout_toEndOf="@+id/currencyType"/>
+        <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+            android:maxLines="1"
+        android:hint="R "
+        android:inputType="numberDecimal"
+            android:layout_marginRight="@dimen/bank_spacing_width"
+            android:layout_marginLeft="@dimen/bank_spacing_width"
+        android:paddingLeft="8dp"
+        android:textColorHint="@color/recent_search_bg"
+        android:imeOptions="actionDone"
+        android:textColor="@color/white"
+        android:textCursorDrawable="@drawable/colorcursor"
+        android:textSize="45sp"
+        android:digits="0123456789"
+        app:WEditTextView_font="light"
+        android:id="@+id/editWithdrawAmount"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true" >
+            <requestFocus />
+        </za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView>
 
-            <za.co.woolworths.financial.services.android.ui.views.WEditTextView
-                android:id="@+id/currencyType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:text="R"
-                android:textColor="@color/white"
-                android:textSize="45sp"
-                app:WEditTextView_font="light"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:gravity="center_vertical"
-                android:inputType="none"
-                />
-        </RelativeLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>
