@@ -106,6 +106,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     private ProgressBar ccProgressBar;
     private ProgressBar plProgressBar;
 
+    private ImageView imgCreditCard;
+
     Map<String, Account> accounts;
     List<String> unavailableAccounts;
     private AccountsResponse accountsResponse; //purely referenced to be passed forward as Intent Extra
@@ -154,6 +156,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         messageCounter=(WTextView)view.findViewById(R.id.messageCounter);
         userName = (WTextView) view.findViewById(R.id.user_name);
         userInitials = (WTextView) view.findViewById(R.id.initials);
+        imgCreditCard=(ImageView)view.findViewById(R.id.imgCreditCard);
 
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
@@ -185,6 +188,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void initialize() {
+        this.accountsResponse=null;
         this.hideAllLayers();
         this.accounts.clear();
         this.unavailableAccounts.clear();
@@ -223,6 +227,17 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             } else if(account.productGroupCode.equals("CC")){
                 linkedCreditCardView.setVisibility(View.VISIBLE);
                 applyCreditCardView.setVisibility(View.GONE);
+                //Check with AccountNumber and change the image accordingly
+                if(account.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD))
+                {
+                 imgCreditCard.setBackgroundResource(R.drawable.small_5);
+                }else if(account.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD))
+                {
+                    imgCreditCard.setBackgroundResource(R.drawable.small_4);
+                }else  if(account.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD))
+                {
+                    imgCreditCard.setBackgroundResource(R.drawable.small_3);
+                }
 
                 cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
                 ccProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));

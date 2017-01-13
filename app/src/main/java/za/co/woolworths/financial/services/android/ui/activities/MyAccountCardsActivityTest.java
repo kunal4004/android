@@ -71,10 +71,7 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
         fragmentPager = (WFragmentViewPager) findViewById(R.id.fragmentpager);
         NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nest_scrollview);
         scrollView.setFillViewport(true);
-        pager.setAdapter(new MyAccountsCardsAdapter(MyAccountCardsActivityTest.this));
-        pager.setPageMargin(16);
         fragmentPager.setPagingEnabled(true);
-        pager.setCurrentItem(getIntent().getIntExtra("position",0));
         //fragmentPager.setCurrentItem(getIntent().getIntExtra("position",0));
         changeViewPagerAndActionBarBackground(getIntent().getIntExtra("position",0));
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
