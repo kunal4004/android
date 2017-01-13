@@ -323,7 +323,6 @@
     <string name="cli_loading">LOADING...</string>
     <string name="cli_loading_active_offer">GETTING ACTIVE OFFER...</string>
     <string name="cli_yes_continue">YES-CONTINUE</string>
-    <string name="cli_cannot_proceed_error">Sorry, we can no proceed with your application</string>
     <string name="cli_sending_email">SENDING EMAIL...</string>
     <string name="cli_updating_bank_detail">UPDATING BANK DETAIL...</string>
     <string name="cli_solvency_error">All fields are mandatory. If not applicable, please enter R0.</string>
@@ -340,13 +339,14 @@
     <string name="cli_take_a_photo_desc">Take clear photos of your documents and email it to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.
 </string>
     <string name="cli_attach">b) Attach from a drive</string>
-    <string name="cli_cannot_proceed_desc">Unfortunately we can\'t proceed until you no longer have any of these conditions in place.</string>
     <string name="cli_proceed_to_permission">Permission to proceed</string>
-    <string name="cli_pop_insolvency_title">UNFORTUNATELY WE \nCANNOT PROCEED </string>
+
+    <string name="cli_pop_confidential_title">UNFORTUNATELY WE CANNOT PROCEED</string>
+    <string name="cli_pop_confidential_desc">We can only continue with your\napplication once you’ve granted us permission to access your consumer credit information.</string>
+
+    <string name="cli_pop_insolvency_title">SORRY, WE CANNOT PROCEED WITH YOUR APPLICATION</string>
     <string name="cli_pop_insolvency_desc">Unfortunately we can’t proceed until you no longer have any of these conditions in place.</string>
 
-    <string name="cli_cancel_application_desc">We can only continue with your application once you’ve granted us permission to access your consumer credit information.</string>
-    <string name="cli_pop_confidential_desc">We can only continue with your\napplication once you’ve granted us permission to access your consumer credit information.</string>
     <string name="onboarding_desc_screen_1">The new Woolies app gives you access to everything you love in the palm of your hand. Simply scroll, tap and enjoy!</string>
     <string name="onboarding_desc_screen_2">See how much you’ve saved, track your tier status and access your exclusive vouchers.</string>
     <string name="onboarding_desc_screen_3">Conveniently view your credit balance, next payment due, available funds, apply for a personal loan and more.</string>
