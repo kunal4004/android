@@ -53,6 +53,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.CLICreditLimitAda
 import za.co.woolworths.financial.services.android.ui.views.StepIndicator;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
+import za.co.woolworths.financial.services.android.ui.views.WRadioButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
@@ -140,15 +141,18 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
 
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton radioButton = (RadioButton) findViewById(checkedId);
+                if(!radioButton.isChecked()){
+                    return;
+                }
+
                 switch (checkedId){
                     case R.id.radioNoSolvency:
                         isConfidential=true;
-                        Log.e("SolvencyYes","isSolvencyTrue");
                         break;
                     case R.id.radioYesSolvency:
                         isConfidential = false;
-                        Log.e("SolvencyYes","isSolvencyFalse");
-                        displayConfidentialPopUp();
+                        displaySolvencyPopUp();
                         break;
                 }
                 hideSoftKeyboard();
@@ -159,11 +163,15 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
 
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton radioButton = (RadioButton) findViewById(checkedId);
+                if(!radioButton.isChecked()){
+                    return;
+                }
                 switch (checkedId){
                     case R.id.radioYesConfidentialCredit:
                         break;
                     case R.id.radioNoConfidentialCredit:
-                           displaySolvencyPopUp();
+                        displayConfidentialPopUp();
                         break;
                 }
                 hideSoftKeyboard();
@@ -239,67 +247,79 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
             case R.id.btnContinue:
                 mBtnContinue.startAnimation(buttonClick);
                 hideSoftKeyboard();
-                    String creditAmount = mTextAmount.getText().toString();
 
-                        if(!TextUtils.isEmpty(creditAmount))
-                            mCreditLimitAmount = Integer.valueOf(creditAmount.replaceAll("[^0-9.]", ""));
-                        else
-                            mCreditLimitAmount=0;
-                        if (mRadApplySolvency.getCheckedRadioButtonId() == -1) {
-                            slidingUpViewLayout.openOverlayView(getString(R.string.cli_solvency_error), SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
-                        } else {
-                            if (mRadConfidentialCredit.getCheckedRadioButtonId() == -1) {
-                                slidingUpViewLayout.openOverlayView(getString(R.string.cli_solvency_error), SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
-                            } else {
+                boolean pageIsValid = true;
 
-                                String selectedRadSolvency = selectedRadioGroup(mRadApplySolvency);
-                                String selectedRadConfidential = selectedRadioGroup(mRadConfidentialCredit);
+                int selectedInsolventRadioButtonId = mRadApplySolvency.getCheckedRadioButtonId();
+                int selectedAccessRequestRadioButton = mRadConfidentialCredit.getCheckedRadioButtonId();
 
-                                if (selectedRadSolvency.equalsIgnoreCase("NO")){
-                                    isConfidential=true;
-                                }else{
-                                    isConfidential=false;
-                                }
+                String creditAmount = mTextAmount.getText().toString().replaceAll("[^0-9.]", "");
+                String grossMonthlyIncome = mArrCreditLimit.get(0).getAmount().replaceAll("[^0-9.]", "");
+                String netMonthlyIncome = mArrCreditLimit.get(1).getAmount().replaceAll("[^0-9.]", "");
+                String additionalMonthlyIncome = mArrCreditLimit.get(2).getAmount().replaceAll("[^0-9.]", "");
+                String mortgagePayments = mArrCreditLimit.get(3).getAmount().replaceAll("[^0-9.]", "");
+                String rentalPayments = mArrCreditLimit.get(4).getAmount().replaceAll("[^0-9.]", "");
+                String maintenanceExpenses = mArrCreditLimit.get(5).getAmount().replaceAll("[^0-9.]", "");
+                String monthlyCreditPayments = mArrCreditLimit.get(6).getAmount().replaceAll("[^0-9.]", "");
+                String otherExpenses = mArrCreditLimit.get(7).getAmount().replaceAll("[^0-9.]", "");
 
-                                if (selectedRadConfidential.equalsIgnoreCase("YES")){
-                                    isSolvency=true;
-                                }else{
-                                    isSolvency=false;
-                                }
-                                if (isConfidential&&!isSolvency) {
-
-                                    displaySolvencyPopUp();
-
-                                } else if (!isConfidential&&isSolvency){
-                                    displayConfidentialPopUp();
-                                } else if (!isConfidential&&!isSolvency){
-                                    displayConfidentialPopUp();
-                                } else {
-                                    mCreateOfferRequest = new CreateOfferRequest(mWoolworthsApplication.getProductOfferingId(),
-                                            mCreditLimitAmount,
-                                            getNumbers(0),
-                                            getNumbers(1),
-                                            getNumbers(2),
-                                            getNumbers(3),
-                                            getNumbers(4),
-                                            getNumbers(5),
-                                            getNumbers(6),
-                                            getNumbers(7));
-
-//                                for (int index = 0; index < mArrCreditLimit.size(); index++) {
-//                                    String amount = mArrCreditLimit.get(index).getAmount();
-////                                    if (TextUtils.isEmpty(amount) || amount.equalsIgnoreCase("0")) {
-////                                        WErrorDialog.setErrorMessage(CLISupplyInfoActivity.this,
-////                                                getString(R.string.cli_solvency_error));
-////                                        return;
-////                                    }
-                                    //}
-                                    createOfferRequest();
-                                }
-                            }
+                if (creditAmount.equals("")){
+                    pageIsValid = false;
+                } else if(grossMonthlyIncome.equals("")){
+                    pageIsValid = false;
+                } else if(netMonthlyIncome.equals("")){
+                    pageIsValid = false;
+                } else if(additionalMonthlyIncome.equals("")){
+                    pageIsValid = false;
+                } else if(mortgagePayments.equals("")){
+                    pageIsValid = false;
+                } else if(rentalPayments.equals("")){
+                    pageIsValid = false;
+                } else if(maintenanceExpenses.equals("")){
+                    pageIsValid = false;
+                } else if(monthlyCreditPayments.equals("")){
+                    pageIsValid = false;
+                } else if(otherExpenses.equals("")){
+                    pageIsValid = false;
+                } else if(selectedInsolventRadioButtonId == -1 || selectedAccessRequestRadioButton == -1){
+                    pageIsValid = false;
                 }
-                break;
 
+                if (!pageIsValid){
+                    slidingUpViewLayout.openOverlayView(getString(R.string.cli_solvency_error), SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                    return;
+                }
+
+                mCreditLimitAmount = Integer.valueOf(creditAmount);
+
+                String selectedRadSolvency = selectedRadioGroup(mRadApplySolvency);
+                String selectedRadConfidential = selectedRadioGroup(mRadConfidentialCredit);
+
+                if (selectedRadSolvency.equalsIgnoreCase("NO")){
+                    isConfidential=true;
+                }else{
+                    isConfidential=false;
+                }
+
+                if (selectedRadConfidential.equalsIgnoreCase("YES")){
+                    isSolvency=true;
+                }else{
+                    isSolvency=false;
+                }
+
+                mCreateOfferRequest = new CreateOfferRequest(mWoolworthsApplication.getProductOfferingId(),
+                        mCreditLimitAmount,
+                        Integer.valueOf(grossMonthlyIncome),
+                        Integer.valueOf(netMonthlyIncome),
+                        Integer.valueOf(additionalMonthlyIncome),
+                        Integer.valueOf(mortgagePayments),
+                        Integer.valueOf(rentalPayments),
+                        Integer.valueOf(maintenanceExpenses),
+                        Integer.valueOf(monthlyCreditPayments),
+                        Integer.valueOf(otherExpenses));
+                createOfferRequest();
+                break;
+            default:break;
         }
     }
 
@@ -446,14 +466,6 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    public int getNumbers(int position) {
-        if (mArrCreditLimit != null) {
-            return Integer.valueOf(mArrCreditLimit.get(position).getAmount().replaceAll("[^0-9.]", ""));
-        } else {
-            return 0;
-        }
-    }
-
     public void stopProgressDialog() {
         if (mCreateOfferProgressDialog != null && mCreateOfferProgressDialog.isShowing()) {
             mCreateOfferProgressDialog.dismiss();
@@ -560,58 +572,6 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    public PopupWindow displaySolvencyPopUp() {
-        //darken the current screen
-        View view = getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
-        darkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        darkenScreen.setAnimationStyle(R.style.Darken_Screen);
-        darkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
-        darkenScreen.setOutsideTouchable(false);
-        //Then popup window appears
-        final View popupView = getLayoutInflater().inflate(R.layout.cli_insolvency_popup, null);
-        mBtnCancel = (WButton) popupView.findViewById(R.id.btnCancel);
-        mBtnContinue = (WButton) popupView.findViewById(R.id.btnContinue);
-        pWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        pWindow.setAnimationStyle(R.style.Animations_popup);
-        pWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
-        pWindow.setOutsideTouchable(false);
-        //Dismiss popup when touch outside
-        pWindow.setTouchable(false);
-        mBtnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        pWindow.dismiss();
-                    }
-                }, 200);
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        darkenScreen.dismiss();
-                    }
-                }, 300);
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                    }
-                }, 400);
-
-            }
-        });
-        mBtnContinue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pWindow.dismiss();
-                darkenScreen.dismiss();
-            }
-        });
-        return darkenScreen;
-    }
-
     public PopupWindow displayConfidentialPopUp() {
         //darken the current screen
         View view = getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
@@ -621,56 +581,56 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mDarkenScreen.setOutsideTouchable(false);
         //Then popup window appears
         final View popupView = getLayoutInflater().inflate(R.layout.cli_confidential_popup, null);
-        mBtnCancel = (WButton) popupView.findViewById(R.id.btnCancel);
-        mBtnContinue = (WButton) popupView.findViewById(R.id.btnContinue);
-        mTextApplicationNotProceed = (WTextView) popupView.findViewById(R.id.textApplicationNotProceed);
-        mTextOverlayDescription = (WTextView) popupView.findViewById(R.id.overlayDescription);
-        mTextApplicationNotProceed.setText(getString(R.string.cli_cancel_application));
-        mTextOverlayDescription.setText(getString(R.string.cli_cancel_application_desc));
-        mPopWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mPopWindow.setAnimationStyle(R.style.Animations_popup);
-        mPopWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
-        mPopWindow.setOutsideTouchable(false);
+        pWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        pWindow.setAnimationStyle(R.style.Animations_popup);
+        pWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+        pWindow.setOutsideTouchable(false);
         //Dismiss popup when touch outside
-        mPopWindow.setTouchable(false);
-        mBtnCancel.setOnClickListener(new View.OnClickListener() {
+        pWindow.setTouchable(false);
+
+        final WRadioButton checked = (WRadioButton)findViewById(mRadConfidentialCredit.getCheckedRadioButtonId());
+        ((WButton) popupView.findViewById(R.id.btnOK)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPopWindow.dismiss();
-                    }
-                }, 200);
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDarkenScreen.dismiss();
-                    }
-                }, 300);
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
-                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-                    }
-                }, 400);
 
+                checked.setChecked(false);
+                checked.setTypeface(Typeface.DEFAULT);
+
+                pWindow.dismiss();
+                mDarkenScreen.dismiss();
             }
         });
+        return mDarkenScreen;
+    }
 
+    public PopupWindow displaySolvencyPopUp() {
+        //darken the current screen
+        View view = getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
+        mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
+        mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
+        mDarkenScreen.setOutsideTouchable(false);
+        //Then popup window appears
+        final View popupView = getLayoutInflater().inflate(R.layout.cli_insolvency_popup, null);
+        pWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        pWindow.setAnimationStyle(R.style.Animations_popup);
+        pWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+        pWindow.setOutsideTouchable(false);
+        //Dismiss popup when touch outside
+        pWindow.setTouchable(false);
 
-        mBtnContinue.setOnClickListener(new View.OnClickListener() {
+        final WRadioButton checked = (WRadioButton)findViewById(mRadApplySolvency.getCheckedRadioButtonId());
+        ((WButton) popupView.findViewById(R.id.btnOK)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPopWindow.dismiss();
+                checked.setChecked(false);
+                checked.setTypeface(Typeface.DEFAULT);
+
+                pWindow.dismiss();
                 mDarkenScreen.dismiss();
             }
         });
 
-        mBtnCancel.setText("YES");
-        mBtnContinue.setText("NO");
-
-        return darkenScreen;
+        return mDarkenScreen;
     }
 }
