@@ -614,7 +614,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         final View popupView = getLayoutInflater().inflate(R.layout.cli_insolvency_popup, null);
         pWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         pWindow.setAnimationStyle(R.style.Animations_popup);
-        pWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+        pWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0); 
         pWindow.setOutsideTouchable(false);
         //Dismiss popup when touch outside
         pWindow.setTouchable(false);
