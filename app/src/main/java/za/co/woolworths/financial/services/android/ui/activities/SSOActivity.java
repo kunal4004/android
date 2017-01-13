@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
@@ -32,7 +33,8 @@ public class SSOActivity extends WebViewActivity {
         STATE_MISMATCH(4),
         NONCE_MISMATCH(5),
         SUCCESS(6),
-        EXPIRED(7);
+        EXPIRED(7),
+        SIGNED_OUT(8);
 
         private int result;
 
@@ -52,6 +54,7 @@ public class SSOActivity extends WebViewActivity {
     public static final String TAG_PATH = "TAG_PATH";
     public static final String TAG_JWT = "TAG_JWT";
     public static final String TAG_SCOPE = "TAG_SCOPE";
+    public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 
 
     // TODO: This redirectURIString be pulled from MCS.
@@ -59,6 +62,7 @@ public class SSOActivity extends WebViewActivity {
     private Protocol protocol;
     private Host host;
     private Path path;
+    private Map<String, String> extraQueryStringParams;
 
     private final String state = UUID.randomUUID().toString();
     private final String nonce = UUID.randomUUID().toString();
@@ -85,15 +89,15 @@ public class SSOActivity extends WebViewActivity {
         this.protocol = Protocol.getProtocolByRawValue(bundle.getString(SSOActivity.TAG_PROTOCOL));
         this.host = Host.getHostByRawValue(bundle.getString(SSOActivity.TAG_HOST));
         this.path = Path.getPathByRawValue(bundle.getString(SSOActivity.TAG_PATH));
-        String scope = bundle.getString(SSOActivity.TAG_SCOPE);
+        this.extraQueryStringParams = (Map<String, String>) intent.getSerializableExtra(SSOActivity.TAG_EXTRA_QUERYSTRING_PARAMS);
 
+        String scope = bundle.getString(SSOActivity.TAG_SCOPE);
         String link = this.constructAndGetAuthorisationRequestURL(scope);
 
         Log.d(SSOActivity.TAG, String.format("Authorization Link: %s", link));
 
         bundle.putString("title", "SSO");
         bundle.putString("link", link);
-
         intent.putExtra("Bundle", bundle);
 
         return intent;
@@ -146,8 +150,9 @@ public class SSOActivity extends WebViewActivity {
     }
 
     public enum Path implements SSORequiredParameter {
-        SIGNIN("/customerid/connect/authorize"),
-        REGISTER("/customerid/register/step1");
+        SIGNIN("customerid/connect/authorize"),
+        REGISTER("customerid/register/step1"),
+        LOGOUT("customerid/connect/endsession");
 
         private String path;
 
@@ -178,7 +183,7 @@ public class SSOActivity extends WebViewActivity {
         Uri.Builder builder = new Uri.Builder();
         builder.scheme(this.protocol.rawValue())
                 .authority(this.host.rawValue())
-                .appendPath(this.path.rawValue())
+                .appendEncodedPath(this.path.rawValue())
                 .appendQueryParameter("client_id", "WWOneApp")
                 .appendQueryParameter("response_type", "id_token") // Identity token
                 .appendQueryParameter("response_mode", "form_post")
@@ -187,6 +192,12 @@ public class SSOActivity extends WebViewActivity {
                 .appendQueryParameter("nonce", this.nonce)
                 .appendQueryParameter("scope", scope)
         ;
+
+        if(this.extraQueryStringParams != null){
+            for(Map.Entry<String, String> param : this.extraQueryStringParams.entrySet()){
+                builder.appendQueryParameter(param.getKey(), param.getValue());
+            }
+        }
 
         switch (this.path) {
 
@@ -238,8 +249,13 @@ public class SSOActivity extends WebViewActivity {
                 break;
         }
 
-
-        return builder.build().toString();
+        String constructedURL = "";
+        try{
+            constructedURL = URLDecoder.decode(builder.build().toString(), "UTF-8").toString();
+        }catch(Exception e){
+            constructedURL = builder.build().toString();
+        }
+        return constructedURL;
     }
 
     private final WebViewClient webviewClient = new WebViewClient() {
@@ -276,6 +292,18 @@ public class SSOActivity extends WebViewActivity {
                         finish();
                     }
                 });
+            }else if (extraQueryStringParams != null){
+                int indexOfQuestionMark = url.indexOf("?");
+                if(indexOfQuestionMark > -1){
+                    String urlWithoutQueryString = url.substring(0, indexOfQuestionMark);
+
+                    String redirectURI = extraQueryStringParams.get("post_logout_redirect_uri");
+                    if (urlWithoutQueryString.equals(redirectURI)){
+                        Intent intent = new Intent();
+                        setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
+                        finish();
+                    }
+                }
             }
         }
 

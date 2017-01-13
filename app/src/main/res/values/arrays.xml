@@ -56,14 +56,14 @@
         <item>@drawable/ic_drw_accounts</item>
     </integer-array>
     <string-array name="cl_amount">
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
-        <item>0</item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
     </string-array>
     <string-array name="cl_label">
         <item>@string/cli_monthly_income</item>

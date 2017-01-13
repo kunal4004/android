@@ -25,7 +25,7 @@
             android:textAllCaps="true"
             android:background="@color/white"
             android:textSize="16sp"
-            android:text="@string/cli_cancel_application"
+            android:text="@string/cli_cannot_proceed_error"
             app:WTextView_font="medium_bold"
             android:textColor="@color/black" />
 
@@ -47,7 +47,7 @@
             android:background="@color/white"
             android:textSize="15sp"
             android:layout_marginBottom="@dimen/default_margin"
-            android:text="@string/cli_cannot_proceed_desc"
+            android:text="@string/cli_pop_confidential_desc"
             app:WTextView_font="myriadpro_regular"
             android:textColor="@color/semi_transparent_black"
             />
@@ -67,35 +67,19 @@
             android:orientation="horizontal">
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/btnCancel"
+                android:id="@+id/btnOK"
                 android:layout_marginRight="@dimen/default_margin"
-                android:layout_weight="0.5"
-                android:background="@drawable/white_button_bg"
+                android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:textAllCaps="true"
                 android:letterSpacing="0.12"
                 app:WButton_font="medium_bold"
                 android:textSize="12sp"
-                android:text="@string/cancel"
+                android:text="@string/ok"
                 app:WTextView_font="medium_bold"
                 android:textColor="@color/black" />
-
-            <za.co.woolworths.financial.services.android.ui.views.WButton
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/btnContinue"
-                android:layout_weight="0.5"
-                android:background="@color/black"
-                android:gravity="center"
-                android:letterSpacing="0.12"
-                android:textAllCaps="true"
-                app:WButton_font="medium_bold"
-                android:textSize="12sp"
-                android:text="@string/cli_continue"
-                app:WTextView_font="medium_bold"
-                android:textColor="@color/white" />
 
         </LinearLayout>
     </LinearLayout>

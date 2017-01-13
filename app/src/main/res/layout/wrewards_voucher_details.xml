@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:background="#cc000000"
+
+    >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:background="@android:color/transparent"
+        android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/WRewardsVoucherDetails"
+        app:theme="@style/WRewardsVoucherDetails"
+        app:title="">
+    </android.support.v7.widget.Toolbar>
+
+    <za.co.woolworths.financial.services.android.ui.views.SwipeStack
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:id="@+id/swipeStack"
+        android:padding="16dp"
+        app:stack_rotation="0"
+        app:stack_spacing="-10dp"
+        app:stack_size="3"
+        />
+
+</LinearLayout>

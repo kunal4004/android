@@ -305,7 +305,7 @@
     <string name="cli_enter_acc_number_error">Please enter your account number</string>
     <string name="cli_select_acc_type">Please select your account type</string>
     <string name="cli_email_address">We will send further instructions to your email:</string>
-    <string name="cli_cancel_application">SORRY, WE CANNOT PROCEED WITH YOUR APPLICATION</string>
+    <string name="cli_cancel_application">UNFORTUNATELY WE CANNOT PROCEED</string>
     <string name="cli_lorem_ipsum">Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum </string>
     <string name="cli_got_it">GOT IT</string>
     <string name="cli_overlay_monthly_income">Gross Monthly Income is your income before Tax/ Deductions.</string>
@@ -326,9 +326,9 @@
     <string name="cli_cannot_proceed_error">Sorry, we can no proceed with your application</string>
     <string name="cli_sending_email">SENDING EMAIL...</string>
     <string name="cli_updating_bank_detail">UPDATING BANK DETAIL...</string>
-    <string name="cli_solvency_error">Please answer all questions</string>
+    <string name="cli_solvency_error">All fields are mandatory. If not applicable, please enter R0.</string>
     <string name="cli_check_field">Please answer all questions</string>
-    <string name="cli_amount_hint">R0</string>
+    <string name="cli_amount_hint">R</string>
     <string name="cli_additional_credit_amount">How much additional credit would you\nlike to apply for?</string>
     <string name="cli_apply_insolvency">DO ANY OF THE FOLLOWING APPLY TO YOU?</string>
     <string name="cli_text_with_bullet">•    I’ve applied for insolvency debt counseling\n•    I’ve applied for debt administration\n•    I’m currently insolvent\n•    I’m currently under debt review</string>
@@ -343,10 +343,10 @@
     <string name="cli_cannot_proceed_desc">Unfortunately we can\'t proceed until you no longer have any of these conditions in place.</string>
     <string name="cli_proceed_to_permission">Permission to proceed</string>
     <string name="cli_pop_insolvency_title">UNFORTUNATELY WE \nCANNOT PROCEED </string>
-    <string name="cli_pop_confidential_desc">We can only continue with your application once you\'ve granted us permission to access your consumer credit information.</string>
+    <string name="cli_pop_insolvency_desc">Unfortunately we can’t proceed until you no longer have any of these conditions in place.</string>
 
-    <string name="cli_cancel_application_desc">Unfortunately we can\'t proceed until you no longer have any of these conditions in place.</string>
-    <string name="cli_pop_insolvency_desc">We can only continue with your\napplication once you’ve granted us permission to access your consumer credit information.</string>
+    <string name="cli_cancel_application_desc">We can only continue with your application once you’ve granted us permission to access your consumer credit information.</string>
+    <string name="cli_pop_confidential_desc">We can only continue with your\napplication once you’ve granted us permission to access your consumer credit information.</string>
     <string name="onboarding_desc_screen_1">The new Woolies app gives you access to everything you love in the palm of your hand. Simply scroll, tap and enjoy!</string>
     <string name="onboarding_desc_screen_2">See how much you’ve saved, track your tier status and access your exclusive vouchers.</string>
     <string name="onboarding_desc_screen_3">Conveniently view your credit balance, next payment due, available funds, apply for a personal loan and more.</string>
@@ -355,4 +355,40 @@
     <string name="cli_activity_desc">To help us calculate how much additional credit you can qualify for, please answer a few quick and easy questions.  Once you have completed this, you will need to submit proof of income in order for us to proceed with your application.</string>
     <string name="cli_attach_drive_desc">Select your existing saved documents from your device and email it to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.</string>
     <string name="cli_process_email_content">To upload your Proof of Income Documents, follow the instructions we’ve sent to your email. If you didn’t receive the password reset, please check your spam folder.</string>
+    <string name="loan_withdrawal_title">loan withdrawal</string>
+    <string name="your_cash_will_be_in_your_account">Your cash will be in your account in 48 hours</string>
+    <string name="loan_withdrawal_popup_error">Loan request too high</string>
+    <string name="loan_withdrawal_popup_desc_err">Unfortunately you do need meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>
+    <string name="issueing_loan">Processing your loan...</string>
+
+    <string name="wrewards_tag_line">|!b|W|!?|Rewards is our way of rewarding customers INSTANTLY.WRewards members save millions every week.</string>
+    <string name="link_account">link account</string>
+    <string name="apply_for_wrewards">apply for WREWARDS</string>
+    <string name="get_more">Get more</string>
+    <string name="wrewards_three_levels">There are three levels to |!b|W|!?|Rewards - the more you spend, the more guaranteed rewards you\'ll enjoy. You\'ll start out on the Valued level, and we\'ll review your status every quarter, upgrading your status automatically as you qualify for a higher level.</string>
+    <string name="member">MEMBER</string>
+    <string name="swipe_and_save_instantly">SWIPE AND SAVE INSTANTLY</string>
+    <string name="spend_30000">SPEND R30 000 OR MORE ANNUALLY</string>
+    <string name="vip">VIP</string>
+    <string name="spend_between_10000_29000annually">SPEND BETWEEN R10 000 - R29 999 ANNUALLY</string>
+    <string name="savings">SAVINGS</string>
+    <string name="to_next_tier">TO NEXT TIER</string>
+    <string name="info_valued_header">SWIPE AND SAVE INSTANTLY</string>
+    <string name="info_loyal_header">SPEND BETWEEN R9 000 AND R27 000 PER YEAR at woolworths</string>
+    <string name="info_vip_header">SPEND OVER R27 000 PER YEAR AT WOOLWORTHS</string>
+    <string name="overview">OVERVIEW</string>
+    <string name="vouchers">VOUCHERS</string>
+    <string name="year">YEAR</string>
+    <string name="to_date">TO DATE</string>
+    <string name="tier_status1">Tier Status</string>
+    <string name="wrewards_instant_savings">WRewards Instant Savings</string>
+    <string name="wrewards_green_earned">WRewards Green Earned</string>
+    <string name="quarterly_voucher_earned">Quarterly Voucher Earned</string>
+    <string name="year_to_date_spend">Year to Date Spend</string>
+    <string name="value">VALUE</string>
+    <string name="minimum_spend">Minimum Spend</string>
+    <string name="view_terms_conditions">VIEW TERMS &amp; CONDITIONS</string>
+    <string name="expires">"Expires: "</string>
+    <string name="use_before">"USE BEFORE "</string>
+    <string name="register">REGISTER</string>
 </resources>

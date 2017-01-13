@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivityTest;
+import za.co.woolworths.financial.services.android.ui.activities.OnboardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -97,6 +99,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     WTextView messageCounter;
     WTextView userName;
     WTextView userInitials;
+    RelativeLayout signoutLayer;
 
     private ProgressDialog mGetAccountsProgressDialog;
     private ProgressBar scProgressBar;
@@ -161,6 +164,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         linkedCreditCardView.setOnClickListener(this);
         linkedPersonalCardView.setOnClickListener(this);
         openShoppingList.setOnClickListener(this);
+        signOutBtn.setOnClickListener(this);
+
 
         adapter=new MyAccountOverViewPagerAdapter(getActivity());
         viewPager.addOnPageChangeListener(this);
@@ -193,6 +198,15 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    //To remove negative signs from negative balance and add "CR" after the negative balance
+    public String removeNegativeSymbol(SpannableString amount){
+        String currentAmount = amount.toString();
+        if(currentAmount.contains("-")){
+            currentAmount = currentAmount.replace("-","")+" CR";
+        }
+        return currentAmount;
+    }
+
     private void configureView() {
         this.configureAndLayoutTopLayerView();
 
@@ -203,21 +217,21 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 linkedStoreCardView.setVisibility(View.VISIBLE);
                 applyStoreCardView.setVisibility(View.GONE);
 
-                sc_available_funds.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity()));
+                sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
                 scProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
 
             } else if(account.productGroupCode.equals("CC")){
                 linkedCreditCardView.setVisibility(View.VISIBLE);
                 applyCreditCardView.setVisibility(View.GONE);
 
-                cc_available_funds.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity()));
+                cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
                 ccProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
 
             } else if(account.productGroupCode.equals("PL")){
                 linkedPersonalCardView.setVisibility(View.VISIBLE);
                 applyPersonalCardView.setVisibility(View.GONE);
 
-                pl_available_funds.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity()));
+                pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
                 plProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
             }
         }
@@ -258,10 +272,10 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             //initials of the logged in user will be displayed on the page
             String initials = jwtDecodedModel.name.substring(0, 1).concat(" ").concat(jwtDecodedModel.family_name.substring(0, 1));
             userInitials.setText(initials);
+            signOutBtn.setVisibility(View.VISIBLE);
             if(jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")){
                 //user is linked and signed in
                 linkedAccountsLayout.setVisibility(View.VISIBLE);
-                signOutBtn.setVisibility(View.VISIBLE);
             } else{
                 //user is not linked
                 //but signed in
@@ -361,6 +375,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 break;
             case R.id.openShoppingList:
                 break;
+            case R.id.signOutBtn:
+                ScreenManager.presentSSOLogout(getActivity());
+                break;
+
+            default:break;
 
         }
     }
@@ -471,7 +490,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             }
         }.execute();
     }
-
     public void redirectToMyAccountsCardsActivity(int position)
     {
         woolworthsApplication.setCliCardPosition(position);
@@ -542,6 +560,15 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
             initialize();
         } else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()){
+            initialize();
+        } else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()){
+            try{
+                SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
+                sessionDao.value = "";
+                sessionDao.save();
+            }catch(Exception e){
+                Log.e(TAG, e.getMessage());
+            }
             initialize();
         }
     }

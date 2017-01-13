@@ -130,26 +130,6 @@ public class SlidingUpViewLayout {
         //Then popup window appears
         View popupView = null;
         switch (overlay_type){
-            case INSOLVENCY_CHECK:
-                popupView = mInflator.inflate(R.layout.cli_insolvency_popup, null);
-                mBtnCancel = (WButton) popupView.findViewById(R.id.btnCancel);
-                mBtnContinue = (WButton) popupView.findViewById(R.id.btnContinue);
-                mBtnCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                        public void onClick(View v) {
-                        Log.e("OnClickListener","----clicked");
-                        ((Activity) mContext).finish();
-                        ((Activity) mContext).overridePendingTransition(R.anim.slide_in_left,
-                                R.anim.slide_out_right);
-                    }
-                });
-                mBtnContinue.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                });
-                break;
 
             case INFO:
                 popupView = mInflator.inflate(R.layout.open_overlay_got_it, null);
@@ -194,7 +174,7 @@ public class SlidingUpViewLayout {
                 textEmailContent = (WTextView)popupView.findViewById(R.id.textEmailContent);
                 mLinEmail =(LinearLayout)popupView.findViewById(R.id.linEmail);
                 mLinEmail.setVisibility(View.GONE);
-                mOverlayTitle.setVisibility(View.GONE);
+                mOverlayTitle.setVisibility(View.VISIBLE);
                 mOverlayDescription.setText(description);
                 mOverlayBtn.setText(getString(R.string.ok));
                 mOverlayBtn.setOnClickListener(new View.OnClickListener() {
