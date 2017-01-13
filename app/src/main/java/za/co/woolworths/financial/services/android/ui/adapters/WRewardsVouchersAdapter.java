@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +10,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
 
 import java.text.ParseException;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
+import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.Voucher;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+
+import static android.graphics.Color.BLACK;
+import static android.graphics.Color.WHITE;
 
 /**
  * Created by W7099877 on 12/01/2017.
@@ -64,9 +76,9 @@ public class WRewardsVouchersAdapter extends BaseAdapter{
         }
 
         try {
-            holder.beforeDate.setText("USE BEFORE "+WFormatter.formatDateTOddMMMMYYYY(vouchers.get(position).validToDate));
+            holder.beforeDate.setText(mContext.getString(R.string.use_before)+WFormatter.formatDateTOddMMMMYYYY(vouchers.get(position).validToDate));
         } catch (ParseException e) {
-            holder.beforeDate.setText("USE BEFORE "+String.valueOf(vouchers.get(position).validToDate));
+            holder.beforeDate.setText(mContext.getString(R.string.use_before)+String.valueOf(vouchers.get(position).validToDate));
         }
 
         if ("PERCENTAGE".equals(vouchers.get(position).type))
@@ -78,9 +90,13 @@ public class WRewardsVouchersAdapter extends BaseAdapter{
             holder.value.setText(String.valueOf(WFormatter.formatAmountNoDecimal(vouchers.get(position).amount)));
         }
         holder.message.setText(vouchers.get(position).description);
-        holder.voucherNumber.setText(vouchers.get(position).voucherNumber);
-        holder.beforeDate.setText(String.valueOf(WFormatter.formatAmount(vouchers.get(position).minimumSpend)));
-
+        holder.voucherNumber.setText(WFormatter.formatVoucher(vouchers.get(position).voucherNumber));
+        holder.minimumSpend.setText(String.valueOf(WFormatter.formatAmount(vouchers.get(position).minimumSpend)));
+        try {
+            holder.barCode.setImageBitmap(encodeAsBitmap(vouchers.get(position).voucherNumber,BarcodeFormat.CODE_128,convertView.getWidth(),60));
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
         return convertView;
     }
     public class ViewHolder
@@ -92,4 +108,50 @@ public class WRewardsVouchersAdapter extends BaseAdapter{
         WTextView minimumSpend;
         ImageView barCode;
     }
+    Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int img_width, int img_height) throws WriterException {
+
+        String contentsToEncode = contents;
+        if (contentsToEncode == null) {
+            return null;
+        }
+        Map<EncodeHintType, Object> hints = null;
+        String encoding = guessAppropriateEncoding(contentsToEncode);
+        if (encoding != null) {
+            hints = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
+            hints.put(EncodeHintType.CHARACTER_SET, encoding);
+        }
+        MultiFormatWriter writer = new MultiFormatWriter();
+        BitMatrix result;
+        try {
+            result = writer.encode(contentsToEncode, format, img_width, img_height, hints);
+        } catch (IllegalArgumentException iae) {
+            // Unsupported format
+            return null;
+        }
+        int width = result.getWidth();
+        int height = result.getHeight();
+        int[] pixels = new int[width * height];
+        for (int y = 0; y < height; y++) {
+            int offset = y * width;
+            for (int x = 0; x < width; x++) {
+                pixels[offset + x] = result.get(x, y) ? BLACK : WHITE;
+            }
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height,
+                Bitmap.Config.ARGB_8888);
+        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+        return bitmap;
+    }
+
+    private static String guessAppropriateEncoding(CharSequence contents) {
+        // Very crude at the moment
+        for (int i = 0; i < contents.length(); i++) {
+            if (contents.charAt(i) > 0xFF) {
+                return "UTF-8";
+            }
+        }
+        return null;
+    }
+
 }

@@ -364,5 +364,6 @@
     <string name="minimum_spend">Minimum Spend</string>
     <string name="view_terms_conditions">VIEW TERMS &amp; CONDITIONS</string>
     <string name="expires">"Expires: "</string>
+    <string name="use_before">"USE BEFORE "</string>
 
 </resources>
