@@ -22,8 +22,11 @@ import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CLISupplyInfoActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 
 public class CLIFourthStepFragment extends Fragment implements View.OnClickListener {
+
+    private SharePreferenceHelper mSharePreference;
 
     public interface CloseActivity{
         public void closeActivity();
@@ -39,7 +42,9 @@ public class CLIFourthStepFragment extends Fragment implements View.OnClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
          view = inflater.inflate(R.layout.cli_fragment_step_four, container, false);
          setHasOptionsMenu(true);
-         MyAccountCardsActivity.myAccountCardsActivity.finish();
+         mSharePreference = SharePreferenceHelper.getInstance(getContext());
+         Intent i = new Intent(mSharePreference.getValue(mSharePreference.getValue("acc_card_activity")));
+         getActivity().sendBroadcast(i);
          initUI();
          setListener();
          setContent();
@@ -95,6 +100,7 @@ public class CLIFourthStepFragment extends Fragment implements View.OnClickListe
     }
 
     public void closeActivity(){
+
         getActivity().finish();
         getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }

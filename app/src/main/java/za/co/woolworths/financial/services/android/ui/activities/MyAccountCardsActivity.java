@@ -1,7 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.app.Activity;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
@@ -38,6 +41,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardEmptyF
 import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragment;
 import za.co.woolworths.financial.services.android.ui.views.WFragmentViewPager;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 
@@ -53,18 +57,18 @@ public class MyAccountCardsActivity extends AppCompatActivity {
     CardsFragmentPagerAdapter fragmentsAdapter;
     private CollapsingToolbarLayout collapsingToolbarLayout = null;
     private WoolworthsApplication mWoolworthsApplication;
-    public static Activity myAccountCardsActivity;
+    private SharePreferenceHelper mSharePreferenceHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_account_cards_test);
-        myAccountCardsActivity = this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
+        mSharePreferenceHelper =  SharePreferenceHelper.getInstance(MyAccountCardsActivity.this);
         mWoolworthsApplication = (WoolworthsApplication)getApplication();
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
@@ -111,7 +115,18 @@ public class MyAccountCardsActivity extends AppCompatActivity {
             fragmentPager.setCurrentItem(getIntent().getIntExtra("position",0));
         }
 
+        mSharePreferenceHelper.save("acc_card_activity","acc_card_activity");
+        this.registerReceiver(this.finishAlert, new IntentFilter(mSharePreferenceHelper.getValue("acc_card_activity")));
     }
+
+    BroadcastReceiver finishAlert = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            MyAccountCardsActivity.this.finish();
+        }
+    };
 
     private void dynamicToolbarColor(String colorString) {
         collapsingToolbarLayout.setContentScrimColor(Color.parseColor(colorString));
@@ -138,7 +153,12 @@ public class MyAccountCardsActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mSharePreferenceHelper.removeValue("acc_card_activity");
+        this.unregisterReceiver(finishAlert);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

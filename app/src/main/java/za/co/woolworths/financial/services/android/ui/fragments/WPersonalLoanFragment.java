@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -161,7 +162,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
     private void getActiveOffer() {
         if (connectionDetector.isOnline(getActivity())) {
-            new HttpAsyncTask<String, String, OfferActive>() {
+            AsyncTask<String, String, OfferActive> asyncActiveOfferRequestLoan = new HttpAsyncTask<String, String, OfferActive>() {
                 @Override
                 protected OfferActive httpDoInBackground(String... params) {
                     return (woolworthsApplication.getApi().getActiveOfferRequest(productOfferingId));
@@ -191,9 +192,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                     String httpDesc = offerActive.response.desc;
                     if (httpCode == 200) {
                         isOfferActive = offerActive.offerActive;
-                        if(isOfferActive){
+                        if (isOfferActive) {
                             disableIncreaseLimit();
-                        }else {
+                        } else {
                             enableIncreaseLimit();
                         }
                     } else {
@@ -208,7 +209,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 protected Class<OfferActive> httpDoInBackgroundReturnType() {
                     return OfferActive.class;
                 }
-            }.execute();
+            };
+            asyncActiveOfferRequestLoan.execute();
         } else {
             hideProgressBar();
             mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
