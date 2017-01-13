@@ -2,12 +2,7 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.ContextCompatApi24;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,15 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.Switch;
 
 import com.awfs.coordination.R;
 
 import java.lang.reflect.Method;
-import java.util.Locale;
 
-import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
-import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 

@@ -88,6 +88,7 @@ android {
 }
 
 dependencies {
+
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
     compile 'io.jsonwebtoken:jjwt:0.7.0'
     compile 'za.co.wigroup.android:MenuDrawer:1.0.8'
@@ -110,5 +111,8 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:10.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'jp.wasabeef:recyclerview-animators:2.0.0'
+    compile 'jp.wasabeef:recyclerview-animators:2.2.5'
+    compile 'me.dm7.barcodescanner:zxing:1.9'
+    compile files('src/main/zbar.jar')
 }
 apply plugin: 'com.google.gms.google-services'

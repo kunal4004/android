@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.support.v4.content.ContextCompatApi24;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;

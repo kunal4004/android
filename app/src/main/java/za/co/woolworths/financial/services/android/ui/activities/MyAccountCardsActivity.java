@@ -103,7 +103,15 @@ public class MyAccountCardsActivity extends AppCompatActivity {
             handleAccountsResponse(accountsResponse);
         }
         else {
-            fragmentsAdapter = new CardsFragmentPagerAdapter(getSupportFragmentManager());
+            fragmentsAdapter = new CardsFragmentPagerAdapter(getSupportFragmentManager()){
+
+                @Override
+                public int getItemPosition(Object object) {
+
+                    return POSITION_NONE;
+                }
+
+            };
             fragmentsAdapter.addFrag(new WStoreCardEmptyFragment());
             fragmentsAdapter.addFrag( new WCreditCardEmptyFragment());
             fragmentsAdapter.addFrag( new WPersonalLoanEmptyFragment());

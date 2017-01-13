@@ -17,9 +17,9 @@ public class PSRootCategoryAdapter extends EnumMapBindAdapter<PSRootCategoryAdap
         CBX_CONTENT
     }
 
-    public PSRootCategoryAdapter(List<RootCategory> rootCategories) {
+    public PSRootCategoryAdapter(List<RootCategory> rootCategories, RootCategoryBinder.OnClickListener click) {
         this.mRootCategories = rootCategories;
-        putBinder(SampleViewType.CBX_CONTENT, new RootCategoryBinder(this));
+        putBinder(SampleViewType.CBX_CONTENT, new RootCategoryBinder(this,click));
     }
 
     public void setCLIContent() {

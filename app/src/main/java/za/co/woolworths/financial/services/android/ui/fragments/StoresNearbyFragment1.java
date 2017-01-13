@@ -138,7 +138,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     Marker myLocation;
     private Status status;
 
-
     public StoresNearbyFragment1() {
         // Required empty public constructor
         setHasOptionsMenu(true);

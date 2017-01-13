@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.util.binder.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,7 @@ import com.squareup.picasso.Transformation;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.wasabeef.recyclerview.animators.holder.AnimateViewHolder;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.binder.DataBindAdapter;
@@ -26,14 +29,20 @@ import za.co.woolworths.financial.services.android.util.binder.DataBinder;
 
 public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder> {
 
-    private FrameLayout mFrameRootCategory;
+
+    public interface OnClickListener {
+        void onClick(View v, int position);
+    }
+
+    private OnClickListener mOnClickListener;
+
     private Context mContext;
     private List<RootCategory> mDataSet = new ArrayList<>();
     private RootCategory rootCategory;
-    private int lastPosition=0;
 
-    public RootCategoryBinder(DataBindAdapter dataBindAdapter) {
+    public RootCategoryBinder(DataBindAdapter dataBindAdapter,OnClickListener onClickListener) {
         super(dataBindAdapter);
+        this.mOnClickListener = onClickListener;
     }
 
     @Override
@@ -47,10 +56,6 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
     public void bindViewHolder(final ViewHolder holder, int position) {
          rootCategory = mDataSet.get(position);
         holder.mTextProduct.setText(rootCategory.categoryName);
-
-
-        Animation animation = AnimationUtils.loadAnimation(mContext,  R.anim.down_from_top);
-        mFrameRootCategory.startAnimation(animation);
 
         Transformation transformation = new Transformation() {
 
@@ -88,6 +93,13 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
                         public void onError() {}
                     });
         }
+
+        holder.mFrameRootCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mOnClickListener.onClick(view,holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -109,20 +121,20 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
 
         ImageView mImageProductCategory;
         WTextView mTextProduct;
+        FrameLayout mFrameRootCategory;
+
         public ViewHolder(View view) {
             super(view);
             mContext = view.getContext();
+
+//            Animation animation = AnimationUtils.loadAnimation(mContext,  R.anim.down_from_top);
+//            view.startAnimation(animation);
 
             mImageProductCategory = (ImageView) view.findViewById(R.id.imProductCategory);
             mTextProduct = (WTextView) view.findViewById(R.id.textProduct);
             mFrameRootCategory = (FrameLayout) view.findViewById(R.id.frameRootCategory);
 
 
-
         }
     }
-
-
-
-
 }

@@ -357,4 +357,25 @@
     <string name="cli_process_email_content">To upload your Proof of Income Documents, follow the instructions we’ve sent to your email. If you didn’t receive the password reset, please check your spam folder.</string>
 
     <string name="product_search_hint">Search products, brands</string>
+    <string name="no_product_found">No product found</string>
+    <string name="simple_scanner_activity">ZBar Scanner - Simple Activity</string>
+    <string name="simple_scanner_fragment_activity">ZBar Scanner - Simple Fragment Activity</string>
+    <string name="simple_activity_sample">Simple Activity Sample</string>
+    <string name="simple_fragment_sample">Simple Fragment Sample</string>
+    <string name="activity_sample">Full Activity Sample</string>
+    <string name="fragment_sample">Full Fragment Sample</string>
+    <string name="toggle_flash">Flash</string>
+    <string name="flash_on">Flash [ON]</string>
+    <string name="flash_off">Flash [OFF]</string>
+    <string name="auto_focus_on">Auto Focus [ON]</string>
+    <string name="auto_focus_off">Auto Focus [OFF]</string>
+    <string name="formats">Formats</string>
+    <string name="choose_formats">Choose Formats</string>
+    <string name="select_camera">Select a Camera</string>
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="enter_product_brand_err">Please enter a product or a brand</string>
+    <string name="scan_product">SCAN PRODUCT</string>
+    <string name="set_manually_enter_barcode">Manually enter the barcode</string>
+    <string name="set_info_detail">Place the barcode within the \nguidelines &amp; remain steady</string>
 </resources>

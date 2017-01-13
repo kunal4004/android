@@ -40,7 +40,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.CLIIncomeProofAda
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.AccountNumberFormatWatcher;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -89,8 +88,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     private WTextView mOverlayDescription;
     private LinearLayout mLinEmail;
 
-    public CLIThirdStepFragment() {
-    }
+    public CLIThirdStepFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -98,7 +96,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
         mConnectionDetector = new ConnectionDetector();
         view = inflater.inflate(R.layout.cli_fragment_step_three, container, false);
-        mEmail = SharePreferenceHelper.getInstance().getValue(getActivity(),"email");
+        mEmail = SharePreferenceHelper.getInstance(getActivity()).getValue("email");
         mStepIndicator = (CLIStepIndicatorActivity) getActivity();
         mStepIndicator.setOnFragmentRefresh(this);
         mLayoutInflater = (LayoutInflater)getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );

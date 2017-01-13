@@ -28,4 +28,5 @@
     <dimen name="cli_head_top_margin">22dp</dimen>
     <dimen name="bold_title">20sp</dimen>
     <dimen name="text_desc_15sp">15sp</dimen>
+    <dimen name="toolbar_elevation">4dp</dimen>
 </resources>

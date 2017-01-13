@@ -21,6 +21,7 @@ public class SessionDao extends BaseDao {
     public enum KEY{
         STORES_USER_LAST_LOCATION("STORES_USER_LAST_LOCATION"),
         STORES_USER_SEARCH("STORES_USER_SEARCH"),
+        STORES_PRODUCT_SEARCH("STORES_PRODUCT_SEARCH"),
         USER_TOKEN("USER_TOKEN");
 
         private final String text;

@@ -1,11 +1,13 @@
 package za.co.woolworths.financial.services.android.models;
 
 import android.content.Context;
+import android.location.Location;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.awfs.coordination.R;
+import com.google.android.gms.maps.model.LatLng;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
@@ -45,12 +47,15 @@ import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.Product;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
+import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 
 public class WfsApi {
 
@@ -58,8 +63,8 @@ public class WfsApi {
     private ApiInterface mApiInterface;
     public static final String TAG = "WfsApi";
 
-
     protected WfsApi(Context mContext) {
+
         this.mContext = mContext;
         OkHttpClient client = new OkHttpClient();
         client.setReadTimeout(60, TimeUnit.SECONDS);
@@ -159,6 +164,14 @@ public class WfsApi {
 
     public RootCategories getRootCategory() {
         return mApiInterface.getRootCategories(getOsVersion(),getApiId(),getOS(), getSha1Password(),getDeviceModel(),getNetworkCarrier(),getOsVersion(),"Android");
+    }
+
+    public SubCategories getSubCategory(String category_id) {
+        return mApiInterface.getSubCategory(getOsVersion(),getApiId(),getOS(), getSha1Password(),getDeviceModel(),getNetworkCarrier(),getOsVersion(),"Android",category_id);
+    }
+
+    public Product getProductSearchList(String search_item, LatLng loc, boolean isBarcode, int pageSize, int pageNumber) {
+        return mApiInterface.getProductSearch(getOsVersion(),getDeviceModel(),getOsVersion(),getOS(),getNetworkCarrier(),getApiId(),"","",getSha1Password(),loc.longitude,loc.latitude,isBarcode,search_item,pageSize,pageNumber);
     }
 
     private String getOsVersion() {
