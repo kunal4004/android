@@ -350,7 +350,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
 
     private int repaymentPeriod(int amount){
         if(amount<=10000){
-            return 30;
+            return 36;
         }else {
             return 60;
         }
