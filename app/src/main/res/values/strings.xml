@@ -301,9 +301,9 @@
     <string name="cli_option_two_desc">Simply fax your documents to us at 021 407 9343. Your ID number will be your reference.</string>
     <string name="cli_send_mail">SEND MAIL</string>
     <string name="loading">LOADING…</string>
-    <string name="cli_select_bank_error">Please select a bank</string>
-    <string name="cli_enter_acc_number_error">Please enter your account number</string>
-    <string name="cli_select_acc_type">Please select your account type</string>
+    <string name="cli_select_bank_error">Please select your bank to continue.</string>
+    <string name="cli_enter_acc_number_error">Please capture your bank account number to continue.</string>
+    <string name="cli_select_acc_type">Please select your bank account type to continue.</string>
     <string name="cli_email_address">We will send further instructions to your email:</string>
     <string name="cli_cancel_application">UNFORTUNATELY WE CANNOT PROCEED</string>
     <string name="cli_lorem_ipsum">Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum </string>
@@ -327,7 +327,7 @@
     <string name="cli_sending_email">SENDING EMAIL...</string>
     <string name="cli_updating_bank_detail">UPDATING BANK DETAIL...</string>
     <string name="cli_solvency_error">All fields are mandatory. If not applicable, please enter R0.</string>
-    <string name="cli_check_field">Please answer all questions</string>
+    <string name="cli_check_field">Please select whether Woolworths Financial Services can access your bank statements to continue.</string>
     <string name="cli_amount_hint">R</string>
     <string name="cli_additional_credit_amount">How much additional credit would you\nlike to apply for?</string>
     <string name="cli_apply_insolvency">DO ANY OF THE FOLLOWING APPLY TO YOU?</string>

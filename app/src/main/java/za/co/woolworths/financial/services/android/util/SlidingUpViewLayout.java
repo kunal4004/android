@@ -167,16 +167,11 @@ public class SlidingUpViewLayout {
                 break;
 
             case ERROR:
-                popupView = mInflator.inflate(R.layout.open_overlay_got_it, null);
+                popupView = mInflator.inflate(R.layout.error_popup, null);
                 mOverlayBtn = (WButton) popupView.findViewById(R.id.btnOverlay);
-                mOverlayTitle = (WTextView)popupView.findViewById(R.id.textApplicationNotProceed);
                 mOverlayDescription = (WTextView)popupView.findViewById(R.id.overlayDescription);
                 textEmailContent = (WTextView)popupView.findViewById(R.id.textEmailContent);
-                mLinEmail =(LinearLayout)popupView.findViewById(R.id.linEmail);
-                mLinEmail.setVisibility(View.GONE);
-                mOverlayTitle.setVisibility(View.VISIBLE);
                 mOverlayDescription.setText(description);
-                mOverlayBtn.setText(getString(R.string.ok));
                 mOverlayBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
