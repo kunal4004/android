@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import com.awfs.coordination.R;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,9 +73,9 @@ public class ScreenManager {
         HashMap<String, String> params = new HashMap<String, String>();
 
         try {
-            SessionDao sessionDao = new SessionDao(activity, SessionDao.KEY.USER_TOKEN);
+            SessionDao sessionDao = new SessionDao(activity, SessionDao.KEY.USER_TOKEN).get();
             params.put("id_token_hint", sessionDao.value);
-            params.put("post_logout_redirect_uri", "http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4/sso/redirect/logout\n");
+            params.put("post_logout_redirect_uri", "http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4/sso/redirect/logout");
         } catch (Exception e) {
             e.printStackTrace();
         }

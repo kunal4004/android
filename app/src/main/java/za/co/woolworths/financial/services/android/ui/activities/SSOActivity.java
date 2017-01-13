@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
@@ -32,7 +33,8 @@ public class SSOActivity extends WebViewActivity {
         STATE_MISMATCH(4),
         NONCE_MISMATCH(5),
         SUCCESS(6),
-        EXPIRED(7);
+        EXPIRED(7),
+        SIGNED_OUT(8);
 
         private int result;
 
@@ -148,9 +150,9 @@ public class SSOActivity extends WebViewActivity {
     }
 
     public enum Path implements SSORequiredParameter {
-        SIGNIN("/customerid/connect/authorize"),
-        REGISTER("/customerid/register/step1"),
-        LOGOUT("/customerid/connect/endsession");
+        SIGNIN("customerid/connect/authorize"),
+        REGISTER("customerid/register/step1"),
+        LOGOUT("customerid/connect/endsession");
 
         private String path;
 
@@ -181,7 +183,7 @@ public class SSOActivity extends WebViewActivity {
         Uri.Builder builder = new Uri.Builder();
         builder.scheme(this.protocol.rawValue())
                 .authority(this.host.rawValue())
-                .appendPath(this.path.rawValue())
+                .appendEncodedPath(this.path.rawValue())
                 .appendQueryParameter("client_id", "WWOneApp")
                 .appendQueryParameter("response_type", "id_token") // Identity token
                 .appendQueryParameter("response_mode", "form_post")
@@ -247,8 +249,13 @@ public class SSOActivity extends WebViewActivity {
                 break;
         }
 
-
-        return builder.build().toString();
+        String constructedURL = "";
+        try{
+            constructedURL = URLDecoder.decode(builder.build().toString(), "UTF-8").toString();
+        }catch(Exception e){
+            constructedURL = builder.build().toString();
+        }
+        return constructedURL;
     }
 
     private final WebViewClient webviewClient = new WebViewClient() {
@@ -285,6 +292,18 @@ public class SSOActivity extends WebViewActivity {
                         finish();
                     }
                 });
+            }else if (extraQueryStringParams != null){
+                int indexOfQuestionMark = url.indexOf("?");
+                if(indexOfQuestionMark > -1){
+                    String urlWithoutQueryString = url.substring(0, indexOfQuestionMark);
+
+                    String redirectURI = extraQueryStringParams.get("post_logout_redirect_uri");
+                    if (urlWithoutQueryString.equals(redirectURI)){
+                        Intent intent = new Intent();
+                        setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
+                        finish();
+                    }
+                }
             }
         }
 

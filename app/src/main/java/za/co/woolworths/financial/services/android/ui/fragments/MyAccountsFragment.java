@@ -272,10 +272,10 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             //initials of the logged in user will be displayed on the page
             String initials = jwtDecodedModel.name.substring(0, 1).concat(" ").concat(jwtDecodedModel.family_name.substring(0, 1));
             userInitials.setText(initials);
+            signOutBtn.setVisibility(View.VISIBLE);
             if(jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")){
                 //user is linked and signed in
                 linkedAccountsLayout.setVisibility(View.VISIBLE);
-                signOutBtn.setVisibility(View.VISIBLE);
             } else{
                 //user is not linked
                 //but signed in
@@ -560,6 +560,15 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
             initialize();
         } else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()){
+            initialize();
+        } else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()){
+            try{
+                SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
+                sessionDao.value = "";
+                sessionDao.save();
+            }catch(Exception e){
+                Log.e(TAG, e.getMessage());
+            }
             initialize();
         }
     }
