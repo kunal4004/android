@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivityTest;
+import za.co.woolworths.financial.services.android.ui.activities.OnboardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -98,6 +99,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     WTextView messageCounter;
     WTextView userName;
     WTextView userInitials;
+    RelativeLayout signoutLayer;
 
     private ProgressDialog mGetAccountsProgressDialog;
     private ProgressBar scProgressBar;
@@ -162,6 +164,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         linkedCreditCardView.setOnClickListener(this);
         linkedPersonalCardView.setOnClickListener(this);
         openShoppingList.setOnClickListener(this);
+        signOutBtn.setOnClickListener(this);
+
 
         adapter=new MyAccountOverViewPagerAdapter(getActivity());
         viewPager.addOnPageChangeListener(this);
@@ -371,6 +375,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 break;
             case R.id.openShoppingList:
                 break;
+            case R.id.signOutBtn:
+                ScreenManager.presentSSOLogout(getActivity());
+                break;
+
+            default:break;
 
         }
     }

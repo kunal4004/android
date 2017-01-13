@@ -52,6 +52,7 @@ public class SSOActivity extends WebViewActivity {
     public static final String TAG_PATH = "TAG_PATH";
     public static final String TAG_JWT = "TAG_JWT";
     public static final String TAG_SCOPE = "TAG_SCOPE";
+    public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 
 
     // TODO: This redirectURIString be pulled from MCS.
@@ -59,6 +60,7 @@ public class SSOActivity extends WebViewActivity {
     private Protocol protocol;
     private Host host;
     private Path path;
+    private Map<String, String> extraQueryStringParams;
 
     private final String state = UUID.randomUUID().toString();
     private final String nonce = UUID.randomUUID().toString();
@@ -85,15 +87,15 @@ public class SSOActivity extends WebViewActivity {
         this.protocol = Protocol.getProtocolByRawValue(bundle.getString(SSOActivity.TAG_PROTOCOL));
         this.host = Host.getHostByRawValue(bundle.getString(SSOActivity.TAG_HOST));
         this.path = Path.getPathByRawValue(bundle.getString(SSOActivity.TAG_PATH));
-        String scope = bundle.getString(SSOActivity.TAG_SCOPE);
+        this.extraQueryStringParams = (Map<String, String>) intent.getSerializableExtra(SSOActivity.TAG_EXTRA_QUERYSTRING_PARAMS);
 
+        String scope = bundle.getString(SSOActivity.TAG_SCOPE);
         String link = this.constructAndGetAuthorisationRequestURL(scope);
 
         Log.d(SSOActivity.TAG, String.format("Authorization Link: %s", link));
 
         bundle.putString("title", "SSO");
         bundle.putString("link", link);
-
         intent.putExtra("Bundle", bundle);
 
         return intent;
@@ -147,7 +149,8 @@ public class SSOActivity extends WebViewActivity {
 
     public enum Path implements SSORequiredParameter {
         SIGNIN("/customerid/connect/authorize"),
-        REGISTER("/customerid/register/step1");
+        REGISTER("/customerid/register/step1"),
+        LOGOUT("/customerid/connect/endsession");
 
         private String path;
 
@@ -187,6 +190,12 @@ public class SSOActivity extends WebViewActivity {
                 .appendQueryParameter("nonce", this.nonce)
                 .appendQueryParameter("scope", scope)
         ;
+
+        if(this.extraQueryStringParams != null){
+            for(Map.Entry<String, String> param : this.extraQueryStringParams.entrySet()){
+                builder.appendQueryParameter(param.getKey(), param.getValue());
+            }
+        }
 
         switch (this.path) {
 
