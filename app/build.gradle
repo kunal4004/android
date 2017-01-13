@@ -113,6 +113,6 @@ dependencies {
     compile 'jp.wasabeef:recyclerview-animators:2.0.0'
     compile 'jp.wasabeef:recyclerview-animators:2.2.5'
     compile 'me.dm7.barcodescanner:zxing:1.9'
-    compile files('src/main/zbar.jar')
+    compile files('libs/zbar.jar')
 }
 apply plugin: 'com.google.gms.google-services'
