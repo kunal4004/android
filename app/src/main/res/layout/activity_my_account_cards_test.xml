@@ -15,9 +15,10 @@
             android:layout_height="match_parent"
             app:contentScrim="@color/black"
             app:statusBarScrim="@null"
+            android:fitsSystemWindows="true"
             app:titleEnabled="false"
             android:background="@drawable/accounts_storecard_background"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
             <za.co.woolworths.financial.services.android.util.WCustomViewPager
                 android:id="@+id/myAccountsCardPager"

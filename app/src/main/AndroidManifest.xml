@@ -134,7 +134,25 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CLIActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/ShoppingList"/>
+            android:theme="@style/ShoppingList" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/LoanWithdrawal" />
+
+        <activity
+        android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalSuccessActivity"
+        android:screenOrientation="portrait"
+        android:theme="@style/LoanWithdrawal" />
+
+
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalConfirmActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/LoanWithdrawal" />
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MessagesActivity"
             android:parentActivityName="za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity"
@@ -177,7 +195,7 @@
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity"
-            android:theme="@style/WTransaction"/>
+            android:theme="@style/WTransaction" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CLISupplyInfoActivity"
             android:screenOrientation="portrait"

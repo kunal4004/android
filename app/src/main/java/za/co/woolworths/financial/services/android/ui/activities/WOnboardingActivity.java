@@ -123,8 +123,8 @@ public class WOnboardingActivity extends FragmentActivity implements WOnboarding
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-            final Drawable pageControlActive = getResources().getDrawable(R.drawable.page_control_active);
-            final Drawable pageControlInactive = getResources().getDrawable(R.drawable.page_control_inactive);
+            final Drawable pageControlActive = getResources().getDrawable(R.drawable.page_indicator_selected);
+            final Drawable pageControlInactive = getResources().getDrawable(R.drawable.page_indicator_default);
 
             switch (position) {
                 case 0:

@@ -15,9 +15,11 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:src="@drawable/walkthrough1"
+            android:src="@drawable/walkthrough_1"
             android:layout_above="@+id/fragment_wonboarding_one_description_layer"
-            android:background="@android:color/transparent">
+            android:background="@android:color/transparent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true">
         </ImageView>
 
         <LinearLayout
@@ -33,21 +35,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="WELCOME"
+                android:letterSpacing="0.1"
                 app:WTextView_font="medium_bold"
                 android:gravity="center_horizontal"
                 style="@style/TitleWSemiBoldWhite"
-                android:paddingTop="32dp"
                 />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/fragment_wonboarding_one_description_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="The new Woolies app gives you access to everything you love in the palm of your hand. Simply scroll, tap and enjoy!"
+                android:text="@string/onboarding_desc_screen_1"
                 android:gravity="center_horizontal"
                 style="@style/CaptionLightGrey"
+                android:lineSpacingExtra="1.2dp"
                 app:WTextView_font="myriadpro_regular"
-                android:lineSpacingExtra="1.3sp"
                 android:paddingTop="16dp"
                 android:paddingLeft="32dp"
                 android:paddingRight="32dp"

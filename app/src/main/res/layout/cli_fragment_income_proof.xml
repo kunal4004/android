@@ -76,55 +76,66 @@
             android:layout_height="wrap_content"
             android:text="@string/cli_send_document_title"
             android:letterSpacing="0.1"
-            android:gravity="center"
+            android:layout_marginLeft="@dimen/bank_spacing_width"
+            android:layout_marginRight="@dimen/bank_spacing_width"
+            android:gravity="left"
             android:layout_marginTop="31dp"
-            android:layout_marginBottom="38dp"
             android:textColor="@color/semi_transparent_black"
             android:textSize="12sp"
             android:textAllCaps="true"
             app:WTextView_font="medium" />
 
+        <include layout="@layout/cli_income_proof_email"/>
 
-        <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycleProofIncome"
-        android:layout_width="match_parent"
-        android:clipToPadding="false"
-            android:layout_marginLeft="@dimen/bank_spacing_width"
-            android:layout_marginRight="@dimen/bank_spacing_width"
-            android:layout_marginBottom="@dimen/activity_horizontal_margin"
-        android:layout_height="wrap_content"/>
+        <View
+            android:layout_height="0.5dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            android:background="@color/recent_search_bg"
+            android:layout_width="match_parent" />
+
+
+        <include layout="@layout/cli_income_proof_row"/>
+
+        <View
+            android:layout_height="0.5dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            android:layout_marginBottom="32dp"
+            android:background="@color/recent_search_bg"
+            android:layout_width="match_parent" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/cli_email_address"
+            android:text="@string/cli_email_required_email"
             android:letterSpacing="0.1"
-            android:gravity="center"
+            android:gravity="left"
             android:layout_marginRight="@dimen/bank_spacing_width"
             android:layout_marginLeft="@dimen/bank_spacing_width"
             android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="5dp"
             android:textColor="@color/black"
-            android:textSize="14sp"
+            android:textSize="15sp"
             android:lineSpacingExtra="8dp"
-            app:WTextView_font="medium" />
+            app:WTextView_font="medium_bold" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/textEmailAdress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/cli_email_address"
+            android:text="@string/cli_email_required_email_desc"
             android:letterSpacing="0.1"
-            android:gravity="center"
+            android:gravity="left"
             android:layout_marginRight="@dimen/bank_spacing_width"
             android:layout_marginLeft="@dimen/bank_spacing_width"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="@dimen/default_width"
             android:textColor="@color/black"
-            android:textSize="14sp"
+            android:textSize="15sp"
             android:lineSpacingExtra="8dp"
-            app:WTextView_font="medium_bold" />
-
-
+            app:WTextView_font="medium" />
 
         <RelativeLayout
             android:layout_width="match_parent"

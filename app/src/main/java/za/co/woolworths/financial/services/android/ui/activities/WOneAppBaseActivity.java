@@ -39,12 +39,14 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     public WTextView mToolbarTitle;
     private List<Fragment> fragmentList;
     public static final String TAG = "WOneAppBaseActivity";
+    private SharePreferenceHelper mSharePreferenceHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.one_app_base_activity);
         Utils.updateStatusBarBackground(this);
+        mSharePreferenceHelper = SharePreferenceHelper.getInstance(WOneAppBaseActivity.this);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
@@ -85,6 +87,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
                 break;
             case 2:
                 fragment = new StoresNearbyFragment1();
+                title = getString(R.string.screen_title_store);
                 title = getString(R.string.nav_item_store);
                 break;
             case 3:
@@ -141,7 +144,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             SessionDao sessionDao = new SessionDao(WOneAppBaseActivity.this, SessionDao.KEY.USER_TOKEN).get();
             if (sessionDao.value != null && !sessionDao.value.equals("")){
                 result = JWTHelper.decode(sessionDao.value);
-                SharePreferenceHelper.getInstance().save(WOneAppBaseActivity.this,result.email,"email");
+                mSharePreferenceHelper.save(result.email,"email");
             }
         }catch(Exception e){
             Log.e(TAG, e.getMessage());

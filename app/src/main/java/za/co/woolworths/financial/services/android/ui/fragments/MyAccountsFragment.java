@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
+import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivityTest;
+import za.co.woolworths.financial.services.android.ui.activities.OnboardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -95,6 +97,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     WTextView cc_available_funds;
     WTextView pl_available_funds;
     WTextView messageCounter;
+    WTextView userName;
+    WTextView userInitials;
+    RelativeLayout signoutLayer;
 
     private ProgressDialog mGetAccountsProgressDialog;
     private ProgressBar scProgressBar;
@@ -147,6 +152,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         ccProgressBar=(ProgressBar)view.findViewById(R.id.ccProgressBar);
         plProgressBar=(ProgressBar)view.findViewById(R.id.plProgressBar);
         messageCounter=(WTextView)view.findViewById(R.id.messageCounter);
+        userName = (WTextView) view.findViewById(R.id.user_name);
+        userInitials = (WTextView) view.findViewById(R.id.initials);
 
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
@@ -157,6 +164,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         linkedCreditCardView.setOnClickListener(this);
         linkedPersonalCardView.setOnClickListener(this);
         openShoppingList.setOnClickListener(this);
+        signOutBtn.setOnClickListener(this);
+
 
         adapter=new MyAccountOverViewPagerAdapter(getActivity());
         viewPager.addOnPageChangeListener(this);
@@ -166,6 +175,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
         view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
         view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
+        view.findViewById(R.id.linkAccountsBtn).setOnClickListener(this.btnLinkAccounts_onClick);
+
+
 
         //hide all views, load accounts may occur
         this.initialize();
@@ -186,6 +198,15 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         }
     }
 
+    //To remove negative signs from negative balance and add "CR" after the negative balance
+    public String removeNegativeSymbol(SpannableString amount){
+        String currentAmount = amount.toString();
+        if(currentAmount.contains("-")){
+            currentAmount = currentAmount.replace("-","")+" CR";
+        }
+        return currentAmount;
+    }
+
     private void configureView() {
         this.configureAndLayoutTopLayerView();
 
@@ -196,21 +217,21 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 linkedStoreCardView.setVisibility(View.VISIBLE);
                 applyStoreCardView.setVisibility(View.GONE);
 
-                sc_available_funds.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity()));
+                sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
                 scProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
 
             } else if(account.productGroupCode.equals("CC")){
                 linkedCreditCardView.setVisibility(View.VISIBLE);
                 applyCreditCardView.setVisibility(View.GONE);
 
-                cc_available_funds.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity()));
+                cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
                 ccProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
 
             } else if(account.productGroupCode.equals("PL")){
                 linkedPersonalCardView.setVisibility(View.VISIBLE);
                 applyPersonalCardView.setVisibility(View.GONE);
 
-                pl_available_funds.setText(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity()));
+                pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
                 plProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
             }
         }
@@ -246,11 +267,15 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity)getActivity()).getJWTDecoded();
         if(jwtDecodedModel.AtgSession != null){
             loggedInHeaderLayout.setVisibility(View.VISIBLE);
-
+            //logged in user's name and family name will be displayed on the page
+            userName.setText(jwtDecodedModel.name + " " + jwtDecodedModel.family_name);
+            //initials of the logged in user will be displayed on the page
+            String initials = jwtDecodedModel.name.substring(0, 1).concat(" ").concat(jwtDecodedModel.family_name.substring(0, 1));
+            userInitials.setText(initials);
+            signOutBtn.setVisibility(View.VISIBLE);
             if(jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")){
                 //user is linked and signed in
                 linkedAccountsLayout.setVisibility(View.VISIBLE);
-                signOutBtn.setVisibility(View.VISIBLE);
             } else{
                 //user is not linked
                 //but signed in
@@ -312,6 +337,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         }
     };
 
+    private View.OnClickListener btnLinkAccounts_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ScreenManager.presentSSOLinkAccounts(getActivity());
+        }
+    };
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -343,6 +375,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 break;
             case R.id.openShoppingList:
                 break;
+            case R.id.signOutBtn:
+                ScreenManager.presentSSOLogout(getActivity());
+                break;
+
+            default:break;
 
         }
     }
@@ -453,17 +490,16 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             }
         }.execute();
     }
-
     public void redirectToMyAccountsCardsActivity(int position)
     {
         woolworthsApplication.setCliCardPosition(position);
-        Intent intent=new Intent(getActivity(),MyAccountCardsActivity.class);
+        Intent intent = new Intent(getActivity(), MyAccountCardsActivity.class);
 
         intent.putExtra("position",position);
         if(accountsResponse != null) {
             intent.putExtra("accounts", Utils.objectToJson(accountsResponse));
         }
-        startActivity(intent);
+        startActivityForResult(intent, 0);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
     }
@@ -523,12 +559,23 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             }
 
             initialize();
+        } else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()){
+            initialize();
+        } else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()){
+            try{
+                SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
+                sessionDao.value = "";
+                sessionDao.save();
+            }catch(Exception e){
+                Log.e(TAG, e.getMessage());
+            }
+            initialize();
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-       // loadMessages();
+        loadMessages();
     }
 }

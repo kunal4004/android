@@ -1,7 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.Intent;
+import android.app.Activity;
 import android.graphics.Color;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
@@ -26,6 +29,7 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountsCardsAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.BaseAccountFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.CLIFourthStepFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardEmptyFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanEmptyFragment;
@@ -39,7 +43,6 @@ import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 
 public class MyAccountCardsActivity extends AppCompatActivity {
 
-
     WCustomViewPager pager;
     WFragmentViewPager fragmentPager;
     public WTextView toolbarTextView;
@@ -50,13 +53,13 @@ public class MyAccountCardsActivity extends AppCompatActivity {
     CardsFragmentPagerAdapter fragmentsAdapter;
     private CollapsingToolbarLayout collapsingToolbarLayout = null;
     private WoolworthsApplication mWoolworthsApplication;
-
+    public static Activity myAccountCardsActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_account_cards_test);
-        Utils.updateStatusBarBackground(MyAccountCardsActivity.this);
+        myAccountCardsActivity = this;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -73,6 +76,7 @@ public class MyAccountCardsActivity extends AppCompatActivity {
         pager.setPageMargin(50);
         fragmentPager.setPagingEnabled(false);
         pager.setCurrentItem(getIntent().getIntExtra("position",0));
+        setStatusBarColor(getIntent().getIntExtra("position",0));
         //fragmentPager.setCurrentItem(getIntent().getIntExtra("position",0));
         changeViewPagerAndActionBarBackground(getIntent().getIntExtra("position",0));
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -85,6 +89,7 @@ public class MyAccountCardsActivity extends AppCompatActivity {
                 mWoolworthsApplication.setCliCardPosition(position);
                 fragmentPager.setCurrentItem(position);
                 changeViewPagerAndActionBarBackground(position);
+                setStatusBarColor(position);
             }
 
             @Override
@@ -107,7 +112,6 @@ public class MyAccountCardsActivity extends AppCompatActivity {
         }
 
     }
-
 
     private void dynamicToolbarColor(String colorString) {
         collapsingToolbarLayout.setContentScrimColor(Color.parseColor(colorString));
@@ -212,6 +216,42 @@ public class MyAccountCardsActivity extends AppCompatActivity {
             default:
                 ((TextView) findViewById(R.id.no_internet_message)).setText(accountsResponse.response.desc);
                 findViewById(R.id.no_internet).setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void setStatusBarColor(int position){
+        switch (position){
+            case 0:
+                Utils.updateStatusBarBackground(MyAccountCardsActivity.this,R.color.cli_store_card);
+                break;
+            case 1:
+                Utils.updateStatusBarBackground(MyAccountCardsActivity.this,R.color.cli_credit_card);
+                break;
+            case 2:
+                Utils.updateStatusBarBackground(MyAccountCardsActivity.this,R.color.cli_personal_loan);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()){
+            setResult(resultCode);
+            finish();
+        }
+    }
+
+    public static class MyAccountCardsFragment extends Fragment{
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+
+            getActivity().setResult(resultCode);
         }
     }
 }

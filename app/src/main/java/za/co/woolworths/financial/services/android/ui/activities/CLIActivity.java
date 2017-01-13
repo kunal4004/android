@@ -102,7 +102,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
 
     private void setPagerCard(int id) {
         int[] cards={R.drawable.w_store_card,R.drawable.w_credi_card,R.drawable.w_personal_loan_card};
-        mImageAccount.setBackgroundResource(cards[id]);
+        mImageAccount.setImageResource(cards[id]);
        setCLIContent(id);
     }
 
@@ -127,7 +127,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
                 getString(R.string.store_card),
                 getString(R.string.cli_credit_limit_increase),
                 getString(R.string.cli_crd_before_we_get_started),
-                getString(R.string.cli_store_card_content)));
+                getString(R.string.cli_activity_desc)));
 
         //gold credit card
 //        arrCLI.add(new CLI(R.drawable.accounts_blackcreditcard_background,
@@ -143,7 +143,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
                 getString(R.string.credit_card),
                 getString(R.string.cli_crd_credit_limit_increase),
                 getString(R.string.cli_crd_before_we_get_started),
-                getString(R.string.cli_crd_credit_card_content)));
+                getString(R.string.cli_activity_desc)));
 
         //personal loan
         arrCLI.add(new CLI(R.drawable.accounts_personalloancard_background,
@@ -151,7 +151,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
                 getString(R.string.personal_loan),
                 getString(R.string.cli_psl_credit_limit_increase),
                 getString(R.string.cli_psl_before_we_get_started),
-                getString(R.string.cli_psl_content)));
+                getString(R.string.cli_activity_desc)));
         return arrCLI;
     }
 
@@ -192,25 +192,11 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         switch(view.getId()){
             case R.id.btnContinue:
                 mBtnContinue.startAnimation(buttonClick);
-                switch (mPosition){
-                    case 0:
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        break;
-                }
                 Intent openCLIStepIndicator = new Intent(CLIActivity.this,CLISupplyInfoActivity.class);
                 startActivity(openCLIStepIndicator);
                 finish();
-               // overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-
                 break;
         }
     }
-
-
 }

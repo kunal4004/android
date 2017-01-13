@@ -31,7 +31,7 @@ public class WCreditCardEmptyFragment extends Fragment {
         applyNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getFaqLink())));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getApplyNowLink())));
             }
         });
 

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:gravity="bottom"
+    android:id="@+id/relLoanAmount"
+android:layout_width="match_parent"
+android:layout_height="wrap_content">
+
+<LinearLayout
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:gravity="bottom"
+    android:paddingRight="@dimen/bank_spacing_width"
+    android:paddingLeft="@dimen/bank_spacing_width"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="@dimen/bank_spacing_width"
+        android:gravity="center"
+        android:textAllCaps="true"
+        android:letterSpacing="0.07"
+        app:WTextView_font="medium_bold"
+        android:textColor="@color/black"
+        android:text="@string/loan_withdrawal_popup_error" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/textProofIncome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:letterSpacing="0.05"
+        app:WTextView_font="myriadpro_regular"
+        android:textColor="@color/description_color"
+        android:text="@string/loan_withdrawal_popup_desc_err" />
+
+    <View android:layout_width="match_parent"
+        android:layout_height="0.4dp"
+        android:layout_marginTop="@dimen/bank_spacing_width"
+        android:background="@color/description_color" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/btnOk"
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:text="OK"
+        style="?android:attr/borderlessButtonStyle"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:letterSpacing="0.2"
+        app:WButton_font="medium_bold"
+        android:layout_height="80dp"/>
+
+</LinearLayout>
+</RelativeLayout>
