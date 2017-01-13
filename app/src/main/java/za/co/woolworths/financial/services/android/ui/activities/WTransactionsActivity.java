@@ -75,6 +75,7 @@ public class WTransactionsActivity extends AppCompatActivity {
                 switch (transactionHistoryResponse.httpCode) {
                     case 200:
                         transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this,Utils.getdata(transactionHistoryResponse.transactions)));
+                        break;
                     case 440:
                         AlertDialog mError = WErrorDialog.getSimplyErrorDialog(WTransactionsActivity.this);
                         mError.setTitle("Authentication Error");
