@@ -51,6 +51,7 @@ public class WRewardsVouchersFragment extends Fragment {
             public void onClick(View view, int position) {
                 Intent intent=new Intent(getActivity(),WRewardsVoucherDetailsActivity.class);
                 intent.putExtra("VOUCHERS", Utils.objectToJson(voucherResponse.voucherCollection));
+                intent.putExtra("POSITION",position);
                 startActivity(intent);
 
             }

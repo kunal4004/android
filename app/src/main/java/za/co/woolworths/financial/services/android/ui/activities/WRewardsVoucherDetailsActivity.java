@@ -14,6 +14,10 @@ import android.view.WindowManager;
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
+import java.util.Collections;
+import java.util.List;
+
+import za.co.woolworths.financial.services.android.models.dto.Voucher;
 import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsVouchersAdapter;
@@ -27,6 +31,8 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements
     private SwipeStack mSwipeStack;
     WRewardsVouchersAdapter mAdapter;
     VoucherCollection voucherCollection;
+    int postion;
+    List<Voucher> vouchers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -46,7 +52,10 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
         voucherCollection=new Gson().fromJson(getIntent().getStringExtra("VOUCHERS"),VoucherCollection.class);
-        mAdapter = new WRewardsVouchersAdapter(WRewardsVoucherDetailsActivity.this,voucherCollection.vouchers);
+        postion=getIntent().getIntExtra("POSITION",0);
+        vouchers=voucherCollection.vouchers;
+        Collections.rotate(vouchers, -postion);
+        mAdapter = new WRewardsVouchersAdapter(WRewardsVoucherDetailsActivity.this,vouchers);
         mSwipeStack.setAdapter(mAdapter);
         mSwipeStack.setListener(this);
     }
