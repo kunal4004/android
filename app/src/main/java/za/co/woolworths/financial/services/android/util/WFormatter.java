@@ -26,6 +26,10 @@ public class WFormatter {
         }
         return String.format("R%s.%02d", stringBuilder.reverse().toString(), amount % 100);
     }
+    public static String formatAmountNoDecimal(int amount) {
+
+        return String.format("R%d", amount / 100);
+    }
 
     public static String formatPercent(int amount) {
         return String.format("%d%%", amount / 100);
@@ -51,6 +55,13 @@ public class WFormatter {
         }
         DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         return new SimpleDateFormat("dd/MM/yyyy").format(m_ISO8601Local.parse(validFromDate));
+    }
+    public static String formatDateTOddMMMMYYYY(String validFromDate) throws ParseException {
+        if (validFromDate == null) {
+            return "N/A";
+        }
+        DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        return new SimpleDateFormat("dd MMMM yyyy").format(m_ISO8601Local.parse(validFromDate));
     }
 
     public  static String formatMessagingDate(Date validDate) throws  ParseException
