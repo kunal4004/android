@@ -360,4 +360,35 @@
     <string name="loan_withdrawal_popup_error">Loan request too high</string>
     <string name="loan_withdrawal_popup_desc_err">Unfortunately you do need meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>
     <string name="issueing_loan">Processing your loan...</string>
+
+    <string name="wrewards_tag_line">|!b|W|!?|Rewards is our way of rewarding customers INSTANTLY.WRewards members save millions every week.</string>
+    <string name="link_account">link account</string>
+    <string name="apply_for_wrewards">apply for WREWARDS</string>
+    <string name="get_more">Get more</string>
+    <string name="wrewards_three_levels">There are three levels to |!b|W|!?|Rewards - the more you spend, the more guaranteed rewards you\'ll enjoy. You\'ll start out on the Valued level, and we\'ll review your status every quarter, upgrading your status automatically as you qualify for a higher level.</string>
+    <string name="member">MEMBER</string>
+    <string name="swipe_and_save_instantly">SWIPE AND SAVE INSTANTLY</string>
+    <string name="spend_30000">SPEND R30 000 OR MORE ANNUALLY</string>
+    <string name="vip">VIP</string>
+    <string name="spend_between_10000_29000annually">SPEND BETWEEN R10 000 - R29 999 ANNUALLY</string>
+    <string name="savings">SAVINGS</string>
+    <string name="to_next_tier">TO NEXT TIER</string>
+    <string name="info_valued_header">SWIPE AND SAVE INSTANTLY</string>
+    <string name="info_loyal_header">SPEND BETWEEN R9 000 AND R27 000 PER YEAR at woolworths</string>
+    <string name="info_vip_header">SPEND OVER R27 000 PER YEAR AT WOOLWORTHS</string>
+    <string name="overview">OVERVIEW</string>
+    <string name="vouchers">VOUCHERS</string>
+    <string name="year">YEAR</string>
+    <string name="to_date">TO DATE</string>
+    <string name="tier_status1">Tier Status</string>
+    <string name="wrewards_instant_savings">WRewards Instant Savings</string>
+    <string name="wrewards_green_earned">WRewards Green Earned</string>
+    <string name="quarterly_voucher_earned">Quarterly Voucher Earned</string>
+    <string name="year_to_date_spend">Year to Date Spend</string>
+    <string name="value">VALUE</string>
+    <string name="minimum_spend">Minimum Spend</string>
+    <string name="view_terms_conditions">VIEW TERMS &amp; CONDITIONS</string>
+    <string name="expires">"Expires: "</string>
+    <string name="use_before">"USE BEFORE "</string>
+    <string name="register">REGISTER</string>
 </resources>
