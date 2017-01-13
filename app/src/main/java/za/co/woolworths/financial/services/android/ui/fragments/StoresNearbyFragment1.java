@@ -84,7 +84,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 import static android.content.Context.LOCATION_SERVICE;
 import static com.google.android.gms.wearable.DataMap.TAG;
 
-public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener {
+public class  StoresNearbyFragment1 extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener {
 
 
     WCustomViewPager pager;

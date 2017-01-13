@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.models;
 
 import android.content.Context;
-import android.location.Location;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
@@ -9,19 +8,12 @@ import android.util.Log;
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
 
 
 import retrofit.RestAdapter;
-import java.io.IOException;
-import java.nio.charset.Charset;
+
 import java.util.concurrent.TimeUnit;
 
-import okio.Buffer;
-import okio.BufferedSource;
-import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -45,7 +37,6 @@ import za.co.woolworths.financial.services.android.models.dto.LoginRequest;
 import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
-import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.Product;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
@@ -55,7 +46,6 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionHistory
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
-import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 
 public class WfsApi {
 

@@ -18,7 +18,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:background="@color/recent_search_bg"
             app:titleEnabled="false">
-            <include layout="@layout/test"/>
+            <include layout="@layout/search_layout_row"/>
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>

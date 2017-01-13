@@ -12,17 +12,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
-
 import com.awfs.coordination.R;
-
 import java.util.List;
-
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -31,7 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchSubCategoryActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.PSRootCategoryAdapter;
-import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
@@ -39,15 +35,14 @@ import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
 import za.co.woolworths.financial.services.android.util.barcode.scanner.FullScannerActivity;
 import za.co.woolworths.financial.services.android.util.binder.view.RootCategoryBinder;
 
-
 public class WProductFragment extends Fragment implements RootCategoryBinder.OnClickListener, View.OnClickListener {
 
     private ConnectionDetector mConnectionDetector;
-    public LayoutInflater mLayoutInflater;
+    public  LayoutInflater mLayoutInflater;
     private SlidingUpViewLayout mSlidingUpViewLayout;
     private ImageView mImProductSearch;
     private ImageView mImBarcodeScanner;
-    public WEditTextView mEditProductSearch;
+    public  WTextView mTextProductSearch;
     private RecyclerView mRecycleProductSearch;
     private PSRootCategoryAdapter mPSRootCategoryAdapter;
     private LinearLayoutManager mLayoutManager;
@@ -61,9 +56,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //View view = inflater.inflate(R.layout.product_root_category_fragment, container, false);
         View view = inflater.inflate(R.layout.product_root_category_fragment, container, false);
-
         mContext = this;
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
         mConnectionDetector = new ConnectionDetector();
@@ -78,12 +71,13 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     private void setUIListener() {
         mImProductSearch.setOnClickListener(this);
         mImBarcodeScanner.setOnClickListener(this);
+        mTextProductSearch.setOnClickListener(this);
     }
 
     private void initUI(View v) {
         mImProductSearch = (ImageView)v.findViewById(R.id.imProductSearch);
         mImBarcodeScanner = (ImageView)v.findViewById(R.id.imBarcodeScanner);
-        mEditProductSearch = (WEditTextView)v.findViewById(R.id.editProductSearch);
+        mTextProductSearch = (WTextView)v.findViewById(R.id.textProductSearch);
         mRecycleProductSearch = (RecyclerView)v.findViewById(R.id.recycleProductSearch);
     }
 
@@ -119,8 +113,10 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
                             case 200:
                                 if (rootCategories.rootCategories != null) {
                                     mRootCategories = rootCategories.rootCategories;
-                                    mPSRootCategoryAdapter = new PSRootCategoryAdapter(rootCategories.rootCategories, mContext);
-                                    AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mPSRootCategoryAdapter);
+                                    mPSRootCategoryAdapter =
+                                            new PSRootCategoryAdapter(rootCategories.rootCategories, mContext);
+                                    AlphaInAnimationAdapter alphaAdapter =
+                                            new AlphaInAnimationAdapter(mPSRootCategoryAdapter);
                                     mRecycleProductSearch.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(1f)));
                                     mRecycleProductSearch.getItemAnimator().setAddDuration(1500);
                                     mRecycleProductSearch.getItemAnimator().setRemoveDuration(1500);
@@ -163,19 +159,12 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     @Override
     public void onClick(View v) {
         switch(v.getId()){
+            case R.id.textProductSearch:
             case R.id.imProductSearch:
-                String productBrandValue = mEditProductSearch.getText().toString();
-                if (!TextUtils.isEmpty(productBrandValue)) {
-                    mSharePreferenceHelper.save(productBrandValue, "search_prod_brand");
                     Intent openProductSearchActivity = new Intent(getActivity(), ProductSearchActivity.class);
                     startActivity(openProductSearchActivity);
                     getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                }else {
-                    mSlidingUpViewLayout.openOverlayView(getString(R.string.enter_product_brand_err),
-                            SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
-                }
                 break;
-
             case R.id.imBarcodeScanner:
                 launchActivity(FullScannerActivity.class);
                 break;
@@ -186,11 +175,12 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             mClss = clss;
-            ActivityCompat.requestPermissions(getActivity(),
+             ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.CAMERA}, ZBAR_CAMERA_PERMISSION);
         } else {
             Intent intent = new Intent(getActivity(), clss);
             getActivity().startActivity(intent);
+            getActivity().overridePendingTransition(0, 0);
         }
     }
 
@@ -202,6 +192,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
                     if(mClss != null) {
                         Intent intent = new Intent(getActivity(), mClss);
                         getActivity().startActivity(intent);
+                        getActivity().overridePendingTransition(0, 0);
                     }
                 } else {}
                 return;

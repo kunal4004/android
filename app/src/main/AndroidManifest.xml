@@ -199,6 +199,11 @@
             android:label="@string/app_name">
             <meta-data android:name="android.support.UI_OPTIONS"
                 android:value="splitActionBarWhenNarrow" /></activity>
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity"
+            android:theme="@style/AppOverlayTheme"
+            android:uiOptions="splitActionBarWhenNarrow"
+            android:label="@string/app_name">
+        </activity>
     </application>
 
 </manifest>

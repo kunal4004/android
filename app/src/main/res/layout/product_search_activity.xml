@@ -49,9 +49,15 @@
         android:textSize="15sp"
         android:layout_gravity="left|center"
         android:visibility="gone"
-        android:gravity="center"
+        android:padding="@dimen/bank_spacing_width"
+        android:gravity="center|top"
         android:letterSpacing="0.06"
         app:WTextView_font="myriadpro_semibold"/>
+    <include
+        layout="@layout/recent_serachs_layout"
+        android:id="@+id/recentSearchLayout"
+        android:visibility="gone"
+        />
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

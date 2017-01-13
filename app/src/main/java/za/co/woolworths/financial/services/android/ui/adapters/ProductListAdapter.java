@@ -16,8 +16,10 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 public class ProductListAdapter extends RecyclerSwipeAdapter<ProductListAdapter.SimpleViewHolder>{
     public Activity mContext;
     public List<Product_> mProductList;
+    private Product_ mProduct;
+
     public ProductListAdapter(Activity mContext, List<Product_> product_list) {
-     this.mContext=mContext;
+        this.mContext=mContext;
         this.mProductList=product_list;
     }
 
@@ -32,8 +34,11 @@ public class ProductListAdapter extends RecyclerSwipeAdapter<ProductListAdapter.
 
     @Override
     public void onBindViewHolder(final SimpleViewHolder viewHolder, final int position) {
-        viewHolder.mTextSubCategoryName.setText(mProductList.get(position).productName);
-    }
+        mProduct = mProductList.get(position);
+        if (mProduct!=null) {
+            viewHolder.mTextSubCategoryName.setText(mProduct.productName);
+            }
+        }
 
     @Override
     public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

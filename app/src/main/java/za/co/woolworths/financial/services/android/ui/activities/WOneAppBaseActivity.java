@@ -24,7 +24,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragme
 import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
 import za.co.woolworths.financial.services.android.ui.fragments.WProductFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.WProductsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.JWTHelper;

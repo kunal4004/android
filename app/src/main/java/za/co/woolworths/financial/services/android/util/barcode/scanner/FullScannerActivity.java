@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.util.barcode.scanner;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -9,7 +10,9 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
@@ -17,6 +20,7 @@ import com.awfs.coordination.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.barcode.core.IViewFinder;
 import za.co.woolworths.financial.services.android.util.barcode.core.ViewFinderView;
@@ -24,7 +28,7 @@ import za.co.woolworths.financial.services.android.util.barcode.core.ViewFinderV
 
 public class FullScannerActivity extends BaseScannerActivity implements MessageDialogFragment.MessageDialogListener,
         ZBarScannerView.ResultHandler, FormatSelectorDialogFragment.FormatSelectorDialogListener,
-        CameraSelectorDialogFragment.CameraSelectorDialogListener {
+        CameraSelectorDialogFragment.CameraSelectorDialogListener, View.OnClickListener {
     private static final String FLASH_STATE = "FLASH_STATE";
     private static final String AUTO_FOCUS_STATE = "AUTO_FOCUS_STATE";
     private static final String SELECTED_FORMATS = "SELECTED_FORMATS";
@@ -35,6 +39,7 @@ public class FullScannerActivity extends BaseScannerActivity implements MessageD
     private ArrayList<Integer> mSelectedIndices;
     private int mCameraId = -1;
     private ProgressBar mProgressBar;
+    private Button mBtnManual;
 
     @Override
     public void onCreate(Bundle state) {
@@ -54,6 +59,8 @@ public class FullScannerActivity extends BaseScannerActivity implements MessageD
         }
 
         setContentView(R.layout.activity_full_scanner);
+        mBtnManual = (Button)findViewById(R.id.btnManual);
+        mBtnManual.setOnClickListener(this);
         setupToolbar();
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
         mScannerView = new ZBarScannerView(this) {
@@ -155,5 +162,16 @@ public class FullScannerActivity extends BaseScannerActivity implements MessageD
         mScannerView.stopCamera();
         closeMessageDialog();
         closeFormatsDialog();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btnManual:
+                Intent openManual = new Intent(FullScannerActivity.this, EnterBarcodeActivity.class);
+                startActivity(openManual);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                break;
+        }
     }
 }

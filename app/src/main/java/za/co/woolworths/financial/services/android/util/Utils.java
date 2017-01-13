@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -266,5 +267,18 @@ public class Utils {
         String response=gson.toJson(object);
 
         return response;
+    }
+
+    public static int getToolbarHeight(Context context) {
+        final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
+                new int[]{R.attr.actionBarSize});
+        int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
+
+        return toolbarHeight;
+    }
+
+    public static int getTabsHeight(Context context) {
+        return (int) context.getResources().getDimension(R.dimen.bank_spacing_width);
     }
 }

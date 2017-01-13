@@ -378,4 +378,6 @@
     <string name="scan_product">SCAN PRODUCT</string>
     <string name="set_manually_enter_barcode">Manually enter the barcode</string>
     <string name="set_info_detail">Place the barcode within the \nguidelines &amp; remain steady</string>
+    <string name="enter_barcode">ENTER BARCODE</string>
+    <string name="enter_barcode_desc">ENTER THE NUMBER BELOW THE BARCODE</string>
 </resources>

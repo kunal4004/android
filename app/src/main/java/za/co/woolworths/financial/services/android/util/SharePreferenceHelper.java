@@ -12,7 +12,7 @@ public class SharePreferenceHelper {
     private static SharePreferenceHelper sharedPreference;
     public static final String PREFS_NAME = "AOP_PREFS";
     public static final String PREFS_KEY = "AOP_PREFS_String";
-
+    private static Context mContext;
 
 
     public static SharePreferenceHelper getInstance()
@@ -21,6 +21,16 @@ public class SharePreferenceHelper {
         {
             sharedPreference = new SharePreferenceHelper();
         }
+        return sharedPreference;
+    }
+
+    public static SharePreferenceHelper getInstance(Context context)
+    {
+        if (sharedPreference == null)
+        {
+            sharedPreference = new SharePreferenceHelper();
+        }
+        mContext = context;
         return sharedPreference;
     }
 
@@ -41,11 +51,24 @@ public class SharePreferenceHelper {
         editor.commit(); //4
     }
 
-    public String getValue(Context context , String Key) {
+    public void save(String text , String Key) {
+        SharedPreferences settings;
+        Editor editor;
+
+        //settings = PreferenceManager.getDefaultSharedPreferences(context);
+        settings = mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE); //1
+        editor = settings.edit(); //2
+
+        editor.putString(Key, text); //3
+
+        editor.commit(); //4
+    }
+
+    public String getValue(String Key) {
         SharedPreferences settings;
         String text = "";
         //  settings = PreferenceManager.getDefaultSharedPreferences(context);
-        settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        settings = mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         text = settings.getString(Key, "");
         return text;
     }
@@ -62,11 +85,11 @@ public class SharePreferenceHelper {
         editor.commit();
     }
 
-    public void removeValue(Context context , String value) {
+    public void removeValue(String value) {
         SharedPreferences settings;
         Editor editor;
 
-        settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        settings = mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         editor = settings.edit();
 
         editor.remove(value);
