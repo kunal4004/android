@@ -133,6 +133,7 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
         public int getCount() {
             return 4;
         }
+
     };
 
     @Override
