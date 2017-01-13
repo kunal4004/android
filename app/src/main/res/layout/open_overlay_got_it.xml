@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/overlayDescription"
             android:letterSpacing="0.06"
-            android:gravity="center|top"
+            android:gravity="center"
             android:lineSpacingExtra="1.3dp"
             android:background="@color/white"
             android:textSize="15sp"

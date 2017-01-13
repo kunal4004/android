@@ -25,7 +25,7 @@
             android:textAllCaps="true"
             android:background="@color/white"
             android:textSize="16sp"
-            android:text="@string/cli_cannot_proceed_error"
+            android:text="@string/cli_pop_insolvency_title"
             app:WTextView_font="medium_bold"
             android:textColor="@color/black" />
 
