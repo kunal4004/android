@@ -1,13 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,11 +14,9 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -29,19 +24,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-
 import com.awfs.coordination.R;
-
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
@@ -53,14 +43,12 @@ import za.co.woolworths.financial.services.android.ui.adapters.CLICreditLimitAda
 import za.co.woolworths.financial.services.android.ui.views.StepIndicator;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
-import za.co.woolworths.financial.services.android.ui.views.WRadioButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICreditLimitContentBinder;
 
 
@@ -93,9 +81,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     private PopupWindow slidingUpView;
     private int mCreditLimitAmount=0;
     private CreateOfferRequest mCreateOfferRequest;
-    private String current="";
     private NestedScrollView mNestedScrollview;
-
     WoolworthsApplication mWoolworthsApplication;
     private UpdateBankDetail mUpdateBankDetail;
     ConnectionDetector connectionDetector;
@@ -103,16 +89,10 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     private SlidingUpViewLayout slidingUpViewLayout;
     private WTextView mTextProceedToSolvency;
     private LayoutInflater mLayoutInflater;
-    private WButton mBtnCancel;
     private PopupWindow pWindow;
 
-    Handler handler = new Handler();
-    private PopupWindow darkenScreen;
     private PopupWindow mDarkenScreen;
-    private PopupWindow mPopWindow;
     private boolean isConfidential=true;
-    private WTextView mTextApplicationNotProceed;
-    private WTextView mTextOverlayDescription;
     private boolean isSolvency;
 
     @Override
@@ -141,18 +121,22 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
 
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton radioButton = (RadioButton) findViewById(checkedId);
-                if(!radioButton.isChecked()){
-                    return;
-                }
-
                 switch (checkedId){
                     case R.id.radioNoSolvency:
                         isConfidential=true;
                         break;
                     case R.id.radioYesSolvency:
                         isConfidential = false;
-                        displaySolvencyPopUp();
+                        displaySolvencyPopUp()
+                                .setOnDismissListener(new PopupWindow.OnDismissListener() {
+                            @Override
+                            public void onDismiss() {
+                                mRadApplySolvency.clearCheck();
+                                pWindow.dismiss();
+                                mDarkenScreen.dismiss();
+                            }});
+                        break;
+                    default:
                         break;
                 }
                 hideSoftKeyboard();
@@ -163,15 +147,20 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
 
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton radioButton = (RadioButton) findViewById(checkedId);
-                if(!radioButton.isChecked()){
-                    return;
-                }
                 switch (checkedId){
                     case R.id.radioYesConfidentialCredit:
                         break;
                     case R.id.radioNoConfidentialCredit:
-                        displayConfidentialPopUp();
+                        displayConfidentialPopUp()
+                                .setOnDismissListener(new PopupWindow.OnDismissListener() {
+                            @Override
+                            public void onDismiss() {
+                                mRadConfidentialCredit.clearCheck();
+                                pWindow.dismiss();
+                                mDarkenScreen.dismiss();
+                            }});
+                        break;
+                    default:
                         break;
                 }
                 hideSoftKeyboard();
@@ -286,7 +275,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                 }
 
                 if (!pageIsValid){
-                    slidingUpViewLayout.openOverlayView(getString(R.string.cli_solvency_error), SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                    slidingUpViewLayout.openOverlayView(getString(R.string.cli_solvency_error), SlidingUpViewLayout.OVERLAY_TYPE.MANDATORY_FIELD);
                     return;
                 }
 
@@ -575,27 +564,28 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     public PopupWindow displayConfidentialPopUp() {
         //darken the current screen
         View view = getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
-        mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
         mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
         mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
         mDarkenScreen.setOutsideTouchable(false);
         //Then popup window appears
         final View popupView = getLayoutInflater().inflate(R.layout.cli_confidential_popup, null);
-        pWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        WTextView mTextApplicationNotProceed =
+                (WTextView)popupView.findViewById(R.id.textApplicationNotProceed);
+        mTextApplicationNotProceed.setText(getString(R.string.cli_pop_insolvency_title));
+        pWindow = new PopupWindow(popupView,
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         pWindow.setAnimationStyle(R.style.Animations_popup);
         pWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
         pWindow.setOutsideTouchable(false);
         //Dismiss popup when touch outside
         pWindow.setTouchable(false);
 
-        final WRadioButton checked = (WRadioButton)findViewById(mRadConfidentialCredit.getCheckedRadioButtonId());
-        ((WButton) popupView.findViewById(R.id.btnOK)).setOnClickListener(new View.OnClickListener() {
+        ((WButton) popupView.findViewById(R.id.btnOK))
+                .setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                checked.setChecked(false);
-                checked.setTypeface(Typeface.DEFAULT);
-
                 pWindow.dismiss();
                 mDarkenScreen.dismiss();
             }
@@ -606,26 +596,25 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     public PopupWindow displaySolvencyPopUp() {
         //darken the current screen
         View view = getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
-        mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
         mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
         mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
         mDarkenScreen.setOutsideTouchable(false);
         //Then popup window appears
         final View popupView = getLayoutInflater().inflate(R.layout.cli_insolvency_popup, null);
-        pWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        pWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
         pWindow.setAnimationStyle(R.style.Animations_popup);
         pWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0); 
         pWindow.setOutsideTouchable(false);
         //Dismiss popup when touch outside
         pWindow.setTouchable(false);
 
-        final WRadioButton checked = (WRadioButton)findViewById(mRadApplySolvency.getCheckedRadioButtonId());
-        ((WButton) popupView.findViewById(R.id.btnOK)).setOnClickListener(new View.OnClickListener() {
+        ((WButton) popupView.findViewById(R.id.btnOK))
+                .setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checked.setChecked(false);
-                checked.setTypeface(Typeface.DEFAULT);
-
                 pWindow.dismiss();
                 mDarkenScreen.dismiss();
             }
@@ -633,4 +622,11 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
 
         return mDarkenScreen;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+
 }

@@ -49,7 +49,7 @@ public class SlidingUpViewLayout {
     private WButton mBtnCancel;
     private WButton mBtnContinue;
 
-    public enum OVERLAY_TYPE {INSOLVENCY_CHECK,INFO,EMAIL,ERROR}
+    public enum OVERLAY_TYPE {INSOLVENCY_CHECK,INFO,EMAIL,ERROR,MANDATORY_FIELD}
 
     public SlidingUpViewLayout(Context context,LayoutInflater inflater){
         this.mContext = context;
@@ -175,6 +175,29 @@ public class SlidingUpViewLayout {
                 mLinEmail =(LinearLayout)popupView.findViewById(R.id.linEmail);
                 mLinEmail.setVisibility(View.GONE);
                 mOverlayTitle.setVisibility(View.VISIBLE);
+                mOverlayDescription.setText(description);
+                mOverlayBtn.setText(getString(R.string.ok));
+                mOverlayBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        pWindow.dismiss();
+                        darkenScreen.dismiss();
+                    }
+                });
+                break;
+
+
+            case MANDATORY_FIELD:
+                popupView = mInflator.inflate(R.layout.open_overlay_got_it, null);
+                mOverlayBtn = (WButton) popupView.findViewById(R.id.btnOverlay);
+                mOverlayTitle = (WTextView)popupView.findViewById(R.id.textApplicationNotProceed);
+                mOverlayDescription = (WTextView)popupView.findViewById(R.id.overlayDescription);
+                textEmailContent = (WTextView)popupView.findViewById(R.id.textEmailContent);
+                mLinEmail =(LinearLayout)popupView.findViewById(R.id.linEmail);
+                mOverlayTitle.setText(mContext.getResources().getString(R.string.before_we_get_started));
+                mLinEmail.setVisibility(View.GONE);
+                mOverlayTitle.setVisibility(View.VISIBLE);
+                mOverlayTitle.setAllCaps(true);
                 mOverlayDescription.setText(description);
                 mOverlayBtn.setText(getString(R.string.ok));
                 mOverlayBtn.setOnClickListener(new View.OnClickListener() {

@@ -323,10 +323,10 @@
     <string name="cli_loading">LOADING...</string>
     <string name="cli_loading_active_offer">GETTING ACTIVE OFFER...</string>
     <string name="cli_yes_continue">YES-CONTINUE</string>
-    <string name="cli_cannot_proceed_error">Sorry, we can no proceed with your application</string>
+    <string name="cli_cannot_proceed_error">SORRY, WE CANNOt PROCEED WITH YOUR APPLICATION</string>
     <string name="cli_sending_email">SENDING EMAIL...</string>
     <string name="cli_updating_bank_detail">UPDATING BANK DETAIL...</string>
-    <string name="cli_solvency_error">All fields are mandatory. If not applicable, please enter R0.</string>
+    <string name="cli_solvency_error">All fields are mandatory.\nIf not applicable, please enter R0.</string>
     <string name="cli_check_field">Please answer all questions</string>
     <string name="cli_amount_hint">R</string>
     <string name="cli_additional_credit_amount">How much additional credit would you\nlike to apply for?</string>
@@ -342,7 +342,7 @@
     <string name="cli_attach">b) Attach from a drive</string>
     <string name="cli_cannot_proceed_desc">Unfortunately we can\'t proceed until you no longer have any of these conditions in place.</string>
     <string name="cli_proceed_to_permission">Permission to proceed</string>
-    <string name="cli_pop_insolvency_title">UNFORTUNATELY WE \nCANNOT PROCEED </string>
+    <string name="cli_pop_insolvency_title">UNFORTUNATELY WE CANNOT PROCEED </string>
     <string name="cli_pop_insolvency_desc">Unfortunately we can’t proceed until you no longer have any of these conditions in place.</string>
 
     <string name="cli_cancel_application_desc">We can only continue with your application once you’ve granted us permission to access your consumer credit information.</string>
@@ -391,4 +391,6 @@
     <string name="expires">"Expires: "</string>
     <string name="use_before">"USE BEFORE "</string>
     <string name="register">REGISTER</string>
+    <string name="before_we_get_started">before we get started</string>
+
 </resources>
