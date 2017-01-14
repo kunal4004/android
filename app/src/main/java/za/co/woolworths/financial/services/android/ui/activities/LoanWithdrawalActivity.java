@@ -205,13 +205,19 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                     previousScreen();
                 return true;
             case R.id.itemNextArrow:
-               String withdrawalAmount = mEditWithdrawalAmount.getText().toString();
-                if(withdrawalAmount.length()>0){
-                    mSharePreferenceHelper.save(mEditWithdrawalAmount.getText().toString(),"lwf_drawDownAmount");
-                }else{
-                    mSharePreferenceHelper.save("0","lwf_drawDownAmount");
+               mSharePreferenceHelper.save(mEditWithdrawalAmount.getText().toString(),"lwf_drawDownAmount");
+                String withdrawalAmount = mEditWithdrawalAmount.getText().toString();
+                //if(withdrawalAmount){
+                Log.e("StringAvailableFund",String.valueOf(getAvailableFund())+" "+String.valueOf(getDrawnDownAmount()));
+                if (getDrawnDownAmount()>getAvailableFund()){
+                    popUpError();
+
+                }else {
+                    loanRequest();
                 }
-                loanRequest();
+                //}else{
+                    //popUpError();
+                //}
                 break;
         }
         return false;
@@ -351,7 +357,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
 
     private int repaymentPeriod(int amount){
         if(amount<=10000){
-            return 30;
+            return 36;
         }else {
             return 60;
         }
@@ -401,13 +407,21 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
 
     public int getCreditAmount(){
         String creditAmount = mSharePreferenceHelper.getValue("lw_credit_limit").replaceAll("[\\D]", "");
-        if (creditAmount!=null)
-            return Integer.valueOf(creditAmount);
-        else
+        if (TextUtils.isEmpty(creditAmount))
             return 0;
+        else
+            return Integer.valueOf(creditAmount);
     }
 
-    public int getTypeAmount(){
+    public int getAvailableFund(){
+        String availableFund = mSharePreferenceHelper.getValue("lw_available_fund").replaceAll("[\\D]", "");
+        if (TextUtils.isEmpty(availableFund))
+            return 0;
+        else
+        return Integer.valueOf(availableFund);
+    }
+
+    public int getDrawnDownAmount(){
         String amount = mEditWithdrawalAmount.getText().toString().replaceAll("[\\D]", "");
         if (TextUtils.isEmpty(amount)){
             return 0;
