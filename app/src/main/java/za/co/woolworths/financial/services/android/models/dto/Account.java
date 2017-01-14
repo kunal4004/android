@@ -11,5 +11,6 @@ public class Account {
     public int rpCreditLimitThreshold;
     public boolean retrievalError;
     public String productGroupCode;
+    public String accountNumberBin;
 
 }

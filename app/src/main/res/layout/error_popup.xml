@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:id="@+id/linErrorMsg"
+            android:layout_width="match_parent"
+            android:layout_height="122dp"
+            android:orientation="vertical"
+            android:paddingRight="32dp"
+            android:paddingLeft="32dp">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/overlayDescription"
+                android:letterSpacing="0.06"
+                android:gravity="center"
+                android:lineSpacingExtra="1.3dp"
+                android:background="@color/white"
+                android:textSize="15sp"
+                android:text="@string/cli_lorem_ipsum"
+                app:WTextView_font="myriadpro_regular"
+                android:textColor="@color/semi_transparent_black"
+                />
+
+        </LinearLayout>
+
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/recent_search_bg"
+            android:visibility="visible"
+            />
+
+        <LinearLayout android:id="@+id/linYesNoContainer"
+            android:layout_width="match_parent"
+            android:weightSum="1"
+            android:gravity="center"
+            android:layout_height="75dp"
+            android:orientation="horizontal">
+
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnOverlay"
+                android:layout_weight="0.8"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:letterSpacing="0.12"
+                app:WButton_font="medium_bold"
+                android:textSize="12sp"
+                android:text="@string/ok"
+                app:WTextView_font="medium_bold"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -71,6 +71,9 @@ public class Utils {
 
     public static final String SHARED_PREF = "ah_firebase";
 
+    public static final String SILVER_CARD="400154";
+    public static final String GOLD_CARD="410374";
+    public static final String BLACK_CARD="410375";
 
     public static void saveLastLocation(Location loc,Context mContext)
     {

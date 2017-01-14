@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +11,15 @@ import android.widget.ExpandableListView;
 
 import com.awfs.coordination.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
+import za.co.woolworths.financial.services.android.util.WFormatter;
 
 /**
  * Created by W7099877 on 12/12/2016.
@@ -82,6 +87,14 @@ public class WTransactionsAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
+    public String removeNegativeSymbol(SpannableString amount){
+        String currentAmount = amount.toString();
+        if(currentAmount.contains("-")){
+            currentAmount = currentAmount.replace("-","")+" CR";
+        }
+        return currentAmount;
+    }
+
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         Transaction transaction=transactionParentObjList.get(groupPosition).getTransactionList().get(childPosition);
@@ -93,8 +106,19 @@ public class WTransactionsAdapter extends BaseExpandableListAdapter {
         WTextView transactionDate=(WTextView)convertView.findViewById(R.id.transactionDate);
         WTextView transactionAmount=(WTextView)convertView.findViewById(R.id.transactionAmount);
         WTextView transactionDescription=(WTextView)convertView.findViewById(R.id.transactionDescription);
-        transactionDate.setText(transaction.date);
-        transactionAmount.setText("R"+String.valueOf(transaction.amount));
+        //Display date in the format DD/MM/YYYY
+        SimpleDateFormat dateFormat= new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            Date formattedDate = dateFormat.parse(transaction.date);
+            transactionDate.setText(formattedDate.toString());
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        //convert amount to int
+        int amount = Math.round(transaction.amount);
+        //remove negative sign from negative amount
+        String newAmount = removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(amount * 100), 1, mContext));
+        transactionAmount.setText(newAmount);
         transactionDescription.setText(transaction.description);
 
         return convertView;

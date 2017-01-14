@@ -19,10 +19,6 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 
-import static com.awfs.coordination.R.id.linkAccountsBtn;
-import static com.awfs.coordination.R.id.loggedInHeaderLayout;
-import static com.awfs.coordination.R.id.loggedOutHeaderLayout;
-import static com.awfs.coordination.R.id.signOutBtn;
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 /**

@@ -3,16 +3,15 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.app.Activity;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -32,7 +31,6 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountsCardsAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.BaseAccountFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.CLIFourthStepFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardEmptyFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanEmptyFragment;
@@ -58,6 +56,7 @@ public class MyAccountCardsActivity extends AppCompatActivity {
     private CollapsingToolbarLayout collapsingToolbarLayout = null;
     private WoolworthsApplication mWoolworthsApplication;
     private SharePreferenceHelper mSharePreferenceHelper;
+    ArrayList<Integer> cards;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,10 +75,10 @@ public class MyAccountCardsActivity extends AppCompatActivity {
         fragmentPager = (WFragmentViewPager) findViewById(R.id.fragmentpager);
         NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nest_scrollview);
         scrollView.setFillViewport(true);
-        pager.setAdapter(new MyAccountsCardsAdapter(MyAccountCardsActivity.this));
-        pager.setPageMargin(50);
+        cards=new ArrayList<>();
+
         fragmentPager.setPagingEnabled(false);
-        pager.setCurrentItem(getIntent().getIntExtra("position",0));
+
         setStatusBarColor(getIntent().getIntExtra("position",0));
         //fragmentPager.setCurrentItem(getIntent().getIntExtra("position",0));
         changeViewPagerAndActionBarBackground(getIntent().getIntExtra("position",0));
@@ -113,6 +112,11 @@ public class MyAccountCardsActivity extends AppCompatActivity {
             fragmentsAdapter.addFrag( new WPersonalLoanEmptyFragment());
             fragmentPager.setAdapter(fragmentsAdapter);
             fragmentPager.setCurrentItem(getIntent().getIntExtra("position",0));
+            cards.add(R.drawable.w_store_card);
+            cards.add(R.drawable.w_credi_card);
+            cards.add(R.drawable.w_personal_loan_card);
+            setUpAdapter(cards);
+
         }
 
         mSharePreferenceHelper.save("acc_card_activity","acc_card_activity");
@@ -186,19 +190,38 @@ public class MyAccountCardsActivity extends AppCompatActivity {
                 List<Account> accountList = accountsResponse.accountList;
                 boolean containsStoreCard = false, containsCreditCard = false, containsPersonalLoan = false;
                 if (accountList != null) {
+                    cards.clear();
+                    cards.add(R.drawable.w_store_card);
                     for (Account p : accountList) {
                         if ("SC".equals(p.productGroupCode)) {
                             containsStoreCard = true;
                         } else if ("CC".equals(p.productGroupCode)) {
                             containsCreditCard = true;
+                            if(p.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD))
+                            {
+                                cards.add(R.drawable.w_silver_credit_card);
+                            }else if(p.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD))
+                            {
+                                cards.add(R.drawable.w_gold_credit_card);
+                            }else  if(p.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD))
+                            {
+                                cards.add(R.drawable.w_credi_card);
+                            }
                         } else if ("PL".equals(p.productGroupCode)) {
                             containsPersonalLoan = true;
                         }
                     }
+                    if(!containsCreditCard)
+                    {
+                        cards.add(R.drawable.w_credi_card);
+                    }
+                    cards.add(R.drawable.w_personal_loan_card);
+                    setUpAdapter(cards);
                 }
                 Bundle bundle = new Bundle();
                 bundle.putString("accounts", Utils.objectToJson(accountsResponse));
                 fragmentsAdapter = new CardsFragmentPagerAdapter(getSupportFragmentManager());
+
                 if (containsStoreCard) {
                     WStoreCardFragment fragment = new WStoreCardFragment();
                     fragment.setArguments(bundle);
@@ -273,5 +296,12 @@ public class MyAccountCardsActivity extends AppCompatActivity {
 
             getActivity().setResult(resultCode);
         }
+    }
+
+    public void setUpAdapter(ArrayList<Integer> cardsList)
+    {
+        pager.setAdapter(new MyAccountsCardsAdapter(MyAccountCardsActivity.this,cardsList));
+        pager.setPageMargin(50);
+        pager.setCurrentItem(getIntent().getIntExtra("position",0));
     }
 }
