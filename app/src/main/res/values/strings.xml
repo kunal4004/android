@@ -391,4 +391,6 @@
     <string name="expires">"Expires: "</string>
     <string name="use_before">"USE BEFORE "</string>
     <string name="register">REGISTER</string>
+    <string name="before_we_get_started">before we get started</string>
+
 </resources>
