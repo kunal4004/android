@@ -205,12 +205,13 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                     previousScreen();
                 return true;
             case R.id.itemNextArrow:
-               mSharePreferenceHelper.save(mEditWithdrawalAmount.getText().toString(),"lwf_drawDownAmount");
-                if(getCreditAmount()>getTypeAmount()){
-                    loanRequest();
+               String withdrawalAmount = mEditWithdrawalAmount.getText().toString();
+                if(withdrawalAmount.length()>0){
+                    mSharePreferenceHelper.save(mEditWithdrawalAmount.getText().toString(),"lwf_drawDownAmount");
                 }else{
-                    popUpError();
+                    mSharePreferenceHelper.save("0","lwf_drawDownAmount");
                 }
+                loanRequest();
                 break;
         }
         return false;
@@ -350,7 +351,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
 
     private int repaymentPeriod(int amount){
         if(amount<=10000){
-            return 36;
+            return 30;
         }else {
             return 60;
         }
