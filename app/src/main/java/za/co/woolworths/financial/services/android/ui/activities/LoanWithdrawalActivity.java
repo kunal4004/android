@@ -205,19 +205,12 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                     previousScreen();
                 return true;
             case R.id.itemNextArrow:
-               mSharePreferenceHelper.save(mEditWithdrawalAmount.getText().toString(),"lwf_drawDownAmount");
-                String withdrawalAmount = mEditWithdrawalAmount.getText().toString();
-                //if(withdrawalAmount){
-                Log.e("StringAvailableFund",String.valueOf(getAvailableFund())+" "+String.valueOf(getDrawnDownAmount()));
                 if (getDrawnDownAmount()>getAvailableFund()){
                     popUpError();
 
                 }else {
                     loanRequest();
                 }
-                //}else{
-                    //popUpError();
-                //}
                 break;
         }
         return false;
