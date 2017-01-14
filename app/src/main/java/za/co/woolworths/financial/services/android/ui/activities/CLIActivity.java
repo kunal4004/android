@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -17,23 +16,14 @@ import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
-import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
-import za.co.woolworths.financial.services.android.models.UserManager;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.CLI;
-import za.co.woolworths.financial.services.android.models.dto.OfferActive;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
 public class CLIActivity extends AppCompatActivity implements View.OnClickListener {
 
