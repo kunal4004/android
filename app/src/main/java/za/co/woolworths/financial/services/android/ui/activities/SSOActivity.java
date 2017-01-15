@@ -64,8 +64,13 @@ public class SSOActivity extends WebViewActivity {
     private Path path;
     private Map<String, String> extraQueryStringParams;
 
-    private final String state = UUID.randomUUID().toString();
-    private final String nonce = UUID.randomUUID().toString();
+    private final String state;
+    private final String nonce;
+
+    public SSOActivity (){
+        this.state = UUID.randomUUID().toString();
+        this.nonce = UUID.randomUUID().toString();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +80,7 @@ public class SSOActivity extends WebViewActivity {
     }
 
     private void instantiateWebView(){
+
         this.webView.setWebViewClient(this.webviewClient);
         this.webView.getSettings().setUseWideViewPort(true);
         this.webView.getSettings().setLoadWithOverviewMode(true);
@@ -174,6 +180,7 @@ public class SSOActivity extends WebViewActivity {
     }
 
     private String constructAndGetAuthorisationRequestURL(String scope) {
+
         if(scope == null){
             scope = "";
         }
@@ -259,7 +266,6 @@ public class SSOActivity extends WebViewActivity {
     }
 
     private final WebViewClient webviewClient = new WebViewClient() {
-
         @Override
         public void onPageStarted(WebView view, final String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
@@ -271,6 +277,8 @@ public class SSOActivity extends WebViewActivity {
                 view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
                     @Override
                     public void onReceiveValue(String value) {
+                        if (value == "null")
+                            return;
 
                         JsonParser jsonParser = new JsonParser();
                         JsonObject jsonObject = (JsonObject) jsonParser.parse(value);
@@ -280,7 +288,7 @@ public class SSOActivity extends WebViewActivity {
 
                         Intent intent = new Intent();
 
-                        if (SSOActivity.this.state.equals(webviewState)) {
+                        if (state.equals(webviewState)) {
 
                             String jwt = list.get(1);
                             intent.putExtra(SSOActivity.TAG_JWT, jwt);
