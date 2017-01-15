@@ -56,9 +56,6 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
         String sInstallment_amount = mSharePreferenceHelper.getValue("lw_installment_amount");
         if(!TextUtils.isEmpty(sInstallment_amount))
             installment_amount = Integer.valueOf(mSharePreferenceHelper.getValue("lw_installment_amount"));
-        else
-            installment_amount = 100000;
-
         setActionBar();
         initViews();
         clickListener();

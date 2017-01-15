@@ -205,11 +205,11 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                     previousScreen();
                 return true;
             case R.id.itemNextArrow:
-               mSharePreferenceHelper.save(mEditWithdrawalAmount.getText().toString(),"lwf_drawDownAmount");
-                if(getCreditAmount()>getTypeAmount()){
-                    loanRequest();
-                }else{
+                if (getDrawnDownAmount()>getAvailableFund()){
                     popUpError();
+
+                }else {
+                    loanRequest();
                 }
                 break;
         }
@@ -400,13 +400,21 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
 
     public int getCreditAmount(){
         String creditAmount = mSharePreferenceHelper.getValue("lw_credit_limit").replaceAll("[\\D]", "");
-        if (creditAmount!=null)
-            return Integer.valueOf(creditAmount);
-        else
+        if (TextUtils.isEmpty(creditAmount))
             return 0;
+        else
+            return Integer.valueOf(creditAmount);
     }
 
-    public int getTypeAmount(){
+    public int getAvailableFund(){
+        String availableFund = mSharePreferenceHelper.getValue("lw_available_fund").replaceAll("[\\D]", "");
+        if (TextUtils.isEmpty(availableFund))
+            return 0;
+        else
+        return Integer.valueOf(availableFund);
+    }
+
+    public int getDrawnDownAmount(){
         String amount = mEditWithdrawalAmount.getText().toString().replaceAll("[\\D]", "");
         if (TextUtils.isEmpty(amount)){
             return 0;
