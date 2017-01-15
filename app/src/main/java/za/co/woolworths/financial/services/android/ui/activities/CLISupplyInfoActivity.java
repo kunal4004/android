@@ -369,15 +369,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onBackPressed() {
-        if (slidingUpView != null) {
-            if (slidingUpView.isShowing()) {
-                slidingUpViewLayout.dismissLayout();
-            } else {
-                canGoBack();
-            }
-        } else {
             canGoBack();
-        }
     }
 
     @Override
