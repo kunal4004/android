@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/default_margin"
     android:layout_gravity="top"
     android:layout_marginTop="0dp">
-        <ImageView
+        <za.co.woolworths.financial.services.android.ui.views.DynamicHeightImageView
             android:id="@+id/imProductCategory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

@@ -23,7 +23,9 @@ import java.util.List;
 
 import jp.wasabeef.recyclerview.animators.holder.AnimateViewHolder;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
+import za.co.woolworths.financial.services.android.ui.views.DynamicHeightImageView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BitmapTransform;
 import za.co.woolworths.financial.services.android.util.binder.DataBindAdapter;
 import za.co.woolworths.financial.services.android.util.binder.DataBinder;
 
@@ -54,8 +56,9 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
 
     @Override
     public void bindViewHolder(final ViewHolder holder, int position) {
-         rootCategory = mDataSet.get(position);
-        holder.mTextProduct.setText(rootCategory.categoryName);
+        rootCategory = mDataSet.get(position);
+
+       // holder.mImageProductCategory.setHeightRatio(((double)photo.getHeight())/photo.getWidth());
 
         Transformation transformation = new Transformation() {
 
@@ -70,6 +73,7 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
                     // Same bitmap is returned if sizes are the same
                     source.recycle();
                 }
+
                 return result;
             }
 
@@ -79,6 +83,8 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
             }
         };
 
+
+        holder.mTextProduct.setText(rootCategory.categoryName);
         String imageUrl = rootCategory.imgUrl;
         if (imageUrl!=null) {
             Picasso.with(mContext)
@@ -119,7 +125,7 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView mImageProductCategory;
+        DynamicHeightImageView mImageProductCategory;
         WTextView mTextProduct;
         FrameLayout mFrameRootCategory;
 
@@ -130,7 +136,7 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
 //            Animation animation = AnimationUtils.loadAnimation(mContext,  R.anim.down_from_top);
 //            view.startAnimation(animation);
 
-            mImageProductCategory = (ImageView) view.findViewById(R.id.imProductCategory);
+            mImageProductCategory = (DynamicHeightImageView) view.findViewById(R.id.imProductCategory);
             mTextProduct = (WTextView) view.findViewById(R.id.textProduct);
             mFrameRootCategory = (FrameLayout) view.findViewById(R.id.frameRootCategory);
 
