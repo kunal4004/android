@@ -22,13 +22,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.jsonwebtoken.Jwts;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
-import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
-import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
-import za.co.woolworths.financial.services.android.util.Utils;
 
 public class SSOActivity extends WebViewActivity {
 
@@ -295,7 +289,6 @@ public class SSOActivity extends WebViewActivity {
                         Intent intent = new Intent();
 
                         if (state.equals(webviewState)) {
-                            sendRegistrationToServer();
 
                             String jwt = list.get(1);
                             intent.putExtra(SSOActivity.TAG_JWT, jwt);
@@ -342,48 +335,5 @@ public class SSOActivity extends WebViewActivity {
                 progressBar.setVisibility(View.GONE);
             }
         }
-    }
-    private void sendRegistrationToServer() {
-        // sending gcm token to server
-
-        final CreateUpdateDevice device=new CreateUpdateDevice();
-        device.appInstanceId= UUID.randomUUID().toString();
-        device.pushNotificationToken=getSharedPreferences(Utils.SHARED_PREF,0).getString("regId",null);
-
-        //Sending Token and app instance Id to App server
-        //Need to be done after Login
-
-        new HttpAsyncTask<String, String, CreateUpdateDeviceResponse>() {
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-
-            }
-
-            @Override
-            protected CreateUpdateDeviceResponse httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().getResponseOnCreateUpdateDevice(device);
-            }
-
-            @Override
-            protected Class<CreateUpdateDeviceResponse> httpDoInBackgroundReturnType() {
-                return CreateUpdateDeviceResponse.class;
-            }
-
-            @Override
-            protected CreateUpdateDeviceResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                CreateUpdateDeviceResponse createUpdateResponse = new CreateUpdateDeviceResponse();
-                createUpdateResponse.response = new Response();
-                return createUpdateResponse;
-            }
-
-            @Override
-            protected void onPostExecute(CreateUpdateDeviceResponse createUpdateResponse) {
-                super.onPostExecute(createUpdateResponse);
-
-
-            }
-        }.execute();
-
     }
 }
