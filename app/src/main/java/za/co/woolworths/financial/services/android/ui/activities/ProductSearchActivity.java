@@ -499,7 +499,6 @@ public class ProductSearchActivity extends AppCompatActivity
         super.onStop();
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

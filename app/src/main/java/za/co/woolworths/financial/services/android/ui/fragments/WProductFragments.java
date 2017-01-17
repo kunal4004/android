@@ -193,7 +193,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         Intent openSubCategory = new Intent(getActivity(), ProductSearchSubCategoryActivity.class);
         openSubCategory.putExtra("root_category_id",rootCategory.categoryId);
         openSubCategory.putExtra("root_category_name",rootCategory.categoryName);
-        openSubCategory.putExtra("catStep","0");
+        openSubCategory.putExtra("catStep",0);
         startActivity(openSubCategory);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
