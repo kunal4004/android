@@ -32,7 +32,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
-import za.co.woolworths.financial.services.android.util.barcode.scanner.FullScannerActivity;
+import za.co.woolworths.financial.services.android.util.barcode.scanner.ProductCategoryBarcodeActivity;
 import za.co.woolworths.financial.services.android.util.binder.view.RootCategoryBinder;
 
 public class WProductFragment extends Fragment implements RootCategoryBinder.OnClickListener, View.OnClickListener {
@@ -166,7 +166,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
                     getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
             case R.id.imBarcodeScanner:
-                launchActivity(FullScannerActivity.class);
+                launchActivity(ProductCategoryBarcodeActivity.class);
                 break;
         }
     }

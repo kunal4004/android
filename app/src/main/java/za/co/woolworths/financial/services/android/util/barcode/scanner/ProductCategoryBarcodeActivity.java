@@ -26,7 +26,7 @@ import za.co.woolworths.financial.services.android.util.barcode.core.IViewFinder
 import za.co.woolworths.financial.services.android.util.barcode.core.ViewFinderView;
 
 
-public class FullScannerActivity extends BaseScannerActivity implements MessageDialogFragment.MessageDialogListener,
+public class ProductCategoryBarcodeActivity extends BaseScannerActivity implements MessageDialogFragment.MessageDialogListener,
         ZBarScannerView.ResultHandler, FormatSelectorDialogFragment.FormatSelectorDialogListener,
         CameraSelectorDialogFragment.CameraSelectorDialogListener, View.OnClickListener {
     private static final String FLASH_STATE = "FLASH_STATE";
@@ -38,14 +38,12 @@ public class FullScannerActivity extends BaseScannerActivity implements MessageD
     private boolean mAutoFocus;
     private ArrayList<Integer> mSelectedIndices;
     private int mCameraId = -1;
-    private ProgressBar mProgressBar;
     private Button mBtnManual;
 
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
-        Utils.updateStatusBarBackground(this,R.color.black);
-        mProgressBar = new ProgressBar(this);
+        Utils.updateStatusBarBackground(this, R.color.black);
         if (state != null) {
             mFlash = state.getBoolean(FLASH_STATE, false);
             mAutoFocus = state.getBoolean(AUTO_FOCUS_STATE, true);
@@ -59,7 +57,7 @@ public class FullScannerActivity extends BaseScannerActivity implements MessageD
         }
 
         setContentView(R.layout.activity_full_scanner);
-        mBtnManual = (Button)findViewById(R.id.btnManual);
+        mBtnManual = (Button) findViewById(R.id.btnManual);
         mBtnManual.setOnClickListener(this);
         setupToolbar();
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
@@ -68,7 +66,7 @@ public class FullScannerActivity extends BaseScannerActivity implements MessageD
             protected IViewFinder createViewFinderView(Context context) {
                 ViewFinderView finderView = new ViewFinderView(context);
                 finderView.setLaserColor(Color.TRANSPARENT);
-                finderView.setMaskColor(ContextCompat.getColor(FullScannerActivity.this, R.color.black));
+                finderView.setMaskColor(ContextCompat.getColor(ProductCategoryBarcodeActivity.this, R.color.black));
                 finderView.setBorderColor(Color.WHITE);
                 finderView.setBorderStrokeWidth(3);
                 return finderView;
@@ -166,12 +164,18 @@ public class FullScannerActivity extends BaseScannerActivity implements MessageD
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btnManual:
-                Intent openManual = new Intent(FullScannerActivity.this, EnterBarcodeActivity.class);
+                Intent openManual = new Intent(ProductCategoryBarcodeActivity.this, EnterBarcodeActivity.class);
                 startActivity(openManual);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(0,0);
     }
 }

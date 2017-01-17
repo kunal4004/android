@@ -47,10 +47,10 @@
                         android:background="@android:color/transparent"
                         android:gravity="start|center"
                         android:letterSpacing="0.06"
-                        android:textColor="@color/recent_search_bg"
+                        android:textColor="@color/product_search_hint"
                         android:layout_marginLeft="@dimen/bank_spacing_width"
                         android:text="@string/product_search_hint"
-                        android:paddingStart="@dimen/bank_spacing_width"
+                        android:paddingStart="@dimen/recent_search_margin"
                         android:textSize="16sp"
                         app:WEditTextView_font="myriadpro_regular" />
 

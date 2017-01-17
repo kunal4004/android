@@ -34,13 +34,12 @@ import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
 import za.co.woolworths.financial.services.android.util.binder.view.SubCategoryBinder;
 
-public class ProductSearchSubCategoryActivity extends AppCompatActivity implements View.OnClickListener, SubCategoryBinder.OnClickListener {
+public class ProductSearchSubCategoryActivity extends AppCompatActivity implements View.OnClickListener,
+        SubCategoryBinder.OnClickListener {
 
     private Toolbar toolbar;
     private RecyclerView recyclerView;
     private SearchView searchView;
-    private LinearLayout recentSearchLayout;
-    private LinearLayout recentSearchList;
     private SharePreferenceHelper mSharePreferenceHelper;
     private ConnectionDetector mConnectionDetector;
     private LayoutInflater mLayoutInflater;
@@ -56,13 +55,13 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.product_search_activity);
+        setContentView(R.layout.product_search_sub_category);
         mContext = this;
         statusBar();
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(this);
         mConnectionDetector = new ConnectionDetector();
-        mLayoutInflater = (LayoutInflater)getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        mSlidingUpViewLayout = new SlidingUpViewLayout(this,mLayoutInflater);
+        mLayoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mSlidingUpViewLayout = new SlidingUpViewLayout(this, mLayoutInflater);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
         initUI();
         loadData();
@@ -71,9 +70,9 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
             @Override
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
-                if(mConnectionDetector.isOnline(ProductSearchSubCategoryActivity.this)){
+                if (mConnectionDetector.isOnline(ProductSearchSubCategoryActivity.this)) {
                     loadData();
-                }else {
+                } else {
                     mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
                             SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
                     hideRefreshView();
@@ -83,12 +82,12 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
     }
 
     private void initUI() {
-        toolbar=(Toolbar)findViewById(R.id.toolbar);
-        mToolBarTitle =(WTextView)findViewById(R.id.toolbarText);
-        recyclerView=(RecyclerView)findViewById(R.id.productSearchList) ;
-        recentSearchLayout=(LinearLayout)findViewById(R.id.recentSearchLayout);
-        recentSearchList=(LinearLayout)findViewById(R.id.recentSearchList);
-        mTextNoProductFound =(WTextView)findViewById(R.id.textNoProductFound);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolBarTitle = (WTextView) findViewById(R.id.toolbarText);
+        recyclerView = (RecyclerView) findViewById(R.id.productSearchList);
+        LinearLayout recentSearchLayout = (LinearLayout) findViewById(R.id.recentSearchLayout);
+        LinearLayout recentSearchList = (LinearLayout) findViewById(R.id.recentSearchList);
+        mTextNoProductFound = (WTextView) findViewById(R.id.textNoProductFound);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -112,15 +111,13 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
     }
 
     @Override
-    public void onClick(View v) {
-    }
+    public void onClick(View v) {}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.ps_search_icon, menu);
-       // MenuItem searchViewItem = menu.findItem(R.id.action_search);
+        // MenuItem searchViewItem = menu.findItem(R.id.action_search);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -128,6 +125,10 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
+                Intent openSearchBarActivity = new Intent(ProductSearchSubCategoryActivity.this,ProductSearchActivity.class);
+                startActivity(openSearchBarActivity);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
                 break;
             case android.R.id.home:
                 onBackPressed();
@@ -137,12 +138,12 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
         return super.onOptionsItemSelected(item);
     }
 
-    private void getSubCategoryRequest(final String categeory_id){
-        if(mConnectionDetector.isOnline(this)) {
+    private void getSubCategoryRequest(final String categeory_id) {
+        if (mConnectionDetector.isOnline(ProductSearchSubCategoryActivity.this)) {
             new HttpAsyncTask<String, String, SubCategories>() {
                 @Override
                 protected SubCategories httpDoInBackground(String... params) {
-                    return ((WoolworthsApplication)getApplication()).getApi().getSubCategory(categeory_id);
+                    return ((WoolworthsApplication) getApplication()).getApi().getSubCategory(categeory_id);
                 }
 
                 @Override
@@ -168,7 +169,7 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
 
                     switch (subCategories.httpCode) {
                         case 200:
-                            if (subCategories.subCategories != null&&subCategories.subCategories.size()!=0) {
+                            if (subCategories.subCategories != null && subCategories.subCategories.size() != 0) {
                                 mSubCategories = subCategories.subCategories;
                                 mPSRootCategoryAdapter = new PSSubCategoryAdapter(subCategories.subCategories, mContext);
                                 mLayoutManager = new LinearLayoutManager(ProductSearchSubCategoryActivity.this);
@@ -178,7 +179,7 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
                                 recyclerView.setAdapter(mPSRootCategoryAdapter);
                                 mPSRootCategoryAdapter.setCLIContent();
                                 hideNoProductFound();
-                            }else{
+                            } else {
                                 showNoProductFound();
                             }
                             break;
@@ -192,7 +193,7 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
                 }
 
             }.execute();
-        }else {
+        } else {
             mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
                     SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
         }
@@ -211,16 +212,16 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
     @Override
     public void onClick(View v, int position) {
         SubCategory subCategory = mSubCategories.get(position);
-        mSharePreferenceHelper.save(subCategory.categoryId,"sub_category_id");
-        mSharePreferenceHelper.save(subCategory.categoryName,"sub_category_name");
-        mSharePreferenceHelper.save("1","catStep");
-        Intent openProductCategory = new Intent(ProductSearchSubCategoryActivity.this,ProductSearchSubCategoryActivity.class);
+        mSharePreferenceHelper.save(subCategory.categoryId, "sub_category_id");
+        mSharePreferenceHelper.save(subCategory.categoryName, "sub_category_name");
+        mSharePreferenceHelper.save("1", "catStep");
+        Intent openProductCategory = new Intent(ProductSearchSubCategoryActivity.this, ProductSearchSubCategoryActivity.class);
         startActivity(openProductCategory);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     public void hideRefreshView() {
-        if (mSwipeRefreshLayout!=null&&mSwipeRefreshLayout.isRefreshing()) {
+        if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(false);
         }
     }

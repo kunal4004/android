@@ -193,7 +193,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/CLI"
             ></activity>
-        <activity android:name="za.co.woolworths.financial.services.android.util.barcode.scanner.FullScannerActivity"
+        <activity android:name="za.co.woolworths.financial.services.android.util.barcode.scanner.ProductCategoryBarcodeActivity"
             android:theme="@style/AppOverlayTheme"
             android:uiOptions="splitActionBarWhenNarrow"
             android:label="@string/app_name">

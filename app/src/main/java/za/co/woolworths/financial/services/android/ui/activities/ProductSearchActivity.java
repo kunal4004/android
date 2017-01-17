@@ -1,17 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +17,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,7 +29,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.util.Attributes;
@@ -52,12 +52,13 @@ import za.co.woolworths.financial.services.android.models.dto.Product_;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
-import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductSearchActivity extends AppCompatActivity
@@ -66,8 +67,7 @@ public class ProductSearchActivity extends AppCompatActivity
     public RecyclerView productListview;
     public LinearLayoutManager mLayoutManager;
     public Toolbar toolbar;
-    SwipeRefreshLayout swipeRefreshLayout;
-
+    public SwipeRefreshLayout swipeRefreshLayout;
     public static final int PAGE_SIZE = 20;
     private boolean mIsLoading = false;
     private boolean mIsLastPage = false;
@@ -80,12 +80,11 @@ public class ProductSearchActivity extends AppCompatActivity
     private ProductListAdapter mProductListAdapter;
     private List<Product_> moreProductList;
     private String searchProductBrand;
-    private WTextView mToolbarText;
+    private WEditTextView mEditSearchProduct;
     private WTextView mTextNoProductFound;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private SearchView searchView;
-    private Handler mHandler;
     private LinearLayout recentSearchList;
     private WTextView recentSearchListitem;
     private LinearLayout recentSearchLayout;
@@ -101,7 +100,7 @@ public class ProductSearchActivity extends AppCompatActivity
     private int REQUEST_LOCATION = 1;
     private long UPDATE_INTERVAL = 10 * 1000;
     private long FASTEST_INTERVAL = 1 * 1000;
-
+    private ProgressDialog mSearchProductDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +115,7 @@ public class ProductSearchActivity extends AppCompatActivity
         mSlidingUpViewLayout = new SlidingUpViewLayout(this, mLayoutInflater);
         setRecycleListView();
         showRecentSearchHistoryView(true);
+        editProduct();
         scrollListener();
         getLocation();
     }
@@ -128,7 +128,6 @@ public class ProductSearchActivity extends AppCompatActivity
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
-
             // Create the LocationRequest object
             mLocationRequest = LocationRequest.create()
                     .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -140,9 +139,8 @@ public class ProductSearchActivity extends AppCompatActivity
     private void initUI() {
         mLayoutManager = new LinearLayoutManager(ProductSearchActivity.this);
         productListview = (RecyclerView) findViewById(R.id.productSearchList);
-        mToolbarText = (WTextView) findViewById(R.id.toolbarText);
+        mEditSearchProduct = (WEditTextView) findViewById(R.id.toolbarText);
         mTextNoProductFound = (WTextView) findViewById(R.id.textNoProductFound);
-        mToolbarText.setVisibility(View.GONE);
         recentSearchLayout = (LinearLayout) findViewById(R.id.recentSearchLayout);
     }
 
@@ -179,8 +177,34 @@ public class ProductSearchActivity extends AppCompatActivity
         });
     }
 
+    public void editProduct() {
+
+        mEditSearchProduct.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.toString().length()==0){
+                    showRecentSearchHistoryView(true);
+                    productListview.setVisibility(View.GONE);
+                }else{
+                    showRecentSearchHistoryView(false);
+                    productListview.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+    }
+
     private void setRecycleListView() {
-        mHandler = new Handler();
         productListview.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -188,13 +212,10 @@ public class ProductSearchActivity extends AppCompatActivity
                 return false;
             }
         });
-        searchProductBrand = mSharePreferenceHelper.getValue("search_prod_brand");
-        mToolbarText.setText(searchProductBrand);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
         recentSearchList = (LinearLayout) findViewById(R.id.recentSearchList);
         productListview.setHasFixedSize(true);
         productListview.setLayoutManager(mLayoutManager);
-        mToolbarText.setText(searchProductBrand);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -209,7 +230,6 @@ public class ProductSearchActivity extends AppCompatActivity
             }
         });
     }
-
 
     private void hideRefreshView() {
         if (swipeRefreshLayout.isRefreshing()) {
@@ -247,21 +267,26 @@ public class ProductSearchActivity extends AppCompatActivity
                         mIsLastPage = false;
                         mCurrentPage = 1;
                         mIsLoading = false;
+                        showRecentSearchHistoryView(false);
                         hideNoProductFound();
                     } else {
+                        showRecentSearchHistoryView(true);
                         showNoProductFound();
                     }
                 } else {
                     showNoProductFound();
                 }
                 hideRefreshView();
+                hideProgressDialog();
             }
 
             @Override
             protected void onPreExecute() {
-                search = new SearchHistory();
-                search.searchedValue = query;
-                saveRecentSearch(search);
+                mSearchProductDialog = new ProgressDialog(ProductSearchActivity.this);
+                mSearchProductDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.loading), 1, ProductSearchActivity.this));
+                mSearchProductDialog.setCancelable(false);
+                mSearchProductDialog.show();
+                saveCurrentSearch(query);
                 super.onPreExecute();
             }
 
@@ -274,7 +299,7 @@ public class ProductSearchActivity extends AppCompatActivity
 
     public void bindDataWithUI(List<Product_> product_list) {
         mProductListAdapter = new ProductListAdapter(ProductSearchActivity.this, product_list);
-        ((ProductListAdapter) mProductListAdapter).setMode(Attributes.Mode.Single);
+        mProductListAdapter.setMode(Attributes.Mode.Single);
         productListview.setAdapter(mProductListAdapter);
     }
 
@@ -352,6 +377,20 @@ public class ProductSearchActivity extends AppCompatActivity
             case android.R.id.home:
                 canGoBack();
                 return true;
+            case R.id.action_search:
+                searchProductBrand = mEditSearchProduct.getText().toString();
+                if (!TextUtils.isEmpty(searchProductBrand)) {
+                    if (productList != null) {
+                        productList.clear();
+                    }
+                    productListview.setVisibility(View.VISIBLE);
+                    showRecentSearchHistoryView(false);
+                    getProductRequest(searchProductBrand);
+                } else {
+                    productListview.setVisibility(View.GONE);
+                    showRecentSearchHistoryView(true);
+                }
+                break;
         }
         return false;
     }
@@ -368,7 +407,7 @@ public class ProductSearchActivity extends AppCompatActivity
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.e("onConnected==","connected");
+        Log.e("onConnected==", "connected");
         // Create the LocationRequest object
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -463,57 +502,8 @@ public class ProductSearchActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.w_search_store_menu, menu);
-        MenuItem searchViewItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) MenuItemCompat.getActionView(searchViewItem);
-        searchView.setIconified(false);
-        SpannableMenuOption spannableMenuOption = new SpannableMenuOption(this);
-        searchView.setQueryHint(spannableMenuOption.customSpannableSearch(getString(R.string.product_search_hint)));
-        TextView searchText = (TextView)
-                searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Regular.otf");
-        searchText.setTypeface(font);
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                searchView.clearFocus();
-                return true;
-            }
-        });
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                //searchViewAndroidActionBar.clearFocus();
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(final String newText) {
-
-                mHandler.removeCallbacksAndMessages(null);
-
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (newText.isEmpty()) {
-                            //if storeDetailsList is null before clearing it we get NullPointerException
-                            //Therefore we check if it is null before clearing it
-                            if (productList != null) {
-                                productList.clear();
-                            }
-                            showRecentSearchHistoryView(true);
-                        } else {
-                            showRecentSearchHistoryView(false);
-                            getProductRequest(newText);
-                        }
-                    }
-                }, 600);
-
-                return true;
-            }
-        });
+        inflater.inflate(R.menu.search_item, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -612,7 +602,9 @@ public class ProductSearchActivity extends AppCompatActivity
     public void onClick(View v) {
         int pos = (Integer) v.getTag();
         showRecentSearchHistoryView(false);
-        searchView.setQuery(getRecentSearch().get(pos).searchedValue, true);
+        searchProductBrand = getRecentSearch().get(pos).searchedValue;
+        mEditSearchProduct.setText(searchProductBrand);
+        mEditSearchProduct.setSelection(searchProductBrand.length());
     }
 
     @Override
@@ -624,7 +616,6 @@ public class ProductSearchActivity extends AppCompatActivity
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
         latLng = new LatLng(currentLatitude, currentLongitude);
-
     }
 
     @Override
@@ -666,5 +657,20 @@ public class ProductSearchActivity extends AppCompatActivity
                 mLocationRequest, this);
     }
 
+    public void saveCurrentSearch(String query) {
+        if (!TextUtils.isEmpty(query)) {
+            search = new SearchHistory();
+            search.searchedValue = query;
+            saveRecentSearch(search);
+        }
+    }
+
+    public void hideProgressDialog (){
+        if (mSearchProductDialog!=null){
+            if (mSearchProductDialog.isShowing()){
+                mSearchProductDialog.dismiss();
+            }
+        }
+    }
 
 }
