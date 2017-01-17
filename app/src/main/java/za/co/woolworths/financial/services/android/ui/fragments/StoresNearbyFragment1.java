@@ -73,6 +73,7 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity;
+import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -90,7 +91,7 @@ import static com.google.android.gms.wearable.DataMap.TAG;
 
 public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener {
 
-
+    private static final int REQUEST_CALL = 1;
     WCustomViewPager pager;
     GoogleMap googleMap;
     static int CAMERA_ANIMATION_SPEED = 350;
@@ -108,6 +109,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     private SlidingUpPanelLayout mLayout;
     public List<StoreDetails> storeDetailsList;
 
+    Intent callIntent;
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
     RelativeLayout direction;
@@ -499,9 +501,15 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
                 if (storeDetail.phoneNumber != null) {
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent = new Intent(Intent.ACTION_CALL);
                     callIntent.setData(Uri.parse("tel:" + storeDetail.phoneNumber));
-                    startActivity(callIntent);
+                    //Check for permission before calling
+                    //The app will ask permission before calling only on first use after installation
+                    if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+                    } else {
+                        startActivity(callIntent);
+                    }
                 }
 
             }
@@ -513,6 +521,18 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             }
         });
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode){
+            case REQUEST_CALL:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    startActivity(callIntent);
+                } else {
+                    ////
+                }
+        }
     }
 
     public void openNativeMapWindow(final double lat, final double lon) {
