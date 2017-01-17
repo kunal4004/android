@@ -1,8 +1,10 @@
 package za.co.woolworths.financial.services.android.util.barcode.scanner;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -14,16 +16,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.awfs.coordination.R;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.Product;
+import za.co.woolworths.financial.services.android.models.dto.Product_;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity;
+import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.barcode.core.IViewFinder;
 import za.co.woolworths.financial.services.android.util.barcode.core.ViewFinderView;
+
+import static za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity.PAGE_SIZE;
 
 
 public class ProductCategoryBarcodeActivity extends BaseScannerActivity implements MessageDialogFragment.MessageDialogListener,
@@ -39,7 +51,8 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     private ArrayList<Integer> mSelectedIndices;
     private int mCameraId = -1;
     private Button mBtnManual;
-
+    private ProgressDialog mSearchProductDialog;
+    private ArrayList<Product_> productList;
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -68,7 +81,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
                 finderView.setLaserColor(Color.TRANSPARENT);
                 finderView.setMaskColor(ContextCompat.getColor(ProductCategoryBarcodeActivity.this, R.color.black));
                 finderView.setBorderColor(Color.WHITE);
-                finderView.setBorderStrokeWidth(3);
+                finderView.setBorderStrokeWidth(6);
                 return finderView;
             }
         };
@@ -93,7 +106,9 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             r.play();
         } catch (Exception e) {
         }
-        showMessageDialog("Contents = " + rawResult.getContents() + ", Format = " + rawResult.getBarcodeFormat().getName());
+        getProductRequest(rawResult.getBarcodeFormat().getName());
+        Toast.makeText(this,rawResult.getBarcodeFormat().getName(),Toast.LENGTH_SHORT).show();
+      //  showMessageDialog("Contents = " + rawResult.getContents() + ", Format = " + rawResult.getBarcodeFormat().getName());
     }
 
     public void showMessageDialog(String message) {
@@ -177,5 +192,47 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     public void onBackPressed() {
         finish();
         overridePendingTransition(0,0);
+    }
+
+    public void getProductRequest(final String query) {
+
+        new HttpAsyncTask<String, String, Product>() {
+            @Override
+            protected Product httpDoInBackground(String... params) {
+                Location location = Utils.getLastSavedLocation(ProductCategoryBarcodeActivity.this);
+                LatLng location1 = new LatLng(-29.79, 31.0833);
+                return ((WoolworthsApplication) getApplication()).getApi()
+                        .getProductSearchList(query,
+                                location1, true, 1, PAGE_SIZE);
+            }
+
+            @Override
+            protected Product httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                Product product = new Product();
+                return product;
+            }
+
+            @Override
+            protected void onPostExecute(Product product) {
+                super.onPostExecute(product);
+                productList = null;
+                productList = new ArrayList<>();
+                productList = product.products;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                mSearchProductDialog = new ProgressDialog(ProductCategoryBarcodeActivity.this);
+                mSearchProductDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.loading), 1, ProductCategoryBarcodeActivity.this));
+                mSearchProductDialog.setCancelable(false);
+                mSearchProductDialog.show();
+                super.onPreExecute();
+            }
+
+            @Override
+            protected Class<Product> httpDoInBackgroundReturnType() {
+                return Product.class;
+            }
+        }.execute();
     }
 }

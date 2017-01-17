@@ -458,32 +458,32 @@ public class ProductSearchActivity extends AppCompatActivity
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.e("==mLastLocatifail", connectionResult.getErrorMessage().toString());
-                /*
-         * Google Play services can resolve some errors it detects.
-         * If the error has a resolution, try sending an Intent to
-         * start a Google Play services activity that can resolve
-         * error.
-         */
-        if (connectionResult.hasResolution()) {
-            try {
-                // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-                /*
-                 * Thrown if Google Play services canceled the original
-                 * PendingIntent
-                 */
-            } catch (IntentSender.SendIntentException e) {
-                // Log the error
-                Log.e("mmSendIntentException", String.valueOf(e));
-            }
-        } else {
-            /*
-             * If no resolution is available, display a dialog to the
-             * user with the error.
-             */
-            Log.i("TAG", "Location services connection failed with code " + connectionResult.getErrorCode());
-        }
+        //Log.e("==mLastLocatifail", connectionResult.getErrorMessage().toString());
+//                /*
+//         * Google Play services can resolve some errors it detects.
+//         * If the error has a resolution, try sending an Intent to
+//         * start a Google Play services activity that can resolve
+//         * error.
+//         */
+//        if (connectionResult.hasResolution()) {
+//            try {
+//                // Start an Activity that tries to resolve the error
+//                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+//                /*
+//                 * Thrown if Google Play services canceled the original
+//                 * PendingIntent
+//                 */
+//            } catch (IntentSender.SendIntentException e) {
+//                // Log the error
+//                Log.e("mmSendIntentException", String.valueOf(e));
+//            }
+//        } else {
+//            /*
+//             * If no resolution is available, display a dialog to the
+//             * user with the error.
+//             */
+//            Log.i("TAG", "Location services connection failed with code " + connectionResult.getErrorCode());
+//        }
 
     }
 

@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityCompat;
@@ -27,8 +29,10 @@ import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.awfs.coordination.R;
+
 import java.util.List;
 
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
@@ -53,10 +57,14 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
 
     public interface HideActionBarComponent {
         void onActionBarComponent(boolean actionbarIsVisible);
+
         void onBurgerButtonPressed();
     }
 
     private HideActionBarComponent hideActionBarComponent;
+
+    private static final int PERMS_REQUEST_CODE = 123;
+
     private ImageView mBurgerButtonPressed;
     private ImageView mTBBarcodeScanner;
     private ImageView mImProductSearch;
@@ -100,7 +108,8 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         try {
             hideActionBarComponent = (HideActionBarComponent) getActivity();
         } catch (ClassCastException ex) {
-            Log.e("Interface",ex.toString());}
+            Log.e("Interface", ex.toString());
+        }
     }
 
     private void initUI(View v) {
@@ -177,7 +186,8 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                                         SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
                                 break;
                         }
-                    } catch (NullPointerException ex) {Log.e("NullPointer",ex.toString());
+                    } catch (NullPointerException ex) {
+                        Log.e("NullPointer", ex.toString());
                     }
                 }
             }.execute();
@@ -191,9 +201,9 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     public void onClick(View v, int position) {
         RootCategory rootCategory = mRootCategories.get(position);
         Intent openSubCategory = new Intent(getActivity(), ProductSearchSubCategoryActivity.class);
-        openSubCategory.putExtra("root_category_id",rootCategory.categoryId);
-        openSubCategory.putExtra("root_category_name",rootCategory.categoryName);
-        openSubCategory.putExtra("catStep",0);
+        openSubCategory.putExtra("root_category_id", rootCategory.categoryId);
+        openSubCategory.putExtra("root_category_name", rootCategory.categoryName);
+        openSubCategory.putExtra("catStep", 0);
         startActivity(openSubCategory);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
@@ -210,35 +220,11 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                 break;
             case R.id.imTBBarcodeScanner:
             case R.id.imBarcodeScanner:
-                launchActivity(ProductCategoryBarcodeActivity.class);
+                openCamera(ProductCategoryBarcodeActivity.class);
                 break;
             case R.id.imBurgerButtonPressed:
                 hideActionBarComponent.onBurgerButtonPressed();
                 break;
-        }
-    }
-
-    public void launchActivity(Class<?> clss) {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.CAMERA}, ZBAR_CAMERA_PERMISSION);
-        } else {
-            Intent intent = new Intent(getActivity(), clss);
-            getActivity().startActivity(intent);
-            getActivity().overridePendingTransition(0, 0);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case ZBAR_CAMERA_PERMISSION:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        launchActivity(ProductCategoryBarcodeActivity.class);
-                } else {
-                }
-                return;
         }
     }
 
@@ -304,5 +290,64 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
 
     public void setHideActionBarComponent(HideActionBarComponent hideActionBarComponent) {
         this.hideActionBarComponent = hideActionBarComponent;
+    }
+
+    public boolean hasPermissions() {
+        int res = 0;
+        //string array of permissions,
+        String[] permissions = new String[]{Manifest.permission.CAMERA};
+
+        for (String perms : permissions) {
+            res = getActivity().checkCallingOrSelfPermission(perms);
+            if (!(res == PackageManager.PERMISSION_GRANTED)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void requestPerms() {
+        String[] permissions = new String[]{Manifest.permission.CAMERA};
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(permissions, PERMS_REQUEST_CODE);
+        }
+    }
+
+    public void openCamera(Class<?> clss) {
+        if (hasPermissions()) {
+            Intent intent = new Intent(getActivity(), clss);
+            getActivity().startActivity(intent);
+            getActivity().overridePendingTransition(0, 0);
+        } else {
+            requestPerms();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        boolean allowed = true;
+        switch (requestCode) {
+            case PERMS_REQUEST_CODE:
+                for (int res : grantResults) {
+                    // if user granted all permissions.
+                    allowed = allowed && (res == PackageManager.PERMISSION_GRANTED);
+                }
+                break;
+            default:
+                // if user not granted permissions.
+                allowed = false;
+                break;
+        }
+        if (allowed) {
+            //user granted all permissions we can perform our task.
+            openCamera(ProductCategoryBarcodeActivity.class);
+        } else {
+            // we will give warning to user that they haven't granted permissions.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    Toast.makeText(getActivity(), "Camera Permissions denied.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 }

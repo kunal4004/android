@@ -23,7 +23,7 @@ public class BarcodeFormat {
     public static final BarcodeFormat CODABAR = new BarcodeFormat(Symbol.CODABAR, "CODABAR");
     public static final BarcodeFormat CODE39 = new BarcodeFormat(Symbol.CODE39, "CODE39");
     public static final BarcodeFormat PDF417 = new BarcodeFormat(Symbol.PDF417, "PDF417");
-    public static final BarcodeFormat QRCODE = new BarcodeFormat(Symbol.QRCODE, "QRCODE");
+    //public static final BarcodeFormat QRCODE = new BarcodeFormat(Symbol.QRCODE, "QRCODE");
     public static final BarcodeFormat CODE93 = new BarcodeFormat(Symbol.CODE93, "CODE93");
     public static final BarcodeFormat CODE128 = new BarcodeFormat(Symbol.CODE128, "CODE128");
 

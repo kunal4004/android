@@ -13,17 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.awfs.coordination.R;
-
 import java.lang.reflect.Method;
-
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-
-
-
-/**
- * Created by dimitrij on 2016/12/23.
- */
 
 public class SlidingUpViewLayout {
 
