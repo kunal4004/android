@@ -23,13 +23,9 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
 import com.awfs.coordination.R;
-
 import java.util.List;
-
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -48,20 +44,30 @@ import za.co.woolworths.financial.services.android.util.barcode.scanner.FullScan
 import za.co.woolworths.financial.services.android.util.binder.view.RootCategoryBinder;
 
 public class WProductFragments extends Fragment implements RootCategoryBinder.OnClickListener, View.OnClickListener,
-        AppBarLayout.OnOffsetChangedListener,LDObservableScrollView.LDObservableScrollViewListener {
+        AppBarLayout.OnOffsetChangedListener, LDObservableScrollView.LDObservableScrollViewListener {
 
-    private ConnectionDetector mConnectionDetector;
-    public  LayoutInflater mLayoutInflater;
-    private SlidingUpViewLayout mSlidingUpViewLayout;
+
+    public interface HideActionBarComponent {
+        void onActionBarComponent(boolean actionbarIsVisible);
+        void onBurgerButtonPressed();
+    }
+
+    private HideActionBarComponent hideActionBarComponent;
+    private ImageView mBurgerButtonPressed;
+    private ImageView mTBBarcodeScanner;
     private ImageView mImProductSearch;
     private ImageView mImBarcodeScanner;
-    public  WTextView mTextProductSearch;
+    private ConnectionDetector mConnectionDetector;
+    public LayoutInflater mLayoutInflater;
+    private SlidingUpViewLayout mSlidingUpViewLayout;
+    public WTextView mTextProductSearch;
     private RecyclerView mRecycleProductSearch;
     private PSRootCategoryAdapter mPSRootCategoryAdapter;
     private LinearLayoutManager mLayoutManager;
     private WProductFragments mContext;
     private List<RootCategory> mRootCategories;
     private SharePreferenceHelper mSharePreferenceHelper;
+    private WTextView mTextTBProductSearch;
 
     private Class<?> mClss;
     private static final int ZBAR_CAMERA_PERMISSION = 1;
@@ -78,9 +84,9 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         mContext = this;
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
         mConnectionDetector = new ConnectionDetector();
-        mLayoutInflater = (LayoutInflater)getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        mSlidingUpViewLayout = new SlidingUpViewLayout(getActivity(),mLayoutInflater);
-        mProductToolbar = (Toolbar)view.findViewById(R.id.productToolbar);
+        mLayoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mSlidingUpViewLayout = new SlidingUpViewLayout(getActivity(), mLayoutInflater);
+        mProductToolbar = (Toolbar) view.findViewById(R.id.productToolbar);
         initUI(view);
         setUIListener();
         getRootCategoryRequest();
@@ -88,24 +94,39 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         return view;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            hideActionBarComponent = (HideActionBarComponent) getActivity();
+        } catch (ClassCastException ex) {
+        }
+    }
+
+    private void initUI(View v) {
+        mNestedScrollview = (LDObservableScrollView) v.findViewById(R.id.mNestedScrollview);
+        mImProductSearch = (ImageView) v.findViewById(R.id.imProductSearch);
+        mImBarcodeScanner = (ImageView) v.findViewById(R.id.imBarcodeScanner);
+        mRecycleProductSearch = (RecyclerView) v.findViewById(R.id.recycleProductSearch);
+        mRelSearchRowLayout = (RelativeLayout) v.findViewById(R.id.relSearchRowLayout);
+        mBurgerButtonPressed = (ImageView) v.findViewById(R.id.imBurgerButtonPressed);
+        mTBBarcodeScanner = (ImageView) v.findViewById(R.id.imTBBarcodeScanner);
+        mTextTBProductSearch = (WTextView) v.findViewById(R.id.textTBProductSearch);
+        mTextProductSearch= (WTextView) v.findViewById(R.id.textProductSearch);
+    }
+
     private void setUIListener() {
         mImProductSearch.setOnClickListener(this);
         mImBarcodeScanner.setOnClickListener(this);
         mTextProductSearch.setOnClickListener(this);
-    }
-
-    private void initUI(View v) {
-        mNestedScrollview = (LDObservableScrollView)v.findViewById(R.id.mNestedScrollview);
-        mImProductSearch = (ImageView)v.findViewById(R.id.imProductSearch);
-        mImBarcodeScanner = (ImageView)v.findViewById(R.id.imBarcodeScanner);
-        mTextProductSearch = (WTextView)v.findViewById(R.id.textProductSearch);
-        mRecycleProductSearch = (RecyclerView)v.findViewById(R.id.recycleProductSearch);
-        mRelSearchRowLayout=(RelativeLayout)v.findViewById(R.id.relSearchRowLayout);
+        mBurgerButtonPressed.setOnClickListener(this);
+        mTextTBProductSearch.setOnClickListener(this);
+        mTBBarcodeScanner.setOnClickListener(this);
         mNestedScrollview.setScrollViewListener(this);
     }
 
-    private void getRootCategoryRequest(){
-        if(mConnectionDetector.isOnline(getActivity())) {
+    private void getRootCategoryRequest() {
+        if (mConnectionDetector.isOnline(getActivity())) {
             new HttpAsyncTask<String, String, RootCategories>() {
                 @Override
                 protected RootCategories httpDoInBackground(String... params) {
@@ -159,10 +180,11 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                                         SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
                                 break;
                         }
-                    }catch (NullPointerException ex){}
+                    } catch (NullPointerException ex) {
+                    }
                 }
             }.execute();
-        }else {
+        } else {
             mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
                     SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
         }
@@ -171,9 +193,9 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     @Override
     public void onClick(View v, int position) {
         RootCategory rootCategory = mRootCategories.get(position);
-        mSharePreferenceHelper.save(rootCategory.categoryId,"root_category_id");
-        mSharePreferenceHelper.save(rootCategory.categoryName,"root_category_name");
-        mSharePreferenceHelper.save("0","catStep");
+        mSharePreferenceHelper.save(rootCategory.categoryId, "root_category_id");
+        mSharePreferenceHelper.save(rootCategory.categoryName, "root_category_name");
+        mSharePreferenceHelper.save("0", "catStep");
         Intent openSubCategory = new Intent(getActivity(), ProductSearchSubCategoryActivity.class);
         startActivity(openSubCategory);
         getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -181,15 +203,20 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
+        switch (v.getId()) {
+            case R.id.textTBProductSearch:
             case R.id.textProductSearch:
             case R.id.imProductSearch:
-                    Intent openProductSearchActivity = new Intent(getActivity(), ProductSearchActivity.class);
-                    startActivity(openProductSearchActivity);
-                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                Intent openProductSearchActivity = new Intent(getActivity(), ProductSearchActivity.class);
+                startActivity(openProductSearchActivity);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
+            case R.id.imTBBarcodeScanner:
             case R.id.imBarcodeScanner:
                 launchActivity(FullScannerActivity.class);
+                break;
+            case R.id.imBurgerButtonPressed:
+                hideActionBarComponent.onBurgerButtonPressed();
                 break;
         }
     }
@@ -198,7 +225,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             mClss = clss;
-             ActivityCompat.requestPermissions(getActivity(),
+            ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.CAMERA}, ZBAR_CAMERA_PERMISSION);
         } else {
             Intent intent = new Intent(getActivity(), clss);
@@ -208,75 +235,62 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,  String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case ZBAR_CAMERA_PERMISSION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if(mClss != null) {
-                        Intent intent = new Intent(getActivity(), mClss);
-                        getActivity().startActivity(intent);
-                        getActivity().overridePendingTransition(0, 0);
+                    if (mClss != null) {
+                        launchActivity(FullScannerActivity.class);
                     }
-                } else {}
+                } else {
+                }
                 return;
         }
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-       // ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
-    }
-    @Override
-    public void onStop() {
-        super.onStop();
-       // ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-    }
-
-    @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-
     }
 
     @Override
     public void onScrollChanged(LDObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
         // TODO Auto-generated method stub
-        int searchRowHeight = Math.round(mRelSearchRowLayout.getHeight()+(getToolBarHeight()/2));
-        if (searchRowHeight>y){
+        int searchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight() / 2));
+        if (searchRowHeight > y) {
             showSearchBar();
-        }else {
+        } else {
             hideSearchBar();
         }
     }
 
     public int getToolBarHeight() {
-        int[] attrs = new int[] {R.attr.actionBarSize};
+        int[] attrs = new int[]{R.attr.actionBarSize};
         TypedArray ta = getContext().obtainStyledAttributes(attrs);
         int toolBarHeight = ta.getDimensionPixelSize(0, -1);
         ta.recycle();
         return toolBarHeight;
     }
 
-    private void hideSearchBar(){
+    private void hideSearchBar() {
         mRelSearchRowLayout.setAlpha(0);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setElevation(0);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
         mProductToolbar.setVisibility(View.VISIBLE);
         mRelSearchRowLayout.setEnabled(false);
         mImProductSearch.setEnabled(false);
         mImBarcodeScanner.setEnabled(false);
         mTextProductSearch.setEnabled(false);
+        hideActionBarComponent.onActionBarComponent(false);
     }
 
-    private void showSearchBar(){
-       // mProductToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2)).start();
+    private void showSearchBar() {
         mRelSearchRowLayout.setAlpha(1);
         mRelSearchRowLayout.setEnabled(true);
         mImProductSearch.setEnabled(true);
         mImBarcodeScanner.setEnabled(true);
         mTextProductSearch.setEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setElevation(0);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setElevation(0);
         mProductToolbar.setAlpha(0);
         mProductToolbar
                 .animate()
@@ -289,5 +303,10 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                         mRelSearchRowLayout.animate().setListener(null);
                     }
                 });
+        hideActionBarComponent.onActionBarComponent(true);
+    }
+
+    public void setHideActionBarComponent(HideActionBarComponent hideActionBarComponent) {
+        this.hideActionBarComponent = hideActionBarComponent;
     }
 }

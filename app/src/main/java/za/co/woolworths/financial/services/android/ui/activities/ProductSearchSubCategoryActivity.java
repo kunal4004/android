@@ -65,7 +65,6 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
         mSlidingUpViewLayout = new SlidingUpViewLayout(this,mLayoutInflater);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
         initUI();
-
         loadData();
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -139,7 +138,7 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
     }
 
     private void getSubCategoryRequest(final String categeory_id){
-        if(mConnectionDetector.isOnline()) {
+        if(mConnectionDetector.isOnline(this)) {
             new HttpAsyncTask<String, String, SubCategories>() {
                 @Override
                 protected SubCategories httpDoInBackground(String... params) {

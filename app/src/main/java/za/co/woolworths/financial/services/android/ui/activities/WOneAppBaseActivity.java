@@ -5,10 +5,12 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.os.Bundle;
 import android.view.animation.AccelerateInterpolator;
@@ -23,7 +25,6 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
-import za.co.woolworths.financial.services.android.ui.fragments.WProductFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WProductFragments;
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -31,7 +32,8 @@ import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener{
+public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
+        , WProductFragments.HideActionBarComponent {
 
     public static Toolbar mToolbar;
     public static AppBarLayout appbar;
@@ -39,6 +41,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     public WTextView mToolbarTitle;
     private List<Fragment> fragmentList;
     public static final String TAG = "WOneAppBaseActivity";
+    private View mSeparatorLine;
+    private DrawerLayout mDrawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,17 +54,19 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         getSupportActionBar().setDisplayShowHomeEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false); // false for hiding the title from actoinBar
         getSupportActionBar().setElevation(0);
-        mToolbarTitle=(WTextView)findViewById(R.id.toolbar_title);
-        appbar=(AppBarLayout)findViewById(R.id.appbar);
+        mToolbarTitle = (WTextView) findViewById(R.id.toolbar_title);
+        appbar = (AppBarLayout) findViewById(R.id.appbar);
         fragmentList = new ArrayList<>();
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(null);
         mToolbar.setNavigationIcon(R.drawable.ic_drawer_menu);
+        mSeparatorLine = (View) findViewById(R.id.view_toolbar);
         drawerFragment = (WFragmentDrawer)
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
-        drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerFragment.setUp(R.id.fragment_navigation_drawer, mDrawerLayout, mToolbar);
         drawerFragment.setDrawerListener(this);
         displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
     }
@@ -127,22 +133,39 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        for(Fragment fragment : fragmentList){
+        for (Fragment fragment : fragmentList) {
             fragment.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    public JWTDecodedModel getJWTDecoded(){
+    public JWTDecodedModel getJWTDecoded() {
         JWTDecodedModel result = new JWTDecodedModel();
-        try{
+        try {
             SessionDao sessionDao = new SessionDao(WOneAppBaseActivity.this, SessionDao.KEY.USER_TOKEN).get();
-            if (sessionDao.value != null && !sessionDao.value.equals("")){
+            if (sessionDao.value != null && !sessionDao.value.equals("")) {
                 result = JWTHelper.decode(sessionDao.value);
-                SharePreferenceHelper.getInstance().save(WOneAppBaseActivity.this,result.email,"email");
+                SharePreferenceHelper.getInstance().save(WOneAppBaseActivity.this, result.email, "email");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
         return result;
+    }
+
+    @Override
+    public void onActionBarComponent(boolean actionbarIsVisible) {
+        if (actionbarIsVisible) {
+            mSeparatorLine.setVisibility(View.VISIBLE);
+        } else {
+            mSeparatorLine.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onBurgerButtonPressed() {
+        if (!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            //drawer is open
+            mDrawerLayout.openDrawer(Gravity.LEFT); //OPEN Nav Drawer!
+        }
     }
 }
