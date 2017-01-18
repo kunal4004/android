@@ -279,7 +279,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                 }
 
                 if (!pageIsValid) {
-                    slidingUpViewLayout.openOverlayView(getString(R.string.cli_solvency_error), SlidingUpViewLayout.OVERLAY_TYPE.MANDATORY_FIELD);
+                    slidingUpViewLayout.mandatoryField();
                     return;
                 }
 

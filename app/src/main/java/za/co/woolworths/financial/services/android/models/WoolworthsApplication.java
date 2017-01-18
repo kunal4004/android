@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
-import android.util.Log;
 
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
