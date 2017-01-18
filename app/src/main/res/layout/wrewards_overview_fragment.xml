@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/grey_bg"
-              android:orientation="vertical"
+              android:scrollbars="none"
     >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -151,4 +156,38 @@
         android:layout_height="0.5dp"
         android:background="#0a000000"/>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingBottom="16dp"
+        android:layout_marginTop="16dp"
+        android:id="@+id/promotionsLayout"
+        >
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#0a000000"
+            />
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="64dp"
+            android:paddingLeft="16dp"
+            app:WTextView_font="medium_bold"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:textAllCaps="true"
+            android:text="@string/featured_promotions"
+            android:gravity="center_vertical"
+            />
+        <android.support.v4.view.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:id="@+id/promotionViewPager"
+            android:paddingLeft="8dp"
+            />
+    </LinearLayout>
+    </LinearLayout>
+</ScrollView>
