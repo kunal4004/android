@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,9 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -46,7 +43,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.PSRootCategoryAda
 import za.co.woolworths.financial.services.android.ui.views.LDObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
 import za.co.woolworths.financial.services.android.util.barcode.scanner.ProductCategoryBarcodeActivity;
@@ -80,7 +76,6 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     private List<RootCategory> mRootCategories;
     private WTextView mTextTBProductSearch;
 
-    private static final int ZBAR_CAMERA_PERMISSION = 1;
     private RelativeLayout mRelSearchRowLayout;
     private Toolbar mProductToolbar;
     private LDObservableScrollView mNestedScrollview;
@@ -167,11 +162,12 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                                     mRootCategories = rootCategories.rootCategories;
                                     mPSRootCategoryAdapter = new PSRootCategoryAdapter(rootCategories.rootCategories, mContext);
                                     AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mPSRootCategoryAdapter);
-                                    mRecycleProductSearch.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(1f)));
+                                    mRecycleProductSearch.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(2f)));
                                     mRecycleProductSearch.getItemAnimator().setAddDuration(1500);
                                     mRecycleProductSearch.getItemAnimator().setRemoveDuration(1500);
                                     mRecycleProductSearch.getItemAnimator().setMoveDuration(1500);
                                     mRecycleProductSearch.getItemAnimator().setChangeDuration(1500);
+                                    mRecycleProductSearch.getItemAnimator().setMoveDuration(1500);
                                     mLayoutManager = new LinearLayoutManager(getActivity());
                                     mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                                     mRecycleProductSearch.setLayoutManager(mLayoutManager);
@@ -220,7 +216,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                 break;
             case R.id.imTBBarcodeScanner:
             case R.id.imBarcodeScanner:
-                openCamera(ProductCategoryBarcodeActivity.class);
+                onpenBarcodeScanner(ProductCategoryBarcodeActivity.class);
                 break;
             case R.id.imBurgerButtonPressed:
                 hideActionBarComponent.onBurgerButtonPressed();
@@ -313,7 +309,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         }
     }
 
-    public void openCamera(Class<?> clss) {
+    public void onpenBarcodeScanner(Class<?> clss) {
         if (hasPermissions()) {
             Intent intent = new Intent(getActivity(), clss);
             getActivity().startActivity(intent);
@@ -340,7 +336,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         }
         if (allowed) {
             //user granted all permissions we can perform our task.
-            openCamera(ProductCategoryBarcodeActivity.class);
+            onpenBarcodeScanner(ProductCategoryBarcodeActivity.class);
         } else {
             // we will give warning to user that they haven't granted permissions.
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

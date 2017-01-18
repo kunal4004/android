@@ -2,17 +2,16 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/barcodeContainer"
     android:layout_width="match_parent"
+    android:id="@+id/barcodeContainer"
     android:layout_height="match_parent"
     android:background="@color/black">
-
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black"/>
-
+        android:background="@color/black" >
+    </FrameLayout>
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -33,6 +32,13 @@
             android:textSize="12sp"
             app:WTextView_font="medium_bold" />
     </android.support.v7.widget.Toolbar>
+
+    <WebView android:id="@+id/webviewProgressBar"
+        android:layout_width="60dp"
+        android:visibility="visible"
+        android:scrollbars="none"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/textInfo"
@@ -64,21 +70,5 @@
         android:textColor="@color/white"
         android:textSize="12sp"
         app:WButton_font="medium" />
-
-    <RelativeLayout
-        android:id="@+id/relRelProgressContainer"
-        android:layout_width="match_parent"
-        android:visibility="gone"
-        android:layout_height="wrap_content"
-        android:gravity="center">
-
-        <ProgressBar
-            android:id="@+id/ppBar"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="120dp"
-            android:gravity="center"
-             />
-    </RelativeLayout>
 
 </FrameLayout>

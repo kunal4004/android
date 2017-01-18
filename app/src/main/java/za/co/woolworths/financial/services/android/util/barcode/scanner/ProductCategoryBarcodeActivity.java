@@ -1,21 +1,19 @@
 package za.co.woolworths.financial.services.android.util.barcode.scanner;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.Location;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.awfs.coordination.R;
@@ -26,21 +24,17 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Product;
-import za.co.woolworths.financial.services.android.models.dto.Product_;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
-import za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity;
-import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.barcode.core.IViewFinder;
 import za.co.woolworths.financial.services.android.util.barcode.core.ViewFinderView;
 
-import static za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity.PAGE_SIZE;
-
-
-public class ProductCategoryBarcodeActivity extends BaseScannerActivity implements MessageDialogFragment.MessageDialogListener,
-        ZBarScannerView.ResultHandler, FormatSelectorDialogFragment.FormatSelectorDialogListener,
+public class ProductCategoryBarcodeActivity extends BaseScannerActivity implements
+        ZBarScannerView.ResultHandler,
         CameraSelectorDialogFragment.CameraSelectorDialogListener, View.OnClickListener {
+
+    public static int PAGE_SIZE = 20;
     private static final String FLASH_STATE = "FLASH_STATE";
     private static final String AUTO_FOCUS_STATE = "AUTO_FOCUS_STATE";
     private static final String SELECTED_FORMATS = "SELECTED_FORMATS";
@@ -50,9 +44,9 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     private boolean mAutoFocus;
     private ArrayList<Integer> mSelectedIndices;
     private int mCameraId = -1;
-    private Button mBtnManual;
-    private ProgressDialog mSearchProductDialog;
-    private ArrayList<Product_> productList;
+    private RelativeLayout mRelProgressBar;
+    private TextView mTextInfo;
+
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -70,10 +64,12 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         }
 
         setContentView(R.layout.activity_full_scanner);
-        mBtnManual = (Button) findViewById(R.id.btnManual);
+        Button mBtnManual = (Button) findViewById(R.id.btnManual);
         mBtnManual.setOnClickListener(this);
         setupToolbar();
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
+        mRelProgressBar = (RelativeLayout)findViewById(R.id.relRelProgressContainer);
+        mTextInfo = (TextView)findViewById(R.id.textInfo);
         mScannerView = new ZBarScannerView(this) {
             @Override
             protected IViewFinder createViewFinderView(Context context) {
@@ -104,44 +100,9 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
             r.play();
-        } catch (Exception e) {
-        }
+        } catch (Exception e) {Log.e("Exception", e.toString());}
         getProductRequest(rawResult.getBarcodeFormat().getName());
-        Toast.makeText(this,rawResult.getBarcodeFormat().getName(),Toast.LENGTH_SHORT).show();
-      //  showMessageDialog("Contents = " + rawResult.getContents() + ", Format = " + rawResult.getBarcodeFormat().getName());
-    }
-
-    public void showMessageDialog(String message) {
-        DialogFragment fragment = MessageDialogFragment.newInstance("Scan Results", message, this);
-        fragment.show(getSupportFragmentManager(), "scan_results");
-    }
-
-    public void closeMessageDialog() {
-        closeDialog("scan_results");
-    }
-
-    public void closeFormatsDialog() {
-        closeDialog("format_selector");
-    }
-
-    public void closeDialog(String dialogName) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        DialogFragment fragment = (DialogFragment) fragmentManager.findFragmentByTag(dialogName);
-        if (fragment != null) {
-            fragment.dismiss();
-        }
-    }
-
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        // Resume the camera
-        mScannerView.resumeCameraPreview(this);
-    }
-
-    @Override
-    public void onFormatsSaved(ArrayList<Integer> selectedIndices) {
-        mSelectedIndices = selectedIndices;
-        setupFormats();
+        Toast.makeText(this, rawResult.getBarcodeFormat().getName(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -153,9 +114,9 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     }
 
     public void setupFormats() {
-        List<BarcodeFormat> formats = new ArrayList<BarcodeFormat>();
+        List<BarcodeFormat> formats = new ArrayList<>();
         if (mSelectedIndices == null || mSelectedIndices.isEmpty()) {
-            mSelectedIndices = new ArrayList<Integer>();
+            mSelectedIndices = new ArrayList<>();
             for (int i = 0; i < BarcodeFormat.ALL_FORMATS.size(); i++) {
                 mSelectedIndices.add(i);
             }
@@ -173,8 +134,6 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     public void onPause() {
         super.onPause();
         mScannerView.stopCamera();
-        closeMessageDialog();
-        closeFormatsDialog();
     }
 
     @Override
@@ -191,7 +150,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     @Override
     public void onBackPressed() {
         finish();
-        overridePendingTransition(0,0);
+        overridePendingTransition(0, 0);
     }
 
     public void getProductRequest(final String query) {
@@ -199,7 +158,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         new HttpAsyncTask<String, String, Product>() {
             @Override
             protected Product httpDoInBackground(String... params) {
-                Location location = Utils.getLastSavedLocation(ProductCategoryBarcodeActivity.this);
+                // Location location = Utils.getLastSavedLocation(ProductCategoryBarcodeActivity.this);
                 LatLng location1 = new LatLng(-29.79, 31.0833);
                 return ((WoolworthsApplication) getApplication()).getApi()
                         .getProductSearchList(query,
@@ -208,24 +167,20 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
 
             @Override
             protected Product httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                Product product = new Product();
-                return product;
+                hideProgressDialog();
+                return new Product();
             }
 
             @Override
             protected void onPostExecute(Product product) {
+                hideProgressDialog();
                 super.onPostExecute(product);
-                productList = null;
-                productList = new ArrayList<>();
-                productList = product.products;
             }
 
             @Override
             protected void onPreExecute() {
-                mSearchProductDialog = new ProgressDialog(ProductCategoryBarcodeActivity.this);
-                mSearchProductDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.loading), 1, ProductCategoryBarcodeActivity.this));
-                mSearchProductDialog.setCancelable(false);
-                mSearchProductDialog.show();
+                mTextInfo.setVisibility(View.GONE);
+                mRelProgressBar.setVisibility(View.VISIBLE);
                 super.onPreExecute();
             }
 
@@ -235,4 +190,18 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             }
         }.execute();
     }
+
+    public void hideProgressDialog() {
+        if(mRelProgressBar.getVisibility()==View.VISIBLE){
+            mRelProgressBar.setVisibility(View.GONE);
+            mTextInfo.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+    @Override
+    public void finish() {
+        super.finish();
+    }
+
 }

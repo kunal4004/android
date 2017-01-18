@@ -2,20 +2,21 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.IntentSender;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -29,14 +30,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.util.Attributes;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -55,15 +52,15 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductListAdapte
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.Const;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
+import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductSearchActivity extends AppCompatActivity
-        implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, View.OnClickListener, LocationListener {
+        implements View.OnClickListener {
     public RecyclerView productListview;
     public LinearLayoutManager mLayoutManager;
     public Toolbar toolbar;
@@ -73,34 +70,21 @@ public class ProductSearchActivity extends AppCompatActivity
     private boolean mIsLastPage = false;
     private int mCurrentPage = 1;
     private ConnectionDetector connectionDetector;
-    private SharePreferenceHelper mSharePreferenceHelper;
-    private LayoutInflater mLayoutInflater;
+    public LayoutInflater mLayoutInflater;
     private SlidingUpViewLayout mSlidingUpViewLayout;
-    private ArrayList<Product_> productList;
+    public ArrayList<Product_> productList;
     private ProductListAdapter mProductListAdapter;
     private List<Product_> moreProductList;
     private String searchProductBrand;
     private WEditTextView mEditSearchProduct;
     private WTextView mTextNoProductFound;
-    private GoogleApiClient mGoogleApiClient;
-    private Location mLastLocation;
-    private SearchView searchView;
     private LinearLayout recentSearchList;
-    private WTextView recentSearchListitem;
     private LinearLayout recentSearchLayout;
-    private SearchHistory search;
-    private LocationRequest mLocationRequest;
-    private LatLng latLng;
+    private static final int PERMS_REQUEST_CODE = 1234;
 
-    /*
-     * Define a request code to send to Google Play services
-     * This code is returned in Activity.onActivityResult
-     */
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private int REQUEST_LOCATION = 1;
-    private long UPDATE_INTERVAL = 10 * 1000;
-    private long FASTEST_INTERVAL = 1 * 1000;
     private ProgressDialog mSearchProductDialog;
+    private boolean permissionIsAllowed = false;
+    private LatLng mLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,32 +93,21 @@ public class ProductSearchActivity extends AppCompatActivity
         Utils.updateStatusBarBackground(this);
         setActionBar();
         initUI();
+        mLocation = new LatLng(0,0);
         connectionDetector = new ConnectionDetector();
-        mSharePreferenceHelper = SharePreferenceHelper.getInstance(this);
         mLayoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mSlidingUpViewLayout = new SlidingUpViewLayout(this, mLayoutInflater);
         setRecycleListView();
         showRecentSearchHistoryView(true);
         editProduct();
         scrollListener();
-        getLocation();
-    }
-
-    private void getLocation() {
-        // Create an instance of GoogleAPIClient.
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-            // Create the LocationRequest object
-            mLocationRequest = LocationRequest.create()
-                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                    .setInterval(UPDATE_INTERVAL)        // 10 seconds, in milliseconds
-                    .setFastestInterval(FASTEST_INTERVAL); // 1 second, in milliseconds
+        if (hasPermissions()) {
+            startLocationUpdate();
+        } else {
+            requestPerms();
         }
     }
+
 
     private void initUI() {
         mLayoutManager = new LinearLayoutManager(ProductSearchActivity.this);
@@ -192,10 +165,10 @@ public class ProductSearchActivity extends AppCompatActivity
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.toString().length()==0){
+                if (s.toString().length() == 0) {
                     showRecentSearchHistoryView(true);
                     productListview.setVisibility(View.GONE);
-                }else{
+                } else {
                     showRecentSearchHistoryView(false);
                     productListview.setVisibility(View.VISIBLE);
                 }
@@ -242,17 +215,14 @@ public class ProductSearchActivity extends AppCompatActivity
         new HttpAsyncTask<String, String, Product>() {
             @Override
             protected Product httpDoInBackground(String... params) {
-                Location location = Utils.getLastSavedLocation(ProductSearchActivity.this);
-                LatLng location1 = new LatLng(-29.79, 31.0833);
                 return ((WoolworthsApplication) getApplication()).getApi()
                         .getProductSearchList(query,
-                                location1, false, mCurrentPage, PAGE_SIZE);
+                                mLocation, false, mCurrentPage, PAGE_SIZE);
             }
 
             @Override
             protected Product httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                Product product = new Product();
-                return product;
+                return new Product();
             }
 
             @Override
@@ -314,11 +284,9 @@ public class ProductSearchActivity extends AppCompatActivity
 
             @Override
             protected Product httpDoInBackground(String... params) {
-                Location loc = Utils.getLastSavedLocation(ProductSearchActivity.this);
-                LatLng location = new LatLng(-29.79, 31.0833);
                 return ((WoolworthsApplication) getApplication()).getApi()
                         .getProductSearchList(query,
-                                location, false, mCurrentPage, PAGE_SIZE);
+                                mLocation, false, mCurrentPage, PAGE_SIZE);
             }
 
             @Override
@@ -338,8 +306,7 @@ public class ProductSearchActivity extends AppCompatActivity
             protected void onPostExecute(Product productResponse) {
                 super.onPostExecute(productResponse);
                 mIsLoading = false;
-                List<Product_> product_ = null;
-                product_ = new ArrayList<>();
+                List<Product_> product_ = new ArrayList<>();
                 moreProductList = productResponse.products;
                 if (moreProductList != null && moreProductList.size() != 0) {
                     if (moreProductList.size() < PAGE_SIZE) {
@@ -355,15 +322,25 @@ public class ProductSearchActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        if (mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
-        }
+        // stop location updates
+        try {
+            FusedLocationSingleton.getInstance().stopLocationUpdates();
+            // unregister observer
+            LocalBroadcastManager.getInstance(ProductSearchActivity.this).unregisterReceiver(mLocationUpdated);
+        } catch (NullPointerException ex) {Log.e("onPauseFusedLoc",ex.toString());}
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    private void startLocationUpdate() {
+        // start location updates
+        FusedLocationSingleton.getInstance().startLocationUpdates();
+        // register observer for location updates
+        LocalBroadcastManager.getInstance(ProductSearchActivity.this).registerReceiver(mLocationUpdated,
+                new IntentFilter(Const.INTENT_FILTER_LOCATION_UPDATE));
     }
 
     @Override
@@ -403,100 +380,6 @@ public class ProductSearchActivity extends AppCompatActivity
     private void hideNoProductFound() {
         mTextNoProductFound.setVisibility(View.GONE);
         productListview.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Log.e("onConnected==", "connected");
-        // Create the LocationRequest object
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(UPDATE_INTERVAL)        // 10 seconds, in milliseconds
-                .setFastestInterval(FASTEST_INTERVAL); // 1 second, in milliseconds
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            // Check Permissions Now
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION);
-
-
-            return;
-        }
-        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location == null) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        } else {
-            handleNewLocation(location);
-        }
-
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
-                mGoogleApiClient);
-        if (mLastLocation != null) {
-            // mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
-            // mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
-            Log.e("==mLastLocation==", String.valueOf(mLastLocation));
-        }
-
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.e("==mLastLocatisus", String.valueOf(i));
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        //Log.e("==mLastLocatifail", connectionResult.getErrorMessage().toString());
-//                /*
-//         * Google Play services can resolve some errors it detects.
-//         * If the error has a resolution, try sending an Intent to
-//         * start a Google Play services activity that can resolve
-//         * error.
-//         */
-//        if (connectionResult.hasResolution()) {
-//            try {
-//                // Start an Activity that tries to resolve the error
-//                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-//                /*
-//                 * Thrown if Google Play services canceled the original
-//                 * PendingIntent
-//                 */
-//            } catch (IntentSender.SendIntentException e) {
-//                // Log the error
-//                Log.e("mmSendIntentException", String.valueOf(e));
-//            }
-//        } else {
-//            /*
-//             * If no resolution is available, display a dialog to the
-//             * user with the error.
-//             */
-//            Log.i("TAG", "Location services connection failed with code " + connectionResult.getErrorCode());
-//        }
-
-    }
-
-    protected void onStart() {
-        if (!mGoogleApiClient.isConnecting() || !mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.connect();
-        }
-        super.onStart();
-    }
-
-    protected void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
     }
 
     @Override
@@ -579,7 +462,7 @@ public class ProductSearchActivity extends AppCompatActivity
         if (status && searchHistories != null) {
             for (int i = 0; i < searchHistories.size(); i++) {
                 View v = getLayoutInflater().inflate(R.layout.recent_search_list_item, null);
-                recentSearchListitem = (WTextView) v.findViewById(R.id.recentSerachListItem);
+                WTextView recentSearchListitem = (WTextView) v.findViewById(R.id.recentSerachListItem);
                 recentSearchListitem.setText(searchHistories.get(i).searchedValue);
                 recentSearchList.addView(v);
                 int position = recentSearchList.indexOfChild(v) - 1;
@@ -606,70 +489,90 @@ public class ProductSearchActivity extends AppCompatActivity
         mEditSearchProduct.setSelection(searchProductBrand.length());
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        handleNewLocation(location);
-    }
-
-    private void handleNewLocation(Location location) {
-        double currentLatitude = location.getLatitude();
-        double currentLongitude = location.getLongitude();
-        latLng = new LatLng(currentLatitude, currentLongitude);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.e("Req Code", "" + requestCode);
-
-        if (requestCode == REQUEST_LOCATION) {
-            if (grantResults.length == 1
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // We can now safely use the API we requested access to
-                Log.e("TEST", "testdata");
-            } else {
-                // Permission was denied or request was cancelled
-            }
-        }
-
-    }
-
-    // Trigger new location updates at interval
-    protected void startLocationUpdates() {
-        // Create the location request
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(UPDATE_INTERVAL)
-                .setFastestInterval(FASTEST_INTERVAL);
-        // Request location updates
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-                mLocationRequest, this);
-    }
-
     public void saveCurrentSearch(String query) {
         if (!TextUtils.isEmpty(query)) {
-            search = new SearchHistory();
+            SearchHistory search = new SearchHistory();
             search.searchedValue = query;
             saveRecentSearch(search);
         }
     }
 
-    public void hideProgressDialog (){
-        if (mSearchProductDialog!=null){
-            if (mSearchProductDialog.isShowing()){
+    public void hideProgressDialog() {
+        if (mSearchProductDialog != null) {
+            if (mSearchProductDialog.isShowing()) {
                 mSearchProductDialog.dismiss();
             }
         }
     }
 
+    /***********************************************************************************************
+     * local broadcast receiver
+     **********************************************************************************************/
+    /**
+     * handle new location
+     */
+    private BroadcastReceiver mLocationUpdated = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                Location location = intent.getParcelableExtra(Const.LBM_EVENT_LOCATION_UPDATE);
+                mLocation = new LatLng(location.getLatitude(),location.getLongitude());
+            } catch (NullPointerException e) {
+                mLocation = new LatLng(0,0);
+            }
+        }
+    };
+
+    public boolean hasPermissions() {
+        int res = 0;
+        //string array of permissions,
+        String[] permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION};
+
+        for (String perms : permissions) {
+            res = checkCallingOrSelfPermission(perms);
+            if (!(res == PackageManager.PERMISSION_GRANTED)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void requestPerms() {
+        String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION};
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(permissions, PERMS_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionIsAllowed = true;
+        switch (requestCode) {
+            case PERMS_REQUEST_CODE:
+                for (int res : grantResults) {
+                    // if user granted all permissions.
+                    permissionIsAllowed = permissionIsAllowed && (res == PackageManager.PERMISSION_GRANTED);
+                }
+                break;
+            default:
+                // if user not granted permissions.
+                permissionIsAllowed = false;
+                break;
+        }
+        if (permissionIsAllowed) {
+            //user granted all permissions we can perform our task.
+            startLocationUpdate();
+            mEditSearchProduct.setFocusable(true);
+        } else {
+            // we will give warning to user that they haven't granted permissions.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)
+                        && shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    Toast.makeText(this, "Location Permissions denied.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
 }
