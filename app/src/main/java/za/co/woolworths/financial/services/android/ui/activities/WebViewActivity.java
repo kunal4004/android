@@ -3,6 +3,8 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.widget.ContentLoadingProgressBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
@@ -11,12 +13,15 @@ import android.widget.Toast;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 
-public class WebViewActivity extends Activity {
+public class WebViewActivity extends AppCompatActivity {
 
     WebView webView;
     ContentLoadingProgressBar progressBar;
+    public Toolbar toolbar;
+    public WTextView toolbarTextView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,9 +31,14 @@ public class WebViewActivity extends Activity {
         progressBar.show();
         Bundle b = new Bundle();
         b= getIntent().getBundleExtra("Bundle");
-        getActionBar().setTitle(FontHyperTextParser.getSpannable(b.getString("title"), 1, this));
+       // getActionBar().setTitle(FontHyperTextParser.getSpannable(b.getString("title"), 1, this));
 
         //getActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(null);
 
         String url = b.getString("link");
         webView.getSettings().setJavaScriptEnabled(true);
@@ -62,4 +72,5 @@ public class WebViewActivity extends Activity {
             progressBar.hide();
         }
     }
+
 }
