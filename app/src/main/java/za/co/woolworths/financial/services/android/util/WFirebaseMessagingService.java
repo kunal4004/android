@@ -68,6 +68,10 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             builder.setAutoCancel(true);
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.notify(id, builder.build());
+        }else if(!NotificationUtils.isAppIsInBackground(getApplicationContext())){
+            Intent intent=new Intent("UpdateCounter");
+            LocalBroadcastManager.
+                    getInstance(getApplicationContext()).sendBroadcast(intent);
         }
     }
 }
