@@ -176,6 +176,6 @@
 	<style name="CaptionLightGrey">
 		<item name="android:textSize">15sp</item>
 		<item name="android:textColor">@color/onboarding_desc_text</item>
-		<item name="android:letterSpacing">0.05</item>
+		<item name="android:lineSpacingExtra">2dp</item>
 	</style>
 </resources>

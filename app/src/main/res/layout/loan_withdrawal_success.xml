@@ -12,6 +12,7 @@
     android:id="@+id/linLoanWithdrawalSuccess">
 
     <za.co.woolworths.financial.services.android.ui.views.WButton
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:text="Ok"
@@ -34,26 +35,10 @@
         android:letterSpacing="0.06"
         android:layout_gravity="center"
         android:gravity="center"
-        android:lineSpacingExtra="7sp"
+        android:lineSpacingExtra="2sp"
         app:WTextView_font="medium_bold"
         android:id="@+id/title"
         android:layout_above="@+id/description" />
-
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Lorum ipsum lodor sit ahmed Lorum ipsum lodor sit ahmed Lorum ipsum lodor sit ahmed Lorum ipsum lodor sit ahmed Lorum ipsum lodor sit ahmed Lorum ipsum lodor sit ahmed Lorum ipsum lodor sit ahmed Lorum ipsum lodor sit ahmed "
-        android:textColor="@android:color/white"
-        android:textSize="14sp"
-        android:letterSpacing="0.06"
-        android:gravity="center"
-        android:lineSpacingExtra="4sp"
-        app:WTextView_font="myriadpro_regular"
-        android:layout_gravity="center"
-        android:id="@+id/description"
-        android:layout_above="@+id/btnOk"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="150dp" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -63,4 +48,19 @@
         android:layout_marginBottom="15dp"
         android:layout_above="@+id/title"
         android:layout_centerHorizontal="true" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lorum ipsum lodor sit ahmed Lorum ipsum lodor sit ahmed Lorum ipsum lodor sit ahmed Lorum ipsum lodor sit ahmed Lorum ipsum lodor sit ahmed Lorum ipsum lodor sit ahmed Lorum ipsum lodor sit ahmed Lorum ipsum lodor sit ahmed "
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:lineSpacingExtra="4sp"
+        app:WTextView_font="myriadpro_regular"
+        android:layout_gravity="center"
+        android:id="@+id/description"
+        android:layout_marginBottom="150dp"
+        android:layout_above="@+id/btnOk"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

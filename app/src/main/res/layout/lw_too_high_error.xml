@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-android:gravity="bottom"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/relLoanAmount"
-android:layout_width="match_parent"
-android:layout_height="wrap_content">
-
-<LinearLayout
-    android:orientation="vertical"
-    android:background="@color/white"
-    android:gravity="bottom"
-    android:paddingRight="@dimen/bank_spacing_width"
-    android:paddingLeft="@dimen/bank_spacing_width"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:gravity="bottom">
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="@dimen/bank_spacing_width"
-        android:gravity="center"
-        android:textAllCaps="true"
-        android:letterSpacing="0.07"
-        app:WTextView_font="medium_bold"
-        android:textColor="@color/black"
-        android:text="@string/loan_withdrawal_popup_error" />
+        android:background="@color/white"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/bank_spacing_width"
+        android:paddingRight="@dimen/bank_spacing_width">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/textProofIncome"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:gravity="center"
-        android:lineSpacingExtra="4dp"
-        android:letterSpacing="0.05"
-        app:WTextView_font="myriadpro_regular"
-        android:textColor="@color/description_color"
-        android:text="@string/loan_withdrawal_popup_desc_err" />
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="@dimen/bank_spacing_width"
+            android:gravity="center"
+            android:letterSpacing="0.07"
+            android:text="@string/loan_withdrawal_popup_error"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:WTextView_font="medium_bold" />
 
-    <View android:layout_width="match_parent"
-        android:layout_height="0.4dp"
-        android:layout_marginTop="@dimen/bank_spacing_width"
-        android:background="@color/description_color" />
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/textProofIncome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:text="@string/loan_withdrawal_popup_desc_err"
+            android:textColor="@color/description_color"
+            android:textSize="15sp"
+            app:WTextView_font="myriadpro_regular" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WButton
-        android:id="@+id/btnOk"
-        android:layout_width="match_parent"
-        android:background="@color/white"
-        android:text="OK"
-        style="?android:attr/borderlessButtonStyle"
-        android:textSize="12sp"
-        android:gravity="center"
-        android:letterSpacing="0.2"
-        app:WButton_font="medium_bold"
-        android:layout_height="80dp"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.4dp"
+            android:layout_marginTop="@dimen/bank_spacing_width"
+            android:background="@color/description_color" />
 
-</LinearLayout>
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnOk"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/white"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+            android:text="OK"
+            android:textSize="12sp"
+            app:WButton_font="medium_bold" />
+
+    </LinearLayout>
 </RelativeLayout>

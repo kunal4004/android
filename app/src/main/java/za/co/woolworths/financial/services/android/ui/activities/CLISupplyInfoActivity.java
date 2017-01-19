@@ -103,8 +103,8 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         connectionDetector = new ConnectionDetector();
         mWoolworthsApplication = (WoolworthsApplication) getApplication();
         mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
-        mLayoutInflater = (LayoutInflater) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        slidingUpViewLayout = new SlidingUpViewLayout(this,mLayoutInflater);
+        mLayoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        slidingUpViewLayout = new SlidingUpViewLayout(this, mLayoutInflater);
         mRdioGroupTypeFace = Typeface.createFromAsset(getAssets(), "fonts/WFutura-Medium.ttf");
         mRdioGroupTypeFaceBold = Typeface.createFromAsset(getAssets(), "fonts/WFutura-SemiBold.ttf");
         LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -162,13 +162,14 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                     case R.id.radioNoConfidentialCredit:
                         displayConfidentialPopUp()
                                 .setOnDismissListener(new PopupWindow.OnDismissListener() {
-                            @Override
-                            public void onDismiss() {
-                                mRadConfidentialCredit.clearCheck();
-                                mRadioNoConfidentialCredit.setTypeface(mRdioGroupTypeFace);
-                                mRadioYesConfidentialCredit.setTypeface(mRdioGroupTypeFace);
-                                mDarkenScreen.dismiss();
-                            }});
+                                    @Override
+                                    public void onDismiss() {
+                                        mRadConfidentialCredit.clearCheck();
+                                        mRadioNoConfidentialCredit.setTypeface(mRdioGroupTypeFace);
+                                        mRadioYesConfidentialCredit.setTypeface(mRdioGroupTypeFace);
+                                        mDarkenScreen.dismiss();
+                                    }
+                                });
                         break;
                     default:
                         break;
@@ -513,6 +514,10 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                     }
                     et.setText(finalAmount);
                     endlen = et.getText().length();
+                    if (endlen == 0) {
+                        et.setText("R ");
+                    }
+
                     int sel = (cp + (endlen - inilen));
                     if (sel > 0 && sel <= et.getText().length()) {
                         et.setSelection(sel);

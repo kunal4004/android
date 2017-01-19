@@ -18,14 +18,14 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:minHeight="?attr/actionBarSize"
-            app:popupTheme="@style/WTransaction"
-            app:theme="@style/WTransaction"
+            app:elevation="0dp"
             >
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/toolbarText"
                 app:WTextView_font="medium_bold"
+                android:letterSpacing="0.1"
                 android:textAllCaps="true"
                 android:textSize="12sp"
                 android:textColor="@color/black"

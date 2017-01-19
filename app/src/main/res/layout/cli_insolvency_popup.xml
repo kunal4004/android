@@ -15,16 +15,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:letterSpacing="0.09"
-            android:layout_marginBottom="@dimen/default_margin"
             android:gravity="center"
             android:textAllCaps="true"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
             android:background="@color/white"
             android:orientation="vertical"
             android:paddingLeft="@dimen/bank_spacing_width"
             android:paddingRight="@dimen/bank_spacing_width"
-            android:paddingTop="@dimen/bank_spacing_width">
+            android:paddingTop="@dimen/bank_spacing_width"
+            android:layout_alignParentBottom="true">
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/textApplicationNotProceed"
@@ -44,6 +43,7 @@
                 android:id="@+id/linEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/white"
                 android:orientation="vertical">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -76,12 +76,13 @@
                 android:id="@+id/linYesNoContainer"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/cli_button_height_popup"
-                android:layout_marginBottom="@dimen/default_margin"
                 android:layout_marginTop="@dimen/default_margin"
+                android:paddingBottom="@dimen/default_margin"
                 android:gravity="center"
                 android:textAllCaps="true"
                 android:textSize="12sp"
                 android:text="@string/ok"
+                android:background="@color/white"
                 android:textColor="@color/black"
                 android:orientation="horizontal"
                 android:weightSum="1">

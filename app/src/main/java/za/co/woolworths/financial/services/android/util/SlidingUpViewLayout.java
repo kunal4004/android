@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.ContextCompatApi24;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -124,7 +125,7 @@ public class SlidingUpViewLayout {
 
     }
 
-    public PopupWindow openOverlayView(final String description, final OVERLAY_TYPE overlay_type) {
+    public PopupWindow openOverlayView(String description, final OVERLAY_TYPE overlay_type) {
         //darken the current screen
         View view = mInflator.inflate(R.layout.open_nativemaps_layout, null);
         final PopupWindow darkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -175,6 +176,9 @@ public class SlidingUpViewLayout {
                 mOverlayBtn = (WButton) popupView.findViewById(R.id.btnOverlay);
                 mOverlayDescription = (WTextView)popupView.findViewById(R.id.overlayDescription);
                 textEmailContent = (WTextView)popupView.findViewById(R.id.textEmailContent);
+                if(TextUtils.isEmpty(description)){
+                    description = "Cannot connect to server";
+                }
                 mOverlayDescription.setText(description);
                 mOverlayBtn.setOnClickListener(new View.OnClickListener() {
                     @Override

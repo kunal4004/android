@@ -5,10 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#8c000000">
+
     <RelativeLayout
         android:id="@+id/relContainerRootMessage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -79,6 +82,7 @@
                 android:layout_height="@dimen/cli_button_height_popup"
                 android:layout_marginBottom="@dimen/default_margin"
                 android:layout_marginTop="@dimen/default_margin"
+                android:background="@color/white"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:weightSum="1">

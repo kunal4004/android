@@ -313,6 +313,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                 protected void onPostExecute(IssueLoanResponse issueLoanResponse) {
                     super.onPostExecute(issueLoanResponse);
                     hideProgressDialog();
+
                     if (issueLoanResponse.httpCode==200) {
                         mSharePreferenceHelper.save(String.valueOf(issueLoanResponse.installmentAmount),"lw_installment_amount");
                         Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this,LoanWithdrawalConfirmActivity.class);
