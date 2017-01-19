@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
-import android.util.Log;
 
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
@@ -28,10 +27,11 @@ public class WoolworthsApplication extends Application {
     public static String LANDING_LOAN_CARD = "LANDING_LOAN_CARD";
     public static String LANDING_REWARDS_CARD = "LANDING_REWARDS_CARD";
     private static Context context;
+    private static Context mContextApplication;
     private UserManager mUserManager;
     private WfsApi mWfsApi;
     private Tracker mTracker;
-    private boolean swapSecondFragment=false;
+    private boolean swapSecondFragment = false;
     private static String applyNowLink;
     private static String registrationTCLink;
     private static String faqLink;
@@ -45,10 +45,10 @@ public class WoolworthsApplication extends Application {
     private static String apiKey;
     private static String sha1Password;
     private boolean isDEABank = false;
-    private boolean isOther=false;
+    private boolean isOther = false;
     private int productOfferingId;
 
-    private static int NumVouchers =0;
+    private static int NumVouchers = 0;
 
     public UpdateBankDetail updateBankDetail;
 
@@ -145,6 +145,8 @@ public class WoolworthsApplication extends Application {
         super.onCreate();
         updateBankDetail = new UpdateBankDetail();
         WoolworthsApplication.context = this.getApplicationContext();
+        // set app context
+        mContextApplication = getApplicationContext();
         Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
         CalligraphyConfig.initDefault("fonts/WFutura-medium.ttf", R.attr.fontPath);
         getTracker();
@@ -189,14 +191,14 @@ public class WoolworthsApplication extends Application {
     }
 
     public UserManager getUserManager() {
-        if (mUserManager == null){
+        if (mUserManager == null) {
             mUserManager = new UserManager(this);
         }
         return mUserManager;
     }
 
     public WfsApi getApi() {
-        if (mWfsApi == null){
+        if (mWfsApi == null) {
             mWfsApi = new WfsApi(this);
         }
         return mWfsApi;
@@ -215,12 +217,13 @@ public class WoolworthsApplication extends Application {
             // When dry run is set, hits will not be dispatched, but will still be logged as
             // though they were dispatched.
             instance.setDryRun((Util.isDebug(this) ? false : false));
-            instance.getLogger().setLogLevel(Util.isDebug(this) ? com.google.android.gms.analytics.Logger.LogLevel.VERBOSE :com.google.android.gms.analytics.Logger.LogLevel.ERROR);
+            instance.getLogger().setLogLevel(Util.isDebug(this) ? com.google.android.gms.analytics.Logger.LogLevel.VERBOSE : com.google.android.gms.analytics.Logger.LogLevel.ERROR);
             instance.setLocalDispatchPeriod(15);
             mTracker = instance.newTracker(R.xml.global_tracker);
         }
         return mTracker;
     }
+
     public static void setConfig(JSONObject config) {
 
         SharedPreferences settings = context.getSharedPreferences("config_file", 0);
@@ -233,19 +236,20 @@ public class WoolworthsApplication extends Application {
     public static JSONObject config() {
 
         SharedPreferences settings = context.getSharedPreferences("config_file", 0);
-        try{
+        try {
             return new JSONObject(settings.getString("jsondata", ""));
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
 
     }
+
     public static long getConfig_expireLastNotify() {
 
         SharedPreferences settings = context.getSharedPreferences("config", 0);
-        try{
+        try {
             return Long.parseLong(settings.getString("Config_expireLastNotify", "").toString());
-        }catch (Exception e){
+        } catch (Exception e) {
             return Long.parseLong("0");
         }
 
@@ -260,11 +264,11 @@ public class WoolworthsApplication extends Application {
         editor.commit();
     }
 
-    public  boolean isDEABank() {
+    public boolean isDEABank() {
         return isDEABank;
     }
 
-    public  void setDEABank(boolean DEABank) {
+    public void setDEABank(boolean DEABank) {
         this.isDEABank = DEABank;
     }
 
@@ -297,4 +301,14 @@ public class WoolworthsApplication extends Application {
     public void setProductOfferingId(int productOfferingId) {
         this.productOfferingId = productOfferingId;
     }
+
+    /**
+     * retrieve application context
+     *
+     * @return Context
+     */
+    public static Context getAppContext() {
+        return mContextApplication;
+    }
+
 }

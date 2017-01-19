@@ -14,8 +14,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.*;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 
 import com.awfs.coordination.R;
@@ -48,6 +50,8 @@ public class SlidingUpViewLayout {
     private PopupWindow pWindow;
     private WButton mBtnCancel;
     private WButton mBtnContinue;
+    private Animation mFadeInAnimation;
+    private Animation mPopEnterAnimation;
 
     public enum OVERLAY_TYPE {INSOLVENCY_CHECK,INFO,EMAIL,ERROR,MANDATORY_FIELD}
 
@@ -233,5 +237,51 @@ public class SlidingUpViewLayout {
             mPopUpWindow.dismiss();
             mDarkenScreen.dismiss();
         }
+    }
+
+    private void setAnimation() {
+        mFadeInAnimation = android.view.animation.AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
+        mPopEnterAnimation = android.view.animation.AnimationUtils.loadAnimation(mContext, R.anim.popup_enter);
+    }
+    public PopupWindow mandatoryField() {
+        View view = mInflator.inflate(R.layout.cli_mandatory_error, null);
+        mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
+        mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
+        mDarkenScreen.setOutsideTouchable(true);
+        mDarkenScreen.setFocusable(true);
+        mDarkenScreen.setAnimationStyle(R.style.Animations_popup);
+        RelativeLayout mRelPopContainer = (RelativeLayout) view.findViewById(R.id.relPopContainer);
+        final RelativeLayout mRelRootContainer = (RelativeLayout) view.findViewById(R.id.relContainerRootMessage);
+        setAnimation();
+        mRelPopContainer.setAnimation(mFadeInAnimation);
+        mRelRootContainer.setAnimation(mPopEnterAnimation);
+        view.findViewById(R.id.btnOK)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+                        animation.setFillAfter(true);
+                        animation.setDuration(600);
+                        animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                mDarkenScreen.dismiss();
+                            }
+                        });
+                        mRelRootContainer.startAnimation(animation);
+                    }
+                });
+
+        return mDarkenScreen;
     }
 }

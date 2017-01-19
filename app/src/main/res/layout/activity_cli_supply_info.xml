@@ -295,7 +295,7 @@
                         android:gravity="center"
                         android:layout_marginTop="@dimen/bank_spacing_width"
                         app:WTextView_font="medium_bold"
-                        android:lineSpacingExtra="10dp"
+                        android:lineSpacingExtra="5dp"
                         android:textColor="@color/black"
                         android:text="@string/cli_confirm_information"
                         />
