@@ -65,7 +65,7 @@ public class PersonalLoanWithdrawalConfirmationActivity extends Activity {
         IssueLoanResponse issueLoanResponse = new Gson().fromJson(getIntent().getExtras().getString(ISSUE_LOAN_RESPONSE, ""), IssueLoanResponse.class);
         ((TextView) findViewById(R.id.personal_loan_withdrawal_confirmation_amount)).setText(WFormatter.formatAmount(issueLoanResponse.drawDownAmount));
         ((TextView) findViewById(R.id.personal_loan_withdrawal_confirmation_repayment)).setText(WFormatter.formatAmount(issueLoanResponse.installmentAmount));
-        ((TextView) findViewById(R.id.personal_loan_withdrawal_confirmation_months)).setText(getString(R.string.issue_loan_confirmation_months, issueLoanResponse.repaymentPeriod));
+        ((TextView) findViewById(R.id.personal_loan_withdrawal_confirmation_months)).setText(getString(R.string.issue_loan_confirmation_months, String.valueOf(issueLoanResponse.repaymentPeriod)));
         findViewById(R.id.personal_loan_withdrawal_confirmation_cancel_action).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
