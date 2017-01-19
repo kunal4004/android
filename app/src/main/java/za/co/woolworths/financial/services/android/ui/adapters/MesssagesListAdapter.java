@@ -66,7 +66,6 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
         viewHolder.txtTitle.setText(messageDetailsList.get(position).title);
         viewHolder.txtBody.setText(messageDetailsList.get(position).content);
         if (messageDetailsList.get(position).isRead) {
-           // viewHolder.relContainer.setBackgroundColor(mContext.getResources().getColor(R.color.recent_search_bg));
             viewHolder.cardlayout.setBackground(ContextCompat.getDrawable(mContext,R.drawable.card_shadow));
             viewHolder.cardlayout.setAlpha(0.5f);
             viewHolder.txtBody.setTextColor(Color.GRAY);
@@ -87,8 +86,6 @@ public class MesssagesListAdapter extends RecyclerSwipeAdapter<MesssagesListAdap
                 deleteMessage(position, messageDetailsList.get(position).id);
             }
         });
-
-
     }
 
     @Override

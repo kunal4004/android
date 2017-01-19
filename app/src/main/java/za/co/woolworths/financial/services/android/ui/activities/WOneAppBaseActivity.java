@@ -51,7 +51,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false); // false for hiding the title from actoinBar
-        getSupportActionBar().setElevation(0);
         mToolbarTitle=(WTextView)findViewById(R.id.toolbar_title);
         appbar=(AppBarLayout)findViewById(R.id.appbar);
         fragmentList = new ArrayList<>();
@@ -65,6 +64,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
         drawerFragment.setDrawerListener(this);
         displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
+
     }
 
     @Override

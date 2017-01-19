@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 
@@ -21,27 +23,23 @@ import za.co.woolworths.financial.services.android.ui.fragments.CLIFirstStepFrag
 import za.co.woolworths.financial.services.android.ui.fragments.CLIFourthStepFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.CLISecondStepFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIThirdStepFragment;
-import za.co.woolworths.financial.services.android.ui.views.StepIndicator;
 import za.co.woolworths.financial.services.android.ui.views.WFragmentViewPager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity.mToolbar;
 
-/**
- * Created by dimitrij on 2016/12/20.
- */
-
 public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnboardingOnFragmentInteractionListener,
-        CLIFirstStepFragment.StepNavigatorCallback{
+        CLIFirstStepFragment.StepNavigatorCallback {
 
     private OnFragmentRefresh onFragmentRefresh;
     private WoolworthsApplication mWoolworthApplication;
+    private ImageView mImgStepIcon;
 
-    public interface OnFragmentRefresh{
+    public interface OnFragmentRefresh {
         void refreshFragment();
     }
 
-    private StepIndicator mStepIndicator;
+    //private StepIndicator mStepIndicator;
     private WFragmentViewPager mViewPStepIndicator;
     public static AppBarLayout mAppBarLayout;
 
@@ -50,7 +48,7 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cli_step);
         Utils.updateStatusBarBackground(CLIStepIndicatorActivity.this);
-        mWoolworthApplication = (WoolworthsApplication)getApplication();
+        mWoolworthApplication = (WoolworthsApplication) getApplication();
         initViews();
         setActionBar();
         setCLIContent();
@@ -59,13 +57,14 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
 
     private void initViews() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mStepIndicator = (StepIndicator) findViewById(R.id.step_indicator);
-        mStepIndicator.setDefaultView(1);
+        // mStepIndicator = (StepIndicator) findViewById(R.id.step_indicator);
+        //  mStepIndicator.setDefaultView(1);
         mViewPStepIndicator = (WFragmentViewPager) findViewById(R.id.mViewPStepIndicator);
-        mAppBarLayout=(AppBarLayout) findViewById(R.id.appbar);
+        mImgStepIcon = (ImageView) findViewById(R.id.imgStepIcon);
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar);
     }
 
-    private void setActionBar(){
+    private void setActionBar() {
         setSupportActionBar(mToolbar);
         ActionBar mActionBar = getSupportActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -75,25 +74,53 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
         mActionBar.setHomeAsUpIndicator(R.drawable.back24);
     }
 
-    private void setCLIContent(){
+    private void setCLIContent() {
         // Create the adapter that will return a fragment for each of the three
         mViewPStepIndicator.setPagingEnabled(false);
         mViewPStepIndicator.setAdapter(mPagerFragmentAdapter);
-        mStepIndicator.setupWithViewPager(mViewPStepIndicator);
+        //mStepIndicator.setupWithViewPager(mViewPStepIndicator);
         mViewPStepIndicator.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if(position==2){
-                    refresh();
+
+                Log.e("CurrentPosition",String.valueOf(position));
+
+                switch (position) {
+                    case 2:
+                        refresh();
+                        break;
                 }
             }
 
             @Override
             public void onPageSelected(int position) {
-                if(position==3){
+                if (position == 3) {
                     showCloseIconToolbar(true);
-                }else {
+                } else {
                     showCloseIconToolbar(false);
+                }
+                Log.e("CurrentPosition",String.valueOf(position));
+                switch (position) {
+                    case 0:
+                        mImgStepIcon.setImageResource(R.drawable.clinumbersprogress_1);
+                        break;
+
+                    case 1:
+                        mImgStepIcon.setImageResource(R.drawable.clinumbersprogress_2);
+                        break;
+
+                    case 2:
+                        mImgStepIcon.setImageResource(R.drawable.clinumbersprogress_3);
+                        refresh();
+                        break;
+
+                    case 3:
+                        mImgStepIcon.setImageResource(R.drawable.clinumbersprogress_4);
+                        break;
+
+                    default:
+                        mImgStepIcon.setImageResource(R.drawable.clinumbersprogress_1);
+                        break;
                 }
             }
 
@@ -105,7 +132,8 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {}
+    public void onFragmentInteraction(Uri uri) {
+    }
 
     public FragmentPagerAdapter mPagerFragmentAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
         @Override
@@ -124,7 +152,8 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
                 case 3:
                     fragment = new CLIFourthStepFragment();
                     break;
-                default:break;
+                default:
+                    break;
             }
             return fragment;
         }
@@ -141,13 +170,13 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
         switch (item.getItemId()) {
             case android.R.id.home:
                 backActionPressed();
-                return  true;
+                return true;
         }
         return false;
     }
 
     public void showCloseIconToolbar(boolean showToolbarIcon) {
-        if(showToolbarIcon)
+        if (showToolbarIcon)
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.close_24);
         else
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.back24);
@@ -156,7 +185,7 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
 
     @Override
     public void openNextFragment(int index) {
-                moveToPage(index);
+        moveToPage(index);
     }
 
 
@@ -164,38 +193,38 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
         this.onFragmentRefresh = onFragmentRefresh;
     }
 
-    public void moveToPage(int position){
-        mStepIndicator.setCurrentStepPosition(position);
+    public void moveToPage(int position) {
+        // mStepIndicator.setCurrentStepPosition(position);
         mViewPStepIndicator.setCurrentItem(position);
     }
 
-    public void refresh(){
+    public void refresh() {
         onFragmentRefresh.refreshFragment();
     }
 
     @Override
     public void onBackPressed() {
-       backActionPressed();
+        backActionPressed();
     }
 
-    private void backActionPressed(){
+    private void backActionPressed() {
         int currentPosition = mViewPStepIndicator.getCurrentItem();
-        switch (currentPosition){
+        switch (currentPosition) {
             case 0:
-                Intent openCLIStepIndicatorActivity = new Intent(CLIStepIndicatorActivity.this,CLISupplyInfoActivity.class);
+                Intent openCLIStepIndicatorActivity = new Intent(CLIStepIndicatorActivity.this, CLISupplyInfoActivity.class);
                 startActivity(openCLIStepIndicatorActivity);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
             case 1:
                 moveToPage(0);
                 break;
             case 2:
-                Log.e("mWooworthApplication",String.valueOf(mWoolworthApplication.isOther()));
-                if (mWoolworthApplication.isOther()){
+                Log.e("mWooworthApplication", String.valueOf(mWoolworthApplication.isOther()));
+                if (mWoolworthApplication.isOther()) {
                     mViewPStepIndicator.setCurrentItem(0);
-                    mStepIndicator.setOtherState();
-                }else {
+                    //mStepIndicator.setOtherState();
+                } else {
                     moveToPage(1);
                 }
                 break;

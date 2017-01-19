@@ -26,7 +26,11 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin">
 
-                <include layout="@layout/cli_custom_step" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/clinumbersprogress_0" />
+
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
@@ -94,21 +98,19 @@
                             android:src="@drawable/icon_info" />
                     </RelativeLayout>
 
-                    <za.co.woolworths.financial.services.android.ui.views.WEditTextView
-                        android:id="@+id/textAmount"
+                    <LinearLayout
+                        android:id="@+id/llCurrencyContainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/edittext_background"
-                        android:digits="0123456789"
-                        android:hint="@string/cli_amount_hint"
-                        android:imeOptions="actionNext"
-                        android:inputType="number"
-                        android:maxLength="21"
-                        android:maxLines="1"
-                        android:paddingLeft="16dp"
-                        android:textColor="@color/black"
-                        android:textSize="20sp"
-                        app:WEditTextView_font="medium" />
+                        android:orientation="horizontal"
+                        android:paddingBottom="9dp">
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            style="@style/editCurrencyStyle" />
+                        <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                            android:id="@+id/textAmount"
+                            style="@style/editCurrencyValue"/>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout

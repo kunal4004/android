@@ -34,8 +34,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICbxContentBinder;
 
 
@@ -45,8 +44,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     private int mSelectedPosition=-1;
     private CLIStepIndicatorActivity mStepIndicatorActivity;
     private CLIStepIndicatorActivity.OnFragmentRefresh onFragmentRefresh;
-    private LayoutInflater mLayoutInflater;
-    private SlidingUpViewLayout mSlidingUpViewLayout;
+    private PopWindowValidationMessage mPopWindowValidationMessage;
 
     public interface StepNavigatorCallback{
         void openNextFragment(int index);
@@ -75,8 +73,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         mContext = this;
         mWoolworthsApplication = (WoolworthsApplication)getActivity().getApplication();
         mConnectionDetector = new ConnectionDetector();
-        mLayoutInflater = (LayoutInflater)getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        mSlidingUpViewLayout = new SlidingUpViewLayout(getActivity(),mLayoutInflater);
+        mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         initUI();
         setListener();
         setText();
@@ -164,15 +161,15 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                             relButtonCLIDeaBank.setVisibility(View.GONE);
                         }
                     }else {
-                        mSlidingUpViewLayout.openOverlayView(deaBanks.response.desc,
-                                SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                        mPopWindowValidationMessage.displayValidationMessage(deaBanks.response.desc,
+                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     }
                     stopProgressDialog();
                 }
             }.execute();
         }else{
-            mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
-                    SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
+                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
         }
     }
 
@@ -199,16 +196,16 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                             stepNavigatorCallback.openNextFragment(1);
                         }
                         }else {
-                        mSlidingUpViewLayout.openOverlayView(getString(R.string.cli_select_bank_error),
-                                SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                        mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_select_bank_error),
+                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     }
                 }else{
                      if(mConnectionDetector.isOnline(getActivity())){
-                         mSlidingUpViewLayout.openOverlayView(getString(R.string.cli_select_bank_error),
-                                 SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                         mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_select_bank_error),
+                                 PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                      }else{
-                         mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
-                                 SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                         mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
+                                 PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                      }
                 }
                 break;

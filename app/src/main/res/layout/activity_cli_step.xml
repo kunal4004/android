@@ -25,7 +25,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin" >
-                <include layout="@layout/cli_custom_step"/>
+                <ImageView
+                    android:id="@+id/imgStepIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/clinumbersprogress_1"/>
+                <!--<include layout="@layout/cli_custom_step"/>-->
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.CollapsingToolbarLayout>
         </android.support.design.widget.AppBarLayout>

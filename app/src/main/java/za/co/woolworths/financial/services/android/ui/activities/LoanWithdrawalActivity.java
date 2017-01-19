@@ -15,7 +15,6 @@ import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,7 +41,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
-import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class LoanWithdrawalActivity extends AppCompatActivity {
@@ -59,8 +58,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
     private RelativeLayout mRelLoanWithdrawal;
     private SharePreferenceHelper mSharePreferenceHelper;
     private ConnectionDetector mConnectionDetector;
-    private SlidingUpViewLayout mSlidingUpViewLayout;
-    private LayoutInflater mLayoutInflater;
+    private PopWindowValidationMessage mPopWindowValidationMessage;
     private ProgressDialog mGetProgressDialog;
     Handler handler = new Handler();
     @Override
@@ -70,8 +68,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
         setContentView(R.layout.loan_withdrawal_activity);
         mConnectionDetector = new ConnectionDetector();
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(LoanWithdrawalActivity.this);
-        mLayoutInflater = (LayoutInflater)getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        mSlidingUpViewLayout = new SlidingUpViewLayout(LoanWithdrawalActivity.this,mLayoutInflater);
+        mPopWindowValidationMessage = new PopWindowValidationMessage(LoanWithdrawalActivity.this);
         setActionBar();
         initViews();
         setContent();
@@ -279,7 +276,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
     }
 
     public void loanRequest(){
-        if (mConnectionDetector.isOnline()) {
+        if (mConnectionDetector.isOnline(this)) {
             new HttpAsyncTask<String, String, IssueLoanResponse>() {
                 @Override
                 protected IssueLoanResponse httpDoInBackground(String... params) {
@@ -324,8 +321,8 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                         try {
                             String responseDesc = issueLoanResponse.response.desc;
                             if (responseDesc != null) {
-                                mSlidingUpViewLayout.openOverlayView(responseDesc,
-                                        SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                                mPopWindowValidationMessage.displayValidationMessage(responseDesc,
+                                        PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                             }
                         }catch (NullPointerException ex){}
                     }
@@ -345,7 +342,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
             }.execute();
 
         }else {
-            mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server), PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
         }
     }
 

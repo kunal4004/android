@@ -19,7 +19,7 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 
 public class CLISecondStepFragment extends Fragment implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
@@ -33,18 +33,20 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
 
     WoolworthsApplication mWoolworthsApplication;
     private CLIStepIndicatorActivity mMain;
-    private SlidingUpViewLayout mSlidingUpViewLayout;
+    private PopWindowValidationMessage mPopWindowValidationMessage;
     private Typeface mRdioGroupTypeFace;
     private Typeface mRdioGroupTypeFaceBold;
 
-    public CLISecondStepFragment() {}
+    public CLISecondStepFragment() {
+    }
+
     View view;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-         view = inflater.inflate(R.layout.cli_fragment_step_two, container, false);
-         mWoolworthsApplication = (WoolworthsApplication)getActivity().getApplication();
-        LayoutInflater mLayoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mSlidingUpViewLayout = new SlidingUpViewLayout(getActivity(), mLayoutInflater);
+        view = inflater.inflate(R.layout.cli_fragment_step_two, container, false);
+        mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
+        mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         mRdioGroupTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/WFutura-Medium.ttf");
         mRdioGroupTypeFaceBold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/WFutura-SemiBold.ttf");
 
@@ -61,15 +63,15 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
     }
 
     private void initUI() {
-        mTextApplySolvency= (WTextView) view.findViewById(R.id.textApplySolvency);
-        mRadApplySolvency =(RadioGroup)view.findViewById(R.id.radApplySolvency);
-        mRadioYesSolvency = (RadioButton)view.findViewById(R.id.radioYesSolvency);
-        mRadioNoSolvency = (RadioButton)view.findViewById(R.id.radioNoSolvency);
-        mBtnContinue =(Button)view.findViewById(R.id.btnContinue);
+        mTextApplySolvency = (WTextView) view.findViewById(R.id.textApplySolvency);
+        mRadApplySolvency = (RadioGroup) view.findViewById(R.id.radApplySolvency);
+        mRadioYesSolvency = (RadioButton) view.findViewById(R.id.radioYesSolvency);
+        mRadioNoSolvency = (RadioButton) view.findViewById(R.id.radioNoSolvency);
+        mBtnContinue = (Button) view.findViewById(R.id.btnContinue);
 
     }
 
-    private  void setText(){
+    private void setText() {
         mTextApplySolvency.setText(getActivity().getResources().getString(R.string.cli_proof_income));
     }
 
@@ -89,18 +91,20 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
         super.onDetach();
     }
 
-    public void setRadioButtonBold(){
+    public void setRadioButtonBold() {
         try {
             RadioButton checked = (RadioButton) view.findViewById(mRadApplySolvency.getCheckedRadioButtonId());
             checked.setTypeface(mRdioGroupTypeFace);
+        } catch (NullPointerException ex) {
+            Log.e("setTypeFacefaileed", ex.toString());
         }
-        catch (NullPointerException ex){Log.e("setTypeFacefaileed",ex.toString());}
 
         try {
             RadioButton checked = (RadioButton) view.findViewById(mRadApplySolvency.getCheckedRadioButtonId());
             checked.setTypeface(mRdioGroupTypeFace);
-        }catch (NullPointerException ex){
-            Log.e("setTypeFacefaileed",ex.toString());}
+        } catch (NullPointerException ex) {
+            Log.e("setTypeFacefaileed", ex.toString());
+        }
     }
 
     public String selectedRadioGroup(RadioGroup radioGroup) {
@@ -111,12 +115,12 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btnContinue:
                 mBtnContinue.startAnimation(buttonClick);
                 if (mRadApplySolvency.getCheckedRadioButtonId() == -1) {
-                    mSlidingUpViewLayout.openOverlayView(getString(R.string.cli_check_field),
-                            SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                    mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_check_field),
+                            PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     return;
                 }
 
@@ -137,7 +141,7 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        stepNavigatorCallback = (CLIFirstStepFragment.StepNavigatorCallback)getActivity();
+        stepNavigatorCallback = (CLIFirstStepFragment.StepNavigatorCallback) getActivity();
         mMain = (CLIStepIndicatorActivity) getActivity();
     }
 }

@@ -4,7 +4,7 @@
     android:id="@+id/relPopContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#8c000000">
+    android:background="@color/black_50">
     <RelativeLayout
         android:id="@+id/relContainerRootMessage"
         android:layout_width="match_parent"

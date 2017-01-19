@@ -1,8 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-/**
- * Created by dimitrij on 2016/12/20.
- */
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -41,18 +38,16 @@ import za.co.woolworths.financial.services.android.ui.adapters.CLIIncomeProofAda
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.AccountNumberFormatWatcher;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
-import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.binder.view.CLIBankAccountTypeBinder;
 
 public class CLIThirdStepFragment extends Fragment implements View.OnClickListener,
         CLIBankAccountTypeBinder.OnCheckboxClickListener, CLIStepIndicatorActivity.OnFragmentRefresh {
 
-    private boolean isDeaBank = false;
     private CLIFirstStepFragment.StepNavigatorCallback stepNavigatorCallback;
 
     private View view;
@@ -68,27 +63,18 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     private WoolworthsApplication mWoolworthsApplication;
     private ConnectionDetector mConnectionDetector;
     private WEditTextView mEditAccountNumber;
-    private List<IncomeProof> mArrIncomeProof;
-    private CLIIncomeProofAdapter mClIIncomeProofAdapter;
-    private WTextView mTextIncomeProof;
-    private WTextView mTextProofIncomeSize;
+    protected WTextView mTextIncomeProof;
     private LinearLayout mLinProofLayout;
     private LinearLayout mLinBankLayout;
-    private CLIStepIndicatorActivity mStepIndicator;
-    private WButton mBtnSendMail;
-    private SlidingUpViewLayout mSlidingUpViewLayout;
+    public WButton mBtnSendMail;
+    private PopWindowValidationMessage mPopWindowValidationMessage;
     private ProgressDialog mPostEmailProgressDialog;
-    private WTextView mTextEmailAdress;
     private String mEmail = "";
     private ProgressDialog mUpdateBankDetailProgressDialog;
-    private LayoutInflater mLayoutInflater;
     private PopupWindow mDarkenScreen;
     private PopupWindow mPopWindow;
     private WTextView textEmailContent;
     private WButton mOverlayBtn;
-    private WTextView mOverlayTitle;
-    private WTextView mOverlayDescription;
-    private LinearLayout mLinEmail;
     private SharePreferenceHelper mSharePreferenceHelper;
 
     public CLIThirdStepFragment() {
@@ -102,10 +88,9 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         view = inflater.inflate(R.layout.cli_fragment_step_three, container, false);
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
         mEmail = mSharePreferenceHelper.getValue("email");
-        mStepIndicator = (CLIStepIndicatorActivity) getActivity();
+        CLIStepIndicatorActivity mStepIndicator = (CLIStepIndicatorActivity) getActivity();
         mStepIndicator.setOnFragmentRefresh(this);
-        mLayoutInflater = (LayoutInflater)getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        mSlidingUpViewLayout = new SlidingUpViewLayout(getActivity(),mLayoutInflater);
+        mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         mLinProofLayout = (LinearLayout) view.findViewById(R.id.linProofLayout);
         mLinBankLayout = (LinearLayout) view.findViewById(R.id.linBankLayout);
 
@@ -124,7 +109,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     }
 
     public void loadView() {
-        isDeaBank = mWoolworthsApplication.isDEABank();
+        boolean isDeaBank = mWoolworthsApplication.isDEABank();
         if (isDeaBank) {
             mLinBankLayout.setVisibility(View.VISIBLE);
             mLinProofLayout.setVisibility(View.GONE);
@@ -199,8 +184,8 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                             mRecycleList.setAdapter(mCLIBankAccountAdapter);
                             mCLIBankAccountAdapter.setCLIContent();
                         }else {
-                            mSlidingUpViewLayout.openOverlayView(bankAccountTypes.response.desc,
-                                    SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                            mPopWindowValidationMessage.displayValidationMessage(bankAccountTypes.response.desc,
+                                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                         }
                     } else {
                     }
@@ -208,8 +193,8 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                 }
             }.execute();
         } else {
-            mSlidingUpViewLayout.openOverlayView(getString(R.string.cli_enter_acc_number_error),
-                    SlidingUpViewLayout.OVERLAY_TYPE.ERROR);        }
+            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_enter_acc_number_error),
+                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);        }
     }
     //Method to hide keyboard
     public static void hideKeyboard(Context context) {
@@ -238,26 +223,26 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                             //If everything is ok then hide the keyboard
                             hideKeyboard(getContext());
                         } else {
-                            mSlidingUpViewLayout.openOverlayView(getString(R.string.cli_enter_acc_number_error),
-                                    SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_enter_acc_number_error),
+                                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                         }
                     } else {
-                        mSlidingUpViewLayout.openOverlayView(getString(R.string.cli_select_acc_type),
-                                SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                        mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_select_acc_type),
+                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     }
                 } else {
                     if (mConnectionDetector.isOnline(getActivity())) {
-                        mSlidingUpViewLayout.openOverlayView(getString(R.string.cli_select_acc_type),
-                                SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                        mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_select_acc_type),
+                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     } else {
-                        mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
-                                SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                        mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
+                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     }
                 }
                 break;
 
             case R.id.btnSendMail:
-                sendEmail(mEmail);
+                sendEmail();
                 break;
         }
     }
@@ -310,8 +295,8 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
     private void initProofUI() {
         mTextIncomeProof = (WTextView) view.findViewById(R.id.textProofIncome);
-        mTextProofIncomeSize = (WTextView) view.findViewById(R.id.textProofIncomeSize);
-        mTextEmailAdress = (WTextView) view.findViewById(R.id.textEmailAdress);
+        WTextView mTextProofIncomeSize = (WTextView) view.findViewById(R.id.textProofIncomeSize);
+        WTextView mTextEmailAdress = (WTextView) view.findViewById(R.id.textEmailAdress);
         mBtnSendMail = (WButton) view.findViewById(R.id.btnSendMail);
     }
 
@@ -325,8 +310,8 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     }
 
     public void populateList() {
-        mArrIncomeProof = arrIncomeProof();
-        mClIIncomeProofAdapter = new CLIIncomeProofAdapter(mArrIncomeProof);
+        List<IncomeProof> mArrIncomeProof = arrIncomeProof();
+        CLIIncomeProofAdapter mClIIncomeProofAdapter = new CLIIncomeProofAdapter(mArrIncomeProof);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mClIIncomeProofAdapter.setCLIContent();
@@ -337,12 +322,12 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         loadView();
     }
 
-    public void sendEmail(final String userEmail) {
+    public void sendEmail() {
         if (mConnectionDetector.isOnline(getActivity())) {
             new HttpAsyncTask<String, String, CLIEmailResponse>() {
                 @Override
                 protected CLIEmailResponse httpDoInBackground(String... params) {
-                    return ((WoolworthsApplication) getActivity().getApplication()).getApi().cliEmailResponse(userEmail);
+                    return ((WoolworthsApplication) getActivity().getApplication()).getApi().cliEmailResponse();
                 }
 
                 @Override
@@ -376,15 +361,15 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                     if (httpCode == 200) {
                         popEmail(mEmail);
                     } else {
-                        mSlidingUpViewLayout.openOverlayView(desc,
-                                SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                        mPopWindowValidationMessage.displayValidationMessage(desc,
+                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     }
                 }
 
             }.execute();
         } else {
-            mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
-                    SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
+                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
         }
     }
 
@@ -431,16 +416,16 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                         if (updateBankDetailResponse.httpCode == 200) {
                             stepNavigatorCallback.openNextFragment(3);
                         } else {
-                            mSlidingUpViewLayout.openOverlayView(updateBankDetailResponse.response.desc,
-                                    SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                            mPopWindowValidationMessage.displayValidationMessage(updateBankDetailResponse.response.desc,
+                                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                         }
                     }
                     stopUpadateBankProgressDialog();
                 }
             }.execute();
         }else{
-            mSlidingUpViewLayout.openOverlayView(getString(R.string.cli_enter_acc_number_error),
-                    SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_enter_acc_number_error),
+                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
         }
     }
 

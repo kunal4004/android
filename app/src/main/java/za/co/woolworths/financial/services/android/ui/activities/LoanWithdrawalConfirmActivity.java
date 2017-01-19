@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -9,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,21 +24,19 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
-import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Toolbar mToolbar;
     private ScrollView mScrollLoanWithdrawal;
     private SharePreferenceHelper mSharePreferenceHelper;
     private WTextView mTextDrawnAmount;
     private WTextView mTextMonths;
     private WTextView mTextAdditionalMonthAmount;
     private ConnectionDetector mConnectionDetector;
-    private LayoutInflater mLayoutInflater;
-    private SlidingUpViewLayout mSlidingUpViewLayout;
+    private PopWindowValidationMessage mPopWindowValidationMessage;
     private WTextView mBtnConfirm;
     private Integer installment_amount;
     private ProgressDialog mGetProgressDialog;
@@ -51,8 +47,7 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
         setContentView(R.layout.loan_withdrawal_activity);
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(LoanWithdrawalConfirmActivity.this);
         mConnectionDetector = new ConnectionDetector();
-        mLayoutInflater = (LayoutInflater)getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        mSlidingUpViewLayout = new SlidingUpViewLayout(LoanWithdrawalConfirmActivity.this,mLayoutInflater);
+        mPopWindowValidationMessage = new PopWindowValidationMessage(LoanWithdrawalConfirmActivity.this);
         String sInstallment_amount = mSharePreferenceHelper.getValue("lw_installment_amount");
         if(!TextUtils.isEmpty(sInstallment_amount))
             installment_amount = Integer.valueOf(mSharePreferenceHelper.getValue("lw_installment_amount"));
@@ -74,21 +69,23 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
     }
 
     private void setActionBar(){
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         ActionBar mActionBar = getSupportActionBar();
-        mActionBar.setDisplayHomeAsUpEnabled(true);
-        mActionBar.setDisplayShowTitleEnabled(false);
-        mActionBar.setDisplayUseLogoEnabled(false);
-        mActionBar.setDefaultDisplayHomeAsUpEnabled(false);
-        mActionBar.setHomeAsUpIndicator(R.drawable.back_white);
+        if(mActionBar!=null) {
+            mActionBar.setDisplayHomeAsUpEnabled(true);
+            mActionBar.setDisplayShowTitleEnabled(false);
+            mActionBar.setDisplayUseLogoEnabled(false);
+            mActionBar.setDefaultDisplayHomeAsUpEnabled(false);
+            mActionBar.setHomeAsUpIndicator(R.drawable.back_white);
+        }
     }
 
     private void setContent() {
         mScrollLoanWithdrawal.setVisibility(View.VISIBLE);
         mTextDrawnAmount.setText(mSharePreferenceHelper.getValue("lwf_drawDownAmount"));
         mTextMonths.setText(mSharePreferenceHelper.getValue("lw_months")+" months");
-//        mTextAdditionalMonthAmount.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(installment_amount/100), 1, this)));
+        mTextAdditionalMonthAmount.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(installment_amount/100), 1, this)));
     }
 
     @Override
@@ -140,8 +137,8 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
                         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         finish();
                     }else {
-                        mSlidingUpViewLayout.openOverlayView(authoriseLoanResponse.response.desc,
-                                SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                        mPopWindowValidationMessage.displayValidationMessage(authoriseLoanResponse.response.desc,
+                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     }
                 }
 
@@ -159,7 +156,7 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
             }.execute();
 
         }else {
-            mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server), SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server), PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
         }
     }
 
@@ -213,7 +210,7 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                 inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             }
-        }catch (NullPointerException ex){}
+        }catch (NullPointerException ignored){}
     }
 
 
