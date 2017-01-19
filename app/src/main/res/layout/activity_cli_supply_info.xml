@@ -35,7 +35,7 @@
             android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
         android:orientation="vertical">
-            <include layout="@layout/horizontal_divider"/>
+            <include layout="@layout/horizontal_divider_light"/>
 
             <android.support.v4.widget.NestedScrollView
                 android:id="@+id/mNestedScrollview"

@@ -6,7 +6,7 @@
     android:id="@+id/linProofLayout"
     android:visibility="visible"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <include layout="@layout/horizontal_divider"/>
+    <include layout="@layout/horizontal_divider_light"/>
 
 
     <android.support.v4.widget.NestedScrollView
@@ -42,7 +42,7 @@
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/imgIcon"
             android:layout_marginStart="18dp" />
-        <include layout="@layout/horizontal_divider"
+        <include layout="@layout/horizontal_divider_light"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginLeft="@dimen/bank_spacing_width"
@@ -52,7 +52,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/cli_require_document"
-        android:letterSpacing="0.05"
         android:layout_marginLeft="@dimen/bank_spacing_width"
         android:layout_marginRight="@dimen/bank_spacing_width"
         android:layout_marginTop="@dimen/bank_spacing_width"
@@ -63,7 +62,7 @@
         android:textSize="15sp"
         app:WTextView_font="myriadpro_regular"
 />
-    <include layout="@layout/horizontal_divider"
+    <include layout="@layout/horizontal_divider_light"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginLeft="@dimen/bank_spacing_width"
@@ -72,15 +71,13 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/textProofIncomeSize"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/sectionTitleLight"
             android:text="@string/cli_send_document_title"
-            android:letterSpacing="0.1"
+            android:letterSpacing="0.12"
             android:layout_marginLeft="@dimen/bank_spacing_width"
             android:layout_marginRight="@dimen/bank_spacing_width"
             android:gravity="left"
             android:layout_marginTop="31dp"
-            android:textColor="@color/semi_transparent_black"
             android:textSize="12sp"
             android:textAllCaps="true"
             app:WTextView_font="medium" />

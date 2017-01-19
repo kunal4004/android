@@ -19,8 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textApplicationNotProceed"
-            android:letterSpacing="0.09"
-            android:layout_marginBottom="@dimen/cli_eleven_dp"
+            android:letterSpacing="0.04"
+            android:layout_marginBottom="@dimen/default_margin"
             android:gravity="center"
             android:textAllCaps="true"
             android:background="@color/white"
@@ -41,7 +41,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/overlayDescription"
-            android:letterSpacing="0.06"
             android:gravity="center|top"
             android:lineSpacingExtra="1.3dp"
             android:background="@color/white"
@@ -49,11 +48,12 @@
             android:layout_marginBottom="@dimen/default_margin"
             android:text="@string/cli_pop_confidential_desc"
             app:WTextView_font="myriadpro_regular"
-            android:textColor="@color/semi_transparent_black"
+            android:textColor="@color/black_desc_opacity"
             />
 
         <View android:layout_width="match_parent"
             android:layout_height="0.5dp"
+            android:layout_marginTop="@dimen/default_margin"
             android:background="@color/recent_search_bg"/>
 
 

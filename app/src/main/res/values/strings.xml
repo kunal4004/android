@@ -275,7 +275,7 @@
     <string name="cli_credit_limit_amount">Credit Limit Amount</string>
     <string name="cli_select_your_bank">Select your bank</string>
     <string name="cli_rand_60000">R60 000</string>
-    <string name="cli_others">Others</string>
+    <string name="cli_others">Other</string>
     <string name="cli_proof_income">I agree that Woolworths Financial Services may request and receive three months of my bank statements from my bank or any third party at any time as proof of income.</string>
     <string name="cli_confirm_information">DO YOU CONFIRM THAT ALL INFORMATION SUPPLIED IS CORRECT?</string>
     <string name="cli_other_expenses">Other Expenses</string>
@@ -325,7 +325,7 @@
     <string name="cli_yes_continue">YES-CONTINUE</string>
     <string name="cli_sending_email">SENDING EMAIL...</string>
     <string name="cli_updating_bank_detail">UPDATING BANK DETAIL...</string>
-    <string name="cli_solvency_error">All fields are mandatory. If not applicable, please enter R0.</string>
+    <string name="cli_solvency_error">All fields are mandatory.\nIf not applicable, please enter R0.</string>
     <string name="cli_check_field">Please select whether Woolworths Financial Services can access your bank statements to continue.</string>
     <string name="cli_amount_hint">R</string>
     <string name="cli_additional_credit_amount">How much additional credit would you\nlike to apply for?</string>

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.util.binder.view;
 
+import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +23,10 @@ import za.co.woolworths.financial.services.android.util.binder.DataBindAdapter;
 import za.co.woolworths.financial.services.android.util.binder.DataBinder;
 
 public class CLICbxContentBinder extends DataBinder<CLICbxContentBinder.ViewHolder> {
+
+
+    private Typeface mRdioGroupTypeFace;
+    private Typeface mRdioGroupTypeFaceBold;
 
     public interface OnCheckboxClickListener {
          void onCheckboxViewClick(View v, int position);
@@ -50,12 +55,15 @@ public class CLICbxContentBinder extends DataBinder<CLICbxContentBinder.ViewHold
             holder.mTextBankName.setText(mBank.bankName);
         }
 
+        mRdioGroupTypeFace = Typeface.createFromAsset(holder.mImgSelectBank.getContext().getAssets(), "fonts/WFutura-Medium.ttf");
+        mRdioGroupTypeFaceBold = Typeface.createFromAsset(holder.mImgSelectBank.getContext().getAssets(), "fonts/WFutura-SemiBold.ttf");
+
         if (selectedPosition==position){
             holder.mImgSelectBank.setBackgroundResource(R.drawable.tick_cli_active);
-            holder.mTextBankName.setTypeface(Typeface.DEFAULT_BOLD);
+            holder.mTextBankName.setTypeface(mRdioGroupTypeFaceBold);
         }else {
             holder.mImgSelectBank.setBackgroundResource(R.drawable.tick_cli_inactive);
-            holder.mTextBankName.setTypeface(Typeface.DEFAULT);
+            holder.mTextBankName.setTypeface(mRdioGroupTypeFace);
         }
 
         holder.linDeaBankContainer.setOnClickListener(new View.OnClickListener() {

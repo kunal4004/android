@@ -225,6 +225,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mTextACreditLimit.setText(getString(R.string.cli_additional_credit_amount));
         mTextACreditLimit.setAllCaps(true);
         mTextAmount.addTextChangedListener(new NumberTextWatcher(mTextAmount));
+        mTextAmount.setSelection(mTextAmount.getText().length());
         mTextProceedToSolvency.setVisibility(View.VISIBLE);
     }
 
@@ -366,7 +367,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        buttonView.setTypeface(isChecked ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        buttonView.setTypeface(isChecked ? mRdioGroupTypeFaceBold : mRdioGroupTypeFace);
     }
 
     @Override
@@ -573,7 +574,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         final View popupView = getLayoutInflater().inflate(R.layout.cli_confidential_popup, null);
         WTextView mTextApplicationNotProceed =
                 (WTextView)popupView.findViewById(R.id.textApplicationNotProceed);
-        mTextApplicationNotProceed.setText(getString(R.string.cli_pop_insolvency_title));
+        mTextApplicationNotProceed.setText(getString(R.string.cli_pop_confidential_title));
         pWindow = new PopupWindow(popupView,
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         pWindow.setAnimationStyle(R.style.Animations_popup);
@@ -606,7 +607,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         pWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         pWindow.setAnimationStyle(R.style.Animations_popup);
-        pWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0); 
+        pWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
         pWindow.setOutsideTouchable(false);
         //Dismiss popup when touch outside
         pWindow.setTouchable(false);

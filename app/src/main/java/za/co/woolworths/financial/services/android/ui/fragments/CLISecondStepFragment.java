@@ -1,13 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-/**
- * Created by dimitrij on 2016/12/20.
- */
-
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +20,6 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
 public class CLISecondStepFragment extends Fragment implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
@@ -37,8 +33,9 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
 
     WoolworthsApplication mWoolworthsApplication;
     private CLIStepIndicatorActivity mMain;
-    private LayoutInflater mLayoutInflater;
     private SlidingUpViewLayout mSlidingUpViewLayout;
+    private Typeface mRdioGroupTypeFace;
+    private Typeface mRdioGroupTypeFaceBold;
 
     public CLISecondStepFragment() {}
     View view;
@@ -46,8 +43,10 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
          view = inflater.inflate(R.layout.cli_fragment_step_two, container, false);
          mWoolworthsApplication = (WoolworthsApplication)getActivity().getApplication();
-        mLayoutInflater = (LayoutInflater)getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        mSlidingUpViewLayout = new SlidingUpViewLayout(getActivity(),mLayoutInflater);
+        LayoutInflater mLayoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mSlidingUpViewLayout = new SlidingUpViewLayout(getActivity(), mLayoutInflater);
+        mRdioGroupTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/WFutura-Medium.ttf");
+        mRdioGroupTypeFaceBold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/WFutura-SemiBold.ttf");
 
         initUI();
         setListener();
@@ -76,7 +75,7 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        buttonView.setTypeface(isChecked ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        buttonView.setTypeface(isChecked ? mRdioGroupTypeFaceBold : mRdioGroupTypeFace);
     }
 
     @Override
@@ -93,19 +92,21 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
     public void setRadioButtonBold(){
         try {
             RadioButton checked = (RadioButton) view.findViewById(mRadApplySolvency.getCheckedRadioButtonId());
-            checked.setTypeface(Typeface.DEFAULT_BOLD);
-        }catch (NullPointerException ex){}
+            checked.setTypeface(mRdioGroupTypeFace);
+        }
+        catch (NullPointerException ex){Log.e("setTypeFacefaileed",ex.toString());}
+
         try {
             RadioButton checked = (RadioButton) view.findViewById(mRadApplySolvency.getCheckedRadioButtonId());
-            checked.setTypeface(Typeface.DEFAULT_BOLD);
-        }catch (NullPointerException ex){}
+            checked.setTypeface(mRdioGroupTypeFace);
+        }catch (NullPointerException ex){
+            Log.e("setTypeFacefaileed",ex.toString());}
     }
 
     public String selectedRadioGroup(RadioGroup radioGroup) {
         int radioID = radioGroup.getCheckedRadioButtonId();
         RadioButton radioButton = (RadioButton) radioGroup.findViewById(radioID);
-        String selectedConfidentialCredit = (String) radioButton.getText();
-        return selectedConfidentialCredit;
+        return (String) radioButton.getText();
     }
 
     @Override

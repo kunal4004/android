@@ -77,7 +77,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         mConnectionDetector = new ConnectionDetector();
         mLayoutInflater = (LayoutInflater)getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         mSlidingUpViewLayout = new SlidingUpViewLayout(getActivity(),mLayoutInflater);
-
         initUI();
         setListener();
         setText();
