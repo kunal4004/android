@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -35,7 +36,7 @@ public class WebViewActivity extends AppCompatActivity {
 
         //getActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
+        toolbarTextView = (WTextView) findViewById(R.id.toolbar_title);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
@@ -44,6 +45,13 @@ public class WebViewActivity extends AppCompatActivity {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewController());
         webView.loadUrl(url);
+        webView.setWebChromeClient(new WebChromeClient(){
+            @Override
+            public void onReceivedTitle(WebView view, String title) {
+                super.onReceivedTitle(view, title);
+                toolbarTextView.setText(title);
+            }
+        });
     }
 
     @Override
