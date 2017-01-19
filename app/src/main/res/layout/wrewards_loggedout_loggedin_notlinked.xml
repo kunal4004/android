@@ -161,6 +161,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/layoutValuedMember"
             android:minHeight="100dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -229,6 +230,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/layoutLoyalMember"
             android:minHeight="100dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -297,6 +299,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/layoutVipMember"
             android:minHeight="100dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
