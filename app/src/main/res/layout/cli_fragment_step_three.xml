@@ -15,7 +15,7 @@
         android:visibility="gone"
         android:id="@+id/linBankLayout"
         android:layout_height="match_parent">
-        <include layout="@layout/horizontal_divider"/>
+        <include layout="@layout/horizontal_divider_light"/>
 
 
         <android.support.v4.widget.NestedScrollView

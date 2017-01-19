@@ -35,5 +35,7 @@ public class WStoreCardEmptyFragment  extends Fragment{
         });
 
 
+
+
         return view;    }
 }

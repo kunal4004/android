@@ -45,11 +45,6 @@
                 android:id="@+id/toolbar_title"
                 android:letterSpacing="0.1"/>
         </android.support.v7.widget.Toolbar>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:color="#D3D3D3"
-                android:id="@+id/view_toolbar" />
 </android.support.design.widget.AppBarLayout>
 
 

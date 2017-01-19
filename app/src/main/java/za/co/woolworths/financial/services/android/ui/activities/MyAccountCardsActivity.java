@@ -13,9 +13,13 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -37,8 +41,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanEmp
 import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardEmptyFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragment;
+import za.co.woolworths.financial.services.android.ui.views.CustomScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WFragmentViewPager;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.WViewPager;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WCustomViewPager;
@@ -53,10 +59,10 @@ public class MyAccountCardsActivity extends AppCompatActivity {
     boolean isStoreCard = false;
     boolean isPersonalCard = false;
     CardsFragmentPagerAdapter fragmentsAdapter;
-    private CollapsingToolbarLayout collapsingToolbarLayout = null;
     private WoolworthsApplication mWoolworthsApplication;
     private SharePreferenceHelper mSharePreferenceHelper;
     ArrayList<Integer> cards;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,22 +75,35 @@ public class MyAccountCardsActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(null);
         mSharePreferenceHelper =  SharePreferenceHelper.getInstance(MyAccountCardsActivity.this);
         mWoolworthsApplication = (WoolworthsApplication)getApplication();
-        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
         pager = (WCustomViewPager) findViewById(R.id.myAccountsCardPager);
+        getScreenResolution(this);
         fragmentPager = (WFragmentViewPager) findViewById(R.id.fragmentpager);
-        NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nest_scrollview);
+        final NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nest_scrollview);
         scrollView.setFillViewport(true);
         cards=new ArrayList<>();
-
         fragmentPager.setPagingEnabled(false);
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        pager.setOnTouchListener(new View.OnTouchListener() {
 
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if(event.getAction() == MotionEvent.ACTION_MOVE && scrollView!=null){
+                    scrollView.requestDisallowInterceptTouchEvent(true);
+                }
+                return false;
+            }
+        });
+
+        // pager.setOnTouchListener(new ViewInScrollViewTouchHelper(pager));
         setStatusBarColor(getIntent().getIntExtra("position",0));
         //fragmentPager.setCurrentItem(getIntent().getIntExtra("position",0));
         changeViewPagerAndActionBarBackground(getIntent().getIntExtra("position",0));
+
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
             }
 
             @Override
@@ -93,6 +112,8 @@ public class MyAccountCardsActivity extends AppCompatActivity {
                 fragmentPager.setCurrentItem(position);
                 changeViewPagerAndActionBarBackground(position);
                 setStatusBarColor(position);
+
+
             }
 
             @Override
@@ -301,7 +322,31 @@ public class MyAccountCardsActivity extends AppCompatActivity {
     public void setUpAdapter(ArrayList<Integer> cardsList)
     {
         pager.setAdapter(new MyAccountsCardsAdapter(MyAccountCardsActivity.this,cardsList));
-        pager.setPageMargin(50);
         pager.setCurrentItem(getIntent().getIntExtra("position",0));
     }
+
+    private void getScreenResolution(Context context)
+    {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+        if (width<1000&&height<1500){
+            pager.setPadding(100, 0, 100, 0);
+            pager.setClipToPadding(false);
+            pager.setPageMargin(16);
+
+        }else {
+            pager.setPadding(200, 0, 200, 0);
+            pager.setClipToPadding(false);
+            pager.setPageMargin(16);
+        }
+    }
+
+
+
+
+
 }

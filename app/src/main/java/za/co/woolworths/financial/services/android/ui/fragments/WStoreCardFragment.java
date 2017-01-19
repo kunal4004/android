@@ -81,7 +81,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         txtIncreseLimit=(WTextView)view.findViewById(R.id.txtIncreseLimit);
         mProgressCreditLimit = (WebView)view.findViewById(R.id.progressCreditLimit);
         mImageArrow = (ImageView)view.findViewById(R.id.imgArrow);
-        txtIncreseLimit.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.ripple_effect_gray));
         mProgressCreditLimit.loadUrl("file:///android_asset/web/pulse.html");
         txtIncreseLimit.setOnClickListener(this);
         transactions.setOnClickListener(this);
@@ -140,7 +139,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                 if (!isOfferActive) {
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
                     startActivity(openCLIIncrease);
-                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    getActivity().overridePendingTransition(0,0);
                 }
                 break;
 

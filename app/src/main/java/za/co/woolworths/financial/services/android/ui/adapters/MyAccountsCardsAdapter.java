@@ -33,7 +33,7 @@ public class MyAccountsCardsAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         View cView=mContext.getLayoutInflater().inflate(R.layout.my_accounts_cards_pager_item,container,false);
         ImageView myaccountsCard=(ImageView)cView.findViewById(R.id.myaccountsCard);
-        myaccountsCard.setBackgroundResource(cards.get(position));
+        myaccountsCard.setImageResource(cards.get(position));
         container.addView(cView);
         return cView;
     }

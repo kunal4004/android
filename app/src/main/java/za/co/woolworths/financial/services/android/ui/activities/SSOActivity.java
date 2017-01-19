@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.webkit.SslErrorHandler;
@@ -12,6 +14,7 @@ import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.awfs.coordination.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -62,7 +65,7 @@ public class SSOActivity extends WebViewActivity {
     public static final String TAG_SCOPE = "TAG_SCOPE";
     public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 
-
+    private Toolbar mToolbar;
     // TODO: This redirectURIString be pulled from MCS.
     private String redirectURIString = "http://wfs-appserver-dev.wigroup.co:8080/wfs/app/v4/sso/redirect/successful";
     private Protocol protocol;
@@ -81,7 +84,6 @@ public class SSOActivity extends WebViewActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         this.instantiateWebView();
     }
 
@@ -108,7 +110,7 @@ public class SSOActivity extends WebViewActivity {
 
         Log.d(SSOActivity.TAG, String.format("Authorization Link: %s", link));
 
-        bundle.putString("title", "SSO");
+        bundle.putString("title", "SIGN IN");
         bundle.putString("link", link);
         intent.putExtra("Bundle", bundle);
 

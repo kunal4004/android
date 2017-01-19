@@ -27,7 +27,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -90,11 +89,11 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     private WTextView mTextProceedToSolvency;
 
     private PopupWindow mDarkenScreen;
+    private Typeface mRdioGroupTypeFace;
+    private Typeface mRdioGroupTypeFaceBold;
     private Animation mFadeInAnimation;
-    private RelativeLayout mRelPopContainer;
-    private RelativeLayout mRelRootContainer;
     private Animation mPopEnterAnimation;
-    private LinearLayout mLinConfidentialPopUp;
+    private LayoutInflater mLayoutInflater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +103,10 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         connectionDetector = new ConnectionDetector();
         mWoolworthsApplication = (WoolworthsApplication) getApplication();
         mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
+        mLayoutInflater = (LayoutInflater) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        slidingUpViewLayout = new SlidingUpViewLayout(this,mLayoutInflater);
+        mRdioGroupTypeFace = Typeface.createFromAsset(getAssets(), "fonts/WFutura-Medium.ttf");
+        mRdioGroupTypeFaceBold = Typeface.createFromAsset(getAssets(), "fonts/WFutura-SemiBold.ttf");
         LayoutInflater mLayoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         slidingUpViewLayout = new SlidingUpViewLayout(this, mLayoutInflater);
 
@@ -135,6 +138,8 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                             @Override
                             public void onDismiss() {
                                 mRadApplySolvency.clearCheck();
+                                mRadioYesSolvency.setTypeface(mRdioGroupTypeFace);
+                                mRadioNoSolvency.setTypeface(mRdioGroupTypeFace);
                                 mDarkenScreen.dismiss();
                             }
                         });
@@ -157,12 +162,13 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                     case R.id.radioNoConfidentialCredit:
                         displayConfidentialPopUp()
                                 .setOnDismissListener(new PopupWindow.OnDismissListener() {
-                                    @Override
-                                    public void onDismiss() {
-                                        mRadConfidentialCredit.clearCheck();
-                                        mDarkenScreen.dismiss();
-                                    }
-                                });
+                            @Override
+                            public void onDismiss() {
+                                mRadConfidentialCredit.clearCheck();
+                                mRadioNoConfidentialCredit.setTypeface(mRdioGroupTypeFace);
+                                mRadioYesConfidentialCredit.setTypeface(mRdioGroupTypeFace);
+                                mDarkenScreen.dismiss();
+                            }});
                         break;
                     default:
                         break;
@@ -170,6 +176,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                 hideSoftKeyboard();
             }
         });
+
     }
 
     private void initViews() {
@@ -221,6 +228,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mTextACreditLimit.setText(getString(R.string.cli_additional_credit_amount));
         mTextACreditLimit.setAllCaps(true);
         mTextAmount.addTextChangedListener(new NumberTextWatcher(mTextAmount));
+        mTextAmount.setSelection(mTextAmount.getText().length());
         mTextProceedToSolvency.setVisibility(View.VISIBLE);
     }
 
@@ -319,12 +327,12 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     public void setRadioButtonBold() {
         try {
             RadioButton checked = (RadioButton) findViewById(mRadApplySolvency.getCheckedRadioButtonId());
-            checked.setTypeface(Typeface.DEFAULT_BOLD);
+            checked.setTypeface(mRdioGroupTypeFaceBold);
         } catch (NullPointerException ex) {
         }
         try {
             RadioButton checked = (RadioButton) findViewById(mRadConfidentialCredit.getCheckedRadioButtonId());
-            checked.setTypeface(Typeface.DEFAULT_BOLD);
+            checked.setTypeface(mRdioGroupTypeFaceBold);
         } catch (NullPointerException ex) {
         }
     }
@@ -348,7 +356,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        buttonView.setTypeface(isChecked ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+        buttonView.setTypeface(isChecked ? mRdioGroupTypeFaceBold : mRdioGroupTypeFace);
     }
 
     @Override

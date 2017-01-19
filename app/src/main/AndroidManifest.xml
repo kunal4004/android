@@ -191,7 +191,9 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivityTest"
             android:theme="@style/MyAccountCards"/>
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity"/>
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity"
+            android:theme="@style/OneAppBaseTheme"
+            />
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity"

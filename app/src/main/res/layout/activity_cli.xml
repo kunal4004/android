@@ -41,7 +41,7 @@
                     app:WTextView_font="medium_bold"
                     android:textAllCaps="true"
                     android:textSize="12sp"
-                    android:layout_gravity="center"
+                    android:layout_gravity="left"
                     android:textColor="@color/white"
                     android:text="Store card"
                     />
@@ -73,8 +73,8 @@
                 android:layout_marginTop="44dp"
                 android:layout_centerInParent="true"
                 android:textAllCaps="true"
-                android:letterSpacing="0.07"
-                android:textColor="@color/semi_per_black"
+                android:letterSpacing="0.06"
+                android:textColor="@color/semi_transparent_black"
                 android:textSize="14sp"
                 app:WTextView_font="medium" />
 
@@ -89,9 +89,8 @@
                 android:layout_marginBottom="24dp"
                 android:textColor="@color/black"
                 android:textSize="@dimen/bold_title"
-                android:letterSpacing="0.1"
+                android:letterSpacing="0"
                 app:WTextView_font="medium_bold" />
-
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/textClIContent"
@@ -99,10 +98,10 @@
                 android:layout_height="wrap_content"
                 android:text="@string/cli_store_card_content"
                 android:gravity="center_horizontal|bottom"
-                android:letterSpacing="0.05"
                 android:layout_marginBottom="58dp"
                 android:textColor="@color/cli_content_color_desc"
-                android:lineSpacingExtra="4dp"
+                android:letterSpacing="0.04"
+                android:lineSpacingExtra="2.4dp"
                 android:layout_below="@+id/textBeforeStart"
                 android:textSize="@dimen/text_desc_15sp"
                 app:WTextView_font="myriadpro_regular" />
@@ -110,6 +109,7 @@
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/bank_spacing_width"
                 android:layout_below="@+id/textClIContent"
                 android:gravity="bottom">
 
