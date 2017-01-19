@@ -7,9 +7,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 
@@ -20,6 +22,10 @@ import za.co.woolworths.financial.services.android.util.ScreenManager;
 public class WRewardsLoggedOutFragment extends Fragment implements View.OnClickListener {
     public WButton login;
     public WButton register;
+    public RelativeLayout valuedMember;
+    public RelativeLayout loyalMember;
+    public RelativeLayout vipMember;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -27,8 +33,14 @@ public class WRewardsLoggedOutFragment extends Fragment implements View.OnClickL
         view.findViewById(R.id.wRewars_linkaccounts).setVisibility(View.GONE);
         login=(WButton)view.findViewById(R.id.wRewars_login);
         register=(WButton)view.findViewById(R.id.wRewars_register);
+        valuedMember=(RelativeLayout)view.findViewById(R.id.layoutValuedMember);
+        loyalMember=(RelativeLayout)view.findViewById(R.id.layoutLoyalMember);
+        vipMember=(RelativeLayout)view.findViewById(R.id.layoutVipMember);
         login.setOnClickListener(this);
         register.setOnClickListener(this);
+        valuedMember.setOnClickListener(this);
+        loyalMember.setOnClickListener(this);
+        vipMember.setOnClickListener(this);
 
         return view;
     }
@@ -43,6 +55,15 @@ public class WRewardsLoggedOutFragment extends Fragment implements View.OnClickL
             case R.id.wRewars_register:
                 ScreenManager.presentSSORegister(getActivity());
                 break;
+            case R.id.layoutValuedMember:
+                redirectToWRewardsMemberActivity(0);
+                break;
+            case R.id.layoutLoyalMember:
+                redirectToWRewardsMemberActivity(1);
+                break;
+            case R.id.layoutVipMember:
+                redirectToWRewardsMemberActivity(2);
+                break;
             default:
                 break;
         }
@@ -51,5 +72,10 @@ public class WRewardsLoggedOutFragment extends Fragment implements View.OnClickL
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void redirectToWRewardsMemberActivity( int type)
+    {
+       startActivity(new Intent(getActivity(), WRewardsMembersInfoActivity.class).putExtra("type",type));
     }
 }

@@ -3,12 +3,15 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.CardView;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -577,6 +580,26 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver,new IntentFilter("UpdateCounter"));
         loadMessages();
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        try {
+            LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
+        }catch (Exception e)
+        {
+          Log.e(TAG,"Broadcast Unregister Exception");
+        }
+
+    }
+
+    public BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            loadMessages();
+        }
+    };
 }

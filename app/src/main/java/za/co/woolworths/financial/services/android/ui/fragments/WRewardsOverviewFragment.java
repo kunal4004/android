@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +15,17 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
+import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity;
+import za.co.woolworths.financial.services.android.ui.adapters.FeaturedPromotionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 /**
@@ -31,6 +40,7 @@ public class WRewardsOverviewFragment extends Fragment {
     public WTextView toNextTire;
     public RelativeLayout toNextTireLayout;
     public VoucherResponse voucherResponse;
+    public ViewPager promotionViewPager;
 
     @Nullable
     @Override
@@ -44,7 +54,7 @@ public class WRewardsOverviewFragment extends Fragment {
         savings=(WTextView)view.findViewById(R.id.savings);
         toNextTire=(WTextView)view.findViewById(R.id.toNextTire);
         toNextTireLayout=(RelativeLayout) view.findViewById(R.id.toNextTireLayout);
-
+        promotionViewPager=(ViewPager)view.findViewById(R.id.promotionViewPager);
         tireStatus.setText(voucherResponse.tierInfo.currentTier);
         savings.setText(WFormatter.formatAmount(voucherResponse.tierInfo.earned));
         if (currentStatus.equals(getString(R.string.valued)) || currentStatus.equals(getString(R.string.loyal))) {
@@ -59,6 +69,55 @@ public class WRewardsOverviewFragment extends Fragment {
                 startActivity(new Intent(getActivity(), WRewardsMembersInfoActivity.class));
             }
         });
+        promotionViewPager.setClipToPadding(false);
+        loadPromotions();
         return view;
+    }
+    public void loadPromotions(){
+        new HttpAsyncTask<String, String, PromotionsResponse>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected PromotionsResponse httpDoInBackground(String... params) {
+
+                return ((WoolworthsApplication) getActivity().getApplication()).getApi().getPromotions();
+            }
+
+            @Override
+            protected Class<PromotionsResponse> httpDoInBackgroundReturnType() {
+                return PromotionsResponse.class;
+            }
+
+            @Override
+            protected PromotionsResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                PromotionsResponse promotionsResponse = new PromotionsResponse();
+                promotionsResponse.response = new Response();
+                return promotionsResponse;
+            }
+
+            @Override
+            protected void onPostExecute(PromotionsResponse promotionsResponse) {
+                super.onPostExecute(promotionsResponse);
+                handlePromotionResponse(promotionsResponse);
+
+            }
+        }.execute();
+    }
+    public void handlePromotionResponse(PromotionsResponse promotionsResponse)
+    {
+             switch (promotionsResponse.httpCode)
+             {
+                 case 200:
+                     if(promotionsResponse.promotions.size()>0)
+                     {
+                         promotionViewPager.setAdapter(new FeaturedPromotionsAdapter(getActivity(),promotionsResponse.promotions));
+                     }
+                     break;
+                 default:
+                     break;
+             }
     }
 }

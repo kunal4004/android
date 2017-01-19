@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
@@ -56,7 +57,7 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Query("productOfferingId") String productOfferingId);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime: 60"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @GET("/user/accounts")
     AccountsResponse getAccounts(
             @Header("apiId") String apiId,
@@ -362,5 +363,17 @@ public interface ApiInterface {
             @Header("userAgentVersion") String userAgentVersion,
             @Header("sessionToken") String sessionToken,
             @Body UpdateBankDetail updateBankDetail);
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @GET("/content/promotions")
+    PromotionsResponse getPromotions(
+            @Header("apiId") String apiId,
+            @Header("sha1Password") String sha1Password,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("deviceModel") String deviceModel,
+            @Header("network") String network,
+            @Header("os") String os,
+            @Header("osVersion") String osVersion,
+            @Header("userAgent") String userAgent,
+            @Header("userAgentVersion") String userAgentVersion);
 
 }

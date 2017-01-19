@@ -66,6 +66,8 @@ public class WRewardsMembersInfoActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         changeTabsFont(tabLayout);
+        if(getIntent().hasExtra("type"))
+            viewPager.setCurrentItem(getIntent().getIntExtra("type",0));
 
         appBar.addOnOffsetChangedListener(new   AppBarLayout.OnOffsetChangedListener() {
             @Override
