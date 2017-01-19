@@ -87,10 +87,14 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements
 
     @Override
     public void onViewSwipedToTop(int position) {
+
     }
 
     @Override
     public void onViewSwipedToBottom(int position) {
+        vouchers.add(vouchers.get(position));
+        mAdapter.notifyDataSetChanged();
+
     }
 
     @Override
