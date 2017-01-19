@@ -81,7 +81,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         mProgressCreditLimit = (WebView)view.findViewById(R.id.progressCreditLimit);
         mImageArrow = (ImageView)view.findViewById(R.id.imgArrow);
         mProgressCreditLimit.loadUrl("file:///android_asset/web/pulse.html");
-        txtIncreseLimit.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.ripple_effect_black));
         transactions.setOnClickListener(this);
         txtIncreseLimit.setOnClickListener(this);
         AccountsResponse accountsResponse=new Gson().fromJson(getArguments().getString("accounts"),AccountsResponse.class);
@@ -139,7 +138,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                if(!isOfferActive){
                    Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
                    startActivity(openCLIIncrease);
-                   getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                   getActivity().overridePendingTransition(0,0);
                }
                break;
        }

@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,7 +93,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         withdrawCashNow.setOnClickListener(this);
         txtIncreseLimit.setOnClickListener(this);
         transactions.setOnClickListener(this);
-        txtIncreseLimit.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.ripple_effect_purple));
         AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
         bindData(accountsResponse);
         disableIncreaseLimit();
@@ -127,6 +127,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                     try {
                         dueDate.setText(FontHyperTextParser.getSpannable(WFormatter.formatDate(p.paymentDueDate), 1, getActivity()));
                     } catch (ParseException e) {
+                        Log.e("dueDateErr",e.toString());
                         dueDate.setText(p.paymentDueDate);
                         WiGroupLogger.e(getActivity(), TAG, e.getMessage(), e);
                     }
@@ -154,7 +155,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 if (!isOfferActive) {
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
                     startActivity(openCLIIncrease);
-                    getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                    getActivity().overridePendingTransition(0,0);
                 }
                 break;
         }

@@ -72,7 +72,7 @@
                                 android:letterSpacing="0.1"
                                 android:gravity="center|start"
                                 android:lineSpacingExtra="1.3dp"
-                                android:textColor="@color/semi_transparent_black"
+                                android:textColor="@color/black_desc_opacity"
                                 android:textSize="13sp"
                                 android:textAllCaps="true"
                                 android:maxLines="2"
@@ -96,12 +96,13 @@
                             android:layout_height="wrap_content"
                             android:digits="0123456789"
                             android:id="@+id/textAmount"
-                            android:backgroundTint="@color/recent_search_bg"
                             android:inputType="number"
+                            android:background="@drawable/edittext_background"
                             android:maxLines="1"
                             android:imeOptions="actionNext"
                             android:maxLength="21"
                             android:hint="@string/cli_amount_hint"
+                            android:paddingLeft="16dp"
                             app:WEditTextView_font="medium"
                             android:textColor="@color/black"
                             android:textSize="20sp"/>
@@ -122,7 +123,7 @@
                             android:text="@string/cli_solvency_agreement"
                             android:letterSpacing="0.08"
                             android:gravity="center|start"
-                            android:textColor="@color/semi_transparent_black"
+                            android:textColor="@color/black_desc_opacity"
                             android:textSize="12sp"
                             android:lineSpacingExtra="4dp"
                             app:WTextView_font="medium"
@@ -136,9 +137,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/cli_text_with_bullet"
-                            android:letterSpacing="0.06"
                             android:gravity="center|start"
-                            android:textColor="@color/semi_transparent_black"
+                            android:textColor="@color/black_desc_opacity"
                             android:layout_marginTop="@dimen/default_margin"
                             android:textSize="15sp"
                             android:lineSpacingExtra="4dp"
@@ -211,7 +211,7 @@
                             android:visibility="gone"
                             android:layout_marginBottom="@dimen/default_margin"
                             android:textAllCaps="true"
-                            android:textColor="@color/semi_transparent_black"
+                            android:textColor="@color/black_desc_opacity"
                             android:textSize="14sp"
                             android:lineSpacingExtra="4dp"
                             app:WTextView_font="medium"
@@ -223,9 +223,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/cli_solvency_agreement"
-                            android:letterSpacing="0.06"
                             android:gravity="center|start"
-                            android:textColor="@color/semi_transparent_black"
+                            android:textColor="@color/black_desc_opacity"
                             android:textSize="15sp"
                             android:lineSpacingExtra="4dp"
                             app:WTextView_font="myriadpro_regular"
@@ -275,7 +274,6 @@
                                 android:checked="false"
                             />
                         </RadioGroup>
-
 
                         <include layout="@layout/horizontal_divider"/>
                     </LinearLayout>

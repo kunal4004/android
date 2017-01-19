@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -69,6 +70,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         mTextToolbar = (WTextView) findViewById(R.id.toolbarText);
+        mTextToolbar.setGravity(Gravity.LEFT);
         mTextCreditLimit = (WTextView) findViewById(R.id.textCreditLimit);
         mTextBeforeStart = (WTextView) findViewById(R.id.textBeforeStart);
         mTextClIContent = (WTextView) findViewById(R.id.textClIContent);
@@ -173,7 +175,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        overridePendingTransition(0,0);
     }
 
 

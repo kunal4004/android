@@ -48,7 +48,7 @@ public class MyAccountOverViewPagerAdapter extends PagerAdapter {
         ImageView boardingImage=(ImageView)cView.findViewById(R.id.boardingImage);
         WTextView title=(WTextView)cView.findViewById(R.id.accountsWalkthroughTitle);
         WTextView description=(WTextView)cView.findViewById(R.id.accountsWalkthroughDescription);
-        boardingImage.setBackgroundResource(images.getResourceId(position,-1));
+        boardingImage.setImageResource(images.getResourceId(position,-1));
         title.setText(titles[position]);
         description.setText(descriptions[position]);
 

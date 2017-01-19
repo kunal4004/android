@@ -20,16 +20,6 @@
             android:background="@drawable/accounts_storecard_background"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
-            <za.co.woolworths.financial.services.android.util.WCustomViewPager
-                android:id="@+id/myAccountsCardPager"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:overScrollMode="never"
-                android:paddingLeft="30dp"
-                android:paddingRight="30dp"
-                android:layout_marginTop="?attr/actionBarSize"
-                />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -48,6 +38,18 @@
                     />
             </android.support.v7.widget.Toolbar>
 
+            <za.co.woolworths.financial.services.android.util.WCustomViewPager
+                android:id="@+id/myAccountsCardPager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingLeft="30dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:paddingRight="30dp"
+                android:layout_marginTop="?attr/actionBarSize"
+                />
+
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
@@ -55,6 +57,8 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:scrollbars="none"
         android:id="@+id/nest_scrollview"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <LinearLayout

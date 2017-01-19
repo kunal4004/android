@@ -30,4 +30,5 @@
     <dimen name="text_desc_15sp">15sp</dimen>
 
     <dimen name="default_stack_spacing">12dp</dimen>
+    <dimen name="button_style_height">48dp</dimen>
 </resources>

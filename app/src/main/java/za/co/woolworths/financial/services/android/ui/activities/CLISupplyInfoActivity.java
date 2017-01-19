@@ -94,6 +94,8 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     private PopupWindow mDarkenScreen;
     private boolean isConfidential=true;
     private boolean isSolvency;
+    private Typeface mRdioGroupTypeFace;
+    private Typeface mRdioGroupTypeFaceBold;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +107,8 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
         mLayoutInflater = (LayoutInflater) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         slidingUpViewLayout = new SlidingUpViewLayout(this,mLayoutInflater);
+        mRdioGroupTypeFace = Typeface.createFromAsset(getAssets(), "fonts/WFutura-Medium.ttf");
+        mRdioGroupTypeFaceBold = Typeface.createFromAsset(getAssets(), "fonts/WFutura-SemiBold.ttf");
 
         initViews();
         setActionBar();
@@ -132,6 +136,8 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                             @Override
                             public void onDismiss() {
                                 mRadApplySolvency.clearCheck();
+                                mRadioYesSolvency.setTypeface(mRdioGroupTypeFace);
+                                mRadioNoSolvency.setTypeface(mRdioGroupTypeFace);
                                 pWindow.dismiss();
                                 mDarkenScreen.dismiss();
                             }});
@@ -156,6 +162,8 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                             @Override
                             public void onDismiss() {
                                 mRadConfidentialCredit.clearCheck();
+                                mRadioNoConfidentialCredit.setTypeface(mRdioGroupTypeFace);
+                                mRadioYesConfidentialCredit.setTypeface(mRdioGroupTypeFace);
                                 pWindow.dismiss();
                                 mDarkenScreen.dismiss();
                             }});
@@ -329,12 +337,12 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     public void setRadioButtonBold() {
         try {
             RadioButton checked = (RadioButton) findViewById(mRadApplySolvency.getCheckedRadioButtonId());
-            checked.setTypeface(Typeface.DEFAULT_BOLD);
+            checked.setTypeface(mRdioGroupTypeFaceBold);
         } catch (NullPointerException ex) {
         }
         try {
             RadioButton checked = (RadioButton) findViewById(mRadConfidentialCredit.getCheckedRadioButtonId());
-            checked.setTypeface(Typeface.DEFAULT_BOLD);
+            checked.setTypeface(mRdioGroupTypeFaceBold);
         } catch (NullPointerException ex) {
         }
     }
