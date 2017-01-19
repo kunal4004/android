@@ -10,6 +10,7 @@ import android.support.multidex.MultiDex;
 
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
@@ -188,6 +189,7 @@ public class WoolworthsApplication extends Application {
 
 
         });
+        Fresco.initialize(this);
     }
 
     public UserManager getUserManager() {
