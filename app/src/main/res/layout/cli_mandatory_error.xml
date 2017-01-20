@@ -4,7 +4,7 @@
     android:id="@+id/relPopContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#8c000000">
+    android:background="@color/black_50">
     <RelativeLayout
         android:id="@+id/relContainerRootMessage"
         android:layout_width="match_parent"
@@ -48,10 +48,9 @@
                 android:id="@+id/overlayDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/default_margin"
+                android:layout_marginBottom="@dimen/bank_spacing_width"
                 android:background="@color/white"
                 android:gravity="center|top"
-                android:letterSpacing="0.06"
                 android:lineSpacingExtra="1.3dp"
                 android:text="@string/cli_solvency_error"
                 android:textColor="@color/semi_transparent_black"

@@ -344,9 +344,9 @@ public interface ApiInterface {
             @Header("deviceModel") String deviceModel,
             @Header("network") String network,
             @Header("os") String os,
-            @Header("sessionToken") String sessionToken,
             @Header("osVersion") String osVersion,
-            @Body String email);
+            @Header("sessionToken") String sessionToken,
+            @Body String body);
 
 
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})

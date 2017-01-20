@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
     <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/transactionMonth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/transactionMonth"
-        android:padding="16dp"
         android:background="#efefef"
-        app:WTextView_font="medium_bold"
+        android:gravity="center_vertical"
+        android:paddingTop="@dimen/bank_spacing_width"
+        android:paddingBottom="@dimen/recent_search_margin"
+        android:paddingLeft="@dimen/default_margin"
+        android:letterSpacing="0.1"
+        android:paddingRight="@dimen/default_margin"
         android:text="march"
         android:textAllCaps="true"
-        android:textSize="12sp"
         android:textColor="@color/black"
-        android:gravity="center_vertical"
-        />
+        android:textSize="12sp"
+        app:WTextView_font="medium_bold" />
 
 </LinearLayout>

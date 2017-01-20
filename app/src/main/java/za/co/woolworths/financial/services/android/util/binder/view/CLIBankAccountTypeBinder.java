@@ -20,6 +20,9 @@ import za.co.woolworths.financial.services.android.util.binder.DataBinder;
 
 public class CLIBankAccountTypeBinder extends DataBinder<CLIBankAccountTypeBinder.ViewHolder> {
 
+    private Typeface mFontDefault;
+    private Typeface mFontActive;
+
     public interface OnCheckboxClickListener {
         void onCheckboxViewClick(View v, int position);
     }
@@ -47,12 +50,15 @@ public class CLIBankAccountTypeBinder extends DataBinder<CLIBankAccountTypeBinde
             holder.mTextBankName.setText(bankAccountType.accountType);
         }
 
+        mFontDefault = Typeface.createFromAsset(holder.mImgSelectBank.getContext().getAssets(), "fonts/WFutura-Medium.ttf");
+        mFontActive = Typeface.createFromAsset(holder.mImgSelectBank.getContext().getAssets(), "fonts/WFutura-SemiBold.ttf");
+
         if (selectedPosition==position){
             holder.mImgSelectBank.setBackgroundResource(R.drawable.tick_cli_active);
-            holder.mTextBankName.setTypeface(Typeface.DEFAULT_BOLD);
+            holder.mTextBankName.setTypeface(mFontActive);
         }else {
             holder.mImgSelectBank.setBackgroundResource(R.drawable.tick_cli_inactive);
-            holder.mTextBankName.setTypeface(Typeface.DEFAULT);
+            holder.mTextBankName.setTypeface(mFontDefault);
         }
 
         holder.linDeaBankContainer.setOnClickListener(new View.OnClickListener() {

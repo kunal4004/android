@@ -45,7 +45,7 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
     @Override
     public ViewHolder newViewHolder(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.cli_info_content_limit, parent, false);
+                R.layout.cli_financial_service_row, parent, false);
         return new ViewHolder(view);
     }
 
@@ -166,9 +166,9 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
                     int cp = et.getSelectionStart();
                     String finalAmount="";
                     if (hasFractionalPart) {
-                        finalAmount = "R " + df.format(n).replace(".", " ").replace(","," ");
+                        finalAmount = "" + df.format(n).replace(".", " ").replace(","," ");
                     } else {
-                        finalAmount = "R " + dfnd.format(n).replace(".", " ").replace(","," ");
+                        finalAmount = "" + dfnd.format(n).replace(".", " ").replace(","," ");
                     }
                     et.setText(finalAmount);
                     if (mDataSet != null) {

@@ -32,6 +32,7 @@
                     android:id="@+id/toolbarText"
                     app:WTextView_font="medium_bold"
                     android:textAllCaps="true"
+                    android:letterSpacing="0.1"
                     android:textSize="12sp"
                     android:textColor="@color/white"
                     android:text="Store card"

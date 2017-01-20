@@ -39,9 +39,9 @@ public class WTransactionsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
-        transactionListview=(ExpandableListView)findViewById(R.id.transactionListView);
-        productOfferingId=getIntent().getStringExtra("productOfferingId");
-
+        getSupportActionBar().setElevation(0);
+        transactionListview = (ExpandableListView) findViewById(R.id.transactionListView);
+        productOfferingId = getIntent().getStringExtra("productOfferingId");
         loadTransactionHistory(productOfferingId);
     }
 
@@ -74,7 +74,7 @@ public class WTransactionsActivity extends AppCompatActivity {
             protected void onPostExecute(TransactionHistoryResponse transactionHistoryResponse) {
                 switch (transactionHistoryResponse.httpCode) {
                     case 200:
-                        transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this,Utils.getdata(transactionHistoryResponse.transactions)));
+                        transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this, Utils.getdata(transactionHistoryResponse.transactions)));
                         break;
                     case 440:
                         AlertDialog mError = WErrorDialog.getSimplyErrorDialog(WTransactionsActivity.this);
@@ -96,18 +96,20 @@ public class WTransactionsActivity extends AppCompatActivity {
                         }
 
                         break;
-                    default:break;
+                    default:
+                        break;
                 }
 
             }
         }.execute();
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                return  true;
+                return true;
         }
         return false;
     }

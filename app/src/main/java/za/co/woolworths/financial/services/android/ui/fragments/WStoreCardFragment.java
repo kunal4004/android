@@ -1,14 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,8 +31,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.SlidingUpViewLayout;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
@@ -61,8 +57,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     private WebView mProgressCreditLimit;
     private boolean isOfferActive=true;
     private ImageView mImageArrow;
-    private LayoutInflater mLayoutInflater;
-    private SlidingUpViewLayout mSlidingUpViewLayout;
+    private PopWindowValidationMessage mPopWindowValidationMessage;
 
     @Nullable
     @Override
@@ -72,8 +67,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         connectionDetector = new ConnectionDetector();
         availableBalance=(WTextView)view.findViewById(R.id.available_funds);
         creditLimit=(WTextView)view.findViewById(R.id.creditLimit);
-        mLayoutInflater = (LayoutInflater)getActivity().getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        mSlidingUpViewLayout = new SlidingUpViewLayout(getActivity(),mLayoutInflater);
+        mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         dueDate=(WTextView)view.findViewById(R.id.dueDate);
         minAmountDue=(WTextView)view.findViewById(R.id.minAmountDue);
         currentBalance=(WTextView)view.findViewById(R.id.currentBalance);
@@ -136,7 +130,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 
             case R.id.txtIncreseLimit:
-                if (!isOfferActive) {
+               if (!isOfferActive) {
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
                     startActivity(openCLIIncrease);
                     getActivity().overridePendingTransition(0,0);
@@ -186,8 +180,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         }
                     } else {
                         disableIncreaseLimit();
-                        mSlidingUpViewLayout.openOverlayView(httpDesc,
-                                SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                        mPopWindowValidationMessage.displayValidationMessage(httpDesc,
+                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     }
                     hideProgressBar();
                 }
@@ -200,8 +194,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
             asyncActiveOfferRequest.execute();
         } else {
             hideProgressBar();
-            mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
-                    SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
+                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
         }
     }
 

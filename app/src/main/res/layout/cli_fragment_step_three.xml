@@ -12,7 +12,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/linBankLayout"
         android:layout_height="match_parent">
         <include layout="@layout/horizontal_divider_light"/>
@@ -52,7 +52,7 @@
                         android:text="@string/acc_number"
                         android:letterSpacing="0.1"
                         android:gravity="center|start"
-                        android:textColor="@color/semi_transparent_black"
+                        android:textColor="@color/black_desc_opacity"
                         android:textSize="12sp"
                         android:layout_marginTop="@dimen/default_margin"
                         android:textAllCaps="true"
@@ -70,6 +70,9 @@
                         app:WTextView_font="medium"
                         android:digits="0123456789 "
                         android:maxLength="30"
+                        android:paddingTop="@dimen/edittext_top_padding"
+                        android:paddingBottom="@dimen/edittext_top_padding"
+                        android:background="@drawable/edittext_background"
                         android:inputType="number"
                         android:textColor="@color/black"
                         android:textSize="20sp"/>

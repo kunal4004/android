@@ -19,7 +19,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/cli_option_two_desc"
-        android:letterSpacing="0.05"
         android:gravity="center|start"
         android:textColor="@color/black_desc_opacity"
         android:lineSpacingExtra="5dp"

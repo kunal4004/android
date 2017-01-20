@@ -32,7 +32,7 @@
                 android:id="@+id/transactionAmount"
                 android:textColor="#4d030303"
                 android:textSize="15sp"
-                app:WTextView_font="medium"
+                app:WTextView_font="myriadpro_regular"
                 android:layout_alignParentRight="true"
                 android:text="R200"
                 />

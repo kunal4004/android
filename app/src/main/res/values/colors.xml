@@ -5,7 +5,7 @@
     <color name="login_font_color">#686663</color>
     <color name="drawer_color">#333333</color>
     <color name="onboarding_bg">#242529</color>
-    <color name="onboarding_desc_text">#65ffffff</color>
+    <color name="onboarding_desc_text">#80ffffff</color>
     <color name="store_card">#CD0F69</color>
     <color name="store_card_pressed">#b00d5a</color>
     <color name="credit_card">#247EAB</color>
