@@ -85,7 +85,7 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
         mScrollLoanWithdrawal.setVisibility(View.VISIBLE);
         mTextDrawnAmount.setText(mSharePreferenceHelper.getValue("lwf_drawDownAmount"));
         mTextMonths.setText(mSharePreferenceHelper.getValue("lw_months")+" months");
-        mTextAdditionalMonthAmount.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(installment_amount/100), 1, this)));
+        mTextAdditionalMonthAmount.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(installment_amount), 1, this)));
     }
 
     @Override
