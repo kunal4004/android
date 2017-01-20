@@ -176,6 +176,13 @@
     <style name="LoanWithdrawalStyle" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:background">@color/purple</item>
     </style>
+    <style name="SSOActivity" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:homeAsUpIndicator">@drawable/back24</item>
+
+    </style>
 
     <style name="whiteButtonStyle" parent="android:Theme">
         <item name="android:layout_height">@dimen/button_style_height</item>

@@ -100,7 +100,9 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WebViewActivity"
-            android:icon="@drawable/ic_action_bar_logo"/>
+            android:icon="@drawable/ic_action_bar_logo"
+            android:theme="@style/SSOActivity"
+            />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity"
             android:screenOrientation="portrait"
@@ -142,9 +144,9 @@
             android:theme="@style/LoanWithdrawal" />
 
         <activity
-        android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalSuccessActivity"
-        android:screenOrientation="portrait"
-        android:theme="@style/LoanWithdrawal" />
+            android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalSuccessActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/LoanWithdrawal" />
 
 
 
@@ -192,7 +194,7 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivityTest"
             android:theme="@style/MyAccountCards"/>
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity"
-            android:theme="@style/OneAppBaseTheme"
+                  android:theme="@style/SSOActivity"
             />
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity"/>
         <activity
@@ -207,7 +209,7 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity"
             android:theme="@style/WRewardsInfo"/>
         <activity android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardsVoucherDetailsActivity"
-            android:theme="@style/WRewardsVoucherDetails"/>
+                  android:theme="@style/WRewardsVoucherDetails"/>
 
     </application>
 
