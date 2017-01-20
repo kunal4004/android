@@ -11,7 +11,7 @@ android {
         job = "4";
     }
 
-    def buildNumber = major + "." + minor + "." + fix
+    def buildNumber = major + "." + minor + "." + 40
 
     signingConfigs {
         woneappDev {
