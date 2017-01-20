@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.webkit.SslErrorHandler;
@@ -12,6 +14,7 @@ import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.awfs.coordination.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -22,7 +25,13 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.jsonwebtoken.Jwts;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
+import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
+import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class SSOActivity extends WebViewActivity {
 
@@ -56,7 +65,7 @@ public class SSOActivity extends WebViewActivity {
     public static final String TAG_SCOPE = "TAG_SCOPE";
     public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 
-
+    private Toolbar mToolbar;
     // TODO: This redirectURIString be pulled from MCS.
     private String redirectURIString = "http://wfs-appserver-dev.wigroup.co:8080/wfs/app/v4/sso/redirect/successful";
     private Protocol protocol;
@@ -75,7 +84,6 @@ public class SSOActivity extends WebViewActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         this.instantiateWebView();
     }
 
@@ -102,7 +110,7 @@ public class SSOActivity extends WebViewActivity {
 
         Log.d(SSOActivity.TAG, String.format("Authorization Link: %s", link));
 
-        bundle.putString("title", "SSO");
+        bundle.putString("title", "SIGN IN");
         bundle.putString("link", link);
         intent.putExtra("Bundle", bundle);
 
@@ -289,6 +297,7 @@ public class SSOActivity extends WebViewActivity {
                         Intent intent = new Intent();
 
                         if (state.equals(webviewState)) {
+                            sendRegistrationToServer();
 
                             String jwt = list.get(1);
                             intent.putExtra(SSOActivity.TAG_JWT, jwt);
@@ -335,5 +344,48 @@ public class SSOActivity extends WebViewActivity {
                 progressBar.setVisibility(View.GONE);
             }
         }
+    }
+    private void sendRegistrationToServer() {
+        // sending gcm token to server
+
+        final CreateUpdateDevice device=new CreateUpdateDevice();
+        device.appInstanceId= UUID.randomUUID().toString();
+        device.pushNotificationToken=getSharedPreferences(Utils.SHARED_PREF,0).getString("regId",null);
+
+        //Sending Token and app instance Id to App server
+        //Need to be done after Login
+
+        new HttpAsyncTask<String, String, CreateUpdateDeviceResponse>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+            }
+
+            @Override
+            protected CreateUpdateDeviceResponse httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getApplication()).getApi().getResponseOnCreateUpdateDevice(device);
+            }
+
+            @Override
+            protected Class<CreateUpdateDeviceResponse> httpDoInBackgroundReturnType() {
+                return CreateUpdateDeviceResponse.class;
+            }
+
+            @Override
+            protected CreateUpdateDeviceResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                CreateUpdateDeviceResponse createUpdateResponse = new CreateUpdateDeviceResponse();
+                createUpdateResponse.response = new Response();
+                return createUpdateResponse;
+            }
+
+            @Override
+            protected void onPostExecute(CreateUpdateDeviceResponse createUpdateResponse) {
+                super.onPostExecute(createUpdateResponse);
+
+
+            }
+        }.execute();
+
     }
 }

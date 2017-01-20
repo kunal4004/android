@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -9,6 +11,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -23,6 +27,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -46,7 +51,7 @@ import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class StoreDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
-
+    private static final int REQUEST_CALL = 1;
     GoogleMap googleMap;
     public Toolbar toolbar;
     StoreDetails storeDetails;
@@ -67,7 +72,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
     WTextView nativeMap;
     WTextView cancel;
 
-
+    Intent callIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,11 +93,11 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
         storeDistance = (WTextView) findViewById(R.id.distance);
         storeAddress = (WTextView) findViewById(R.id.storeAddress);
         timeingsLayout = (LinearLayout) findViewById(R.id.timeingsLayout);
-        brandsLayout=(LinearLayout) findViewById(R.id.brandsLayout);
+        brandsLayout = (LinearLayout) findViewById(R.id.brandsLayout);
         direction = (RelativeLayout) findViewById(R.id.direction);
-        storeNumber=(WTextView)findViewById(R.id.storeNumber);
+        storeNumber = (WTextView) findViewById(R.id.storeNumber);
         makeCall = (RelativeLayout) findViewById(R.id.call);
-        relBrandLayout = (RelativeLayout)findViewById(R.id.relBrandLayout);
+        relBrandLayout = (RelativeLayout) findViewById(R.id.relBrandLayout);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
@@ -151,17 +156,15 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
         brandsLayout.removeAllViews();
         storeName.setText(storeDetail.name);
         storeAddress.setText(storeDetail.address);
-        if(storeDetail.phoneNumber!=null)
+        if (storeDetail.phoneNumber != null)
             storeNumber.setText(storeDetail.phoneNumber);
         SpannableMenuOption spannableMenuOption = new SpannableMenuOption(this);
         storeDistance.setText(spannableMenuOption.distanceKm(WFormatter.formatMeter(storeDetail.distance)));
-        if (storeDetail.offerings != null)
-        {
+        if (storeDetail.offerings != null) {
             storeOfferings.setText(WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department")));
-            List<StoreOfferings> brandslist=getOfferingByType(storeDetail.offerings,"Brand");
-            if(brandslist!=null)
-            {
-                if (brandslist.size()>0) {
+            List<StoreOfferings> brandslist = getOfferingByType(storeDetail.offerings, "Brand");
+            if (brandslist != null) {
+                if (brandslist.size() > 0) {
                     WTextView textView;
                     relBrandLayout.setVisibility(View.VISIBLE);
                     for (int i = 0; i < brandslist.size(); i++) {
@@ -170,13 +173,13 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
                         textView.setText(brandslist.get(i).offering);
                         brandsLayout.addView(textView);
                     }
-                }else {
+                } else {
                     relBrandLayout.setVisibility(View.GONE);
                 }
-            }else {
+            } else {
                 relBrandLayout.setVisibility(View.GONE);
             }
-        }else {
+        } else {
             relBrandLayout.setVisibility(View.GONE);
         }
         WTextView textView;
@@ -186,7 +189,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
                 textView = (WTextView) v.findViewById(R.id.openingHours);
                 textView.setText(storeDetail.times.get(i).day + " " + storeDetail.times.get(i).hours);
                 if (i == 0)
-                    textView.setTypeface(Typeface.createFromAsset(getAssets(),"fonts/MyriadPro-Semibold.otf"));
+                    textView.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Semibold.otf"));
                 timeingsLayout.addView(textView);
             }
         }
@@ -194,10 +197,16 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
         makeCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(storeDetail.phoneNumber!=null){
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:"+storeDetail.phoneNumber));
-                    startActivity(callIntent);
+                if (storeDetail.phoneNumber != null) {
+                    callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + storeDetail.phoneNumber));
+                    //Check for permission before calling
+                    //The app will ask permission before calling only on first use after installation
+                    if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(StoreDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+                    } else {
+                        startActivity(callIntent);
+                    }
                 }
 
             }
@@ -209,6 +218,19 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
             }
         });
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode){
+            case REQUEST_CALL:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    startActivity(callIntent);
+                } else {
+                    ////
+                }
+        }
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

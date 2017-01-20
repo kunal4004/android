@@ -15,7 +15,7 @@
         android:text="@string/cli_solvency_agreement"
         android:letterSpacing="0.06"
         android:gravity="center|start"
-        android:textColor="@color/black"
+        android:textColor="@color/black_desc_opacity"
         android:textSize="14sp"
         android:lineSpacingExtra="4dp"
         app:WTextView_font="myriadpro_regular"

@@ -35,6 +35,8 @@
     <color name="semi_transparent_black">#50000000</color>
     <color name="semi_per_black">#30000000</color>
     <color name="description_color">#80000000</color>
+    <color name="black_desc_opacity">#75000000</color>
+
 
     <!-- step indicator -->
     <color name="background_default">#A5D6A7</color>
@@ -44,4 +46,6 @@
     <color name="secondary_text_default">#ffffff</color>
     <color name="cli_content_color_desc">#80000000</color>
     <color name="page_indicator_default">#10ffffff</color>
+    <color name="horizontal_line">#10000000</color>
+
 </resources>

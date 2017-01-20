@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <include layout="@layout/horizontal_divider"/>
+    android:orientation="vertical">
+
+    <include layout="@layout/horizontal_divider_light" />
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/mNestedScrollview"
@@ -12,21 +13,22 @@
         android:layout_height="match_parent"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-<LinearLayout
-    android:id="@+id/llNestedDeoBank"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:layout_width="match_parent">
 
-    <include layout="@layout/cli_info_contents"/>
+        <LinearLayout
+            android:id="@+id/llNestedDeoBank"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycleList"
-        android:layout_width="match_parent"
-        android:clipToPadding="false"
-        android:layout_height="wrap_content"/>
+            <include layout="@layout/cli_info_contents" />
 
-    <include layout="@layout/cli_button_wrap"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycleList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false" />
+
+            <include layout="@layout/cli_button_wrap" />
 
         </LinearLayout>
 

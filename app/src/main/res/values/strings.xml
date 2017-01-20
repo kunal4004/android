@@ -7,7 +7,7 @@
     <string name="drawer_faq">FAQ</string>
     <string name="drawer_contact">CONTACT US</string>
     <string name="drawer_apply_now">APPLY NOW</string>
-    <string name="log_in">LOG IN</string>
+    <string name="log_in">Sign in</string>
     <string name="id_number">ID NUMBER</string>
     <string name="acc_number">ACCOUNT NUMBER</string>
     <string name="acc_number_info">Your 16 digit card / account number is located on your |!b|W|!?|Rewards, MySchool, Store or Credit Cards.</string>
@@ -19,16 +19,16 @@
     <string name="credit_card_line_two">With a Woolworths Credit Card you will earn |!b|W|!?|Vouchers each and every time you shop with your card.  As a Woolworths Credit card holder, you\'re automatically part of our great |!b|W|!?|Rewards programme that gives you the opportunity to save from 10% instantly on thousands of items throughout the store.</string>
     <string name="my_accounts">MY ACCOUNTS</string>
     <string name="last_transactions">VIEW PREVIOUS TRANSACTIONS</string>
-    <string name="credit_limit">CREDIT LIMIT</string>
-    <string name="available_funds">AVAILABLE FUNDS</string>
-    <string name="next_payment_date">NEXT PAYMENT DUE</string>
-    <string name="minimum_payment">MINIMUM AMOUNT DUE</string>
+    <string name="credit_limit">Credit limit</string>
+    <string name="available_funds">Available funds</string>
+    <string name="next_payment_date">Next payment due</string>
+    <string name="minimum_payment">Minimum amount due</string>
     <string name="withdrawal">WITHDRAWAL</string>
     <string name="personal_loan_withdrawal_button_text">LOANS WITHDRAWAL</string>
     <string name="personal_loan_withdrawal">PERSONAL LOAN WITHDRAWAL</string>
     <string name="hide_transactions">HIDE PREVIOUS TRANSACTIONS</string>
     <string name="next">NEXT</string>
-    <string name="current_balance">CURRENT BALANCE</string>
+    <string name="current_balance">Current balance</string>
     <string name="withdraw_amount">HOW MUCH DO YOU WANT TO WITHDRAW?</string>
     <string name="withdraw_repayment_period">SELECT YOUR PAYMENT PERIOD</string>
     <string name="withdraw_months">%d MONTHS</string>
@@ -53,7 +53,7 @@
     <string name="personal_loan_line_six">Convenience of accessing cash through our interactive voice message system or mobile app.</string>
     <string name="call_centre">CALL CENTRE</string>
     <string name="send">SEND</string>
-    <string name="logging_in">LOGGING IN…</string>
+    <string name="logging_in">SIGNING IN…</string>
     <string name="error">ERROR</string>
     <string name="ok">OK</string>
     <string name="getting_accounts">GETTING ACCOUNTS…</string>
@@ -127,7 +127,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="km">km</string>
     <string name="linked_cards">LINKED CARDS</string>
-    <string name="contact_us">Contact Us</string>
+    <string name="contact_us">Contact us</string>
     <string name="submit_query">Submit Query</string>
     <string name="faqs">FAQs</string>
     <string name="sign_out">Sign Out</string>
@@ -239,7 +239,7 @@
     <string name="link_products">https://woolies.herokuapp.com/products</string>
     <string name="withdraw_cash_now">WITHDRAW CASH NOW</string>
 
-    <string name="accounts_walkthrough_desc_1">The new Woolies app gives you access to everything you love in the palm of your hand. Simply scroll, tap and enjoy!</string>
+    <string name="accounts_walkthrough_desc_1">The new Woolies app gives you easy access to fashion trends, recipes, store locators and more</string>
     <string name="accounts_walkthrough_desc_2">See how much you’ve saved, track your tier status and access your exclusive vouchers.</string>
     <string name="accounts_walkthrough_desc_3">Conveniently view your credit balance, next payment due, available funds, apply for a personal loan and more.</string>
     <string name="accounts_walkthrough_desc_4">Create an account or use your existing Woolies logins to get started. Your login details will be the same on the app, mobi site and website.</string>
@@ -275,7 +275,7 @@
     <string name="cli_credit_limit_amount">Credit Limit Amount</string>
     <string name="cli_select_your_bank">Select your bank</string>
     <string name="cli_rand_60000">R60 000</string>
-    <string name="cli_others">Others</string>
+    <string name="cli_others">Other</string>
     <string name="cli_proof_income">I agree that Woolworths Financial Services may request and receive three months of my bank statements from my bank or any third party at any time as proof of income.</string>
     <string name="cli_confirm_information">DO YOU CONFIRM THAT ALL INFORMATION SUPPLIED IS CORRECT?</string>
     <string name="cli_other_expenses">Other Expenses</string>
@@ -325,7 +325,7 @@
     <string name="cli_yes_continue">YES-CONTINUE</string>
     <string name="cli_sending_email">SENDING EMAIL...</string>
     <string name="cli_updating_bank_detail">UPDATING BANK DETAIL...</string>
-    <string name="cli_solvency_error">All fields are mandatory. If not applicable, please enter R0.</string>
+    <string name="cli_solvency_error">All fields are mandatory.\nIf not applicable, please enter R0.</string>
     <string name="cli_check_field">Please select whether Woolworths Financial Services can access your bank statements to continue.</string>
     <string name="cli_amount_hint">R</string>
     <string name="cli_additional_credit_amount">How much additional credit would you\nlike to apply for?</string>
@@ -358,7 +358,7 @@
     <string name="loan_withdrawal_title">loan withdrawal</string>
     <string name="your_cash_will_be_in_your_account">Your cash will be in your account in 48 hours</string>
     <string name="loan_withdrawal_popup_error">Loan request too high</string>
-    <string name="loan_withdrawal_popup_desc_err">Unfortunately you do need meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>
+    <string name="loan_withdrawal_popup_desc_err">Unfortunately you do not meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>
     <string name="issueing_loan">Processing your loan...</string>
 
     <string name="wrewards_tag_line">|!b|W|!?|Rewards is our way of rewarding customers INSTANTLY.WRewards members save millions every week.</string>
@@ -392,5 +392,5 @@
     <string name="use_before">"USE BEFORE "</string>
     <string name="register">REGISTER</string>
     <string name="before_we_get_started">before we get started</string>
-
+    <string name="featured_promotions">featured promotions</string>
 </resources>

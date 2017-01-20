@@ -32,7 +32,7 @@ public class WebViewActivity extends AppCompatActivity {
         progressBar.show();
         Bundle b = new Bundle();
         b= getIntent().getBundleExtra("Bundle");
-       // getActionBar().setTitle(FontHyperTextParser.getSpannable(b.getString("title"), 1, this));
+        // getActionBar().setTitle(FontHyperTextParser.getSpannable(b.getString("title"), 1, this));
 
         //getActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
