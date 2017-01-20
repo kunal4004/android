@@ -328,7 +328,7 @@
     <string name="cli_solvency_error">All fields are mandatory.\nIf not applicable, please enter R0.</string>
     <string name="cli_check_field">Please select whether Woolworths Financial Services can access your bank statements to continue.</string>
     <string name="cli_amount_hint">R</string>
-    <string name="cli_additional_credit_amount">How much additional credit would you\nlike to apply for?</string>
+    <string name="cli_additional_credit_amount">How much additional credit would you like to apply for?</string>
     <string name="cli_apply_insolvency">DO ANY OF THE FOLLOWING APPLY TO YOU?</string>
     <string name="cli_text_with_bullet">•    I’ve applied for insolvency debt counseling\n•    I’ve applied for debt administration\n•    I’m currently insolvent\n•    I’m currently under debt review</string>
     <string name="cli_solvency_agreement">I agree that Woolworths Financial Services may request and receive my confidential consumer credit information from any credit bureau or third party at any time, including obtaining a bureau score to determine my credit worthiness</string>
