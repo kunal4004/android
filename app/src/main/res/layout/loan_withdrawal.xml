@@ -98,12 +98,11 @@
         android:id="@+id/relWithdrawalAmount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/txtWithdrawAmount"
         android:layout_marginTop="21dp"
         android:gravity="center"
-        android:minHeight="92dp">
-
+        android:minHeight="92dp"
+        android:layout_below="@+id/txtWithdrawAmount"
+        android:layout_alignParentStart="true">
 
         <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
             android:id="@+id/editWithdrawAmount"

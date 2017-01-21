@@ -34,7 +34,7 @@ public class PopWindowValidationMessage {
     private double mLongiude;
 
 
-    public enum OVERLAY_TYPE {CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD, STORE_LOCATOR_DIRECTION}
+    public enum OVERLAY_TYPE {CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,HIGH_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION}
 
     public PopWindowValidationMessage(Context context) {
         this.mContext = context;
@@ -172,6 +172,22 @@ public class PopWindowValidationMessage {
                     }
                 });
                 break;
+            case HIGH_LOAN_AMOUNT:
+                mView = mLayoutInflater.inflate(R.layout.lw_too_high_error, null);
+                popupWindowSetting(mView);
+                setAnimation();
+                touchToDismiss();
+                mRelPopContainer.setAnimation(mFadeInAnimation);
+                mRelRootContainer.setAnimation(mPopEnterAnimation);
+                mView.findViewById(R.id.btnOk)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startExitAnimation();
+                            }
+                        });
+                break;
+
         }
 
         return mDarkenScreen;

@@ -1,50 +1,53 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 android:layout_width="match_parent"
-    android:background="@color/white"
-    android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/mAppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:elevation="0dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:elevation="0dp">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:contentScrim="@color/purple"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:statusBarScrim="@null"
-            app:titleEnabled="false"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:titleEnabled="false">
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/purple"
-                app:layout_collapseMode="pin" >
+                app:layout_collapseMode="pin">
+
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/toolbarText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/toolbarText"
-                    android:letterSpacing="0.1"
-                    app:WTextView_font="medium_bold"
-                    android:textAllCaps="true"
-                    android:textSize="12sp"
                     android:gravity="left"
-                    android:textColor="@color/white"
+                    android:letterSpacing="0.1"
                     android:text="@string/loan_withdrawal_title"
-                    />
-                </android.support.v7.widget.Toolbar>
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:WTextView_font="medium_bold" />
+            </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/loan_withdrawal"/>
-    <include layout="@layout/loan_withdrawal_confirmation"/>
-    <include layout="@layout/loan_withdrawal_success"/>
+    <include layout="@layout/loan_withdrawal" />
+
+    <include layout="@layout/loan_withdrawal_confirmation" />
+
+    <include layout="@layout/loan_withdrawal_success" />
 
 </android.support.design.widget.CoordinatorLayout>

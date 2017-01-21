@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class StoreDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -79,15 +80,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-        if (Build.VERSION.SDK_INT >= 21) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(getResources().getColor(R.color.white));
-            View decor = getWindow().getDecorView();
-            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
+        Utils.updateStatusBarBackground(this);
         setContentView(R.layout.store_details_activity);
 
         mPopWindowValidationMessage = new PopWindowValidationMessage(this);

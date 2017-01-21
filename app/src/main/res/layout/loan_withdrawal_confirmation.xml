@@ -54,7 +54,7 @@
                 android:text="R 2.50"
                 android:textColor="@color/white"
                 android:textSize="45sp"
-                app:WEditTextView_font="light" />
+                app:WTextView_font="light"/>
 
         </LinearLayout>
 
