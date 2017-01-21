@@ -1,62 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/relPopContainer"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#8c000000">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/relContainerRootMessage"
+    <LinearLayout
+        android:id="@+id/popup_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true">
+        android:layout_height="151dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:background="@color/white"
 
-        <LinearLayout
-            android:id="@+id/popup_view"
+        >
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:layout_width="match_parent"
-            android:layout_height="151dp"
-            android:layout_alignParentBottom="true"
+            android:layout_height="75dp"
+            android:id="@+id/nativeGoogleMap"
+            android:letterSpacing="0.1"
+            android:gravity="center"
             android:background="@color/white"
-            android:orientation="vertical"
+            android:textSize="12sp"
+            android:text="@string/google_maps"
+            app:WTextView_font="medium_bold"
+            android:textColor="@color/black"
+            />
 
-            >
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#d8d8d8"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            />
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:id="@+id/cancel"
+            android:gravity="center"
+            android:letterSpacing="0.1"
+            android:background="@color/white"
+            android:textSize="13sp"
+            android:text="@string/cancel"
+            app:WTextView_font="medium"
+            android:textColor="@color/black"
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/nativeGoogleMap"
-                android:layout_width="match_parent"
-                android:layout_height="75dp"
-                android:background="@color/white"
-                android:gravity="center"
-                android:letterSpacing="0.1"
-                android:text="@string/google_maps"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:WTextView_font="medium_bold" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
-                android:background="#d8d8d8" />
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/cancel"
-                android:layout_width="match_parent"
-                android:layout_height="75dp"
-                android:background="@color/white"
-                android:gravity="center"
-                android:letterSpacing="0.1"
-                android:text="@string/cancel"
-                android:textColor="@color/black"
-                android:textSize="13sp"
-                app:WTextView_font="medium"
-
-                />
-        </LinearLayout>
+            />
+    </LinearLayout>
 
 
-    </RelativeLayout>
 </RelativeLayout>
