@@ -222,7 +222,6 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
                 mPopWindowValidationMessage.setmLongiude(storeDetail.longitude);
                 mPopWindowValidationMessage.displayValidationMessage("",
                         PopWindowValidationMessage.OVERLAY_TYPE.STORE_LOCATOR_DIRECTION);
-              //  openNativeMapWindow(storeDetail.latitude,storeDetail.longitude);
             }
         });
     }
