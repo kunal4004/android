@@ -66,14 +66,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_store_activity);
-        if (Build.VERSION.SDK_INT >= 21) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(getResources().getColor(R.color.white));
-            View decor = getWindow().getDecorView();
-            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
+        Utils.updateStatusBarBackground(this);
         toolbar=(Toolbar)findViewById(R.id.toolbar);
         recyclerView=(RecyclerView)findViewById(R.id.storeList) ;
         recentSearchLayout=(LinearLayout)findViewById(R.id.recentSearchLayout);

@@ -52,11 +52,11 @@ public class PopWindowValidationMessage {
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
                 touchToDismiss();
                 mOverlayBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startExitAnimation();
-                            }
-                        });
+                    @Override
+                    public void onClick(View v) {
+                        startExitAnimation();
+                    }
+                });
                 break;
 
             case INFO:
