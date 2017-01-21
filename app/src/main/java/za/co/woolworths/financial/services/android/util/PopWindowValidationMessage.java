@@ -12,6 +12,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
@@ -25,11 +26,11 @@ public class PopWindowValidationMessage {
     private RelativeLayout mRelPopContainer;
     private RelativeLayout mRelRootContainer;
 
-    public enum OVERLAY_TYPE {CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD}
+    public enum OVERLAY_TYPE {CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD, HIGH_LOAN_AMOUNT}
 
     public PopWindowValidationMessage(Context context) {
         this.mContext = context;
-        this.mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        this.mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public String getString(int id) {
@@ -129,6 +130,23 @@ public class PopWindowValidationMessage {
                             }
                         });
                 break;
+
+            case HIGH_LOAN_AMOUNT:
+                mView = mLayoutInflater.inflate(R.layout.lw_too_high_error, null);
+                popupWindowSetting(mView);
+                setAnimation();
+                touchToDismiss();
+                mRelPopContainer.setAnimation(mFadeInAnimation);
+                mRelRootContainer.setAnimation(mPopEnterAnimation);
+                mView.findViewById(R.id.btnOk)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startExitAnimation();
+                            }
+                        });
+                break;
+
         }
 
         return mDarkenScreen;
