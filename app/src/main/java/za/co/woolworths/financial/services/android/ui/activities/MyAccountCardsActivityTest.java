@@ -50,7 +50,6 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
     CardsFragmentPagerAdapter fragmentsAdapter;
     private CollapsingToolbarLayout collapsingToolbarLayout = null;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,7 +105,6 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
         }
 
     }
-
 
     private void dynamicToolbarColor(String colorString) {
         collapsingToolbarLayout.setContentScrimColor(Color.parseColor(colorString));
