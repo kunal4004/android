@@ -1,12 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.app.Activity;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -16,6 +21,8 @@ import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
+
+import static com.crittercism.internal.ap.C;
 
 public class WebViewActivity extends AppCompatActivity {
 
@@ -44,6 +51,9 @@ public class WebViewActivity extends AppCompatActivity {
         String url = b.getString("link");
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewController());
+        webView.clearCache(true);
+        webView.clearHistory();
+        clearCookies(this);
         webView.loadUrl(url);
         webView.setWebChromeClient(new WebChromeClient(){
             @Override
@@ -78,6 +88,26 @@ public class WebViewActivity extends AppCompatActivity {
                 finish();
             }
             progressBar.hide();
+        }
+    }
+    @SuppressWarnings("deprecation")
+    public static void clearCookies(Context context)
+    {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+           // Log.d(TAG, "Using clearCookies code for API >=" + String.valueOf(Build.VERSION_CODES.LOLLIPOP_MR1));
+            CookieManager.getInstance().removeAllCookies(null);
+            CookieManager.getInstance().flush();
+        } else
+        {
+          //  Log.d(C.TAG, "Using clearCookies code for API <" + String.valueOf(Build.VERSION_CODES.LOLLIPOP_MR1));
+            CookieSyncManager cookieSyncMngr=CookieSyncManager.createInstance(context);
+            cookieSyncMngr.startSync();
+            CookieManager cookieManager=CookieManager.getInstance();
+            cookieManager.removeAllCookie();
+            cookieManager.removeSessionCookie();
+            cookieSyncMngr.stopSync();
+            cookieSyncMngr.sync();
         }
     }
 
