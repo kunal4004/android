@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -22,19 +20,16 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
@@ -64,16 +59,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
-import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity;
-import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -81,6 +73,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.LocationTracker;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WCustomViewPager;
@@ -125,10 +118,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     WTextView storeDistance;
     WTextView storeNumber;
 
-    WTextView nativeMap;
-    WTextView cancel;
-
-
     //Location Service Layouts
     LinearLayout layoutLocationServiceOff;
     RelativeLayout layoutLocationServiceOn;
@@ -143,6 +132,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     private String provider;
     Marker myLocation;
     private Status status;
+    private PopWindowValidationMessage mPopWindowValidationMessage;
 
 
     public StoresNearbyFragment1() {
@@ -157,6 +147,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         pager = (WCustomViewPager) v.findViewById(R.id.cardPager);
         detailsLayout = (LinearLayout) v.findViewById(R.id.detailsView);
         mLayout = (SlidingUpPanelLayout) v.findViewById(R.id.sliding_layout);
+        mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         close = (ImageView) v.findViewById(R.id.close);
         storeName = (WTextView) v.findViewById(R.id.storeName);
         storeOfferings = (WTextView) v.findViewById(R.id.offerings);
@@ -265,8 +256,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         if (googleMap == null) {
             mapFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
-            mMarkers = new HashMap<String, Integer>();
-            markers = new ArrayList<Marker>();
+            mMarkers = new HashMap<>();
+            markers = new ArrayList<>();
         }
     }
 
@@ -343,10 +334,9 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             if (previousmarker != null)
                 previousmarker.setIcon(unSelectedIcon);
             marker.setIcon(selectedIcon);
-            //googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 13), CAMERA_ANIMATION_SPEED, null);
             previousmarker = marker;
             pager.setCurrentItem(id);
-        }catch (NullPointerException ex){}
+        }catch (NullPointerException ignored){}
         return true;
     }
 
@@ -517,7 +507,9 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         direction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openNativeMapWindow(storeDetail.latitude, storeDetail.longitude);
+                mPopWindowValidationMessage.setmLongiude(storeDetail.latitude);
+                mPopWindowValidationMessage.setmLongiude(storeDetail.longitude);
+                mPopWindowValidationMessage.displayValidationMessage("",PopWindowValidationMessage.OVERLAY_TYPE.STORE_LOCATOR_DIRECTION);
             }
         });
 
@@ -529,64 +521,9 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             case REQUEST_CALL:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     startActivity(callIntent);
-                } else {
-                    ////
                 }
         }
     }
-
-    public void openNativeMapWindow(final double lat, final double lon) {
-        //darken the current screen
-        View view = getActivity().getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
-        RelativeLayout relPopContainer = (RelativeLayout) view.findViewById(R.id.relPopContainer);
-        final PopupWindow mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
-        mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
-        mDarkenScreen.setTouchable(true);
-        mDarkenScreen.setFocusable(false);
-        mDarkenScreen.setOutsideTouchable(true);
-        mDarkenScreen.setBackgroundDrawable (new ColorDrawable());
-        //Then popup window appears
-        final View popupView = getActivity().getLayoutInflater().inflate(R.layout.popup_view, null);
-        nativeMap = (WTextView) popupView.findViewById(R.id.nativeGoogleMap);
-        cancel = (WTextView) popupView.findViewById(R.id.cancel);
-        final PopupWindow mPopWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mPopWindow.setAnimationStyle(R.style.Animations_popup);
-        mPopWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
-        mPopWindow.setOutsideTouchable(true);
-        //Dismiss popup when touch outside
-        mPopWindow.setTouchable(false);
-        mPopWindow.setBackgroundDrawable (new ColorDrawable());
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopWindow.dismiss();
-                mDarkenScreen.dismiss();
-            }
-        });
-
-        popupView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopWindow.dismiss();
-                mDarkenScreen.dismiss();
-            }
-        });
-
-        nativeMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String uri = String.format(Locale.ENGLISH,"","http://maps.google.com/maps?daddr=%f,%f (%s)", lat, lon, "");
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
-                startActivity(intent);
-                mPopWindow.dismiss();
-                mDarkenScreen.dismiss();
-            }
-        });
-    }
-
 
     public void init(final Location location) {
         new HttpAsyncTask<String, String, LocationResponse>() {

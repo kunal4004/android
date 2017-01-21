@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsVouchersAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SwipeStack;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.toolbar;
 
@@ -35,16 +36,8 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements
     List<Voucher> vouchers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= 21) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(Color.parseColor("#cc000000"));
-            View decor = getWindow().getDecorView();
-            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
+        Utils.updateStatusBarBackground(this,R.color.reward_status_bar_color);
         setContentView(R.layout.wrewards_voucher_details);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mSwipeStack = (SwipeStack) findViewById(R.id.swipeStack);
