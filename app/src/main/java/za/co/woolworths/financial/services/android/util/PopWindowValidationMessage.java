@@ -33,7 +33,6 @@ public class PopWindowValidationMessage {
     private double mLatitude;
     private double mLongiude;
 
-
     public enum OVERLAY_TYPE {CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,HIGH_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION}
 
     public PopWindowValidationMessage(Context context) {
