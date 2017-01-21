@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.WRewardsLoyalMem
 import za.co.woolworths.financial.services.android.ui.fragments.WRewardsValuedMembersInfoFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WRewardsVipMembersInfoFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity.appbar;
 import static za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity.mToolbar;
@@ -44,14 +45,7 @@ public class WRewardsMembersInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wrewards_members_info_activity);
-        if (Build.VERSION.SDK_INT >= 21) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(ContextCompat.getColor(this, R.color.green));
-            View decor = getWindow().getDecorView();
-            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
+        Utils.updateStatusBarBackground(this,R.color.green);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

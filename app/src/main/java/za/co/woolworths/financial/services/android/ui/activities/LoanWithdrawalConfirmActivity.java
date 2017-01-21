@@ -40,16 +40,27 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
     private WTextView mBtnConfirm;
     private Integer installment_amount;
     private ProgressDialog mGetProgressDialog;
+    private String mDrawanDownAmount;
+    private String mAvailableFund;
+    private String mCreditLimit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.updateStatusBarBackground(LoanWithdrawalConfirmActivity.this,R.color.purple);
+        Utils.updateStatusBarBackground(LoanWithdrawalConfirmActivity.this, R.color.purple);
         setContentView(R.layout.loan_withdrawal_activity);
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(LoanWithdrawalConfirmActivity.this);
         mConnectionDetector = new ConnectionDetector();
         mPopWindowValidationMessage = new PopWindowValidationMessage(LoanWithdrawalConfirmActivity.this);
+        Bundle intent = getIntent().getExtras();
+        if (intent != null) {
+            mDrawanDownAmount = intent.getString("drawnDownAmount");
+            mAvailableFund = intent.getString("availableFunds");
+            mCreditLimit = intent.getString("creditLimit");
+        }
+
         String sInstallment_amount = mSharePreferenceHelper.getValue("lw_installment_amount");
-        if(!TextUtils.isEmpty(sInstallment_amount))
+        if (!TextUtils.isEmpty(sInstallment_amount))
             installment_amount = Integer.valueOf(mSharePreferenceHelper.getValue("lw_installment_amount"));
         setActionBar();
         initViews();
@@ -58,21 +69,22 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
     }
 
     private void initViews() {
-        mScrollLoanWithdrawal = (ScrollView)findViewById(R.id.scrollLoanWithdrawal);
-        mTextDrawnAmount = (WTextView)findViewById(R.id.currencyType);
-        mTextMonths = (WTextView)findViewById(R.id.textMonths);
-        mTextAdditionalMonthAmount = (WTextView)findViewById(R.id.textAdditionalMonthAmount);
-        mBtnConfirm = (WTextView)findViewById(R.id.btnConfirm);
+        mScrollLoanWithdrawal = (ScrollView) findViewById(R.id.scrollLoanWithdrawal);
+        mTextDrawnAmount = (WTextView) findViewById(R.id.currencyType);
+        mTextMonths = (WTextView) findViewById(R.id.textMonths);
+        mTextAdditionalMonthAmount = (WTextView) findViewById(R.id.textAdditionalMonthAmount);
+        mBtnConfirm = (WTextView) findViewById(R.id.btnConfirm);
     }
+
     private void clickListener() {
         mBtnConfirm.setOnClickListener(this);
     }
 
-    private void setActionBar(){
+    private void setActionBar() {
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         ActionBar mActionBar = getSupportActionBar();
-        if(mActionBar!=null) {
+        if (mActionBar != null) {
             mActionBar.setDisplayHomeAsUpEnabled(true);
             mActionBar.setDisplayShowTitleEnabled(false);
             mActionBar.setDisplayUseLogoEnabled(false);
@@ -83,8 +95,8 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
 
     private void setContent() {
         mScrollLoanWithdrawal.setVisibility(View.VISIBLE);
-        mTextDrawnAmount.setText(mSharePreferenceHelper.getValue("lwf_drawDownAmount"));
-        mTextMonths.setText(mSharePreferenceHelper.getValue("lw_months")+" months");
+        mTextDrawnAmount.setText(mDrawanDownAmount);
+        mTextMonths.setText(mSharePreferenceHelper.getValue("lw_months") + " months");
         mTextAdditionalMonthAmount.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(installment_amount), 1, this)));
     }
 
@@ -93,14 +105,14 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
         previousActivity();
     }
 
-    public void previousActivity(){
-        Intent openLoanWithdrawal = new Intent(LoanWithdrawalConfirmActivity.this,LoanWithdrawalActivity.class);
+    public void previousActivity() {
+        Intent openLoanWithdrawal = new Intent(LoanWithdrawalConfirmActivity.this, LoanWithdrawalActivity.class);
         startActivity(openLoanWithdrawal);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         finish();
     }
 
-    public void authoriseLoanWithdrawal(){
+    public void authoriseLoanWithdrawal() {
         if (mConnectionDetector.isOnline()) {
             new HttpAsyncTask<String, String, AuthoriseLoanResponse>() {
                 @Override
@@ -131,12 +143,12 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
                 protected void onPostExecute(AuthoriseLoanResponse authoriseLoanResponse) {
                     super.onPostExecute(authoriseLoanResponse);
                     hideProgressDialog();
-                    if (authoriseLoanResponse.httpCode==200){
-                        Intent intent = new Intent(LoanWithdrawalConfirmActivity.this,LoanWithdrawalSuccessActivity.class);
+                    if (authoriseLoanResponse.httpCode == 200) {
+                        Intent intent = new Intent(LoanWithdrawalConfirmActivity.this, LoanWithdrawalSuccessActivity.class);
                         startActivity(intent);
                         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         finish();
-                    }else {
+                    } else {
                         mPopWindowValidationMessage.displayValidationMessage(authoriseLoanResponse.response.desc,
                                 PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     }
@@ -155,20 +167,20 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
                 }
             }.execute();
 
-        }else {
+        } else {
             mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server), PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
         }
     }
 
-    public void hideProgressDialog(){
-        if (mGetProgressDialog!=null&&mGetProgressDialog.isShowing()){
+    public void hideProgressDialog() {
+        if (mGetProgressDialog != null && mGetProgressDialog.isShowing()) {
             mGetProgressDialog.dismiss();
         }
     }
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
+        switch (v.getId()) {
             case R.id.btnConfirm:
                 hideKeyboard();
                 authoriseLoanWithdrawal();
@@ -193,10 +205,10 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
 
 
     //To remove negative signs from negative balance and add "CR" after the negative balance
-    public String removeNegativeSymbol(SpannableString amount){
+    public String removeNegativeSymbol(SpannableString amount) {
         String currentAmount = amount.toString();
-        if(currentAmount.contains("-")){
-            currentAmount = currentAmount.replace("-","")+" CR";
+        if (currentAmount.contains("-")) {
+            currentAmount = currentAmount.replace("-", "") + " CR";
         }
         return currentAmount;
     }
@@ -210,7 +222,8 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
                 InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                 inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             }
-        }catch (NullPointerException ignored){}
+        } catch (NullPointerException ignored) {
+        }
     }
 
 

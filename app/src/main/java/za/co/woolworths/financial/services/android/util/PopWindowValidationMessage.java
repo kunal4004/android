@@ -1,6 +1,9 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -12,6 +15,9 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+
+import java.util.Locale;
+
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
@@ -24,12 +30,14 @@ public class PopWindowValidationMessage {
     private Animation mPopEnterAnimation;
     private RelativeLayout mRelPopContainer;
     private RelativeLayout mRelRootContainer;
+    private double mLatitude;
+    private double mLongiude;
 
-    public enum OVERLAY_TYPE {CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD}
+    public enum OVERLAY_TYPE {CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,HIGH_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION}
 
     public PopWindowValidationMessage(Context context) {
         this.mContext = context;
-        this.mLayoutInflater = (LayoutInflater)mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        this.mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public String getString(int id) {
@@ -52,11 +60,11 @@ public class PopWindowValidationMessage {
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
                 touchToDismiss();
                 mOverlayBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startExitAnimation();
-                            }
-                        });
+                    @Override
+                    public void onClick(View v) {
+                        startExitAnimation();
+                    }
+                });
                 break;
 
             case INFO:
@@ -129,6 +137,56 @@ public class PopWindowValidationMessage {
                             }
                         });
                 break;
+
+            case STORE_LOCATOR_DIRECTION:
+                Log.e("store_locator_direction","popLocator");
+                mView = mLayoutInflater.inflate(R.layout.popup_view, null);
+                popupWindowSetting(mView);
+                WTextView nativeMap = (WTextView) mView.findViewById(R.id.nativeGoogleMap);
+                WTextView cancel = (WTextView) mView.findViewById(R.id.cancel);
+                setAnimation();
+                mRelPopContainer.setAnimation(mFadeInAnimation);
+                mRelRootContainer.setAnimation(mPopEnterAnimation);
+                //touchToDismiss();
+                mRelPopContainer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startExitAnimation();
+                    }
+                });
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startExitAnimation();
+                    }
+                });
+                nativeMap.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String uri = String.format(Locale.ENGLISH,"","http://maps.google.com/maps?daddr=%f,%f (%s)",getmLatitude(), getmLongiude(), "");
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                        intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
+                        mContext.startActivity(intent);
+                        dismissLayout();
+                    }
+                });
+                break;
+            case HIGH_LOAN_AMOUNT:
+                mView = mLayoutInflater.inflate(R.layout.lw_too_high_error, null);
+                popupWindowSetting(mView);
+                setAnimation();
+                touchToDismiss();
+                mRelPopContainer.setAnimation(mFadeInAnimation);
+                mRelRootContainer.setAnimation(mPopEnterAnimation);
+                mView.findViewById(R.id.btnOk)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startExitAnimation();
+                            }
+                        });
+                break;
+
         }
 
         return mDarkenScreen;
@@ -166,7 +224,7 @@ public class PopWindowValidationMessage {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                mDarkenScreen.dismiss();
+                dismissLayout();
             }
         });
         mRelRootContainer.startAnimation(animation);
@@ -187,5 +245,21 @@ public class PopWindowValidationMessage {
         if (mDarkenScreen != null) {
             mDarkenScreen.dismiss();
         }
+    }
+
+    public double getmLatitude() {
+        return mLatitude;
+    }
+
+    public void setmLatitude(double mLatitude) {
+        this.mLatitude = mLatitude;
+    }
+
+    public double getmLongiude() {
+        return mLongiude;
+    }
+
+    public void setmLongiude(double mLongiude) {
+        this.mLongiude = mLongiude;
     }
 }
