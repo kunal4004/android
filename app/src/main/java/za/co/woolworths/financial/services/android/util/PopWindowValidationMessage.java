@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.*;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -33,8 +35,10 @@ public class PopWindowValidationMessage {
     private double mLatitude;
     private double mLongiude;
 
-    public enum OVERLAY_TYPE {CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
-        HIGH_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION,SIGN_OUT}
+    public enum OVERLAY_TYPE {
+        CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
+        HIGH_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT
+    }
 
     public PopWindowValidationMessage(Context context) {
         this.mContext = context;
@@ -163,9 +167,9 @@ public class PopWindowValidationMessage {
                 nativeMap.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String uri = String.format(Locale.ENGLISH,"","http://maps.google.com/maps?daddr=%f,%f (%s)",getmLatitude(), getmLongiude(), "");
+                        String uri = String.format(Locale.ENGLISH, "", "http://maps.google.com/maps?daddr=%f,%f (%s)", getmLatitude(), getmLongiude(), "");
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                        intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
+                        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
                         mContext.startActivity(intent);
                         dismissLayout();
                     }
@@ -230,7 +234,8 @@ public class PopWindowValidationMessage {
     }
 
     private void popupWindowSetting(View view) {
-        mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT,true);
+        hideStatusBar((Activity) mContext);
+        mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
         mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
         mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
         mDarkenScreen.setOutsideTouchable(true);
@@ -257,7 +262,8 @@ public class PopWindowValidationMessage {
             @Override
             public void onAnimationEnd(Animation animation) {
                 dismissLayout();
-                switch (type){
+                showStatusBar((Activity) mContext);
+                switch (type) {
                     case SIGN_OUT:
                         ScreenManager.presentSSOLogout((Activity) mContext);
                         break;
@@ -298,5 +304,25 @@ public class PopWindowValidationMessage {
 
     public void setmLongiude(double mLongiude) {
         this.mLongiude = mLongiude;
+    }
+
+    public void hideStatusBar(Activity activity) {
+        Window window = activity.getWindow();
+        View decorView = window.getDecorView();
+        int visibility = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(visibility);
+        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        window.clearFlags(
+                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+    }
+
+    public void showStatusBar(Activity activity) {
+        Window window = activity.getWindow();
+        View decorView = activity.getWindow().getDecorView();
+        int visibility = View.SYSTEM_UI_FLAG_VISIBLE;
+        decorView.setSystemUiVisibility(visibility);
+        window.addFlags(
+                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 }
