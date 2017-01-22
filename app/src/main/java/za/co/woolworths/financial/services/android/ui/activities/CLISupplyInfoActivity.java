@@ -2,8 +2,11 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +24,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -40,9 +44,9 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.CLICreditLimitAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
+import za.co.woolworths.financial.services.android.ui.views.WEmpyViewDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -65,7 +69,6 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     private Toolbar mToolbar;
     private List<CreditLimit> mArrCreditLimit;
     final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
-    private ProgressDialog mCreateOfferProgressDialog;
     private CreateOfferRequest mCreateOfferRequest;
     private NestedScrollView mNestedScrollview;
     WoolworthsApplication mWoolworthsApplication;
@@ -77,16 +80,22 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
 
     private Typeface mRdioGroupTypeFace;
     private Typeface mRdioGroupTypeFaceBold;
+    private ProgressBar mProgressBar;
+    private FragmentManager fm;
+    private WEmpyViewDialogFragment mEmpyViewDialogFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cli_supply_info);
         Utils.updateStatusBarBackground(CLISupplyInfoActivity.this);
+        fm = getSupportFragmentManager();
         connectionDetector = new ConnectionDetector();
         mWoolworthsApplication = (WoolworthsApplication) getApplication();
         mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
         mPopSlideValidation = new PopWindowValidationMessage(this);
+        mProgressBar = (ProgressBar) findViewById(R.id.mWoolworthsProgressBar);
+
         mRdioGroupTypeFace = Typeface.createFromAsset(getAssets(), "fonts/WFutura-Medium.ttf");
         mRdioGroupTypeFaceBold = Typeface.createFromAsset(getAssets(), "fonts/WFutura-SemiBold.ttf");
         initViews();
@@ -126,7 +135,6 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                 hideSoftKeyboard();
             }
         });
-
 
         mRadConfidentialCredit.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
@@ -378,10 +386,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
 
                 @Override
                 protected void onPreExecute() {
-                    mCreateOfferProgressDialog = new ProgressDialog(CLISupplyInfoActivity.this);
-                    mCreateOfferProgressDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.cli_creating_offer), 1, CLISupplyInfoActivity.this));
-                    mCreateOfferProgressDialog.setCancelable(false);
-                    mCreateOfferProgressDialog.show();
+                    showProgressBar();
                     super.onPreExecute();
                 }
 
@@ -410,12 +415,6 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
             }.execute();
         } else {
             mPopSlideValidation.displayValidationMessage(getString(R.string.connect_to_server), PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
-        }
-    }
-
-    public void stopProgressDialog() {
-        if (mCreateOfferProgressDialog != null && mCreateOfferProgressDialog.isShowing()) {
-            mCreateOfferProgressDialog.dismiss();
         }
     }
 
@@ -509,6 +508,29 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             hasFractionalPart = s.toString().contains(String.valueOf(df.getDecimalFormatSymbols().getDecimalSeparator()));
+        }
+    }
+
+    public void showProgressBar() {
+        if (mProgressBar != null) {
+            mEmpyViewDialogFragment = WEmpyViewDialogFragment.newInstance("blank");
+            mEmpyViewDialogFragment.setCancelable(false);
+            mEmpyViewDialogFragment.show(fm,"blank");
+            mProgressBar.bringToFront();
+            mProgressBar.setVisibility(View.VISIBLE);
+            mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+        }
+    }
+
+    public void stopProgressDialog() {
+        if (mProgressBar != null) {
+            if (mEmpyViewDialogFragment.isVisible()) {
+                mEmpyViewDialogFragment.dismiss();
+            }
+        }
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(View.GONE);
+            mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         }
     }
 }
