@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
-import android.os.Build;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.os.Bundle;
 import android.view.animation.AccelerateInterpolator;
-
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
@@ -66,6 +64,10 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         drawerFragment.setDrawerListener(this);
         displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 
+//        FragmentManager fm = getSupportFragmentManager();
+//        WProgressDialogFragment editNameDialogFragment = WProgressDialogFragment.newInstance("Some Title");
+//        editNameDialogFragment.show(fm, "fragment_edit_name");
+//        editNameDialogFragment.setCancelable(false);
     }
 
     @Override
@@ -112,6 +114,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             mToolbarTitle.setText(title);
             fragmentList.add(fragment);
         }
+
+
     }
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {

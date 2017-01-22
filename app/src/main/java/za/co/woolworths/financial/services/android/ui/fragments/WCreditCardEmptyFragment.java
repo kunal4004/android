@@ -35,6 +35,5 @@ public class WCreditCardEmptyFragment extends Fragment {
             }
         });
 
-
         return view;    }
 }

@@ -1,12 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
@@ -20,6 +24,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -63,10 +68,12 @@ public class MyAccountCardsActivity extends AppCompatActivity {
     private SharePreferenceHelper mSharePreferenceHelper;
     ArrayList<Integer> cards;
     private CollapsingToolbarLayout collapsingToolbarLayout;
+    private AppBarLayout mAppBarAccountCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        scrollToolbarOnDelay();
         setContentView(R.layout.activity_my_account_cards_test);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -84,6 +91,8 @@ public class MyAccountCardsActivity extends AppCompatActivity {
         cards=new ArrayList<>();
         fragmentPager.setPagingEnabled(false);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        mAppBarAccountCard = (AppBarLayout) findViewById(R.id.appBarAccountCard);
+
         pager.setOnTouchListener(new View.OnTouchListener() {
 
             public boolean onTouch(View v, MotionEvent event) {
@@ -345,6 +354,24 @@ public class MyAccountCardsActivity extends AppCompatActivity {
         }
     }
 
+    public void scrollToolbarOnDelay() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarAccountCard);
+                CoordinatorLayout coordinator = (CoordinatorLayout) findViewById(R.id.rootLayout);
+                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
+                AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
+                if(behavior!=null)
+                    behavior.onNestedPreScroll(coordinator, appBarLayout, null, 0, 100, new int[]{0, 0});
+                else
+                    scrollToolbarOnDelay();
+            }
+        }, 3000);
+
+
+    }
 
 
 

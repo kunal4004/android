@@ -1,10 +1,12 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:id="@+id/rootLayout"
     android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
+        android:id="@+id/appBarAccountCard"
         android:layout_height="wrap_content"
         app:elevation="0dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -17,8 +19,20 @@
             app:statusBarScrim="@null"
             android:fitsSystemWindows="true"
             app:titleEnabled="false"
-            android:background="@drawable/accounts_storecard_background"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+            android:background="@drawable/accounts_storecard_background">
+
+            <za.co.woolworths.financial.services.android.util.WCustomViewPager
+                android:id="@+id/myAccountsCardPager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:layout_marginTop="?attr/actionBarSize"
+                app:layout_collapseMode="parallax"
+                android:fitsSystemWindows="true"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 
             <android.support.v7.widget.Toolbar
@@ -38,18 +52,6 @@
                     android:text="Store card"
                     />
             </android.support.v7.widget.Toolbar>
-
-            <za.co.woolworths.financial.services.android.util.WCustomViewPager
-                android:id="@+id/myAccountsCardPager"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:overScrollMode="never"
-                android:paddingLeft="30dp"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                android:paddingRight="30dp"
-                android:layout_marginTop="?attr/actionBarSize"
-                />
 
         </android.support.design.widget.CollapsingToolbarLayout>
 

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,15 +94,13 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
         try {
             RadioButton checked = (RadioButton) view.findViewById(mRadApplySolvency.getCheckedRadioButtonId());
             checked.setTypeface(mRdioGroupTypeFace);
-        } catch (NullPointerException ex) {
-            Log.e("setTypeFacefaileed", ex.toString());
+        } catch (NullPointerException ignored) {
         }
 
         try {
             RadioButton checked = (RadioButton) view.findViewById(mRadApplySolvency.getCheckedRadioButtonId());
             checked.setTypeface(mRdioGroupTypeFace);
-        } catch (NullPointerException ex) {
-            Log.e("setTypeFacefaileed", ex.toString());
+        } catch (NullPointerException ignored) {
         }
     }
 
