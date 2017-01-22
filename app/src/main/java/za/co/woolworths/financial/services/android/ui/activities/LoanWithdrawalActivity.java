@@ -206,10 +206,10 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
             case R.id.itemNextArrow:
 
                 if (getDrawnDownAmount() >= 1000
-                        &&getDrawnDownAmount()<=getAvailableFund()) {
-                     mDrawnDownAmount = mEditWithdrawalAmount.getText().toString();
-                     mCreditLimit = amountInCents(mTextCreditLimit.getText().toString());
-                     mAvailableFunds = amountInCents(mTextAvailableFund.getText().toString());
+                        && getDrawnDownAmount() <= getAvailableFund()) {
+                    mDrawnDownAmount = mEditWithdrawalAmount.getText().toString();
+                    mCreditLimit = amountInCents(mTextCreditLimit.getText().toString());
+                    mAvailableFunds = amountInCents(mTextAvailableFund.getText().toString());
                     loanRequest();
                 } else {
                     mPopWindowValidationMessage.displayValidationMessage("",
@@ -312,9 +312,9 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                     if (issueLoanResponse.httpCode == 200) {
                         mSharePreferenceHelper.save(String.valueOf(issueLoanResponse.installmentAmount), "lw_installment_amount");
                         Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this, LoanWithdrawalConfirmActivity.class);
-                        openConfirmWithdrawal.putExtra("drawnDownAmount",mDrawnDownAmount);
-                        openConfirmWithdrawal.putExtra("availableFunds",mAvailableFunds);
-                        openConfirmWithdrawal.putExtra("creditLimit",mCreditLimit);
+                        openConfirmWithdrawal.putExtra("drawnDownAmount", mDrawnDownAmount);
+                        openConfirmWithdrawal.putExtra("availableFunds", mAvailableFunds);
+                        openConfirmWithdrawal.putExtra("creditLimit", mCreditLimit);
                         startActivity(openConfirmWithdrawal);
                         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         finish();
@@ -372,7 +372,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
 
     public int getAvailableFund() {
         String availableFund = mSharePreferenceHelper.getValue("lw_available_fund");
-        String mAvaibleFund = availableFund.substring(0,availableFund.indexOf(".")).replaceAll("[\\D]", "");
+        String mAvaibleFund = availableFund.substring(0, availableFund.indexOf(".")).replaceAll("[\\D]", "");
         if (TextUtils.isEmpty(mAvaibleFund))
             return 0;
         else
@@ -381,7 +381,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
 
     public int getDrawnDownAmount() {
         String mDrawnAmount = mEditWithdrawalAmount.getText().toString();
-        String mCurrentDrawnAmount = mDrawnAmount.substring(0,mDrawnAmount.indexOf(".")).replaceAll("[\\D]", "");
+        String mCurrentDrawnAmount = mDrawnAmount.substring(0, mDrawnAmount.indexOf(".")).replaceAll("[\\D]", "");
         if (TextUtils.isEmpty(mCurrentDrawnAmount)) {
             return 0;
         } else {
@@ -389,7 +389,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
         }
     }
 
-    public String amountInCents(String edit){
+    public String amountInCents(String edit) {
         return edit.replaceAll("[\\D]", "");
     }
 }
