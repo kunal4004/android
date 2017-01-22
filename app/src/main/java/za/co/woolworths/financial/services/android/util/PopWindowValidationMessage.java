@@ -265,7 +265,7 @@ public class PopWindowValidationMessage {
             @Override
             public void onAnimationEnd(Animation animation) {
                 dismissLayout();
-                showStatusBar((Activity)mContext);
+                showStatusBar((Activity) mContext);
                 switch (type) {
                     case SIGN_OUT:
                         ScreenManager.presentSSOLogout((Activity) mContext);
@@ -309,16 +309,16 @@ public class PopWindowValidationMessage {
         this.mLongiude = mLongiude;
     }
 
-
-    public void hideStatusBar(Activity activity){
+    public void hideStatusBar(Activity activity) {
         Window window = activity.getWindow();
-            View decorView = window.getDecorView();
-            int visibility = View.SYSTEM_UI_FLAG_FULLSCREEN;
-            decorView.setSystemUiVisibility(visibility);
+        View decorView = window.getDecorView();
+        int visibility = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(visibility);
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         window.clearFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
     }
+
     public void showStatusBar(Activity activity) {
         Window window = activity.getWindow();
         View decorView = activity.getWindow().getDecorView();
