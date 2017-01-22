@@ -161,11 +161,9 @@
     <string name="shop_anywhere">Shop anywhere</string>
     <string name="shop_any_where_description">Your Woolworths Credit Card is internationally recognised and accepted at 29 million outlets around the world wherever you see the Visa sign.</string>
     <string name="cc_to_qualify">To qualify, you have to:</string>
-    <string name="points_to_qualify">\u2022Be 18 or older \n\u2022Have a valid RSA ID number \n\u2022Earn over R41 666 per month</string>
-    <string name="bring_following_while_collecting">When collecting your credit card, bring the following:</string>
+    <string name="bring_following_while_collecting">Bring the following when you collect your Store Card:</string>
     <string name="points_bring_following_while_collecting">\u2022Avalid South African ID \n\u2022Your latest three payslips or your last three months’ bank statements \n\u2022Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
     <string name="cash_when_you_need_it">Cash when you need it:</string>
-    <string name="points_cash_when_you_need_it">\u2022Flexible repayment terms of up to 60 months \n\u2022Re-use the money that’s been paid back towards your loan \n\u2022Low initiation and monthly service fees \n\u2022Easily apply to increase your limit if needed \n\u2022Settle your account early without penalties \n\u2022Make additional payments towards your loan \n\u2022Easily access your cash using our mobi app or our interactive voice message system</string>
     <string name="funds_within_48_hours">Funds within 48 hours</string>
     <string name="funds_within_48_hours_description">Once your application has been approved the cash will be in your account within 48 hours.</string>
     <string name="easy_access">Easy access</string>
@@ -181,11 +179,8 @@
     <string name="your_in_control_description">With a Woolworths Store Card you decide how much you want to repay each month and your preferred payment method.</string>
     <string name="easy_payment_methods">Easy payment methods</string>
     <string name="easy_payment_methods_description">Your purchases are automatically billed to your account and you’ll get a monthly statement. You could pay your account using any of the below methods:</string>
-    <string name="points_easy_payment_method">\u2022At a Woolies store \n\u2022Debit order \n\u2022At an ABSA ATM \n\u2022Cellphone or internet banking</string>
-    <string name="convenient">Convenient</string>
-    <string name="points_convinent">\u2022Use your Store Card at any Woolies &amp; Woolies \n\u2022Foodstops at Engen \n\u2022Pay your utility bills \n\u2022Buy airtime \n\u2022Shop Woolies online 24/7</string>
-    <string name="sc_points_to_qualify">\u2022Be 18 or older \n\u2022Have a valid RSA ID number \n\u2022Earn a minimum of R2000 per month</string>
-    <string name="sc_points_bring_following_while_collecting">\u2022Avalid South African ID \n\u2022Your latest three payslips or your last three months’ bank statements </string>
+    <string name="convenient">Convenient</string> f
+    <string name="sc_points_to_qualify">\u2022 \t Be 18 or older \n\u2022 \t Have a valid RSA ID number \n\u2022 \t Earn a minimum of R2000 per month</string>
     <string name="please_enter_the_amount">PLEASE ENTER THE AMOUNT YOU WOULD LIKE TO WITHDRAW:</string>
     <string name="confirm_loan_withdrawal">PLEASE CONFIRM YOUR LOAN\nREQUEST DETAILS:</string>
     <string name="call_us">CALL US</string>
@@ -393,4 +388,44 @@
     <string name="register">REGISTER</string>
     <string name="before_we_get_started">before we get started</string>
     <string name="featured_promotions">featured promotions</string>
+    <string name="bullet">\u2022</string>
+    <string name="sc_points_bring_following_while_collecting_1">A valid South African ID</string>
+    <string name="sc_points_bring_following_while_collecting_2">Your latest three payslips or your last three months’ bank statements</string>
+
+    <string name="sc_points_to_qualify_1">Be 18 or older</string>
+    <string name="sc_points_to_qualify_2">Have a valid RSA ID number</string>
+    <string name="sc_points_to_qualify_3">Earn a minimum of R2000 per month</string>
+
+    <string name="points_convinent_1">Use your Store Card at any Woolies &amp; Woolies </string>
+    <string name="points_convinent_2">Foodstops at Engen</string>
+    <string name="points_convinent_3">Pay your utility bills</string>
+    <string name="points_convinent_4">Buy airtime</string>
+    <string name="points_convinent_5">Shop Woolies online 24/7</string>
+
+    <string name="points_easy_payment_method_1">At a Woolies store</string>
+    <string name="points_easy_payment_method_2">Debit order</string>
+    <string name="points_easy_payment_method_3">At an ABSA ATM</string>
+    <string name="points_easy_payment_method_4">Cellphone or internet banking</string>
+
+    <string name="points_cash_when_you_need_it_1">Flexible repayment terms of up to 60 months</string>
+    <string name="points_cash_when_you_need_it_2">Re-use the money that’s been paid back towards your loan</string>
+    <string name="points_cash_when_you_need_it_3">Low initiation and monthly service fees</string>
+    <string name="points_cash_when_you_need_it_4">Easily apply to increase your limit if needed</string>
+    <string name="points_cash_when_you_need_it_5">Settle your account early without penalties</string>
+    <string name="points_cash_when_you_need_it_6">Make additional payments towards your loan</string>
+    <string name="points_cash_when_you_need_it_7">Easily access your cash using our mobi app or our interactive voice message system</string>
+
+    <string name="personal_loan_points_to_qualify_1">Be 18 or older</string>
+    <string name="personal_loan_points_to_qualify_2">Have a valid South African ID</string>
+    <string name="personal_loan_points_to_qualify_3">Earn a minimum of R2 000 per month</string>
+    <string name="personal_loan_points_to_qualify_4">Provide your latest three payslips or your last three months’ bank statements Have your own bank account</string>
+
+    <string name="points_to_qualify_1">Be 18 or older</string>
+    <string name="points_to_qualify_2">Have a valid RSA ID number</string>
+    <string name="points_to_qualify_3">Earn over R41 666 per month</string>
+
+    <string name="points_bring_following_while_collecting_1">A valid South African ID</string>
+    <string name="points_bring_following_while_collecting_2">Your latest three payslips or your last three months’ bank statements</string>
+    <string name="points_bring_following_while_collecting_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
+
 </resources>
