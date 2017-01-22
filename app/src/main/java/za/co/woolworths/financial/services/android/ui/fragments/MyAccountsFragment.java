@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
@@ -109,6 +110,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
     private int dotsCount;
     private ImageView[] dots;
+    private PopWindowValidationMessage mPopWindowValidationMessage;
     private FragmentManager fm;
 
     public MyAccountsFragment() {
@@ -127,6 +129,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         // ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("ACCOUNTS");
         woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
         openMessageActivity = (ImageView) view.findViewById(R.id.openMessageActivity);
+        mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         openShoppingList = (ImageView) view.findViewById(R.id.openShoppingList);
         contactUs = (RelativeLayout) view.findViewById(R.id.contactUs);
         applyStoreCardView = (LinearLayout) view.findViewById(R.id.applyStoreCard);
@@ -380,7 +383,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             case R.id.openShoppingList:
                 break;
             case R.id.signOutBtn:
-                ScreenManager.presentSSOLogout(getActivity());
+                mPopWindowValidationMessage.displayValidationMessage("", PopWindowValidationMessage.OVERLAY_TYPE.SIGN_OUT);
                 break;
 
             default:
