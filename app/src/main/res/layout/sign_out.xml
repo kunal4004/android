@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relPopContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#8c000000">
+
+    <RelativeLayout
+        android:id="@+id/relContainerRootMessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.09"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:layout_alignParentStart="true"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/bank_spacing_width"
+            android:paddingRight="@dimen/bank_spacing_width"
+            android:paddingTop="@dimen/bank_spacing_width"
+            android:layout_alignParentBottom="true">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/textSignOut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/cli_eleven_dp"
+                android:background="@color/white"
+                android:gravity="center"
+                android:letterSpacing="0.09"
+                android:text="@string/sign_out"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:WTextView_font="medium_bold" />
+
+            <LinearLayout
+                android:id="@+id/linEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/overlayDescription"
+                    android:gravity="center|top"
+                    android:lineSpacingExtra="1.3dp"
+                    android:background="@color/white"
+                    android:textSize="15sp"
+                    android:letterSpacing="0.04"
+                    android:layout_marginBottom="30dp"
+                    android:text="@string/sign_out_desc"
+                    app:WTextView_font="myriadpro_regular"
+                    android:textColor="@color/black_desc_opacity"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linYesNoContainer"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/cli_button_height_popup"
+                android:layout_marginTop="@dimen/default_margin"
+                android:background="@color/white"
+                android:textColor="@color/black"
+                android:layout_marginBottom="@dimen/bank_spacing_width"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <za.co.woolworths.financial.services.android.ui.views.WButton
+                    android:id="@+id/btCancel"
+                    style="@style/whiteButtonStyle"
+                    android:layout_weight="0.5"
+                    android:layout_marginRight="4dp"
+                    android:text="@string/cancel"
+                    android:textAllCaps="true"
+                    app:WButton_font="medium_bold"
+                    />
+
+                <za.co.woolworths.financial.services.android.ui.views.WButton
+                    android:id="@+id/btnOK"
+                    style="@style/whiteButtonStyle"
+                    android:layout_weight="0.5"
+                    android:text="@string/ok"
+                    android:layout_marginLeft="4dp"
+                    android:textAllCaps="true"
+                    app:WButton_font="medium_bold"
+                    />
+
+
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

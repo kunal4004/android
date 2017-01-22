@@ -393,4 +393,5 @@
     <string name="register">REGISTER</string>
     <string name="before_we_get_started">before we get started</string>
     <string name="featured_promotions">featured promotions</string>
+    <string name="sign_out_desc">Are you sure you want to sign out? You will need to re-enter your username and password to sign in again.</string>
 </resources>
