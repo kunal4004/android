@@ -46,5 +46,7 @@ public class WEmpyViewDialogFragment extends DialogFragment {
                 android.R.color.transparent);
         ProgressBar mProgressBar = (ProgressBar) view.findViewById(R.id.mWoolworthsProgressBar);
         mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+        mProgressBar.setVisibility(View.GONE);
     }
+
 }

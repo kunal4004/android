@@ -105,11 +105,12 @@
                         android:background="@drawable/edittext_background"
                         android:orientation="horizontal"
                         android:paddingBottom="9dp">
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
-                            style="@style/editCurrencyStyle" />
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView style="@style/editCurrencyStyle" />
+
                         <za.co.woolworths.financial.services.android.ui.views.WEditTextView
                             android:id="@+id/textAmount"
-                            style="@style/editCurrencyValue"/>
+                            style="@style/editCurrencyValue" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -307,7 +308,7 @@
                     android:textSize="14sp"
                     app:WTextView_font="medium_bold" />
 
-                <include layout="@layout/cli_footer_binder" />
+                <include layout="@layout/cli_button_progress" />
 
             </LinearLayout>
 

@@ -3,16 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:background="@android:color/transparent"
     android:orientation="vertical">
 
     <ProgressBar
         android:id="@+id/mWoolworthsProgressBar"
         style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:progressDrawable="@drawable/spinner_progress_black"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:visibility="visible" />
 
 </LinearLayout>

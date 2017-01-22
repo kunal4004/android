@@ -536,7 +536,7 @@ public class ViewDragHelper {
     }
 
     /**
-     * {@link #cancel()}, but also abort all motion in progress and snap to the end of any
+     * {@link #cancel()}, but also abort all motion in spinner_progress_black and snap to the end of any
      * animation.
      */
     public void abort() {
@@ -559,7 +559,7 @@ public class ViewDragHelper {
      * returns false there is no further work to do to complete the movement.
      *
      * <p>This operation does not count as a capture event, though {@link #getCapturedView()}
-     * will still report the sliding view while the slide is in progress.</p>
+     * will still report the sliding view while the slide is in spinner_progress_black.</p>
      *
      * @param child Child view to capture and animate
      * @param finalLeft Final left position of child
@@ -740,7 +740,7 @@ public class ViewDragHelper {
      *                       Set this to true if you are calling this method from
      *                       {@link View#computeScroll()} or similar methods
      *                       invoked as part of layout or drawing.
-     * @return true if settle is still in progress
+     * @return true if settle is still in spinner_progress_black
      */
     public boolean continueSettling(boolean deferCallbacks) {
         // Make sure, there is a captured view
