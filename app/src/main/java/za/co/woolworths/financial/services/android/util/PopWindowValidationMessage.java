@@ -312,23 +312,20 @@ public class PopWindowValidationMessage {
 
     public void hideStatusBar(Activity activity){
         Window window = activity.getWindow();
-
             View decorView = window.getDecorView();
-            // Hide the status bar.
             int visibility = View.SYSTEM_UI_FLAG_FULLSCREEN;
             decorView.setSystemUiVisibility(visibility);
-            // Hide action bar that too if necessary.
-           // ActionBar actionBar = activity.getSupportActionBar();
-         //   actionBar.hide();
+        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        window.clearFlags(
+                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
     }
     public void showStatusBar(Activity activity) {
         Window window = activity.getWindow();
         View decorView = activity.getWindow().getDecorView();
-        // Show the status bar.
         int visibility = View.SYSTEM_UI_FLAG_VISIBLE;
         decorView.setSystemUiVisibility(visibility);
-        // Show action bar
-       // ActionBar actionBar = activity.getActionBar();
-       // actionBar.show();
+        window.addFlags(
+                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 }
