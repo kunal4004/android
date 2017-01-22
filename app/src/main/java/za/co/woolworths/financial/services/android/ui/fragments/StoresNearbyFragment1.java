@@ -511,6 +511,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         direction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mPopWindowValidationMessage.setmName(storeDetail.name);
                 mPopWindowValidationMessage.setmLatitude(storeDetail.latitude);
                 mPopWindowValidationMessage.setmLongiude(storeDetail.longitude);
                 mPopWindowValidationMessage.displayValidationMessage("",
