@@ -204,7 +204,7 @@ public class PopWindowValidationMessage {
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startExitAnimation(OVERLAY_TYPE.SIGN_OUT);
+                                startExitAnimation(overlay_type);
                             }
                         });
 
@@ -212,7 +212,7 @@ public class PopWindowValidationMessage {
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startExitAnimation(overlay_type);
+                                startExitAnimation(overlay_type.ERROR);
                             }
                         });
 
@@ -220,7 +220,7 @@ public class PopWindowValidationMessage {
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startExitAnimation(overlay_type);
+                                startExitAnimation(overlay_type.ERROR);
                             }
                         });
 
