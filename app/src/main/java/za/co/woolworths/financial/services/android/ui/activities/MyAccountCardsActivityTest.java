@@ -24,7 +24,6 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsFragmentPagerAdapter;
-import za.co.woolworths.financial.services.android.ui.adapters.MyAccountsCardsAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.BaseAccountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardEmptyFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardFragment;
@@ -49,7 +48,6 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
     boolean isPersonalCard = false;
     CardsFragmentPagerAdapter fragmentsAdapter;
     private CollapsingToolbarLayout collapsingToolbarLayout = null;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +104,6 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
         }
 
     }
-
 
     private void dynamicToolbarColor(String colorString) {
         collapsingToolbarLayout.setContentScrimColor(Color.parseColor(colorString));

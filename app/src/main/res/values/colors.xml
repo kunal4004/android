@@ -48,4 +48,5 @@
     <color name="page_indicator_default">#10ffffff</color>
     <color name="horizontal_line">#10000000</color>
     <color name="reward_status_bar_color">#cc000000</color>
+    <color name="default_background">#ececec</color>
 </resources>

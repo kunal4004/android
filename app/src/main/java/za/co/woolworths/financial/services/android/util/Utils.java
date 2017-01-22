@@ -189,7 +189,7 @@ public class Utils {
         View decor = activity.getWindow().getDecorView();
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             window.setStatusBarColor(ContextCompat.getColor(activity, R.color.black));
-            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+            decor.setSystemUiVisibility(0);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.setStatusBarColor(ContextCompat.getColor(activity, R.color.white));
