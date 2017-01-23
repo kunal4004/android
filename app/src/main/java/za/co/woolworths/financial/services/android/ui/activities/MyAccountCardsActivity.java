@@ -369,11 +369,5 @@ public class MyAccountCardsActivity extends AppCompatActivity {
                     scrollToolbarOnDelay();
             }
         }, 3000);
-
-
     }
-
-
-
-
 }

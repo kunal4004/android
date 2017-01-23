@@ -20,6 +20,7 @@ import com.awfs.coordination.R;
 
 import java.util.Locale;
 
+import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
@@ -223,6 +224,27 @@ public class PopWindowValidationMessage {
 
                 break;
 
+            case EMAIL:
+                mView = mLayoutInflater.inflate(R.layout.cli_email_layout, null);
+                popupWindowSetting(mView);
+                setAnimation();
+                WTextView textEmailContent = (WTextView) mView.findViewById(R.id.textEmailAddress);
+                textEmailContent.setText(description);
+                mRelPopContainer.setAnimation(mFadeInAnimation);
+                mRelRootContainer.setAnimation(mPopEnterAnimation);
+
+                mRelPopContainer
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                CLIStepIndicatorActivity cliStepIndicatorActivity = (CLIStepIndicatorActivity) mContext;
+                                if (cliStepIndicatorActivity instanceof Activity) {
+                                    cliStepIndicatorActivity.moveToPage(3);
+                                }
+                            }
+                        });
+                break;
+
         }
 
         return mDarkenScreen;
@@ -325,4 +347,5 @@ public class PopWindowValidationMessage {
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
+
 }
