@@ -1,14 +1,16 @@
 package za.co.woolworths.financial.services.android.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.*;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -33,7 +35,10 @@ public class PopWindowValidationMessage {
     private double mLatitude;
     private double mLongiude;
 
-    public enum OVERLAY_TYPE {CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,HIGH_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION}
+    public enum OVERLAY_TYPE {
+        CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
+        HIGH_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT
+    }
 
     public PopWindowValidationMessage(Context context) {
         this.mContext = context;
@@ -58,11 +63,11 @@ public class PopWindowValidationMessage {
                 setAnimation();
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
-                touchToDismiss();
+                touchToDismiss(overlay_type);
                 mOverlayBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startExitAnimation();
+                        startExitAnimation(overlay_type);
                     }
                 });
                 break;
@@ -70,7 +75,7 @@ public class PopWindowValidationMessage {
             case INFO:
                 mView = mLayoutInflater.inflate(R.layout.open_overlay_got_it, null);
                 popupWindowSetting(mView);
-                WTextView mOverlayTitle = (WTextView) mView.findViewById(R.id.textApplicationNotProceed);
+                WTextView mOverlayTitle = (WTextView) mView.findViewById(R.id.textSignOut);
                 mOverlayDescription = (WTextView) mView.findViewById(R.id.overlayDescription);
                 mOverlayBtn = (WButton) mView.findViewById(R.id.btnOverlay);
                 LinearLayout mLinEmail = (LinearLayout) mView.findViewById(R.id.linEmail);
@@ -81,12 +86,12 @@ public class PopWindowValidationMessage {
                 setAnimation();
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
-                touchToDismiss();
+                touchToDismiss(overlay_type);
                 mOverlayBtn
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startExitAnimation();
+                                startExitAnimation(overlay_type);
                             }
                         });
                 break;
@@ -101,7 +106,7 @@ public class PopWindowValidationMessage {
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startExitAnimation();
+                                startExitAnimation(overlay_type);
                             }
                         });
                 break;
@@ -116,7 +121,7 @@ public class PopWindowValidationMessage {
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startExitAnimation();
+                                startExitAnimation(overlay_type);
                             }
                         });
                 break;
@@ -124,7 +129,7 @@ public class PopWindowValidationMessage {
             case CONFIDENTIAL:
                 mView = mLayoutInflater.inflate(R.layout.cli_confidential_popup, null);
                 popupWindowSetting(mView);
-                WTextView mTextApplicationNotProceed = (WTextView) mView.findViewById(R.id.textApplicationNotProceed);
+                WTextView mTextApplicationNotProceed = (WTextView) mView.findViewById(R.id.textSignOut);
                 mTextApplicationNotProceed.setText(mContext.getResources().getString(R.string.cli_pop_confidential_title));
                 setAnimation();
                 mRelPopContainer.setAnimation(mFadeInAnimation);
@@ -133,13 +138,12 @@ public class PopWindowValidationMessage {
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startExitAnimation();
+                                startExitAnimation(overlay_type);
                             }
                         });
                 break;
 
             case STORE_LOCATOR_DIRECTION:
-                Log.e("store_locator_direction","popLocator");
                 mView = mLayoutInflater.inflate(R.layout.popup_view, null);
                 popupWindowSetting(mView);
                 WTextView nativeMap = (WTextView) mView.findViewById(R.id.nativeGoogleMap);
@@ -151,21 +155,21 @@ public class PopWindowValidationMessage {
                 mRelPopContainer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startExitAnimation();
+                        startExitAnimation(overlay_type);
                     }
                 });
                 cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startExitAnimation();
+                        startExitAnimation(overlay_type);
                     }
                 });
                 nativeMap.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String uri = String.format(Locale.ENGLISH,"","http://maps.google.com/maps?daddr=%f,%f (%s)",getmLatitude(), getmLongiude(), "");
+                        String uri = String.format(Locale.ENGLISH, "", "http://maps.google.com/maps?daddr=%f,%f (%s)", getmLatitude(), getmLongiude(), "");
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                        intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
+                        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
                         mContext.startActivity(intent);
                         dismissLayout();
                     }
@@ -175,16 +179,48 @@ public class PopWindowValidationMessage {
                 mView = mLayoutInflater.inflate(R.layout.lw_too_high_error, null);
                 popupWindowSetting(mView);
                 setAnimation();
-                touchToDismiss();
+                touchToDismiss(overlay_type);
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
                 mView.findViewById(R.id.btnOk)
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startExitAnimation();
+                                startExitAnimation(overlay_type);
                             }
                         });
+                break;
+
+            case SIGN_OUT:
+                mView = mLayoutInflater.inflate(R.layout.sign_out, null);
+                popupWindowSetting(mView);
+                setAnimation();
+                mRelPopContainer.setAnimation(mFadeInAnimation);
+                mRelRootContainer.setAnimation(mPopEnterAnimation);
+                mView.findViewById(R.id.btnOK)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startExitAnimation(overlay_type);
+                            }
+                        });
+
+                mView.findViewById(R.id.btCancel)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startExitAnimation(overlay_type.ERROR);
+                            }
+                        });
+
+                mRelPopContainer
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startExitAnimation(overlay_type.ERROR);
+                            }
+                        });
+
                 break;
 
         }
@@ -198,7 +234,8 @@ public class PopWindowValidationMessage {
     }
 
     private void popupWindowSetting(View view) {
-        mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        hideStatusBar((Activity) mContext);
+        mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
         mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
         mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
         mDarkenScreen.setOutsideTouchable(true);
@@ -208,7 +245,7 @@ public class PopWindowValidationMessage {
         mRelRootContainer = (RelativeLayout) view.findViewById(R.id.relContainerRootMessage);
     }
 
-    private void startExitAnimation() {
+    private void startExitAnimation(final OVERLAY_TYPE type) {
         TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
         animation.setFillAfter(true);
         animation.setDuration(600);
@@ -225,17 +262,23 @@ public class PopWindowValidationMessage {
             @Override
             public void onAnimationEnd(Animation animation) {
                 dismissLayout();
+                showStatusBar((Activity) mContext);
+                switch (type) {
+                    case SIGN_OUT:
+                        ScreenManager.presentSSOLogout((Activity) mContext);
+                        break;
+                }
             }
         });
         mRelRootContainer.startAnimation(animation);
     }
 
-    private void touchToDismiss() {
+    public void touchToDismiss(final OVERLAY_TYPE overlay_type) {
         mDarkenScreen.setTouchable(true);
         mDarkenScreen.setTouchInterceptor(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                startExitAnimation();
+                startExitAnimation(overlay_type);
                 return true;
             }
         });
@@ -261,5 +304,25 @@ public class PopWindowValidationMessage {
 
     public void setmLongiude(double mLongiude) {
         this.mLongiude = mLongiude;
+    }
+
+    public void hideStatusBar(Activity activity) {
+        Window window = activity.getWindow();
+        View decorView = window.getDecorView();
+        int visibility = View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(visibility);
+        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        window.clearFlags(
+                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+    }
+
+    public void showStatusBar(Activity activity) {
+        Window window = activity.getWindow();
+        View decorView = activity.getWindow().getDecorView();
+        int visibility = View.SYSTEM_UI_FLAG_VISIBLE;
+        decorView.setSystemUiVisibility(visibility);
+        window.addFlags(
+                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 }

@@ -13,96 +13,95 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true">
 
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:letterSpacing="0.04"
-            android:layout_marginBottom="@dimen/default_margin"
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.04"
             android:gravity="center"
-            android:textAllCaps="true"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:background="@color/white"
-            android:id="@+id/linConfidentialPopUp"
-            android:orientation="vertical"
-            android:paddingLeft="@dimen/bank_spacing_width"
-            android:paddingRight="@dimen/bank_spacing_width"
-            android:paddingTop="@dimen/bank_spacing_width">
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/textApplicationNotProceed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/cli_eleven_dp"
-                android:background="@color/white"
-                android:gravity="center"
-                android:letterSpacing="0.09"
-                android:text="@string/cli_pop_confidential_title"
                 android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                app:WTextView_font="medium_bold" />
-
-            <LinearLayout
-                android:id="@+id/linEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/overlayDescription"
-            android:gravity="center|top"
-            android:lineSpacingExtra="1.3dp"
             android:background="@color/white"
-            android:textSize="15sp"
-            android:layout_marginBottom="@dimen/default_margin"
-            android:text="@string/cli_pop_confidential_desc"
-            app:WTextView_font="myriadpro_regular"
-            android:textColor="@color/black_desc_opacity"
-            />
+                android:id="@+id/linConfidentialPopUp"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/bank_spacing_width"
+                android:paddingRight="@dimen/bank_spacing_width"
+                android:paddingTop="@dimen/bank_spacing_width"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true">
 
-        <View android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginTop="@dimen/default_margin"
-            android:background="@color/recent_search_bg"/>
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:background="@color/recent_search_bg" />
-
-
-            <LinearLayout
-                android:id="@+id/linYesNoContainer"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/cli_button_height_popup"
-                android:layout_marginBottom="@dimen/default_margin"
-                android:layout_marginTop="@dimen/default_margin"
-                android:background="@color/white"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:weightSum="1">
-
-                <za.co.woolworths.financial.services.android.ui.views.WButton
-                    android:id="@+id/btnOK"
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/textApplicationNotProceed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/default_margin"
-                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_marginBottom="@dimen/cli_eleven_dp"
+                    android:background="@color/white"
                     android:gravity="center"
-                    android:letterSpacing="0.12"
-                    android:text="@string/ok"
+                    android:letterSpacing="0.09"
+                    android:text="@string/cli_pop_confidential_title"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
-                    android:textSize="12sp"
-                    app:WButton_font="medium_bold"
+                    android:textSize="16sp"
                     app:WTextView_font="medium_bold" />
 
+                <LinearLayout
+                    android:id="@+id/linEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/overlayDescription"
+                android:gravity="center|top"
+                android:lineSpacingExtra="1.3dp"
+                android:background="@color/white"
+                android:textSize="15sp"
+                android:layout_marginBottom="@dimen/default_margin"
+                android:text="@string/cli_pop_confidential_desc"
+                app:WTextView_font="myriadpro_regular"
+                android:textColor="@color/black_desc_opacity"
+                />
+
+            <View android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="@dimen/default_margin"
+                android:background="@color/recent_search_bg"/>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/recent_search_bg" />
+
+
+                <LinearLayout
+                    android:id="@+id/linYesNoContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/cli_button_height_popup"
+                    android:layout_marginBottom="@dimen/default_margin"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WButton
+                        android:id="@+id/btnOK"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="@dimen/default_margin"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:letterSpacing="0.12"
+                        android:text="@string/ok"
+                        android:textAllCaps="true"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        app:WButton_font="medium_bold"
+                        app:WTextView_font="medium_bold" />
+
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-</RelativeLayout>
+    </RelativeLayout>
 </RelativeLayout>

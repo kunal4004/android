@@ -130,11 +130,11 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 
             case R.id.txtIncreseLimit:
-               if (!isOfferActive) {
+              // if (!isOfferActive) {
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
                     startActivity(openCLIIncrease);
                     getActivity().overridePendingTransition(0,0);
-                }
+              //  }
                 break;
 
         }
@@ -213,7 +213,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     }
 
     public void disableIncreaseLimit(){
-        txtIncreseLimit.setEnabled(false);
+        txtIncreseLimit.setEnabled(true);
         txtIncreseLimit.setTextColor(Color.GRAY);
         mImageArrow.setImageAlpha(50);
     }

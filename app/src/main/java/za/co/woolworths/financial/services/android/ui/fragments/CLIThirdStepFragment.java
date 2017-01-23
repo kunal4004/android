@@ -4,8 +4,11 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -17,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
@@ -37,6 +41,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.CLIBankAccountTyp
 import za.co.woolworths.financial.services.android.ui.adapters.CLIIncomeProofAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
+import za.co.woolworths.financial.services.android.ui.views.WEmpyViewDialogFragment;
+import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
@@ -68,17 +74,18 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     private LinearLayout mLinBankLayout;
     public WButton mBtnSendMail;
     private PopWindowValidationMessage mPopWindowValidationMessage;
-    private ProgressDialog mPostEmailProgressDialog;
     private String mEmail = "";
     private ProgressDialog mUpdateBankDetailProgressDialog;
     private PopupWindow mDarkenScreen;
     private PopupWindow mPopWindow;
-    private WTextView textEmailContent;
-    private WButton mOverlayBtn;
-    private SharePreferenceHelper mSharePreferenceHelper;
+    private FragmentManager fm;
+   // private WProgressDialogFragment mGetAccountsProgressDialog;
+    private ProgressBar mProgressBar;
+    private WEmpyViewDialogFragment mEmpyViewDialogFragment;
+    private ProgressBar mWoolEmailProgress;
+    private WEmpyViewDialogFragment mEmpyViewDialogEmailFragment;
 
-    public CLIThirdStepFragment() {
-    }
+    public CLIThirdStepFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -86,13 +93,17 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
         mConnectionDetector = new ConnectionDetector();
         view = inflater.inflate(R.layout.cli_fragment_step_three, container, false);
-        mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
+        SharePreferenceHelper mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
+        fm = getActivity().getSupportFragmentManager();
         mEmail = mSharePreferenceHelper.getValue("email");
         CLIStepIndicatorActivity mStepIndicator = (CLIStepIndicatorActivity) getActivity();
         mStepIndicator.setOnFragmentRefresh(this);
         mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         mLinProofLayout = (LinearLayout) view.findViewById(R.id.linProofLayout);
         mLinBankLayout = (LinearLayout) view.findViewById(R.id.linBankLayout);
+
+        mProgressBar = (ProgressBar)view.findViewById(R.id.mWoolworthsProgressBar);
+        mWoolEmailProgress = (ProgressBar)view.findViewById(R.id.mWoolEmailProgress);
 
         initUI();
         setListener();
@@ -129,7 +140,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
     private void setListener() {
         mBtnContinue.setOnClickListener(this);
-       // mEditAccountNumber.addTextChangedListener(new AccountNumberFormatWatcher(getActivity(), mEditAccountNumber));
     }
 
     private void setContent() {
@@ -145,10 +155,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
                 @Override
                 protected void onPreExecute() {
-//                    mGetBankDetailProgressDialog = new ProgressDialog(getActivity());
-//                    mGetBankDetailProgressDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.loading), 1, getActivity()));
-//                    mGetBankDetailProgressDialog.setCancelable(false);
-//                    mGetBankDetailProgressDialog.show();
                     super.onPreExecute();
                 }
 
@@ -166,7 +172,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                 protected BankAccountTypes httpError(String errorMessage, HttpAsyncTask.HttpErrorCode httpErrorCode) {
                     BankAccountTypes bankAccountTypes = new BankAccountTypes();
                     bankAccountTypes.response = new BankAccountResponse();
-                    stopProgressDialog();
                     return bankAccountTypes;
                 }
 
@@ -174,7 +179,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                 protected void onPostExecute(BankAccountTypes bankAccountTypes) {
                     super.onPostExecute(bankAccountTypes);
                     if (bankAccountTypes.bankAccountTypes != null) {
-                        if(bankAccountTypes.httpCode==200) {
+                        if (bankAccountTypes.httpCode == 200) {
                             mBankAccountType = bankAccountTypes.bankAccountTypes;
                             mCLIBankAccountAdapter = new CLIBankAccountTypeAdapter(mBankAccountType, mContext);
                             mLayoutManager = new LinearLayoutManager(getActivity());
@@ -183,19 +188,19 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                             mRecycleList.setNestedScrollingEnabled(false);
                             mRecycleList.setAdapter(mCLIBankAccountAdapter);
                             mCLIBankAccountAdapter.setCLIContent();
-                        }else {
+                        } else {
                             mPopWindowValidationMessage.displayValidationMessage(bankAccountTypes.response.desc,
                                     PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                         }
-                    } else {
                     }
-                    stopProgressDialog();
                 }
             }.execute();
         } else {
             mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_enter_acc_number_error),
-                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);        }
+                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+        }
     }
+
     //Method to hide keyboard
     public static void hideKeyboard(Context context) {
         InputMethodManager inputManager = (InputMethodManager) context
@@ -217,7 +222,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                     if (mUpdateBankDetail.getAccountType() != null) {
                         String accountNumber = mEditAccountNumber.getText().toString();
                         if (!TextUtils.isEmpty(accountNumber)) {
-                            String newAccount = accountNumber.replaceAll(" ","");
+                            String newAccount = accountNumber.replaceAll(" ", "");
                             mUpdateBankDetail.setAccountNumber(newAccount);
                             updateBankDetail();
                             //If everything is ok then hide the keyboard
@@ -267,12 +272,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    public void stopProgressDialog() {
-//        if(mGetBankDetailProgressDialog != null && mGetBankDetailProgressDialog.isShowing()){
-//            mGetBankDetailProgressDialog.dismiss();
-//        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -295,8 +294,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
     private void initProofUI() {
         mTextIncomeProof = (WTextView) view.findViewById(R.id.textProofIncome);
-        WTextView mTextProofIncomeSize = (WTextView) view.findViewById(R.id.textProofIncomeSize);
-        WTextView mTextEmailAdress = (WTextView) view.findViewById(R.id.textEmailAdress);
         mBtnSendMail = (WButton) view.findViewById(R.id.btnSendMail);
     }
 
@@ -345,10 +342,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
                 @Override
                 protected void onPreExecute() {
-                    mPostEmailProgressDialog = new ProgressDialog(getActivity());
-                    mPostEmailProgressDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.cli_sending_email), 1, getActivity()));
-                    mPostEmailProgressDialog.setCancelable(false);
-                    mPostEmailProgressDialog.show();
+                    showEmailProgressBar();
                     super.onPreExecute();
                 }
 
@@ -359,11 +353,13 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                     int httpCode = cliEmailResponse.httpCode;
                     String desc = cliEmailResponse.response.desc;
                     if (httpCode == 200) {
-                        popEmail(mEmail);
+                        popEmail();
                     } else {
                         mPopWindowValidationMessage.displayValidationMessage(desc,
                                 PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     }
+
+
                 }
 
             }.execute();
@@ -373,15 +369,9 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    public void stopEmailProgressDialog() {
-        if (mPostEmailProgressDialog != null && mPostEmailProgressDialog.isShowing()) {
-            mPostEmailProgressDialog.dismiss();
-        }
-    }
-
     public void updateBankDetail() {
-
         if (mConnectionDetector.isOnline(getActivity())) {
+            showProgressBar();
             new HttpAsyncTask<String, String, UpdateBankDetailResponse>() {
                 @Override
                 protected UpdateBankDetailResponse httpDoInBackground(String... params) {
@@ -391,7 +381,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                 @Override
                 protected UpdateBankDetailResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                     UpdateBankDetailResponse updateBankDetailResponse = new UpdateBankDetailResponse();
-                    stopUpadateBankProgressDialog();
+                    stopProgressDialog();
                     return updateBankDetailResponse;
                 }
 
@@ -402,17 +392,13 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
                 @Override
                 protected void onPreExecute() {
-                    mUpdateBankDetailProgressDialog = new ProgressDialog(getActivity());
-                    mUpdateBankDetailProgressDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.cli_updating_bank_detail), 1, getActivity()));
-                    mUpdateBankDetailProgressDialog.setCancelable(false);
-                    mUpdateBankDetailProgressDialog.show();
                     super.onPreExecute();
                 }
 
                 @Override
                 protected void onPostExecute(UpdateBankDetailResponse updateBankDetailResponse) {
                     super.onPostExecute(updateBankDetailResponse);
-                    if (updateBankDetailResponse!=null) {
+                    if (updateBankDetailResponse != null) {
                         if (updateBankDetailResponse.httpCode == 200) {
                             stepNavigatorCallback.openNextFragment(3);
                         } else {
@@ -420,22 +406,18 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                                     PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                         }
                     }
-                    stopUpadateBankProgressDialog();
+                    stopProgressDialog();
                 }
             }.execute();
-        }else{
+        } else {
             mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_enter_acc_number_error),
                     PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
         }
     }
 
-    public void stopUpadateBankProgressDialog() {
-        if (mUpdateBankDetailProgressDialog != null && mUpdateBankDetailProgressDialog.isShowing()) {
-            mUpdateBankDetailProgressDialog.dismiss();
-        }
-    }
 
-    public PopupWindow popEmail(String description) {
+
+    public PopupWindow popEmail() {
         //darken the current screen
         View view = getActivity().getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
         mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -444,8 +426,8 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mDarkenScreen.setOutsideTouchable(false);
         //Then popup window appears
         final View popupView = getActivity().getLayoutInflater().inflate(R.layout.cli_email_layout, null);
-        mOverlayBtn = (WButton) popupView.findViewById(R.id.btnOk);
-        textEmailContent = (WTextView)popupView.findViewById(R.id.textEmailAddress);
+        WButton mOverlayBtn = (WButton) popupView.findViewById(R.id.btnOk);
+        WTextView textEmailContent = (WTextView) popupView.findViewById(R.id.textEmailAddress);
         textEmailContent.setText(mEmail);
         mPopWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mPopWindow.setAnimationStyle(R.style.Animations_popup);
@@ -457,8 +439,8 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mOverlayBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CLIStepIndicatorActivity cliStepIndicatorActivity = (CLIStepIndicatorActivity)getActivity();
-                if (cliStepIndicatorActivity instanceof Activity){
+                CLIStepIndicatorActivity cliStepIndicatorActivity = (CLIStepIndicatorActivity) getActivity();
+                if (cliStepIndicatorActivity instanceof Activity) {
                     cliStepIndicatorActivity.moveToPage(3);
                 }
                 mPopWindow.dismiss();
@@ -468,4 +450,50 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         return mDarkenScreen;
     }
 
+
+    public void showProgressBar() {
+        if (mProgressBar != null) {
+            mEmpyViewDialogFragment = WEmpyViewDialogFragment.newInstance("blank");
+            mEmpyViewDialogFragment.setCancelable(false);
+            mEmpyViewDialogFragment.show(fm,"blank");
+            mProgressBar.bringToFront();
+            mProgressBar.setVisibility(View.VISIBLE);
+            mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+        }
+    }
+
+    public void stopProgressDialog() {
+        if (mProgressBar != null) {
+            if (mEmpyViewDialogFragment.isVisible()) {
+                mEmpyViewDialogFragment.dismiss();
+            }
+        }
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(View.GONE);
+            mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+        }
+    }
+
+    public void showEmailProgressBar() {
+        if (mProgressBar != null) {
+            mEmpyViewDialogEmailFragment = WEmpyViewDialogFragment.newInstance("blank");
+            mEmpyViewDialogEmailFragment.setCancelable(false);
+            mEmpyViewDialogEmailFragment.show(fm,"blank");
+            mWoolEmailProgress.bringToFront();
+            mWoolEmailProgress.setVisibility(View.VISIBLE);
+            mWoolEmailProgress.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+        }
+    }
+
+    public void stopEmailProgressDialog() {
+        if (mEmpyViewDialogEmailFragment != null) {
+            if (mEmpyViewDialogEmailFragment.isVisible()) {
+                mEmpyViewDialogEmailFragment.dismiss();
+            }
+        }
+        if (mWoolEmailProgress != null) {
+            mWoolEmailProgress.setVisibility(View.GONE);
+            mWoolEmailProgress.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+        }
+    }
 }

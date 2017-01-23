@@ -394,4 +394,14 @@
         <item name="WTextView_font">myriadpro_regular</item>
         <item name="android:lineSpacingExtra">2.1dp</item>
     </style>
+
+    <style name="spin_progress_style" parent="@android:style/Theme.Dialog">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
 </resources>
