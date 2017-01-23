@@ -26,12 +26,16 @@ import java.util.UUID;
 
 import io.jsonwebtoken.Jwts;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static android.R.attr.data;
+import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class SSOActivity extends WebViewActivity {
 
@@ -297,11 +301,19 @@ public class SSOActivity extends WebViewActivity {
                         Intent intent = new Intent();
 
                         if (state.equals(webviewState)) {
-                            sendRegistrationToServer();
+
 
                             String jwt = list.get(1);
                             intent.putExtra(SSOActivity.TAG_JWT, jwt);
-
+                            //Save JWT
+                            SessionDao sessionDao = new SessionDao(SSOActivity.this, SessionDao.KEY.USER_TOKEN);
+                            sessionDao.value = jwt;
+                            try {
+                                sessionDao.save();
+                            } catch (Exception e) {
+                                Log.e(TAG, e.getMessage());
+                            }
+                            sendRegistrationToServer();
                             setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
                         } else {
                             setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
