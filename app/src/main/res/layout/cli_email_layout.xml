@@ -1,74 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:gravity="bottom"
+    android:id="@+id/relPopContainer"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:gravity="bottom">
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
         android:orientation="vertical"
         android:paddingLeft="@dimen/bank_spacing_width"
-        android:background="@color/white"
-        android:paddingRight="@dimen/bank_spacing_width"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:paddingRight="@dimen/bank_spacing_width">
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/textEmailSent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="13sp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="@dimen/bank_spacing_width"
-        android:gravity="center"
-        android:letterSpacing="0.07"
-        app:WTextView_font="medium"
-        android:textColor="@color/black"
-        android:text="@string/cli_send_to_title" />
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/textEmailSent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="@dimen/bank_spacing_width"
+            android:gravity="center"
+            android:letterSpacing="0.07"
+            android:text="@string/cli_send_to_title"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            app:WTextView_font="medium" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/textEmailAddress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_marginBottom="18dp"
-        android:gravity="center"
-        android:lineSpacingExtra="4dp"
-        android:letterSpacing="0.05"
-        app:WTextView_font="medium_bold"
-        android:textColor="@color/black"
-        android:text="@string/cli_send_to_title" />
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/textEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:gravity="center"
+            android:letterSpacing="0.05"
+            android:lineSpacingExtra="4dp"
+            android:text="@string/cli_send_to_title"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:WTextView_font="medium_bold" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/textProofIncome"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:layout_marginBottom="12dp"
-        android:gravity="center"
-        android:lineSpacingExtra="4dp"
-        android:letterSpacing="0.05"
-        app:WTextView_font="myriadpro_regular"
-        android:textColor="@color/description_color"
-        android:text="@string/cli_process_email_content" />
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/textProofIncome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:gravity="center"
+            android:letterSpacing="0.05"
+            android:lineSpacingExtra="4dp"
+            android:text="@string/cli_process_email_content"
+            android:textColor="@color/description_color"
+            android:textSize="15sp"
+            app:WTextView_font="myriadpro_regular" />
 
-    <View android:layout_width="match_parent"
-        android:layout_height="0.4dp"
-        android:layout_marginTop="@dimen/bank_spacing_width"
-        android:background="@color/description_color" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.4dp"
+            android:layout_marginTop="@dimen/bank_spacing_width"
+            android:background="@color/description_color" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WButton
-        android:id="@+id/btnOk"
-        android:layout_width="match_parent"
-        android:background="@color/white"
-        android:text="OK"
-        style="?android:attr/borderlessButtonStyle"
-        android:textSize="12sp"
-        android:gravity="center"
-        android:letterSpacing="0.2"
-        app:WButton_font="medium_bold"
-        android:layout_height="90dp"/>
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnOk"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:background="@color/white"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+            android:text="OK"
+            android:textSize="12sp"
+            app:WButton_font="medium_bold" />
     </LinearLayout>
-
 </RelativeLayout>
