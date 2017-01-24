@@ -39,7 +39,7 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
-import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsNotLoggedActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
@@ -501,7 +501,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
     public void redirectToMyAccountsCardsActivity(int position) {
         woolworthsApplication.setCliCardPosition(position);
-        Intent intent = new Intent(getActivity(), MyAccountCardsActivity.class);
+        Intent intent = new Intent(getActivity(), MyAccountCardsNotLoggedActivity.class);
 
         intent.putExtra("position", position);
         if (accountsResponse != null) {
