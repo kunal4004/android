@@ -19,7 +19,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -452,6 +454,9 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         timeingsLayout.removeAllViews();
         brandsLayout.removeAllViews();
         storeName.setText(storeDetail.name);
+        /*storeName.setGravity(Gravity.CENTER);
+        storeName.setSingleLine(true);
+        storeName.setEllipsize(TextUtils.TruncateAt.END);*/
         storeAddress.setText(storeDetail.address);
         if (storeDetail.phoneNumber != null)
             storeNumber.setText(storeDetail.phoneNumber);
