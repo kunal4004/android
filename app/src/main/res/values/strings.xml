@@ -179,7 +179,8 @@
     <string name="your_in_control_description">With a Woolworths Store Card you decide how much you want to repay each month and your preferred payment method.</string>
     <string name="easy_payment_methods">Easy payment methods</string>
     <string name="easy_payment_methods_description">Your purchases are automatically billed to your account and you’ll get a monthly statement. You could pay your account using any of the below methods:</string>
-    <string name="convenient">Convenient</string> f
+    <string name="convenient">Convenient</string>
+    f
     <string name="sc_points_to_qualify">\u2022 \t Be 18 or older \n\u2022 \t Have a valid RSA ID number \n\u2022 \t Earn a minimum of R2000 per month</string>
     <string name="please_enter_the_amount">PLEASE ENTER THE AMOUNT YOU WOULD LIKE TO WITHDRAW:</string>
     <string name="confirm_loan_withdrawal">PLEASE CONFIRM YOUR LOAN\nREQUEST DETAILS:</string>
@@ -250,7 +251,7 @@
     <string name="cli_continue">continue</string>
     <string name="cli_credit_limit_increase">credit limit increase</string>
     <string name="cli_before_we_get_started">before we get started</string>
-<string name="cli_store_card_content">To help us calculate how much additional credit you can qualify for, please answer a few quick and easy questions.  Once you have completed this, you will need to submit proof of income in order for us to proceed with your application.</string>
+    <string name="cli_store_card_content">To help us calculate how much additional credit you can qualify for, please answer a few quick and easy questions.  Once you have completed this, you will need to submit proof of income in order for us to proceed with your application.</string>
     <string name="cli_gold_crd_credit_limit_increase">credit limit increase</string>
     <string name="cli_gold_crd_before_we_get_started">before we get started</string>
     <string name="cli_gold_crd_credit_card_content">To help us calculate how much additional credit you can qualify for, please submit proof of income and answer a few quick and easy questions</string>
@@ -428,5 +429,7 @@
     <string name="points_bring_following_while_collecting_1">A valid South African ID</string>
     <string name="points_bring_following_while_collecting_2">Your latest three payslips or your last three months’ bank statements</string>
     <string name="points_bring_following_while_collecting_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
+    <string name="terms_conditions">terms &amp; conditions</string>
+    <string name="view_general_terms_conditions">view general terms &amp; conditions</string>
 
 </resources>
