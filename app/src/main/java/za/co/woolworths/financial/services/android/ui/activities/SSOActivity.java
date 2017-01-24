@@ -15,6 +15,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.awfs.coordination.R;
+import com.google.android.gms.iid.InstanceID;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -357,11 +358,17 @@ public class SSOActivity extends WebViewActivity {
             }
         }
     }
+
+
+
+    //1. sendRegistrationToServer is created twice: SSOActivity and WFirebaseInstanceIDSService
+    //
+
+
     private void sendRegistrationToServer() {
         // sending gcm token to server
-
         final CreateUpdateDevice device=new CreateUpdateDevice();
-        device.appInstanceId= UUID.randomUUID().toString();
+        device.appInstanceId= InstanceID.getInstance(getApplicationContext()).getId();
         device.pushNotificationToken=getSharedPreferences(Utils.SHARED_PREF,0).getString("regId",null);
 
         //Sending Token and app instance Id to App server
