@@ -171,16 +171,6 @@ public class WOnboardingActivity extends FragmentActivity implements WOnboarding
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()){
-            /*//Save JWT
-            SessionDao sessionDao = new SessionDao(WOnboardingActivity.this);
-            sessionDao.key = SessionDao.KEY.USER_TOKEN;
-            sessionDao.value = data.getStringExtra(SSOActivity.TAG_JWT);
-            try {
-                sessionDao.save();
-            }catch(Exception e){
-                Log.e(TAG, e.getMessage());
-            }*/
-
             this.navigateToMain();
         }
     }
