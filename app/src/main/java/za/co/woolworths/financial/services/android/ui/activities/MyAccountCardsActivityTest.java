@@ -52,7 +52,7 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_account_cards_test);
+        setContentView(R.layout.activity_my_accounts_offline_layout);
         Utils.updateStatusBarBackground(MyAccountCardsActivityTest.this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -87,8 +87,7 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
-        // dynamicToolbarColor();
-       // dynamicToolbarColor("#4f5051");
+
         if(getIntent().hasExtra("accounts"))
         {
             AccountsResponse accountsResponse=new Gson().fromJson(getIntent().getExtras().getString("accounts"),AccountsResponse.class);
