@@ -37,7 +37,6 @@
     <color name="description_color">#80000000</color>
     <color name="black_desc_opacity">#75000000</color>
 
-
     <!-- step indicator -->
     <color name="background_default">#A5D6A7</color>
     <color name="step_default">#4CAF50</color>
