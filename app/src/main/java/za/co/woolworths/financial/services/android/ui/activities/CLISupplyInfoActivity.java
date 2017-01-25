@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
@@ -105,6 +106,15 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         setRecycleView(mArrCreditLimit);
         hideSoftKeyboard();
         radioCheckStateChanged();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mPopSlideValidation.displayValidationMessage(getString(R.string.cli_before_we_get_started),
+                        PopWindowValidationMessage.OVERLAY_TYPE.MANDATORY_FIELD);
+            }
+        }, 1000);
+
     }
 
     private void radioCheckStateChanged() {
@@ -271,7 +281,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                 }
 
                 if (!pageIsValid) {
-                    mPopSlideValidation.displayValidationMessage("", PopWindowValidationMessage.OVERLAY_TYPE.MANDATORY_FIELD);
+                    mPopSlideValidation.displayValidationMessage(getString(R.string.cli_cancel_application), PopWindowValidationMessage.OVERLAY_TYPE.MANDATORY_FIELD);
                     return;
                 }
 

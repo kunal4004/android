@@ -100,6 +100,8 @@ public class PopWindowValidationMessage {
             case MANDATORY_FIELD:
                 mView = mLayoutInflater.inflate(R.layout.cli_mandatory_error, null);
                 popupWindowSetting(mView);
+                WTextView mTextProceed = (WTextView) mView.findViewById(R.id.textApplicationNotProceed);
+                mTextProceed.setText(description);
                 setAnimation();
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
