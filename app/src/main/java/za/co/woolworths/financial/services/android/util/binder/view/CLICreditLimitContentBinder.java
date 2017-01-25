@@ -117,7 +117,7 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
     }
 
     private String newAmount(String amount) {
-        Log.e("new_Amount_amount",amount);
+        Log.e("new_Amount_amount", amount);
         return amount.replaceAll("[^0-9.]", "");
     }
 
@@ -153,8 +153,7 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
                 if (TextUtils.isEmpty(v)) {
                     et.setText("");
                     if (mDataSet != null)
-                        Log.e("new_Amount",newAmount(String.valueOf(s)));
-                    mDataSet.get(position).setAmount("");
+                        mDataSet.get(position).setAmount("");
                 } else {
                     try {
                         n = df.parse(v);
@@ -169,7 +168,6 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
                     }
                     et.setText(finalAmount);
                     if (mDataSet != null)
-                        Log.e("new_Amount",newAmount(String.valueOf(s)));
                         mDataSet.get(position).setAmount(newAmount(String.valueOf(s)));
 
                     endlen = et.getText().length();
@@ -187,7 +185,8 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
         }
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
