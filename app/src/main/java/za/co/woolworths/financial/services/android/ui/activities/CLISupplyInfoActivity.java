@@ -107,13 +107,13 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         hideSoftKeyboard();
         radioCheckStateChanged();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mPopSlideValidation.displayValidationMessage(getString(R.string.cli_before_we_get_started),
-                        PopWindowValidationMessage.OVERLAY_TYPE.MANDATORY_FIELD);
-            }
-        }, 1000);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                mPopSlideValidation.displayValidationMessage(getString(R.string.cli_before_we_get_started),
+//                        PopWindowValidationMessage.OVERLAY_TYPE.MANDATORY_FIELD);
+//            }
+//        }, 1000);
 
     }
 
