@@ -3,11 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:nestedScrollingEnabled="true"
         android:scrollbars="none">
 
         <LinearLayout
@@ -210,6 +208,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/bank_spacing_width"
                     android:orientation="horizontal">
+
                     <TextView style="@style/account_logged_out_bullet" />
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -302,20 +301,13 @@
 
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
     <za.co.woolworths.financial.services.android.ui.views.WButton
         android:id="@+id/applynow"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/apply_now_btn"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
         android:background="@color/black"
-        android:gravity="center"
-        android:minHeight="60dp"
-        android:text="@string/apply_now"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="13sp" />
+        android:text="@string/apply_now" />
 
 </RelativeLayout>
