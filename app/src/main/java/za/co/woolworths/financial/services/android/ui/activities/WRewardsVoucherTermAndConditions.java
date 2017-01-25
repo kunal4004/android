@@ -29,7 +29,8 @@ public class WRewardsVoucherTermAndConditions extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
-
+        if(getIntent().hasExtra("TERMS"))
+             termsAndCondition.setText(getIntent().getStringExtra("TERMS"));
         viewGeneralTermsAndCondtions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -39,7 +39,6 @@
                     android:layout_height="42dp"
                     android:background="@color/green"
                     android:gravity="center"
-                    android:text="USE BEFORE 31 DECEMBER 2016"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="13.5sp"
@@ -52,7 +51,10 @@
                     android:background="@color/white"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
-                    android:padding="16dp"
+                    android:paddingTop="10dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="16dp"
                     >
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -60,7 +62,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="R29"
                         android:textColor="@color/black"
                         android:textSize="93sp"
                         app:WTextView_font="medium_bold"
@@ -70,7 +71,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="OFF INSTANTLY"
+                        android:text="@string/off_instantly"
                         android:textAllCaps="true"
                         android:textColor="@color/green"
                         android:textSize="20sp"
@@ -87,22 +88,23 @@
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/message"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
                         android:gravity="center"
-                        android:text="FREE WOOLIES cappuccino COFFEE VALUED AT R29"
                         android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         app:WTextView_font="medium"
+                        android:maxLines="3"
+                        android:ellipsize="end"
                         />
 
                     <ImageView
                         android:id="@+id/barcode"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
-                        android:layout_marginTop="38dp"
+                        android:layout_marginTop="16dp"
                         android:adjustViewBounds="true"
                         android:scaleType="fitXY"
                         />
@@ -112,8 +114,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginTop="21dp"
+                        android:layout_marginTop="16dp"
                         android:gravity="center"
                         android:textColor="@color/black"
                         android:textSize="17sp"
@@ -160,7 +161,6 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:text="R325.00"
                             android:textAllCaps="true"
                             android:textColor="#4d000000"
                             android:textSize="15sp"
@@ -182,21 +182,6 @@
                 android:background="@drawable/vouchertearoff"
                 />
 
-            <!--
-                            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                                android:id="@+id/termsCondition"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:visibility="gone"
-                                android:layout_gravity="center_horizontal"
-                                android:layout_marginTop="40dp"
-                                android:text="@string/view_terms_conditions"
-                                android:textAllCaps="true"
-                                android:textColor="#b3ffffff"
-                                android:textSize="15sp"
-                                app:WTextView_font="myriadpro_regular"
-                                android:layout_marginBottom="40dp"
-                                />-->
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
