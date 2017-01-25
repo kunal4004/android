@@ -9,19 +9,20 @@
 
     <include layout="@layout/horizontal_divider_light" />
 
-    <android.support.v4.widget.NestedScrollView
+    <za.co.woolworths.financial.services.android.ui.views.WScrollView
         android:id="@+id/mNestedScrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:descendantFocusability="beforeDescendants"
         android:fillViewport="true"
-        android:focusableInTouchMode="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:id="@+id/llNestedDeoBank"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="beforeDescendants"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:orientation="vertical">
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -65,9 +66,9 @@
                 style="@style/sectionTitleLight"
                 android:layout_marginLeft="@dimen/bank_spacing_width"
                 android:layout_marginRight="@dimen/bank_spacing_width"
+                android:layout_marginTop="@dimen/bank_spacing_width"
                 android:gravity="left"
                 android:letterSpacing="0.12"
-                android:layout_marginTop="@dimen/bank_spacing_width"
                 android:text="@string/cli_send_document_title"
                 android:textAllCaps="true"
                 android:textSize="12sp"
@@ -112,21 +113,36 @@
                 app:WTextView_font="myriadpro_regular" />
 
             <RelativeLayout
+                android:id="@+id/relButtonCLIDeaBank"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
+                android:minHeight="48dp"
+                android:background="@color/black"
                 android:layout_marginLeft="@dimen/bank_spacing_width"
                 android:layout_marginRight="@dimen/bank_spacing_width"
+                android:layout_marginBottom="@dimen/bank_spacing_width"
                 android:layout_marginTop="@dimen/bank_spacing_width">
+
+
+                <ProgressBar
+                    android:id="@+id/mEmailWoolworthsProgressBar"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="35dp"
+                    android:paddingTop="10dp"
+                    android:elevation="10dp"
+                    android:visibility="gone"
+                    android:layout_height="35dp"
+             />
 
                 <za.co.woolworths.financial.services.android.ui.views.WButton
                     android:id="@+id/btnSendMail"
                     style="@style/blackButtonStyle"
-                    android:layout_marginBottom="@dimen/cli_bottom_margin"
+                    android:visibility="visible"
                     android:text="@string/cli_continue"
-                    android:textAllCaps="true"
                     app:WButton_font="medium_bold" />
             </RelativeLayout>
         </LinearLayout>
 
-    </android.support.v4.widget.NestedScrollView>
+    </za.co.woolworths.financial.services.android.ui.views.WScrollView>
 </LinearLayout>

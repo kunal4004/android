@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -512,18 +511,17 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     }
 
     public void showProgressBar() {
-        if (mProgressBar != null) {
             mEmpyViewDialogFragment = WEmpyViewDialogFragment.newInstance("blank");
             mEmpyViewDialogFragment.setCancelable(false);
             mEmpyViewDialogFragment.show(fm,"blank");
             mProgressBar.bringToFront();
             mProgressBar.setVisibility(View.VISIBLE);
+            mBtnContinue.setVisibility(View.GONE);
             mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
-        }
     }
 
     public void stopProgressDialog() {
-        if (mProgressBar != null) {
+        if (mEmpyViewDialogFragment != null) {
             if (mEmpyViewDialogFragment.isVisible()) {
                 mEmpyViewDialogFragment.dismiss();
             }
@@ -532,5 +530,6 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
             mProgressBar.setVisibility(View.GONE);
             mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         }
+        mBtnContinue.setVisibility(View.VISIBLE);
     }
 }
