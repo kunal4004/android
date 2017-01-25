@@ -219,6 +219,7 @@
         <item name="android:gravity">center</item>
         <item name="android:textSize">12sp</item>
         <item name="android:letterSpacing">0.15</item>
+        <item name="WButton_font">medium_bold</item>
         <item name="android:stateListAnimator">@null</item>
     </style>
 
@@ -412,6 +413,28 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="account_logged_out_list_bullet_gray" parent="android:Theme">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:gravity">start|top</item>
+        <item name="android:textColor">@color/black_desc_opacity</item>
+        <item name="android:textSize">15sp</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:lineSpacingExtra">2.1dp</item>
+    </style>
+
+    <style name="account_logged_out_bullet_gray" parent="android:Theme">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:gravity">start|center</item>
+        <item name="android:textColor">@color/black_desc_opacity</item>
+        <item name="android:text">@string/bullet</item>
+        <item name="android:layout_marginRight">@dimen/default_margin</item>
+        <item name="android:textSize">15sp</item>
+        <item name="WTextView_font">medium_bold</item>
     </style>
 
 </resources>

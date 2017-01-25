@@ -4,10 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -42,12 +42,15 @@ import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanFra
 import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardEmptyFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragment;
 import za.co.woolworths.financial.services.android.ui.views.WCustomPager;
+import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WViewPager;
+import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
+import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implements View.OnClickListener {
+public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implements View.OnClickListener, ObservableScrollViewCallbacks {
 
     WViewPager pager;
     WCustomPager fragmentPager;
@@ -59,16 +62,20 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
     private Toolbar mToolbar;
     private CoordinatorLayout mCoordinatorLayout;
     private Button mBtnApplyNow;
+    private WObservableScrollView mWObservableScrollView;
+    private ActionBar actionBar;
+    private int mScrollY = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        scrollToolbarOnDelay();
+        //scrollToolbarOnDelay();
         setContentView(R.layout.activity_my_accounts_offline_layout);
         setActionBar();
         init();
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(MyAccountCardsNotLoggedActivity.this);
         getScreenResolution(this);
+        mWObservableScrollView.setScrollViewCallbacks(this);
         fragmentPager = (WCustomPager) findViewById(R.id.fragmentpager);
         fragmentPager.setViewPagerIsScrollable(false);
         cards = new ArrayList<>();
@@ -118,9 +125,12 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
     public void setActionBar() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(null);
+        actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffffff")));
+            getSupportActionBar().setTitle(null);
+        }
     }
 
     private void init() {
@@ -129,6 +139,7 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
         pager = (WViewPager) findViewById(R.id.myAccountsCardPager);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.rootLayout);
         mBtnApplyNow = (Button) findViewById(R.id.btnApplyNow);
+        mWObservableScrollView = (WObservableScrollView) findViewById(R.id.nest_scrollview);
         mBtnApplyNow.setOnClickListener(this);
     }
 
@@ -313,6 +324,7 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
         }
     }
 
+
     public static class MyAccountCardsFragment extends Fragment {
 
         @Override
@@ -347,25 +359,6 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
         }
     }
 
-    public void scrollToolbarOnDelay() {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarAccountCard);
-                CoordinatorLayout coordinator = (CoordinatorLayout) findViewById(R.id.rootLayout);
-                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
-                AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
-                if (behavior != null)
-                    behavior.onNestedPreScroll(coordinator, appBarLayout, null, 0, 100, new int[]{0, 0});
-                else
-                    scrollToolbarOnDelay();
-            }
-        }, 3000);
-
-
-    }
-
     public void changeButtonColor(int position) {
         switch (position) {
 
@@ -379,7 +372,35 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
                 mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsNotLoggedActivity.this, R.color.purple));
                 break;
         }
+    }
 
+    private void hideViews() {
+        actionBar.hide();
+    }
+
+    private void showViews() {
+        actionBar.show();
+    }
+
+    @Override
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+        this.mScrollY = scrollY;
+    }
+
+    @Override
+    public void onDownMotionEvent() {}
+
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+        if (scrollState == scrollState.UP) {
+            hideViews();
+        } else {
+            if (scrollState == scrollState.DOWN) {
+                Log.e("mScrollY--",String.valueOf(mScrollY));
+                if (mScrollY < 10)
+                    showViews();
+            }
+        }
     }
 }
 

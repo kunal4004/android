@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.util;
+package za.co.woolworths.financial.services.android.ui.views;
 
 /*
  * Copyright 2014 Soichiro Kashima
@@ -20,19 +20,24 @@ package za.co.woolworths.financial.services.android.util;
         import android.content.Context;
         import android.os.Parcel;
         import android.os.Parcelable;
+        import android.support.v4.widget.NestedScrollView;
         import android.util.AttributeSet;
+        import android.view.GestureDetector;
         import android.view.MotionEvent;
         import android.view.View;
         import android.view.ViewGroup;
-        import android.widget.ScrollView;
 
         import java.util.ArrayList;
         import java.util.List;
 
+        import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
+        import za.co.woolworths.financial.services.android.util.ScrollState;
+        import za.co.woolworths.financial.services.android.util.Scrollable;
+
 /**
  * ScrollView that its scroll position can be observed.
  */
-public class WObservableScrollView extends ScrollView implements Scrollable {
+public class WObservableScrollView extends NestedScrollView implements Scrollable {
 
     // Fields that should be saved onSaveInstanceState
     private int mPrevScrollY;
@@ -47,6 +52,7 @@ public class WObservableScrollView extends ScrollView implements Scrollable {
     private boolean mIntercepted;
     private MotionEvent mPrevMoveEvent;
     private ViewGroup mTouchInterceptionViewGroup;
+    private GestureDetector mGestureDetector;
 
     public WObservableScrollView(Context context) {
         super(context);
@@ -54,10 +60,14 @@ public class WObservableScrollView extends ScrollView implements Scrollable {
 
     public WObservableScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mGestureDetector = new GestureDetector(context, new WObservableScrollView.YScrollDetector());
+        setFadingEdgeLength(0);
     }
 
     public WObservableScrollView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        mGestureDetector = new GestureDetector(context, new WObservableScrollView.YScrollDetector());
+        setFadingEdgeLength(0);
     }
 
     @Override
@@ -107,7 +117,7 @@ public class WObservableScrollView extends ScrollView implements Scrollable {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (hasNoCallbacks()) {
-            return super.onInterceptTouchEvent(ev);
+            return super.onInterceptTouchEvent(ev)&& mGestureDetector.onTouchEvent(ev);
         }
         switch (ev.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
@@ -121,7 +131,7 @@ public class WObservableScrollView extends ScrollView implements Scrollable {
                 dispatchOnDownMotionEvent();
                 break;
         }
-        return super.onInterceptTouchEvent(ev);
+        return super.onInterceptTouchEvent(ev)&& mGestureDetector.onTouchEvent(ev);
     }
 
     @Override
@@ -318,5 +328,14 @@ public class WObservableScrollView extends ScrollView implements Scrollable {
                 return new SavedState[size];
             }
         };
+    }
+
+    // Return false if we're scrolling in the x direction
+    class YScrollDetector extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2,
+                                float distanceX, float distanceY) {
+            return (Math.abs(distanceY) > Math.abs(distanceX));
+        }
     }
 }
