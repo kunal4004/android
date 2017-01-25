@@ -52,7 +52,7 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_account_cards_test);
+        setContentView(R.layout.activity_my_accounts_offline_layout);
         Utils.updateStatusBarBackground(MyAccountCardsActivityTest.this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
