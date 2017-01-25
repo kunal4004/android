@@ -53,8 +53,8 @@ public class Utils {
     public final static float BIG_SCALE = 2.4f;
     public final static float SMALL_SCALE = 1.9f;
     public final static float DIFF_SCALE = BIG_SCALE - SMALL_SCALE;
-    public static int FIRST_PAGE=0;
-    public static  int DEFAULT_SELECTED_NAVIGATION_ITEM=0;
+    public static int FIRST_PAGE = 0;
+    public static int DEFAULT_SELECTED_NAVIGATION_ITEM = 0;
 
     //Firebase Messaging service
 
@@ -71,12 +71,11 @@ public class Utils {
 
     public static final String SHARED_PREF = "ah_firebase";
 
-    public static final String SILVER_CARD="400154";
-    public static final String GOLD_CARD="410374";
-    public static final String BLACK_CARD="410375";
+    public static final String SILVER_CARD = "400154";
+    public static final String GOLD_CARD = "410374";
+    public static final String BLACK_CARD = "410375";
 
-    public static void saveLastLocation(Location loc,Context mContext)
-    {
+    public static void saveLastLocation(Location loc, Context mContext) {
 
         try {
             JSONObject locationJson = new JSONObject();
@@ -96,13 +95,13 @@ public class Utils {
         prefsEditor.commit();*/
 
     }
-    public static Location getLastSavedLocation(Context mContext)
-    {
-       // Location location=new Location("");
+
+    public static Location getLastSavedLocation(Context mContext) {
+        // Location location=new Location("");
         SharedPreferences mPrefs = mContext.getSharedPreferences("lastLocation", mContext.MODE_PRIVATE);
       /*  location.setLatitude(Double.parseDouble(mPrefs.getString("lat","0")));
         location.setLongitude(Double.parseDouble(mPrefs.getString("lon","0")));*/
-      //  return  location;
+        //  return  location;
 
         try {
             String json = mPrefs.getString("location", null);
@@ -123,21 +122,21 @@ public class Utils {
     }
 
 
-    public static boolean isLocationServiceEnabled( Context context){
+    public static boolean isLocationServiceEnabled(Context context) {
         LocationManager locationManager = null;
-        boolean gps_enabled= false,network_enabled = false;
+        boolean gps_enabled = false, network_enabled = false;
 
-        if(locationManager ==null)
+        if (locationManager == null)
             locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        try{
+        try {
             gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        }catch(Exception ex){
+        } catch (Exception ex) {
             //do nothing...
         }
 
-        try{
+        try {
             network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        }catch(Exception ex){
+        } catch (Exception ex) {
             //do nothing...
         }
 
@@ -145,8 +144,7 @@ public class Utils {
 
     }
 
-    public static String getDistance(GoogleMap googleMap)
-    {
+    public static String getDistance(GoogleMap googleMap) {
 
         VisibleRegion visibleRegion = googleMap.getProjection().getVisibleRegion();
 
@@ -157,96 +155,95 @@ public class Utils {
 
         float[] distanceWidth = new float[2];
         Location.distanceBetween(
-                (farRight.latitude+nearRight.latitude)/2,
-                (farRight.longitude+nearRight.longitude)/2,
-                (farLeft.latitude+nearLeft.latitude)/2,
-                (farLeft.longitude+nearLeft.longitude)/2,
+                (farRight.latitude + nearRight.latitude) / 2,
+                (farRight.longitude + nearRight.longitude) / 2,
+                (farLeft.latitude + nearLeft.latitude) / 2,
+                (farLeft.longitude + nearLeft.longitude) / 2,
                 distanceWidth
         );
 
 
         float[] distanceHeight = new float[2];
         Location.distanceBetween(
-                (farRight.latitude+nearRight.latitude)/2,
-                (farRight.longitude+nearRight.longitude)/2,
-                (farLeft.latitude+nearLeft.latitude)/2,
-                (farLeft.longitude+nearLeft.longitude)/2,
+                (farRight.latitude + nearRight.latitude) / 2,
+                (farRight.longitude + nearRight.longitude) / 2,
+                (farLeft.latitude + nearLeft.latitude) / 2,
+                (farLeft.longitude + nearLeft.longitude) / 2,
                 distanceHeight
         );
 
         float distance;
 
-        if (distanceWidth[0]>distanceHeight[0]){
+        if (distanceWidth[0] > distanceHeight[0]) {
             distance = distanceWidth[0];
         } else {
             distance = distanceHeight[0];
         }
-        return  String.valueOf(distance);
+        return String.valueOf(distance);
     }
 
-  public static void updateStatusBarBackground(Activity activity)
-   {
-       if (Build.VERSION.SDK_INT >= 21) {
-           Window window = activity.getWindow();
-           window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-           window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-           window.setStatusBarColor(ContextCompat.getColor(activity, R.color.white));
-           View decor = activity.getWindow().getDecorView();
-           decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-       }
-   }
-
-    public static void updateStatusBarBackground(Activity activity, int color)
-    {
-
-        if (Build.VERSION.SDK_INT >= 21) {
-            Window window = activity.getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(ContextCompat.getColor(activity, color));
-            View decor = activity.getWindow().getDecorView();
+    public static void updateStatusBarBackground(Activity activity) {
+        Window window = activity.getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        View decor = activity.getWindow().getDecorView();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(ContextCompat.getColor(activity, R.color.black));
             decor.setSystemUiVisibility(0);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.setStatusBarColor(ContextCompat.getColor(activity, R.color.white));
+            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
     }
 
-    public static  List<TransactionParentObj> getdata(List<Transaction> transactions)
-    {
-        List<TransactionParentObj> transactionParentObjList=new ArrayList<>();
+    public static void updateStatusBarBackground(Activity activity, int color) {
+        Window window = activity.getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        View decor = activity.getWindow().getDecorView();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(ContextCompat.getColor(activity, R.color.black));
+            decor.setSystemUiVisibility(0);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.setStatusBarColor(ContextCompat.getColor(activity, color));
+            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+
+        }
+    }
+
+    public static List<TransactionParentObj> getdata(List<Transaction> transactions) {
+        List<TransactionParentObj> transactionParentObjList = new ArrayList<>();
         DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
         DateFormat outputFormat = new SimpleDateFormat("MMMM");
         TransactionParentObj transactionParentObj;
 
-        for(int i=0;i<transactions.size();i++)
-        {
+        for (int i = 0; i < transactions.size(); i++) {
             try {
                 Date date = inputFormat.parse(transactions.get(i).date);
-                String month=outputFormat.format(date);
-                boolean monthFound=false;
-                List<Transaction> transactionList =null;
-                if(transactionParentObjList.size()==0)
-                {
-                    transactionList=new ArrayList<>();
-                    transactionParentObj=new TransactionParentObj();
+                String month = outputFormat.format(date);
+                boolean monthFound = false;
+                List<Transaction> transactionList = null;
+                if (transactionParentObjList.size() == 0) {
+                    transactionList = new ArrayList<>();
+                    transactionParentObj = new TransactionParentObj();
                     transactionParentObj.setMonth(month);
                     transactionList.add(transactions.get(i));
                     transactionParentObj.setTransactionList(transactionList);
                     transactionParentObjList.add(transactionParentObj);
-                }
-                else {
-                        for(int j=0;j<transactionParentObjList.size();j++)
-                        {
-                            if(transactionParentObjList.get(j).getMonth().equals(month))
-                            {
-                                monthFound=true;
-                                transactionParentObjList.get(j).getTransactionList().add(transactions.get(i));
-                                break;
-                            }
+                } else {
+                    for (int j = 0; j < transactionParentObjList.size(); j++) {
+                        if (transactionParentObjList.get(j).getMonth().equals(month)) {
+                            monthFound = true;
+                            transactionParentObjList.get(j).getTransactionList().add(transactions.get(i));
+                            break;
                         }
+                    }
 
-                    if(monthFound==false)
-                    {
-                        transactionList=new ArrayList<>();
-                        transactionParentObj=new TransactionParentObj();
+                    if (monthFound == false) {
+                        transactionList = new ArrayList<>();
+                        transactionParentObj = new TransactionParentObj();
                         transactionParentObj.setMonth(month);
                         transactionList.add(transactions.get(i));
                         transactionParentObj.setTransactionList(transactionList);
@@ -262,12 +259,12 @@ public class Utils {
         return transactionParentObjList;
     }
 
-    public static String objectToJson(Object object)
-    {
-        Gson gson=new Gson();
+    public static String objectToJson(Object object) {
+        Gson gson = new Gson();
 
-        String response=gson.toJson(object);
+        String response = gson.toJson(object);
 
         return response;
     }
+
 }

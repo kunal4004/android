@@ -47,7 +47,9 @@ import java.util.Locale;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class StoreDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -73,20 +75,15 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
     WTextView cancel;
 
     Intent callIntent;
+    private PopWindowValidationMessage mPopWindowValidationMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-        if (Build.VERSION.SDK_INT >= 21) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(getResources().getColor(R.color.white));
-            View decor = getWindow().getDecorView();
-            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
+        Utils.updateStatusBarBackground(this);
         setContentView(R.layout.store_details_activity);
+
+        mPopWindowValidationMessage = new PopWindowValidationMessage(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         storeName = (WTextView) findViewById(R.id.storeName);
         storeOfferings = (WTextView) findViewById(R.id.offerings);
@@ -214,7 +211,10 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
         direction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openNativeMapWindow(storeDetail.latitude,storeDetail.longitude);
+                mPopWindowValidationMessage.setmLatitude(storeDetail.latitude);
+                mPopWindowValidationMessage.setmLongiude(storeDetail.longitude);
+                mPopWindowValidationMessage.displayValidationMessage("",
+                        PopWindowValidationMessage.OVERLAY_TYPE.STORE_LOCATOR_DIRECTION);
             }
         });
     }
@@ -241,57 +241,57 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
         return super.onOptionsItemSelected(item);
     }
 
-    public void openNativeMapWindow(final double lat, final double lon) {
-        //darken the current screen
-        View view = getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
-        RelativeLayout relPopContainer = (RelativeLayout) view.findViewById(R.id.relPopContainer);
-        final PopupWindow mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
-        mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
-        mDarkenScreen.setTouchable(true);
-        mDarkenScreen.setFocusable(false);
-        mDarkenScreen.setOutsideTouchable(true);
-        mDarkenScreen.setBackgroundDrawable (new ColorDrawable());
-        //Then popup window appears
-        final View popupView = getLayoutInflater().inflate(R.layout.popup_view, null);
-        nativeMap = (WTextView) popupView.findViewById(R.id.nativeGoogleMap);
-        cancel = (WTextView) popupView.findViewById(R.id.cancel);
-        final PopupWindow mPopWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mPopWindow.setAnimationStyle(R.style.Animations_popup);
-        mPopWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
-        mPopWindow.setOutsideTouchable(true);
-        //Dismiss popup when touch outside
-        mPopWindow.setTouchable(false);
-        mPopWindow.setBackgroundDrawable (new ColorDrawable());
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopWindow.dismiss();
-                mDarkenScreen.dismiss();
-            }
-        });
-
-        popupView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopWindow.dismiss();
-                mDarkenScreen.dismiss();
-            }
-        });
-
-        nativeMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String uri = String.format(Locale.ENGLISH,"","http://maps.google.com/maps?daddr=%f,%f (%s)", lat, lon, "");
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
-                startActivity(intent);
-                mPopWindow.dismiss();
-                mDarkenScreen.dismiss();
-            }
-        });
-    }
+//    public void openNativeMapWindow(final double lat, final double lon) {
+//        //darken the current screen
+//        View view = getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
+//        RelativeLayout relPopContainer = (RelativeLayout) view.findViewById(R.id.relPopContainer);
+//        final PopupWindow mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//        mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
+//        mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
+//        mDarkenScreen.setTouchable(true);
+//        mDarkenScreen.setFocusable(false);
+//        mDarkenScreen.setOutsideTouchable(true);
+//        mDarkenScreen.setBackgroundDrawable (new ColorDrawable());
+//        //Then popup window appears
+//        final View popupView = getLayoutInflater().inflate(R.layout.popup_view, null);
+//        nativeMap = (WTextView) popupView.findViewById(R.id.nativeGoogleMap);
+//        cancel = (WTextView) popupView.findViewById(R.id.cancel);
+//        final PopupWindow mPopWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//        mPopWindow.setAnimationStyle(R.style.Animations_popup);
+//        mPopWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+//        mPopWindow.setOutsideTouchable(true);
+//        //Dismiss popup when touch outside
+//        mPopWindow.setTouchable(false);
+//        mPopWindow.setBackgroundDrawable (new ColorDrawable());
+//
+//        cancel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mPopWindow.dismiss();
+//                mDarkenScreen.dismiss();
+//            }
+//        });
+//
+//        popupView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mPopWindow.dismiss();
+//                mDarkenScreen.dismiss();
+//            }
+//        });
+//
+//        nativeMap.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String uri = String.format(Locale.ENGLISH,"","http://maps.google.com/maps?daddr=%f,%f (%s)", lat, lon, "");
+//                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+//                intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
+//                startActivity(intent);
+//                mPopWindow.dismiss();
+//                mDarkenScreen.dismiss();
+//            }
+//        });
+//    }
 
     public List<StoreOfferings> getOfferingByType(List<StoreOfferings> offerings, String type)
     {
@@ -303,5 +303,6 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
         }
         return list;
     }
+
 
 }

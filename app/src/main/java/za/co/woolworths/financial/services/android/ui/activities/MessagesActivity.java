@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,7 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
@@ -52,6 +54,8 @@ public class MessagesActivity extends AppCompatActivity {
     //public ProgressBar mLoadingImageView;
     public int visibleThreshold = 5;
     ConnectionDetector  connectionDetector;
+    private FragmentManager fm;
+    private WProgressDialogFragment mGetMessageProgressDialog;
 
 
     @Override
@@ -68,6 +72,7 @@ public class MessagesActivity extends AppCompatActivity {
         messsageListview = (RecyclerView) findViewById(R.id.messsageListView);
         //mLoadingImageView = (ProgressBar) findViewById(R.id.loadingBar);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
+
         messsageListview.setHasFixedSize(true);
         messsageListview.setLayoutManager(mLayoutManager);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -121,9 +126,13 @@ public class MessagesActivity extends AppCompatActivity {
     }
 
     public void loadMessages() {
+        fm = getSupportFragmentManager();
+        mGetMessageProgressDialog = WProgressDialogFragment.newInstance("message");
+        mGetMessageProgressDialog.setCancelable(false);
         new HttpAsyncTask<String, String, MessageResponse>() {
             @Override
             protected void onPreExecute() {
+                mGetMessageProgressDialog.show(fm,"message");
                 super.onPreExecute();
             }
 
@@ -143,9 +152,11 @@ public class MessagesActivity extends AppCompatActivity {
             protected MessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 MessageResponse messageResponse = new MessageResponse();
                 messageResponse.response = new Response();
+                dismissProgress();
                 hideRefreshView();
                 return messageResponse;
             }
+
 
             @Override
             protected void onPostExecute(MessageResponse messageResponse) {
@@ -160,6 +171,7 @@ public class MessagesActivity extends AppCompatActivity {
                     mCurrentPage = 1;
                     mIsLoading = false;
                 }
+                dismissProgress();
                 hideRefreshView();
             }
         }.execute();
@@ -329,5 +341,11 @@ public class MessagesActivity extends AppCompatActivity {
                 return  true;
         }
         return false;
+    }
+
+    private void dismissProgress(){
+        if (mGetMessageProgressDialog!=null&&mGetMessageProgressDialog.isVisible()){
+            mGetMessageProgressDialog.dismiss();
+        }
     }
 }

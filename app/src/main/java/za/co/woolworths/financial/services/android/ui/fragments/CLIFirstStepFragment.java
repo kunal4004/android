@@ -1,14 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-/**
- * Created by DimitriJ on 2016/12/20.
- */
-
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -30,9 +26,9 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIDeaBankMapAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICbxContentBinder;
@@ -45,6 +41,8 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     private CLIStepIndicatorActivity mStepIndicatorActivity;
     private CLIStepIndicatorActivity.OnFragmentRefresh onFragmentRefresh;
     private PopWindowValidationMessage mPopWindowValidationMessage;
+    private FragmentManager fm;
+    private WProgressDialogFragment mGetAccountsProgressDialog;
 
     public interface StepNavigatorCallback{
         void openNextFragment(int index);
@@ -59,7 +57,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     private ImageView mImgInfo;
     private List<Bank> mBanks;
     private CLIFirstStepFragment mContext;
-    private ProgressDialog mGetDeaBanksProgressDialog;
     private WoolworthsApplication mWoolworthsApplication;
     private UpdateBankDetail mUpdateBankDetail;
     private ConnectionDetector mConnectionDetector;
@@ -109,16 +106,15 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     }
 
     public void setDeaBanks() {
+        fm = getActivity().getSupportFragmentManager();
+        mGetAccountsProgressDialog = WProgressDialogFragment.newInstance("gettingAccount");
         if(mConnectionDetector.isOnline(getActivity())) {
 
             new HttpAsyncTask<String, String, DeaBanks>() {
 
                 @Override
                 protected void onPreExecute() {
-                    mGetDeaBanksProgressDialog = new ProgressDialog(getActivity());
-                    mGetDeaBanksProgressDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.loading), 1, getActivity()));
-                    mGetDeaBanksProgressDialog.setCancelable(false);
-                    mGetDeaBanksProgressDialog.show();
+                    mGetAccountsProgressDialog.show(fm,"gettingAccount");
                     super.onPreExecute();
                 }
 
@@ -236,11 +232,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    public void stopProgressDialog(){
-        if(mGetDeaBanksProgressDialog != null && mGetDeaBanksProgressDialog.isShowing()){
-            mGetDeaBanksProgressDialog.dismiss();
-        }
-    }
+
 
     @SuppressLint("ValidFragment")
     public CLIFirstStepFragment(StepNavigatorCallback stepNavigatorCallback) {
@@ -254,5 +246,9 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
             return 0;
     }
 
-
+    public void stopProgressDialog(){
+        if (mGetAccountsProgressDialog!=null&&mGetAccountsProgressDialog.isVisible()){
+            mGetAccountsProgressDialog.dismiss();
+        }
+    }
 }

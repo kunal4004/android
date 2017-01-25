@@ -27,14 +27,5 @@ public class WCreditCardEmptyFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.logged_out_state_creditcard, container, false);
-        applyNow=(WButton)view.findViewById(R.id.applynow);
-        applyNow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getApplyNowLink())));
-            }
-        });
-
-
         return view;    }
 }

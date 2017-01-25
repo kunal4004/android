@@ -37,7 +37,6 @@
     <color name="description_color">#80000000</color>
     <color name="black_desc_opacity">#75000000</color>
 
-
     <!-- step indicator -->
     <color name="background_default">#A5D6A7</color>
     <color name="step_default">#4CAF50</color>
@@ -47,5 +46,6 @@
     <color name="cli_content_color_desc">#80000000</color>
     <color name="page_indicator_default">#10ffffff</color>
     <color name="horizontal_line">#10000000</color>
-
+    <color name="reward_status_bar_color">#cc000000</color>
+    <color name="default_background">#ececec</color>
 </resources>

@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.os.Bundle;
 import android.view.animation.AccelerateInterpolator;
-
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
@@ -65,6 +64,10 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         drawerFragment.setDrawerListener(this);
         displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 
+//        FragmentManager fm = getSupportFragmentManager();
+//        WProgressDialogFragment editNameDialogFragment = WProgressDialogFragment.newInstance("Some Title");
+//        editNameDialogFragment.show(fm, "fragment_edit_name");
+//        editNameDialogFragment.setCancelable(false);
     }
 
     @Override
@@ -111,6 +114,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             mToolbarTitle.setText(title);
             fragmentList.add(fragment);
         }
+
+
     }
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {

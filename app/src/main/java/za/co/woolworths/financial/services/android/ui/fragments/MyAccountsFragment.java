@@ -2,13 +2,13 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
@@ -44,10 +44,12 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
@@ -94,7 +96,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     WTextView userInitials;
     RelativeLayout signoutLayer;
 
-    private ProgressDialog mGetAccountsProgressDialog;
+    private WProgressDialogFragment mGetAccountsProgressDialog;
     private ProgressBar scProgressBar;
     private ProgressBar ccProgressBar;
     private ProgressBar plProgressBar;
@@ -108,6 +110,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
     private int dotsCount;
     private ImageView[] dots;
+    private PopWindowValidationMessage mPopWindowValidationMessage;
+    private FragmentManager fm;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -125,6 +129,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         // ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("ACCOUNTS");
         woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
         openMessageActivity = (ImageView) view.findViewById(R.id.openMessageActivity);
+        mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         openShoppingList = (ImageView) view.findViewById(R.id.openShoppingList);
         contactUs = (RelativeLayout) view.findViewById(R.id.contactUs);
         applyStoreCardView = (LinearLayout) view.findViewById(R.id.applyStoreCard);
@@ -378,7 +383,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             case R.id.openShoppingList:
                 break;
             case R.id.signOutBtn:
-                ScreenManager.presentSSOLogout(getActivity());
+                mPopWindowValidationMessage.displayValidationMessage("", PopWindowValidationMessage.OVERLAY_TYPE.SIGN_OUT);
                 break;
 
             default:
@@ -404,15 +409,14 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void loadAccounts() {
-        mGetAccountsProgressDialog = new ProgressDialog(getActivity());
-        mGetAccountsProgressDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.getting_accounts), 1, getActivity()));
-        mGetAccountsProgressDialog.setCancelable(false);
-
+        fm = getActivity().getSupportFragmentManager();
+        mGetAccountsProgressDialog = WProgressDialogFragment.newInstance("gettingAccount");
         new HttpAsyncTask<String, String, AccountsResponse>() {
 
             @Override
             protected void onPreExecute() {
-                mGetAccountsProgressDialog.show();
+                mGetAccountsProgressDialog.show(fm,"account");
+                mGetAccountsProgressDialog.setCancelable(false);
             }
 
             @Override
@@ -433,13 +437,12 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 accountResponse.httpCode = 408;
                 accountResponse.response = new Response();
                 accountResponse.response.desc = errorMessage;
+                dismissProgress();
                 return accountResponse;
             }
 
             @Override
             protected void onPostExecute(AccountsResponse accountsResponse) {
-                mGetAccountsProgressDialog.dismiss();
-
                 switch (accountsResponse.httpCode) {
                     case 200:
                         MyAccountsFragment.this.accountsResponse = accountsResponse;
@@ -491,6 +494,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                     default:
                         break;
                 }
+                dismissProgress();
             }
         }.execute();
     }
@@ -594,6 +598,12 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
           Log.e(TAG,"Broadcast Unregister Exception");
         }
 
+    }
+
+    private void dismissProgress(){
+        if (mGetAccountsProgressDialog!=null&&mGetAccountsProgressDialog.isVisible()){
+            mGetAccountsProgressDialog.dismiss();
+        }
     }
 
     public BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {

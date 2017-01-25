@@ -14,13 +14,13 @@
         android:padding="16dp">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/availableFundLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/available_funds"
             android:textColor="@color/black"
             android:textSize="15sp"
-            app:WTextView_font="myriadpro_regular"
-            android:id="@+id/availableFundLabel" />
+            app:WTextView_font="myriadpro_regular" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -97,12 +97,12 @@
                 android:layout_centerVertical="true"
                 android:layout_toStartOf="@+id/linContainer"
                 android:background="@drawable/ripple_effect_gray"
-                android:letterSpacing="0.05"
+                android:letterSpacing="0.04"
                 android:text="@string/increase_limit"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                app:WTextView_font="medium" />
+                app:WTextView_font="medium_bold" />
 
             <LinearLayout
                 android:id="@+id/linContainer"
@@ -123,8 +123,8 @@
 
                 <WebView
                     android:id="@+id/progressCreditLimit"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_alignParentTop="true"
                     android:layout_toStartOf="@+id/imgArrow"
                     android:scrollbars="none"
@@ -193,7 +193,7 @@
             android:layout_alignParentTop="true"
             android:text="13/30/2014"
             android:textColor="#4d000000"
-            android:textSize="14sp"
+            android:textSize="15sp"
             app:WTextView_font="myriadpro_regular" />
     </RelativeLayout>
 
@@ -222,7 +222,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:textColor="#4d000000"
-            android:textSize="14sp"
+            android:textSize="15sp"
             app:WTextView_font="myriadpro_regular" />
     </RelativeLayout>
 

@@ -22,7 +22,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,7 +32,6 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -64,7 +62,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
@@ -79,6 +76,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.LocationTracker;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WCustomViewPager;
@@ -144,9 +142,9 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     private static final int PERMS_REQUEST_CODE = 1234;
     private boolean permissionIsAllowed = false;
 
+    private PopWindowValidationMessage mPopWindowValidationMessage;
 
     public StoresNearbyFragment1() {
-        // Required empty public constructor
         setHasOptionsMenu(true);
     }
 
@@ -154,6 +152,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_stores_nearby1, container, false);
+        mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         pager = (WCustomViewPager) v.findViewById(R.id.cardPager);
         detailsLayout = (LinearLayout) v.findViewById(R.id.detailsView);
         mLayout = (SlidingUpPanelLayout) v.findViewById(R.id.sliding_layout);
@@ -399,7 +398,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             //googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 13), CAMERA_ANIMATION_SPEED, null);
             previousmarker = marker;
             pager.setCurrentItem(id);
-        } catch (NullPointerException ex) {
+        } catch (NullPointerException ignored) {
         }
         return true;
     }
@@ -570,10 +569,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         direction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openNativeMapWindow(storeDetail.latitude, storeDetail.longitude);
+                mPopWindowValidationMessage.setmLatitude(storeDetail.latitude);
+                mPopWindowValidationMessage.setmLongiude(storeDetail.longitude);
+                mPopWindowValidationMessage.displayValidationMessage("",
+                        PopWindowValidationMessage.OVERLAY_TYPE.STORE_LOCATOR_DIRECTION);
             }
         });
-
     }
 
     @Override
@@ -583,8 +584,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             case REQUEST_CALL:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startActivity(callIntent);
-                } else {
-                    ////
                 }
                 break;
 
@@ -618,59 +617,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         }
     }
 
-    public void openNativeMapWindow(final double lat, final double lon) {
-        //darken the current screen
-        View view = getActivity().getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
-        RelativeLayout relPopContainer = (RelativeLayout) view.findViewById(R.id.relPopContainer);
-        final PopupWindow mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
-        mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
-        mDarkenScreen.setTouchable(true);
-        mDarkenScreen.setFocusable(false);
-        mDarkenScreen.setOutsideTouchable(true);
-        mDarkenScreen.setBackgroundDrawable(new ColorDrawable());
-        //Then popup window appears
-        final View popupView = getActivity().getLayoutInflater().inflate(R.layout.popup_view, null);
-        nativeMap = (WTextView) popupView.findViewById(R.id.nativeGoogleMap);
-        cancel = (WTextView) popupView.findViewById(R.id.cancel);
-        final PopupWindow mPopWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mPopWindow.setAnimationStyle(R.style.Animations_popup);
-        mPopWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
-        mPopWindow.setOutsideTouchable(true);
-        //Dismiss popup when touch outside
-        mPopWindow.setTouchable(false);
-        mPopWindow.setBackgroundDrawable(new ColorDrawable());
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopWindow.dismiss();
-                mDarkenScreen.dismiss();
-            }
-        });
-
-        popupView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopWindow.dismiss();
-                mDarkenScreen.dismiss();
-            }
-        });
-
-        nativeMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String uri = String.format(Locale.ENGLISH, "", "http://maps.google.com/maps?daddr=%f,%f (%s)", lat, lon, "");
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-                startActivity(intent);
-                mPopWindow.dismiss();
-                mDarkenScreen.dismiss();
-            }
-        });
-    }
-
-
     public void init(final Location location) {
         new HttpAsyncTask<String, String, LocationResponse>() {
             @Override
@@ -698,7 +644,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             @Override
             protected void onPostExecute(LocationResponse locationResponse) {
                 super.onPostExecute(locationResponse);
-                storeDetailsList = new ArrayList<StoreDetails>();
+                storeDetailsList = new ArrayList<>();
                 storeDetailsList = locationResponse.Locations;
                 if (storeDetailsList != null && storeDetailsList.size() != 0) {
                     bindDataWithUI(storeDetailsList);
@@ -731,6 +677,53 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         }
     }
 
+    public void settingsrequest() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(30 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true); //this is the key ingredient
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                status = result.getStatus();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        // All location settings are satisfied. The client can initialize location
+                        // requests here.
+                        if (Utils.getLastSavedLocation(getActivity()) != null) {
+                            Location location = Utils.getLastSavedLocation(getActivity());
+                            updateMyCurrentLocationOnMap(location);
+                        }
+                        searchForCurrentLocation();
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
+                        if (Utils.getLastSavedLocation(getActivity()) == null) {
+                            checkLocationServiceAndSetLayout(false);
+                            try {
+                                status.startResolutionForResult(getActivity(), REQUEST_CHECK_SETTINGS);
+                            } catch (IntentSender.SendIntentException e) {
+                                ;
+                            }
+
+                        } else {
+                            onLocationChanged(Utils.getLastSavedLocation(getActivity()));
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
+                        break;
+                }
+            }
+        });
+    }
 
     public void searchForCurrentLocation() {
         checkLocationServiceAndSetLayout(true);
@@ -843,4 +836,3 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 
 }
-
