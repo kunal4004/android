@@ -7,13 +7,13 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -28,7 +28,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -36,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -71,9 +71,7 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
-import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity;
-import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -143,6 +141,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     private String provider;
     Marker myLocation;
     private Status status;
+    private static final int PERMS_REQUEST_CODE = 1234;
+    private boolean permissionIsAllowed = false;
 
 
     public StoresNearbyFragment1() {
@@ -176,6 +176,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         provider = locationManager.getBestProvider(criteria, false);
+        unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
+        selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
         //  locationManager.requestLocationUpdates(provider, 40000, 10, this);
         pager.addOnPageChangeListener(this);
         pager.setOnItemClickListener(new WCustomViewPager.OnItemClickListener() {
@@ -243,7 +245,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         if (Utils.isLocationServiceEnabled(getActivity()) && Utils.getLastSavedLocation(getActivity()) == null) {
             checkLocationServiceAndSetLayout(false);
         }
-        settingsrequest();
+        settingsRequest();
         initMap();
 
 /*
@@ -261,46 +263,97 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         return v;
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("RequestSETTINGRESULT", String.valueOf(requestCode));
+        switch (requestCode) {
+// Check for the integer request code originally supplied to startResolutionForResult().
+            case REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        // startLocationUpdates();
+                        searchForCurrentLocation();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        settingsRequest();//keep asking if imp or do whatever
+                        break;
+                }
+                break;
+        }
+    }
+
+    public void settingsRequest() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(30 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+        builder.setAlwaysShow(true); //this is the key ingredient
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult result) {
+                status = result.getStatus();
+                final LocationSettingsStates state = result.getLocationSettingsStates();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        // All location settings are satisfied. The client can initialize location
+                        // requests here.
+                        if (Utils.getLastSavedLocation(getActivity()) != null) {
+                            Location location = Utils.getLastSavedLocation(getActivity());
+                            updateMyCurrentLocationOnMap(location);
+                        }
+                        searchForCurrentLocation();
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied. But could be fixed by showing the user
+                        // a dialog.
+                        if (Utils.getLastSavedLocation(getActivity()) == null) {
+                            checkLocationServiceAndSetLayout(false);
+                            try {
+                                status.startResolutionForResult(getActivity(), REQUEST_CHECK_SETTINGS);
+                            } catch (IntentSender.SendIntentException e) {
+                                ;
+                            }
+
+                        } else {
+                            onLocationChanged(Utils.getLastSavedLocation(getActivity()));
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        // Location settings are not satisfied. However, we have no way to fix the
+                        // settings so we won't show the dialog.
+                        break;
+                }
+            }
+        });
+    }
+
     public void initMap() {
         if (googleMap == null) {
             mapFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
-            mMarkers = new HashMap<String, Integer>();
-            markers = new ArrayList<Marker>();
+            mMarkers = new HashMap<>();
+            markers = new ArrayList<>();
         }
     }
 
-    //    Function to request permission
-    public void requestLocationPermission() {
-        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                REQUEST_CODE_ASK_PERMISSIONS);
-        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS);
-
-    }
 
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
         //If permission is not granted, request permission.
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestLocationPermission();
-        } else {
+        if (hasPermissions()) {
             googleMap.setMyLocationEnabled(false);
             googleMap.setOnMarkerClickListener(this);
             unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
             selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
-            //Current location
+        } else {
+            requestPerms();
         }
-
-
-/*
-        googleMap.addMarker(new MarkerOptions().position(new LatLng(lTracker.getLatitude(), lTracker.getLongitude()))
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapcurrentlocation)));*/
-        // map.getUiSettings().setMyLocationButtonEnabled(false);
-       /* CameraPosition cameraPosition = new CameraPosition.Builder().target(
-                new LatLng(lats[0], longs[0])).zoom(13).build();
-
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));*/
     }
 
     private void drawMarker(LatLng point, BitmapDescriptor bitmapDescriptor, int pos) {
@@ -346,7 +399,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             //googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 13), CAMERA_ANIMATION_SPEED, null);
             previousmarker = marker;
             pager.setCurrentItem(id);
-        }catch (NullPointerException ex){}
+        } catch (NullPointerException ex) {
+        }
         return true;
     }
 
@@ -382,11 +436,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             updateMyCurrentLocationOnMap(location);
             init(location);
             //If permission is not granted, request permission.
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestLocationPermission();
-            } else {
+            if (hasPermissions())
                 locationManager.removeUpdates(this);
-            }
+        } else {
+            requestPerms();
         }
     }
 
@@ -525,13 +578,43 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch(requestCode){
+        permissionIsAllowed = true;
+        switch (requestCode) {
             case REQUEST_CALL:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startActivity(callIntent);
                 } else {
                     ////
                 }
+                break;
+
+            case PERMS_REQUEST_CODE:
+                for (int res : grantResults) {
+                    // if user granted all permissions.
+                    permissionIsAllowed = permissionIsAllowed && (res == PackageManager.PERMISSION_GRANTED);
+                }
+                break;
+
+            default:
+                // if user not granted permissions.
+                permissionIsAllowed = false;
+                break;
+        }
+        if (permissionIsAllowed) {
+            //user granted all permissions we can perform our task.
+            settingsRequest();
+            initMap();
+            googleMap.setMyLocationEnabled(false);
+            googleMap.setOnMarkerClickListener(this);
+        } else {
+            // we will give warning to user that they haven't granted permissions.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)
+                        && shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    Toast.makeText(getActivity(), "Location Permissions denied.", Toast.LENGTH_SHORT).show();
+
+                }
+            }
         }
     }
 
@@ -545,7 +628,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         mDarkenScreen.setTouchable(true);
         mDarkenScreen.setFocusable(false);
         mDarkenScreen.setOutsideTouchable(true);
-        mDarkenScreen.setBackgroundDrawable (new ColorDrawable());
+        mDarkenScreen.setBackgroundDrawable(new ColorDrawable());
         //Then popup window appears
         final View popupView = getActivity().getLayoutInflater().inflate(R.layout.popup_view, null);
         nativeMap = (WTextView) popupView.findViewById(R.id.nativeGoogleMap);
@@ -556,7 +639,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         mPopWindow.setOutsideTouchable(true);
         //Dismiss popup when touch outside
         mPopWindow.setTouchable(false);
-        mPopWindow.setBackgroundDrawable (new ColorDrawable());
+        mPopWindow.setBackgroundDrawable(new ColorDrawable());
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -577,9 +660,9 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         nativeMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String uri = String.format(Locale.ENGLISH,"","http://maps.google.com/maps?daddr=%f,%f (%s)", lat, lon, "");
+                String uri = String.format(Locale.ENGLISH, "", "http://maps.google.com/maps?daddr=%f,%f (%s)", lat, lon, "");
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
+                intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
                 startActivity(intent);
                 mPopWindow.dismiss();
                 mDarkenScreen.dismiss();
@@ -648,79 +731,14 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         }
     }
 
-    public void settingsrequest() {
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(30 * 1000);
-        locationRequest.setFastestInterval(5 * 1000);
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest);
-        builder.setAlwaysShow(true); //this is the key ingredient
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(LocationSettingsResult result) {
-                status = result.getStatus();
-                final LocationSettingsStates state = result.getLocationSettingsStates();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        // All location settings are satisfied. The client can initialize location
-                        // requests here.
-                        if (Utils.getLastSavedLocation(getActivity()) != null) {
-                            Location location = Utils.getLastSavedLocation(getActivity());
-                            updateMyCurrentLocationOnMap(location);
-                        }
-                        searchForCurrentLocation();
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        // Location settings are not satisfied. But could be fixed by showing the user
-                        // a dialog.
-                        if (Utils.getLastSavedLocation(getActivity()) == null) {
-                            checkLocationServiceAndSetLayout(false);
-                            try{
-                                status.startResolutionForResult(getActivity(),REQUEST_CHECK_SETTINGS);
-                            }catch (IntentSender.SendIntentException e){;}
-
-                        } else {
-                            onLocationChanged(Utils.getLastSavedLocation(getActivity()));
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        // Location settings are not satisfied. However, we have no way to fix the
-                        // settings so we won't show the dialog.
-                        break;
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e("RequestSETTINGRESULT",String.valueOf(requestCode));
-        switch (requestCode) {
-// Check for the integer request code originally supplied to startResolutionForResult().
-            case REQUEST_CHECK_SETTINGS:
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        // startLocationUpdates();
-                        searchForCurrentLocation();
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        settingsrequest();//keep asking if imp or do whatever
-                        break;
-                }
-                break;
-        }
-    }
 
     public void searchForCurrentLocation() {
         checkLocationServiceAndSetLayout(true);
         //If permission is not granted, request permission.
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestLocationPermission();
-        } else {
+        if (hasPermissions()) {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 1, this);
+        } else {
+            requestPerms();
         }
     }
 
@@ -771,6 +789,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             @Override
             public void onFinish() {
             }
+
             @Override
             public void onCancel() {
             }
@@ -789,7 +808,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     @Override
     public void onResume() {
         super.onResume();
-        if(updateMap) {
+        if (updateMap) {
             // All location settings are satisfied. The client can initialize location
             // requests here.
             if (Utils.getLastSavedLocation(getActivity()) != null) {
@@ -799,5 +818,29 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             }
         }
     }
+
+    public boolean hasPermissions() {
+        int res = 0;
+        //string array of permissions,
+        String[] permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION};
+        for (String perms : permissions) {
+            res = getActivity().checkCallingOrSelfPermission(perms);
+            if (!(res == PackageManager.PERMISSION_GRANTED)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void requestPerms() {
+        String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION};
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(permissions, PERMS_REQUEST_CODE);
+        }
+    }
+
+
 }
 
