@@ -291,7 +291,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                     mSharePreferenceHelper.save(String.valueOf(drawnDownAmountCent), "lw_amount_drawn_cent");
                     IssueLoanRequest issueLoanRequest = new IssueLoanRequest(productOfferingId,
                             drawnDownAmountCent,
-                            repaymentPeriod(drawnDownAmount),
+                            repaymentPeriod(creditLimit),
                             creditLimit);
                     return ((WoolworthsApplication) getApplication()).getApi().issueLoan(issueLoanRequest);
                 }
@@ -349,7 +349,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
     }
 
     private int repaymentPeriod(int amount) {
-        if (amount <= 10000) {
+        if (amount < 1000000) {
             return 36;
         } else {
             return 60;
