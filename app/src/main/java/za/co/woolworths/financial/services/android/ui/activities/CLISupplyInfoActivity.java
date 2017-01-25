@@ -511,13 +511,13 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     }
 
     public void showProgressBar() {
-            mEmpyViewDialogFragment = WEmpyViewDialogFragment.newInstance("blank");
-            mEmpyViewDialogFragment.setCancelable(false);
-            mEmpyViewDialogFragment.show(fm,"blank");
-            mProgressBar.bringToFront();
-            mProgressBar.setVisibility(View.VISIBLE);
-            mBtnContinue.setVisibility(View.GONE);
-            mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+        mEmpyViewDialogFragment = WEmpyViewDialogFragment.newInstance("blank");
+        mEmpyViewDialogFragment.setCancelable(false);
+        mEmpyViewDialogFragment.show(fm, "blank");
+        mProgressBar.bringToFront();
+        mProgressBar.setVisibility(View.VISIBLE);
+        mBtnContinue.setVisibility(View.GONE);
+        mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
     }
 
     public void stopProgressDialog() {

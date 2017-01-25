@@ -6,10 +6,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -77,10 +75,11 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     private PopupWindow mDarkenScreen;
     private PopupWindow mPopWindow;
     private FragmentManager fm;
-    private ProgressBar mProgressBar;
-    private WEmpyViewDialogFragment mEmpyViewDialogFragment;
     private WEmpyViewDialogFragment mEmailEmpyViewDialogFragment;
     private ProgressBar mEmailProgressBar;
+    private ProgressBar mProgressBar;
+    private WEmpyViewDialogFragment mEmpyViewDialogFragment;
+
 
     public CLIThirdStepFragment() {
     }
@@ -101,6 +100,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mLinBankLayout = (LinearLayout) view.findViewById(R.id.linBankLayout);
         mProgressBar = (ProgressBar) view.findViewById(R.id.mWoolworthsProgressBar);
         mEmailProgressBar = (ProgressBar) view.findViewById(R.id.mEmailWoolworthsProgressBar);
+
         initUI();
         setListener();
         setContent();
@@ -412,7 +412,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         }
     }
 
-
     public PopupWindow popEmail() {
         //darken the current screen
         View view = getActivity().getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
@@ -446,6 +445,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         return mDarkenScreen;
     }
 
+
     public void showProgressBar() {
         mEmpyViewDialogFragment = WEmpyViewDialogFragment.newInstance("blank");
         mEmpyViewDialogFragment.setCancelable(false);
@@ -477,6 +477,8 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mEmailEmpyViewDialogFragment = WEmpyViewDialogFragment.newInstance("blank");
         mEmailEmpyViewDialogFragment.setCancelable(false);
         mEmailEmpyViewDialogFragment.show(fm, "blank");
+        mEmailProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+
     }
 
     public void stopEmailProgressDialog() {

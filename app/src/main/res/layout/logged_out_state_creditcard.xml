@@ -154,7 +154,7 @@
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/account_logged_out_reward_bold"
-                    android:text="@string/bring_following_while_collecting" />
+                    android:text="@string/collect_credit_card_title" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -165,7 +165,7 @@
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_bring_following_while_collecting_1" />
+                        android:text="@string/collect_credit_card_desc_1" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -177,7 +177,7 @@
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_bring_following_while_collecting_2" />
+                        android:text="@string/collect_credit_card_desc_2" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -190,16 +190,19 @@
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_bring_following_while_collecting_3" />
+                        android:text="@string/collect_credit_card_desc_3" />
                 </LinearLayout>
             </LinearLayout>
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
                 android:id="@+id/applynow"
-                style="@style/apply_now_btn"
+                style="@style/blackButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:background="@color/black"
-                android:text="@string/apply_now" />
+                android:text="@string/apply_now"
+
+                 />
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
