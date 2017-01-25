@@ -2,11 +2,13 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,6 +93,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         disableIncreaseLimit();
         hideProgressBar();
         getActiveOffer();
+        setTextSize();
         return view;
     }
 
@@ -127,6 +130,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 }
             }
         }
+        setTextSize();
     }
 
     @Override
@@ -228,5 +232,22 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         txtIncreseLimit.setEnabled(false);
         txtIncreseLimit.setTextColor(Color.GRAY);
         mImageArrow.setImageAlpha(50);
+    }
+
+    private void setTextSize(){
+        dueDate.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+        minAmountDue.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+        currentBalance.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+
+        Typeface mMyriaProFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Regular.otf");
+        dueDate.setTypeface(mMyriaProFont);
+        minAmountDue.setTypeface(mMyriaProFont);
+        currentBalance.setTypeface(mMyriaProFont);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setTextSize();
     }
 }
