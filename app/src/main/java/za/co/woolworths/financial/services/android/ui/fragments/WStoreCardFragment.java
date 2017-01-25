@@ -3,10 +3,16 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,16 +35,13 @@ import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsA
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
-
-/**
- * Created by W7099877 on 22/11/2016.
- */
 
 public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener{
 
@@ -108,7 +111,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                     minAmountDue.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.minimumAmountDue), 1, getActivity())));
                     currentBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.currentBalance), 1, getActivity())));
                     try {
-                        dueDate.setText(FontHyperTextParser.getSpannable(WFormatter.formatDate(p.paymentDueDate), 1, getActivity()));
+                        dueDate.setText(setTypeFace(FontHyperTextParser.getSpannable(WFormatter.formatDate(p.paymentDueDate), 1, getActivity())));
                     } catch (ParseException e) {
                         dueDate.setText(p.paymentDueDate);
                         WiGroupLogger.e(getActivity(), TAG, e.getMessage(), e);
@@ -116,6 +119,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                 }
             }
         }
+        setTextSize();
     }
 
     @Override
@@ -134,7 +138,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
                     startActivity(openCLIIncrease);
                     getActivity().overridePendingTransition(0,0);
-                }
+               }
                 break;
 
         }
@@ -216,5 +220,34 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         txtIncreseLimit.setEnabled(false);
         txtIncreseLimit.setTextColor(Color.GRAY);
         mImageArrow.setImageAlpha(50);
+    }
+
+    private String setTypeFace(SpannableString value){
+        Typeface mMyriaProFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Regular.otf");
+       // dueDate.setTypeface(mMyriaProFont);
+       // minAmountDue.setTypeface(mMyriaProFont);
+       // currentBalance.setTypeface(mMyriaProFont);
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(value);
+        spannableStringBuilder.setSpan (new CustomTypefaceSpan("", mMyriaProFont), 0, value.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        spannableStringBuilder.setSpan(new AbsoluteSizeSpan(15, true), 0, value.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        return spannableStringBuilder.toString();
+    }
+
+    private void setTextSize(){
+        dueDate.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+        minAmountDue.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+        currentBalance.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+
+        Typeface mMyriaProFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Regular.otf");
+        dueDate.setTypeface(mMyriaProFont);
+        minAmountDue.setTypeface(mMyriaProFont);
+        currentBalance.setTypeface(mMyriaProFont);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setTextSize();
     }
 }

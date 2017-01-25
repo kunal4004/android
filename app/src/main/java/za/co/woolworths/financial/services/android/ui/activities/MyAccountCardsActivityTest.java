@@ -93,8 +93,7 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
-        // dynamicToolbarColor();
-       // dynamicToolbarColor("#4f5051");
+
         if(getIntent().hasExtra("accounts"))
         {
             AccountsResponse accountsResponse=new Gson().fromJson(getIntent().getExtras().getString("accounts"),AccountsResponse.class);
