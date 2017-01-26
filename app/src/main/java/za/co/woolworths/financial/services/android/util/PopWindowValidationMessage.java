@@ -381,7 +381,7 @@ public class PopWindowValidationMessage {
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         window.clearFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        Utils.updateStatusBarBackground(activity, R.color.purple);
+        Utils.updateStatusBarBackground(activity);
     }
 
     public void showStatusBar(Activity activity) {
@@ -392,7 +392,7 @@ public class PopWindowValidationMessage {
         window.addFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Utils.updateStatusBarBackground(activity, R.color.purple);
+        Utils.updateStatusBarBackground(activity);
     }
 
     public void showLoanStatusBar(Activity activity) {
@@ -403,6 +403,6 @@ public class PopWindowValidationMessage {
         window.addFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Utils.updateStatusBarBackground(activity, R.color.purple);
+        Utils.updateStatusBarBackground(activity);
     }
 }

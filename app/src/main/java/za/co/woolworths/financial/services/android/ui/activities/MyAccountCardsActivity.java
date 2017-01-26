@@ -425,18 +425,18 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     }
 
     @Override
-    public void onDownMotionEvent() {
-    }
+    public void onDownMotionEvent() {}
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
         if (scrollState.UP == scrollState) {
+            Log.e("ScrollUpState--UP", String.valueOf(mScrollY));
             hideViews();
-        } else {
-            if (scrollState == scrollState.DOWN) {
-                if (mScrollY < 10) {
-                    showViews();
-                }
+        } else if (scrollState == scrollState.DOWN) {
+            Log.e("ScrollUpState--DOWN", String.valueOf(mScrollY));
+
+            if (mScrollY < 10) {
+                showViews();
             }
         }
     }
