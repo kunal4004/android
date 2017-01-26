@@ -40,7 +40,6 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
-
 public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener {
     public WTextView availableBalance;
     public WTextView creditLimit;
@@ -83,7 +82,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         getActiveOffer();
         return view;
     }
-
 
     //To remove negative signs from negative balance and add "CR" after the negative balance
     public String removeNegativeSymbol(SpannableString amount) {

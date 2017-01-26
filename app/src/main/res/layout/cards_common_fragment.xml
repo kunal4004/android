@@ -96,7 +96,6 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toStartOf="@+id/linContainer"
-                android:background="@drawable/ripple_effect_gray"
                 android:letterSpacing="0.04"
                 android:text="@string/increase_limit"
                 android:textAllCaps="true"
@@ -126,6 +125,7 @@
                     style="?android:attr/progressBarStyleLarge"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:layout_marginLeft="@dimen/bank_spacing_width"
                     android:visibility="gone" />
 
             </LinearLayout>
