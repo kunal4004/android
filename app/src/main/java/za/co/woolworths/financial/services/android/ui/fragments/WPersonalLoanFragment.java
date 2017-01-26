@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.util.Log;
 import android.util.TypedValue;
@@ -222,13 +223,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         txtIncreseLimit.setVisibility(View.VISIBLE);
     }
 
-    public void enableIncreaseLimit(){
+    public void enableIncreaseLimit() {
         txtIncreseLimit.setEnabled(true);
         txtIncreseLimit.setTextColor(Color.BLACK);
+        txtIncreseLimit.setAlpha(1);
         mImageArrow.setImageAlpha(255);
     }
 
-    public void disableIncreaseLimit(){
+    public void disableIncreaseLimit() {
         txtIncreseLimit.setEnabled(false);
         txtIncreseLimit.setTextColor(Color.GRAY);
         mImageArrow.setImageAlpha(50);

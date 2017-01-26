@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -204,6 +205,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     public void enableIncreaseLimit() {
         txtIncreseLimit.setEnabled(true);
         txtIncreseLimit.setTextColor(Color.BLACK);
+        txtIncreseLimit.setAlpha(1);
         mImageArrow.setImageAlpha(255);
     }
 

@@ -317,7 +317,10 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                 } else {
                     switch (pager.getCurrentItem()) { //logged in
                         case 2:
-
+                            mSharePreferenceHelper.save("", "lw_amount_drawn_cent");
+                            Intent openWithdrawCashNow = new Intent(MyAccountCardsActivity.this, LoanWithdrawalActivity.class);
+                            startActivity(openWithdrawCashNow);
+                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                             break;
                     }
                 }

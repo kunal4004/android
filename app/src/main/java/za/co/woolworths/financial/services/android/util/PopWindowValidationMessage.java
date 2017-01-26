@@ -38,7 +38,7 @@ public class PopWindowValidationMessage {
 
     public enum OVERLAY_TYPE {
         CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
-        HIGH_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT
+        HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT
     }
 
     public PopWindowValidationMessage(Context context) {
@@ -189,7 +189,27 @@ public class PopWindowValidationMessage {
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startExitAnimation(overlay_type);
+                                startLoanExitAnimation();
+                            }
+                        });
+                break;
+
+            case LOW_LOAN_AMOUNT:
+                mView = mLayoutInflater.inflate(R.layout.lw_too_high_error, null);
+                popupWindowSetting(mView);
+                WTextView wTextTitle = (WTextView) mView.findViewById(R.id.title);
+                WTextView wTextProofIncome = (WTextView) mView.findViewById(R.id.textProofIncome);
+                wTextTitle.setText(getString(R.string.loan_withdrawal_popup_low_error));
+                wTextProofIncome.setText(getString(R.string.loan_withdrawal_popup_low_error_detail));
+                setAnimation();
+                touchToDismiss(overlay_type);
+                mRelPopContainer.setAnimation(mFadeInAnimation);
+                mRelRootContainer.setAnimation(mPopEnterAnimation);
+                mView.findViewById(R.id.btnOk)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startLoanExitAnimation();
                             }
                         });
                 break;
@@ -297,6 +317,29 @@ public class PopWindowValidationMessage {
         mRelRootContainer.startAnimation(animation);
     }
 
+    private void startLoanExitAnimation() {
+        TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+        animation.setFillAfter(true);
+        animation.setDuration(600);
+        animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                dismissLayout();
+                showLoanStatusBar((Activity) mContext);
+            }
+        });
+        mRelRootContainer.startAnimation(animation);
+    }
+
     public void touchToDismiss(final OVERLAY_TYPE overlay_type) {
         mDarkenScreen.setTouchable(true);
         mDarkenScreen.setTouchInterceptor(new View.OnTouchListener() {
@@ -338,6 +381,7 @@ public class PopWindowValidationMessage {
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         window.clearFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        Utils.updateStatusBarBackground(activity, R.color.purple);
     }
 
     public void showStatusBar(Activity activity) {
@@ -348,7 +392,17 @@ public class PopWindowValidationMessage {
         window.addFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Utils.updateStatusBarBackground(activity);
+        Utils.updateStatusBarBackground(activity, R.color.purple);
     }
 
+    public void showLoanStatusBar(Activity activity) {
+        Window window = activity.getWindow();
+        View decorView = activity.getWindow().getDecorView();
+        int visibility = View.SYSTEM_UI_FLAG_VISIBLE;
+        decorView.setSystemUiVisibility(visibility);
+        window.addFlags(
+                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Utils.updateStatusBarBackground(activity, R.color.purple);
+    }
 }
