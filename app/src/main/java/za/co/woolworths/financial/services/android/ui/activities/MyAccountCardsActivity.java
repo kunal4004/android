@@ -44,10 +44,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragme
 import za.co.woolworths.financial.services.android.ui.views.WCustomPager;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WViewPager;
+import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class MyAccountCardsActivity extends AppCompatActivity implements View.OnClickListener {
+public class MyAccountCardsActivity extends AppCompatActivity implements View.OnClickListener, PersonalLoanAmount {
 
     WViewPager pager;
     WCustomPager fragmentPager;
@@ -63,6 +64,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     private boolean containsStoreCard;
     private boolean containsCreditCard;
     private boolean containsPersonalLoan;
+    private int wMinDrawnDownAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,7 +184,8 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                finish();
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                 return true;
         }
         return false;
@@ -191,7 +194,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     private void handleAccountsResponse(AccountsResponse accountsResponse) {
@@ -319,12 +321,22 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                 } else {
                     switch (pager.getCurrentItem()) { //logged in
                         case 2:
-
+                            mSharePreferenceHelper.save("", "lw_amount_drawn_cent");
+                            Intent openWithdrawCashNow = new Intent(MyAccountCardsActivity.this, LoanWithdrawalActivity.class);
+                            openWithdrawCashNow.putExtra("minDrawnDownAmount", wMinDrawnDownAmount);
+                            startActivity(openWithdrawCashNow);
+                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                             break;
                     }
                 }
                 break;
         }
+    }
+
+    @Override
+    public void minDrawnAmount(int amount) {
+        this.wMinDrawnDownAmount = amount;
+
     }
 
     public static class MyAccountCardsFragment extends Fragment {

@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
@@ -439,9 +438,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
-    /**
-     * Hides the soft keyboard
-     */
+
     public void hideSoftKeyboard() {
         try {
             if (getCurrentFocus() != null) {

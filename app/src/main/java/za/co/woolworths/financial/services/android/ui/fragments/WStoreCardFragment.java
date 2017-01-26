@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -17,7 +16,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -57,10 +55,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     public WTextView txtIncreseLimit;
 
     String productOfferingId;
-    private ProgressDialog mGetActiveOfferProgressDialog;
     WoolworthsApplication woolworthsApplication;
     ConnectionDetector connectionDetector;
     private ProgressBar mProgressCreditLimit;
+
     private boolean isOfferActive = true;
     private ImageView mImageArrow;
     private PopWindowValidationMessage mPopWindowValidationMessage;
@@ -216,24 +214,21 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     public void enableIncreaseLimit() {
         txtIncreseLimit.setEnabled(true);
         txtIncreseLimit.setTextColor(Color.BLACK);
+        txtIncreseLimit.setAlpha(1);
         mImageArrow.setImageAlpha(255);
     }
 
     public void disableIncreaseLimit() {
         txtIncreseLimit.setEnabled(false);
         txtIncreseLimit.setTextColor(Color.GRAY);
-        mImageArrow.setImageAlpha(50);
+        mImageArrow.setImageAlpha(75);
     }
 
     private String setTypeFace(SpannableString value) {
         Typeface mMyriaProFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Regular.otf");
-        // dueDate.setTypeface(mMyriaProFont);
-        // minAmountDue.setTypeface(mMyriaProFont);
-        // currentBalance.setTypeface(mMyriaProFont);
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(value);
         spannableStringBuilder.setSpan(new CustomTypefaceSpan("", mMyriaProFont), 0, value.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         spannableStringBuilder.setSpan(new AbsoluteSizeSpan(15, true), 0, value.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
         return spannableStringBuilder.toString();
     }
 

@@ -127,7 +127,6 @@
                     android:layout_height="24dp"
                     android:layout_marginLeft="@dimen/bank_spacing_width"
                     android:visibility="gone" />
-
             </LinearLayout>
 
 
