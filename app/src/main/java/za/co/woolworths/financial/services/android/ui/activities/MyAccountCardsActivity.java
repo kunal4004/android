@@ -60,6 +60,9 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     private Button mBtnApplyNow;
     private boolean cardsHasAccount = false;
     private int position;
+    private boolean containsStoreCard;
+    private boolean containsCreditCard;
+    private boolean containsPersonalLoan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,7 +200,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
 
                 ((WoolworthsApplication) getApplication()).getUserManager().setAccounts(accountsResponse);
                 List<Account> accountList = accountsResponse.accountList;
-                boolean containsStoreCard = false, containsCreditCard = false, containsPersonalLoan = false;
                 if (accountList != null) {
                     cards.clear();
                     cards.add(R.drawable.w_store_card);

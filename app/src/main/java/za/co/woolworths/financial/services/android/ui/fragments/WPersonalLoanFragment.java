@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,12 +15,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
+import java.text.ParseException;
 import java.util.List;
 
+import za.co.wigroup.logger.lib.WiGroupLogger;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
@@ -36,6 +40,8 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+
+import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 
 /**
@@ -56,7 +62,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     String productOfferingId;
     private WoolworthsApplication woolworthsApplication;
     private ConnectionDetector connectionDetector;
-    private WebView mProgressCreditLimit;
+    private ProgressBar mProgressCreditLimit;
     private boolean isOfferActive = true;
     private ImageView mImageArrow;
     private PopWindowValidationMessage mPopWindowValidationMessage;
@@ -78,9 +84,10 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         withdrawCashNow = (WTextView) view.findViewById(R.id.withdrawCashNow);
         transactions = (WTextView) view.findViewById(R.id.txtTransactions);
         txtIncreseLimit = (WTextView) view.findViewById(R.id.txtIncreseLimit);
-        mProgressCreditLimit = (WebView) view.findViewById(R.id.progressCreditLimit);
+        mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
+        mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+
         mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
-        mProgressCreditLimit.loadUrl("file:///android_asset/web/pulse.html");
         withdrawCashNow.setVisibility(View.VISIBLE);
         withdrawCashNow.setOnClickListener(this);
         txtIncreseLimit.setOnClickListener(this);
@@ -135,16 +142,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 //                    }
                     minAmountDue.setText(removeNegativeSymbol(WFormatter.formatAmount(p.minimumAmountDue)));
                     currentBalance.setText(removeNegativeSymbol(WFormatter.formatAmount(p.currentBalance)));
-
                     try {
                         dueDate.setText(WFormatter.formatDate(p.paymentDueDate));
-                    } catch (Exception ex) {
-                        Log.e("exception", ex.toString());
+                    } catch (ParseException ex) {
+                        dueDate.setText(p.paymentDueDate);
                     }
                 }
             }
         }
-        setTextSize();
     }
 
     @Override
