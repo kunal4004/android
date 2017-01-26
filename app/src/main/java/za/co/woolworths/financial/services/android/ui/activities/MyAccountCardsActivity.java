@@ -4,11 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -46,11 +43,12 @@ import za.co.woolworths.financial.services.android.ui.views.WObservableScrollVie
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WViewPager;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
+import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implements View.OnClickListener, ObservableScrollViewCallbacks {
+public class MyAccountCardsActivity extends AppCompatActivity implements View.OnClickListener, PersonalLoanAmount, ObservableScrollViewCallbacks {
 
     WViewPager pager;
     WCustomPager fragmentPager;
@@ -60,11 +58,13 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
     private SharePreferenceHelper mSharePreferenceHelper;
     ArrayList<Integer> cards;
     private Toolbar mToolbar;
-    private CoordinatorLayout mCoordinatorLayout;
     private Button mBtnApplyNow;
+
+    private boolean cardsHasAccount = false;
+    private int wMinDrawnDownAmount;
     private WObservableScrollView mWObservableScrollView;
+    private int mScrollY;
     private ActionBar actionBar;
-    private int mScrollY = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +73,7 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
         setContentView(R.layout.activity_my_accounts_offline_layout);
         setActionBar();
         init();
-        mSharePreferenceHelper = SharePreferenceHelper.getInstance(MyAccountCardsNotLoggedActivity.this);
+        mSharePreferenceHelper = SharePreferenceHelper.getInstance(MyAccountCardsActivity.this);
         getScreenResolution(this);
         mWObservableScrollView.setScrollViewCallbacks(this);
         fragmentPager = (WCustomPager) findViewById(R.id.fragmentpager);
@@ -101,7 +101,8 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
             public void onPageScrollStateChanged(int state) {
             }
         });
-        if (getIntent().hasExtra("accounts")) {
+        cardsHasAccount = getIntent().hasExtra("accounts");
+        if (cardsHasAccount) {
             AccountsResponse accountsResponse = new Gson().fromJson(getIntent().getExtras().getString("accounts"), AccountsResponse.class);
             handleAccountsResponse(accountsResponse);
         } else {
@@ -115,7 +116,6 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
             cards.add(R.drawable.w_credi_card);
             cards.add(R.drawable.w_personal_loan_card);
             setUpAdapter(cards);
-
         }
 
         mSharePreferenceHelper.save("acc_card_activity", "acc_card_activity");
@@ -128,7 +128,6 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#ffffff")));
             getSupportActionBar().setTitle(null);
         }
     }
@@ -137,7 +136,6 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
         mWoolworthsApplication = (WoolworthsApplication) getApplication();
         toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
         pager = (WViewPager) findViewById(R.id.myAccountsCardPager);
-        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.rootLayout);
         mBtnApplyNow = (Button) findViewById(R.id.btnApplyNow);
         mWObservableScrollView = (WObservableScrollView) findViewById(R.id.nest_scrollview);
         mBtnApplyNow.setOnClickListener(this);
@@ -148,14 +146,13 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            MyAccountCardsNotLoggedActivity.this.finish();
+            MyAccountCardsActivity.this.finish();
         }
     };
 
     private void dynamicToolbarColor(int color) {
-        int mColor = ContextCompat.getColor(MyAccountCardsNotLoggedActivity.this, color);
+        int mColor = ContextCompat.getColor(MyAccountCardsActivity.this, color);
         mToolbar.setBackgroundColor((mColor));
-        mCoordinatorLayout.setBackgroundColor(mColor);
     }
 
     public void changeViewPagerAndActionBarBackground(int position) {
@@ -280,13 +277,13 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
     public void setStatusBarColor(int position) {
         switch (position) {
             case 0:
-                Utils.updateStatusBarBackground(MyAccountCardsNotLoggedActivity.this, R.color.cli_store_card);
+                Utils.updateStatusBarBackground(MyAccountCardsActivity.this, R.color.cli_store_card);
                 break;
             case 1:
-                Utils.updateStatusBarBackground(MyAccountCardsNotLoggedActivity.this, R.color.cli_credit_card);
+                Utils.updateStatusBarBackground(MyAccountCardsActivity.this, R.color.cli_credit_card);
                 break;
             case 2:
-                Utils.updateStatusBarBackground(MyAccountCardsNotLoggedActivity.this, R.color.cli_personal_loan);
+                Utils.updateStatusBarBackground(MyAccountCardsActivity.this, R.color.cli_personal_loan);
                 break;
             default:
                 break;
@@ -307,23 +304,43 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnApplyNow:
-                switch (pager.getCurrentItem()) {
-                    case 0:
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getApplyNowLink())));
-                        break;
 
-                    case 1:
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getApplyNowLink())));
-                        break;
+                if (!cardsHasAccount) { //not logged in
 
-                    case 2:
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getApplyNowLink())));
-                        break;
+                    switch (pager.getCurrentItem()) {
+                        case 0:
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getApplyNowLink())));
+                            break;
+
+                        case 1:
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getApplyNowLink())));
+                            break;
+
+                        case 2:
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getApplyNowLink())));
+                            break;
+                    }
+
+                } else {
+                    switch (pager.getCurrentItem()) { //logged in
+                        case 2:
+                            mSharePreferenceHelper.save("", "lw_amount_drawn_cent");
+                            Intent openWithdrawCashNow = new Intent(MyAccountCardsActivity.this, LoanWithdrawalActivity.class);
+                            openWithdrawCashNow.putExtra("minDrawnDownAmount", wMinDrawnDownAmount);
+                            startActivity(openWithdrawCashNow);
+                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                            break;
+                    }
                 }
                 break;
         }
     }
 
+    @Override
+    public void minDrawnAmount(int amount) {
+        this.wMinDrawnDownAmount = amount;
+
+    }
 
     public static class MyAccountCardsFragment extends Fragment {
 
@@ -336,7 +353,7 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
     }
 
     public void setUpAdapter(ArrayList<Integer> cardsList) {
-        pager.setAdapter(new MyAccountsCardsAdapter(MyAccountCardsNotLoggedActivity.this, cardsList));
+        pager.setAdapter(new MyAccountsCardsAdapter(MyAccountCardsActivity.this, cardsList));
         pager.setCurrentItem(getIntent().getIntExtra("position", 0));
     }
 
@@ -360,17 +377,37 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
     }
 
     public void changeButtonColor(int position) {
-        switch (position) {
-
-            case 0:
-                mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsNotLoggedActivity.this, R.color.cli_store_card));
-                break;
-            case 1:
-                mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsNotLoggedActivity.this, R.color.cli_credit_card));
-                break;
-            case 2:
-                mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsNotLoggedActivity.this, R.color.purple));
-                break;
+        // not logged in
+        mBtnApplyNow.setVisibility(View.GONE);
+        if (!cardsHasAccount) {
+            switch (position) {
+                case 0:
+                    mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_store_card));
+                    mBtnApplyNow.setVisibility(View.VISIBLE);
+                    break;
+                case 1:
+                    mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_credit_card));
+                    mBtnApplyNow.setVisibility(View.VISIBLE);
+                    break;
+                case 2:
+                    mBtnApplyNow.setVisibility(View.VISIBLE);
+                    mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.purple));
+                    break;
+            }
+        } else { // logged in
+            switch (position) {
+                case 0:
+                    mBtnApplyNow.setVisibility(View.GONE);
+                    break;
+                case 1:
+                    mBtnApplyNow.setVisibility(View.GONE);
+                    break;
+                case 2:
+                    mBtnApplyNow.setText(getString(R.string.withdraw_cash_now));
+                    mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.purple));
+                    mBtnApplyNow.setVisibility(View.VISIBLE);
+                    break;
+            }
         }
     }
 
@@ -388,20 +425,20 @@ public class MyAccountCardsNotLoggedActivity extends AppCompatActivity implement
     }
 
     @Override
-    public void onDownMotionEvent() {}
+    public void onDownMotionEvent() {
+    }
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        if (scrollState == scrollState.UP) {
+        if (scrollState.UP == scrollState) {
             hideViews();
         } else {
             if (scrollState == scrollState.DOWN) {
-                Log.e("mScrollY--",String.valueOf(mScrollY));
-                if (mScrollY < 10)
+                if (mScrollY < 10) {
                     showViews();
+                }
             }
         }
     }
 }
-
 

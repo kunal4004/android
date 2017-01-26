@@ -16,6 +16,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:elevation="10dp"
             app:layout_collapseMode="pin">
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView

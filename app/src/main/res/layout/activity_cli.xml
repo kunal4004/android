@@ -15,7 +15,10 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+<<<<<<< HEAD
             android:layout_gravity="fill_vertical"
+=======
+>>>>>>> fd7757a63f0c36f7d062a34707511a6c545f7958
             app:contentScrim="@color/black"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:statusBarScrim="@null"

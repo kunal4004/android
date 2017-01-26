@@ -353,6 +353,12 @@
     <string name="loan_withdrawal_title">loan withdrawal</string>
     <string name="your_cash_will_be_in_your_account">Your cash will be in your\naccount in 48 hours</string>
     <string name="loan_withdrawal_popup_error">Loan request too high</string>
+    <string name="loan_withdrawal_popup_low_error">Loan request too low</string>
+    <string name="loan_withdrawal_popup_low_error_detail">Unfortunately you do not meet the requirements for a loan of this amount. The minimum withdrawal amount is R1000</string>
+
+
+
+
     <string name="loan_withdrawal_popup_desc_err">Unfortunately you do not meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>
     <string name="issueing_loan">Processing your loan...</string>
 
@@ -433,5 +439,10 @@
     <string name="cli_text_with_bullet_2">I’ve applied for debt administration</string>
     <string name="cli_text_with_bullet_3">I’m currently insolvent</string>
     <string name="cli_text_with_bullet_4">I’m currently under debt review</string>
+
+    <string name="collect_credit_card_title">When collecting your credit card, bring the following:</string>
+    <string name="collect_credit_card_desc_1">A valid South African ID </string>
+    <string name="collect_credit_card_desc_2">Your latest three payslips or your last three months’ bank statements</string>
+    <string name="collect_credit_card_desc_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
 
 </resources>

@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.view.ViewPager;
@@ -72,10 +73,15 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
         fragmentPager.setPagingEnabled(true);
         //fragmentPager.setCurrentItem(getIntent().getIntExtra("position",0));
         changeViewPagerAndActionBarBackground(getIntent().getIntExtra("position",0));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            // there are problems with this on 4.0.3, probably also on 4.1
+            pager.setPageTransformer(true, new DepthPageTransformer());
+        }
+
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
+        }
 
             @Override
             public void onPageSelected(int position) {
@@ -87,8 +93,7 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
-        // dynamicToolbarColor();
-       // dynamicToolbarColor("#4f5051");
+
         if(getIntent().hasExtra("accounts"))
         {
             AccountsResponse accountsResponse=new Gson().fromJson(getIntent().getExtras().getString("accounts"),AccountsResponse.class);
@@ -212,4 +217,42 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
                 findViewById(R.id.no_internet).setVisibility(View.VISIBLE);
         }
     }
+
+    public class DepthPageTransformer implements ViewPager.PageTransformer {
+        private static final float MIN_SCALE = 0.8f;
+
+        public void transformPage(View view, float position) {
+            int pageWidth = view.getWidth();
+
+            if (position < -1) { // [-Infinity,-1)
+                // This page is way off-screen to the left.
+                view.setAlpha(0);
+
+            } else if (position <= 0) { // [-1,0]
+                // Use the default slide transition when moving to the left page
+                view.setAlpha(1);
+                view.setTranslationX(0);
+                view.setScaleX(1);
+                view.setScaleY(1);
+
+            } else if (position <= 1) { // (0,1]
+                // Fade the page out.
+                view.setAlpha(1 - position);
+
+                // Counteract the default slide transition
+                view.setTranslationX(pageWidth * -position);
+
+                // Scale the page down (between MIN_SCALE and 1)
+                float scaleFactor = MIN_SCALE
+                        + (1 - MIN_SCALE) * (1 - Math.abs(position));
+                view.setScaleX(scaleFactor);
+                view.setScaleY(scaleFactor);
+
+            } else { // (1,+Infinity]
+                // This page is way off-screen to the right.
+                view.setAlpha(0);
+            }
+        }
+    }
+
 }
