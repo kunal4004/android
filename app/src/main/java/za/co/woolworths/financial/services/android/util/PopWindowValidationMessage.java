@@ -200,7 +200,7 @@ public class PopWindowValidationMessage {
                 WTextView wTextTitle = (WTextView) mView.findViewById(R.id.title);
                 WTextView wTextProofIncome = (WTextView) mView.findViewById(R.id.textProofIncome);
                 wTextTitle.setText(getString(R.string.loan_withdrawal_popup_low_error));
-                wTextProofIncome.setText(getString(R.string.loan_withdrawal_popup_low_error_detail));
+                wTextProofIncome.setText(getString(R.string.loan_withdrawal_popup_low_error_detail).replace("1000",description));
                 setAnimation();
                 touchToDismiss(overlay_type);
                 mRelPopContainer.setAnimation(mFadeInAnimation);

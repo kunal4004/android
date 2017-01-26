@@ -1,13 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -48,6 +50,8 @@ import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener {
 
+
+    private PersonalLoanAmount personalLoanInfo;
     public WTextView availableBalance;
     public WTextView creditLimit;
     public WTextView dueDate;
@@ -115,6 +119,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                     productOfferingId = String.valueOf(p.productOfferingId);
                     woolworthsApplication.setProductOfferingId(p.productOfferingId);
                     mSharePreferenceHelper.save(String.valueOf(p.productOfferingId),"lw_product_offering_id");
+                    int minDrawnAmount = p.minDrawDownAmount;
+                    if (TextUtils.isEmpty(String.valueOf(minDrawnAmount))){
+                        minDrawnAmount=0;
+                    }
+                    Log.e("minDraw--",String.valueOf(minDrawnAmount));
+                    personalLoanInfo.minDrawnAmount(minDrawnAmount);
                     availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.availableFunds), 1, getActivity())));
                     mSharePreferenceHelper.save(availableBalance.getText().toString(),"lw_available_fund");
                     creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.creditLimit), 1, getActivity())));
@@ -252,4 +262,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         super.onResume();
         setTextSize();
     }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        personalLoanInfo = (PersonalLoanAmount) context;
+
+    }
 }
+

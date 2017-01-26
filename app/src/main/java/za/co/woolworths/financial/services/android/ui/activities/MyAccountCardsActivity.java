@@ -44,10 +44,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragme
 import za.co.woolworths.financial.services.android.ui.views.WCustomPager;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WViewPager;
+import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class MyAccountCardsActivity extends AppCompatActivity implements View.OnClickListener {
+public class MyAccountCardsActivity extends AppCompatActivity implements View.OnClickListener, PersonalLoanAmount {
 
     WViewPager pager;
     WCustomPager fragmentPager;
@@ -60,6 +61,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     private Button mBtnApplyNow;
     private boolean cardsHasAccount = false;
     private int position;
+    private int wMinDrawnDownAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -319,6 +321,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                         case 2:
                             mSharePreferenceHelper.save("", "lw_amount_drawn_cent");
                             Intent openWithdrawCashNow = new Intent(MyAccountCardsActivity.this, LoanWithdrawalActivity.class);
+                            openWithdrawCashNow.putExtra("minDrawnDownAmount", wMinDrawnDownAmount);
                             startActivity(openWithdrawCashNow);
                             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                             break;
@@ -326,6 +329,13 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                 }
                 break;
         }
+    }
+
+    @Override
+    public void minDrawnAmount(int amount) {
+        Log.e("minDraw-$$",String.valueOf(amount));
+        this.wMinDrawnDownAmount = amount;
+
     }
 
     public static class MyAccountCardsFragment extends Fragment {

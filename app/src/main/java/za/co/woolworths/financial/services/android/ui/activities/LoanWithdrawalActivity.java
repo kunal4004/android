@@ -58,6 +58,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
     private String mAvailableFunds;
     private WeakReference<WLoanEditTextView> mEditTextWeakReference;
     private WLoanEditTextView mEditText;
+    private int wminDrawnDownAmount = 0;
 
 
     @Override
@@ -71,6 +72,12 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
         setActionBar();
         initViews();
         setContent();
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            wminDrawnDownAmount = bundle.getInt("minDrawnDownAmount")/100;
+        }
+        Log.e("wminDrawnDownAmount", String.valueOf(wminDrawnDownAmount));
+
         String shareDrawDownAmount = mSharePreferenceHelper.getValue("lw_amount_drawn_cent");
         if (TextUtils.isEmpty(shareDrawDownAmount)) {
             mEditWithdrawalAmount.setText("R ");
@@ -206,7 +213,8 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                 previousScreen();
                 return true;
             case R.id.itemNextArrow:
-                if (getDrawnDownAmount() < 1000) {
+                Log.e("wminDrawnAmount", String.valueOf(wminDrawnDownAmount));
+                if (getDrawnDownAmount() < wminDrawnDownAmount) {
 
                     handler.postDelayed(new Runnable() {
                         @Override
@@ -217,7 +225,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            mPopWindowValidationMessage.displayValidationMessage("",
+                            mPopWindowValidationMessage.displayValidationMessage(String.valueOf(wminDrawnDownAmount),
                                     PopWindowValidationMessage.OVERLAY_TYPE.LOW_LOAN_AMOUNT)
                                     .setOnDismissListener(new PopupWindow.OnDismissListener() {
                                         @Override
@@ -228,7 +236,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                                     });
                         }
                     }, 200);
-                } else if (getDrawnDownAmount() >= 1000
+                } else if (getDrawnDownAmount() >= wminDrawnDownAmount
                         && getDrawnDownAmount() <= getAvailableFund()) {
                     handler.postDelayed(new Runnable() {
                         @Override
