@@ -439,9 +439,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
-    /**
-     * Hides the soft keyboard
-     */
+
     public void hideSoftKeyboard() {
         try {
             if (getCurrentFocus() != null) {
