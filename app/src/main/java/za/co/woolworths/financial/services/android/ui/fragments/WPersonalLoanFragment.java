@@ -89,7 +89,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         mProgressCreditLimit = (WebView)view.findViewById(R.id.progressCreditLimit);
         mImageArrow = (ImageView)view.findViewById(R.id.imgArrow);
         mProgressCreditLimit.loadUrl("file:///android_asset/web/pulse.html");
-        withdrawCashNow.setVisibility(View.VISIBLE);
+        withdrawCashNow.setVisibility(View.GONE);
         withdrawCashNow.setOnClickListener(this);
         txtIncreseLimit.setOnClickListener(this);
         transactions.setOnClickListener(this);
