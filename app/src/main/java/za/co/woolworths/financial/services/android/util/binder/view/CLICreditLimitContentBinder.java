@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
@@ -30,8 +30,9 @@ import za.co.woolworths.financial.services.android.util.binder.DataBinder;
 public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitContentBinder.ViewHolder> {
 
     public interface OnClickListener {
-         void onClick(View v, int position);
-         void scrollToBottom();
+        void onClick(View v, int position);
+
+        void scrollToBottom();
     }
 
     private OnClickListener onClickListener;
@@ -52,20 +53,20 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
     @Override
     public void bindViewHolder(final ViewHolder holder, final int position) {
         CreditLimit creditLimit = mDataSet.get(position);
-          if (creditLimit!=null) {
-                holder.mTxtACreditLimit.setText(creditLimit.getTitle());
-                holder.mTextAmount.setTag(position);
-                holder.mTextAmount.setVisibility(View.VISIBLE);
-          }
+        if (creditLimit != null) {
+            holder.mTxtACreditLimit.setText(creditLimit.getTitle());
+            holder.mTextAmount.setTag(position);
+            holder.mTextAmount.setVisibility(View.VISIBLE);
+        }
 
         holder.mImgInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onClickListener.onClick(view,position);
+                onClickListener.onClick(view, position);
             }
         });
 
-        if (position==7){
+        if (position == 7) {
             holder.mTextAmount.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
             holder.mTextAmount.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -98,17 +99,15 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        WTextView mTxtACreditLimit;
-        WEditTextView mTextAmount;
-        ImageView mImgInfo;
-        LinearLayout mLinRootView;
-        private String current;
+        private WTextView mTxtACreditLimit;
+        private WEditTextView mTextAmount;
+        private ImageView mImgInfo;
+
         public ViewHolder(View view) {
             super(view);
             mTxtACreditLimit = (WTextView) view.findViewById(R.id.textACreditLimit);
             mTextAmount = (WEditTextView) view.findViewById(R.id.textAmount);
             mImgInfo = (ImageView) view.findViewById(R.id.imgInfo);
-            mLinRootView = (LinearLayout) view.findViewById(R.id.linRootView);
             mTextAmount.addTextChangedListener(new NumberTextWatcher(mTextAmount));
         }
     }
@@ -117,15 +116,12 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
         this.onClickListener = onClickListener;
     }
 
-    public String newAmount(String amount){
-        if(amount.length()>0) {
-            return amount.replaceAll("[^0-9.]", "");
-        }else {
-            return "0";
-        }
+    private String newAmount(String amount) {
+        Log.e("new_Amount_amount", amount);
+        return amount.replaceAll("[^0-9.]", "");
     }
 
-    public class NumberTextWatcher implements TextWatcher {
+    private class NumberTextWatcher implements TextWatcher {
 
         private DecimalFormat df;
         private DecimalFormat dfnd;
@@ -133,8 +129,7 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
 
         private EditText et;
 
-        public NumberTextWatcher(EditText et)
-        {
+        private NumberTextWatcher(EditText et) {
             df = new DecimalFormat("#,###.##");
             df.setDecimalSeparatorAlwaysShown(true);
             dfnd = new DecimalFormat("#,###");
@@ -146,34 +141,35 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
         private static final String TAG = "NumberTextWatcher";
 
         @Override
-        public void afterTextChanged(Editable s)
-        {
+        public void afterTextChanged(Editable s) {
             int position = (int) et.getTag();
             et.removeTextChangedListener(this);
 
             try {
                 int inilen, endlen;
                 inilen = et.getText().length();
-                String v = s.toString().replace(String.valueOf(df.getDecimalFormatSymbols().getGroupingSeparator()), "").replace(" ", "").replace("R ", "").replace("R", "");
+                String v = s.toString().replace(String.valueOf(df.getDecimalFormatSymbols().getGroupingSeparator()), "").replaceAll("[^0-9.]", "");
                 Number n = null;
                 if (TextUtils.isEmpty(v)) {
                     et.setText("");
+                    if (mDataSet != null)
+                        mDataSet.get(position).setAmount("");
                 } else {
                     try {
                         n = df.parse(v);
-                    } catch (ParseException e) {
+                    } catch (ParseException ignored) {
                     }
                     int cp = et.getSelectionStart();
-                    String finalAmount="";
+                    String finalAmount;
                     if (hasFractionalPart) {
-                        finalAmount = "" + df.format(n).replace(".", " ").replace(","," ");
+                        finalAmount = "" + df.format(n).replace(".", " ").replace(",", " ");
                     } else {
-                        finalAmount = "" + dfnd.format(n).replace(".", " ").replace(","," ");
+                        finalAmount = "" + dfnd.format(n).replace(".", " ").replace(",", " ");
                     }
                     et.setText(finalAmount);
-                    if (mDataSet != null) {
-                            mDataSet.get(position).setAmount(newAmount(String.valueOf(s)));
-                    }
+                    if (mDataSet != null)
+                        mDataSet.get(position).setAmount(newAmount(String.valueOf(s)));
+
                     endlen = et.getText().length();
                     int sel = (cp + (endlen - inilen));
                     if (sel > 0 && sel <= et.getText().length()) {
@@ -183,27 +179,19 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
                         et.setSelection(et.getText().length());
                     }
                 }
-            }catch(NumberFormatException nfe){
+            } catch (NumberFormatException ignored) {
             }
             et.addTextChangedListener(this);
         }
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after)
-        {
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count)
-        {
-            if (s.toString().contains(String.valueOf(df.getDecimalFormatSymbols().getDecimalSeparator())))
-            {
-                hasFractionalPart = true;
-            } else {
-                hasFractionalPart = false;
-            }
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            hasFractionalPart = s.toString().contains(String.valueOf(df.getDecimalFormatSymbols().getDecimalSeparator()));
         }
-
     }
 
 }

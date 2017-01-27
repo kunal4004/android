@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,54 +36,55 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     private WTextView mTextBeforeStart;
     private WTextView mTextClIContent;
     private Intent mIntent;
-    private int mPosition=0;
+    private int mPosition = 0;
     private WButton mBtnContinue;
     final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
     private ImageView mImageAccount;
-    private ProgressDialog mGetActiveOfferProgressDialog;
     private WoolworthsApplication woolworthsApplication;
+    private AppBarLayout mAppBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cli);
-         woolworthsApplication = (WoolworthsApplication)getApplication();
+        woolworthsApplication = (WoolworthsApplication) getApplication();
         Utils.updateStatusBarBackground(CLIActivity.this);
         initViews();
         setCurrentIndex();
         setListener();
         setActionBar();
         setPagerCard(woolworthsApplication.getCliCardPosition());
-        setAppBarDragging(false);
 
-        //getActiveOffer();
-        //loadOffer();
+
     }
 
-    public void setCurrentIndex(){
+    public void setCurrentIndex() {
         mIntent = getIntent();
-        if (mIntent!=null){
-            mPosition = mIntent.getIntExtra("position",0);
+        if (mIntent != null) {
+            mPosition = mIntent.getIntExtra("position", 0);
         }
     }
 
     private void initViews() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setCollapsible(false);
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         mTextToolbar = (WTextView) findViewById(R.id.toolbarText);
         mTextToolbar.setGravity(Gravity.LEFT);
         mTextCreditLimit = (WTextView) findViewById(R.id.textCreditLimit);
         mTextBeforeStart = (WTextView) findViewById(R.id.textBeforeStart);
         mTextClIContent = (WTextView) findViewById(R.id.textClIContent);
-        mBtnContinue = (WButton)findViewById(R.id.btnContinue);
-        mImageAccount = (ImageView)findViewById(R.id.myaccountsCard);
+        mBtnContinue = (WButton) findViewById(R.id.btnContinue);
+        mImageAccount = (ImageView) findViewById(R.id.myaccountsCard);
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.mAppBarLayout);
+
     }
 
-    public void setListener(){
+    public void setListener() {
         mBtnContinue.setOnClickListener(this);
     }
 
-    private void setActionBar(){
+    private void setActionBar() {
         setSupportActionBar(mToolbar);
         ActionBar mActionBar = getSupportActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -93,26 +95,27 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     private void setPagerCard(int id) {
-        int[] cards={R.drawable.w_store_card,R.drawable.w_credi_card,R.drawable.w_personal_loan_card};
+        int[] cards = {R.drawable.w_store_card, R.drawable.w_credi_card, R.drawable.w_personal_loan_card};
         mImageAccount.setImageResource(cards[id]);
-       setCLIContent(id);
+        setCLIContent(id);
     }
 
-    public void setCLIContent(int position){
-        ArrayList<CLI>arrCLI = arrCLIContent();
+    public void setCLIContent(int position) {
+        ArrayList<CLI> arrCLI = arrCLIContent();
         CLI cli = arrCLI.get(position);
         int mColor = ContextCompat.getColor(CLIActivity.this, cli.getmColor());
         mTextToolbar.setText(cli.getmTitle());
         mCollapsingToolbarLayout.setBackgroundResource(cli.getmImage());
-        mCollapsingToolbarLayout.setContentScrimColor(mColor);
+        mCollapsingToolbarLayout.setContentScrimColor(Color.TRANSPARENT);
         mTextCreditLimit.setText(cli.getmSubTitle());
         mTextBeforeStart.setText(cli.getmBoldText());
         mTextClIContent.setText(cli.getmDescription());
-        Utils.updateStatusBarBackground(CLIActivity.this,cli.getmColor());
+        mToolbar.setBackgroundColor(mColor);
+        Utils.updateStatusBarBackground(CLIActivity.this, cli.getmColor());
     }
 
-    private ArrayList<CLI> arrCLIContent(){
-        ArrayList<CLI>arrCLI = new ArrayList<>();
+    private ArrayList<CLI> arrCLIContent() {
+        ArrayList<CLI> arrCLI = new ArrayList<>();
         //store card
         arrCLI.add(new CLI(R.drawable.accounts_storecard_background,
                 R.color.cli_store_card,
@@ -120,14 +123,6 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
                 getString(R.string.cli_credit_limit_increase),
                 getString(R.string.cli_crd_before_we_get_started),
                 getString(R.string.cli_activity_desc)));
-
-        //gold credit card
-//        arrCLI.add(new CLI(R.drawable.accounts_blackcreditcard_background,
-//                R.color.cli_credit_card,
-//                getString(R.string.credit_card),
-//                getString(R.string.cli_gold_crd_credit_limit_increase),
-//                getString(R.string.cli_gold_crd_before_we_get_started),
-//                getString(R.string.cli_gold_crd_credit_card_content)));
 
         //black credit card
         arrCLI.add(new CLI(R.drawable.accounts_blackcreditcard_background,
@@ -148,7 +143,6 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     private void setAppBarDragging(final boolean newValue) {
-        AppBarLayout mAppBarLayout = (AppBarLayout) findViewById(R.id.mAppBarLayout);
         CoordinatorLayout.LayoutParams params =
                 (CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams();
         AppBarLayout.Behavior behavior = new AppBarLayout.Behavior();
@@ -175,20 +169,33 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(0,0);
+        overridePendingTransition(0, 0);
     }
-
 
     @Override
     public void onClick(View view) {
-        switch(view.getId()){
+        switch (view.getId()) {
             case R.id.btnContinue:
                 mBtnContinue.startAnimation(buttonClick);
-                Intent openCLIStepIndicator = new Intent(CLIActivity.this,CLISupplyInfoActivity.class);
+                Intent openCLIStepIndicator = new Intent(CLIActivity.this, CLISupplyInfoActivity.class);
                 startActivity(openCLIStepIndicator);
                 finish();
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
         }
     }
+
+    public void lockAppBar(boolean locked) {
+        if(locked){
+            mAppBarLayout.setExpanded(false, true);
+            int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
+            CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams)mAppBarLayout.getLayoutParams();
+            lp.height = px;
+            mAppBarLayout.setLayoutParams(lp);
+        }else{
+            mAppBarLayout.setExpanded(true, false);
+            mAppBarLayout.setActivated(true);
+        }
+    }
+
 }

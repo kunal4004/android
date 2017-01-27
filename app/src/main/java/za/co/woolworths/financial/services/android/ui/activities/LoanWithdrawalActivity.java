@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -42,11 +44,8 @@ import za.co.woolworths.financial.services.android.util.Utils;
 public class LoanWithdrawalActivity extends AppCompatActivity {
 
     private WLoanEditTextView mEditWithdrawalAmount;
-    private MenuItem menuItem;
-    private WeakReference<WLoanEditTextView> mEditTextWeakReference;
     private WTextView mTextAvailableFund;
     private WTextView mTextCreditLimit;
-    private WLoanEditTextView mEditText;
     private Menu mMenu;
     private RelativeLayout mRelLoanWithdrawal;
     private SharePreferenceHelper mSharePreferenceHelper;
@@ -57,6 +56,10 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
     private String mDrawnDownAmount;
     private String mCreditLimit;
     private String mAvailableFunds;
+    private WeakReference<WLoanEditTextView> mEditTextWeakReference;
+    private WLoanEditTextView mEditText;
+    private int wminDrawnDownAmount = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,12 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
         setActionBar();
         initViews();
         setContent();
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            wminDrawnDownAmount = bundle.getInt("minDrawnDownAmount")/100;
+        }
+        Log.e("wminDrawnDownAmount", String.valueOf(wminDrawnDownAmount));
+
         String shareDrawDownAmount = mSharePreferenceHelper.getValue("lw_amount_drawn_cent");
         if (TextUtils.isEmpty(shareDrawDownAmount)) {
             mEditWithdrawalAmount.setText("R ");
@@ -171,6 +180,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                 mEditText.addTextChangedListener(this);
             }
         });
+
         WLoanEditTextView.OnKeyPreImeListener onKeyPreImeListener =
                 new WLoanEditTextView.OnKeyPreImeListener() {
                     @Override
@@ -192,8 +202,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         this.mMenu = menu;
-        boolean isNextArrow = false;
-        menuItemVisible(menu, isNextArrow);
+        menuItemVisible(menu, false);
         return true;
     }
 
@@ -204,16 +213,67 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                 previousScreen();
                 return true;
             case R.id.itemNextArrow:
+                Log.e("wminDrawnAmount", String.valueOf(wminDrawnDownAmount));
+                if (getDrawnDownAmount() < wminDrawnDownAmount) {
 
-                if (getDrawnDownAmount() >= 1000
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            hideKeyboard();
+                        }
+                    }, 100);
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mPopWindowValidationMessage.displayValidationMessage(String.valueOf(wminDrawnDownAmount),
+                                    PopWindowValidationMessage.OVERLAY_TYPE.LOW_LOAN_AMOUNT)
+                                    .setOnDismissListener(new PopupWindow.OnDismissListener() {
+                                        @Override
+                                        public void onDismiss() {
+                                            showSoftKeyboard();
+                                            Utils.updateStatusBarBackground(LoanWithdrawalActivity.this, R.color.purple);
+                                        }
+                                    });
+                        }
+                    }, 200);
+                } else if (getDrawnDownAmount() >= wminDrawnDownAmount
                         && getDrawnDownAmount() <= getAvailableFund()) {
-                    mDrawnDownAmount = mEditWithdrawalAmount.getText().toString();
-                    mCreditLimit = amountInCents(mTextCreditLimit.getText().toString());
-                    mAvailableFunds = amountInCents(mTextAvailableFund.getText().toString());
-                    loanRequest();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            hideKeyboard();
+                        }
+                    }, 100);
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDrawnDownAmount = mEditWithdrawalAmount.getText().toString();
+                            mCreditLimit = amountInCents(mTextCreditLimit.getText().toString());
+                            mAvailableFunds = amountInCents(mTextAvailableFund.getText().toString());
+                            loanRequest();
+                        }
+                    }, 200);
                 } else {
-                    mPopWindowValidationMessage.displayValidationMessage("",
-                            PopWindowValidationMessage.OVERLAY_TYPE.HIGH_LOAN_AMOUNT);
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            hideKeyboard();
+                        }
+                    }, 100);
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mPopWindowValidationMessage.displayValidationMessage("",
+                                    PopWindowValidationMessage.OVERLAY_TYPE.HIGH_LOAN_AMOUNT)
+                                    .setOnDismissListener(new PopupWindow.OnDismissListener() {
+                                        @Override
+                                        public void onDismiss() {
+                                            showSoftKeyboard();
+                                            Utils.updateStatusBarBackground(LoanWithdrawalActivity.this, R.color.purple);
+                                        }
+                                    });
+                        }
+                    }, 200);
                 }
                 break;
         }
@@ -243,7 +303,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
 
     public void menuItemVisible(Menu menu, boolean isVisible) {
         try {
-            menuItem = menu.findItem(R.id.itemNextArrow);
+            MenuItem menuItem = menu.findItem(R.id.itemNextArrow);
             if (isVisible) {
                 menuItem.setEnabled(true);
                 menuItem.getIcon().setAlpha(255);
@@ -291,7 +351,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                     mSharePreferenceHelper.save(String.valueOf(drawnDownAmountCent), "lw_amount_drawn_cent");
                     IssueLoanRequest issueLoanRequest = new IssueLoanRequest(productOfferingId,
                             drawnDownAmountCent,
-                            repaymentPeriod(drawnDownAmount),
+                            repaymentPeriod(creditLimit),
                             creditLimit);
                     return ((WoolworthsApplication) getApplication()).getApi().issueLoan(issueLoanRequest);
                 }
@@ -323,7 +383,14 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                             String responseDesc = issueLoanResponse.response.desc;
                             if (responseDesc != null) {
                                 mPopWindowValidationMessage.displayValidationMessage(responseDesc,
-                                        PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+                                        PopWindowValidationMessage.OVERLAY_TYPE.ERROR)
+                                        .setOnDismissListener(new PopupWindow.OnDismissListener() {
+                                            @Override
+                                            public void onDismiss() {
+                                                showSoftKeyboard();
+                                                Utils.updateStatusBarBackground(LoanWithdrawalActivity.this, R.color.purple);
+                                            }
+                                        });
                             }
                         } catch (NullPointerException ignored) {
                         }
@@ -349,7 +416,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
     }
 
     private int repaymentPeriod(int amount) {
-        if (amount <= 10000) {
+        if (amount < 1000000) {
             return 36;
         } else {
             return 60;
@@ -391,5 +458,10 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
 
     public String amountInCents(String edit) {
         return edit.replaceAll("[\\D]", "");
+    }
+
+    public void showSoftKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(mEditWithdrawalAmount, InputMethodManager.SHOW_IMPLICIT);
     }
 }

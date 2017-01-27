@@ -179,7 +179,8 @@
     <string name="your_in_control_description">With a Woolworths Store Card you decide how much you want to repay each month and your preferred payment method.</string>
     <string name="easy_payment_methods">Easy payment methods</string>
     <string name="easy_payment_methods_description">Your purchases are automatically billed to your account and you’ll get a monthly statement. You could pay your account using any of the below methods:</string>
-    <string name="convenient">Convenient</string> f
+    <string name="convenient">Convenient</string>
+    f
     <string name="sc_points_to_qualify">\u2022 \t Be 18 or older \n\u2022 \t Have a valid RSA ID number \n\u2022 \t Earn a minimum of R2000 per month</string>
     <string name="please_enter_the_amount">PLEASE ENTER THE AMOUNT YOU WOULD LIKE TO WITHDRAW:</string>
     <string name="confirm_loan_withdrawal">PLEASE CONFIRM YOUR LOAN\nREQUEST DETAILS:</string>
@@ -250,7 +251,7 @@
     <string name="cli_continue">continue</string>
     <string name="cli_credit_limit_increase">credit limit increase</string>
     <string name="cli_before_we_get_started">before we get started</string>
-<string name="cli_store_card_content">To help us calculate how much additional credit you can qualify for, please answer a few quick and easy questions.  Once you have completed this, you will need to submit proof of income in order for us to proceed with your application.</string>
+    <string name="cli_store_card_content">To help us calculate how much additional credit you can qualify for, please answer a few quick and easy questions.  Once you have completed this, you will need to submit proof of income in order for us to proceed with your application.</string>
     <string name="cli_gold_crd_credit_limit_increase">credit limit increase</string>
     <string name="cli_gold_crd_before_we_get_started">before we get started</string>
     <string name="cli_gold_crd_credit_card_content">To help us calculate how much additional credit you can qualify for, please submit proof of income and answer a few quick and easy questions</string>
@@ -325,7 +326,6 @@
     <string name="cli_amount_hint">R</string>
     <string name="cli_additional_credit_amount">How much additional credit would you like to apply for?</string>
     <string name="cli_apply_insolvency">DO ANY OF THE FOLLOWING APPLY TO YOU?</string>
-    <string name="cli_text_with_bullet">•    I’ve applied for insolvency debt counseling\n•    I’ve applied for debt administration\n•    I’m currently insolvent\n•    I’m currently under debt review</string>
     <string name="cli_solvency_agreement">I agree that Woolworths Financial Services may request and receive my confidential consumer credit information from any credit bureau or third party at any time, including obtaining a bureau score to determine my credit worthiness</string>
     <string name="cli_require_document">In order to complete your application, we\nrequire your latest 3 months’ bank statements or last 3 months payslips.</string>
     <string name="cli_email_required_email">Don’t have the required documents right now or need more detailed instructions?</string>
@@ -353,6 +353,12 @@
     <string name="loan_withdrawal_title">loan withdrawal</string>
     <string name="your_cash_will_be_in_your_account">Your cash will be in your\naccount in 48 hours</string>
     <string name="loan_withdrawal_popup_error">Loan request too high</string>
+    <string name="loan_withdrawal_popup_low_error">Loan request too low</string>
+    <string name="loan_withdrawal_popup_low_error_detail">Unfortunately you do not meet the requirements for a loan of this amount. The minimum withdrawal amount is R1000</string>
+
+
+
+
     <string name="loan_withdrawal_popup_desc_err">Unfortunately you do not meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>
     <string name="issueing_loan">Processing your loan...</string>
 
@@ -428,5 +434,19 @@
     <string name="points_bring_following_while_collecting_1">A valid South African ID</string>
     <string name="points_bring_following_while_collecting_2">Your latest three payslips or your last three months’ bank statements</string>
     <string name="points_bring_following_while_collecting_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
+    <string name="terms_conditions">terms &amp; conditions</string>
+    <string name="view_general_terms_conditions">view general terms &amp; conditions</string>
+    <string name="off_instantly">OFF INSTANTLY</string>
+    <string name="wrewards_monthly_spend">Monthly Spend</string>
+
+    <string name="cli_text_with_bullet_1">I’ve applied for insolvency debt counseling</string>
+    <string name="cli_text_with_bullet_2">I’ve applied for debt administration</string>
+    <string name="cli_text_with_bullet_3">I’m currently insolvent</string>
+    <string name="cli_text_with_bullet_4">I’m currently under debt review</string>
+
+    <string name="collect_credit_card_title">When collecting your credit card, bring the following:</string>
+    <string name="collect_credit_card_desc_1">A valid South African ID </string>
+    <string name="collect_credit_card_desc_2">Your latest three payslips or your last three months’ bank statements</string>
+    <string name="collect_credit_card_desc_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
 
 </resources>

@@ -14,7 +14,7 @@
         android:paddingLeft="16dp"
         android:paddingTop="16dp"
         android:orientation="vertical"
-       >
+        >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -190,21 +190,36 @@
 
                 <LinearLayout
                     android:id="@+id/brandsLayout"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
+                    android:layout_below="@+id/BrandsLabel"
+                    android:paddingLeft="@dimen/default_width"
                     android:layout_toRightOf="@+id/imgW"
                     android:orientation="vertical">
+
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="15sp"
                         android:paddingLeft="@dimen/default_width"
                         android:textColor="@color/black"
-                        android:text="@string/brands"
                         app:WTextView_font="myriadpro_semibold"
                         />
                 </LinearLayout>
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/BrandsLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="3dp"
+                    android:textSize="15sp"
+                    android:paddingLeft="@dimen/default_width"
+                    android:textColor="@color/black"
+                    android:text="@string/brands"
+                    app:WTextView_font="myriadpro_semibold"
+                    android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@+id/imgW" />
+
             </RelativeLayout>
         </LinearLayout>
     </ScrollView>
