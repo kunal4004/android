@@ -72,6 +72,7 @@ import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -302,7 +303,11 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             googleMap.setOnMarkerClickListener(this);
             unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
             selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
-            //Current location
+           /*
+            *This process of setting adapter to googleMap is related to making
+            *selected marker come in front of unselected marker.
+            */
+            googleMap.setInfoWindowAdapter(new MapWindowAdapter(getContext()));
         }
 
 
@@ -328,7 +333,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mkr.getPosition(), 13), CAMERA_ANIMATION_SPEED, null);
             previousmarker = mkr;
         }
-
     }
 
     @Override
@@ -338,6 +342,11 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         markers.get(position).setIcon(selectedIcon);
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markers.get(position).getPosition(), 13), CAMERA_ANIMATION_SPEED, null);
         previousmarker = markers.get(position);
+      /*
+        *InfoWindow shows description above a marker.
+        *Make info window invisible to make selected marker come in front of unselected marker.
+       */
+        previousmarker.showInfoWindow();
 
     }
 
