@@ -132,6 +132,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(null);
+            actionBar.setHomeAsUpIndicator(R.drawable.back_white);
         }
     }
 
