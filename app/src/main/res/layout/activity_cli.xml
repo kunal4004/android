@@ -66,10 +66,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:weightSum="1"
-                android:layout_marginRight="@dimen/bank_spacing_width"
                 android:layout_marginLeft="@dimen/bank_spacing_width"
-                android:orientation="vertical">
+                android:layout_marginRight="@dimen/bank_spacing_width"
+                android:orientation="vertical"
+                android:weightSum="1">
 
                 <Space
                     android:layout_width="match_parent"
@@ -127,9 +127,9 @@
                 android:id="@+id/btnContinue"
                 style="@style/blackButtonStyle"
                 android:layout_alignParentBottom="true"
-                android:layout_marginRight="@dimen/bank_spacing_width"
-                android:layout_marginLeft="@dimen/bank_spacing_width"
                 android:layout_marginBottom="@dimen/bank_spacing_width"
+                android:layout_marginLeft="@dimen/bank_spacing_width"
+                android:layout_marginRight="@dimen/bank_spacing_width"
                 android:text="@string/cli_continue" />
 
         </RelativeLayout>

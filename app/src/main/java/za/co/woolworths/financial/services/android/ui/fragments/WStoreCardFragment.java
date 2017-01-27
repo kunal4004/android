@@ -11,6 +11,7 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.AbsoluteSizeSpan;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +42,6 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener {
 
@@ -112,7 +112,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                         dueDate.setText(setTypeFace(FontHyperTextParser.getSpannable(WFormatter.formatDate(p.paymentDueDate), 1, getActivity())));
                     } catch (ParseException e) {
                         dueDate.setText(p.paymentDueDate);
-                        WiGroupLogger.e(getActivity(), TAG, e.getMessage(), e);
+                        WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
                     }
                 }
             }
@@ -144,7 +144,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
     private void getActiveOffer() {
         if (connectionDetector.isOnline(getActivity())) {
-            AsyncTask<String, String, OfferActive> asyncActiveOfferRequest = new HttpAsyncTask<String, String, OfferActive>() {
+            new HttpAsyncTask<String, String, OfferActive>() {
                 @Override
                 protected OfferActive httpDoInBackground(String... params) {
                     return (woolworthsApplication.getApi().getActiveOfferRequest(productOfferingId));
@@ -171,6 +171,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                 protected void onPostExecute(OfferActive offerActive) {
                     super.onPostExecute(offerActive);
                     int httpCode = offerActive.httpCode;
+                    Log.e("isOfferActive-store",String.valueOf(isOfferActive));
                     String httpDesc = offerActive.response.desc;
                     if (httpCode == 200) {
                         isOfferActive = offerActive.offerActive;
@@ -191,15 +192,13 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                 protected Class<OfferActive> httpDoInBackgroundReturnType() {
                     return OfferActive.class;
                 }
-            };
-            asyncActiveOfferRequest.execute();
+            }.execute();
         } else {
             hideProgressBar();
             mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
                     PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
         }
     }
-
 
     public void hideProgressBar() {
         mProgressCreditLimit.setVisibility(View.GONE);
@@ -210,7 +209,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     public void enableIncreaseLimit() {
         txtIncreseLimit.setEnabled(true);
         txtIncreseLimit.setTextColor(Color.BLACK);
-        txtIncreseLimit.setAlpha(1);
         mImageArrow.setImageAlpha(255);
     }
 

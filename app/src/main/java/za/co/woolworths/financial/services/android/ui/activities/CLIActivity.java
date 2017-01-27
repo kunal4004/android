@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -54,8 +55,6 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         setListener();
         setActionBar();
         setPagerCard(woolworthsApplication.getCliCardPosition());
-
-
     }
 
     public void setCurrentIndex() {
@@ -160,6 +159,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                Log.e("backPressed--","backPressed");
                 onBackPressed();
                 return true;
         }

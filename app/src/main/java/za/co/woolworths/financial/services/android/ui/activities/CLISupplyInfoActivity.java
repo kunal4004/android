@@ -94,7 +94,6 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
         mPopSlideValidation = new PopWindowValidationMessage(this);
         mProgressBar = (ProgressBar) findViewById(R.id.mWoolworthsProgressBar);
-
         mRdioGroupTypeFace = Typeface.createFromAsset(getAssets(), "fonts/WFutura-Medium.ttf");
         mRdioGroupTypeFaceBold = Typeface.createFromAsset(getAssets(), "fonts/WFutura-SemiBold.ttf");
         initViews();

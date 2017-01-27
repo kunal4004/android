@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -11,7 +10,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
@@ -26,7 +24,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.CLIThirdStepFrag
 import za.co.woolworths.financial.services.android.ui.views.WFragmentViewPager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity.mToolbar;
 
 public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnboardingOnFragmentInteractionListener,
         CLIFirstStepFragment.StepNavigatorCallback {
@@ -34,14 +31,14 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
     private OnFragmentRefresh onFragmentRefresh;
     private WoolworthsApplication mWoolworthApplication;
     private ImageView mImgStepIcon;
+    private Toolbar mToolbar;
 
     public interface OnFragmentRefresh {
         void refreshFragment();
     }
 
-    //private StepIndicator mStepIndicator;
     private WFragmentViewPager mViewPStepIndicator;
-    public static AppBarLayout mAppBarLayout;
+    public AppBarLayout mAppBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +54,6 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
 
     private void initViews() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        // mStepIndicator = (StepIndicator) findViewById(R.id.step_indicator);
-        //  mStepIndicator.setDefaultView(1);
         mViewPStepIndicator = (WFragmentViewPager) findViewById(R.id.mViewPStepIndicator);
         mImgStepIcon = (ImageView) findViewById(R.id.imgStepIcon);
         mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar);
@@ -78,13 +73,15 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
         // Create the adapter that will return a fragment for each of the three
         mViewPStepIndicator.setPagingEnabled(false);
         mViewPStepIndicator.setAdapter(mPagerFragmentAdapter);
+        int limit = mPagerFragmentAdapter.getCount();
+        // Set the number of pages that should be retained to either
+        // side of the current page in the view hierarchy in an idle state.
+        mViewPStepIndicator.setOffscreenPageLimit(limit);
+
         //mStepIndicator.setupWithViewPager(mViewPStepIndicator);
         mViewPStepIndicator.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-                Log.e("CurrentPosition",String.valueOf(position));
-
                 switch (position) {
                     case 2:
                         refresh();
@@ -99,7 +96,6 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
                 } else {
                     showCloseIconToolbar(false);
                 }
-                Log.e("CurrentPosition",String.valueOf(position));
                 switch (position) {
                     case 0:
                         mImgStepIcon.setImageResource(R.drawable.clinumbersprogress_1);
@@ -194,7 +190,6 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
     }
 
     public void moveToPage(int position) {
-        // mStepIndicator.setCurrentStepPosition(position);
         mViewPStepIndicator.setCurrentItem(position);
     }
 
@@ -220,10 +215,8 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
                 moveToPage(0);
                 break;
             case 2:
-                Log.e("mWooworthApplication", String.valueOf(mWoolworthApplication.isOther()));
                 if (mWoolworthApplication.isOther()) {
                     mViewPStepIndicator.setCurrentItem(0);
-                    //mStepIndicator.setOtherState();
                 } else {
                     moveToPage(1);
                 }

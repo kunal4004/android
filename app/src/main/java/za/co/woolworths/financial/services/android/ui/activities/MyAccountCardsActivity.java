@@ -48,6 +48,8 @@ import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static com.awfs.coordination.R.id.txtIncreseLimit;
+
 public class MyAccountCardsActivity extends AppCompatActivity implements View.OnClickListener, PersonalLoanAmount {
 
     WViewPager pager;
@@ -70,6 +72,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_my_accounts_offline_layout);
         setActionBar();
         init();
+        mWoolworthsApplication = (WoolworthsApplication) getApplication();
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(MyAccountCardsActivity.this);
         getScreenResolution(this);
         fragmentPager = (WCustomPager) findViewById(R.id.fragmentpager);
@@ -79,6 +82,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         setStatusBarColor(position);
         changeViewPagerAndActionBarBackground(position);
         changeButtonColor(position);
+
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -333,7 +337,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
 
     @Override
     public void minDrawnAmount(int amount) {
-        Log.e("minDraw-$$",String.valueOf(amount));
+        Log.e("minDraw-$$", String.valueOf(amount));
         this.wMinDrawnDownAmount = amount;
 
     }
@@ -429,6 +433,8 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         super.onResume();
         changeButtonColor(position);
     }
+
+
 }
 
 
