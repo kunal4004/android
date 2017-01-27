@@ -12,11 +12,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -44,13 +49,17 @@ import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
+import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -61,7 +70,10 @@ import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MyAccountsFragment extends Fragment implements View.OnClickListener, ViewPager.OnPageChangeListener {
+public class MyAccountsFragment extends Fragment implements View.OnClickListener, ViewPager.OnPageChangeListener, ObservableScrollViewCallbacks {
+
+
+    private HideActionBar hideActionBar;
 
     ImageView openMessageActivity;
     ImageView openShoppingList;
@@ -112,6 +124,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     private ImageView[] dots;
     private PopWindowValidationMessage mPopWindowValidationMessage;
     private FragmentManager fm;
+    private WObservableScrollView mWObservableScrollView;
+    private Toolbar mToolbar;
+    private ImageView mImageView;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -126,7 +141,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.my_accounts_fragment, container, false);
-        // ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("ACCOUNTS");
         woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
         openMessageActivity = (ImageView) view.findViewById(R.id.openMessageActivity);
         mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
@@ -139,6 +153,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         linkedStoreCardView = (LinearLayout) view.findViewById(R.id.linkedStoreCard);
         linkedPersonalCardView = (LinearLayout) view.findViewById(R.id.linkedPersonalLoan);
         linkedAccountsLayout = (LinearLayout) view.findViewById(R.id.linkedLayout);
+        mWObservableScrollView = (WObservableScrollView) view.findViewById(R.id.nest_scrollview);
         applyNowAccountsLayout = (LinearLayout) view.findViewById(R.id.applyNowLayout);
         loggedOutHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedOutHeaderLayout);
         loggedInHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedInHeaderLayout);
@@ -149,9 +164,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         sc_available_funds = (WTextView) view.findViewById(R.id.sc_available_funds);
         cc_available_funds = (WTextView) view.findViewById(R.id.cc_available_funds);
         pl_available_funds = (WTextView) view.findViewById(R.id.pl_available_funds);
+        mImageView = (ImageView)view.findViewById(R.id.imgBurgerButton);
         scProgressBar = (ProgressBar) view.findViewById(R.id.scProgressBar);
         ccProgressBar = (ProgressBar) view.findViewById(R.id.ccProgressBar);
         plProgressBar = (ProgressBar) view.findViewById(R.id.plProgressBar);
+        mToolbar = (Toolbar) view.findViewById(R.id.mToolbar);
         messageCounter = (WTextView) view.findViewById(R.id.messageCounter);
         userName = (WTextView) view.findViewById(R.id.user_name);
         userInitials = (WTextView) view.findViewById(R.id.initials);
@@ -167,7 +184,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         linkedPersonalCardView.setOnClickListener(this);
         openShoppingList.setOnClickListener(this);
         signOutBtn.setOnClickListener(this);
-
+        mImageView.setOnClickListener(this);
+        mWObservableScrollView.setScrollViewCallbacks(this);
 
         adapter = new MyAccountOverViewPagerAdapter(getActivity());
         viewPager.addOnPageChangeListener(this);
@@ -315,7 +333,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
         for (int i = 0; i < dotsCount; i++) {
             dots[i] = new ImageView(getActivity());
-            dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.my_account_page_indicator_default));
+            dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_default));
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -327,7 +345,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             pager_indicator.addView(dots[i], params);
         }
 
-        dots[0].setImageDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.my_account_page_indicator_selected));
+        dots[0].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_selected));
     }
 
     private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
@@ -356,7 +374,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         switch (v.getId()) {
             case R.id.openMessageActivity:
                 startActivity(new Intent(getActivity(), MessagesActivity.class).putExtra("fromNotification", false));
-                getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
+                //getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
                 break;
             case R.id.applyStoreCard:
                 redirectToMyAccountsCardsActivity(0);
@@ -385,6 +403,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             case R.id.signOutBtn:
                 mPopWindowValidationMessage.displayValidationMessage("", PopWindowValidationMessage.OVERLAY_TYPE.SIGN_OUT);
                 break;
+            case R.id.imgBurgerButton:
+                hideActionBar.onBurgerButtonPressed();
+                break;
 
             default:
                 break;
@@ -399,9 +420,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     @Override
     public void onPageSelected(int position) {
         for (int i = 0; i < dotsCount; i++) {
-            dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.my_account_page_indicator_default));
+            dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_default));
         }
-        dots[position].setImageDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.my_account_page_indicator_selected));
+        dots[position].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_selected));
     }
 
     @Override
@@ -415,7 +436,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
             @Override
             protected void onPreExecute() {
-                mGetAccountsProgressDialog.show(fm,"account");
+                mGetAccountsProgressDialog.show(fm, "account");
                 mGetAccountsProgressDialog.setCancelable(false);
             }
 
@@ -557,14 +578,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            //Save JWT
-            SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN);
-            sessionDao.value = data.getStringExtra(SSOActivity.TAG_JWT);
-            try {
-                sessionDao.save();
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-            }
 
             initialize();
         } else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()) {
@@ -584,7 +597,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver,new IntentFilter("UpdateCounter"));
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("UpdateCounter"));
         loadMessages();
     }
 
@@ -593,23 +606,76 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         super.onPause();
         try {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
-        }catch (Exception e)
-        {
-          Log.e(TAG,"Broadcast Unregister Exception");
+        } catch (Exception e) {
+            Log.e(TAG, "Broadcast Unregister Exception");
         }
 
     }
 
-    private void dismissProgress(){
-        if (mGetAccountsProgressDialog!=null&&mGetAccountsProgressDialog.isVisible()){
+    private void dismissProgress() {
+        if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
             mGetAccountsProgressDialog.dismiss();
         }
     }
 
-    public BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
+    public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             loadMessages();
         }
     };
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            hideActionBar = (HideActionBar) getActivity();
+        } catch (ClassCastException ignored) {
+        }
+    }
+
+    public void setHideActionBar(HideActionBar hideActionBar) {
+        this.hideActionBar = hideActionBar;
+    }
+
+    @Override
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+
+    }
+
+    @Override
+    public void onDownMotionEvent() {
+
+    }
+
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+        if (scrollState.UP == scrollState) {
+            hideViews();
+        } else if (scrollState == scrollState.DOWN) {
+            showViews();
+        } else {
+        }
+    }
+
+    private void hideViews() {
+        mToolbar.animate().translationY(-mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
+    }
+
+    private void showViews() {
+        mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
+    }
 }

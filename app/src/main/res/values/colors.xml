@@ -48,4 +48,5 @@
     <color name="horizontal_line">#10000000</color>
     <color name="reward_status_bar_color">#cc000000</color>
     <color name="default_background">#ececec</color>
+    <color name="horizontal_line_bg">#15000000</color>
 </resources>

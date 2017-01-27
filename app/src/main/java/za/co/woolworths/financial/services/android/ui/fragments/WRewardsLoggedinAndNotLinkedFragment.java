@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,9 +13,12 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 
+import static com.awfs.coordination.R.id.applyForWRewards;
 import static com.awfs.coordination.R.string.register;
 
 /**
@@ -25,6 +29,8 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
     public RelativeLayout valuedMember;
     public RelativeLayout loyalMember;
     public RelativeLayout vipMember;
+    public WButton wRewars_linkaccounts;
+    public WButton applyForWRewards;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -34,9 +40,13 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
         valuedMember=(RelativeLayout)view.findViewById(R.id.layoutValuedMember);
         loyalMember=(RelativeLayout)view.findViewById(R.id.layoutLoyalMember);
         vipMember=(RelativeLayout)view.findViewById(R.id.layoutVipMember);
+        wRewars_linkaccounts=(WButton) view.findViewById(R.id.wRewars_linkaccounts);
+        applyForWRewards=(WButton) view.findViewById(R.id.applyForWRewards);
         valuedMember.setOnClickListener(this);
         loyalMember.setOnClickListener(this);
         vipMember.setOnClickListener(this);
+        wRewars_linkaccounts.setOnClickListener(this);
+        applyForWRewards.setOnClickListener(this);
         return view;
     }
 
@@ -52,6 +62,12 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
                 break;
             case R.id.layoutVipMember:
                 redirectToWRewardsMemberActivity(2);
+                break;
+            case R.id.wRewars_linkaccounts:
+                ScreenManager.presentSSOLinkAccounts(getActivity());
+                break;
+            case R.id.applyForWRewards:
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getWrewardsLink())));
                 break;
             default:
                 break;
