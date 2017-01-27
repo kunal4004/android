@@ -73,10 +73,13 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
         // Create the adapter that will return a fragment for each of the three
         mViewPStepIndicator.setPagingEnabled(false);
         mViewPStepIndicator.setAdapter(mPagerFragmentAdapter);
-        int limit = mPagerFragmentAdapter.getCount();
-        // Set the number of pages that should be retained to either
-        // side of the current page in the view hierarchy in an idle state.
-        mViewPStepIndicator.setOffscreenPageLimit(limit);
+
+
+         int limit = mPagerFragmentAdapter.getCount();
+         // Set the number of pages that should be retained to either
+         // side of the current page in the view hierarchy in an idle state.
+         mViewPStepIndicator.setOffscreenPageLimit(limit);
+
 
         //mStepIndicator.setupWithViewPager(mViewPStepIndicator);
         mViewPStepIndicator.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

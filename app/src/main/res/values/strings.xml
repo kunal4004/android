@@ -327,7 +327,6 @@
     <string name="cli_additional_credit_amount">How much additional credit would you like to apply for?</string>
     <string name="cli_apply_insolvency">DO ANY OF THE FOLLOWING APPLY TO YOU?</string>
     <string name="cli_solvency_agreement">I agree that Woolworths Financial Services may request and receive my confidential consumer credit information from any credit bureau or third party at any time, including obtaining a bureau score to determine my credit worthiness</string>
-    <string name="cli_require_document">In order to complete your application, we require your latest 3 months’ bank statements or last 3 months payslips.</string>
     <string name="cli_email_required_email">Don’t have the required documents right now or need more detailed instructions?</string>
     <string name="cli_email_required_email_desc">Simply click below and we will send an email to you, so you can complete the process</string>
     <string name="cli_take_a_photo">a) Take a photo</string>
@@ -444,5 +443,6 @@
     <string name="collect_credit_card_desc_1">A valid South African ID </string>
     <string name="collect_credit_card_desc_2">Your latest three payslips or your last three months’ bank statements</string>
     <string name="collect_credit_card_desc_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
+    <string name="cli_require_document">In order to complete your application, we require your latest 3 months’ bank statements or last 3 months payslips.</string>
 
 </resources>
