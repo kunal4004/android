@@ -41,6 +41,7 @@ public class WRewardsOverviewFragment extends Fragment {
     public RelativeLayout toNextTireLayout;
     public VoucherResponse voucherResponse;
     public ViewPager promotionViewPager;
+    public  String currentStatus;
 
     @Nullable
     @Override
@@ -48,7 +49,7 @@ public class WRewardsOverviewFragment extends Fragment {
         View view = inflater.inflate(R.layout.wrewards_overview_fragment, container, false);
         Bundle bundle=getArguments();
         voucherResponse=new Gson().fromJson(bundle.getString("WREWARDS"),VoucherResponse.class);
-        String currentStatus = voucherResponse.tierInfo.currentTier.toUpperCase();
+        currentStatus = voucherResponse.tierInfo.currentTier.toUpperCase();
         infoImage=(ImageView)view.findViewById(R.id.infoImage);
         tireStatus=(WTextView)view.findViewById(R.id.tireStatus);
         savings=(WTextView)view.findViewById(R.id.savings);
@@ -66,7 +67,15 @@ public class WRewardsOverviewFragment extends Fragment {
         infoImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), WRewardsMembersInfoActivity.class));
+                if (currentStatus.equals(getString(R.string.valued))) {
+                    redirectToWRewardsMemberActivity(0);
+                }
+                else  if (currentStatus.equals(getString(R.string.loyal))) {
+                    redirectToWRewardsMemberActivity(1);
+                }
+                else  if (currentStatus.equals(getString(R.string.vip))) {
+                    redirectToWRewardsMemberActivity(2);
+                }
             }
         });
         promotionViewPager.setClipToPadding(false);
@@ -119,5 +128,9 @@ public class WRewardsOverviewFragment extends Fragment {
                  default:
                      break;
              }
+    }
+    public void redirectToWRewardsMemberActivity( int type)
+    {
+        startActivity(new Intent(getActivity(), WRewardsMembersInfoActivity.class).putExtra("type",type));
     }
 }

@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -19,9 +20,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +30,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -70,6 +72,7 @@ import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -173,6 +176,22 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         provider = locationManager.getBestProvider(criteria, false);
         //  locationManager.requestLocationUpdates(provider, 40000, 10, this);
         pager.addOnPageChangeListener(this);
+        WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+        if (width<1000&&height<1500){
+            pager.setPadding(100, 0, 100, 0);
+            pager.setClipToPadding(false);
+            pager.setPageMargin(16);
+
+        }else {
+            pager.setPadding(20, 0, 20, 0);
+            pager.setClipToPadding(false);
+            pager.setPageMargin(16);
+        }
         pager.setOnItemClickListener(new WCustomViewPager.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -284,7 +303,11 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             googleMap.setOnMarkerClickListener(this);
             unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
             selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
-            //Current location
+           /*
+            *This process of setting adapter to googleMap is related to making
+            *selected marker come in front of unselected marker.
+            */
+            googleMap.setInfoWindowAdapter(new MapWindowAdapter(getContext()));
         }
 
 
@@ -310,7 +333,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mkr.getPosition(), 13), CAMERA_ANIMATION_SPEED, null);
             previousmarker = mkr;
         }
-
     }
 
     @Override
@@ -320,6 +342,11 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         markers.get(position).setIcon(selectedIcon);
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markers.get(position).getPosition(), 13), CAMERA_ANIMATION_SPEED, null);
         previousmarker = markers.get(position);
+      /*
+        *InfoWindow shows description above a marker.
+        *Make info window invisible to make selected marker come in front of unselected marker.
+       */
+        previousmarker.showInfoWindow();
 
     }
 
@@ -454,9 +481,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         timeingsLayout.removeAllViews();
         brandsLayout.removeAllViews();
         storeName.setText(storeDetail.name);
-        /*storeName.setGravity(Gravity.CENTER);
-        storeName.setSingleLine(true);
-        storeName.setEllipsize(TextUtils.TruncateAt.END);*/
         storeAddress.setText(storeDetail.address);
         if (storeDetail.phoneNumber != null)
             storeNumber.setText(storeDetail.phoneNumber);
@@ -516,6 +540,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         direction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mPopWindowValidationMessage.setmName(storeDetail.name);
                 mPopWindowValidationMessage.setmLatitude(storeDetail.latitude);
                 mPopWindowValidationMessage.setmLongiude(storeDetail.longitude);
                 mPopWindowValidationMessage.displayValidationMessage("",
