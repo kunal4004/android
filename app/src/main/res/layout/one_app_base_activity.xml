@@ -18,6 +18,7 @@
             android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clipToPadding="false"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:elevation="0dp">
 
@@ -44,12 +45,6 @@
                     android:textSize="12sp"
                     app:WTextView_font="medium_bold" />
             </android.support.v7.widget.Toolbar>
-
-            <View
-                android:id="@+id/view_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:color="#D3D3D3" />
         </android.support.design.widget.AppBarLayout>
 
     </FrameLayout>
@@ -57,9 +52,10 @@
     <fragment
         android:id="@+id/fragment_navigation_drawer"
         android:name="za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer"
-        android:layout_width="260dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:clipToPadding="false"
         app:layout="@layout/w_navigation_drawer_fragment"
         tools:layout="@layout/w_navigation_drawer_fragment" />
 

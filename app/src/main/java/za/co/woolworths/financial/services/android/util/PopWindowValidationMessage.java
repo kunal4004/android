@@ -60,7 +60,8 @@ public class PopWindowValidationMessage {
                 popupWindowSetting(mView);
                 WButton mOverlayBtn = (WButton) mView.findViewById(R.id.btnOverlay);
                 WTextView mOverlayDescription = (WTextView) mView.findViewById(R.id.overlayDescription);
-                mOverlayDescription.setText(description);
+                if (description != null)
+                    mOverlayDescription.setText(description);
                 setAnimation();
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
@@ -200,7 +201,7 @@ public class PopWindowValidationMessage {
                 WTextView wTextTitle = (WTextView) mView.findViewById(R.id.title);
                 WTextView wTextProofIncome = (WTextView) mView.findViewById(R.id.textProofIncome);
                 wTextTitle.setText(getString(R.string.loan_withdrawal_popup_low_error));
-                wTextProofIncome.setText(getString(R.string.loan_withdrawal_popup_low_error_detail).replace("1000",description));
+                wTextProofIncome.setText(getString(R.string.loan_withdrawal_popup_low_error_detail).replace("1000", description));
                 setAnimation();
                 touchToDismiss(overlay_type);
                 mRelPopContainer.setAnimation(mFadeInAnimation);
@@ -381,7 +382,7 @@ public class PopWindowValidationMessage {
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         window.clearFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        Utils.updateStatusBarBackground(activity, R.color.purple);
+        Utils.updateStatusBarBackground(activity);
     }
 
     public void showStatusBar(Activity activity) {
@@ -392,7 +393,7 @@ public class PopWindowValidationMessage {
         window.addFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Utils.updateStatusBarBackground(activity, R.color.purple);
+        Utils.updateStatusBarBackground(activity);
     }
 
     public void showLoanStatusBar(Activity activity) {
@@ -403,6 +404,6 @@ public class PopWindowValidationMessage {
         window.addFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Utils.updateStatusBarBackground(activity, R.color.purple);
+        Utils.updateStatusBarBackground(activity);
     }
 }

@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -29,13 +30,14 @@ import za.co.woolworths.financial.services.android.ui.fragments.WRewardsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.WProductFragments;
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
-        , WProductFragments.HideActionBarComponent {
+        , WProductFragments.HideActionBarComponent, HideActionBar {
 
     public static Toolbar mToolbar;
     public static AppBarLayout appbar;
@@ -44,7 +46,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     private List<Fragment> fragmentList;
     public static final String TAG = "WOneAppBaseActivity";
     private SharePreferenceHelper mSharePreferenceHelper;
-    private View mSeparatorLine;
+
+    private ActionBar mActionBar;
     private DrawerLayout mDrawerLayout;
 
     @Override
@@ -55,29 +58,23 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(this);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(false);
-        getSupportActionBar().setDisplayShowTitleEnabled(false); // false for hiding the title from actoinBar
-        getSupportActionBar().setElevation(0);
+
+        mActionBar = getSupportActionBar();
+        mActionBar.setDisplayShowHomeEnabled(false);
+        mActionBar.setDisplayShowTitleEnabled(false); // false for hiding the title from actoinBar
         mToolbarTitle = (WTextView) findViewById(R.id.toolbar_title);
         appbar = (AppBarLayout) findViewById(R.id.appbar);
         fragmentList = new ArrayList<>();
 
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(null);
         mToolbar.setNavigationIcon(R.drawable.ic_drawer_menu);
-        mSeparatorLine = (View) findViewById(R.id.view_toolbar);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         drawerFragment = (WFragmentDrawer)
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerFragment.setUp(R.id.fragment_navigation_drawer, mDrawerLayout, mToolbar);
         drawerFragment.setDrawerListener(this);
         displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
-
-//        FragmentManager fm = getSupportFragmentManager();
-//        WProgressDialogFragment editNameDialogFragment = WProgressDialogFragment.newInstance("Some Title");
-//        editNameDialogFragment.show(fm, "fragment_edit_name");
-//        editNameDialogFragment.setCancelable(false);
     }
 
     @Override
@@ -169,11 +166,11 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 
     @Override
     public void onActionBarComponent(boolean actionbarIsVisible) {
-        if (actionbarIsVisible) {
-            mSeparatorLine.setVisibility(View.VISIBLE);
-        } else {
-            mSeparatorLine.setVisibility(View.GONE);
-        }
+
+    }
+
+    public void hideActionBar(boolean actionbarIsVisible) {
+        mToolbar.setVisibility(View.GONE);
     }
 
     @Override

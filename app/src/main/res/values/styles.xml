@@ -115,15 +115,15 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:homeAsUpIndicator">@drawable/close_24</item>
-
     </style>
 
     <style name="MyAccountCards" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:background">@android:color/transparent</item>
         <item name="android:homeAsUpIndicator">@drawable/back_white</item>
-
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowActionBarOverlay">false</item>
+        <item name="android:theme">@android:style/Theme.NoTitleBar</item>
     </style>
 
     <style name="ContactUs" parent="Theme.AppCompat.Light.NoActionBar">
@@ -407,6 +407,7 @@
         <item name="android:letterSpacing">0.1</item>
         <item name="android:textAllCaps">true</item>
     </style>
+
     <style name="spin_progress_style" parent="@android:style/Theme.Dialog">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
