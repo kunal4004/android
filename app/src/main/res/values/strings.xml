@@ -434,6 +434,10 @@
     <string name="points_bring_following_while_collecting_1">A valid South African ID</string>
     <string name="points_bring_following_while_collecting_2">Your latest three payslips or your last three months’ bank statements</string>
     <string name="points_bring_following_while_collecting_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
+    <string name="terms_conditions">terms &amp; conditions</string>
+    <string name="view_general_terms_conditions">view general terms &amp; conditions</string>
+    <string name="off_instantly">OFF INSTANTLY</string>
+    <string name="wrewards_monthly_spend">Monthly Spend</string>
 
     <string name="cli_text_with_bullet_1">I’ve applied for insolvency debt counseling</string>
     <string name="cli_text_with_bullet_2">I’ve applied for debt administration</string>
@@ -444,5 +448,6 @@
     <string name="collect_credit_card_desc_1">A valid South African ID </string>
     <string name="collect_credit_card_desc_2">Your latest three payslips or your last three months’ bank statements</string>
     <string name="collect_credit_card_desc_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
+    <string name="no_messages_to_display">No messages to display</string>
 
 </resources>

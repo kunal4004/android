@@ -374,7 +374,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         switch (v.getId()) {
             case R.id.openMessageActivity:
                 startActivity(new Intent(getActivity(), MessagesActivity.class).putExtra("fromNotification", false));
-                getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
+                //getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
                 break;
             case R.id.applyStoreCard:
                 redirectToMyAccountsCardsActivity(0);
@@ -578,14 +578,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            //Save JWT
-            SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN);
-            sessionDao.value = data.getStringExtra(SSOActivity.TAG_JWT);
-            try {
-                sessionDao.save();
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-            }
 
             initialize();
         } else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()) {

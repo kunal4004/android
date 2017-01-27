@@ -65,11 +65,11 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     private Button mBtnApplyNow;
 
     private boolean cardsHasAccount = false;
-    private int wMinDrawnDownAmount;
     private WObservableScrollView mWObservableScrollView;
     private RelativeLayout mRelativeLayout;
     private boolean containsStoreCard = false, containsCreditCard = false, containsPersonalLoan = false;
     private int position;
+    private int wMinDrawnDownAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +84,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         fragmentPager.setViewPagerIsScrollable(false);
         cards = new ArrayList<>();
         position = getIntent().getIntExtra("position", 0);
-        setStatusBarColor(position);
+        Utils.updateStatusBarBackground(MyAccountCardsActivity.this,R.color.white);
         changeViewPagerAndActionBarBackground(position);
         mBtnApplyNow.setVisibility(View.GONE);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -97,7 +97,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                 mWoolworthsApplication.setCliCardPosition(position);
                 fragmentPager.setCurrentItem(position);
                 changeViewPagerAndActionBarBackground(position);
-                setStatusBarColor(position);
                 changeButtonColor(position);
             }
 
@@ -194,7 +193,8 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                finish();
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                 return true;
         }
         return false;
@@ -203,7 +203,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     private void handleAccountsResponse(AccountsResponse accountsResponse) {
@@ -284,21 +283,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         }
     }
 
-    public void setStatusBarColor(int position) {
-        switch (position) {
-            case 0:
-                Utils.updateStatusBarBackground(MyAccountCardsActivity.this, R.color.cli_store_card);
-                break;
-            case 1:
-                Utils.updateStatusBarBackground(MyAccountCardsActivity.this, R.color.cli_credit_card);
-                break;
-            case 2:
-                Utils.updateStatusBarBackground(MyAccountCardsActivity.this, R.color.cli_personal_loan);
-                break;
-            default:
-                break;
-        }
-    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

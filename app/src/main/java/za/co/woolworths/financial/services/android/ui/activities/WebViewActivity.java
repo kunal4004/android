@@ -27,7 +27,6 @@ import static com.crittercism.internal.ap.C;
 public class WebViewActivity extends AppCompatActivity {
 
     WebView webView;
-    ContentLoadingProgressBar progressBar;
     public Toolbar toolbar;
     public WTextView toolbarTextView;
     @Override
@@ -35,8 +34,6 @@ public class WebViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
         webView = (WebView)findViewById(R.id.webview);
-        progressBar = (ContentLoadingProgressBar)findViewById(R.id.load);
-        progressBar.show();
         Bundle b = new Bundle();
         b= getIntent().getBundleExtra("Bundle");
         // getActionBar().setTitle(FontHyperTextParser.getSpannable(b.getString("title"), 1, this));
@@ -87,7 +84,6 @@ public class WebViewActivity extends AppCompatActivity {
             if(url.contains("Login")){
                 finish();
             }
-            progressBar.hide();
         }
     }
     @SuppressWarnings("deprecation")
