@@ -7,11 +7,11 @@
     <za.co.woolworths.financial.services.android.ui.views.WObservableScrollView
         android:id="@+id/nest_scrollview"
         android:layout_width="match_parent"
-        android:clipToPadding="false"
-        android:paddingTop="?attr/actionBarSize"
         android:layout_height="match_parent"
         android:background="@color/white"
+        android:clipToPadding="false"
         android:overScrollMode="never"
+        android:paddingTop="?attr/actionBarSize"
         android:scrollbars="none">
 
         <LinearLayout
@@ -29,16 +29,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
-                android:orientation="vertical"
                 android:focusableInTouchMode="false"
+                android:orientation="vertical"
                 android:paddingBottom="16dp"
                 android:visibility="visible">
 
                 <android.support.v4.view.ViewPager
                     android:id="@+id/pager"
                     android:layout_width="match_parent"
-                    android:nestedScrollingEnabled="false"
-                    android:layout_height="350dp" />
+                    android:layout_height="350dp"
+                    android:nestedScrollingEnabled="false" />
 
                 <LinearLayout
                     android:id="@+id/viewPagerCountDots"
@@ -54,10 +54,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="28dp"
                     android:background="@color/white"
+                    android:focusableInTouchMode="false"
                     android:minHeight="48dp"
                     android:orientation="horizontal"
                     android:paddingLeft="16dp"
-                    android:focusableInTouchMode="false"
                     android:paddingRight="16dp">
 
                     <za.co.woolworths.financial.services.android.ui.views.WButton
