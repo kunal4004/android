@@ -325,11 +325,11 @@ public class MessagesActivity extends AppCompatActivity {
             fromNotification = getIntent().getExtras().getBoolean("fromNotification");
         if (fromNotification) {
             startActivity(new Intent(MessagesActivity.this, WOneAppBaseActivity.class));
-            overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+            //overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
             finish();
         } else {
             super.onBackPressed();
-            overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+           // overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
         }
     }
 

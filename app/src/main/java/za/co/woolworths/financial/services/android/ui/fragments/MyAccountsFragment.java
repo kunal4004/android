@@ -356,7 +356,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         switch (v.getId()) {
             case R.id.openMessageActivity:
                 startActivity(new Intent(getActivity(), MessagesActivity.class).putExtra("fromNotification", false));
-                getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
+                //getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
                 break;
             case R.id.applyStoreCard:
                 redirectToMyAccountsCardsActivity(0);
