@@ -87,6 +87,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         setStatusBarColor(position);
         changeViewPagerAndActionBarBackground(position);
         mBtnApplyNow.setVisibility(View.GONE);
+        changeButtonColor(position);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -408,12 +409,12 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         if (!cardsHasAccount) {
             switch (position) {
                 case 0:
-                    Log.e("ContainsCard","NoAccount");
+                    Log.e("ContainsCard", "NoAccount");
                     mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_store_card));
                     mBtnApplyNow.setVisibility(View.VISIBLE);
                     break;
                 case 1:
-                    Log.e("ContainsCard","NoAccount--");
+                    Log.e("ContainsCard", "NoAccount--");
                     mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_credit_card));
                     mBtnApplyNow.setVisibility(View.VISIBLE);
                     break;
