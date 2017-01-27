@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.os.Bundle;
 import android.view.animation.AccelerateInterpolator;
+
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener{
+public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener {
 
     public static Toolbar mToolbar;
     public static AppBarLayout appbar;
@@ -50,8 +51,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(false); // false for hiding the title from actoinBar
-        mToolbarTitle=(WTextView)findViewById(R.id.toolbar_title);
-        appbar=(AppBarLayout)findViewById(R.id.appbar);
+        mToolbarTitle = (WTextView) findViewById(R.id.toolbar_title);
+        appbar = (AppBarLayout) findViewById(R.id.appbar);
         fragmentList = new ArrayList<>();
 
         setSupportActionBar(mToolbar);
@@ -138,20 +139,20 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        for(Fragment fragment : fragmentList){
+        for (Fragment fragment : fragmentList) {
             fragment.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    public JWTDecodedModel getJWTDecoded(){
+    public JWTDecodedModel getJWTDecoded() {
         JWTDecodedModel result = new JWTDecodedModel();
-        try{
+        try {
             SessionDao sessionDao = new SessionDao(WOneAppBaseActivity.this, SessionDao.KEY.USER_TOKEN).get();
-            if (sessionDao.value != null && !sessionDao.value.equals("")){
+            if (sessionDao.value != null && !sessionDao.value.equals("")) {
                 result = JWTHelper.decode(sessionDao.value);
-                mSharePreferenceHelper.save(result.email,"email");
+                mSharePreferenceHelper.save(result.email, "email");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
         return result;
