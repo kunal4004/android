@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.util.Attributes;
@@ -29,6 +30,7 @@ import za.co.woolworths.financial.services.android.models.dto.ReadMessagesRespon
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
@@ -56,6 +58,7 @@ public class MessagesActivity extends AppCompatActivity {
     ConnectionDetector  connectionDetector;
     private FragmentManager fm;
     private WProgressDialogFragment mGetMessageProgressDialog;
+    private WTextView noMessagesText;
 
 
     @Override
@@ -72,6 +75,7 @@ public class MessagesActivity extends AppCompatActivity {
         messsageListview = (RecyclerView) findViewById(R.id.messsageListView);
         //mLoadingImageView = (ProgressBar) findViewById(R.id.loadingBar);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
+        noMessagesText=(WTextView)findViewById(R.id.noMessagesText);
 
         messsageListview.setHasFixedSize(true);
         messsageListview.setLayoutManager(mLayoutManager);
@@ -171,6 +175,11 @@ public class MessagesActivity extends AppCompatActivity {
                     mCurrentPage = 1;
                     mIsLoading = false;
                 }
+                else if(messageResponse.messagesList.size() == 0)
+                {
+                    messsageListview.setVisibility(View.GONE);
+                    noMessagesText.setVisibility(View.VISIBLE);
+                }
                 dismissProgress();
                 hideRefreshView();
             }
@@ -178,9 +187,12 @@ public class MessagesActivity extends AppCompatActivity {
     }
 
     public void bindDataWithUI(List<MessageDetails> messageDetailsList) {
-        adapter = new MesssagesListAdapter(MessagesActivity.this, messageDetailsList);
-        ((MesssagesListAdapter) adapter).setMode(Attributes.Mode.Single);
-        messsageListview.setAdapter(adapter);
+            noMessagesText.setVisibility(View.GONE);
+            messsageListview.setVisibility(View.VISIBLE);
+            adapter = new MesssagesListAdapter(MessagesActivity.this, messageDetailsList);
+            ((MesssagesListAdapter) adapter).setMode(Attributes.Mode.Single);
+            messsageListview.setAdapter(adapter);
+
     }
 
     public void loadMoreMessages() {
