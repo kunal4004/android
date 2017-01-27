@@ -6,9 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -66,7 +63,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        scrollToolbarOnDelay();
         setContentView(R.layout.activity_my_accounts_offline_layout);
         setActionBar();
         init();
@@ -372,22 +368,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         }
     }
 
-    public void scrollToolbarOnDelay() {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarAccountCard);
-                CoordinatorLayout coordinator = (CoordinatorLayout) findViewById(R.id.rootLayout);
-                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
-                AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
-                if (behavior != null)
-                    behavior.onNestedPreScroll(coordinator, appBarLayout, null, 0, 100, new int[]{0, 0});
-                else
-                    scrollToolbarOnDelay();
-            }
-        }, 3000);
-    }
+
 
     public void changeButtonColor(int position) {
         // not logged in
