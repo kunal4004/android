@@ -96,7 +96,6 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toStartOf="@+id/linContainer"
-                android:background="@drawable/ripple_effect_gray"
                 android:letterSpacing="0.04"
                 android:text="@string/increase_limit"
                 android:textAllCaps="true"
@@ -121,14 +120,13 @@
                     android:layout_marginTop="1dp"
                     android:src="@drawable/ic_caret_black" />
 
-                <WebView
+                <ProgressBar
                     android:id="@+id/progressCreditLimit"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_toStartOf="@+id/imgArrow"
-                    android:scrollbars="none"
-                    android:visibility="visible" />
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginLeft="@dimen/bank_spacing_width"
+                    android:visibility="gone" />
             </LinearLayout>
 
 
@@ -150,7 +148,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:textColor="#4d000000"
-            android:textSize="14sp"
+            android:textSize="15sp"
             app:WTextView_font="myriadpro_regular" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -235,8 +233,8 @@
         android:minHeight="60dp"
         android:text="@string/withdraw_cash_now"
         android:textColor="@color/white"
-        android:textSize="14sp"
+        android:textSize="15sp"
         android:visibility="gone"
-        app:WTextView_font="medium" />
+        app:WTextView_font="myriadpro_regular" />
 
 </LinearLayout>
