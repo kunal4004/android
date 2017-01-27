@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -68,6 +69,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     private WObservableScrollView mWObservableScrollView;
     private RelativeLayout mRelativeLayout;
     private boolean containsStoreCard = false, containsCreditCard = false, containsPersonalLoan = false;
+    private int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,10 +83,10 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         fragmentPager = (WCustomPager) findViewById(R.id.fragmentpager);
         fragmentPager.setViewPagerIsScrollable(false);
         cards = new ArrayList<>();
-        int position = getIntent().getIntExtra("position", 0);
+        position = getIntent().getIntExtra("position", 0);
         setStatusBarColor(position);
         changeViewPagerAndActionBarBackground(position);
-        changeButtonColor(position);
+        mBtnApplyNow.setVisibility(View.GONE);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -157,7 +159,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     private void dynamicToolbarColor(int color) {
         int mColor = ContextCompat.getColor(MyAccountCardsActivity.this, color);
         mToolbar.setBackgroundColor((mColor));
-        mRelativeLayout.setBackgroundColor(mColor);
+        mRelativeLayout.setBackgroundColor(Color.WHITE);
     }
 
     public void changeViewPagerAndActionBarBackground(int position) {
@@ -262,6 +264,8 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                 }
                 fragmentPager.setAdapter(fragmentsAdapter);
                 fragmentPager.setCurrentItem(getIntent().getIntExtra("position", 0));
+
+                changeButtonColor(position);
 
                 break;
             case 400:
@@ -403,10 +407,12 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         if (!cardsHasAccount) {
             switch (position) {
                 case 0:
+                    Log.e("ContainsCard","NoAccount");
                     mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_store_card));
                     mBtnApplyNow.setVisibility(View.VISIBLE);
                     break;
                 case 1:
+                    Log.e("ContainsCard","NoAccount--");
                     mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_credit_card));
                     mBtnApplyNow.setVisibility(View.VISIBLE);
                     break;
