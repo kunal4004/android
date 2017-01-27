@@ -52,7 +52,8 @@ import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class MyAccountCardsActivity extends AppCompatActivity implements View.OnClickListener, PersonalLoanAmount, ObservableScrollViewCallbacks {
+
+public class MyAccountCardsActivity extends AppCompatActivity implements View.OnClickListener, ObservableScrollViewCallbacks, PersonalLoanAmount {
 
     WViewPager pager;
     WCustomPager fragmentPager;
@@ -77,6 +78,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         setContentView(R.layout.activity_my_accounts_offline_layout);
         setActionBar();
         init();
+        mWoolworthsApplication = (WoolworthsApplication) getApplication();
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(MyAccountCardsActivity.this);
         getScreenResolution(this);
         mWObservableScrollView.setScrollViewCallbacks(this);
@@ -88,6 +90,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         changeViewPagerAndActionBarBackground(position);
         mBtnApplyNow.setVisibility(View.GONE);
         changeButtonColor(position);
+
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

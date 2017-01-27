@@ -91,6 +91,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mConnectionDetector = new ConnectionDetector();
         view = inflater.inflate(R.layout.cli_fragment_step_three, container, false);
         SharePreferenceHelper mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
+        setRetainInstance(true);
         fm = getActivity().getSupportFragmentManager();
         mEmail = mSharePreferenceHelper.getValue("email");
         CLIStepIndicatorActivity mStepIndicator = (CLIStepIndicatorActivity) getActivity();
