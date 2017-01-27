@@ -44,6 +44,7 @@ import za.co.woolworths.financial.services.android.ui.views.LDObservableScrollVi
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.barcode.scanner.ProductCategoryBarcodeActivity;
 import za.co.woolworths.financial.services.android.util.binder.view.RootCategoryBinder;
 
@@ -65,7 +66,6 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     private ImageView mImProductSearch;
     private ImageView mImBarcodeScanner;
     private ConnectionDetector mConnectionDetector;
-    public LayoutInflater mLayoutInflater;
     public WTextView mTextProductSearch;
     private RecyclerView mRecycleProductSearch;
     private PSRootCategoryAdapter mPSRootCategoryAdapter;
@@ -77,6 +77,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     private RelativeLayout mRelSearchRowLayout;
     private Toolbar mProductToolbar;
     private LDObservableScrollView mNestedScrollview;
+    private PopWindowValidationMessage mPopWindowValidationMessage;
 
     @Nullable
     @Override
@@ -85,8 +86,8 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         View view = inflater.inflate(R.layout.loan_app_layout, container, false);
         mContext = this;
         mConnectionDetector = new ConnectionDetector();
-        mLayoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mProductToolbar = (Toolbar) view.findViewById(R.id.productToolbar);
+        mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         initUI(view);
         setUIListener();
         getRootCategoryRequest();
@@ -175,18 +176,17 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                                 break;
 
                             default:
-//                                mSlidingUpViewLayout.openOverlayView(rootCategories.response.desc,
-//                                        SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                                mPopWindowValidationMessage.displayValidationMessage(rootCategories.response.desc,
+                                        PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                                 break;
                         }
-                    } catch (NullPointerException ex) {
-                        Log.e("NullPointer", ex.toString());
+                    } catch (NullPointerException ignored) {
                     }
                 }
             }.execute();
         } else {
-//            mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
-//                    SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
+                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
         }
     }
 
@@ -247,6 +247,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     private void hideSearchBar() {
         mRelSearchRowLayout.setAlpha(0);
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        assert actionBar != null;
         actionBar.hide();
         actionBar.setElevation(0);
         mProductToolbar.setVisibility(View.VISIBLE);
@@ -264,6 +265,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         mImBarcodeScanner.setEnabled(true);
         mTextProductSearch.setEnabled(true);
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        assert actionBar != null;
         actionBar.show();
         actionBar.setElevation(0);
         mProductToolbar.setAlpha(0);
@@ -281,12 +283,9 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         hideActionBarComponent.onActionBarComponent(true);
     }
 
-    public void setHideActionBarComponent(HideActionBarComponent hideActionBarComponent) {
-        this.hideActionBarComponent = hideActionBarComponent;
-    }
 
     public boolean hasPermissions() {
-        int res = 0;
+        int res;
         //string array of permissions,
         String[] permissions = new String[]{Manifest.permission.CAMERA};
 
@@ -343,4 +342,13 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
             }
         }
     }
+
+//
+//    private void hideViews() {
+//        mToolbar.animate().translationY(-mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
+//    }
+//
+//    private void showViews() {
+//        mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
+//    }
 }
