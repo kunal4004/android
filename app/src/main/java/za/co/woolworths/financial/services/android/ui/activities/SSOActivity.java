@@ -1,18 +1,26 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.iid.InstanceID;
@@ -80,6 +88,7 @@ public class SSOActivity extends WebViewActivity {
 
     private final String state;
     private final String nonce;
+    public ProgressDialog progressDialog;
 
     public SSOActivity (){
         this.state = UUID.randomUUID().toString();
@@ -93,7 +102,17 @@ public class SSOActivity extends WebViewActivity {
     }
 
     private void instantiateWebView(){
-
+        progressDialog=new ProgressDialog(SSOActivity.this,R.style.full_screen_dialog){
+            @Override
+            protected void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+                setContentView(R.layout.sso_progress_dialog);
+                getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.MATCH_PARENT);
+                ProgressBar mProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
+                mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+            }
+        };
+        progressDialog.setCancelable(false);
         this.webView.setWebViewClient(this.webviewClient);
         this.webView.getSettings().setUseWideViewPort(true);
         this.webView.getSettings().setLoadWithOverviewMode(true);
@@ -282,7 +301,7 @@ public class SSOActivity extends WebViewActivity {
         @Override
         public void onPageStarted(WebView view, final String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-
+            showProgressBar();
             Log.d(TAG, url);
 
             if (url.equals(SSOActivity.this.redirectURIString)) {
@@ -352,9 +371,16 @@ public class SSOActivity extends WebViewActivity {
     };
 
     public void hideProgressBar(){
-        if (progressBar!=null){
-            if(progressBar.getVisibility()==View.VISIBLE){
-                progressBar.setVisibility(View.GONE);
+        if (progressDialog!=null){
+            if(progressDialog.isShowing()){
+                progressDialog.dismiss();
+            }
+        }
+    }
+    public void showProgressBar(){
+        if (progressDialog!=null){
+            if(!progressDialog.isShowing()) {
+                progressDialog.show();
             }
         }
     }
