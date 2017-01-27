@@ -4,7 +4,6 @@ package za.co.woolworths.financial.services.android.ui.fragments;
  * Created by dimitrij on 2016/12/20.
  */
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,9 +17,6 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CLISupplyInfoActivity;
-import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 

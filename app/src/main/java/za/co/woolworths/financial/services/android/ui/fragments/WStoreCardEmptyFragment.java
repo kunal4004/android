@@ -19,23 +19,13 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
  * Created by W7099877 on 30/11/2016.
  */
 
-public class WStoreCardEmptyFragment  extends Fragment{
+public class WStoreCardEmptyFragment extends Fragment {
     public WButton applyNow;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.logged_out_state_store_card, container, false);
-        applyNow=(WButton)view.findViewById(R.id.applynow);
-        applyNow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getApplyNowLink())));
-            }
-        });
-
-
-
-
-        return view;    }
+        View view = inflater.inflate(R.layout.logged_out_state_store_card, container, false);
+        return view;
+    }
 }

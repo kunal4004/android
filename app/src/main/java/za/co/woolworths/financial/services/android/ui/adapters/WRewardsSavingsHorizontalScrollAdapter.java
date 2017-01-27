@@ -20,7 +20,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class WRewardsSavingsHorizontalScrollAdapter extends RecyclerView.Adapter<WRewardsSavingsHorizontalScrollAdapter.ViewHolder> {
     Activity context;
-    public int selectedPosition = 1;
+    public int selectedPosition = 0;
     public final int  HEADER_POSITION = 0;
     List<TierHistory> tierHistoryList;
 
@@ -40,18 +40,20 @@ public class WRewardsSavingsHorizontalScrollAdapter extends RecyclerView.Adapter
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         if (position == HEADER_POSITION) {
-            holder.listItem.setAlpha(0.3f);
+          //  holder.listItem.setAlpha(0.3f);
             holder.monthText.setText(context.getString(R.string.year));
             holder.yearText.setText(context.getString(R.string.to_date));
         } else {
             String[] monthAndYear=tierHistoryList.get(position-1).finMonthDescription.trim().split(" ");
             holder.monthText.setText(monthAndYear[0].substring(0,3));
             holder.yearText.setText(monthAndYear[1]);
-            if (position == selectedPosition)
-                holder.listItem.setAlpha(1f);
-            else
-                holder.listItem.setAlpha(0.3f);
+
         }
+
+        if (position == selectedPosition)
+            holder.listItem.setAlpha(1f);
+        else
+            holder.listItem.setAlpha(0.3f);
     }
 
     @Override

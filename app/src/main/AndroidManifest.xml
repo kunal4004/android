@@ -139,8 +139,9 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/LoanWithdrawal"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
+            android:theme="@style/LoanWithdrawal" />
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalSuccessActivity"
             android:screenOrientation="portrait"

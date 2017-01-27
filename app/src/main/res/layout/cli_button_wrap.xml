@@ -13,9 +13,10 @@
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="35dp"
         android:layout_alignParentEnd="true"
+        android:elevation="10dp"
         android:paddingTop="10dp"
         android:layout_height="35dp"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <za.co.woolworths.financial.services.android.ui.views.WButton
         android:id="@+id/btnContinue"

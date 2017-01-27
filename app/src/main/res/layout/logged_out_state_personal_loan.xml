@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:fillViewport="true"
-        android:nestedScrollingEnabled="true"
         android:scrollbars="none">
 
         <LinearLayout
@@ -112,8 +110,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="@dimen/bank_spacing_width">
+                    android:layout_marginBottom="@dimen/bank_spacing_width"
+                    android:orientation="horizontal">
 
                     <TextView style="@style/account_logged_out_bullet" />
 
@@ -127,20 +125,22 @@
 
             <LinearLayout style="@style/account_logged_out_container">
 
-            <ImageView
-                style="@style/account_logged_out_icon"
+                <ImageView
+                    style="@style/account_logged_out_icon"
                     android:background="@drawable/convenient" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/account_logged_out_reward_title"
-                    android:text="@string/funds_within_48_hours"/>
+                    android:text="@string/funds_within_48_hours" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/account_logged_out_reward_detail"
                     android:text="@string/funds_within_48_hours_description" />
 
             </LinearLayout>
+
             <include layout="@layout/account_horizontal_line" />
+
             <LinearLayout style="@style/account_logged_out_container">
 
                 <ImageView
@@ -157,7 +157,7 @@
 
             </LinearLayout>
 
-            <include layout="@layout/account_horizontal_line"/>
+            <include layout="@layout/account_horizontal_line" />
 
             <LinearLayout style="@style/account_logged_out_container">
 
@@ -171,10 +171,10 @@
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/account_logged_out_reward_detail"
-                    android:text="@string/interest_changed_description"/>
+                    android:text="@string/interest_changed_description" />
             </LinearLayout>
 
-            <include layout="@layout/account_horizontal_line"/>
+            <include layout="@layout/account_horizontal_line" />
 
             <LinearLayout
                 style="@style/account_logged_out_container"
@@ -219,33 +219,29 @@
                         style="@style/account_logged_out_list_bullet"
                         android:text="@string/personal_loan_points_to_qualify_3" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="40dp"
                     android:orientation="horizontal">
+
                     <TextView style="@style/account_logged_out_bullet" />
+
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         style="@style/account_logged_out_list_bullet"
                         android:text="@string/personal_loan_points_to_qualify_4" />
                 </LinearLayout>
-
-
-
             </LinearLayout>
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
-                android:id="@+id/applynow"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#7a4183"
-                android:gravity="center"
-                android:minHeight="60dp"
-                android:text="@string/apply_now"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="13sp" />
+            android:id="@+id/applynow"
+            style="@style/apply_now_btn"
+            android:layout_alignParentBottom="true"
+            android:background="@color/purple"
+            android:text="@string/apply_now" />
         </LinearLayout>
-    </ScrollView>
+
+    </android.support.v4.widget.NestedScrollView>
 
 </RelativeLayout>

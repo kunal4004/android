@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -106,6 +105,15 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         setRecycleView(mArrCreditLimit);
         hideSoftKeyboard();
         radioCheckStateChanged();
+
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                mPopSlideValidation.displayValidationMessage(getString(R.string.cli_before_we_get_started),
+//                        PopWindowValidationMessage.OVERLAY_TYPE.MANDATORY_FIELD);
+//            }
+//        }, 1000);
+
     }
 
     private void radioCheckStateChanged() {
@@ -272,7 +280,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                 }
 
                 if (!pageIsValid) {
-                    mPopSlideValidation.displayValidationMessage("", PopWindowValidationMessage.OVERLAY_TYPE.MANDATORY_FIELD);
+                    mPopSlideValidation.displayValidationMessage(getString(R.string.cli_cancel_application), PopWindowValidationMessage.OVERLAY_TYPE.MANDATORY_FIELD);
                     return;
                 }
 
@@ -430,9 +438,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
-    /**
-     * Hides the soft keyboard
-     */
+
     public void hideSoftKeyboard() {
         try {
             if (getCurrentFocus() != null) {
@@ -512,18 +518,17 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
     }
 
     public void showProgressBar() {
-        if (mProgressBar != null) {
-            mEmpyViewDialogFragment = WEmpyViewDialogFragment.newInstance("blank");
-            mEmpyViewDialogFragment.setCancelable(false);
-            mEmpyViewDialogFragment.show(fm,"blank");
-            mProgressBar.bringToFront();
-            mProgressBar.setVisibility(View.VISIBLE);
-            mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
-        }
+        mEmpyViewDialogFragment = WEmpyViewDialogFragment.newInstance("blank");
+        mEmpyViewDialogFragment.setCancelable(false);
+        mEmpyViewDialogFragment.show(fm, "blank");
+        mProgressBar.bringToFront();
+        mProgressBar.setVisibility(View.VISIBLE);
+        mBtnContinue.setVisibility(View.GONE);
+        mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
     }
 
     public void stopProgressDialog() {
-        if (mProgressBar != null) {
+        if (mEmpyViewDialogFragment != null) {
             if (mEmpyViewDialogFragment.isVisible()) {
                 mEmpyViewDialogFragment.dismiss();
             }
@@ -532,5 +537,6 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
             mProgressBar.setVisibility(View.GONE);
             mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         }
+        mBtnContinue.setVisibility(View.VISIBLE);
     }
 }

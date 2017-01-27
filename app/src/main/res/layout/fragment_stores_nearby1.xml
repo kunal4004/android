@@ -11,51 +11,52 @@
     sothree:umanoParallaxOffset="100dp"
     sothree:umanoScrollableView="@+id/list"
     sothree:umanoShadowHeight="4dp">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <include
-        layout="@layout/location_service_off_layout"
-        android:visibility="gone"
-        />
-    <RelativeLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/layoutLocationServiceOn"
-        >
+        android:layout_height="match_parent">
 
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-
-            android:layout_height="match_parent" />
+        <include
+            layout="@layout/location_service_off_layout"
+            android:visibility="gone" />
 
         <RelativeLayout
+            android:id="@+id/layoutLocationServiceOn"
             android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:background="@android:color/transparent"
-            android:paddingLeft="16dp"
-            android:visibility="gone">
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/close"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:background="@drawable/ic_closecircle"
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
 
-                />
+                android:layout_height="match_parent" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="?android:attr/actionBarSize"
+                android:background="@android:color/transparent"
+                android:paddingLeft="16dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/ic_closecircle"
+
+                    />
+            </RelativeLayout>
+
+            <za.co.woolworths.financial.services.android.util.WCustomViewPager
+                android:id="@+id/cardPager"
+                android:layout_width="match_parent"
+                android:layout_height="145dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="4dp" />
         </RelativeLayout>
-
-        <za.co.woolworths.financial.services.android.util.WCustomViewPager
-            android:id="@+id/cardPager"
-            android:layout_width="match_parent"
-            android:layout_height="145dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="4dp" />
-    </RelativeLayout>
-</LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/detailsView"
