@@ -160,7 +160,8 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                finish();
+                overridePendingTransition(0, 0);
                 return true;
         }
         return false;

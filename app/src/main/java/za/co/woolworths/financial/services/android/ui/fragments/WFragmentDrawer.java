@@ -102,12 +102,15 @@ public class WFragmentDrawer extends Fragment {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                containerView.setClickable(true);
                 getActivity().invalidateOptionsMenu();
+
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                containerView.setClickable(false);
                 getActivity().invalidateOptionsMenu();
             }
 
