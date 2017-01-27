@@ -49,14 +49,6 @@ public class WRewardsFragment extends Fragment{
         }
         else if(resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()){
             removeAllChildFragments();
-            //Save JWT
-            SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN);
-            sessionDao.value = data.getStringExtra(SSOActivity.TAG_JWT);
-            try {
-                sessionDao.save();
-            }catch(Exception e){
-                Log.e(TAG, e.getMessage());
-            }
 
             reloadFragment();
         }
