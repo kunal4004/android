@@ -190,6 +190,7 @@
             android:id="@+id/applynow"
             style="@style/apply_now_btn"
             android:layout_alignParentBottom="true"
+            android:visibility="gone"
             android:background="@color/black"
             android:text="@string/apply_now" />
 
