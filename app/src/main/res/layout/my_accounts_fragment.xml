@@ -1,11 +1,13 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="?attr/actionBarSize"
     android:background="@color/white"
+    app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
     android:fillViewport="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:fitsSystemWindows="true"
     android:orientation="vertical"
     android:scrollbars="none">
 
@@ -187,8 +189,8 @@
 
         <RelativeLayout
             android:id="@+id/signOutBtn"
-            android:layout_marginTop="@dimen/default_margin"
             style="@style/listStyle"
+            android:layout_marginTop="@dimen/default_margin"
             android:visibility="visible">
 
             <ImageView
@@ -222,4 +224,4 @@
     </LinearLayout>
 
 
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>

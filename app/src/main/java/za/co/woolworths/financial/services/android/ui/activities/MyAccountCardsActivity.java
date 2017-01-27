@@ -4,11 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -21,7 +19,10 @@ import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
@@ -42,13 +43,16 @@ import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanFra
 import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardEmptyFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragment;
 import za.co.woolworths.financial.services.android.ui.views.WCustomPager;
+import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WViewPager;
+import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
+import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class MyAccountCardsActivity extends AppCompatActivity implements View.OnClickListener, PersonalLoanAmount {
+public class MyAccountCardsActivity extends AppCompatActivity implements View.OnClickListener, PersonalLoanAmount, ObservableScrollViewCallbacks {
 
     WViewPager pager;
     WCustomPager fragmentPager;
@@ -59,29 +63,30 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     ArrayList<Integer> cards;
     private Toolbar mToolbar;
     private Button mBtnApplyNow;
+
     private boolean cardsHasAccount = false;
+    private WObservableScrollView mWObservableScrollView;
+    private RelativeLayout mRelativeLayout;
+    private boolean containsStoreCard = false, containsCreditCard = false, containsPersonalLoan = false;
     private int position;
-    private boolean containsStoreCard;
-    private boolean containsCreditCard;
-    private boolean containsPersonalLoan;
     private int wMinDrawnDownAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        scrollToolbarOnDelay();
         setContentView(R.layout.activity_my_accounts_offline_layout);
         setActionBar();
         init();
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(MyAccountCardsActivity.this);
         getScreenResolution(this);
+        mWObservableScrollView.setScrollViewCallbacks(this);
         fragmentPager = (WCustomPager) findViewById(R.id.fragmentpager);
         fragmentPager.setViewPagerIsScrollable(false);
         cards = new ArrayList<>();
         position = getIntent().getIntExtra("position", 0);
         Utils.updateStatusBarBackground(MyAccountCardsActivity.this,R.color.white);
         changeViewPagerAndActionBarBackground(position);
-        changeButtonColor(position);
+        mBtnApplyNow.setVisibility(View.GONE);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -134,7 +139,10 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         mWoolworthsApplication = (WoolworthsApplication) getApplication();
         toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
         pager = (WViewPager) findViewById(R.id.myAccountsCardPager);
+
         mBtnApplyNow = (Button) findViewById(R.id.btnApplyNow);
+        mRelativeLayout = (RelativeLayout) findViewById(R.id.relContentLayout);
+        mWObservableScrollView = (WObservableScrollView) findViewById(R.id.nest_scrollview);
         mBtnApplyNow.setOnClickListener(this);
     }
 
@@ -150,6 +158,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     private void dynamicToolbarColor(int color) {
         int mColor = ContextCompat.getColor(MyAccountCardsActivity.this, color);
         mToolbar.setBackgroundColor((mColor));
+        mRelativeLayout.setBackgroundColor(Color.WHITE);
     }
 
     public void changeViewPagerAndActionBarBackground(int position) {
@@ -201,6 +210,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
 
                 ((WoolworthsApplication) getApplication()).getUserManager().setAccounts(accountsResponse);
                 List<Account> accountList = accountsResponse.accountList;
+
                 if (accountList != null) {
                     cards.clear();
                     cards.add(R.drawable.w_store_card);
@@ -254,6 +264,8 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                 fragmentPager.setAdapter(fragmentsAdapter);
                 fragmentPager.setCurrentItem(getIntent().getIntExtra("position", 0));
 
+                changeButtonColor(position);
+
                 break;
             case 400:
                 if ("0619".equals(accountsResponse.response.code) || "0618".equals(accountsResponse.response.code)) {
@@ -305,12 +317,28 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
 
                 } else {
                     switch (pager.getCurrentItem()) { //logged in
+
+                        case 0:
+                            if (!containsStoreCard) {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getApplyNowLink())));
+                            }
+                            break;
+
+                        case 1:
+                            if (!containsCreditCard) {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getApplyNowLink())));
+                            }
+                            break;
                         case 2:
-                            mSharePreferenceHelper.save("", "lw_amount_drawn_cent");
-                            Intent openWithdrawCashNow = new Intent(MyAccountCardsActivity.this, LoanWithdrawalActivity.class);
-                            openWithdrawCashNow.putExtra("minDrawnDownAmount", wMinDrawnDownAmount);
-                            startActivity(openWithdrawCashNow);
-                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                            if (!containsPersonalLoan) {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getApplyNowLink())));
+                            } else {
+                                mSharePreferenceHelper.save("", "lw_amount_drawn_cent");
+                                Intent openWithdrawCashNow = new Intent(MyAccountCardsActivity.this, LoanWithdrawalActivity.class);
+                                openWithdrawCashNow.putExtra("minDrawnDownAmount", wMinDrawnDownAmount);
+                                startActivity(openWithdrawCashNow);
+                                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                            }
                             break;
                     }
                 }
@@ -358,33 +386,18 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         }
     }
 
-    public void scrollToolbarOnDelay() {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appBarAccountCard);
-                CoordinatorLayout coordinator = (CoordinatorLayout) findViewById(R.id.rootLayout);
-                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
-                AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
-                if (behavior != null)
-                    behavior.onNestedPreScroll(coordinator, appBarLayout, null, 0, 100, new int[]{0, 0});
-                else
-                    scrollToolbarOnDelay();
-            }
-        }, 3000);
-    }
-
     public void changeButtonColor(int position) {
         // not logged in
         mBtnApplyNow.setVisibility(View.GONE);
         if (!cardsHasAccount) {
             switch (position) {
                 case 0:
+                    Log.e("ContainsCard","NoAccount");
                     mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_store_card));
                     mBtnApplyNow.setVisibility(View.VISIBLE);
                     break;
                 case 1:
+                    Log.e("ContainsCard","NoAccount--");
                     mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_credit_card));
                     mBtnApplyNow.setVisibility(View.VISIBLE);
                     break;
@@ -396,25 +409,60 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         } else { // logged in
             switch (position) {
                 case 0:
-                    mBtnApplyNow.setVisibility(View.GONE);
+                    if (containsStoreCard) {
+                        mBtnApplyNow.setVisibility(View.GONE);
+                    } else {
+                        mBtnApplyNow.setVisibility(View.VISIBLE);
+                        mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_store_card));
+                    }
                     break;
                 case 1:
-                    mBtnApplyNow.setVisibility(View.GONE);
+                    if (containsCreditCard) {
+                        mBtnApplyNow.setVisibility(View.GONE);
+                    } else {
+                        mBtnApplyNow.setVisibility(View.VISIBLE);
+                        mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_credit_card));
+                    }
                     break;
                 case 2:
-                    mBtnApplyNow.setText(getString(R.string.withdraw_cash_now));
-                    mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.purple));
-                    mBtnApplyNow.setVisibility(View.VISIBLE);
+                    if (containsPersonalLoan) {
+                        mBtnApplyNow.setText(getString(R.string.withdraw_cash_now));
+                        mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.purple));
+                        mBtnApplyNow.setVisibility(View.VISIBLE);
+                    } else {
+                        mBtnApplyNow.setText(getString(R.string.withdraw_cash_now));
+                        mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.purple));
+                        mBtnApplyNow.setVisibility(View.VISIBLE);
+                    }
                     break;
             }
         }
     }
 
+    private void hideViews() {
+        mToolbar.animate().translationY(-mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
+    }
+
+    private void showViews() {
+        mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
+    }
+
     @Override
-    protected void onResume() {
-        super.onResume();
-        changeButtonColor(position);
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+    }
+
+    @Override
+    public void onDownMotionEvent() {
+    }
+
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+        if (scrollState.UP == scrollState) {
+            hideViews();
+        } else if (scrollState == scrollState.DOWN) {
+            showViews();
+        } else {
+        }
     }
 }
-
 
