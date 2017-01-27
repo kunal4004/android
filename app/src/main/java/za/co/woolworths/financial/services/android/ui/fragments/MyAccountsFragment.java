@@ -315,7 +315,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
         for (int i = 0; i < dotsCount; i++) {
             dots[i] = new ImageView(getActivity());
-            dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.my_account_page_indicator_default));
+            dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_default));
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -327,7 +327,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             pager_indicator.addView(dots[i], params);
         }
 
-        dots[0].setImageDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.my_account_page_indicator_selected));
+        dots[0].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_selected));
     }
 
     private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
@@ -399,9 +399,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     @Override
     public void onPageSelected(int position) {
         for (int i = 0; i < dotsCount; i++) {
-            dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.my_account_page_indicator_default));
+            dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_default));
         }
-        dots[position].setImageDrawable(ContextCompat.getDrawable(getActivity(),R.drawable.my_account_page_indicator_selected));
+        dots[position].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_selected));
     }
 
     @Override
@@ -415,7 +415,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
             @Override
             protected void onPreExecute() {
-                mGetAccountsProgressDialog.show(fm,"account");
+                mGetAccountsProgressDialog.show(fm, "account");
                 mGetAccountsProgressDialog.setCancelable(false);
             }
 
@@ -584,7 +584,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver,new IntentFilter("UpdateCounter"));
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("UpdateCounter"));
         loadMessages();
     }
 
@@ -593,20 +593,19 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         super.onPause();
         try {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(broadcastReceiver);
-        }catch (Exception e)
-        {
-          Log.e(TAG,"Broadcast Unregister Exception");
+        } catch (Exception e) {
+            Log.e(TAG, "Broadcast Unregister Exception");
         }
 
     }
 
-    private void dismissProgress(){
-        if (mGetAccountsProgressDialog!=null&&mGetAccountsProgressDialog.isVisible()){
+    private void dismissProgress() {
+        if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
             mGetAccountsProgressDialog.dismiss();
         }
     }
 
-    public BroadcastReceiver broadcastReceiver=new BroadcastReceiver() {
+    public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             loadMessages();
