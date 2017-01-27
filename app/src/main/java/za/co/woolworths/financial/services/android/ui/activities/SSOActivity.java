@@ -1,20 +1,29 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
+import com.google.android.gms.iid.InstanceID;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -26,12 +35,16 @@ import java.util.UUID;
 
 import io.jsonwebtoken.Jwts;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static android.R.attr.data;
+import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class SSOActivity extends WebViewActivity {
 
@@ -75,6 +88,7 @@ public class SSOActivity extends WebViewActivity {
 
     private final String state;
     private final String nonce;
+    public ProgressDialog progressDialog;
 
     public SSOActivity (){
         this.state = UUID.randomUUID().toString();
@@ -88,7 +102,17 @@ public class SSOActivity extends WebViewActivity {
     }
 
     private void instantiateWebView(){
-
+        progressDialog=new ProgressDialog(SSOActivity.this,R.style.full_screen_dialog){
+            @Override
+            protected void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+                setContentView(R.layout.sso_progress_dialog);
+                getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.MATCH_PARENT);
+                ProgressBar mProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
+                mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+            }
+        };
+        progressDialog.setCancelable(false);
         this.webView.setWebViewClient(this.webviewClient);
         this.webView.getSettings().setUseWideViewPort(true);
         this.webView.getSettings().setLoadWithOverviewMode(true);
@@ -277,7 +301,7 @@ public class SSOActivity extends WebViewActivity {
         @Override
         public void onPageStarted(WebView view, final String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-
+            showProgressBar();
             Log.d(TAG, url);
 
             if (url.equals(SSOActivity.this.redirectURIString)) {
@@ -297,11 +321,19 @@ public class SSOActivity extends WebViewActivity {
                         Intent intent = new Intent();
 
                         if (state.equals(webviewState)) {
-                            sendRegistrationToServer();
+
 
                             String jwt = list.get(1);
                             intent.putExtra(SSOActivity.TAG_JWT, jwt);
-
+                            //Save JWT
+                            SessionDao sessionDao = new SessionDao(SSOActivity.this, SessionDao.KEY.USER_TOKEN);
+                            sessionDao.value = jwt;
+                            try {
+                                sessionDao.save();
+                            } catch (Exception e) {
+                                Log.e(TAG, e.getMessage());
+                            }
+                            sendRegistrationToServer();
                             setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
                         } else {
                             setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
@@ -339,17 +371,30 @@ public class SSOActivity extends WebViewActivity {
     };
 
     public void hideProgressBar(){
-        if (progressBar!=null){
-            if(progressBar.getVisibility()==View.VISIBLE){
-                progressBar.setVisibility(View.GONE);
+        if (progressDialog!=null){
+            if(progressDialog.isShowing()){
+                progressDialog.dismiss();
             }
         }
     }
+    public void showProgressBar(){
+        if (progressDialog!=null){
+            if(!progressDialog.isShowing()) {
+                progressDialog.show();
+            }
+        }
+    }
+
+
+
+    //1. sendRegistrationToServer is created twice: SSOActivity and WFirebaseInstanceIDSService
+    //
+
+
     private void sendRegistrationToServer() {
         // sending gcm token to server
-
         final CreateUpdateDevice device=new CreateUpdateDevice();
-        device.appInstanceId= UUID.randomUUID().toString();
+        device.appInstanceId= InstanceID.getInstance(getApplicationContext()).getId();
         device.pushNotificationToken=getSharedPreferences(Utils.SHARED_PREF,0).getString("regId",null);
 
         //Sending Token and app instance Id to App server

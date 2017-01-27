@@ -11,7 +11,9 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:elevation="0dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:elevation="0dp">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -38,6 +40,11 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
+    <View
+    android:layout_width="match_parent"
+    android:layout_height="0.1dp"
+    android:background="@color/black_desc_opacity"
+    android:id="@+id/view_toolbar" />
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -63,6 +70,17 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:visibility="gone" />
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/noMessagesText"
+            android:text="@string/no_messages_to_display"
+            app:WTextView_font="myriadpro_regular"
+            android:textSize="15sp"
+            android:textColor="#80000000"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            />
     </FrameLayout>
 
 

@@ -159,8 +159,8 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Log.e("backPressed--","backPressed");
-                onBackPressed();
+                finish();
+                overridePendingTransition(0, 0);
                 return true;
         }
         return false;
@@ -186,13 +186,13 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     public void lockAppBar(boolean locked) {
-        if(locked){
+        if (locked) {
             mAppBarLayout.setExpanded(false, true);
-            int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
-            CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams)mAppBarLayout.getLayoutParams();
+            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
+            CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams();
             lp.height = px;
             mAppBarLayout.setLayoutParams(lp);
-        }else{
+        } else {
             mAppBarLayout.setExpanded(true, false);
             mAppBarLayout.setActivated(true);
         }

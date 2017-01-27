@@ -1,8 +1,10 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -33,6 +35,7 @@ public class PopWindowValidationMessage {
     private Animation mPopEnterAnimation;
     private RelativeLayout mRelPopContainer;
     private RelativeLayout mRelRootContainer;
+    private String mName;
     private double mLatitude;
     private double mLongiude;
 
@@ -60,7 +63,8 @@ public class PopWindowValidationMessage {
                 popupWindowSetting(mView);
                 WButton mOverlayBtn = (WButton) mView.findViewById(R.id.btnOverlay);
                 WTextView mOverlayDescription = (WTextView) mView.findViewById(R.id.overlayDescription);
-                mOverlayDescription.setText(description);
+                if (description != null)
+                    mOverlayDescription.setText(description);
                 setAnimation();
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
@@ -170,9 +174,17 @@ public class PopWindowValidationMessage {
                 nativeMap.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String uri = String.format(Locale.ENGLISH, "", "http://maps.google.com/maps?daddr=%f,%f (%s)", getmLatitude(), getmLongiude(), "");
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                        String mTitle = getmName();
+                        //Uri gmmIntentUri = Uri.parse("google.navigation:q=" + getmLatitude() +"," + getmLongiude() +","+ mTitle);
+                        /*Uri gmmIntentUri = Uri.parse("google.navigation:q="+ getmLatitude() + "," + getmLongiude() + "," + mTitle);
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        mapIntent.setPackage("com.google.android.apps.maps");
+                        mContext.startActivity(mapIntent);*/
+                        Location location = Utils.getLastSavedLocation(mContext);
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://maps.google.com/maps?f=d&saddr=" + location.getLatitude() +","+location.getLongitude() + "&daddr=" +getmLatitude() + "," + getmLongiude()));
+                        intent.setComponent(new ComponentName("com.google.android.apps.maps",
+                                "com.google.android.maps.MapsActivity"));
                         mContext.startActivity(intent);
                         dismissLayout();
                     }
@@ -200,7 +212,7 @@ public class PopWindowValidationMessage {
                 WTextView wTextTitle = (WTextView) mView.findViewById(R.id.title);
                 WTextView wTextProofIncome = (WTextView) mView.findViewById(R.id.textProofIncome);
                 wTextTitle.setText(getString(R.string.loan_withdrawal_popup_low_error));
-                wTextProofIncome.setText(getString(R.string.loan_withdrawal_popup_low_error_detail).replace("1000",description));
+                wTextProofIncome.setText(getString(R.string.loan_withdrawal_popup_low_error_detail).replace("1000", description));
                 setAnimation();
                 touchToDismiss(overlay_type);
                 mRelPopContainer.setAnimation(mFadeInAnimation);
@@ -357,6 +369,14 @@ public class PopWindowValidationMessage {
         }
     }
 
+    public String getmName() {
+        return mName;
+    }
+
+    public void setmName(String mName) {
+        this.mName = mName;
+    }
+
     public double getmLatitude() {
         return mLatitude;
     }
@@ -381,7 +401,7 @@ public class PopWindowValidationMessage {
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         window.clearFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        Utils.updateStatusBarBackground(activity, R.color.purple);
+        Utils.updateStatusBarBackground(activity);
     }
 
     public void showStatusBar(Activity activity) {
@@ -392,7 +412,7 @@ public class PopWindowValidationMessage {
         window.addFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Utils.updateStatusBarBackground(activity, R.color.purple);
+        Utils.updateStatusBarBackground(activity);
     }
 
     public void showLoanStatusBar(Activity activity) {
@@ -403,6 +423,6 @@ public class PopWindowValidationMessage {
         window.addFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Utils.updateStatusBarBackground(activity, R.color.purple);
+        Utils.updateStatusBarBackground(activity);
     }
 }

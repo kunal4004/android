@@ -3,15 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:fillViewport="true"
-        android:scrollbars="none">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -235,13 +226,11 @@
             </LinearLayout>
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
-            android:id="@+id/applynow"
-            style="@style/apply_now_btn"
-            android:layout_alignParentBottom="true"
-            android:background="@color/purple"
-            android:text="@string/apply_now" />
+                android:id="@+id/applynow"
+                style="@style/apply_now_btn"
+                android:layout_alignParentBottom="true"
+                android:background="@color/purple"
+                android:text="@string/apply_now" />
         </LinearLayout>
-
-    </android.support.v4.widget.NestedScrollView>
 
 </RelativeLayout>
