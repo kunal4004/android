@@ -12,7 +12,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
 import com.awfs.coordination.R;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.request.ImageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +59,11 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
 
         if (imageUrl != null) {
             Uri imageUri = Uri.parse(imageUrl);
-            holder.mImageProductCategory.setImageURI(imageUri);
+            ImageRequest request = ImageRequest.fromUri(imageUri);
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setImageRequest(request)
+                    .setOldController(holder.mImageProductCategory.getController()).build();
+            holder.mImageProductCategory.setController(controller);
         }
 
         holder.mFrameRootCategory.setOnClickListener(new View.OnClickListener() {
