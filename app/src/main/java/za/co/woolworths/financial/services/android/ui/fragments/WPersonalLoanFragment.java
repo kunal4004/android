@@ -89,7 +89,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 
         mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
-        withdrawCashNow.setVisibility(View.VISIBLE);
+        withdrawCashNow.setVisibility(View.GONE);
         withdrawCashNow.setOnClickListener(this);
         txtIncreseLimit.setOnClickListener(this);
         transactions.setOnClickListener(this);
@@ -97,9 +97,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         bindData(accountsResponse);
         disableIncreaseLimit();
         hideProgressBar();
-        getActiveOffer();
         setTextSize();
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getActiveOffer();
     }
 
     //To remove negative signs from negative balance and add "CR" after the negative balance

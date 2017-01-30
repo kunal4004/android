@@ -86,7 +86,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         fragmentPager.setViewPagerIsScrollable(false);
         cards = new ArrayList<>();
         position = getIntent().getIntExtra("position", 0);
-        Utils.updateStatusBarBackground(MyAccountCardsActivity.this,R.color.white);
+        Utils.updateStatusBarBackground(MyAccountCardsActivity.this, R.color.white);
         changeViewPagerAndActionBarBackground(position);
         mBtnApplyNow.setVisibility(View.GONE);
         changeButtonColor(position);
@@ -288,7 +288,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -397,12 +396,10 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         if (!cardsHasAccount) {
             switch (position) {
                 case 0:
-                    Log.e("ContainsCard", "NoAccount");
                     mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_store_card));
                     mBtnApplyNow.setVisibility(View.VISIBLE);
                     break;
                 case 1:
-                    Log.e("ContainsCard", "NoAccount--");
                     mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_credit_card));
                     mBtnApplyNow.setVisibility(View.VISIBLE);
                     break;
@@ -417,6 +414,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                     if (containsStoreCard) {
                         mBtnApplyNow.setVisibility(View.GONE);
                     } else {
+                        mBtnApplyNow.setText(getString(R.string.apply_now));
                         mBtnApplyNow.setVisibility(View.VISIBLE);
                         mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_store_card));
                     }
@@ -425,6 +423,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                     if (containsCreditCard) {
                         mBtnApplyNow.setVisibility(View.GONE);
                     } else {
+                        mBtnApplyNow.setText(getString(R.string.apply_now));
                         mBtnApplyNow.setVisibility(View.VISIBLE);
                         mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_credit_card));
                     }
@@ -435,7 +434,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                         mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.purple));
                         mBtnApplyNow.setVisibility(View.VISIBLE);
                     } else {
-                        mBtnApplyNow.setText(getString(R.string.withdraw_cash_now));
+                        mBtnApplyNow.setText(getString(R.string.apply_now));
                         mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.purple));
                         mBtnApplyNow.setVisibility(View.VISIBLE);
                     }
@@ -470,4 +469,3 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         }
     }
 }
-

@@ -78,7 +78,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         transactions = (WTextView) view.findViewById(R.id.txtTransactions);
         txtIncreseLimit = (WTextView) view.findViewById(R.id.txtIncreseLimit);
         mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
-        mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
         mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
         txtIncreseLimit.setOnClickListener(this);
         transactions.setOnClickListener(this);
@@ -86,9 +85,15 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         bindData(accountsResponse);
         disableIncreaseLimit();
         hideProgressBar();
-        getActiveOffer();
         return view;
     }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getActiveOffer();
+    }
+
 
     //To remove negative signs from negative balance and add "CR" after the negative balance
     public String removeNegativeSymbol(SpannableString amount) {
@@ -166,6 +171,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                 @Override
                 protected void onPreExecute() {
                     mProgressCreditLimit.setVisibility(View.VISIBLE);
+                    mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
                     mImageArrow.setVisibility(View.GONE);
                     txtIncreseLimit.setVisibility(View.GONE);
                     super.onPreExecute();
