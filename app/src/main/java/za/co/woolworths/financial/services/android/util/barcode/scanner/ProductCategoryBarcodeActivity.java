@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +43,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     private boolean mAutoFocus;
     private ArrayList<Integer> mSelectedIndices;
     private int mCameraId = -1;
-    private RelativeLayout mRelProgressBar;
+
     private TextView mTextInfo;
 
     @Override
@@ -68,7 +67,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         mBtnManual.setOnClickListener(this);
         setupToolbar();
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
-        mRelProgressBar = (RelativeLayout)findViewById(R.id.relRelProgressContainer);
+
         mTextInfo = (TextView)findViewById(R.id.textInfo);
         mScannerView = new ZBarScannerView(this) {
             @Override
@@ -180,7 +179,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             @Override
             protected void onPreExecute() {
                 mTextInfo.setVisibility(View.GONE);
-                mRelProgressBar.setVisibility(View.VISIBLE);
+               // mRelProgressBar.setVisibility(View.VISIBLE);
                 super.onPreExecute();
             }
 
@@ -192,10 +191,10 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     }
 
     public void hideProgressDialog() {
-        if(mRelProgressBar.getVisibility()==View.VISIBLE){
-            mRelProgressBar.setVisibility(View.GONE);
-            mTextInfo.setVisibility(View.VISIBLE);
-        }
+//        if(mRelProgressBar.getVisibility()==View.VISIBLE){
+//           // mRelProgressBar.setVisibility(View.GONE);
+//            mTextInfo.setVisibility(View.VISIBLE);
+//        }
     }
 
 

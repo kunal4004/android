@@ -56,6 +56,7 @@ import za.co.woolworths.financial.services.android.util.Const;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductSearchActivity extends AppCompatActivity
@@ -84,6 +85,8 @@ public class ProductSearchActivity extends AppCompatActivity
     private boolean permissionIsAllowed = false;
     private LatLng mLocation;
 
+    PopWindowValidationMessage mPopWindowValidationMessage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +114,7 @@ public class ProductSearchActivity extends AppCompatActivity
         mEditSearchProduct = (WEditTextView) findViewById(R.id.toolbarText);
         mTextNoProductFound = (WTextView) findViewById(R.id.textNoProductFound);
         recentSearchLayout = (LinearLayout) findViewById(R.id.recentSearchLayout);
+        mPopWindowValidationMessage = new PopWindowValidationMessage(this);
     }
 
     private void setActionBar() {
@@ -192,8 +196,8 @@ public class ProductSearchActivity extends AppCompatActivity
                 if (connectionDetector.isOnline(ProductSearchActivity.this)) {
                     getProductRequest(searchProductBrand);
                 } else {
-//                    mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
-//                            SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                    mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
+                            PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     hideRefreshView();
                 }
             }

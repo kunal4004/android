@@ -1,15 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 
-
-
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.util.binder.EnumMapBindAdapter;
 import za.co.woolworths.financial.services.android.util.binder.view.RootCategoryBinder;
 
-public class PSRootCategoryAdapter extends EnumMapBindAdapter<PSRootCategoryAdapter.SampleViewType>  {
+public class PSRootCategoryAdapter extends EnumMapBindAdapter<PSRootCategoryAdapter.SampleViewType> {
 
     private List<RootCategory> mRootCategories;
 
@@ -19,7 +17,7 @@ public class PSRootCategoryAdapter extends EnumMapBindAdapter<PSRootCategoryAdap
 
     public PSRootCategoryAdapter(List<RootCategory> rootCategories, RootCategoryBinder.OnClickListener click) {
         this.mRootCategories = rootCategories;
-        putBinder(SampleViewType.CBX_CONTENT, new RootCategoryBinder(this,click));
+        putBinder(SampleViewType.CBX_CONTENT, new RootCategoryBinder(this, click));
     }
 
     public void setCLIContent() {
@@ -28,7 +26,7 @@ public class PSRootCategoryAdapter extends EnumMapBindAdapter<PSRootCategoryAdap
 
     @Override
     public SampleViewType getEnumFromPosition(int position) {
-            return SampleViewType.CBX_CONTENT;
+        return SampleViewType.CBX_CONTENT;
     }
 
     @Override

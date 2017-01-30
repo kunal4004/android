@@ -32,14 +32,6 @@
             android:textSize="12sp"
             app:WTextView_font="medium_bold" />
     </android.support.v7.widget.Toolbar>
-
-    <WebView android:id="@+id/webviewProgressBar"
-        android:layout_width="60dp"
-        android:visibility="visible"
-        android:scrollbars="none"
-        android:layout_height="60dp"
-        android:layout_alignParentTop="true"/>
-
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/textInfo"
         android:layout_width="match_parent"

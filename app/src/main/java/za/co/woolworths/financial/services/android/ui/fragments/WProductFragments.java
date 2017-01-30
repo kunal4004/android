@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,6 +42,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ProductSearchAc
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchSubCategoryActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.PSRootCategoryAdapter;
 import za.co.woolworths.financial.services.android.ui.views.LDObservableScrollView;
+import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -50,6 +52,9 @@ import za.co.woolworths.financial.services.android.util.binder.view.RootCategory
 
 public class WProductFragments extends Fragment implements RootCategoryBinder.OnClickListener, View.OnClickListener,
         AppBarLayout.OnOffsetChangedListener, LDObservableScrollView.LDObservableScrollViewListener {
+
+    private WProgressDialogFragment mGetMessageProgressDialog;
+    private FragmentManager fm;
 
     public interface HideActionBarComponent {
         void onActionBarComponent(boolean actionbarIsVisible);
@@ -88,6 +93,8 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         mConnectionDetector = new ConnectionDetector();
         mProductToolbar = (Toolbar) view.findViewById(R.id.productToolbar);
         mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
+        fm = getFragmentManager();
+
         initUI(view);
         setUIListener();
         getRootCategoryRequest();
@@ -129,6 +136,8 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
 
     private void getRootCategoryRequest() {
         if (mConnectionDetector.isOnline(getActivity())) {
+            mGetMessageProgressDialog = WProgressDialogFragment.newInstance("message");
+            mGetMessageProgressDialog.setCancelable(false);
             new HttpAsyncTask<String, String, RootCategories>() {
                 @Override
                 protected RootCategories httpDoInBackground(String... params) {
@@ -137,6 +146,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
 
                 @Override
                 protected RootCategories httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                    hideProgress();
                     return new RootCategories();
                 }
 
@@ -147,6 +157,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
 
                 @Override
                 protected void onPreExecute() {
+                    mGetMessageProgressDialog.show(fm, "message");
                     super.onPreExecute();
                 }
 
@@ -182,6 +193,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                         }
                     } catch (NullPointerException ignored) {
                     }
+                    hideProgress();
                 }
             }.execute();
         } else {
@@ -351,4 +363,10 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
 //    private void showViews() {
 //        mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
 //    }
+
+    private void hideProgress() {
+        if (mGetMessageProgressDialog.isVisible())
+            mGetMessageProgressDialog.dismiss();
+    }
+
 }

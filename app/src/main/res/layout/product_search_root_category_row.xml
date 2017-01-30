@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="120dp"
         fresco:fadeDuration="100"
-        fresco:placeholderImage="@drawable/card_bg"
+        fresco:placeholderImage="@color/black"
         fresco:viewAspectRatio="1.33" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView

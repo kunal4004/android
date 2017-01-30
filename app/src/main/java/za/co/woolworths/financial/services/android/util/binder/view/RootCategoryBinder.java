@@ -25,7 +25,7 @@ import za.co.woolworths.financial.services.android.util.binder.DataBinder;
 
 public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder> {
 
-    private int lastPosition=-1;
+    private int lastPosition = -1;
 
     public interface OnClickListener {
         void onClick(View v, int position);
@@ -53,6 +53,7 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
 
         holder.mTextProduct.setText(rootCategory.categoryName);
         String imageUrl = rootCategory.imgUrl;
+
         if (imageUrl != null) {
             Uri imageUri = Uri.parse(imageUrl);
             holder.mImageProductCategory.setImageURI(imageUri);
