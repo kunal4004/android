@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -57,8 +56,6 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
 
     private void initViews() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        // mStepIndicator = (StepIndicator) findViewById(R.id.step_indicator);
-        //  mStepIndicator.setDefaultView(1);
         mViewPStepIndicator = (WFragmentViewPager) findViewById(R.id.mViewPStepIndicator);
         mImgStepIcon = (ImageView) findViewById(R.id.imgStepIcon);
         mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar);
@@ -83,7 +80,7 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-                Log.e("CurrentPosition",String.valueOf(position));
+                Log.e("CurrentPosition", String.valueOf(position));
 
                 switch (position) {
                     case 2:
@@ -99,7 +96,7 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
                 } else {
                     showCloseIconToolbar(false);
                 }
-                Log.e("CurrentPosition",String.valueOf(position));
+                Log.e("CurrentPosition", String.valueOf(position));
                 switch (position) {
                     case 0:
                         mImgStepIcon.setImageResource(R.drawable.clinumbersprogress_1);

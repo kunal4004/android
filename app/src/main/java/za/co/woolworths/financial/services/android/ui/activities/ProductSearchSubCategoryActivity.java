@@ -1,14 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -18,6 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 
 import com.awfs.coordination.R;
@@ -28,20 +30,22 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
 import za.co.woolworths.financial.services.android.ui.adapters.PSSubCategoryAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WObservableRecyclerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
+import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.binder.view.SubCategoryBinder;
 
 public class ProductSearchSubCategoryActivity extends AppCompatActivity implements View.OnClickListener,
-        SubCategoryBinder.OnClickListener {
+        SubCategoryBinder.OnClickListener, ObservableScrollViewCallbacks {
 
-    private Toolbar toolbar;
-    private RecyclerView recyclerView;
+    private Toolbar mToolbar;
+    private WObservableRecyclerView recyclerView;
     private SearchView searchView;
     private ConnectionDetector mConnectionDetector;
     private LayoutInflater mLayoutInflater;
-   // private SlidingUpViewLayout mSlidingUpViewLayout;
     private List<SubCategory> mSubCategories;
     private LinearLayoutManager mLayoutManager;
     private PSSubCategoryAdapter mPSRootCategoryAdapter;
@@ -53,6 +57,7 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
     private String mRootCategoryName;
     private String mRootCategoryId;
     private String mSubCategoriesName;
+    private ActionBar mActionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +73,6 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
             mCatStep = bundleSubCategory.getInt("catStep");
             mSubCategoriesName = bundleSubCategory.getString("sub_category_name");
         }
-
         mConnectionDetector = new ConnectionDetector();
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
         initUI();
@@ -90,14 +94,15 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
     }
 
     private void initUI() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolBarTitle = (WTextView) findViewById(R.id.toolbarText);
-        recyclerView = (RecyclerView) findViewById(R.id.productSearchList);
+        recyclerView = (WObservableRecyclerView) findViewById(R.id.productSearchList);
         LinearLayout recentSearchLayout = (LinearLayout) findViewById(R.id.recentSearchLayout);
         LinearLayout recentSearchList = (LinearLayout) findViewById(R.id.recentSearchList);
         mTextNoProductFound = (WTextView) findViewById(R.id.textNoProductFound);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        setSupportActionBar(toolbar);
+        recyclerView.setScrollViewCallbacks(this);
+       // setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         if (mCatStep == 0)
@@ -119,7 +124,8 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
     }
 
     @Override
-    public void onClick(View v) {}
+    public void onClick(View v) {
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -189,6 +195,7 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
                             } else {
                                 showNoProductFound();
                             }
+
                             break;
 
                         default:
@@ -217,14 +224,19 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
     }
 
     @Override
-    public void onClick(View v, int position) {
-        SubCategory subCategory = mSubCategories.get(position);
-        Intent openProductCategory = new Intent(ProductSearchSubCategoryActivity.this, ProductSearchSubCategoryActivity.class);
-        openProductCategory.putExtra("root_category_id", subCategory.categoryId);
-        openProductCategory.putExtra("sub_category_name", subCategory.categoryName);
-        openProductCategory.putExtra("catStep", 1);
-        startActivity(openProductCategory);
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    public void onClick(View v, final int position) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                SubCategory subCategory = mSubCategories.get(position);
+                Intent openProductCategory = new Intent(ProductSearchSubCategoryActivity.this, ProductSearchSubCategoryActivity.class);
+                openProductCategory.putExtra("root_category_id", subCategory.categoryId);
+                openProductCategory.putExtra("sub_category_name", subCategory.categoryName);
+                openProductCategory.putExtra("catStep", 1);
+                startActivity(openProductCategory);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+        }, 200);
     }
 
     public void hideRefreshView() {
@@ -236,6 +248,28 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
     public void loadData() {
         if (mConnectionDetector.isOnline(ProductSearchSubCategoryActivity.this)) {
             getSubCategoryRequest(mRootCategoryId);
+        }
+    }
+    @Override
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+    }
+
+    @Override
+    public void onDownMotionEvent() {
+    }
+
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+        ActionBar ab = getSupportActionBar();
+        if (ab == null) {
+            return;
+        }
+        if (scrollState == ScrollState.UP) {
+
+            mToolbar.animate().translationY(-mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
+
+        } else if (scrollState == ScrollState.DOWN) {
+            mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
         }
     }
 }

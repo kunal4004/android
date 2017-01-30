@@ -31,9 +31,10 @@
         android:layout_alignParentTop="true"
         android:orientation="horizontal">
 
-        <View android:layout_width="1dp"
+        <View
+            android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="@color/recent_search_bg"/>
+            android:background="@color/recent_search_bg" />
 
         <ImageView
             android:id="@+id/imBarcodeScanner"
