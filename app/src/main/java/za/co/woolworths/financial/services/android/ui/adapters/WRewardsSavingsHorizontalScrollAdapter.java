@@ -50,10 +50,14 @@ public class WRewardsSavingsHorizontalScrollAdapter extends RecyclerView.Adapter
 
         }
 
-        if (position == selectedPosition)
-            holder.listItem.setAlpha(1f);
-        else
-            holder.listItem.setAlpha(0.3f);
+        if (position == selectedPosition) {
+            holder.listItem.setBackgroundResource(R.drawable.black_circle);
+            holder.yearText.setAlpha(0.6f);
+        }
+        else {
+            holder.listItem.setBackgroundResource(R.drawable.gray_circle);
+            holder.yearText.setAlpha(1f);
+        }
     }
 
     @Override
