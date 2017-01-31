@@ -165,7 +165,7 @@ public class SSOActivity extends WebViewActivity {
     }
 
     public enum Host implements SSORequiredParameter {
-        STS("sts.woolworths.co.za");
+        STS("stsqa.woolworths.co.za");
 
         private String host;
 
