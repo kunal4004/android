@@ -16,6 +16,7 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 
 import static com.awfs.coordination.R.id.applyForWRewards;
@@ -29,8 +30,9 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
     public RelativeLayout valuedMember;
     public RelativeLayout loyalMember;
     public RelativeLayout vipMember;
-    public WButton wRewars_linkaccounts;
-    public WButton applyForWRewards;
+    public WTextView wRewars_linkaccounts;
+    public WTextView applyForWRewards;
+    public WTextView wRewardsTagLine;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -40,13 +42,15 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
         valuedMember=(RelativeLayout)view.findViewById(R.id.layoutValuedMember);
         loyalMember=(RelativeLayout)view.findViewById(R.id.layoutLoyalMember);
         vipMember=(RelativeLayout)view.findViewById(R.id.layoutVipMember);
-        wRewars_linkaccounts=(WButton) view.findViewById(R.id.wRewars_linkaccounts);
-        applyForWRewards=(WButton) view.findViewById(R.id.applyForWRewards);
+        wRewars_linkaccounts=(WTextView) view.findViewById(R.id.wRewars_linkaccounts);
+        applyForWRewards=(WTextView) view.findViewById(R.id.applyForWRewards);
+        wRewardsTagLine=(WTextView) view.findViewById(R.id.wRewards_tag_line);
         valuedMember.setOnClickListener(this);
         loyalMember.setOnClickListener(this);
         vipMember.setOnClickListener(this);
         wRewars_linkaccounts.setOnClickListener(this);
         applyForWRewards.setOnClickListener(this);
+        wRewardsTagLine.setText(getResources().getText(R.string.wrewards_tag_line));
         return view;
     }
 
