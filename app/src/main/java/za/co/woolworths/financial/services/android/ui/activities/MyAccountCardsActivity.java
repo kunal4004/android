@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -15,13 +16,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -67,10 +73,10 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
 
     private boolean cardsHasAccount = false;
     private WObservableScrollView mWObservableScrollView;
-    private RelativeLayout mRelativeLayout;
     private boolean containsStoreCard = false, containsCreditCard = false, containsPersonalLoan = false;
     private int position;
     private int wMinDrawnDownAmount;
+    private LinearLayout llRootLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,10 +89,11 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         getScreenResolution(this);
         mWObservableScrollView.setScrollViewCallbacks(this);
         fragmentPager = (WCustomPager) findViewById(R.id.fragmentpager);
+        llRootLayout = (LinearLayout) findViewById(R.id.llRootLayout);
         fragmentPager.setViewPagerIsScrollable(false);
         cards = new ArrayList<>();
         position = getIntent().getIntExtra("position", 0);
-        Utils.updateStatusBarBackground(MyAccountCardsActivity.this,R.color.white);
+        Utils.updateStatusBarBackground(MyAccountCardsActivity.this, R.color.white);
         changeViewPagerAndActionBarBackground(position);
         mBtnApplyNow.setVisibility(View.GONE);
         changeButtonColor(position);
@@ -146,7 +153,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         pager = (WViewPager) findViewById(R.id.myAccountsCardPager);
 
         mBtnApplyNow = (Button) findViewById(R.id.btnApplyNow);
-        mRelativeLayout = (RelativeLayout) findViewById(R.id.relContentLayout);
         mWObservableScrollView = (WObservableScrollView) findViewById(R.id.nest_scrollview);
         mBtnApplyNow.setOnClickListener(this);
     }
@@ -163,7 +169,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     private void dynamicToolbarColor(int color) {
         int mColor = ContextCompat.getColor(MyAccountCardsActivity.this, color);
         mToolbar.setBackgroundColor((mColor));
-        mRelativeLayout.setBackgroundColor(Color.WHITE);
+        setTaskBarColored(mColor);
     }
 
     public void changeViewPagerAndActionBarBackground(int position) {
@@ -286,7 +292,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                 findViewById(R.id.no_internet).setVisibility(View.VISIBLE);
         }
     }
-
 
 
     @Override
@@ -469,5 +474,55 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         } else {
         }
     }
+
+    public void setStatusBarColor(View statusBar, int color) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window w = getWindow();
+            w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            //status bar height
+            // int actionBarHeight = getActionBarHeight();
+            // int statusBarHeight = getStatusBarHeight();
+            //action bar height
+            //  statusBar.getLayoutParams().height = actionBarHeight + statusBarHeight;
+            statusBar.setBackgroundColor(color);
+            llRootLayout.setBackgroundColor(color);
+        }
+    }
+
+    public int getActionBarHeight() {
+        int actionBarHeight = 0;
+        TypedValue tv = new TypedValue();
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+        }
+        return actionBarHeight;
+    }
+
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
+    public void setTaskBarColored(int color) {
+        Window w = this.getWindow();
+        w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        //status bar height
+        int statusBarHeight = getStatusBarHeight();
+        View view = new View(this);
+        view.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        view.getLayoutParams().height = statusBarHeight;
+        ((ViewGroup) w.getDecorView()).addView(view);
+        view.setBackgroundColor(color);
+        llRootLayout.setBackgroundColor(color);
+        view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+    }
+
+    private void whiteBackground(){
+        llRootLayout.setBackgroundColor(Color.WHITE);
+    };
 }
 
