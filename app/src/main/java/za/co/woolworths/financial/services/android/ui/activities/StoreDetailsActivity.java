@@ -15,8 +15,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,12 +26,14 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 
 import com.awfs.coordination.R;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -46,11 +50,14 @@ import java.util.Locale;
 
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
+import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+
+import static com.google.android.gms.wearable.DataMap.TAG;
 
 public class StoreDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
     private static final int REQUEST_CALL = 1;
@@ -74,6 +81,9 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
     WTextView nativeMap;
     WTextView cancel;
 
+    LinearLayout mapLayout;
+    private SlidingUpPanelLayout mLayout;
+
     Intent callIntent;
     private PopWindowValidationMessage mPopWindowValidationMessage;
 
@@ -91,17 +101,26 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
         storeAddress = (WTextView) findViewById(R.id.storeAddress);
         timeingsLayout = (LinearLayout) findViewById(R.id.timeingsLayout);
         brandsLayout = (LinearLayout) findViewById(R.id.brandsLayout);
+        mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        mapLayout =(LinearLayout) findViewById(R.id.mapLayout);
+        //getting height of device
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int height = displaymetrics.heightPixels;
+        int width = displaymetrics.widthPixels;
+        //set height of map view to 3/10 of the screen height
+        mapLayout.setLayoutParams(new SlidingUpPanelLayout.LayoutParams(width, (height * 3)/10));
+        //set height of store details view to 7/10 of the screen height
+        mLayout.setPanelHeight((height * 7)/10);
+
         direction = (RelativeLayout) findViewById(R.id.direction);
         storeNumber = (WTextView) findViewById(R.id.storeNumber);
         makeCall = (RelativeLayout) findViewById(R.id.call);
         relBrandLayout = (RelativeLayout) findViewById(R.id.relBrandLayout);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(null);
         Gson gson = new Gson();
         storeDetails = gson.fromJson(getIntent().getStringExtra("store"), StoreDetails.class);
         initStoreDetailsView(storeDetails);
-        initMap();
+
        /* direction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,12 +136,56 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
             }
         });*/
 
+        mLayout.setFadeOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            }
+        });
+        mLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+                Log.i(TAG, "onPanelSlide, offset " + slideOffset);
+                if (slideOffset == 0.0) {
+                    mLayout.setAnchorPoint(1.0f);
+                }
+            }
+
+            @Override
+            public void onPanelStateChanged(final View panel, SlidingUpPanelLayout.PanelState previousState, final SlidingUpPanelLayout.PanelState newState) {
+                Log.i(TAG, "onPanelStateChanged " + newState);
+
+                if (newState != SlidingUpPanelLayout.PanelState.COLLAPSED) {
+                       /*
+                        * Previous result: Application would exit completely when back button is pressed
+                        * New result: Panel just returns to its previous position (Panel collapses)
+                        */
+                    mLayout.setFocusableInTouchMode(true);
+                    mLayout.setOnKeyListener(new View.OnKeyListener() {
+                        @Override
+                        public boolean onKey(View v, int keyCode, KeyEvent event) {
+                            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                                mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                                mLayout.setFocusable(false);
+                                return true;
+                            }
+                            return true;
+                        }
+                    });
+                }
+            }
+        });
+        initMap();
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
         googleMap.setMyLocationEnabled(false);
+        centerCamera();
+    }
+
+    public void centerCamera() {
         googleMap.addMarker(new MarkerOptions().position(new LatLng(storeDetails.latitude, storeDetails.longitude))
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.selected_pin)));
         CameraPosition cameraPosition = new CameraPosition.Builder().target(

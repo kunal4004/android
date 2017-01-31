@@ -35,6 +35,7 @@
             android:text="@string/tier_status1"
             android:textColor="@color/black"
             android:textSize="15sp"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
 
@@ -78,6 +79,7 @@
             android:text="@string/wrewards_instant_savings"
             android:textColor="@color/black"
             android:textSize="15sp"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
 
@@ -90,6 +92,7 @@
             android:textColor="#4d000000"
             android:textSize="15sp"
             android:textAllCaps="true"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
     </RelativeLayout>
@@ -115,6 +118,7 @@
             android:text="@string/wrewards_green_earned"
             android:textColor="@color/black"
             android:textSize="15sp"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
 
@@ -127,6 +131,7 @@
             android:textColor="#4d000000"
             android:textSize="15sp"
             android:textAllCaps="true"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
     </RelativeLayout>
@@ -152,6 +157,7 @@
             android:text="@string/quarterly_voucher_earned"
             android:textColor="@color/black"
             android:textSize="15sp"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
 
@@ -164,6 +170,7 @@
             android:textColor="#4d000000"
             android:textSize="15sp"
             android:textAllCaps="true"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
     </RelativeLayout>
@@ -190,6 +197,7 @@
             android:text="@string/year_to_date_spend"
             android:textColor="@color/black"
             android:textSize="15sp"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
 
@@ -202,6 +210,7 @@
             android:textColor="#4d000000"
             android:textSize="15sp"
             android:textAllCaps="true"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
     </RelativeLayout>

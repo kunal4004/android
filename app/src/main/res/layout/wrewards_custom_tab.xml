@@ -15,9 +15,9 @@
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Calls"
             android:textColor="@drawable/wrewards_tab_text_color"
             android:textSize="12sp"
+            android:letterSpacing="0.1"
             app:WTextView_font="medium"
             />
 
@@ -28,7 +28,6 @@
             android:layout_marginLeft="6dp"
             android:background="@drawable/vouchers_badge"
             android:gravity="center"
-            android:text="99"
             android:textColor="@color/white"
             android:textSize="10sp"
             app:WTextView_font="medium_bold"

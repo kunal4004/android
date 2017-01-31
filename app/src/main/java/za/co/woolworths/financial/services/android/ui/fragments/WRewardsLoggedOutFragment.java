@@ -15,6 +15,7 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 
 /**
@@ -27,7 +28,8 @@ public class WRewardsLoggedOutFragment extends Fragment implements View.OnClickL
     public RelativeLayout valuedMember;
     public RelativeLayout loyalMember;
     public RelativeLayout vipMember;
-    public WButton applyForWRewards;
+    public WTextView applyForWRewards;
+    public WTextView wRewardsTagLine;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -38,7 +40,9 @@ public class WRewardsLoggedOutFragment extends Fragment implements View.OnClickL
         valuedMember=(RelativeLayout)view.findViewById(R.id.layoutValuedMember);
         loyalMember=(RelativeLayout)view.findViewById(R.id.layoutLoyalMember);
         vipMember=(RelativeLayout)view.findViewById(R.id.layoutVipMember);
-        applyForWRewards=(WButton) view.findViewById(R.id.applyForWRewards);
+        applyForWRewards=(WTextView) view.findViewById(R.id.applyForWRewards);
+        wRewardsTagLine=(WTextView) view.findViewById(R.id.wRewards_tag_line);
+        wRewardsTagLine.setText(getResources().getText(R.string.wrewards_tag_line));
         login.setOnClickListener(this);
         register.setOnClickListener(this);
         valuedMember.setOnClickListener(this);
