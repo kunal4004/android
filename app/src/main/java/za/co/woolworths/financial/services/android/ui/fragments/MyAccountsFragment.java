@@ -127,6 +127,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     private WObservableScrollView mWObservableScrollView;
     private Toolbar mToolbar;
     private ImageView mImageView;
+    private RelativeLayout relFAQ;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -164,7 +165,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         sc_available_funds = (WTextView) view.findViewById(R.id.sc_available_funds);
         cc_available_funds = (WTextView) view.findViewById(R.id.cc_available_funds);
         pl_available_funds = (WTextView) view.findViewById(R.id.pl_available_funds);
-        mImageView = (ImageView)view.findViewById(R.id.imgBurgerButton);
+        mImageView = (ImageView) view.findViewById(R.id.imgBurgerButton);
         scProgressBar = (ProgressBar) view.findViewById(R.id.scProgressBar);
         ccProgressBar = (ProgressBar) view.findViewById(R.id.ccProgressBar);
         plProgressBar = (ProgressBar) view.findViewById(R.id.plProgressBar);
@@ -173,6 +174,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         userName = (WTextView) view.findViewById(R.id.user_name);
         userInitials = (WTextView) view.findViewById(R.id.initials);
         imgCreditCard = (ImageView) view.findViewById(R.id.imgCreditCard);
+        relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
+
 
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
@@ -436,6 +439,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
             @Override
             protected void onPreExecute() {
+                relFAQ.setVisibility(View.GONE);
                 mGetAccountsProgressDialog.show(fm, "account");
                 mGetAccountsProgressDialog.setCancelable(false);
             }
@@ -613,6 +617,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void dismissProgress() {
+        relFAQ.setVisibility(View.VISIBLE);
         if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
             mGetAccountsProgressDialog.dismiss();
         }
