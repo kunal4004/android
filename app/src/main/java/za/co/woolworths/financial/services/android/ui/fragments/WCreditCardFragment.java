@@ -80,8 +80,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         bindData(accountsResponse);
         disableIncreaseLimit();
         hideProgressBar();
-        getActiveOffer();
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getActiveOffer();
     }
 
     //To remove negative signs from negative balance and add "CR" after the negative balance
@@ -170,7 +175,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                     String httpDesc = offerActive.response.desc;
                     if (httpCode == 200) {
                         isOfferActive = offerActive.offerActive;
-                        Log.e("isOffer",String.valueOf(isOfferActive));
+                        Log.e("isOffer", String.valueOf(isOfferActive));
                         if (isOfferActive) {
                             disableIncreaseLimit();
                         } else {
