@@ -450,5 +450,7 @@
     <string name="collect_credit_card_desc_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
 
     <string name="no_messages_to_display">No messages to display</string>
+    <string name="no_tire_history_to_display">NO TIRE HISTORY TO DISPLAY</string>
+    <string name="no_vouchers">NO VOUCHERS</string>
 
 </resources>

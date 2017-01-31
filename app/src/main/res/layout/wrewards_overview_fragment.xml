@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/grey_bg"
-              android:scrollbars="none"
+
     >
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:id="@+id/overviewLayout"
+        android:visibility="gone"
         >
 
     <FrameLayout
@@ -187,7 +194,21 @@
             android:layout_height="250dp"
             android:id="@+id/promotionViewPager"
             android:paddingLeft="8dp"
+            android:clipToPadding="false"
             />
     </LinearLayout>
     </LinearLayout>
-</ScrollView>
+
+    </ScrollView>
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/noTireHistory"
+        android:text="@string/no_tire_history_to_display"
+        app:WTextView_font="myriadpro_regular"
+        android:textSize="15sp"
+        android:textColor="#80000000"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        />
+</RelativeLayout>
