@@ -55,6 +55,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         setListener();
         setActionBar();
         setPagerCard(woolworthsApplication.getCliCardPosition());
+        setStatusBarColor(woolworthsApplication.getCliCardPosition());
     }
 
     public void setCurrentIndex() {
@@ -195,6 +196,25 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         } else {
             mAppBarLayout.setExpanded(true, false);
             mAppBarLayout.setActivated(true);
+        }
+    }
+
+    private void setStatusBarColor(int position) {
+        switch (position) {
+            case 0:
+                int storeCardColor = ContextCompat.getColor(this, R.color.cli_store_card);
+                Utils.updateStatusBarBackground(this, storeCardColor);
+                break;
+
+            case 1:
+                int creditCardColor = ContextCompat.getColor(this, R.color.cli_credit_card);
+                Utils.updateStatusBarBackground(this, creditCardColor);
+                break;
+
+            case 2:
+                int personalLoanColor = ContextCompat.getColor(this, R.color.cli_personal_loan);
+                Utils.updateStatusBarBackground(this, personalLoanColor);
+                break;
         }
     }
 

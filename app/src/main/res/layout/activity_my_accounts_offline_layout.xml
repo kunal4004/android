@@ -1,8 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/llRootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -17,8 +18,8 @@
             android:id="@+id/nest_scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:overScrollMode="never"
             android:clipToPadding="false"
+            android:overScrollMode="never"
             android:paddingTop="?attr/actionBarSize"
             android:scrollbars="none">
 
@@ -50,7 +51,6 @@
 
         </za.co.woolworths.financial.services.android.ui.views.WObservableScrollView>
 
-
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -70,7 +70,6 @@
                 app:WTextView_font="medium_bold" />
 
         </android.support.v7.widget.Toolbar>
-
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnApplyNow"

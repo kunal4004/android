@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -18,11 +19,12 @@ import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
@@ -67,10 +69,10 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
 
     private boolean cardsHasAccount = false;
     private WObservableScrollView mWObservableScrollView;
-    private RelativeLayout mRelativeLayout;
     private boolean containsStoreCard = false, containsCreditCard = false, containsPersonalLoan = false;
     private int position;
     private int wMinDrawnDownAmount;
+    private LinearLayout llRootLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,16 +83,15 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         mWoolworthsApplication = (WoolworthsApplication) getApplication();
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(MyAccountCardsActivity.this);
         getScreenResolution(this);
+        position = getIntent().getIntExtra("position", 0);
         mWObservableScrollView.setScrollViewCallbacks(this);
         fragmentPager = (WCustomPager) findViewById(R.id.fragmentpager);
+        llRootLayout = (LinearLayout) findViewById(R.id.llRootLayout);
         fragmentPager.setViewPagerIsScrollable(false);
         cards = new ArrayList<>();
-        position = getIntent().getIntExtra("position", 0);
-        Utils.updateStatusBarBackground(MyAccountCardsActivity.this, R.color.white);
         changeViewPagerAndActionBarBackground(position);
         mBtnApplyNow.setVisibility(View.GONE);
         changeButtonColor(position);
-
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -102,6 +103,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                 fragmentPager.setCurrentItem(position);
                 changeViewPagerAndActionBarBackground(position);
                 changeButtonColor(position);
+                setStatusBarColor(position);
             }
 
             @Override
@@ -125,6 +127,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
             setUpAdapter(cards);
         }
 
+        setStatusBarColor(position);
         mSharePreferenceHelper.save("acc_card_activity", "acc_card_activity");
         this.registerReceiver(this.finishAlert, new IntentFilter(mSharePreferenceHelper.getValue("acc_card_activity")));
     }
@@ -146,7 +149,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         pager = (WViewPager) findViewById(R.id.myAccountsCardPager);
 
         mBtnApplyNow = (Button) findViewById(R.id.btnApplyNow);
-        mRelativeLayout = (RelativeLayout) findViewById(R.id.relContentLayout);
         mWObservableScrollView = (WObservableScrollView) findViewById(R.id.nest_scrollview);
         mBtnApplyNow.setOnClickListener(this);
     }
@@ -163,7 +165,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     private void dynamicToolbarColor(int color) {
         int mColor = ContextCompat.getColor(MyAccountCardsActivity.this, color);
         mToolbar.setBackgroundColor((mColor));
-        mRelativeLayout.setBackgroundColor(Color.WHITE);
     }
 
     public void changeViewPagerAndActionBarBackground(int position) {
@@ -171,7 +172,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
             case 0:
                 toolbarTextView.setText("STORE CARD");
                 pager.setBackgroundResource(R.drawable.accounts_storecard_background);
-                dynamicToolbarColor(R.color.cli_store_card);
+                dynamicToolbarColor(R.color.charcoal_grey);
                 break;
             case 1:
                 toolbarTextView.setText("CREDIT CARD");
@@ -404,8 +405,8 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                     mBtnApplyNow.setVisibility(View.VISIBLE);
                     break;
                 case 2:
-                    mBtnApplyNow.setVisibility(View.VISIBLE);
                     mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.purple));
+                    mBtnApplyNow.setVisibility(View.VISIBLE);
                     break;
             }
         } else { // logged in
@@ -415,8 +416,8 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                         mBtnApplyNow.setVisibility(View.GONE);
                     } else {
                         mBtnApplyNow.setText(getString(R.string.apply_now));
-                        mBtnApplyNow.setVisibility(View.VISIBLE);
                         mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_store_card));
+                        mBtnApplyNow.setVisibility(View.VISIBLE);
                     }
                     break;
                 case 1:
@@ -424,8 +425,8 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                         mBtnApplyNow.setVisibility(View.GONE);
                     } else {
                         mBtnApplyNow.setText(getString(R.string.apply_now));
-                        mBtnApplyNow.setVisibility(View.VISIBLE);
                         mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.cli_credit_card));
+                        mBtnApplyNow.setVisibility(View.VISIBLE);
                     }
                     break;
                 case 2:
@@ -466,6 +467,57 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         } else if (scrollState == scrollState.DOWN) {
             showViews();
         } else {
+        }
+    }
+
+    public void updateStatusBarBackground(int color) {
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        View decor = getWindow().getDecorView();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(color);
+            decor.setSystemUiVisibility(0);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.setStatusBarColor(color);
+            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
+
+        llRootLayout.setBackgroundColor(color);
+    }
+
+    private void whiteBackground() {
+        llRootLayout.setBackgroundColor(Color.WHITE);
+    }
+
+    private void setStatusBarColor(int position) {
+        switch (position) {
+            case 0:
+                int storeCardColor = ContextCompat.getColor(this, R.color.cli_store_card);
+                updateStatusBarBackground(storeCardColor);
+                break;
+
+            case 1:
+                int creditCardColor = ContextCompat.getColor(this, R.color.cli_credit_card);
+                updateStatusBarBackground(creditCardColor);
+                break;
+
+            case 2:
+                int personalLoanColor = ContextCompat.getColor(this, R.color.cli_personal_loan);
+                updateStatusBarBackground(personalLoanColor);
+                break;
+        }
+
+        if (containsCreditCard) {
+            whiteBackground();
+        }
+
+        if (containsPersonalLoan) {
+            whiteBackground();
+        }
+        if (containsStoreCard) {
+            whiteBackground();
         }
     }
 }
