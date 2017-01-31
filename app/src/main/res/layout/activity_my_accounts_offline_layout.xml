@@ -51,7 +51,6 @@
 
         </za.co.woolworths.financial.services.android.ui.views.WObservableScrollView>
 
-
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -71,7 +70,6 @@
                 app:WTextView_font="medium_bold" />
 
         </android.support.v7.widget.Toolbar>
-
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnApplyNow"

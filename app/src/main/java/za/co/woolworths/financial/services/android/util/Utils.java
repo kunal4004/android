@@ -10,8 +10,10 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -266,5 +268,24 @@ public class Utils {
 
         return response;
     }
+
+//
+//    public void setTaskBarColored(int color) {
+//        Window w = this.getWindow();
+//        // w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        //status bar height
+//        w.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//        w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        int statusBarHeight = getStatusBarHeight();
+//        View view = new View(this);
+//        view.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+//        view.getLayoutParams().height = statusBarHeight;
+//        ((ViewGroup) w.getDecorView()).addView(view);
+//        view.setBackgroundColor(color);
+//        llRootLayout.setBackgroundColor(color);
+//        //View decor = getWindow().getDecorView();
+//        //decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+//    }
+
 
 }
