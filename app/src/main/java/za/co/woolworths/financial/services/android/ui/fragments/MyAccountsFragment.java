@@ -318,7 +318,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void hideAllLayers() {
-
         loggedInHeaderLayout.setVisibility(View.GONE);
         loggedOutHeaderLayout.setVisibility(View.GONE);
         signOutBtn.setVisibility(View.GONE);
