@@ -8,18 +8,33 @@ import com.google.gson.annotations.SerializedName;
 
 public class OtherSku {
 
-    @SerializedName("sku")
+    @SerializedName("colour")
     @Expose
-    public String sku;
-    @SerializedName("externalColourRef")
-    @Expose
-    public String externalColourRef;
+    public String colour;
     @SerializedName("colourImagePath")
     @Expose
     public String colourImagePath;
+    @SerializedName("displayName")
+    @Expose
+    public String displayName;
+    @SerializedName("externalColourRef")
+    @Expose
+    public String externalColourRef;
+    @SerializedName("externalImageRef")
+    @Expose
+    public String externalImageRef;
+    @SerializedName("imagePath")
+    @Expose
+    public String imagePath;
     @SerializedName("price")
     @Expose
     public String price;
+    @SerializedName("size")
+    @Expose
+    public String size;
+    @SerializedName("sku")
+    @Expose
+    public String sku;
     @SerializedName("wasPrice")
     @Expose
     public String wasPrice;

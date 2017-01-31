@@ -102,7 +102,7 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
         mTextNoProductFound = (WTextView) findViewById(R.id.textNoProductFound);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setScrollViewCallbacks(this);
-       // setSupportActionBar(mToolbar);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         if (mCatStep == 0)

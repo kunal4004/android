@@ -8,11 +8,17 @@ import com.google.gson.annotations.SerializedName;
 
 public class PromotionImages {
 
-    @SerializedName("wRewards")
+    @SerializedName("newImage")
     @Expose
-    public String wRewards;
+    public String newImage;
     @SerializedName("save")
     @Expose
     public String save;
+    @SerializedName("vitality")
+    @Expose
+    public String vitality;
+    @SerializedName("wRewards")
+    @Expose
+    public String wRewards;
 
 }

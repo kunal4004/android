@@ -94,7 +94,7 @@ public class ProductSearchActivity extends AppCompatActivity
         Utils.updateStatusBarBackground(this);
         setActionBar();
         initUI();
-        mLocation = new LatLng(0,0);
+        mLocation = new LatLng(0, 0);
         connectionDetector = new ConnectionDetector();
         setRecycleListView();
         showRecentSearchHistoryView(true);
@@ -124,6 +124,8 @@ public class ProductSearchActivity extends AppCompatActivity
         getSupportActionBar().setTitle(null);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_search);
+
     }
 
     private void scrollListener() {
@@ -327,7 +329,9 @@ public class ProductSearchActivity extends AppCompatActivity
             FusedLocationSingleton.getInstance().stopLocationUpdates();
             // unregister observer
             LocalBroadcastManager.getInstance(ProductSearchActivity.this).unregisterReceiver(mLocationUpdated);
-        } catch (NullPointerException ex) {Log.e("onPauseFusedLoc",ex.toString());}
+        } catch (NullPointerException ex) {
+            Log.e("onPauseFusedLoc", ex.toString());
+        }
     }
 
     @Override
@@ -352,9 +356,6 @@ public class ProductSearchActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                canGoBack();
-                return true;
-            case R.id.action_search:
                 searchProductBrand = mEditSearchProduct.getText().toString();
                 if (!TextUtils.isEmpty(searchProductBrand)) {
                     if (productList != null) {
@@ -367,6 +368,9 @@ public class ProductSearchActivity extends AppCompatActivity
                     productListview.setVisibility(View.GONE);
                     showRecentSearchHistoryView(true);
                 }
+                return true;
+            case R.id.action_search:
+                canGoBack();
                 break;
         }
         return false;
@@ -516,9 +520,9 @@ public class ProductSearchActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent) {
             try {
                 Location location = intent.getParcelableExtra(Const.LBM_EVENT_LOCATION_UPDATE);
-                mLocation = new LatLng(location.getLatitude(),location.getLongitude());
+                mLocation = new LatLng(location.getLatitude(), location.getLongitude());
             } catch (NullPointerException e) {
-                mLocation = new LatLng(0,0);
+                mLocation = new LatLng(0, 0);
             }
         }
     };
