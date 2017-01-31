@@ -96,6 +96,39 @@
                 android:visibility="visible">
 
                 <RelativeLayout
+                    android:id="@+id/relFAQ"
+                    style="@style/listStyle"
+                    android:background="@drawable/stores_details_background"
+                    android:visibility="visible">
+
+                    <ImageView
+                        android:id="@+id/imgFaqQuery"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/signout_24_copy" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="32dp"
+                        android:layout_toRightOf="@+id/imgFaqQuery"
+                        android:text="@string/drawer_faq"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        app:WTextView_font="myriadpro_regular" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/ic_caret_black" />
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:id="@+id/contactUs"
                     style="@style/listStyle"
                     android:background="@drawable/stores_details_background">

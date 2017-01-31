@@ -127,6 +127,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     private WObservableScrollView mWObservableScrollView;
     private Toolbar mToolbar;
     private ImageView mImageView;
+    private RelativeLayout relFAQ;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -173,6 +174,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         userName = (WTextView) view.findViewById(R.id.user_name);
         userInitials = (WTextView) view.findViewById(R.id.initials);
         imgCreditCard = (ImageView) view.findViewById(R.id.imgCreditCard);
+        relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
+
 
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
@@ -453,6 +456,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             @Override
             protected void onPreExecute() {
                 mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.recent_search_bg));
+                relFAQ.setVisibility(View.GONE);
                 showViews();
                 mGetAccountsProgressDialog.show(fm, "account");
                 mGetAccountsProgressDialog.setCancelable(false);
@@ -632,6 +636,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
     private void dismissProgress() {
         mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.white));
+        relFAQ.setVisibility(View.VISIBLE);
         if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
             mGetAccountsProgressDialog.dismiss();
         }

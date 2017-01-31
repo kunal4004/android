@@ -171,7 +171,9 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
                         }
                         else {
                             showRecentSearchHistoryView(false);
-                            startSearch(newText);
+                            if (newText.length() >= 2) {
+                                startSearch(newText);
+                            }
                         }
                     }
                 }, 600);
