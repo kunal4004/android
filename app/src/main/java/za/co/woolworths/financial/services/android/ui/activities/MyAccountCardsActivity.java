@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,17 +16,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -472,38 +470,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         }
     }
 
-    public void setStatusBarColor(View statusBar, int color) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window w = getWindow();
-            w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            //status bar height
-            // int actionBarHeight = getActionBarHeight();
-            // int statusBarHeight = getStatusBarHeight();
-            //action bar height
-            //  statusBar.getLayoutParams().height = actionBarHeight + statusBarHeight;
-            statusBar.setBackgroundColor(color);
-            llRootLayout.setBackgroundColor(color);
-        }
-    }
-
-    public int getActionBarHeight() {
-        int actionBarHeight = 0;
-        TypedValue tv = new TypedValue();
-        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-        }
-        return actionBarHeight;
-    }
-
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
-
     public void updateStatusBarBackground(int color) {
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -519,6 +485,10 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         }
 
         llRootLayout.setBackgroundColor(color);
+    }
+
+    private void whiteBackground() {
+        llRootLayout.setBackgroundColor(Color.WHITE);
     }
 
     private void setStatusBarColor(int position) {
@@ -537,6 +507,17 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                 int personalLoanColor = ContextCompat.getColor(this, R.color.cli_personal_loan);
                 updateStatusBarBackground(personalLoanColor);
                 break;
+        }
+
+        if (containsCreditCard) {
+            whiteBackground();
+        }
+
+        if (containsPersonalLoan) {
+            whiteBackground();
+        }
+        if (containsStoreCard) {
+            whiteBackground();
         }
     }
 }

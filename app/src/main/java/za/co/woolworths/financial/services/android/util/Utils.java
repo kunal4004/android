@@ -9,6 +9,7 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -287,5 +288,38 @@ public class Utils {
 //        //decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 //    }
 
+//
+//    public void setStatusBarColor(View statusBar, int color) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            Window w = getWindow();
+//            w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//            //status bar height
+//            // int actionBarHeight = getActionBarHeight();
+//            // int statusBarHeight = getStatusBarHeight();
+//            //action bar height
+//            //  statusBar.getLayoutParams().height = actionBarHeight + statusBarHeight;
+//            statusBar.setBackgroundColor(color);
+//            llRootLayout.setBackgroundColor(color);
+//        }
+//    }
+//
+//    public int getActionBarHeight() {
+//        int actionBarHeight = 0;
+//        TypedValue tv = new TypedValue();
+//        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+//            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+//        }
+//        return actionBarHeight;
+//    }
+//
+//    public int getStatusBarHeight() {
+//        int result = 0;
+//        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+//        if (resourceId > 0) {
+//            result = getResources().getDimensionPixelSize(resourceId);
+//        }
+//        return result;
+//    }
+//
 
 }

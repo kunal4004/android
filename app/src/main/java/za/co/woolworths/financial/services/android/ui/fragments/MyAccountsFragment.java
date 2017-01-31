@@ -194,7 +194,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
         view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
         view.findViewById(R.id.linkAccountsBtn).setOnClickListener(this.btnLinkAccounts_onClick);
-
+        showViews();
         //hide all views, load accounts may occur
         this.initialize();
         return view;
@@ -436,6 +436,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
             @Override
             protected void onPreExecute() {
+                mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.recent_search_bg));
                 mGetAccountsProgressDialog.show(fm, "account");
                 mGetAccountsProgressDialog.setCancelable(false);
             }
@@ -613,6 +614,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void dismissProgress() {
+        mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.white));
         if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
             mGetAccountsProgressDialog.dismiss();
         }
@@ -660,6 +662,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     public void onDownMotionEvent() {
 
     }
+
+
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
