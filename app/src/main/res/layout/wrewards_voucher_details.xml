@@ -44,13 +44,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:padding="16dp"
+            android:padding="24dp"
             android:gravity="center"
             android:text="@string/view_terms_conditions"
             android:textAllCaps="true"
             android:textColor="#b3ffffff"
             android:textSize="12sp"
-            app:WTextView_font="myriadpro_regular"
+            android:letterSpacing="0.1"
+            app:WTextView_font="medium"
             />
     </RelativeLayout>
 

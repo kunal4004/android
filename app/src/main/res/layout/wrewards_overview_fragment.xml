@@ -47,6 +47,7 @@
             android:textColor="#4d000000"
             android:textSize="12sp"
             android:textAllCaps="true"
+            android:letterSpacing="0.1"
             app:WTextView_font="medium"
             />
 
@@ -96,6 +97,7 @@
             android:textColor="#4d000000"
             android:textSize="12sp"
             android:textAllCaps="true"
+            android:letterSpacing="0.1"
             app:WTextView_font="medium"
             />
 
@@ -136,6 +138,7 @@
             android:textAllCaps="true"
             android:textColor="#4d000000"
             android:textSize="12sp"
+            android:letterSpacing="0.1"
             app:WTextView_font="medium"
             />
 
@@ -180,6 +183,7 @@
             android:textSize="12sp"
             android:textAllCaps="true"
             android:text="@string/featured_promotions"
+            android:letterSpacing="0.1"
             android:gravity="center_vertical"
             />
         <android.support.v4.view.ViewPager
