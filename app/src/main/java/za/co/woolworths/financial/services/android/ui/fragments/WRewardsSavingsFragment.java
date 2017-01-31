@@ -55,7 +55,7 @@ public class WRewardsSavingsFragment extends Fragment {
         recyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new WRewardsSavingsHorizontalScrollAdapter(getActivity(), voucherResponse.tierHistoryList);
         recyclerView.setAdapter(mAdapter);
-       // setUpYearToDateValue();
+        setUpYearToDateValue();
        recyclerView.addOnItemTouchListener(new RecycleViewClickListner(getActivity(), recyclerView, new RecycleViewClickListner.ClickListener() {
             @Override
             public void onClick(View view, int position) {
