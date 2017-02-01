@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeleteMessageResponse;
+import za.co.woolworths.financial.services.android.models.dto.FAQ;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
@@ -366,6 +367,19 @@ public interface ApiInterface {
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @GET("/content/promotions")
     PromotionsResponse getPromotions(
+            @Header("apiId") String apiId,
+            @Header("sha1Password") String sha1Password,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("deviceModel") String deviceModel,
+            @Header("network") String network,
+            @Header("os") String os,
+            @Header("osVersion") String osVersion,
+            @Header("userAgent") String userAgent,
+            @Header("userAgentVersion") String userAgentVersion);
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @GET("/content/faq")
+    FAQ getFAQ(
             @Header("apiId") String apiId,
             @Header("sha1Password") String sha1Password,
             @Header("deviceVersion") String deviceVersion,
