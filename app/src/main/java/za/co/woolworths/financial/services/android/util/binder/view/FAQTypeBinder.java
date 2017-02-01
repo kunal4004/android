@@ -54,7 +54,7 @@ public class FAQTypeBinder extends DataBinder<FAQTypeBinder.ViewHolder> {
         }
 
         if (selectedPosition == position) {
-            holder.mRelFAQRow.setBackground(ContextCompat.getDrawable(holder.mFAQName.getContext(),R.drawable.vertical_line));
+            holder.mRelFAQRow.setBackground(ContextCompat.getDrawable(holder.mFAQName.getContext(),R.drawable.pressed_bg));
         } else {
             holder.mRelFAQRow.setBackground(ContextCompat.getDrawable(holder.mFAQName.getContext(),R.drawable.top_border));
         }

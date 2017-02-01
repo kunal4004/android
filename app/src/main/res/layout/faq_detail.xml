@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
-            android:background="@color/white"
+            android:background="@drawable/appbar_background"
             android:minHeight="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/StoreSearch"
@@ -44,9 +44,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/bank_spacing_width"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="30dp"
         android:orientation="vertical"
-        android:paddingEnd="@dimen/bank_spacing_width">
+        android:paddingEnd="@dimen/default_margin">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/title"
@@ -54,9 +55,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginBottom="@dimen/bank_spacing_width"
             android:layout_toStartOf="@+id/imgNextRow"
-            android:gravity="start|center"
+            android:gravity="start"
+            android:layout_marginBottom="10dp"
             android:text="@string/app_name"
             android:textColor="@color/black"
             android:textSize="15sp"
@@ -68,10 +69,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/bank_spacing_width"
-            android:gravity="start|center"
-            android:lineSpacingExtra="2.1dp"
+            android:gravity="start"
+            android:lineSpacingExtra="2.2dp"
             android:text="@string/app_name"
-            android:textColor="@color/black"
+            android:textColor="@color/black_desc_opacity"
             android:textSize="15sp"
             app:WTextView_font="myriadpro_regular" />
 

@@ -380,7 +380,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         int width = metrics.widthPixels;
         int height = metrics.heightPixels;
 
-        Log.e("test--width--"," w "+width+" h "+height);
+        Log.e("test--width--", " w " + width + " h " + height);
 
 
         if (width < 1000 && height < 1500) {

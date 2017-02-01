@@ -4,7 +4,7 @@
     android:id="@+id/search_store_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/recent_search_bg"
     android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
@@ -17,9 +17,10 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/mToolbar"
             android:layout_width="match_parent"
+
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
-            android:background="@color/white"
+            android:background="@drawable/appbar_background"
             android:minHeight="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/StoreSearch"
@@ -45,6 +46,7 @@
         android:id="@+id/faqList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/default_margin"
         android:scrollbars="none" />
 
 </LinearLayout>

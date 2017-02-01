@@ -102,8 +102,7 @@
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
-        <item name="android:selectableItemBackground">@null</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
         <item name="android:actionBarItemBackground">@null</item>
         <item name="actionBarItemBackground">@null</item>
     </style>
@@ -143,6 +142,9 @@
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowActionBarOverlay">false</item>
         <item name="android:theme">@android:style/Theme.NoTitleBar</item>
+        <item name="android:selectableItemBackground">@null</item>
+        <item name="android:actionBarItemBackground">@null</item>
+        <item name="actionBarItemBackground">@null</item>
     </style>
 
     <style name="ContactUs" parent="Theme.AppCompat.Light.NoActionBar">

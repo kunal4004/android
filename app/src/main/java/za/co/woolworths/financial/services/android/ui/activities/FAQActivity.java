@@ -148,6 +148,7 @@ public class FAQActivity extends AppCompatActivity implements FAQTypeBinder.Sele
                 openFAQDetail.putExtra("Question", faqDetail.question);
                 openFAQDetail.putExtra("Answer", faqDetail.answer);
                 startActivity(openFAQDetail);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         }, 300);
     }
