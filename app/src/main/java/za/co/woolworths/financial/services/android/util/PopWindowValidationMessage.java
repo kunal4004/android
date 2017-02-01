@@ -1,8 +1,10 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -33,6 +35,7 @@ public class PopWindowValidationMessage {
     private Animation mPopEnterAnimation;
     private RelativeLayout mRelPopContainer;
     private RelativeLayout mRelRootContainer;
+    private String mName;
     private double mLatitude;
     private double mLongiude;
 
@@ -171,9 +174,17 @@ public class PopWindowValidationMessage {
                 nativeMap.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String uri = String.format(Locale.ENGLISH, "", "http://maps.google.com/maps?daddr=%f,%f (%s)", getmLatitude(), getmLongiude(), "");
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                        String mTitle = getmName();
+                        //Uri gmmIntentUri = Uri.parse("google.navigation:q=" + getmLatitude() +"," + getmLongiude() +","+ mTitle);
+                        /*Uri gmmIntentUri = Uri.parse("google.navigation:q="+ getmLatitude() + "," + getmLongiude() + "," + mTitle);
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        mapIntent.setPackage("com.google.android.apps.maps");
+                        mContext.startActivity(mapIntent);*/
+                        Location location = Utils.getLastSavedLocation(mContext);
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://maps.google.com/maps?f=d&saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + getmLatitude() + "," + getmLongiude()));
+                        intent.setComponent(new ComponentName("com.google.android.apps.maps",
+                                "com.google.android.maps.MapsActivity"));
                         mContext.startActivity(intent);
                         dismissLayout();
                     }
@@ -190,7 +201,7 @@ public class PopWindowValidationMessage {
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startLoanExitAnimation();
+                                startExitAnimation(overlay_type);
                             }
                         });
                 break;
@@ -210,7 +221,7 @@ public class PopWindowValidationMessage {
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startLoanExitAnimation();
+                                startExitAnimation(overlay_type);
                             }
                         });
                 break;
@@ -318,29 +329,6 @@ public class PopWindowValidationMessage {
         mRelRootContainer.startAnimation(animation);
     }
 
-    private void startLoanExitAnimation() {
-        TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
-        animation.setFillAfter(true);
-        animation.setDuration(600);
-        animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
-
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                dismissLayout();
-                showLoanStatusBar((Activity) mContext);
-            }
-        });
-        mRelRootContainer.startAnimation(animation);
-    }
-
     public void touchToDismiss(final OVERLAY_TYPE overlay_type) {
         mDarkenScreen.setTouchable(true);
         mDarkenScreen.setTouchInterceptor(new View.OnTouchListener() {
@@ -356,6 +344,14 @@ public class PopWindowValidationMessage {
         if (mDarkenScreen != null) {
             mDarkenScreen.dismiss();
         }
+    }
+
+    public String getmName() {
+        return mName;
+    }
+
+    public void setmName(String mName) {
+        this.mName = mName;
     }
 
     public double getmLatitude() {
@@ -377,26 +373,11 @@ public class PopWindowValidationMessage {
     public void hideStatusBar(Activity activity) {
         Window window = activity.getWindow();
         View decorView = window.getDecorView();
-        int visibility = View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(visibility);
-        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        window.clearFlags(
-                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        Utils.updateStatusBarBackground(activity);
+        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR, WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR);
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     public void showStatusBar(Activity activity) {
-        Window window = activity.getWindow();
-        View decorView = activity.getWindow().getDecorView();
-        int visibility = View.SYSTEM_UI_FLAG_VISIBLE;
-        decorView.setSystemUiVisibility(visibility);
-        window.addFlags(
-                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Utils.updateStatusBarBackground(activity);
-    }
-
-    public void showLoanStatusBar(Activity activity) {
         Window window = activity.getWindow();
         View decorView = activity.getWindow().getDecorView();
         int visibility = View.SYSTEM_UI_FLAG_VISIBLE;

@@ -31,6 +31,7 @@
                 android:text="@string/value"
                 android:textColor="#40000000"
                 android:textSize="12sp"
+                android:letterSpacing="0.1"
                 app:WTextView_font="medium"
                 />
 
@@ -41,6 +42,7 @@
                 android:textColor="@color/green"
                 android:textSize="24sp"
                 app:WTextView_font="bold"
+                android:letterSpacing="-0.02"
                 />
         </LinearLayout>
 
@@ -49,7 +51,10 @@
             android:layout_height="match_parent"
             android:layout_toRightOf="@+id/leftpart"
             android:background="@color/white"
-            android:padding="16dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp"
             >
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView

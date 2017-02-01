@@ -127,6 +127,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     private WObservableScrollView mWObservableScrollView;
     private Toolbar mToolbar;
     private ImageView mImageView;
+    private RelativeLayout relFAQ;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -173,6 +174,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         userName = (WTextView) view.findViewById(R.id.user_name);
         userInitials = (WTextView) view.findViewById(R.id.initials);
         imgCreditCard = (ImageView) view.findViewById(R.id.imgCreditCard);
+        relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
+
 
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
@@ -194,7 +197,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
         view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
         view.findViewById(R.id.linkAccountsBtn).setOnClickListener(this.btnLinkAccounts_onClick);
-
+        showViews();
         //hide all views, load accounts may occur
         this.initialize();
         return view;
@@ -207,7 +210,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         this.unavailableAccounts.clear();
         this.unavailableAccounts.addAll(Arrays.asList("SC", "CC", "PL"));
 
-        JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity) getActivity()).getJWTDecoded();
+        JWTDecodedModel jwtDecodedModel = null;
+        try {
+            jwtDecodedModel = ((WOneAppBaseActivity) getActivity()).getJWTDecoded();
+        } catch (NullPointerException ignored) {
+            jwtDecodedModel = null;
+        }
+
         if (jwtDecodedModel != null && jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
             this.loadAccounts();
         } else {
@@ -288,26 +297,37 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void configureAndLayoutTopLayerView() {
+        JWTDecodedModel jwtDecodedModel = null;
+        try {
+            jwtDecodedModel = ((WOneAppBaseActivity) getActivity()).getJWTDecoded();
+        } catch (Exception ignored) {
+            jwtDecodedModel = null;
+        }
 
-        JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity) getActivity()).getJWTDecoded();
-        if (jwtDecodedModel.AtgSession != null) {
-            loggedInHeaderLayout.setVisibility(View.VISIBLE);
-            //logged in user's name and family name will be displayed on the page
-            userName.setText(jwtDecodedModel.name + " " + jwtDecodedModel.family_name);
-            //initials of the logged in user will be displayed on the page
-            String initials = jwtDecodedModel.name.substring(0, 1).concat(" ").concat(jwtDecodedModel.family_name.substring(0, 1));
-            userInitials.setText(initials);
-            signOutBtn.setVisibility(View.VISIBLE);
-            if (jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
-                //user is linked and signed in
-                linkedAccountsLayout.setVisibility(View.VISIBLE);
+        if (jwtDecodedModel!=null) {
+            if (jwtDecodedModel.AtgSession != null) {
+                loggedInHeaderLayout.setVisibility(View.VISIBLE);
+                //logged in user's name and family name will be displayed on the page
+                userName.setText(jwtDecodedModel.name + " " + jwtDecodedModel.family_name);
+                //initials of the logged in user will be displayed on the page
+                String initials = jwtDecodedModel.name.substring(0, 1).concat(" ").concat(jwtDecodedModel.family_name.substring(0, 1));
+                userInitials.setText(initials);
+                signOutBtn.setVisibility(View.VISIBLE);
+                if (jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
+                    //user is linked and signed in
+                    linkedAccountsLayout.setVisibility(View.VISIBLE);
+                } else {
+                    //user is not linked
+                    //but signed in
+                    linkAccountsBtn.setVisibility(View.VISIBLE);
+                    setUiPageViewController();
+                }
             } else {
-                //user is not linked
-                //but signed in
-                linkAccountsBtn.setVisibility(View.VISIBLE);
+                //user is signed out
+                loggedOutHeaderLayout.setVisibility(View.VISIBLE);
                 setUiPageViewController();
             }
-        } else {
+        }else {
             //user is signed out
             loggedOutHeaderLayout.setVisibility(View.VISIBLE);
             setUiPageViewController();
@@ -315,7 +335,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void hideAllLayers() {
-
         loggedInHeaderLayout.setVisibility(View.GONE);
         loggedOutHeaderLayout.setVisibility(View.GONE);
         signOutBtn.setVisibility(View.GONE);
@@ -374,7 +393,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         switch (v.getId()) {
             case R.id.openMessageActivity:
                 startActivity(new Intent(getActivity(), MessagesActivity.class).putExtra("fromNotification", false));
-                getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
+                //getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
                 break;
             case R.id.applyStoreCard:
                 redirectToMyAccountsCardsActivity(0);
@@ -436,6 +455,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
             @Override
             protected void onPreExecute() {
+                mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.recent_search_bg));
+                relFAQ.setVisibility(View.GONE);
+                showViews();
                 mGetAccountsProgressDialog.show(fm, "account");
                 mGetAccountsProgressDialog.setCancelable(false);
             }
@@ -578,14 +600,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-            //Save JWT
-            SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN);
-            sessionDao.value = data.getStringExtra(SSOActivity.TAG_JWT);
-            try {
-                sessionDao.save();
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-            }
 
             initialize();
         } else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()) {
@@ -621,6 +635,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void dismissProgress() {
+        mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.white));
+        relFAQ.setVisibility(View.VISIBLE);
         if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
             mGetAccountsProgressDialog.dismiss();
         }
@@ -667,6 +683,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     public void onDownMotionEvent() {
 
     }
+
+
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {

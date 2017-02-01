@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -54,8 +55,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         setListener();
         setActionBar();
         setPagerCard(woolworthsApplication.getCliCardPosition());
-
-
+        setStatusBarColor(woolworthsApplication.getCliCardPosition());
     }
 
     public void setCurrentIndex() {
@@ -160,7 +160,8 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                finish();
+                overridePendingTransition(0, 0);
                 return true;
         }
         return false;
@@ -186,15 +187,34 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     public void lockAppBar(boolean locked) {
-        if(locked){
+        if (locked) {
             mAppBarLayout.setExpanded(false, true);
-            int px = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
-            CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams)mAppBarLayout.getLayoutParams();
+            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
+            CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams();
             lp.height = px;
             mAppBarLayout.setLayoutParams(lp);
-        }else{
+        } else {
             mAppBarLayout.setExpanded(true, false);
             mAppBarLayout.setActivated(true);
+        }
+    }
+
+    private void setStatusBarColor(int position) {
+        switch (position) {
+            case 0:
+                int storeCardColor = ContextCompat.getColor(this, R.color.cli_store_card);
+                Utils.updateStatusBarBackground(this, storeCardColor);
+                break;
+
+            case 1:
+                int creditCardColor = ContextCompat.getColor(this, R.color.cli_credit_card);
+                Utils.updateStatusBarBackground(this, creditCardColor);
+                break;
+
+            case 2:
+                int personalLoanColor = ContextCompat.getColor(this, R.color.cli_personal_loan);
+                Utils.updateStatusBarBackground(this, personalLoanColor);
+                break;
         }
     }
 

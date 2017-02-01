@@ -375,6 +375,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                         openConfirmWithdrawal.putExtra("drawnDownAmount", mDrawnDownAmount);
                         openConfirmWithdrawal.putExtra("availableFunds", mAvailableFunds);
                         openConfirmWithdrawal.putExtra("creditLimit", mCreditLimit);
+                        openConfirmWithdrawal.putExtra("repaymentPeriod", repaymentPeriod(getCreditAmount()));
                         startActivity(openConfirmWithdrawal);
                         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         finish();

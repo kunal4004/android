@@ -62,7 +62,9 @@ public class WRewardsMembersInfoActivity extends AppCompatActivity {
         changeTabsFont(tabLayout);
         if(getIntent().hasExtra("type"))
             viewPager.setCurrentItem(getIntent().getIntExtra("type",0));
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbarTextView.setLetterSpacing(0.1f);
+        }
         appBar.addOnOffsetChangedListener(new   AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
@@ -95,6 +97,9 @@ public class WRewardsMembersInfoActivity extends AppCompatActivity {
                 View tabViewChild = vgTab.getChildAt(i);
                 if (tabViewChild instanceof TextView) {
                     ((TextView) tabViewChild).setTypeface(type);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        ((TextView) tabViewChild).setLetterSpacing(0.1f);
+                    }
                 }
             }
         }
@@ -112,7 +117,6 @@ public class WRewardsMembersInfoActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
 
     }
 }

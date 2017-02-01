@@ -97,12 +97,11 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
                 break;
             case 2:
                 fragment = new StoresNearbyFragment1();
-                title = getString(R.string.screen_title_store);
                 title = getString(R.string.nav_item_store);
                 break;
             case 3:
                 fragment = new WRewardsFragment();
-                title = getString(R.string.nav_item_wrewards);
+                title = "";
                 break;
             case 4:
                 fragment = new MyAccountsFragment();
@@ -178,6 +177,16 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         if (!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             //drawer is open
             mDrawerLayout.openDrawer(Gravity.LEFT); //OPEN Nav Drawer!
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            //drawer is open
+            mDrawerLayout.openDrawer(Gravity.LEFT); //OPEN Nav Drawer!
+        } else {
+            super.onBackPressed();
         }
     }
 }

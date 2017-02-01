@@ -76,9 +76,9 @@ public class WRewardsVouchersAdapter extends BaseAdapter{
         }
 
         try {
-            holder.beforeDate.setText(mContext.getString(R.string.use_before)+WFormatter.formatDateTOddMMMMYYYY(vouchers.get(position).validToDate));
+            holder.beforeDate.setText(WFormatter.formatDateTOddMMMMYYYY(vouchers.get(position).validToDate));
         } catch (ParseException e) {
-            holder.beforeDate.setText(mContext.getString(R.string.use_before)+String.valueOf(vouchers.get(position).validToDate));
+            holder.beforeDate.setText(String.valueOf(vouchers.get(position).validToDate));
         }
 
         if ("PERCENTAGE".equals(vouchers.get(position).type))
