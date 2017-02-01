@@ -14,7 +14,7 @@
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/imProductCategory"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="110dp"
         fresco:fadeDuration="100"
         fresco:placeholderImage="@drawble/card_shadow"
         fresco:placeholderImageScaleType="fitXY"

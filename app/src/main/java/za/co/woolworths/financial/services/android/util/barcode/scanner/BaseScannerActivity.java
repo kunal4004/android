@@ -29,7 +29,7 @@ public class BaseScannerActivity extends AppCompatActivity {
             ab.setDisplayUseLogoEnabled(false);
             ab.setDisplayShowTitleEnabled(false);
             ab.setDefaultDisplayHomeAsUpEnabled(false);
-            ab.setHomeAsUpIndicator(R.drawable.back_white);
+            ab.setHomeAsUpIndicator(R.drawable.close_white);
         }
     }
 

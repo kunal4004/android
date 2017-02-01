@@ -861,7 +861,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(permissions, PERMS_REQUEST_CODE);
+            getActivity().requestPermissions(permissions, PERMS_REQUEST_CODE);
         }
     }
 

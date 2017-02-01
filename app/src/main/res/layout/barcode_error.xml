@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/relPopContainer"
     android:layout_width="match_parent"
-    android:gravity="bottom"
     android:layout_height="match_parent"
-    android:background="#8c000000">
+    android:background="#8c000000"
+    android:gravity="bottom">
 
     <RelativeLayout
         android:id="@+id/relContainerRootMessage"
@@ -31,7 +31,7 @@
                 android:layout_marginTop="@dimen/bank_spacing_width"
                 android:gravity="center"
                 android:letterSpacing="0.07"
-                android:text="@string/loan_withdrawal_popup_error"
+                android:text="@string/barcode_error_title"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="16sp"
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:lineSpacingExtra="4dp"
-                android:text="@string/loan_withdrawal_popup_desc_err"
+                android:text="@string/barcode_error_desc"
                 android:textColor="@color/description_color"
                 android:textSize="15sp"
                 app:WTextView_font="myriadpro_regular" />
@@ -61,6 +61,7 @@
                 android:layout_height="80dp"
                 android:background="@color/white"
                 android:gravity="center"
+                android:textColor="@color/black"
                 android:letterSpacing="0.2"
                 android:text="OK"
                 android:textSize="12sp"

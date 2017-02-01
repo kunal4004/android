@@ -18,23 +18,23 @@ public class ViewFinderView extends View implements IViewFinder {
 
     private Rect mFramingRect;
 
-    private static final float PORTRAIT_WIDTH_RATIO = 6f/8;
+    private static final float PORTRAIT_WIDTH_RATIO = 6f / 8;
     private static final float PORTRAIT_WIDTH_HEIGHT_RATIO = 0.75f;
 
-    private static final float LANDSCAPE_HEIGHT_RATIO = 5f/8;
+    private static final float LANDSCAPE_HEIGHT_RATIO = 5f / 8;
     private static final float LANDSCAPE_WIDTH_HEIGHT_RATIO = 1.4f;
-    private static final int MIN_DIMENSION_DIFF =200;
+    private static final int MIN_DIMENSION_DIFF = 200;
 
-    private static final float SQUARE_DIMENSION_RATIO = 5f/8;
+    private static final float SQUARE_DIMENSION_RATIO = 5f / 8;
 
     private static final int[] SCANNER_ALPHA = {0, 64, 128, 192, 255, 192, 128, 64};
     private int scannerAlpha;
     private static final int POINT_SIZE = 100;
     private static final long ANIMATION_DELAY = 80l;
 
-    private final int mDefaultLaserColor = ContextCompat.getColor(getContext(),R.color.viewfinder_laser);
-    private final int mDefaultMaskColor = ContextCompat.getColor(getContext(),R.color.viewfinder_mask);
-    private final int mDefaultBorderColor = ContextCompat.getColor(getContext(),R.color.viewfinder_border);
+    private final int mDefaultLaserColor = ContextCompat.getColor(getContext(), R.color.viewfinder_laser);
+    private final int mDefaultMaskColor = ContextCompat.getColor(getContext(), R.color.viewfinder_mask);
+    private final int mDefaultBorderColor = ContextCompat.getColor(getContext(), R.color.viewfinder_border);
     private final int mDefaultBorderStrokeWidth = 1;
     private final int mDefaultBorderLineLength = getResources().getInteger(me.dm7.barcodescanner.core.R.integer.viewfinder_border_length);
 
@@ -76,15 +76,19 @@ public class ViewFinderView extends View implements IViewFinder {
     public void setLaserColor(int laserColor) {
         mLaserPaint.setColor(laserColor);
     }
+
     public void setMaskColor(int maskColor) {
         mFinderMaskPaint.setColor(maskColor);
     }
+
     public void setBorderColor(int borderColor) {
         mBorderPaint.setColor(borderColor);
     }
+
     public void setBorderStrokeWidth(int borderStrokeWidth) {
         mBorderPaint.setStrokeWidth(borderStrokeWidth);
     }
+
     public void setBorderLineLength(int borderLineLength) {
         mBorderLineLength = borderLineLength;
     }
@@ -105,7 +109,7 @@ public class ViewFinderView extends View implements IViewFinder {
 
     @Override
     public void onDraw(Canvas canvas) {
-        if(getFramingRect() == null) {
+        if (getFramingRect() == null) {
             return;
         }
 
@@ -127,25 +131,25 @@ public class ViewFinderView extends View implements IViewFinder {
 
     public void drawViewFinderBorder(Canvas canvas) {
         Rect framingRect = getFramingRect();
+        canvas.drawLine(framingRect.left - 40, framingRect.top - 40, framingRect.left - 40, framingRect.top - 40 + mBorderLineLength, mBorderPaint);
+        canvas.drawLine(framingRect.left - 40, framingRect.top - 40, framingRect.left - 40 + mBorderLineLength, framingRect.top - 40, mBorderPaint);
 
-        canvas.drawLine(framingRect.left - 30, framingRect.top - 30, framingRect.left - 30, framingRect.top - 30 + mBorderLineLength, mBorderPaint);
-        canvas.drawLine(framingRect.left - 30, framingRect.top - 30, framingRect.left - 30 + mBorderLineLength, framingRect.top - 30, mBorderPaint);
+        canvas.drawLine(framingRect.left - 40, framingRect.bottom + 40, framingRect.left - 40, framingRect.bottom + 40 - mBorderLineLength, mBorderPaint);
+        canvas.drawLine(framingRect.left - 40, framingRect.bottom + 40, framingRect.left - 40 + mBorderLineLength, framingRect.bottom + 40, mBorderPaint);
 
-        canvas.drawLine(framingRect.left - 30, framingRect.bottom + 30, framingRect.left - 30, framingRect.bottom + 30 - mBorderLineLength, mBorderPaint);
-        canvas.drawLine(framingRect.left - 30, framingRect.bottom + 30, framingRect.left - 30 + mBorderLineLength, framingRect.bottom + 30, mBorderPaint);
+        canvas.drawLine(framingRect.right + 40, framingRect.top - 40, framingRect.right + 40, framingRect.top - 40 + mBorderLineLength, mBorderPaint);
+        canvas.drawLine(framingRect.right + 40, framingRect.top - 40, framingRect.right + 40 - mBorderLineLength, framingRect.top - 40, mBorderPaint);
 
-        canvas.drawLine(framingRect.right + 30, framingRect.top - 30, framingRect.right + 30, framingRect.top - 30 + mBorderLineLength, mBorderPaint);
-        canvas.drawLine(framingRect.right + 30, framingRect.top - 30, framingRect.right + 30 - mBorderLineLength, framingRect.top - 30, mBorderPaint);
-
-        canvas.drawLine(framingRect.right + 30, framingRect.bottom + 30, framingRect.right + 30, framingRect.bottom + 30 - mBorderLineLength, mBorderPaint);
-        canvas.drawLine(framingRect.right + 30, framingRect.bottom + 30, framingRect.right + 30 - mBorderLineLength, framingRect.bottom + 30, mBorderPaint);
+        canvas.drawLine(framingRect.right + 40, framingRect.bottom + 40, framingRect.right + 40, framingRect.bottom + 40 - mBorderLineLength, mBorderPaint);
+        canvas.drawLine(framingRect.right + 40, framingRect.bottom + 40, framingRect.right + 40 - mBorderLineLength, framingRect.bottom + 40, mBorderPaint);
     }
 
     private int cntr = 0;
     private boolean goingup = false;
+
     public void drawLaser(Canvas canvas) {
         // Draw a red "laser scanner" line through the middle to show decoding is active
-       // mLaserPaint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
+        // mLaserPaint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
         mLaserPaint.setAlpha(0);
         scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
         int middle = mFramingRect.height() / 2 + mFramingRect.top;
@@ -183,8 +187,8 @@ public class ViewFinderView extends View implements IViewFinder {
         int height;
         int orientation = DisplayUtils.getScreenOrientation(getContext());
 
-        if(mSquareViewFinder) {
-            if(orientation != Configuration.ORIENTATION_PORTRAIT) {
+        if (mSquareViewFinder) {
+            if (orientation != Configuration.ORIENTATION_PORTRAIT) {
                 height = (int) (getHeight() * SQUARE_DIMENSION_RATIO);
                 width = height;
             } else {
@@ -192,7 +196,7 @@ public class ViewFinderView extends View implements IViewFinder {
                 height = width;
             }
         } else {
-            if(orientation != Configuration.ORIENTATION_PORTRAIT) {
+            if (orientation != Configuration.ORIENTATION_PORTRAIT) {
                 height = (int) (getHeight() * LANDSCAPE_HEIGHT_RATIO);
                 width = (int) (LANDSCAPE_WIDTH_HEIGHT_RATIO * height);
             } else {
@@ -201,11 +205,11 @@ public class ViewFinderView extends View implements IViewFinder {
             }
         }
 
-        if(width > getWidth()) {
+        if (width > getWidth()) {
             width = getWidth() - MIN_DIMENSION_DIFF;
         }
 
-        if(height > getHeight()) {
+        if (height > getHeight()) {
             height = getHeight() - MIN_DIMENSION_DIFF;
         }
 

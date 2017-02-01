@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +10,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -22,7 +22,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -50,17 +49,17 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
+import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.Const;
-import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductSearchActivity extends AppCompatActivity
-        implements View.OnClickListener {
+        implements View.OnClickListener, ProductListAdapter.SelectedProduct {
     public RecyclerView productListview;
     public LinearLayoutManager mLayoutManager;
     public Toolbar toolbar;
@@ -70,7 +69,6 @@ public class ProductSearchActivity extends AppCompatActivity
     private boolean mIsLastPage = false;
     private int mCurrentPage = 1;
     private ConnectionDetector connectionDetector;
-    public LayoutInflater mLayoutInflater;
     public ArrayList<Product_> productList;
     private ProductListAdapter mProductListAdapter;
     private List<Product_> moreProductList;
@@ -81,17 +79,20 @@ public class ProductSearchActivity extends AppCompatActivity
     private LinearLayout recentSearchLayout;
     private static final int PERMS_REQUEST_CODE = 1234;
 
-    private ProgressDialog mSearchProductDialog;
     private boolean permissionIsAllowed = false;
     private LatLng mLocation;
 
     PopWindowValidationMessage mPopWindowValidationMessage;
+    private WProgressDialogFragment mGetProgressDialog;
+    private FragmentManager fm;
+    private ProductSearchActivity mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.product_search_activity);
         Utils.updateStatusBarBackground(this);
+        mContext = this;
         setActionBar();
         initUI();
         mLocation = new LatLng(0, 0);
@@ -107,8 +108,8 @@ public class ProductSearchActivity extends AppCompatActivity
         }
     }
 
-
     private void initUI() {
+        fm = getSupportFragmentManager();
         mLayoutManager = new LinearLayoutManager(ProductSearchActivity.this);
         productListview = (RecyclerView) findViewById(R.id.productSearchList);
         mEditSearchProduct = (WEditTextView) findViewById(R.id.toolbarText);
@@ -176,7 +177,6 @@ public class ProductSearchActivity extends AppCompatActivity
                 }
             }
         });
-
     }
 
     private void setRecycleListView() {
@@ -254,10 +254,9 @@ public class ProductSearchActivity extends AppCompatActivity
 
             @Override
             protected void onPreExecute() {
-                mSearchProductDialog = new ProgressDialog(ProductSearchActivity.this);
-                mSearchProductDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.loading), 1, ProductSearchActivity.this));
-                mSearchProductDialog.setCancelable(false);
-                mSearchProductDialog.show();
+                mGetProgressDialog = WProgressDialogFragment.newInstance("ps");
+                mGetProgressDialog.setCancelable(false);
+                //mGetProgressDialog.show(fm,"ps");
                 saveCurrentSearch(query);
                 super.onPreExecute();
             }
@@ -270,7 +269,7 @@ public class ProductSearchActivity extends AppCompatActivity
     }
 
     public void bindDataWithUI(List<Product_> product_list) {
-        mProductListAdapter = new ProductListAdapter(ProductSearchActivity.this, product_list);
+        mProductListAdapter = new ProductListAdapter(product_list, mContext);
         mProductListAdapter.setMode(Attributes.Mode.Single);
         productListview.setAdapter(mProductListAdapter);
     }
@@ -308,7 +307,6 @@ public class ProductSearchActivity extends AppCompatActivity
             protected void onPostExecute(Product productResponse) {
                 super.onPostExecute(productResponse);
                 mIsLoading = false;
-                List<Product_> product_ = new ArrayList<>();
                 moreProductList = productResponse.products;
                 if (moreProductList != null && moreProductList.size() != 0) {
                     if (moreProductList.size() < PAGE_SIZE) {
@@ -502,9 +500,9 @@ public class ProductSearchActivity extends AppCompatActivity
     }
 
     public void hideProgressDialog() {
-        if (mSearchProductDialog != null) {
-            if (mSearchProductDialog.isShowing()) {
-                mSearchProductDialog.dismiss();
+        if (mGetProgressDialog != null) {
+            if (mGetProgressDialog.isVisible()) {
+                mGetProgressDialog.dismiss();
             }
         }
     }
@@ -578,5 +576,11 @@ public class ProductSearchActivity extends AppCompatActivity
                 }
             }
         }
+    }
+
+    @Override
+    public void onProductSelected(View v, int position) {
+        mProductListAdapter.notifyDataSetChanged();
+        Log.e("mPosition", String.valueOf(position));
     }
 }

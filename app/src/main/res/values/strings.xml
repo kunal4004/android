@@ -357,8 +357,6 @@
     <string name="loan_withdrawal_popup_low_error_detail">Unfortunately you do not meet the requirements for a loan of this amount. The minimum withdrawal amount is R1000</string>
 
 
-
-
     <string name="loan_withdrawal_popup_desc_err">Unfortunately you do not meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>
     <string name="issueing_loan">Processing your loan...</string>
 
@@ -474,5 +472,7 @@
     <string name="enter_barcode">ENTER BARCODE</string>
     <string name="enter_barcode_desc">ENTER THE NUMBER BELOW THE BARCODE</string>
     <string name="no_messages_to_display">No messages to display</string>
-
+    <string name="barcode_error_title">BARCODE ERROR</string>
+    <string name="barcode_error_desc">Please re-enter the barcode</string>
+    <string name="confirm">Confirm</string>
 </resources>

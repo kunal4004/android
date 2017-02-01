@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
-            android:background="@color/white"
+            android:background="@drawable/appbar_background"
             android:minHeight="?attr/actionBarSize"
             app:popupTheme="@style/StoreSearch"
             app:theme="@style/StoreSearch">
@@ -33,9 +33,9 @@
                 android:hint="@string/product_search_hint"
                 android:inputType="textNoSuggestions"
                 android:letterSpacing="0.06"
-                android:textCursorDrawable="@drawable/cursor"
                 android:textColor="@color/black"
                 android:textColorHint="@color/product_search_hint"
+                android:textCursorDrawable="@drawable/cursor_custom_color"
                 android:textSize="16sp"
                 app:WTextView_font="myriadpro_regular" />
         </android.support.v7.widget.Toolbar>

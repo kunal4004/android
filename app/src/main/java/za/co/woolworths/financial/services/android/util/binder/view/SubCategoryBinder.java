@@ -58,7 +58,7 @@ public class SubCategoryBinder extends DataBinder<SubCategoryBinder.ViewHolder> 
 
         if (row_index == position) {
             holder.itemView.setBackground(ContextCompat.getDrawable(holder.mSubCategoryName.getContext(),
-                    R.drawable.vertical_line));
+                    R.drawable.pressed_bg));
         } else {
             holder.itemView.setBackgroundColor(Color.WHITE);
         }

@@ -9,9 +9,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,7 +18,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.LinearLayout;
 
 import com.awfs.coordination.R;
 
@@ -43,21 +40,18 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
 
     private Toolbar mToolbar;
     private WObservableRecyclerView recyclerView;
-    private SearchView searchView;
     private ConnectionDetector mConnectionDetector;
-    private LayoutInflater mLayoutInflater;
     private List<SubCategory> mSubCategories;
     private LinearLayoutManager mLayoutManager;
     private PSSubCategoryAdapter mPSRootCategoryAdapter;
     private ProductSearchSubCategoryActivity mContext;
     private WTextView mTextNoProductFound;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private WTextView mToolBarTitle;
     private int mCatStep;
     private String mRootCategoryName;
     private String mRootCategoryId;
     private String mSubCategoriesName;
-    private ActionBar mActionBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,10 +89,8 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
 
     private void initUI() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mToolBarTitle = (WTextView) findViewById(R.id.toolbarText);
+        WTextView mToolBarTitle = (WTextView) findViewById(R.id.toolbarText);
         recyclerView = (WObservableRecyclerView) findViewById(R.id.productSearchList);
-        LinearLayout recentSearchLayout = (LinearLayout) findViewById(R.id.recentSearchLayout);
-        LinearLayout recentSearchList = (LinearLayout) findViewById(R.id.recentSearchList);
         mTextNoProductFound = (WTextView) findViewById(R.id.textNoProductFound);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setScrollViewCallbacks(this);
@@ -250,6 +242,7 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
             getSubCategoryRequest(mRootCategoryId);
         }
     }
+
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
     }

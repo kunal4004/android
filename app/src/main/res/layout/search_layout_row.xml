@@ -50,18 +50,18 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/imProductSearch"
-        android:layout_toStartOf="@+id/imBarcodeScanner"
         android:background="@android:color/transparent"
         android:gravity="start|center"
         android:hint="@string/product_search_hint"
         android:inputType="textNoSuggestions"
         android:letterSpacing="0.06"
+        android:paddingLeft="50dp"
         android:maxLines="1"
         android:paddingRight="@dimen/default_margin"
         android:textColor="@color/black"
         android:textColorHint="@color/product_search_hint"
-        android:textSize="14sp"
-        app:WEditTextView_font="myriadpro_regular" />
+        android:textSize="16sp"
+        app:WEditTextView_font="myriadpro_regular"
+        android:layout_toStartOf="@+id/llBarcodeScanner" />
 
 </RelativeLayout>
