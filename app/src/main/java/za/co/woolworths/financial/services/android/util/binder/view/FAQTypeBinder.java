@@ -63,8 +63,8 @@ public class FAQTypeBinder extends DataBinder<FAQTypeBinder.ViewHolder> {
             @Override
             public void onClick(View view) {
                 selectedPosition = holder.getAdapterPosition();
-                mSelectQuestion.onQuestionSelected(view, holder.getAdapterPosition());
                 notifyBinderDataSetChanged();
+                mSelectQuestion.onQuestionSelected(view, holder.getAdapterPosition());
             }
         });
     }
