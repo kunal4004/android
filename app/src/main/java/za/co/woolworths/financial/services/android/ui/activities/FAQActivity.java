@@ -71,12 +71,6 @@ public class FAQActivity extends AppCompatActivity implements FAQTypeBinder.Sele
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        //overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-    }
-
-    @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
@@ -85,7 +79,6 @@ public class FAQActivity extends AppCompatActivity implements FAQTypeBinder.Sele
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         dismissProgress();
     }
 
@@ -157,11 +150,6 @@ public class FAQActivity extends AppCompatActivity implements FAQTypeBinder.Sele
                 startActivity(openFAQDetail);
             }
         }, 300);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override
