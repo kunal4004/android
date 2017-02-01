@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
@@ -43,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.ui.activities.FAQActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -176,7 +176,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         imgCreditCard = (ImageView) view.findViewById(R.id.imgCreditCard);
         relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
 
-
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
         applyPersonalCardView.setOnClickListener(this);
@@ -188,6 +187,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         openShoppingList.setOnClickListener(this);
         signOutBtn.setOnClickListener(this);
         mImageView.setOnClickListener(this);
+        relFAQ.setOnClickListener(this);
         mWObservableScrollView.setScrollViewCallbacks(this);
 
         adapter = new MyAccountOverViewPagerAdapter(getActivity());
@@ -292,6 +292,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         }
 
         contactUs.setVisibility(View.VISIBLE);
+        relFAQ.setVisibility(View.VISIBLE);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(0);
     }
@@ -304,7 +305,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             jwtDecodedModel = null;
         }
 
-        if (jwtDecodedModel!=null) {
+        if (jwtDecodedModel != null) {
             if (jwtDecodedModel.AtgSession != null) {
                 loggedInHeaderLayout.setVisibility(View.VISIBLE);
                 //logged in user's name and family name will be displayed on the page
@@ -327,7 +328,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 loggedOutHeaderLayout.setVisibility(View.VISIBLE);
                 setUiPageViewController();
             }
-        }else {
+        } else {
             //user is signed out
             loggedOutHeaderLayout.setVisibility(View.VISIBLE);
             setUiPageViewController();
@@ -341,6 +342,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         linkedAccountsLayout.setVisibility(View.GONE);
         applyNowAccountsLayout.setVisibility(View.GONE);
         contactUs.setVisibility(View.GONE);
+        relFAQ.setVisibility(View.GONE);
         linkAccountsBtn.setVisibility(View.GONE);
     }
 
@@ -415,7 +417,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 break;
             case R.id.contactUs:
                 startActivity(new Intent(getActivity(), WContactUsActivity.class));
-                getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                break;
+            case R.id.relFAQ:
+                startActivity(new Intent(getActivity(), FAQActivity.class));
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
             case R.id.openShoppingList:
                 break;
@@ -455,7 +461,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
             @Override
             protected void onPreExecute() {
-                mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.recent_search_bg));
+                mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
                 relFAQ.setVisibility(View.GONE);
                 showViews();
                 mGetAccountsProgressDialog.show(fm, "account");
@@ -635,7 +641,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void dismissProgress() {
-        mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.white));
+        mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.white));
         relFAQ.setVisibility(View.VISIBLE);
         if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
             mGetAccountsProgressDialog.dismiss();
@@ -683,7 +689,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     public void onDownMotionEvent() {
 
     }
-
 
 
     @Override

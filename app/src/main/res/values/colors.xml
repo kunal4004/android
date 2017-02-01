@@ -65,4 +65,6 @@
     <color name="viewfinder_laser">#00cc0000</color>
     <color name="viewfinder_border">#000</color>
     <color name="horizontal_line_bg">#15000000</color>
+    <color name="colorAccent">#00000000</color>
+
 </resources>

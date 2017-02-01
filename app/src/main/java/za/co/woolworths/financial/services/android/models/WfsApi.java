@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeleteMessageResponse;
+import za.co.woolworths.financial.services.android.models.dto.FAQ;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
@@ -166,6 +167,10 @@ public class WfsApi {
 
     public Product getProductSearchList(String search_item, LatLng loc, boolean isBarcode, int pageSize, int pageNumber) {
         return mApiInterface.getProductSearch(getOsVersion(),getDeviceModel(),getOsVersion(),getOS(),getNetworkCarrier(),getApiId(),"","",getSha1Password(),loc.longitude,loc.latitude,isBarcode,search_item,pageSize,pageNumber);
+    }
+
+    public FAQ getFAQ() {
+        return mApiInterface.getFAQ(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "");
     }
 
     private String getOsVersion() {
