@@ -79,8 +79,7 @@ public class SSOActivity extends WebViewActivity {
     public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 
     private Toolbar mToolbar;
-    // TODO: This redirectURIString be pulled from MCS.
-    private String redirectURIString = "http://wfs-appserver-dev.wigroup.co:8080/wfs/app/v4/sso/redirect/successful";
+    private String redirectURIString = WoolworthsApplication.getSsoRedirectURI();
     private Protocol protocol;
     private Host host;
     private Path path;
@@ -165,7 +164,7 @@ public class SSOActivity extends WebViewActivity {
     }
 
     public enum Host implements SSORequiredParameter {
-        STS("stsqa.woolworths.co.za");
+        STS(WoolworthsApplication.getStsURI());
 
         private String host;
 
@@ -220,8 +219,7 @@ public class SSOActivity extends WebViewActivity {
 
 
         Uri.Builder builder = new Uri.Builder();
-        builder.scheme(this.protocol.rawValue())
-                .authority(this.host.rawValue())
+        builder.scheme(this.host.rawValue()) // moved host.rawValue() from authority to schema as MCS returns host with " https:// "
                 .appendEncodedPath(this.path.rawValue())
                 .appendQueryParameter("client_id", "WWOneApp")
                 .appendQueryParameter("response_type", "id_token") // Identity token
