@@ -48,6 +48,7 @@ import za.co.woolworths.financial.services.android.ui.views.WCustomPager;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WViewPager;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.ScrollState;
@@ -55,7 +56,7 @@ import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 
-public class MyAccountCardsActivity extends AppCompatActivity implements View.OnClickListener, ObservableScrollViewCallbacks, PersonalLoanAmount {
+public class MyAccountCardsActivity extends BaseActivity implements View.OnClickListener, ObservableScrollViewCallbacks, PersonalLoanAmount {
 
     WViewPager pager;
     WCustomPager fragmentPager;
@@ -207,7 +208,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                 return true;
         }
         return false;
@@ -350,7 +350,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                                 Intent openWithdrawCashNow = new Intent(MyAccountCardsActivity.this, LoanWithdrawalActivity.class);
                                 openWithdrawCashNow.putExtra("minDrawnDownAmount", wMinDrawnDownAmount);
                                 startActivity(openWithdrawCashNow);
-                                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                             }
                             break;
                     }

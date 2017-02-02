@@ -10,8 +10,9 @@ import android.view.MenuItem;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 
-public class BaseScannerActivity extends AppCompatActivity {
+public class BaseScannerActivity extends BaseActivity {
 
     private WTextView mTextToolbar;
 

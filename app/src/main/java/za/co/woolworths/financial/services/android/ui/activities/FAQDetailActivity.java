@@ -16,9 +16,10 @@ import com.awfs.coordination.R;
 
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class FAQDetailActivity extends AppCompatActivity {
+public class FAQDetailActivity extends BaseActivity {
 
     private String mQuestion;
     private String mAnswer;
@@ -75,7 +76,6 @@ public class FAQDetailActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     @Override
@@ -83,7 +83,6 @@ public class FAQDetailActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                 return true;
         }
         return false;

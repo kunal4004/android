@@ -135,10 +135,7 @@
         <item name="android:homeAsUpIndicator">@drawable/back_white</item>
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowActionBarOverlay">false</item>
-        <item name="android:theme">@android:style/Theme.NoTitleBar</item>
-        <item name="android:selectableItemBackground">@null</item>
-        <item name="android:actionBarItemBackground">@null</item>
-        <item name="actionBarItemBackground">@null</item>
+
     </style>
 
     <style name="ContactUs" parent="Theme.AppCompat.Light.NoActionBar">

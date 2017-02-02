@@ -210,7 +210,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         openSubCategory.putExtra("root_category_name", rootCategory.categoryName);
         openSubCategory.putExtra("catStep", 0);
         startActivity(openSubCategory);
-        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
     }
 
     @Override
@@ -221,7 +221,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
             case R.id.imProductSearch:
                 Intent openProductSearchActivity = new Intent(getActivity(), ProductSearchActivity.class);
                 startActivity(openProductSearchActivity);
-                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
             case R.id.imTBBarcodeScanner:
             case R.id.imBarcodeScanner:
@@ -321,7 +321,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         if (hasPermissions()) {
             Intent intent = new Intent(getActivity(), clss);
             getActivity().startActivity(intent);
-            getActivity().overridePendingTransition(0, 0);
+            getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
         } else {
             requestPerms();
         }

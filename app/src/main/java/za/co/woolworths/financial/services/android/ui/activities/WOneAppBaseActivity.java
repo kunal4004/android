@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -30,13 +29,14 @@ import za.co.woolworths.financial.services.android.ui.fragments.WRewardsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.WProductFragments;
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 
-public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
+public class WOneAppBaseActivity extends BaseActivity implements WFragmentDrawer.FragmentDrawerListener
         , WProductFragments.HideActionBarComponent, HideActionBar {
 
     public static Toolbar mToolbar;

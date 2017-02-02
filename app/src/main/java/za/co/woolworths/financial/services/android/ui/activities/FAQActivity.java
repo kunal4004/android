@@ -25,12 +25,13 @@ import za.co.woolworths.financial.services.android.models.dto.FAQ;
 import za.co.woolworths.financial.services.android.models.dto.FAQDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.FAQAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.FAQTypeBinder;
 
 
-public class FAQActivity extends AppCompatActivity implements FAQTypeBinder.SelectedQuestion {
+public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQuestion {
 
     private FragmentManager fm;
     private WProgressDialogFragment mGetProgressDialog;
@@ -73,7 +74,7 @@ public class FAQActivity extends AppCompatActivity implements FAQTypeBinder.Sele
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+      //  overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     @Override
@@ -148,7 +149,6 @@ public class FAQActivity extends AppCompatActivity implements FAQTypeBinder.Sele
                 openFAQDetail.putExtra("Question", faqDetail.question);
                 openFAQDetail.putExtra("Answer", faqDetail.answer);
                 startActivity(openFAQDetail);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         }, 300);
     }
@@ -158,7 +158,6 @@ public class FAQActivity extends AppCompatActivity implements FAQTypeBinder.Sele
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                 return true;
         }
         return false;
