@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
@@ -304,7 +303,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             jwtDecodedModel = null;
         }
 
-        if (jwtDecodedModel!=null) {
+        if (jwtDecodedModel != null) {
             if (jwtDecodedModel.AtgSession != null) {
                 loggedInHeaderLayout.setVisibility(View.VISIBLE);
                 //logged in user's name and family name will be displayed on the page
@@ -327,7 +326,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 loggedOutHeaderLayout.setVisibility(View.VISIBLE);
                 setUiPageViewController();
             }
-        }else {
+        } else {
             //user is signed out
             loggedOutHeaderLayout.setVisibility(View.VISIBLE);
             setUiPageViewController();
@@ -455,7 +454,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
             @Override
             protected void onPreExecute() {
-                mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.recent_search_bg));
+                mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
                 relFAQ.setVisibility(View.GONE);
                 showViews();
                 mGetAccountsProgressDialog.show(fm, "account");
@@ -635,7 +634,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void dismissProgress() {
-        mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.white));
+        mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.white));
         relFAQ.setVisibility(View.VISIBLE);
         if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
             mGetAccountsProgressDialog.dismiss();
@@ -684,7 +683,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     public void onDownMotionEvent() {
 
     }
-
 
 
     @Override

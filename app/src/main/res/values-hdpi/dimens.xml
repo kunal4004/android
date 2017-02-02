@@ -1,4 +1,5 @@
 <resources>
+<dimen name="card_margin">50.0dp</dimen>
     <dimen name="accounts_divider_width">1dp</dimen>
     <dimen name="text_micro">9sp</dimen>
     <dimen name="text_small">14sp</dimen>

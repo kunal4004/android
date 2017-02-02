@@ -224,6 +224,7 @@
             app:WTextView_font="myriadpro_regular" />
     </RelativeLayout>
 
+
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/withdrawCashNow"
         android:layout_width="match_parent"

@@ -10,7 +10,6 @@
         android:id="@+id/relContentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/app_bar_layout"
         android:layout_gravity="fill_vertical"
         android:clipToPadding="false">
 
@@ -18,9 +17,7 @@
             android:id="@+id/nest_scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
             android:overScrollMode="never"
-            android:paddingTop="?attr/actionBarSize"
             android:scrollbars="none">
 
             <LinearLayout
@@ -28,6 +25,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/toolbarText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="0.1"
+                        android:text="Store card"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        app:WTextView_font="medium_bold" />
+
+                </android.support.v7.widget.Toolbar>
 
                 <za.co.woolworths.financial.services.android.ui.views.WViewPager
                     android:id="@+id/myAccountsCardPager"
@@ -50,26 +67,6 @@
             </LinearLayout>
 
         </za.co.woolworths.financial.services.android.ui.views.WObservableScrollView>
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/toolbarText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:letterSpacing="0.1"
-                android:text="Store card"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                app:WTextView_font="medium_bold" />
-
-        </android.support.v7.widget.Toolbar>
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnApplyNow"
