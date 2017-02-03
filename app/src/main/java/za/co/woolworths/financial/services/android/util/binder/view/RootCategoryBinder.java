@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.util.binder.view;
 
 import android.net.Uri;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +18,6 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.wasabeef.recyclerview.animators.holder.AnimateViewHolder;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.binder.DataBindAdapter;
@@ -63,6 +60,7 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
             DraweeController controller = Fresco.newDraweeControllerBuilder()
                     .setImageRequest(request)
                     .setOldController(holder.mImageProductCategory.getController()).build();
+
             holder.mImageProductCategory.setController(controller);
         }
 

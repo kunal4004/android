@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -29,13 +28,15 @@ import za.co.woolworths.financial.services.android.models.dto.SubCategory;
 import za.co.woolworths.financial.services.android.ui.adapters.PSSubCategoryAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WObservableRecyclerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.binder.view.SubCategoryBinder;
 
-public class ProductSearchSubCategoryActivity extends AppCompatActivity implements View.OnClickListener,
+public class ProductSearchSubCategoryActivity extends BaseActivity implements View.OnClickListener,
         SubCategoryBinder.OnClickListener, ObservableScrollViewCallbacks {
 
     private Toolbar mToolbar;
@@ -51,7 +52,7 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
     private String mRootCategoryName;
     private String mRootCategoryId;
     private String mSubCategoriesName;
-
+    private PopWindowValidationMessage mPopWindowValidationMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,7 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
         }
         mConnectionDetector = new ConnectionDetector();
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
+        mPopWindowValidationMessage = new PopWindowValidationMessage(this);
         initUI();
         loadData();
 
@@ -132,12 +134,9 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
             case R.id.action_search:
                 Intent openSearchBarActivity = new Intent(ProductSearchSubCategoryActivity.this, ProductSearchActivity.class);
                 startActivity(openSearchBarActivity);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-
                 break;
             case android.R.id.home:
                 onBackPressed();
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -187,12 +186,11 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
                             } else {
                                 showNoProductFound();
                             }
-
                             break;
 
                         default:
-//                            mSlidingUpViewLayout.openOverlayView(subCategories.response.desc,
-//                                    SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+                            mPopWindowValidationMessage.displayValidationMessage(subCategories.response.desc,
+                                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                             break;
                     }
                     hideRefreshView();
@@ -200,8 +198,8 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
 
             }.execute();
         } else {
-//            mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
-//                    SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
+            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
+                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
         }
     }
 
@@ -221,12 +219,19 @@ public class ProductSearchSubCategoryActivity extends AppCompatActivity implemen
             @Override
             public void run() {
                 SubCategory subCategory = mSubCategories.get(position);
-                Intent openProductCategory = new Intent(ProductSearchSubCategoryActivity.this, ProductSearchSubCategoryActivity.class);
-                openProductCategory.putExtra("root_category_id", subCategory.categoryId);
-                openProductCategory.putExtra("sub_category_name", subCategory.categoryName);
-                openProductCategory.putExtra("catStep", 1);
-                startActivity(openProductCategory);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+                if (subCategory.hasChildren) {
+                    Intent openProductCategory = new Intent(ProductSearchSubCategoryActivity.this, ProductSearchSubCategoryActivity.class);
+                    openProductCategory.putExtra("root_category_id", subCategory.categoryId);
+                    openProductCategory.putExtra("sub_category_name", subCategory.categoryName);
+                    openProductCategory.putExtra("catStep", 1);
+                    startActivity(openProductCategory);
+                } else {
+                    Intent openProductListIntent = new Intent(ProductSearchSubCategoryActivity.this, ProductViewActivity.class);
+                    openProductListIntent.putExtra("sub_category_name", subCategory.categoryName);
+                    openProductListIntent.putExtra("sub_category_id", subCategory.categoryId);
+                    startActivity(openProductListIntent);
+                }
             }
         }, 200);
     }

@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="top"
-    android:background="?android:attr/selectableItemBackground"
     android:layout_marginBottom="16dp"
     android:paddingLeft="@dimen/default_margin"
     android:paddingRight="@dimen/default_margin">
@@ -14,9 +13,9 @@
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/imProductCategory"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
-        fresco:fadeDuration="100"
-        fresco:placeholderImage="@drawble/card_shadow"
+        android:layout_height="120dp"
+        fresco:fadeDuration="50"
+        fresco:placeholderImage="@color/semi_transparent_black"
         fresco:placeholderImageScaleType="fitXY"
         fresco:viewAspectRatio="1.33" />
 

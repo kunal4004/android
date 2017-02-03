@@ -51,6 +51,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductListAdapte
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.Const;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
@@ -58,7 +59,7 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class ProductSearchActivity extends AppCompatActivity
+public class ProductSearchActivity extends BaseActivity
         implements View.OnClickListener, ProductListAdapter.SelectedProduct {
     public RecyclerView productListview;
     public LinearLayoutManager mLayoutManager;

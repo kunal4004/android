@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchSubCategoryActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ProductViewActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.PSRootCategoryAdapter;
 import za.co.woolworths.financial.services.android.ui.views.LDObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
@@ -88,7 +89,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        View view = inflater.inflate(R.layout.loan_app_layout, container, false);
+        View view = inflater.inflate(R.layout.product_search_fragment, container, false);
         mContext = this;
         mConnectionDetector = new ConnectionDetector();
         mProductToolbar = (Toolbar) view.findViewById(R.id.productToolbar);
@@ -205,12 +206,20 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     @Override
     public void onClick(View v, int position) {
         RootCategory rootCategory = mRootCategories.get(position);
-        Intent openSubCategory = new Intent(getActivity(), ProductSearchSubCategoryActivity.class);
-        openSubCategory.putExtra("root_category_id", rootCategory.categoryId);
-        openSubCategory.putExtra("root_category_name", rootCategory.categoryName);
-        openSubCategory.putExtra("catStep", 0);
-        startActivity(openSubCategory);
-        getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+        if (rootCategory.hasChildren) {
+            Intent openSubCategory = new Intent(getActivity(), ProductSearchSubCategoryActivity.class);
+            openSubCategory.putExtra("root_category_id", rootCategory.categoryId);
+            openSubCategory.putExtra("root_category_name", rootCategory.categoryName);
+            openSubCategory.putExtra("catStep", 0);
+            startActivity(openSubCategory);
+            getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+        } else {
+            Intent openProductListIntent = new Intent(getActivity(), ProductViewActivity.class);
+            openProductListIntent.putExtra("sub_category_name", rootCategory.categoryName);
+            openProductListIntent.putExtra("sub_category_id", rootCategory.categoryId);
+            startActivity(openProductListIntent);
+            getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+        }
     }
 
     @Override
@@ -292,7 +301,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                         mRelSearchRowLayout.animate().setListener(null);
                     }
                 });
-        hideActionBarComponent.onActionBarComponent(true);
+        //hideActionBarComponent.onActionBarComponent(true);
     }
 
 

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/search_store_activity"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_product_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/recent_search_bg"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="za.co.woolworths.financial.services.android.ui.activities.ProductViewActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -38,39 +39,9 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <include
-        android:id="@+id/recentSearchLayout"
-        layout="@layout/recent_serachs_layout"
-        android:visibility="gone" />
-
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/textNoProductFound"
+    <za.co.woolworths.financial.services.android.ui.views.AdvancedWebView
+        android:id="@+id/productListWebView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="left|center"
-        android:gravity="center|top"
-        android:letterSpacing="0.06"
-        android:padding="@dimen/bank_spacing_width"
-        android:text="@string/no_product_found"
-        android:textSize="15sp"
-        android:visibility="gone"
-        app:WTextView_font="myriadpro_semibold" />
-
-    <include
-        android:id="@+id/recentSearchLayout"
-        layout="@layout/recent_serachs_layout"
-        android:visibility="gone" />
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipeToRefresh"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <za.co.woolworths.financial.services.android.ui.views.WObservableRecyclerView
-            android:id="@+id/productSearchList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="none" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

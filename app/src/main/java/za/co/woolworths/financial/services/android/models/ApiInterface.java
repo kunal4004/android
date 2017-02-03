@@ -378,7 +378,7 @@ public interface ApiInterface {
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json","cacheTime:900"})
     @GET("/categories")
     RootCategories getRootCategories(
             @Header("osVersion") String osVersion,
