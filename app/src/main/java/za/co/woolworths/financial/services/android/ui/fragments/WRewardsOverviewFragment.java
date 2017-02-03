@@ -21,6 +21,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.TierInfo;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.FeaturedPromotionsAdapter;
@@ -33,7 +34,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
  */
 
 
-public class WRewardsOverviewFragment extends Fragment {
+public class WRewardsOverviewFragment extends Fragment implements View.OnClickListener {
     public ImageView infoImage;
     public WTextView tireStatus;
     public WTextView savings;
@@ -41,48 +42,33 @@ public class WRewardsOverviewFragment extends Fragment {
     public RelativeLayout toNextTireLayout;
     public VoucherResponse voucherResponse;
     public ViewPager promotionViewPager;
-    public  String currentStatus;
+    public String currentStatus;
+    public LinearLayout overviewLayout;
+    public WTextView noTireHistory;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.wrewards_overview_fragment, container, false);
-        Bundle bundle=getArguments();
-        voucherResponse=new Gson().fromJson(bundle.getString("WREWARDS"),VoucherResponse.class);
-        currentStatus = voucherResponse.tierInfo.currentTier.toUpperCase();
-        infoImage=(ImageView)view.findViewById(R.id.infoImage);
-        tireStatus=(WTextView)view.findViewById(R.id.tireStatus);
-        savings=(WTextView)view.findViewById(R.id.savings);
-        toNextTire=(WTextView)view.findViewById(R.id.toNextTire);
-        toNextTireLayout=(RelativeLayout) view.findViewById(R.id.toNextTireLayout);
-        promotionViewPager=(ViewPager)view.findViewById(R.id.promotionViewPager);
-        tireStatus.setText(voucherResponse.tierInfo.currentTier);
-        savings.setText(WFormatter.formatAmount(voucherResponse.tierInfo.earned));
-        if (currentStatus.equals(getString(R.string.valued)) || currentStatus.equals(getString(R.string.loyal))) {
-            toNextTireLayout.setVisibility(View.VISIBLE);
-            toNextTire.setText(WFormatter.formatAmount(voucherResponse.tierInfo.toSpend));
+        noTireHistory = (WTextView) view.findViewById(R.id.noTireHistory);
+        overviewLayout = (LinearLayout) view.findViewById(R.id.overviewLayout);
+        infoImage = (ImageView) view.findViewById(R.id.infoImage);
+        tireStatus = (WTextView) view.findViewById(R.id.tireStatus);
+        savings = (WTextView) view.findViewById(R.id.savings);
+        toNextTire = (WTextView) view.findViewById(R.id.toNextTire);
+        toNextTireLayout = (RelativeLayout) view.findViewById(R.id.toNextTireLayout);
+        promotionViewPager = (ViewPager) view.findViewById(R.id.promotionViewPager);
+        Bundle bundle = getArguments();
+        voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
+        if (voucherResponse.tierInfo != null) {
+            handleTireHistoryView(voucherResponse.tierInfo);
+        } else {
+            handleNoTireHistoryView();
         }
-
-
-        infoImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentStatus.equals(getString(R.string.valued))) {
-                    redirectToWRewardsMemberActivity(0);
-                }
-                else  if (currentStatus.equals(getString(R.string.loyal))) {
-                    redirectToWRewardsMemberActivity(1);
-                }
-                else  if (currentStatus.equals(getString(R.string.vip))) {
-                    redirectToWRewardsMemberActivity(2);
-                }
-            }
-        });
-        promotionViewPager.setClipToPadding(false);
-        loadPromotions();
         return view;
     }
-    public void loadPromotions(){
+
+    public void loadPromotions() {
         new HttpAsyncTask<String, String, PromotionsResponse>() {
             @Override
             protected void onPreExecute() {
@@ -91,7 +77,6 @@ public class WRewardsOverviewFragment extends Fragment {
 
             @Override
             protected PromotionsResponse httpDoInBackground(String... params) {
-
                 return ((WoolworthsApplication) getActivity().getApplication()).getApi().getPromotions();
             }
 
@@ -115,22 +100,52 @@ public class WRewardsOverviewFragment extends Fragment {
             }
         }.execute();
     }
-    public void handlePromotionResponse(PromotionsResponse promotionsResponse)
-    {
-             switch (promotionsResponse.httpCode)
-             {
-                 case 200:
-                     if(promotionsResponse.promotions.size()>0)
-                     {
-                         promotionViewPager.setAdapter(new FeaturedPromotionsAdapter(getActivity(),promotionsResponse.promotions));
-                     }
-                     break;
-                 default:
-                     break;
-             }
+
+    public void handlePromotionResponse(PromotionsResponse promotionsResponse) {
+        switch (promotionsResponse.httpCode) {
+            case 200:
+                if (promotionsResponse.promotions.size() > 0) {
+                    promotionViewPager.setAdapter(new FeaturedPromotionsAdapter(getActivity(), promotionsResponse.promotions));
+                }
+                break;
+            default:
+                break;
+        }
     }
-    public void redirectToWRewardsMemberActivity( int type)
-    {
-        startActivity(new Intent(getActivity(), WRewardsMembersInfoActivity.class).putExtra("type",type));
+
+    public void redirectToWRewardsMemberActivity(int type) {
+        startActivity(new Intent(getActivity(), WRewardsMembersInfoActivity.class).putExtra("type", type));
+    }
+
+    public void handleNoTireHistoryView() {
+        overviewLayout.setVisibility(View.GONE);
+        noTireHistory.setVisibility(View.VISIBLE);
+    }
+
+    public void handleTireHistoryView(TierInfo tireInfo) {
+        overviewLayout.setVisibility(View.VISIBLE);
+        noTireHistory.setVisibility(View.GONE);
+        currentStatus = tireInfo.currentTier.toUpperCase();
+        tireStatus.setText(tireInfo.currentTier);
+        savings.setText(WFormatter.formatAmount(tireInfo.earned));
+        infoImage.setOnClickListener(this);
+        if (currentStatus.equals(getString(R.string.valued)) || currentStatus.equals(getString(R.string.loyal))) {
+            toNextTireLayout.setVisibility(View.VISIBLE);
+            toNextTire.setText(WFormatter.formatAmount(tireInfo.toSpend));
+        }
+        loadPromotions();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.infoImage) {
+            if (currentStatus.equals(getString(R.string.valued))) {
+                redirectToWRewardsMemberActivity(0);
+            } else if (currentStatus.equals(getString(R.string.loyal))) {
+                redirectToWRewardsMemberActivity(1);
+            } else if (currentStatus.equals(getString(R.string.vip))) {
+                redirectToWRewardsMemberActivity(2);
+            }
+        }
     }
 }
