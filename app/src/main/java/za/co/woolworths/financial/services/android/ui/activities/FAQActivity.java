@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.models.dto.FAQ;
 import za.co.woolworths.financial.services.android.models.dto.FAQDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.FAQAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
@@ -42,6 +43,7 @@ public class FAQActivity extends AppCompatActivity implements FAQTypeBinder.Sele
     private List<FAQDetail> mFAQ;
     private ConnectionDetector mConnectionDetector;
     private PopWindowValidationMessage mPopWindowValidaitonMessage;
+    private WTextView mtextNotFound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,7 @@ public class FAQActivity extends AppCompatActivity implements FAQTypeBinder.Sele
     private void initUI() {
         mRecycleView = (RecyclerView) findViewById(R.id.faqList);
         mToolbar = (Toolbar) findViewById(R.id.mToolbar);
+        mtextNotFound = (WTextView) findViewById(R.id.textNotFound);
     }
 
     @Override
@@ -120,17 +123,21 @@ public class FAQActivity extends AppCompatActivity implements FAQTypeBinder.Sele
                 protected void onPostExecute(FAQ faq) {
                     super.onPostExecute(faq);
                     mFAQ = faq.faqs;
-                    if (mFAQ.size() > 0) {
-                        FAQAdapter mFAQAdapter = new FAQAdapter(mFAQ, mContext);
-                        LinearLayoutManager mLayoutManager = new LinearLayoutManager(mContext);
-                        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                        mRecycleView.setLayoutManager(mLayoutManager);
-                        mRecycleView.setNestedScrollingEnabled(false);
-                        mRecycleView.setAdapter(mFAQAdapter);
-                        mFAQAdapter.setCLIContent();
-
-                    } else {
-
+                    if (mFAQ != null) {
+                        if (mFAQ.size() > 0) {
+                            FAQAdapter mFAQAdapter = new FAQAdapter(mFAQ, mContext);
+                            LinearLayoutManager mLayoutManager = new LinearLayoutManager(mContext);
+                            mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                            mRecycleView.setLayoutManager(mLayoutManager);
+                            mRecycleView.setNestedScrollingEnabled(false);
+                            mRecycleView.setAdapter(mFAQAdapter);
+                            mFAQAdapter.setCLIContent();
+                            mtextNotFound.setVisibility(View.GONE);
+                            mRecycleView.setVisibility(View.VISIBLE);
+                        } else {
+                            mtextNotFound.setVisibility(View.VISIBLE);
+                            mRecycleView.setVisibility(View.GONE);
+                        }
                     }
 
                     dismissProgress();
