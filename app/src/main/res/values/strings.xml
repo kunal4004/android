@@ -473,6 +473,7 @@
     <string name="enter_barcode">ENTER BARCODE</string>
     <string name="enter_barcode_desc">ENTER THE NUMBER BELOW THE BARCODE</string>
     <string name="no_messages_to_display">No messages to display</string>
+    <string name="no_faq_found">No FAQ to display</string>
     <string name="barcode_error_title">BARCODE ERROR</string>
     <string name="barcode_error_desc">Please re-enter the barcode</string>
     <string name="confirm">Confirm</string>

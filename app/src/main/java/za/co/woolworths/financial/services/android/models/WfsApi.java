@@ -11,7 +11,6 @@ import com.squareup.okhttp.OkHttpClient;
 
 
 import retrofit.RestAdapter;
-
 import java.util.concurrent.TimeUnit;
 
 import retrofit.client.OkClient;
@@ -99,7 +98,7 @@ public class WfsApi {
         return mApiInterface.getContactUsConfig(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "");
     }
 
-    public LocationResponse getLocations(String lat,String lon,String searchString ,String radius) {
+    public LocationResponse getLocations(String lat, String lon, String searchString, String radius) {
 
         if (radius != null && radius.equals("")) {
             //This should never happen for now
@@ -118,12 +117,12 @@ public class WfsApi {
         return mApiInterface.createOfferRequest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), offerRequest);
     }
 
-    public DeaBanks getDeaBanks(){
-        return  mApiInterface.getDeaBanks(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "",getSessionToken(),0,0);
+    public DeaBanks getDeaBanks() {
+        return mApiInterface.getDeaBanks(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), 0, 0);
     }
 
-    public BankAccountTypes getBankAccountTypes(){
-        return  mApiInterface.getBankAccountTypes(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "",getSessionToken(),0,0);
+    public BankAccountTypes getBankAccountTypes() {
+        return mApiInterface.getBankAccountTypes(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), 0, 0);
     }
 
     public OfferActive getActiveOfferRequest(String productOfferingId) {
@@ -138,8 +137,8 @@ public class WfsApi {
         return mApiInterface.setReadMessages(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), readMessages);
     }
 
-    public CLIEmailResponse cliEmailResponse(){
-        return mApiInterface.cliSendEmailRquest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(),"");
+    public CLIEmailResponse cliEmailResponse() {
+        return mApiInterface.cliSendEmailRquest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), "");
     }
 
 
@@ -154,6 +153,7 @@ public class WfsApi {
     public IssueLoanResponse issueLoan(IssueLoanRequest issueLoanRequest) {
         return mApiInterface.issueLoan(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), issueLoanRequest);
     }
+
     public PromotionsResponse getPromotions() {
         return mApiInterface.getPromotions(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "");
     }
@@ -175,10 +175,10 @@ public class WfsApi {
 
     private String getOsVersion() {
         String osVersion = Util.getOsVersion();
-        if (TextUtils.isEmpty(osVersion)){
+        if (TextUtils.isEmpty(osVersion)) {
             String myVersion = android.os.Build.VERSION.RELEASE; // e.g. myVersion := "1.6"
             int sdkVersion = android.os.Build.VERSION.SDK_INT; // e.g. sdkVersion := 8;
-            osVersion= String.valueOf(sdkVersion);
+            osVersion = String.valueOf(sdkVersion);
         }
         return osVersion;
     }
@@ -216,13 +216,13 @@ public class WfsApi {
         }
     }
 
-    private String getSessionToken(){
-        try{
+    private String getSessionToken() {
+        try {
             SessionDao sessionDao = new SessionDao(mContext, SessionDao.KEY.USER_TOKEN).get();
-            if (sessionDao.value != null && !sessionDao.value.equals("")){
+            if (sessionDao.value != null && !sessionDao.value.equals("")) {
                 return sessionDao.value;
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
         return "";
