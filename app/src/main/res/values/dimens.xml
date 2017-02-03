@@ -34,4 +34,9 @@
     <dimen name="edittext_top_padding">10dp</dimen>
     <dimen name="page_margin">16dp</dimen>
     <dimen name="card_margin">45dp</dimen>
+    <dimen name="card_padding_margin">16dp</dimen>
+    <dimen name="account_margin">22dp</dimen>
+    <dimen name="acc_fifteen_dp">12sp</dimen>
+    <dimen name="acc_fourteen_sp">14sp</dimen>
+    <dimen name="acc_thirteen_sp">13sp</dimen>
 </resources>

@@ -96,10 +96,9 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         changeViewPagerAndActionBarBackground(position);
         mBtnApplyNow.setVisibility(View.GONE);
         changeButtonColor(position);
-
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        Log.e("metricsLog", String.valueOf(metrics));
-        differentDensityAndScreenSize(this);
+//
+//        DisplayMetrics metrics = getResources().getDisplayMetrics();
+//        differentDensityAndScreenSize(this);
 
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -139,6 +138,16 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         setStatusBarColor(position);
         mSharePreferenceHelper.save("acc_card_activity", "acc_card_activity");
         this.registerReceiver(this.finishAlert, new IntentFilter(mSharePreferenceHelper.getValue("acc_card_activity")));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            View decor = getWindow().getDecorView();
+
+            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            // We want to change tint color to white again.
+            // You can also record the flags in advance so that you can turn UI back completely if
+            // you have set other flags before, such as translucent or full screen.
+            //  decor.setSystemUiVisibility(0);
+        }
     }
 
     public void setActionBar() {
@@ -507,16 +516,16 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                 break;
         }
 
-        if (containsCreditCard) {
-            whiteBackground();
-        }
-
-        if (containsPersonalLoan) {
-            whiteBackground();
-        }
-        if (containsStoreCard) {
-            whiteBackground();
-        }
+//        if (containsCreditCard) {
+//            whiteBackground();
+//        }
+//
+//        if (containsPersonalLoan) {
+//            whiteBackground();
+//        }
+//        if (containsStoreCard) {
+//            whiteBackground();
+//        }
     }
 
     public int differentDensityAndScreenSize(Context context) {

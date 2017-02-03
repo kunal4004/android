@@ -1,5 +1,10 @@
 <resources>
-<dimen name="card_margin">50.0dp</dimen>
+<dimen name="acc_thirteen_sp">10.0sp</dimen>
+    <dimen name="account_margin">20.0dp</dimen>
+    <dimen name="card_padding_margin">16dp</dimen>
+    <dimen name="acc_fourteen_sp">12sp</dimen>
+    <dimen name="acc_fifteen_dp">10sp</dimen>
+    <dimen name="card_margin">50.0dp</dimen>
     <dimen name="accounts_divider_width">1dp</dimen>
     <dimen name="text_micro">9sp</dimen>
     <dimen name="text_small">14sp</dimen>
