@@ -243,10 +243,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 Log.i(TAG, "onPanelStateChanged " + newState);
 
                 if (newState != SlidingUpPanelLayout.PanelState.COLLAPSED) {
-                        /*
-                        * Previous result: Application would exit completely when back button is pressed
-                        * New result: Panel just returns to its previous position (Panel collapses)
-                         */
+                    /*
+                     * Previous result: Application would exit completely when back button is pressed
+                     * New result: Panel just returns to its previous position (Panel collapses)
+                     */
                     mLayout.setFocusableInTouchMode(true);
                     mLayout.setOnKeyListener(new View.OnKeyListener() {
                         @Override
@@ -268,9 +268,9 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         settingsRequest();
         initMap();
 
-/*
-        init();
-*/
+        /*
+         init();
+         */
         btnOnLocationService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -288,7 +288,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.e("RequestSETTINGRESULT", String.valueOf(requestCode));
         switch (requestCode) {
-// Check for the integer request code originally supplied to startResolutionForResult().
+            // Check for the integer request code originally supplied to startResolutionForResult().
             case REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
@@ -373,10 +373,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
         } else {
             requestPerms();
-           /*
-            *This process of setting adapter to googleMap is related to making
-            *selected marker come in front of unselected marker.
-            */
+            /*
+             *This process of setting adapter to googleMap is related to making
+             *selected marker come in front of unselected marker.
+             */
             googleMap.setInfoWindowAdapter(new MapWindowAdapter(getContext()));
         }
     }
@@ -402,10 +402,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         markers.get(position).setIcon(selectedIcon);
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markers.get(position).getPosition(), 13), CAMERA_ANIMATION_SPEED, null);
         previousmarker = markers.get(position);
-      /*
-        *InfoWindow shows description above a marker.
-        *Make info window invisible to make selected marker come in front of unselected marker.
-       */
+        /*
+         *InfoWindow shows description above a marker.
+         *Make info window invisible to make selected marker come in front of unselected marker.
+         */
         previousmarker.showInfoWindow();
 
     }
@@ -861,9 +861,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(permissions, PERMS_REQUEST_CODE);
+            getActivity().requestPermissions(permissions, PERMS_REQUEST_CODE);
         }
     }
 
 
 }
+

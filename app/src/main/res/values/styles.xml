@@ -96,6 +96,18 @@
         <item name="android:actionBarStyle">@style/LoanWithdrawalStyle</item>
     </style>
 
+    <style name="FaqStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
+        <item name="android:actionBarItemBackground">@null</item>
+        <item name="actionBarItemBackground">@null</item>
+    </style>
+
+
     <style name="WSearchViewStyle" parent="Widget.AppCompat.SearchView">
         <item name="searchHintIcon">@null</item>
         <item name="queryBackground">@null</item>
@@ -123,7 +135,7 @@
         <item name="android:homeAsUpIndicator">@drawable/back_white</item>
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowActionBarOverlay">false</item>
-        <item name="android:theme">@android:style/Theme.NoTitleBar</item>
+
     </style>
 
     <style name="ContactUs" parent="Theme.AppCompat.Light.NoActionBar">
@@ -137,6 +149,7 @@
     <style name="OneAppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 
     <style name="WTransaction" parent="Theme.AppCompat.Light.NoActionBar">
@@ -447,5 +460,53 @@
         <item name="android:textSize">15sp</item>
         <item name="WTextView_font">medium_bold</item>
     </style>
+
+    <style name="AppOverlayTheme" parent="@style/Theme.AppCompat.Light">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="TransparentToolbar" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:windowActionBarOverlay">true</item>
+        <!-- Support Library compability -->
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+
+    <style name="Toolbar" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorAccent">@color/white</item>
+    </style>
+
+    <style name="ToolbarWhiteTheme" parent="android:Theme.Holo">
+        <item name="android:actionBarStyle">@null</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="windowActionBarOverlay">true</item>
+        <item name="android:windowActionBarOverlay">@null</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="AppTheme.ActionBar" parent="android:Widget.ActionBar">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/popup_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/popup_exit</item>
+        <item name="android:activityCloseEnterAnimation">@anim/popup_enter</item>
+        <item name="android:activityCloseExitAnimation">@anim/popup_exit</item>
+    </style>
+
+    <style name="Theme.AppCompat.Translucent">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+    </style>
+
 
 </resources>
