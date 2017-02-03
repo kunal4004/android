@@ -1,14 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -27,13 +23,14 @@ import za.co.woolworths.financial.services.android.ui.adapters.FAQAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.FAQTypeBinder;
 
 
-public class FAQActivity extends AppCompatActivity implements FAQTypeBinder.SelectedQuestion {
+public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQuestion {
 
     private FragmentManager fm;
     private WProgressDialogFragment mGetProgressDialog;
@@ -82,7 +79,7 @@ public class FAQActivity extends AppCompatActivity implements FAQTypeBinder.Sele
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        //  overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     @Override
@@ -166,7 +163,6 @@ public class FAQActivity extends AppCompatActivity implements FAQTypeBinder.Sele
                 openFAQDetail.putExtra("Question", faqDetail.question);
                 openFAQDetail.putExtra("Answer", faqDetail.answer);
                 startActivity(openFAQDetail);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         }, 300);
     }
@@ -176,7 +172,6 @@ public class FAQActivity extends AppCompatActivity implements FAQTypeBinder.Sele
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                 return true;
         }
         return false;

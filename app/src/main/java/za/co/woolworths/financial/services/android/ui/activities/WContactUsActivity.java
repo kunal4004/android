@@ -24,12 +24,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.ContactUsFinanci
 import za.co.woolworths.financial.services.android.ui.fragments.ContactUsMySchoolFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.ContactUsOnlineFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.ContactUsWRewardsFragment;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static android.R.attr.id;
 import static za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.toolbar;
 
-public class WContactUsActivity extends AppCompatActivity {
+public class WContactUsActivity extends BaseActivity {
 
     public Toolbar toolbar;
     public TabLayout tabLayout;
@@ -92,7 +93,5 @@ public class WContactUsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
-
     }
 }

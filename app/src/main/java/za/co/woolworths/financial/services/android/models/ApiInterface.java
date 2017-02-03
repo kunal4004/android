@@ -34,7 +34,10 @@ import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
+import za.co.woolworths.financial.services.android.models.dto.Product;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
+import za.co.woolworths.financial.services.android.models.dto.RootCategories;
+import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
@@ -57,7 +60,7 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Query("productOfferingId") String productOfferingId);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:900"})
     @GET("/user/accounts")
     AccountsResponse getAccounts(
             @Header("apiId") String apiId,
@@ -334,7 +337,6 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Query("productOfferingId") String productOfferingId);
 
-
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @POST("/user/cli/offer/email")
     CLIEmailResponse cliSendEmailRquest(
@@ -347,7 +349,6 @@ public interface ApiInterface {
             @Header("osVersion") String osVersion,
             @Header("sessionToken") String sessionToken,
             @Body String body);
-
 
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @POST("/user/cli/offer/bankingDetails")
@@ -377,7 +378,51 @@ public interface ApiInterface {
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:900"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json","cacheTime:900"})
+    @GET("/categories")
+    RootCategories getRootCategories(
+            @Header("osVersion") String osVersion,
+            @Header("apiId") String apiId,
+            @Header("os") String os,
+            @Header("sha1Password") String sha1Password,
+            @Header("deviceModel") String deviceModel,
+            @Header("network") String network,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("apiKey") String userAgent);
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @GET("/categories/{cat}")
+    SubCategories getSubCategory(
+            @Header("osVersion") String osVersion,
+            @Header("apiId") String apiId,
+            @Header("os") String os,
+            @Header("sha1Password") String sha1Password,
+            @Header("deviceModel") String deviceModel,
+            @Header("network") String network,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("apiKey") String apiKey,
+            @Path("cat") String category);
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @GET("/search")
+    Product getProductSearch(
+            @Header("osVersion") String osVersion,
+            @Header("deviceModel") String deviceModel,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("os") String os,
+            @Header("network") String network,
+            @Header("apiId") String apiId,
+            @Header("userAgent") String userAgent,
+            @Header("userAgentVersion") String userAgentVersion,
+            @Header("sha1Password") String sha1Password,
+            @Header("logitude") double longitude,
+            @Header("latitude") double latitude,
+            @Header("isBarCode") boolean isBarcode,
+            @Query("searchTerm") String searchTerm,
+            @Query("pageOffset") int pageOffset,
+            @Query("pageSize") int pageSize);
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:30"})
     @GET("/content/faq")
     FAQ getFAQ(
             @Header("apiId") String apiId,

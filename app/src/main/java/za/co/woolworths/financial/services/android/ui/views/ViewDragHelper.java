@@ -940,7 +940,7 @@ public class ViewDragHelper {
     /**
      * Tests scrollability within child views of v given a delta of dx.
      *
-     * @param v View to test for horizontal scrollability
+     * @param v View to search_layout_row for horizontal scrollability
      * @param checkV Whether the view v passed should itself be checked for scrollability (true),
      *               or just its children (false).
      * @param dx Delta scrolled in pixels along the X axis
@@ -1442,8 +1442,8 @@ public class ViewDragHelper {
      * parent view's coordinate system. If there is no captured view this method
      * will return false.
      *
-     * @param x X position to test in the parent's coordinate system
-     * @param y Y position to test in the parent's coordinate system
+     * @param x X position to search_layout_row in the parent's coordinate system
+     * @param y Y position to search_layout_row in the parent's coordinate system
      * @return true if the captured view is under the given point, false otherwise
      */
     public boolean isCapturedViewUnder(int x, int y) {
@@ -1454,9 +1454,9 @@ public class ViewDragHelper {
      * Determine if the supplied view is under the given point in the
      * parent view's coordinate system.
      *
-     * @param view Child view of the parent to hit test
-     * @param x X position to test in the parent's coordinate system
-     * @param y Y position to test in the parent's coordinate system
+     * @param view Child view of the parent to hit search_layout_row
+     * @param x X position to search_layout_row in the parent's coordinate system
+     * @param y Y position to search_layout_row in the parent's coordinate system
      * @return true if the supplied view is under the given point, false otherwise
      */
     public boolean isViewUnder(View view, int x, int y) {
@@ -1473,8 +1473,8 @@ public class ViewDragHelper {
      * Find the topmost child under the given point within the parent view's coordinate system.
      * The child order is determined using {@link Callback#getOrderedChildIndex(int)}.
      *
-     * @param x X position to test in the parent's coordinate system
-     * @param y Y position to test in the parent's coordinate system
+     * @param x X position to search_layout_row in the parent's coordinate system
+     * @param y Y position to search_layout_row in the parent's coordinate system
      * @return The topmost child view under (x, y) or null if none found.
      */
     public View findTopChildUnder(int x, int y) {

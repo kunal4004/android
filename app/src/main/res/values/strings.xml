@@ -13,6 +13,7 @@
     <string name="acc_number_info">Your 16 digit card / account number is located on your |!b|W|!?|Rewards, MySchool, Store or Credit Cards.</string>
     <string name="terms">BY LOGGING IN YOU AGREE TO OUR \n|!s|TERMS AND CONDITIONS|!?|</string>
     <string name="store_card">STORE CARD</string>
+
     <string name="credit_card">CREDIT CARD</string>
     <string name="personal_loan">PERSONAL LOAN</string>
     <string name="credit_card_line_one">|!b|GET THE CREDIT CARD THAT REWARDS YOU EACH AND EVERY TIME YOU SWIPE.|!?|</string>
@@ -447,7 +448,33 @@
     <string name="collect_credit_card_desc_2">Your latest three payslips or your last three months’ bank statements</string>
     <string name="collect_credit_card_desc_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
 
+    <string name="product_search_hint">Search products, brands</string>
+    <string name="no_product_found">No product found</string>
+    <string name="simple_scanner_activity">ZBar Scanner - Simple Activity</string>
+    <string name="simple_scanner_fragment_activity">ZBar Scanner - Simple Fragment Activity</string>
+    <string name="simple_activity_sample">Simple Activity Sample</string>
+    <string name="simple_fragment_sample">Simple Fragment Sample</string>
+    <string name="activity_sample">Full Activity Sample</string>
+    <string name="fragment_sample">Full Fragment Sample</string>
+    <string name="toggle_flash">Flash</string>
+    <string name="flash_on">Flash [ON]</string>
+    <string name="flash_off">Flash [OFF]</string>
+    <string name="auto_focus_on">Auto Focus [ON]</string>
+    <string name="auto_focus_off">Auto Focus [OFF]</string>
+    <string name="formats">Formats</string>
+    <string name="choose_formats">Choose Formats</string>
+    <string name="select_camera">Select a Camera</string>
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="enter_product_brand_err">Please enter a product or a brand</string>
+    <string name="scan_product">SCAN PRODUCT</string>
+    <string name="set_manually_enter_barcode">Manually enter the barcode</string>
+    <string name="set_info_detail">Place the barcode within the \nguidelines &amp; remain steady</string>
+    <string name="enter_barcode">ENTER BARCODE</string>
+    <string name="enter_barcode_desc">ENTER THE NUMBER BELOW THE BARCODE</string>
     <string name="no_messages_to_display">No messages to display</string>
     <string name="no_faq_found">No FAQ to display</string>
-
+    <string name="barcode_error_title">BARCODE ERROR</string>
+    <string name="barcode_error_desc">Please re-enter the barcode</string>
+    <string name="confirm">Confirm</string>
 </resources>
