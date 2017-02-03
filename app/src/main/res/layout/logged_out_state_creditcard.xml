@@ -186,6 +186,11 @@
             </LinearLayout>
         </LinearLayout>
 
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp" />
+
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/applynow"
             style="@style/apply_now_btn"

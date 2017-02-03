@@ -665,6 +665,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
     @Override
     public void onDestroy() {
         super.onDestroy();
+        dismissProgress();
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
 
@@ -691,7 +692,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
     }
 
-
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
         if (scrollState.UP == scrollState) {
@@ -709,4 +709,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
     private void showViews() {
         mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
     }
+
+
 }

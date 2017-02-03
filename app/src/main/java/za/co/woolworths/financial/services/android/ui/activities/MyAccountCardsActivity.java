@@ -4,10 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -16,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -26,6 +27,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -75,12 +77,14 @@ public class MyAccountCardsActivity extends BaseActivity implements View.OnClick
     private int wMinDrawnDownAmount;
     private LinearLayout llRootLayout;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_accounts_offline_layout);
         setActionBar();
         init();
+
         mWoolworthsApplication = (WoolworthsApplication) getApplication();
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(MyAccountCardsActivity.this);
         getScreenResolution(this);
@@ -93,6 +97,10 @@ public class MyAccountCardsActivity extends BaseActivity implements View.OnClick
         changeViewPagerAndActionBarBackground(position);
         mBtnApplyNow.setVisibility(View.GONE);
         changeButtonColor(position);
+//
+//        DisplayMetrics metrics = getResources().getDisplayMetrics();
+//        differentDensityAndScreenSize(this);
+
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -139,6 +147,16 @@ public class MyAccountCardsActivity extends BaseActivity implements View.OnClick
         setStatusBarColor(position);
         mSharePreferenceHelper.save("acc_card_activity", "acc_card_activity");
         this.registerReceiver(this.finishAlert, new IntentFilter(mSharePreferenceHelper.getValue("acc_card_activity")));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            View decor = getWindow().getDecorView();
+
+            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            // We want to change tint color to white again.
+            // You can also record the flags in advance so that you can turn UI back completely if
+            // you have set other flags before, such as translucent or full screen.
+            //  decor.setSystemUiVisibility(0);
+        }
     }
 
     public void setActionBar() {
@@ -380,26 +398,11 @@ public class MyAccountCardsActivity extends BaseActivity implements View.OnClick
     }
 
     private void getScreenResolution(Context context) {
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getMetrics(metrics);
-        int width = metrics.widthPixels;
-        int height = metrics.heightPixels;
-
-        Log.e("test--width--", " w " + width + " h " + height);
-
-
-        if (width < 1000 && height < 1500) {
-            pager.setPadding(100, 0, 100, 0);
-            pager.setClipToPadding(false);
-            pager.setPageMargin(16);
-
-        } else {
-            pager.setPadding(200, 0, 200, 0);
-            pager.setClipToPadding(false);
-            pager.setPageMargin(16);
-        }
+        int marginPx = getResources().getDimensionPixelSize(R.dimen.page_margin);
+        int cardMarginPx = getResources().getDimensionPixelSize(R.dimen.card_margin);
+        pager.setPadding(cardMarginPx, 0, cardMarginPx, 0);
+        pager.setPageMargin(marginPx);
+        pager.setClipToPadding(false);
     }
 
     public void changeButtonColor(int position) {
@@ -520,15 +523,168 @@ public class MyAccountCardsActivity extends BaseActivity implements View.OnClick
                 break;
         }
 
-        if (containsCreditCard) {
-            whiteBackground();
-        }
-
-        if (containsPersonalLoan) {
-            whiteBackground();
-        }
-        if (containsStoreCard) {
-            whiteBackground();
-        }
+//        if (containsCreditCard) {
+//            whiteBackground();
+//        }
+//
+//        if (containsPersonalLoan) {
+//            whiteBackground();
+//        }
+//        if (containsStoreCard) {
+//            whiteBackground();
+//        }
     }
+
+    public int differentDensityAndScreenSize(Context context) {
+        int value = 20;
+        String str = "";
+        if ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_SMALL) {
+            switch (context.getResources().getDisplayMetrics().densityDpi) {
+                case DisplayMetrics.DENSITY_LOW:
+                    str = "small-ldpi";
+                    value = 20;
+                    break;
+                case DisplayMetrics.DENSITY_MEDIUM:
+                    str = "small-mdpi";
+                    value = 20;
+                    break;
+                case DisplayMetrics.DENSITY_HIGH:
+                    str = "small-hdpi";
+                    value = 20;
+                    break;
+                case DisplayMetrics.DENSITY_XHIGH:
+                    str = "small-xhdpi";
+                    value = 20;
+                    break;
+                case DisplayMetrics.DENSITY_XXHIGH:
+                    str = "small-xxhdpi";
+                    value = 20;
+                    break;
+                case DisplayMetrics.DENSITY_XXXHIGH:
+                    str = "small-xxxhdpi";
+                    value = 20;
+                    break;
+                case DisplayMetrics.DENSITY_TV:
+                    str = "small-tvdpi";
+                    value = 20;
+                    break;
+                default:
+                    str = "small-unknown";
+                    value = 20;
+                    break;
+            }
+
+        } else if ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
+            switch (context.getResources().getDisplayMetrics().densityDpi) {
+                case DisplayMetrics.DENSITY_LOW:
+                    str = "normal-ldpi";
+                    value = 82;
+                    break;
+                case DisplayMetrics.DENSITY_MEDIUM:
+                    str = "normal-mdpi";
+                    value = 82;
+                    break;
+                case DisplayMetrics.DENSITY_HIGH:
+                    str = "normal-hdpi";
+                    value = 82;
+                    break;
+                case DisplayMetrics.DENSITY_XHIGH:
+                    str = "normal-xhdpi";
+                    value = 90;
+                    break;
+                case DisplayMetrics.DENSITY_XXHIGH:
+                    str = "normal-xxhdpi";
+                    value = 96;
+                    break;
+                case DisplayMetrics.DENSITY_XXXHIGH:
+                    str = "normal-xxxhdpi";
+                    value = 96;
+                    break;
+                case DisplayMetrics.DENSITY_TV:
+                    str = "normal-tvdpi";
+                    value = 96;
+                    break;
+                default:
+                    str = "normal-unknown";
+                    value = 82;
+                    break;
+            }
+        } else if ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+            switch (context.getResources().getDisplayMetrics().densityDpi) {
+                case DisplayMetrics.DENSITY_LOW:
+                    str = "large-ldpi";
+                    value = 78;
+                    break;
+                case DisplayMetrics.DENSITY_MEDIUM:
+                    str = "large-mdpi";
+                    value = 78;
+                    break;
+                case DisplayMetrics.DENSITY_HIGH:
+                    str = "large-hdpi";
+                    value = 78;
+                    break;
+                case DisplayMetrics.DENSITY_XHIGH:
+                    str = "large-xhdpi";
+                    value = 125;
+                    break;
+                case DisplayMetrics.DENSITY_XXHIGH:
+                    str = "large-xxhdpi";
+                    value = 125;
+                    break;
+                case DisplayMetrics.DENSITY_XXXHIGH:
+                    str = "large-xxxhdpi";
+                    value = 125;
+                    break;
+                case DisplayMetrics.DENSITY_TV:
+                    str = "large-tvdpi";
+                    value = 125;
+                    break;
+                default:
+                    str = "large-unknown";
+                    value = 78;
+                    break;
+            }
+
+        } else if ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
+            switch (context.getResources().getDisplayMetrics().densityDpi) {
+                case DisplayMetrics.DENSITY_LOW:
+                    str = "xlarge-ldpi";
+                    value = 125;
+                    break;
+                case DisplayMetrics.DENSITY_MEDIUM:
+                    str = "xlarge-mdpi";
+                    value = 125;
+                    break;
+                case DisplayMetrics.DENSITY_HIGH:
+                    str = "xlarge-hdpi";
+                    value = 125;
+                    break;
+                case DisplayMetrics.DENSITY_XHIGH:
+                    str = "xlarge-xhdpi";
+                    value = 125;
+                    break;
+                case DisplayMetrics.DENSITY_XXHIGH:
+                    str = "xlarge-xxhdpi";
+                    value = 125;
+                    break;
+                case DisplayMetrics.DENSITY_XXXHIGH:
+                    str = "xlarge-xxxhdpi";
+                    value = 125;
+                    break;
+                case DisplayMetrics.DENSITY_TV:
+                    str = "xlarge-tvdpi";
+                    value = 125;
+                    break;
+                default:
+                    str = "xlarge-unknown";
+                    value = 125;
+                    break;
+            }
+        }
+// The Toast will show the Device falls in Which Categories.
+        Toast.makeText(this, "" + str, Toast.LENGTH_SHORT).show();
+
+        return value;
+    }
+
 }

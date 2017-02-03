@@ -251,27 +251,6 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         recentSearchList.addView(storeItem);
         List<SearchHistory> searchHistories = getRecentSearch();
         if (status && searchHistories != null) {
-            String previous = "";
-            String current = "";
-            for (int i = 0; i < searchHistories.size(); i++) {
-                current = searchHistories.get(i).searchedValue.toLowerCase();
-                Log.e("echoTrue", current);
-                if (previous.startsWith(current)) {
-                    Log.e("echoTrue", "current " + current + " previous " + previous);
-                    searchHistories.remove(i);
-                }
-                previous = current;
-            }
-//            SessionDao sessionDao = new SessionDao(SearchStoresActivity.this);
-//            sessionDao.key = SessionDao.KEY.STORES_USER_SEARCH;
-//            Gson gson = new Gson();
-//            String json = gson.toJson(searchHistories);
-//            sessionDao.value = json;
-//            try {
-//                sessionDao.save();
-//            } catch (Exception e) {
-//                Log.e(TAG, e.getMessage());
-//            }
             for (int i = 0; i < searchHistories.size(); i++) {
                 View v = getLayoutInflater().inflate(R.layout.recent_search_list_item, null);
                 recentSearchListitem = (WTextView) v.findViewById(R.id.recentSerachListItem);

@@ -33,11 +33,17 @@
     <dimen name="default_stack_spacing">12dp</dimen>
     <dimen name="button_style_height">48dp</dimen>
     <dimen name="edittext_top_padding">10dp</dimen>
+    <dimen name="page_margin">16dp</dimen>
+    <dimen name="card_margin">45dp</dimen>
+    <dimen name="card_padding_margin">16dp</dimen>
+    <dimen name="account_margin">22dp</dimen>
+    <dimen name="acc_fifteen_dp">12sp</dimen>
+    <dimen name="acc_fourteen_sp">14sp</dimen>
+    <dimen name="acc_thirteen_sp">13sp</dimen>
     <dimen name="toolbar_elevation">4dp</dimen>
     <dimen name="image_width">120dp</dimen>
     <dimen name="image_final_width">32dp</dimen>
     <dimen name="spacing_normal">16dp</dimen>
     <dimen name="product_search_top_margin">105dp</dimen>
-
 </resources>
 

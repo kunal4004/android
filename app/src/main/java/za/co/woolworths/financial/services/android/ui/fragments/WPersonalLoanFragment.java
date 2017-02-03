@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -55,7 +57,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     public WTextView dueDate;
     public WTextView minAmountDue;
     public WTextView currentBalance;
-    public WTextView withdrawCashNow;
     public WTextView transactions;
     public WTextView txtIncreseLimit;
 
@@ -81,16 +82,10 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         dueDate = (WTextView) view.findViewById(R.id.dueDate);
         minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
         currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
-        withdrawCashNow = (WTextView) view.findViewById(R.id.withdrawCashNow);
         transactions = (WTextView) view.findViewById(R.id.txtTransactions);
         txtIncreseLimit = (WTextView) view.findViewById(R.id.txtIncreseLimit);
-
         mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
-        mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-
         mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
-        withdrawCashNow.setVisibility(View.GONE);
-        withdrawCashNow.setOnClickListener(this);
         txtIncreseLimit.setOnClickListener(this);
         transactions.setOnClickListener(this);
         AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
@@ -159,12 +154,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.withdrawCashNow:
-                mSharePreferenceHelper.save("", "lw_amount_drawn_cent");
-                Intent openWithdrawCashNow = new Intent(getActivity(), LoanWithdrawalActivity.class);
-                startActivity(openWithdrawCashNow);
-                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                break;
             case R.id.txtTransactions:
                 Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
                 intent.putExtra("productOfferingId", productOfferingId);
@@ -200,6 +189,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
                 @Override
                 protected void onPreExecute() {
+                    mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
                     mProgressCreditLimit.setVisibility(View.VISIBLE);
                     mImageArrow.setVisibility(View.GONE);
                     txtIncreseLimit.setVisibility(View.GONE);
@@ -240,6 +230,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     }
 
     public void hideProgressBar() {
+        mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(null);
         mProgressCreditLimit.setVisibility(View.GONE);
         mImageArrow.setVisibility(View.VISIBLE);
         txtIncreseLimit.setVisibility(View.VISIBLE);

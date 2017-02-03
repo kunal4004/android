@@ -80,6 +80,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         bindData(accountsResponse);
         disableIncreaseLimit();
         hideProgressBar();
+        view.setBackgroundColor(Color.WHITE);
         return view;
     }
 
