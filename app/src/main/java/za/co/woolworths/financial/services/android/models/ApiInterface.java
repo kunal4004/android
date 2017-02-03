@@ -32,7 +32,6 @@ import za.co.woolworths.financial.services.android.models.dto.LoginRequest;
 import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
-import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
@@ -198,7 +197,7 @@ public interface ApiInterface {
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion,
             @Header("sessionToken") String sessionToken,
-            @Query("lat") String lat ,
+            @Query("lat") String lat,
             @Query("lon") String lon,
             @Query("searchString") String searchString,
             @Query("radius") String radius
@@ -364,6 +363,7 @@ public interface ApiInterface {
             @Header("userAgentVersion") String userAgentVersion,
             @Header("sessionToken") String sessionToken,
             @Body UpdateBankDetail updateBankDetail);
+
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @GET("/content/promotions")
     PromotionsResponse getPromotions(
@@ -377,7 +377,7 @@ public interface ApiInterface {
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json","cacheTime:30"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:900"})
     @GET("/content/faq")
     FAQ getFAQ(
             @Header("apiId") String apiId,
