@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
@@ -18,8 +17,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -254,7 +251,6 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         recentSearchList.addView(storeItem);
         List<SearchHistory> searchHistories = getRecentSearch();
         if (status && searchHistories != null) {
-
             for (int i = 0; i < searchHistories.size(); i++) {
                 View v = getLayoutInflater().inflate(R.layout.recent_search_list_item, null);
                 recentSearchListitem = (WTextView) v.findViewById(R.id.recentSerachListItem);

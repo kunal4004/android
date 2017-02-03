@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/barcodeContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/semi_per_black" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@color/black"
+        android:minHeight="?attr/actionBarSize">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/toolbarText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:letterSpacing="0.1"
+            android:text="Store card"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:WTextView_font="medium_bold" />
+    </android.support.v7.widget.Toolbar>
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/textInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:gravity="center"
+        android:letterSpacing="0.15"
+        android:lineSpacingExtra="1.6dp"
+        android:paddingLeft="@dimen/bank_spacing_width"
+        android:paddingRight="@dimen/bank_spacing_width"
+        android:text="@string/set_info_detail"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:visibility="visible"
+        app:WTextView_font="medium" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/btnManual"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="@dimen/bank_spacing_width"
+        android:layout_marginLeft="@dimen/bank_spacing_width"
+        android:layout_marginRight="@dimen/bank_spacing_width"
+        android:background="@drawable/barcode_btn_border"
+        android:letterSpacing="0.1"
+        android:text="@string/set_manually_enter_barcode"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:WButton_font="medium" />
+
+    <RelativeLayout
+        android:id="@+id/relProgressContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/ppBar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="120dp"
+            android:gravity="center" />
+    </RelativeLayout>
+
+</FrameLayout>

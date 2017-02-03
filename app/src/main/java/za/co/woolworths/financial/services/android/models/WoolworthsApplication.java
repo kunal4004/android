@@ -143,6 +143,7 @@ public class WoolworthsApplication extends Application {
 
     @Override
     public void onCreate() {
+        Fresco.initialize(this);
         super.onCreate();
         updateBankDetail = new UpdateBankDetail();
         WoolworthsApplication.context = this.getApplicationContext();

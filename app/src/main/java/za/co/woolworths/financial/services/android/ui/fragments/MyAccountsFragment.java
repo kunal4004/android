@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.ui.activities.FAQActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -52,6 +53,7 @@ import za.co.woolworths.financial.services.android.ui.views.WObservableScrollVie
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BaseFragment;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -69,7 +71,7 @@ import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MyAccountsFragment extends Fragment implements View.OnClickListener, ViewPager.OnPageChangeListener, ObservableScrollViewCallbacks {
+public class MyAccountsFragment extends BaseFragment implements View.OnClickListener, ViewPager.OnPageChangeListener, ObservableScrollViewCallbacks {
 
 
     private HideActionBar hideActionBar;
@@ -175,7 +177,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         imgCreditCard = (ImageView) view.findViewById(R.id.imgCreditCard);
         relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
 
-
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
         applyPersonalCardView.setOnClickListener(this);
@@ -187,6 +188,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         openShoppingList.setOnClickListener(this);
         signOutBtn.setOnClickListener(this);
         mImageView.setOnClickListener(this);
+        relFAQ.setOnClickListener(this);
         mWObservableScrollView.setScrollViewCallbacks(this);
 
         adapter = new MyAccountOverViewPagerAdapter(getActivity());
@@ -291,6 +293,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         }
 
         contactUs.setVisibility(View.VISIBLE);
+        relFAQ.setVisibility(View.VISIBLE);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(0);
     }
@@ -340,6 +343,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         linkedAccountsLayout.setVisibility(View.GONE);
         applyNowAccountsLayout.setVisibility(View.GONE);
         contactUs.setVisibility(View.GONE);
+        relFAQ.setVisibility(View.GONE);
         linkAccountsBtn.setVisibility(View.GONE);
     }
 
@@ -392,7 +396,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         switch (v.getId()) {
             case R.id.openMessageActivity:
                 startActivity(new Intent(getActivity(), MessagesActivity.class).putExtra("fromNotification", false));
-                //getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
+                getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
             case R.id.applyStoreCard:
                 redirectToMyAccountsCardsActivity(0);
@@ -414,7 +418,11 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 break;
             case R.id.contactUs:
                 startActivity(new Intent(getActivity(), WContactUsActivity.class));
-                getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
+                getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+                break;
+            case R.id.relFAQ:
+                startActivity(new Intent(getActivity(), FAQActivity.class));
+                getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
             case R.id.openShoppingList:
                 break;
@@ -550,7 +558,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             intent.putExtra("accounts", Utils.objectToJson(accountsResponse));
         }
         startActivityForResult(intent, 0);
-        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 
     }
 
@@ -647,7 +655,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             loadMessages();
         }
     };
-
 
     @Override
     public void onStart() {

@@ -41,7 +41,7 @@ public class PopWindowValidationMessage {
 
     public enum OVERLAY_TYPE {
         CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
-        HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT
+        HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR
     }
 
     public PopWindowValidationMessage(Context context) {
@@ -279,6 +279,21 @@ public class PopWindowValidationMessage {
                         });
                 break;
 
+            case BARCODE_ERROR:
+                mView = mLayoutInflater.inflate(R.layout.barcode_error, null);
+                popupWindowSetting(mView);
+                setAnimation();
+                touchToDismiss(overlay_type);
+                mRelPopContainer.setAnimation(mFadeInAnimation);
+                mRelRootContainer.setAnimation(mPopEnterAnimation);
+                mView.findViewById(R.id.btnOk)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startExitAnimation(overlay_type);
+                            }
+                        });
+                break;
         }
 
         return mDarkenScreen;

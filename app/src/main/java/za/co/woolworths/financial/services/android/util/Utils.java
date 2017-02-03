@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -270,56 +271,16 @@ public class Utils {
         return response;
     }
 
-//
-//    public void setTaskBarColored(int color) {
-//        Window w = this.getWindow();
-//        // w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        //status bar height
-//        w.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//        w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        int statusBarHeight = getStatusBarHeight();
-//        View view = new View(this);
-//        view.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//        view.getLayoutParams().height = statusBarHeight;
-//        ((ViewGroup) w.getDecorView()).addView(view);
-//        view.setBackgroundColor(color);
-//        llRootLayout.setBackgroundColor(color);
-//        //View decor = getWindow().getDecorView();
-//        //decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-//    }
+    public static int getToolbarHeight(Context context) {
+        final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
+                new int[]{R.attr.actionBarSize});
+        int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
 
-//
-//    public void setStatusBarColor(View statusBar, int color) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//            //status bar height
-//            // int actionBarHeight = getActionBarHeight();
-//            // int statusBarHeight = getStatusBarHeight();
-//            //action bar height
-//            //  statusBar.getLayoutParams().height = actionBarHeight + statusBarHeight;
-//            statusBar.setBackgroundColor(color);
-//            llRootLayout.setBackgroundColor(color);
-//        }
-//    }
-//
-//    public int getActionBarHeight() {
-//        int actionBarHeight = 0;
-//        TypedValue tv = new TypedValue();
-//        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-//            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-//        }
-//        return actionBarHeight;
-//    }
-//
-//    public int getStatusBarHeight() {
-//        int result = 0;
-//        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-//        if (resourceId > 0) {
-//            result = getResources().getDimensionPixelSize(resourceId);
-//        }
-//        return result;
-//    }
-//
+        return toolbarHeight;
+    }
 
+    public static int getTabsHeight(Context context) {
+        return (int) context.getResources().getDimension(R.dimen.bank_spacing_width);
+    }
 }

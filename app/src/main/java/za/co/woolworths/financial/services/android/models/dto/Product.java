@@ -1,11 +1,23 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Product {
-    public String category;
-    public String name;
-    public String productGroupCode;
-    public int productOfferingID;
-    public int roleTypeID;
-    public String status;
-    public String subCategory;
+
+    @SerializedName("products")
+    @Expose
+    public ArrayList<Product_> products = null;
+    @SerializedName("response")
+    @Expose
+    public Response response;
+    @SerializedName("pagingResponse")
+    @Expose
+    public PagingResponse pagingResponse;
+    @SerializedName("httpCode")
+    @Expose
+    public Integer httpCode;
+
 }
