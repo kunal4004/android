@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -33,13 +34,12 @@ public class WRewardsSavingsFragment extends Fragment {
     public WTextView quarterlyVoucherEarned;
     public WTextView yearToDateSpend;
     public WTextView yearToDateSpendText;
+    public RelativeLayout noSavingsView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.wrewards_savings_fragment, container, false);
-        Bundle bundle = getArguments();
-        voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         tireStatus = (WTextView) view.findViewById(R.id.tireStatus);
         wRewardsInstantSaving = (WTextView) view.findViewById(R.id.wrewardsInstantSavings);
@@ -47,16 +47,21 @@ public class WRewardsSavingsFragment extends Fragment {
         quarterlyVoucherEarned = (WTextView) view.findViewById(R.id.quarterlyVouchersEarned);
         yearToDateSpend = (WTextView) view.findViewById(R.id.yearToDateSpend);
         yearToDateSpendText = (WTextView) view.findViewById(R.id.yearToDateSpendText);
+        noSavingsView = (RelativeLayout) view.findViewById(R.id.noSavingsView);
         mLayoutManager = new LinearLayoutManager(
                 getActivity(),
                 LinearLayoutManager.HORIZONTAL,
                 false
         );
         recyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new WRewardsSavingsHorizontalScrollAdapter(getActivity(), voucherResponse.tierHistoryList);
-        recyclerView.setAdapter(mAdapter);
-        setUpYearToDateValue();
-       recyclerView.addOnItemTouchListener(new RecycleViewClickListner(getActivity(), recyclerView, new RecycleViewClickListner.ClickListener() {
+        Bundle bundle = getArguments();
+        voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
+        if (voucherResponse.tierInfo == null) {
+            displayNoSavingsView();
+        } else {
+            displaySavingsView();
+        }
+        recyclerView.addOnItemTouchListener(new RecycleViewClickListner(getActivity(), recyclerView, new RecycleViewClickListner.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 //Zero position belongs to recycleview header view
@@ -92,5 +97,31 @@ public class WRewardsSavingsFragment extends Fragment {
         quarterlyVoucherEarned.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateWVouchers));
         yearToDateSpend.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateSpend));
 
+    }
+
+    public void displayNoSavingsView() {
+        recyclerView.setVisibility(View.GONE);
+        noSavingsView.setVisibility(View.VISIBLE);
+        yearToDateSpendText.setText(getString(R.string.year_to_date_spend));
+        //tireStatus.setText(voucherResponse.tierInfo.currentTier);
+        wRewardsInstantSaving.setText(WFormatter.formatAmount(0));
+        wRewardsGreenEarned.setText(WFormatter.formatAmount(0));
+        quarterlyVoucherEarned.setText(WFormatter.formatAmount(0));
+        yearToDateSpend.setText(WFormatter.formatAmount(0));
+    }
+
+    public void displaySavingsView() {
+        if (voucherResponse.tierHistoryList == null || voucherResponse.tierHistoryList.size() == 0) {
+            recyclerView.setVisibility(View.GONE);
+            noSavingsView.setVisibility(View.VISIBLE);
+            setUpYearToDateValue();
+
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            noSavingsView.setVisibility(View.GONE);
+            mAdapter = new WRewardsSavingsHorizontalScrollAdapter(getActivity(), voucherResponse.tierHistoryList);
+            recyclerView.setAdapter(mAdapter);
+            setUpYearToDateValue();
+        }
     }
 }
