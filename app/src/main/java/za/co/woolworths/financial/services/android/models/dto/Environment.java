@@ -9,6 +9,7 @@ public class Environment {
     public String sha1Password;
     public String ssoRedirectURI;
     public String stsURI;
+    public String ssoRedirectURILogout;
 
     public String getApiId() {
         return apiKey;
@@ -50,5 +51,11 @@ public class Environment {
         return stsURI;
     }
 
+    public String getSsoRedirectURILogout() {
+        return ssoRedirectURILogout;
+    }
 
+    public void setSsoRedirectURILogout(String ssoRedirectURILogout) {
+        this.ssoRedirectURILogout = ssoRedirectURILogout;
+    }
 }

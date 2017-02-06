@@ -47,6 +47,7 @@ public class WoolworthsApplication extends Application {
     private static String sha1Password;
     private static String ssoRedirectURI;
     private static String stsURI;
+    private static String ssoRedirectURILogout;
     private boolean isDEABank = false;
     private boolean isOther = false;
     private int productOfferingId;
@@ -149,6 +150,14 @@ public class WoolworthsApplication extends Application {
 
     public static void setSsoRedirectURI(String ssoRedirectURI) {
         WoolworthsApplication.ssoRedirectURI = ssoRedirectURI;
+    }
+
+    public static String getSsoRedirectURILogout() {
+        return ssoRedirectURILogout;
+    }
+
+    public static void setSsoRedirectURILogout(String ssoRedirectURILogout) {
+        WoolworthsApplication.ssoRedirectURILogout = ssoRedirectURILogout;
     }
 
     public static String getStsURI() {
