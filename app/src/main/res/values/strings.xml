@@ -473,6 +473,9 @@
     <string name="enter_barcode">ENTER BARCODE</string>
     <string name="enter_barcode_desc">ENTER THE NUMBER BELOW THE BARCODE</string>
     <string name="no_messages_to_display">No messages to display</string>
+    <string name="no_results_to_show">NO RESULTS TO SHOW</string>
+    <string name="search_error_message">Try searching a different area or turning Location Services on in Settings so we can find the store closest to your location.</string>
+
     <string name="no_faq_found">No FAQ to display</string>
     <string name="barcode_error_title">BARCODE ERROR</string>
     <string name="barcode_error_desc">Please re-enter the barcode</string>
