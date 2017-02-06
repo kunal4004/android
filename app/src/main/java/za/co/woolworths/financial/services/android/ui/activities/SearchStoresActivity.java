@@ -215,9 +215,6 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
             protected void onPreExecute() {
 
                 super.onPreExecute();
-                search = new SearchHistory();
-                search.searchedValue = query;
-                saveRecentSearch(search);
             }
 
             @Override

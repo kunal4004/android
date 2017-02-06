@@ -25,7 +25,7 @@
             app:theme="@style/StoreSearch" />
     </android.support.design.widget.AppBarLayout>
 
-    <include
+    <include layout="@layout/recent_serachs_layout"
         android:id="@+id/recentSearchLayout"
         android:visibility="gone"
         />
