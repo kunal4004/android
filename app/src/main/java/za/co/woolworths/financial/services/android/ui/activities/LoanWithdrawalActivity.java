@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -34,6 +33,7 @@ import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -41,7 +41,7 @@ import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class LoanWithdrawalActivity extends AppCompatActivity {
+public class LoanWithdrawalActivity extends BaseActivity {
 
     private WLoanEditTextView mEditWithdrawalAmount;
     private WTextView mTextAvailableFund;
@@ -296,7 +296,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
             @Override
             public void run() {
                 finish();
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+              //  overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
         }, 200);
     }

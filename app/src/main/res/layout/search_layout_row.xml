@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relSearchRowLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="110dp"
+    android:layout_marginLeft="@dimen/default_margin"
+    android:layout_marginRight="@dimen/default_margin"
+    android:layout_marginTop="110dp"
+    android:background="@drawable/card_shadow"
+    android:gravity="center_vertical"
+    app:layout_collapseMode="parallax">
+
+    <ImageView
+        android:id="@+id/imProductSearch"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignBottom="@+id/textProductSearch"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="18dp"
+        android:src="@drawable/ic_search" />
+
+    <LinearLayout
+        android:id="@+id/llBarcodeScanner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textProductSearch"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/recent_search_bg" />
+
+        <ImageView
+            android:id="@+id/imBarcodeScanner"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="18dp"
+            android:src="@drawable/barcode" />
+
+    </LinearLayout>
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/textProductSearch"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/transparent"
+        android:gravity="start|center"
+        android:hint="@string/product_search_hint"
+        android:inputType="textNoSuggestions"
+        android:letterSpacing="0.06"
+        android:paddingLeft="50dp"
+        android:maxLines="1"
+        android:paddingRight="@dimen/default_margin"
+        android:textColor="@color/black"
+        android:textColorHint="@color/product_search_hint"
+        android:textSize="16sp"
+        app:WEditTextView_font="myriadpro_regular"
+        android:layout_toStartOf="@+id/llBarcodeScanner" />
+
+</RelativeLayout>

@@ -75,7 +75,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         showRecentSearchHistoryView(true);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mHandler=new Handler();
+        mHandler = new Handler();
         recyclerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -84,8 +84,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
-        recyclerView.addOnItemTouchListener(new RecycleViewClickListner(getApplicationContext(),recyclerView,new RecycleViewClickListner.ClickListener()
-        {
+        recyclerView.addOnItemTouchListener(new RecycleViewClickListner(getApplicationContext(), recyclerView, new RecycleViewClickListner.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 /*
@@ -122,9 +121,9 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onClick(View v) {
-        int pos=(Integer) v.getTag();
+        int pos = (Integer) v.getTag();
         showRecentSearchHistoryView(false);
-        searchView.setQuery(getRecentSearch().get(pos).searchedValue,true);
+        searchView.setQuery(getRecentSearch().get(pos).searchedValue, true);
         //Toast.makeText(getApplicationContext(),recentSearchData[pos],Toast.LENGTH_SHORT).show();
     }
 
@@ -195,8 +194,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
                             }
 
                             showRecentSearchHistoryView(true);
-                        }
-                        else {
+                        } else {
                             showRecentSearchHistoryView(false);
                             if (newText.length() >= 2) {
                                 startSearch(newText);
@@ -211,25 +209,25 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         return super.onCreateOptionsMenu(menu);
     }
 
-    public void startSearch(final String query)
-    {
-        new HttpAsyncTask<String,String,LocationResponse>()
-        {
+    public void startSearch(final String query) {
+        new HttpAsyncTask<String, String, LocationResponse>() {
             @Override
             protected void onPreExecute() {
 
                 super.onPreExecute();
+                search = new SearchHistory();
+                search.searchedValue = query;
+                saveRecentSearch(search);
             }
 
             @Override
             protected LocationResponse httpDoInBackground(String... params) {
-                Location location=Utils.getLastSavedLocation(SearchStoresActivity.this);
-                if(location!=null)
-                {
-                    return ((WoolworthsApplication) getApplication()).getApi().getLocations(String.valueOf(location.getLatitude()),String.valueOf(location.getLongitude()),query, "50000");
+                Location location = Utils.getLastSavedLocation(SearchStoresActivity.this);
+                if (location != null) {
+                    return ((WoolworthsApplication) getApplication()).getApi().getLocations(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), query, "50000");
 
-                }else {
-                    return ((WoolworthsApplication) getApplication()).getApi().getLocations(null,null,query,null);
+                } else {
+                    return ((WoolworthsApplication) getApplication()).getApi().getLocations(null, null, query, null);
 
                 }
             }
@@ -241,19 +239,18 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 
             @Override
             protected LocationResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                LocationResponse locationResponse=new LocationResponse();
-                locationResponse.response=new Response();
+                LocationResponse locationResponse = new LocationResponse();
+                locationResponse.response = new Response();
                 return locationResponse;
             }
 
             @Override
             protected void onPostExecute(LocationResponse locationResponse) {
                 super.onPostExecute(locationResponse);
-                storeDetailsList=new ArrayList<StoreDetails>() ;
-                storeDetailsList=locationResponse.Locations;
-                if (storeDetailsList!=null&&storeDetailsList.size()!=0)
-                {
-                    searchAdapter =new StoreSearchListAdapter(SearchStoresActivity.this,storeDetailsList);
+                storeDetailsList = new ArrayList<StoreDetails>();
+                storeDetailsList = locationResponse.Locations;
+                if (storeDetailsList != null && storeDetailsList.size() != 0) {
+                    searchAdapter = new StoreSearchListAdapter(SearchStoresActivity.this, storeDetailsList);
                     recyclerView.setAdapter(searchAdapter);
                     final TextView searchText = (TextView)
                             searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
@@ -295,10 +292,9 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case android.R.id.home:
-             //   hideSoftKeyboard();
+                //   hideSoftKeyboard();
                 onBackPressed();
         }
         return super.onOptionsItemSelected(item);
@@ -307,99 +303,87 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-       // overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+        // overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
     }
-    public void showRecentSearchHistoryView(boolean status)
-    {
-        recentSearchList.removeAllViews();
-        View storeItem=getLayoutInflater().inflate(R.layout.stores_recent_search_header_row,null);
-        recentSearchList.addView(storeItem);
-        List<SearchHistory> searchHistories=getRecentSearch();
-        if(status && searchHistories!=null)
-        {
 
-            for(int i=0;i<searchHistories.size();i++)
-            {
-                View v=getLayoutInflater().inflate(R.layout.recent_search_list_item,null);
-                recentSearchListitem=(WTextView)v.findViewById(R.id.recentSerachListItem);
+    public void showRecentSearchHistoryView(boolean status) {
+        recentSearchList.removeAllViews();
+        View storeItem = getLayoutInflater().inflate(R.layout.stores_recent_search_header_row, null);
+        recentSearchList.addView(storeItem);
+        List<SearchHistory> searchHistories = getRecentSearch();
+        if (status && searchHistories != null) {
+            for (int i = 0; i < searchHistories.size(); i++) {
+                View v = getLayoutInflater().inflate(R.layout.recent_search_list_item, null);
+                recentSearchListitem = (WTextView) v.findViewById(R.id.recentSerachListItem);
                 recentSearchListitem.setText(searchHistories.get(i).searchedValue);
                 recentSearchList.addView(v);
-                int position=recentSearchList.indexOfChild(v)-1;
+                int position = recentSearchList.indexOfChild(v) - 1;
                 v.setTag(position);
                 v.setOnClickListener(this);
             }
             recentSearchLayout.setVisibility(View.VISIBLE);
-        }
-        else
-        {
+        } else {
             recentSearchLayout.setVisibility(View.GONE);
         }
 
     }
+
     public void hideSoftKeyboard() {
-        if(getCurrentFocus()!=null) {
+        if (getCurrentFocus() != null) {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
     }
 
-    public void saveRecentSearch(SearchHistory searchHistory)
-    {
-        List<SearchHistory> histories=null;
-        histories=new ArrayList<>();
-        histories=getRecentSearch();
-        SessionDao sessionDao=new SessionDao(SearchStoresActivity.this);
-        sessionDao.key=SessionDao.KEY.STORES_USER_SEARCH;
+    public void saveRecentSearch(SearchHistory searchHistory) {
+        List<SearchHistory> histories = null;
+        histories = new ArrayList<>();
+        histories = getRecentSearch();
+        SessionDao sessionDao = new SessionDao(SearchStoresActivity.this);
+        sessionDao.key = SessionDao.KEY.STORES_USER_SEARCH;
         Gson gson = new Gson();
-        boolean isExist=false;
-        if(histories==null)
-        {
-            histories=new ArrayList<>();
-            histories.add(0,searchHistory);
+        boolean isExist = false;
+        if (histories == null) {
+            histories = new ArrayList<>();
+            histories.add(0, searchHistory);
             String json = gson.toJson(histories);
             sessionDao.value = json;
             try {
                 sessionDao.save();
-            }catch(Exception e){
+            } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
-        }
-        else {
+        } else {
             for (SearchHistory s : histories) {
-                if ( s.searchedValue.equalsIgnoreCase(searchHistory.searchedValue))
-                {
-                    isExist=true;
+                if (s.searchedValue.equalsIgnoreCase(searchHistory.searchedValue)) {
+                    isExist = true;
                 }
             }
-            if(!isExist)
-            {
-                histories.add(0,searchHistory);
-                if(histories.size()>5)
+            if (!isExist) {
+                histories.add(0, searchHistory);
+                if (histories.size() > 5)
                     histories.remove(5);
 
                 String json = gson.toJson(histories);
                 sessionDao.value = json;
                 try {
                     sessionDao.save();
-                }catch(Exception e){
+                } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
                 }
             }
         }
 
 
-
     }
-    public List<SearchHistory> getRecentSearch()
-    {
-        List<SearchHistory> historyList=null ;
+
+    public List<SearchHistory> getRecentSearch() {
+        List<SearchHistory> historyList = null;
         try {
             SessionDao sessionDao = new SessionDao(SearchStoresActivity.this, SessionDao.KEY.STORES_USER_SEARCH).get();
-            if (sessionDao.value==null)
-            {
+            if (sessionDao.value == null) {
                 historyList = new ArrayList<>();
-            }
-            else {
+            } else {
                 Gson gson = new Gson();
                 Type type = new TypeToken<List<SearchHistory>>() {
                 }.getType();

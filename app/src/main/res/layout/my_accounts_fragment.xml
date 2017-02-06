@@ -20,9 +20,6 @@
             android:background="@color/recent_search_bg"
             android:orientation="vertical"
             android:paddingBottom="20dp">
-            <!--<include
-                layout="@layout/my_account_fragment_header_logged_out"
-                />-->
 
             <LinearLayout
                 android:id="@+id/loggedOutHeaderLayout"
@@ -181,7 +178,7 @@
                         android:layout_toRightOf="@+id/imgSubmitQuery"
                         android:text="@string/submit_query"
                         android:textColor="@color/black"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/acc_fifteen_dp"
                         app:WTextView_font="myriadpro_regular" />
 
                     <ImageView

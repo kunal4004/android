@@ -99,6 +99,7 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
                 } else {
                     showCloseIconToolbar(false);
                 }
+
                 switch (position) {
                     case 0:
                         mImgStepIcon.setImageResource(R.drawable.clinumbersprogress_1);
