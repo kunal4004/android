@@ -450,5 +450,7 @@
     <string name="collect_credit_card_desc_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
 
     <string name="no_messages_to_display">No messages to display</string>
+    <string name="no_results_to_show">NO RESULTS TO SHOW</string>
+    <string name="search_error_message">Try searching a different area or turning Location Services on in Settings so we can find the store closest to your location.</string>
 
 </resources>

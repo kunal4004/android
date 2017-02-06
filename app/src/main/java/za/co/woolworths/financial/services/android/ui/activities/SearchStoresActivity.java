@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
@@ -12,17 +11,22 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -31,6 +35,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.Inflater;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -45,9 +50,6 @@ import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
 import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static android.R.attr.data;
-import static java.security.AccessController.getContext;
-
 
 public class SearchStoresActivity extends AppCompatActivity implements View.OnClickListener {
     public Toolbar toolbar;
@@ -55,9 +57,10 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
     StoreSearchListAdapter searchAdapter;
     public List<StoreDetails> storeDetailsList;
     Handler mHandler;
-     SearchView searchView;
+    SearchView searchView;
     LinearLayout recentSearchLayout;
     LinearLayout recentSearchList;
+    RelativeLayout searchErrorLayout;
     WTextView recentSearchListitem;
     SearchHistory search;
     public static final String TAG = "SearchStoresActivity";
@@ -71,6 +74,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         recyclerView=(RecyclerView)findViewById(R.id.storeList) ;
         recentSearchLayout=(LinearLayout)findViewById(R.id.recentSearchLayout);
         recentSearchList=(LinearLayout)findViewById(R.id.recentSearchList);
+        searchErrorLayout =(RelativeLayout)findViewById(R.id.search_Error);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         showRecentSearchHistoryView(true);
         setSupportActionBar(toolbar);
@@ -88,6 +92,12 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         {
             @Override
             public void onClick(View view, int position) {
+                /*
+                 *when the user clicks on one of the cards which resulted from the search
+                 *the query is saved in the recent search list
+                 */
+                storeRecentSearch();
+
                 Gson gson=new Gson();
                 String store=gson.toJson(storeDetailsList.get(position));
                  startActivity(new Intent(getApplicationContext(),StoreDetailsActivity.class).putExtra("store",store));
@@ -122,27 +132,42 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         //Toast.makeText(getApplicationContext(),recentSearchData[pos],Toast.LENGTH_SHORT).show();
     }
 
+    public void storeRecentSearch() {
+        String query = searchView.getQuery().toString();
+        search=new SearchHistory();
+        search.searchedValue=query;
+        if (query.length()>=2) {
+            saveRecentSearch(search);
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.w_search_store_menu, menu);
-        MenuItem searchViewItem = menu.findItem(R.id.action_search);
+        final MenuItem searchViewItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchViewItem);
         searchView.setIconified(false);
+        ImageView mCloseButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
         SpannableMenuOption spannableMenuOption = new SpannableMenuOption(this);
         searchView.setQueryHint(spannableMenuOption.customSpannableSearch(getString(R.string.search_by_store_loc)));
        // ImageView searchCloseIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
        // searchCloseIcon.setImageResource(R.drawable.close_24);
-        TextView searchText = (TextView)
+        final TextView searchText = (TextView)
                 searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Regular.otf");
         searchText.setTypeface(font);
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+        mCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onClose() {
+            public void onClick(View v) {
+                searchText.setText("");
                 searchView.clearFocus();
-                return true;
+                searchErrorLayout.setVisibility(View.GONE);
+                recentSearchLayout.setVisibility(View.VISIBLE);
+                if (storeDetailsList != null) {
+                    storeDetailsList.clear();
+                }
             }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -160,7 +185,13 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        //clear the array and repopulate it each time user types in a letter
+                        if (storeDetailsList!=null) {
+                            storeDetailsList.clear();
+                            searchAdapter.notifyDataSetChanged();
+                        }
                         if(newText.isEmpty()) {
+                            searchErrorLayout.setVisibility(View.GONE);
                             //if storeDetailsList is null before clearing it we get NullPointerException
                             //Therefore we check if it is null before clearing it
                             if (storeDetailsList != null) {
@@ -192,9 +223,6 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
             protected void onPreExecute() {
 
                 super.onPreExecute();
-                search=new SearchHistory();
-                search.searchedValue=query;
-                saveRecentSearch(search);
             }
 
             @Override
@@ -231,6 +259,37 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
                 {
                     searchAdapter =new StoreSearchListAdapter(SearchStoresActivity.this,storeDetailsList);
                     recyclerView.setAdapter(searchAdapter);
+                    final TextView searchText = (TextView)
+                            searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+                    searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                        @Override
+                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                                // Your piece of code on keyboard search click
+                                storeRecentSearch();
+                                return true;
+                            }
+                            return true;
+                        }
+                    });
+                } else {
+                    final TextView searchText = (TextView)
+                            searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+                    searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                        @Override
+                        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                                // Your piece of code on keyboard search click
+                                recentSearchLayout.setVisibility(View.GONE);
+                                searchErrorLayout.setVisibility(View.VISIBLE);
+                                if (storeDetailsList != null) {
+                                    storeDetailsList.clear();
+                                }
+                                return true;
+                            }
+                            return true;
+                        }
+                    });
                 }
 
 
@@ -244,7 +303,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         {
             case android.R.id.home:
              //   hideSoftKeyboard();
-             onBackPressed();
+                onBackPressed();
         }
         return super.onOptionsItemSelected(item);
     }
