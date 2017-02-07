@@ -10,6 +10,7 @@ public class Environment {
     public String ssoRedirectURI;
     public String stsURI;
     public String ssoRedirectURILogout;
+    public String wwTodayURI;
 
     public String getApiId() {
         return apiKey;
@@ -57,5 +58,13 @@ public class Environment {
 
     public void setSsoRedirectURILogout(String ssoRedirectURILogout) {
         this.ssoRedirectURILogout = ssoRedirectURILogout;
+    }
+
+    public String getWwTodayURI() {
+        return wwTodayURI;
+    }
+
+    public void setWwTodayURI(String wwTodayURI) {
+        this.wwTodayURI = wwTodayURI;
     }
 }

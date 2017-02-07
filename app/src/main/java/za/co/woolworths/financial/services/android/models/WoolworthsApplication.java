@@ -48,6 +48,7 @@ public class WoolworthsApplication extends Application {
     private static String ssoRedirectURI;
     private static String stsURI;
     private static String ssoRedirectURILogout;
+    private static String wwTodayURI;
     private boolean isDEABank = false;
     private boolean isOther = false;
     private int productOfferingId;
@@ -158,6 +159,14 @@ public class WoolworthsApplication extends Application {
 
     public static void setSsoRedirectURILogout(String ssoRedirectURILogout) {
         WoolworthsApplication.ssoRedirectURILogout = ssoRedirectURILogout;
+    }
+
+    public static String getWwTodayURI() {
+        return wwTodayURI;
+    }
+
+    public static void setWwTodayURI(String wwTodayURI) {
+        WoolworthsApplication.wwTodayURI = wwTodayURI;
     }
 
     public static String getStsURI() {

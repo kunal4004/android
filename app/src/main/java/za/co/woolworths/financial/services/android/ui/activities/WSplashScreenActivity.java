@@ -134,6 +134,7 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
                 WoolworthsApplication.setSsoRedirectURI(configResponse.enviroment.getSsoRedirectURI());
                 WoolworthsApplication.setStsURI(configResponse.enviroment.getStsURI());
                 WoolworthsApplication.setSsoRedirectURILogout(configResponse.enviroment.getSsoRedirectURILogout());
+                WoolworthsApplication.setWwTodayURI(configResponse.enviroment.getWwTodayURI());
                 WoolworthsApplication.setApplyNowLink(configResponse.defaults.getApplyNowLink());
                 WoolworthsApplication.setRegistrationTCLink(configResponse.defaults.getRegisterTCLink());
                 WoolworthsApplication.setFaqLink(configResponse.defaults.getFaqLink());
