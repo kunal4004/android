@@ -201,11 +201,11 @@ public class WfsApi {
     }
 
     private String getSha1Password() {
-        return mContext.getString(R.string.sha1_password);
+        return WoolworthsApplication.getSha1Password();
     }
 
     private String getApiId() {
-        return mContext.getString(R.string.api_id);
+       return WoolworthsApplication.getApiKey();
     }
 
     private String getDeviceID() {

@@ -9,6 +9,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -75,7 +76,7 @@ public class ScreenManager {
         try {
             SessionDao sessionDao = new SessionDao(activity, SessionDao.KEY.USER_TOKEN).get();
             params.put("id_token_hint", sessionDao.value);
-            params.put("post_logout_redirect_uri", "http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4/sso/redirect/logout");
+            params.put("post_logout_redirect_uri", WoolworthsApplication.getSsoRedirectURILogout());
         } catch (Exception e) {
             e.printStackTrace();
         }
