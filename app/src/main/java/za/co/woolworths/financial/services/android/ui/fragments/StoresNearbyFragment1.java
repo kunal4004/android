@@ -184,22 +184,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
         //  locationManager.requestLocationUpdates(provider, 40000, 10, this);
         pager.addOnPageChangeListener(this);
-        WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getMetrics(metrics);
-        int width = metrics.widthPixels;
-        int height = metrics.heightPixels;
-        if (width<1000&&height<1500){
-            pager.setPadding(100, 0, 100, 0);
-            pager.setClipToPadding(false);
-            pager.setPageMargin(16);
-
-        }else {
-            pager.setPadding(20, 0, 20, 0);
-            pager.setClipToPadding(false);
-            pager.setPageMargin(16);
-        }
         pager.setOnItemClickListener(new WCustomViewPager.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
