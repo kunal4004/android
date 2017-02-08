@@ -692,7 +692,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         }
     }
 
-    public void settingsrequest() {
+    public void settingsRequest() {
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(30 * 1000);
@@ -738,6 +738,25 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 }
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("RequestSETTINGRESULT", String.valueOf(requestCode));
+        switch (requestCode) {
+            // Check for the integer request code originally supplied to startResolutionForResult().
+            case REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        // startLocationUpdates();
+                        searchForCurrentLocation();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        settingsRequest();//keep asking if imp or do whatever
+                        break;
+                }
+                break;
+        }
     }
 
     public void searchForCurrentLocation() {
@@ -851,4 +870,3 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 
 }
-
