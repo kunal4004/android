@@ -308,6 +308,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             @Override
             protected WProduct httpDoInBackground(String... params) {
                 return ((WoolworthsApplication) getApplication()).getApi().getProductDetailView(productId, skuId);
+
             }
 
             @Override
@@ -339,6 +340,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
                     GsonBuilder builder = new GsonBuilder();
                     Gson gson = builder.create();
                     Intent openDetailView = new Intent(mContext, ProductDetailViewActivity.class);
+                    openDetailView.putExtra("product_name", mProductList.get(0).productName);
                     openDetailView.putExtra("product_detail", gson.toJson(mProductList));
                     startActivity(openDetailView);
                     overridePendingTransition(0, 0);

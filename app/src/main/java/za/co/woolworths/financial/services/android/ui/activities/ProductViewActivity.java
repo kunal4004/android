@@ -35,10 +35,17 @@ import com.awfs.coordination.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import retrofit.RestAdapter;
+import retrofit.client.OkClient;
+import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.models.ApiInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
@@ -50,6 +57,7 @@ import za.co.woolworths.financial.services.android.ui.views.WObservableScrollVie
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Const;
+import za.co.woolworths.financial.services.android.util.DynamicJsonConverter;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
@@ -430,12 +438,12 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         new HttpAsyncTask<String, String, WProduct>() {
             @Override
             protected WProduct httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().getProductDetailView(productId, skuId);
+                WProduct product = ((WoolworthsApplication) getApplication()).getApi().getProductDetailView(productId, skuId);
+                return product;
             }
 
             @Override
             protected WProduct httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                Log.e("errorMessage", String.valueOf(errorMessage) + " " + httpErrorCode);
                 dismissFragmentDialog();
                 return new WProduct();
             }
@@ -457,9 +465,9 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             @Override
             protected void onPostExecute(WProduct product) {
                 super.onPostExecute(product);
+                ArrayList<WProductDetail> mProductList = null;
                 WProductDetail productList = product.product;
-                // Log.e("ProductType", productList.products.get(0).productType);
-                ArrayList<WProductDetail> mProductList = new ArrayList<>();
+                mProductList = new ArrayList<>();
                 if (productList != null) {
                     mProductList.add(productList);
                 }
@@ -467,10 +475,10 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                     GsonBuilder builder = new GsonBuilder();
                     Gson gson = builder.create();
                     Intent openDetailView = new Intent(mContext, ProductDetailViewActivity.class);
+                    openDetailView.putExtra("product_name", mProductList.get(0).productName);
                     openDetailView.putExtra("product_detail", gson.toJson(mProductList));
                     startActivity(openDetailView);
                     overridePendingTransition(0, R.anim.anim_slide_up);
-                    //overridePendingTransitionEnter();
                 }
                 dismissFragmentDialog();
             }

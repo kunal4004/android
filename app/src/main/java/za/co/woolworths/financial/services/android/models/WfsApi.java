@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.squareup.okhttp.OkHttpClient;
 
 
+import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 
 import java.util.concurrent.TimeUnit;
@@ -50,6 +51,7 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.util.DynamicJsonConverter;
 
 public class WfsApi {
 
@@ -64,12 +66,15 @@ public class WfsApi {
         client.setReadTimeout(60, TimeUnit.SECONDS);
         client.setConnectTimeout(60, TimeUnit.SECONDS);
         client.interceptors().add(new WfsApiInterceptor(mContext));
+
         mApiInterface = new RestAdapter.Builder()
                 .setClient(new OkClient(client))
                 .setEndpoint(WoolworthsApplication.getBaseURL())
                 .setLogLevel(Util.isDebug(mContext) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
                 .build()
                 .create(ApiInterface.class);
+
+
     }
 
     public LoginResponse login(LoginRequest loginRequest) {
@@ -221,7 +226,7 @@ public class WfsApi {
     }
 
     private String getApiId() {
-       return WoolworthsApplication.getApiKey();
+        return WoolworthsApplication.getApiKey();
     }
 
     private String getDeviceID() {

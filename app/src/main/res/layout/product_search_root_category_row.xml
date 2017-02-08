@@ -14,13 +14,12 @@
         android:id="@+id/imProductCategory"
         android:layout_width="match_parent"
         android:layout_height="120dp"
+        android:background="@color/product_search_hint"
+        fresco:actualImageScaleType="fitXY"
         fresco:fadeDuration="50"
-        android:background="@color/divider"
-        fresco:placeholderImage="@drawable/ic_search"
         fresco:placeholderImageScaleType="fitCenter"
         fresco:roundAsCircle="true"
         fresco:roundedCornerRadius="10dp"
-        fresco:actualImageScaleType="fitXY"
         fresco:roundingBorderWidth="5dp"
         fresco:viewAspectRatio="1.33" />
 

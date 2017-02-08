@@ -29,6 +29,8 @@
             style="@style/colorSizeStyle"
 
             android:layout_alignParentStart="true"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
             android:text="@string/product_colour" />
 
         <com.facebook.drawee.view.SimpleDraweeView
@@ -37,6 +39,8 @@
             android:layout_height="15dp"
             android:layout_alignEnd="@+id/imColorArrow"
             android:layout_alignTop="@+id/imColorArrow"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
             android:layout_marginRight="@dimen/default_margin"
             android:src="@drawable/path_3"
             fresco:roundAsCircle="true" />
@@ -49,6 +53,8 @@
             android:layout_centerInParent="true"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="@dimen/default_margin"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
             android:src="@drawable/path_3" />
 
     </RelativeLayout>
@@ -60,6 +66,8 @@
         android:layout_marginBottom="10dp"
         android:layout_marginRight="@dimen/default_margin"
         android:layout_marginTop="10dp"
+        android:focusableInTouchMode="false"
+        android:focusable="false"
         android:background="@color/divider" />
 
     <RelativeLayout
@@ -73,6 +81,8 @@
             android:id="@+id/textProductSize"
             style="@style/colorSizeStyle"
             android:layout_alignParentStart="true"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
             android:text="@string/product_size" />
 
         <ImageView
@@ -83,6 +93,8 @@
             android:layout_centerInParent="true"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="@dimen/default_margin"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:src="@drawable/path_3" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -90,6 +102,8 @@
             style="@style/colorSizeStyle"
             android:layout_alignParentTop="true"
             android:layout_toStartOf="@+id/mColorArrow"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:text="medium"
             android:textColor="@color/white"
             app:WTextView_font="medium" />

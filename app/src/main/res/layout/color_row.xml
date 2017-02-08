@@ -17,13 +17,14 @@
         android:layout_marginEnd="@dimen/default_margin"
         android:layout_marginLeft="@dimen/default_margin"
         android:layout_marginStart="@dimen/default_margin"
+        android:visibility="gone"
         fresco:fadeDuration="50"
         fresco:roundAsCircle="true"
         fresco:viewAspectRatio="1.33" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignStart="@+id/imColor"
         android:layout_marginLeft="@dimen/default_margin"

@@ -27,4 +27,5 @@ public class WProductDetail {
     @SerializedName("promotionImages")
     @Expose
     public PromotionImages promotionImages;
+
 }

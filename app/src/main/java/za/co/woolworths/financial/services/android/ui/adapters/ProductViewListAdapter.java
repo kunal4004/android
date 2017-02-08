@@ -72,8 +72,8 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             String imgUrl = productItem.imagePath;
             String productType = productItem.productType;
             PromotionImages promo = productItem.promotionImages;
-
             holder.productName.setText(productName);
+
             productType(holder, productType, fromPrice);
             productImage(holder, imgUrl);
             promoImages(holder, promo);
@@ -119,10 +119,14 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             case "clothingProducts":
                 holder.mTextAmount.setText(holder.mTextAmount.getContext().getString(R.string.product_from) + " : "
                         + WFormatter.formatAmount(fromPrice));
+
+                //  holder.mSimpleDraweeView.getLayoutParams().height = 200;
+
                 break;
             default:
                 holder.mTextAmount.setText(
                         WFormatter.formatAmount(fromPrice));
+                // holder.mSimpleDraweeView.getLayoutParams().height = 150;
                 break;
         }
     }
@@ -132,7 +136,10 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             holder.mSimpleDraweeView.getHierarchy().setPlaceholderImage(ContextCompat
                             .getDrawable(holder.mSimpleDraweeView.getContext(), R.drawable.rectangle),
                     ScalingUtils.ScaleType.CENTER_INSIDE);
-            setupImage(holder.mSimpleDraweeView, imgUrl);
+            try {
+                setupImage(holder.mSimpleDraweeView, imgUrl);
+            } catch (IllegalArgumentException ignored) {
+            }
         }
     }
 
@@ -175,12 +182,16 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
     }
 
     private void setupImage(final SimpleDraweeView simpleDraweeView, final String uri) {
+
+        if (TextUtils.isEmpty(uri))
+            return;
+
         simpleDraweeView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
                 simpleDraweeView.getViewTreeObserver().removeOnPreDrawListener(this);
                 ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(uri))
-                        .setResizeOptions(new ResizeOptions(simpleDraweeView.getWidth(), simpleDraweeView.getHeight()))
+                        //.setResizeOptions(new ResizeOptions(simpleDraweeView.getWidth(), simpleDraweeView.getHeight()))
                         .build();
                 PipelineDraweeController controller = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()
                         .setOldController(simpleDraweeView.getController())
@@ -190,6 +201,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
                 simpleDraweeView.setController(controller);
                 simpleDraweeView.setImageURI(uri);
                 return true;
+
             }
         });
     }

@@ -31,7 +31,8 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
     private boolean mVideoPlayerShouldPlay = false;
     private VideoView videoView;
     private boolean isMinimized = false;
-    PersistenceLayer dbHelper= null;
+    PersistenceLayer dbHelper = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,12 +83,12 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
                         .build()
                         .create(ApiInterface.class);
 
-                return mApiInterface.getConfig(getString(R.string.app_token),getDeviceID(), mcsAppVersion);
+                return mApiInterface.getConfig(getString(R.string.app_token), getDeviceID(), mcsAppVersion);
             }
 
             @Override
             public ConfigResponse httpError(final String errorMessage, final HttpErrorCode httpErrorCode) {
-                if (httpErrorCode == HttpErrorCode.NETWORK_UNREACHABLE){
+                if (httpErrorCode == HttpErrorCode.NETWORK_UNREACHABLE) {
 
                     WSplashScreenActivity.this.runOnUiThread(new Runnable() {
                         @Override
@@ -103,7 +104,7 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
                                     }).show();
                         }
                     });
-                } else if (httpErrorCode == HttpErrorCode.UNKOWN_ERROR){
+                } else if (httpErrorCode == HttpErrorCode.UNKOWN_ERROR) {
 
                     WSplashScreenActivity.this.runOnUiThread(new Runnable() {
                         @Override
@@ -150,7 +151,7 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
     @Override
     public void onCompletion(MediaPlayer mp) {
 
-        if(!WSplashScreenActivity.this.mVideoPlayerShouldPlay){
+        if (!WSplashScreenActivity.this.mVideoPlayerShouldPlay) {
             /*
             * When creating a SessionDao with a key where the entry doesn't exist
             * in SQL lite, return a new SessionDao where the key is equal to the
@@ -165,19 +166,19 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
             *
             *
             * */
-            try{
+            try {
                 SessionDao sessionDao = new SessionDao(WSplashScreenActivity.this, SessionDao.KEY.USER_TOKEN).get();
-                if (sessionDao.value != null && !sessionDao.value.equals("")){
+                if (sessionDao.value != null && !sessionDao.value.equals("")) {
                     ScreenManager.presentMain(WSplashScreenActivity.this);
                     return;
                 }
-            }catch(Exception e){
+            } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
             ScreenManager.presentOnboarding(WSplashScreenActivity.this);
             mp.stop();
 
-        }else{
+        } else {
             mp.start();
         }
     }
@@ -188,11 +189,11 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
         SUCCESS
     }
 
-    private String getDeviceID(){
-        try{
+    private String getDeviceID() {
+        try {
 
-            return  Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        }catch (Exception e){
+            return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        } catch (Exception e) {
             return null;
         }
     }
@@ -200,15 +201,14 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
     @Override
     protected void onStop() {
         super.onStop();
-        isMinimized=true;
+        isMinimized = true;
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if(isMinimized)
-        {
-            startActivity(new Intent(this , WSplashScreenActivity.class));
+        if (isMinimized) {
+            startActivity(new Intent(this, WSplashScreenActivity.class));
             isMinimized = false;
             finish();
         }

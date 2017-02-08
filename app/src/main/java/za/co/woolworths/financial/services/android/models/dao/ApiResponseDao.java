@@ -54,30 +54,23 @@ public class ApiResponseDao extends BaseDao {
 
             Log.e(TAG, e.getMessage());
         }
-        for(Map.Entry<String, String> entry: result.entrySet()){
+        for (Map.Entry<String, String> entry : result.entrySet()) {
 
-            if(entry.getKey().equals("id")){
+            if (entry.getKey().equals("id")) {
                 this.id = entry.getValue();
-            }
-            else if(entry.getKey().equals("apiRequestId")){
+            } else if (entry.getKey().equals("apiRequestId")) {
                 this.apiRequestId = entry.getValue();
-            }
-            else if(entry.getKey().equals("responseHandler")){
+            } else if (entry.getKey().equals("responseHandler")) {
                 this.responseHandler = entry.getValue();
-            }
-            else if(entry.getKey().equals("code")){
+            } else if (entry.getKey().equals("code")) {
                 this.code = Integer.parseInt(entry.getValue());
-            }
-            else if(entry.getKey().equals("message")){
+            } else if (entry.getKey().equals("message")) {
                 this.message = entry.getValue();
-            }
-            else if(entry.getKey().equals("body")){
+            } else if (entry.getKey().equals("body")) {
                 this.body = entry.getValue();
-            }
-            else if(entry.getKey().equals("headers")){
+            } else if (entry.getKey().equals("headers")) {
                 this.headers = entry.getValue();
-            }
-            else if(entry.getKey().equals("contentType")){
+            } else if (entry.getKey().equals("contentType")) {
                 this.contentType = entry.getValue();
             }
         }
@@ -85,7 +78,7 @@ public class ApiResponseDao extends BaseDao {
         return this;
     }
 
-    public void save(){
+    public void save() {
         //ApiRequest will never be updated, only new records will be inserted.
         try {
 
@@ -97,9 +90,8 @@ public class ApiResponseDao extends BaseDao {
             arguments.put("contentType", this.contentType);
             arguments.put("headers", this.headers);
             arguments.put("body", this.body);
-
             long rowid = PersistenceLayer.getInstance(mContext).executeInsertQuery(getTableName(), arguments);
-            this.id =  "" + rowid;
+            this.id = "" + rowid;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
