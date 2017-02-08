@@ -267,7 +267,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         return v;
     }
 
-
     public void initMap() {
         if (googleMap == null) {
             mapFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
@@ -283,17 +282,25 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         googleMap = map;
         //If permission is not granted, request permission.
         if (hasPermissions()) {
+              /*
+             *This process of setting adapter to googleMap is related to making
+             *selected marker come in front of unselected marker.
+             */
+            googleMap.setInfoWindowAdapter(new MapWindowAdapter(getContext()));
+
             googleMap.setMyLocationEnabled(false);
             googleMap.setOnMarkerClickListener(this);
             unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
             selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
         } else {
-            requestPerms();
-            /*
+              /*
              *This process of setting adapter to googleMap is related to making
              *selected marker come in front of unselected marker.
              */
             googleMap.setInfoWindowAdapter(new MapWindowAdapter(getContext()));
+
+            requestPerms();
+
         }
     }
 
@@ -552,6 +559,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             initMap();
             googleMap.setMyLocationEnabled(false);
             googleMap.setOnMarkerClickListener(this);
+
         } else {
             // we will give warning to user that they haven't granted permissions.
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
