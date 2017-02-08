@@ -53,6 +53,10 @@ public class WoolworthsApplication extends Application {
     private static String baseURL;
     private static String apiKey;
     private static String sha1Password;
+    private static String ssoRedirectURI;
+    private static String stsURI;
+    private static String ssoRedirectURILogout;
+    private static String wwTodayURI;
     private boolean isDEABank = false;
     private boolean isOther = false;
     private int productOfferingId;
@@ -147,6 +151,38 @@ public class WoolworthsApplication extends Application {
 
     public static void setApplyNowLink(String applyNowLink) {
         WoolworthsApplication.applyNowLink = applyNowLink;
+    }
+
+    public static String getSsoRedirectURI() {
+        return ssoRedirectURI;
+    }
+
+    public static void setSsoRedirectURI(String ssoRedirectURI) {
+        WoolworthsApplication.ssoRedirectURI = ssoRedirectURI;
+    }
+
+    public static String getSsoRedirectURILogout() {
+        return ssoRedirectURILogout;
+    }
+
+    public static void setSsoRedirectURILogout(String ssoRedirectURILogout) {
+        WoolworthsApplication.ssoRedirectURILogout = ssoRedirectURILogout;
+    }
+
+    public static String getWwTodayURI() {
+        return wwTodayURI;
+    }
+
+    public static void setWwTodayURI(String wwTodayURI) {
+        WoolworthsApplication.wwTodayURI = wwTodayURI;
+    }
+
+    public static String getStsURI() {
+        return stsURI;
+    }
+
+    public static void setStsURI(String stsURI) {
+        WoolworthsApplication.stsURI = stsURI;
     }
 
     @Override
