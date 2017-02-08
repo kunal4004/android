@@ -3,6 +3,8 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
               android:layout_width="match_parent"
+    android:focusableInTouchMode="false"
+    android:focusable="false"
               android:layout_height="wrap_content"
               android:id="@+id/loggedInHeaderLayout"
     >
@@ -10,6 +12,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusableInTouchMode="false"
+        android:focusable="false"
         android:background="@color/white"
         android:orientation="vertical"
         >
@@ -20,6 +24,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
             android:minHeight="80dp"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
             android:paddingLeft="52dp"
             android:paddingRight="52dp"
             >
@@ -33,6 +39,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/openMessageActivity"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
                 android:background="@drawable/messages"
                 />
 
@@ -45,6 +53,8 @@
                   android:layout_gravity="end"
                   android:textSize="10sp"
                   android:paddingLeft="8dp"
+                  android:focusableInTouchMode="false"
+                  android:focusable="false"
                   android:paddingRight="8dp"
                   android:textColor="@color/white"
                   android:visibility="gone"
@@ -58,6 +68,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/openShoppingList"
                 android:layout_alignParentRight="true"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
                 android:layout_centerVertical="true"
                 android:background="@drawable/shoppinglist"
                 />
@@ -67,6 +79,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/oval"
                 android:layout_alignParentTop="true"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
                 android:layout_centerHorizontal="true">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -75,6 +89,8 @@
                     android:layout_gravity="center"
                     android:id="@+id/initials"
                     android:textColor="@color/white"
+                    android:focusableInTouchMode="false"
+                    android:focusable="false"
                     android:textSize="23sp"
                     app:WTextView_font="medium_bold"
                     />
@@ -89,6 +105,8 @@
             android:layout_marginBottom="6dp"
             android:layout_marginTop="34dp"
             android:text="@string/welcome_back"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
             android:letterSpacing="0.1"
             android:textAllCaps="true"
             android:textColor="#999999"
@@ -102,6 +120,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="39dp"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="20sp"
@@ -115,6 +135,8 @@
             android:text="LINK ACCOUNTS"
             android:textAllCaps="true"
             android:gravity="center"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
             android:background="@color/black"
             android:textColor="@color/white"
             app:WButton_font="medium"

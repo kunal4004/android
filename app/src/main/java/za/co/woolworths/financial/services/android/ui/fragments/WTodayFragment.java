@@ -13,6 +13,8 @@ import android.webkit.WebView;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+
 /**
  * Created by W7099877 on 02/12/2016.
  */
@@ -28,8 +30,7 @@ public class WTodayFragment extends Fragment {
         //getActivity().getWindow().requestFeature(Window.FEATURE_PROGRESS);
         webView = (WebView)view.findViewById(R.id.wtoday_fragment_webview);
         webView.getSettings().setJavaScriptEnabled(true);
-        Log.d("", getString(R.string.link_wtoday));
-        webView.loadUrl(getString(R.string.link_wtoday));
+        webView.loadUrl(WoolworthsApplication.getWwTodayURI());
 
         return view;
     }

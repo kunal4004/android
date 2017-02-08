@@ -7,6 +7,10 @@ public class Environment {
     public String base_url;
     public String apiKey;
     public String sha1Password;
+    public String ssoRedirectURI;
+    public String stsURI;
+    public String ssoRedirectURILogout;
+    public String wwTodayURI;
 
     public String getApiId() {
         return apiKey;
@@ -20,6 +24,14 @@ public class Environment {
         return base_url;
     }
 
+    public String getSsoRedirectURI() {
+        return ssoRedirectURI;
+    }
+
+    public void setStsURI(String stsURI) {
+        this.stsURI = stsURI;
+    }
+
     public void setApiId(String apiId) {
         this.apiKey = apiId;
     }
@@ -30,5 +42,29 @@ public class Environment {
 
     public void setBase_url(String base_url) {
         this.base_url = base_url;
+    }
+
+    public void setSsoRedirectURI(String ssoRedirectURI) {
+        this.ssoRedirectURI = ssoRedirectURI;
+    }
+
+    public String getStsURI() {
+        return stsURI;
+    }
+
+    public String getSsoRedirectURILogout() {
+        return ssoRedirectURILogout;
+    }
+
+    public void setSsoRedirectURILogout(String ssoRedirectURILogout) {
+        this.ssoRedirectURILogout = ssoRedirectURILogout;
+    }
+
+    public String getWwTodayURI() {
+        return wwTodayURI;
+    }
+
+    public void setWwTodayURI(String wwTodayURI) {
+        this.wwTodayURI = wwTodayURI;
     }
 }

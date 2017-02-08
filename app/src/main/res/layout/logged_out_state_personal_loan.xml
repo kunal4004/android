@@ -1,251 +1,242 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:fillViewport="true"
-        android:nestedScrollingEnabled="true"
-        android:scrollbars="none">
+        android:layout_height="wrap_content"
+        android:background="#ececec"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#ececec"
-            android:orientation="vertical">
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/account_logged_out_benefit"
+            android:paddingTop="@dimen/default_margin" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/account_logged_out_benefit"
-                android:paddingTop="@dimen/default_margin" />
+        <include layout="@layout/account_horizontal_line" />
 
-            <include layout="@layout/account_horizontal_line" />
-
-            <LinearLayout style="@style/account_logged_out_container">
-
-                <ImageView
-                    style="@style/account_logged_out_icon"
-                    android:background="@drawable/calender"
-                    android:contentDescription="@string/app_name" />
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/account_logged_out_reward_title"
-                    android:text="@string/cash_when_you_need_it" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_cash_when_you_need_it_1" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_cash_when_you_need_it_2" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_cash_when_you_need_it_3" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_cash_when_you_need_it_4" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_cash_when_you_need_it_5" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_cash_when_you_need_it_6" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="@dimen/bank_spacing_width">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_cash_when_you_need_it_7" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <include layout="@layout/account_horizontal_line" />
-
-            <LinearLayout style="@style/account_logged_out_container">
+        <LinearLayout style="@style/account_logged_out_container">
 
             <ImageView
                 style="@style/account_logged_out_icon"
-                    android:background="@drawable/convenient" />
+                android:background="@drawable/calender"
+                android:contentDescription="@string/app_name" />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/account_logged_out_reward_title"
-                    android:text="@string/funds_within_48_hours"/>
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/account_logged_out_reward_detail"
-                    android:text="@string/funds_within_48_hours_description" />
-
-            </LinearLayout>
-            <include layout="@layout/account_horizontal_line" />
-            <LinearLayout style="@style/account_logged_out_container">
-
-                <ImageView
-                    style="@style/account_logged_out_icon"
-                    android:background="@drawable/money" />
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/account_logged_out_reward_title"
-                    android:text="@string/easy_access" />
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/account_logged_out_reward_detail"
-                    android:text="@string/easy_access_description" />
-
-            </LinearLayout>
-
-            <include layout="@layout/account_horizontal_line"/>
-
-            <LinearLayout style="@style/account_logged_out_container">
-
-                <ImageView
-                    style="@style/account_logged_out_icon"
-                    android:background="@drawable/interest" />
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/account_logged_out_reward_title"
-                    android:text="@string/interest_changed" />
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/account_logged_out_reward_detail"
-                    android:text="@string/interest_changed_description"/>
-            </LinearLayout>
-
-            <include layout="@layout/account_horizontal_line"/>
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/account_logged_out_reward_title"
+                android:text="@string/cash_when_you_need_it" />
 
             <LinearLayout
-                style="@style/account_logged_out_container"
-                android:background="@color/default_background">
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/account_logged_out_card_title_3"
-                    android:text="@string/cc_to_qualify" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/personal_loan_points_to_qualify_1" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/personal_loan_points_to_qualify_2" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/personal_loan_points_to_qualify_3" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="40dp"
-                    android:orientation="horizontal">
-                    <TextView style="@style/account_logged_out_bullet" />
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/personal_loan_points_to_qualify_4" />
-                </LinearLayout>
-
-
-
-            </LinearLayout>
-
-            <za.co.woolworths.financial.services.android.ui.views.WButton
-                android:id="@+id/applynow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#7a4183"
-                android:gravity="center"
-                android:minHeight="60dp"
-                android:text="@string/apply_now"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="13sp" />
+                android:orientation="horizontal">
+
+                <TextView style="@style/account_logged_out_bullet" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/account_logged_out_list_bullet"
+                    android:text="@string/points_cash_when_you_need_it_1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView style="@style/account_logged_out_bullet" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/account_logged_out_list_bullet"
+                    android:text="@string/points_cash_when_you_need_it_2" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView style="@style/account_logged_out_bullet" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/account_logged_out_list_bullet"
+                    android:text="@string/points_cash_when_you_need_it_3" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView style="@style/account_logged_out_bullet" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/account_logged_out_list_bullet"
+                    android:text="@string/points_cash_when_you_need_it_4" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView style="@style/account_logged_out_bullet" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/account_logged_out_list_bullet"
+                    android:text="@string/points_cash_when_you_need_it_5" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView style="@style/account_logged_out_bullet" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/account_logged_out_list_bullet"
+                    android:text="@string/points_cash_when_you_need_it_6" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/bank_spacing_width"
+                android:orientation="horizontal">
+
+                <TextView style="@style/account_logged_out_bullet" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/account_logged_out_list_bullet"
+                    android:text="@string/points_cash_when_you_need_it_7" />
+            </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+
+        <include layout="@layout/account_horizontal_line" />
+
+        <LinearLayout style="@style/account_logged_out_container">
+
+            <ImageView
+                style="@style/account_logged_out_icon"
+                android:background="@drawable/convenient" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/account_logged_out_reward_title"
+                android:text="@string/funds_within_48_hours" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/account_logged_out_reward_detail"
+                android:text="@string/funds_within_48_hours_description" />
+
+        </LinearLayout>
+
+        <include layout="@layout/account_horizontal_line" />
+
+        <LinearLayout style="@style/account_logged_out_container">
+
+            <ImageView
+                style="@style/account_logged_out_icon"
+                android:background="@drawable/money" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/account_logged_out_reward_title"
+                android:text="@string/easy_access" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/account_logged_out_reward_detail"
+                android:text="@string/easy_access_description" />
+
+        </LinearLayout>
+
+        <include layout="@layout/account_horizontal_line" />
+
+        <LinearLayout style="@style/account_logged_out_container">
+
+            <ImageView
+                style="@style/account_logged_out_icon"
+                android:background="@drawable/interest" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/account_logged_out_reward_title"
+                android:text="@string/interest_changed" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/account_logged_out_reward_detail"
+                android:text="@string/interest_changed_description" />
+        </LinearLayout>
+
+        <include layout="@layout/account_horizontal_line" />
+
+        <LinearLayout
+            style="@style/account_logged_out_container"
+            android:background="@color/default_background">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/account_logged_out_card_title_3"
+                android:text="@string/cc_to_qualify" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView style="@style/account_logged_out_bullet" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/account_logged_out_list_bullet"
+                    android:text="@string/personal_loan_points_to_qualify_1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView style="@style/account_logged_out_bullet" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/account_logged_out_list_bullet"
+                    android:text="@string/personal_loan_points_to_qualify_2" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView style="@style/account_logged_out_bullet" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/account_logged_out_list_bullet"
+                    android:text="@string/personal_loan_points_to_qualify_3" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp"
+                android:orientation="horizontal">
+
+                <TextView style="@style/account_logged_out_bullet" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/account_logged_out_list_bullet"
+                    android:text="@string/personal_loan_points_to_qualify_4" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/applynow"
+            style="@style/apply_now_btn"
+            android:layout_alignParentBottom="true"
+            android:background="@color/purple"
+            android:text="@string/apply_now"
+            android:visibility="gone" />
+    </LinearLayout>
 
 </RelativeLayout>

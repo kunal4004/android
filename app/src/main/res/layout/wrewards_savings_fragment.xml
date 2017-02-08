@@ -6,14 +6,60 @@
               android:background="@color/grey_bg"
               android:orientation="vertical"
     >
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/grey_bg"
-        android:layout_gravity="center_horizontal"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
         />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/noSavingsView"
+            android:background="@drawable/black_circle"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_centerInParent="true"
+                >
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/month"
+                    app:WTextView_font="medium_bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:textAllCaps="true"
+                    android:text="@string/year"
+                    android:layout_gravity="center_horizontal"
+                    />
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/year"
+                    app:WTextView_font="medium"
+                    android:textSize="10sp"
+                    android:textColor="@color/white"
+                    android:textAllCaps="true"
+                    android:text="@string/to_date"
+                    android:layout_gravity="center_horizontal"
+                    />
+            </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
@@ -35,6 +81,7 @@
             android:text="@string/tier_status1"
             android:textColor="@color/black"
             android:textSize="15sp"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
 
@@ -78,6 +125,7 @@
             android:text="@string/wrewards_instant_savings"
             android:textColor="@color/black"
             android:textSize="15sp"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
 
@@ -90,6 +138,7 @@
             android:textColor="#4d000000"
             android:textSize="15sp"
             android:textAllCaps="true"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
     </RelativeLayout>
@@ -115,6 +164,7 @@
             android:text="@string/wrewards_green_earned"
             android:textColor="@color/black"
             android:textSize="15sp"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
 
@@ -127,6 +177,7 @@
             android:textColor="#4d000000"
             android:textSize="15sp"
             android:textAllCaps="true"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
     </RelativeLayout>
@@ -152,6 +203,7 @@
             android:text="@string/quarterly_voucher_earned"
             android:textColor="@color/black"
             android:textSize="15sp"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
 
@@ -164,6 +216,7 @@
             android:textColor="#4d000000"
             android:textSize="15sp"
             android:textAllCaps="true"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
     </RelativeLayout>
@@ -184,11 +237,13 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/yearToDateSpendText"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:text="@string/year_to_date_spend"
             android:textColor="@color/black"
             android:textSize="15sp"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
 
@@ -201,6 +256,7 @@
             android:textColor="#4d000000"
             android:textSize="15sp"
             android:textAllCaps="true"
+            android:letterSpacing="-0.01"
             app:WTextView_font="myriadpro_regular"
             />
     </RelativeLayout>

@@ -23,7 +23,6 @@ import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
-import za.co.woolworths.financial.services.android.util.Utils;
 
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
@@ -132,6 +131,10 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
                 WoolworthsApplication.setBaseURL(configResponse.enviroment.getBase_url());
                 WoolworthsApplication.setApiKey(configResponse.enviroment.getApiId());
                 WoolworthsApplication.setSha1Password(configResponse.enviroment.getApiPassword());
+                WoolworthsApplication.setSsoRedirectURI(configResponse.enviroment.getSsoRedirectURI());
+                WoolworthsApplication.setStsURI(configResponse.enviroment.getStsURI());
+                WoolworthsApplication.setSsoRedirectURILogout(configResponse.enviroment.getSsoRedirectURILogout());
+                WoolworthsApplication.setWwTodayURI(configResponse.enviroment.getWwTodayURI());
                 WoolworthsApplication.setApplyNowLink(configResponse.defaults.getApplyNowLink());
                 WoolworthsApplication.setRegistrationTCLink(configResponse.defaults.getRegisterTCLink());
                 WoolworthsApplication.setFaqLink(configResponse.defaults.getFaqLink());

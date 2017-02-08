@@ -32,14 +32,15 @@
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/wRewards_tag_line"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginTop="40dp"
         android:gravity="center"
-        android:text="@string/wrewards_tag_line"
         android:textColor="#e6000000"
         android:textSize="17.5sp"
         app:WTextView_font="medium"
+        android:lineSpacingExtra="5sp"
         android:layout_marginBottom="48dp"
         />
 
@@ -67,6 +68,7 @@
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="12sp"
+            android:letterSpacing="0.1"
             app:WButton_font="medium_bold"
             />
 
@@ -82,11 +84,12 @@
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="12sp"
+            android:letterSpacing="0.1"
             app:WButton_font="medium_bold"
             />
     </LinearLayout>
 
-    <za.co.woolworths.financial.services.android.ui.views.WButton
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/wRewars_linkaccounts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -97,14 +100,15 @@
         android:gravity="center"
         android:minHeight="48dp"
         android:text="@string/link_account"
+        android:letterSpacing="0.1"
         android:textAllCaps="true"
         android:textColor="@color/black"
         android:textSize="12sp"
-        app:WButton_font="medium_bold"
+        app:WTextView_font="medium_bold"
 
         />
 
-    <za.co.woolworths.financial.services.android.ui.views.WButton
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/applyForWRewards"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -116,10 +120,11 @@
         android:gravity="center"
         android:minHeight="48dp"
         android:text="@string/apply_for_wrewards"
+        android:letterSpacing="0.1"
         android:textAllCaps="true"
         android:textColor="@color/white"
         android:textSize="12sp"
-        app:WButton_font="medium_bold"
+        app:WTextView_font="medium_bold"
         />
 
     <LinearLayout
@@ -150,6 +155,7 @@
             android:paddingLeft="32dp"
             android:paddingRight="32dp"
             android:text="@string/wrewards_three_levels"
+            android:lineSpacingExtra="4sp"
             android:textColor="@color/black"
             android:textSize="15sp"
             app:WTextView_font="myriadpro_regular"/>
@@ -195,6 +201,7 @@
                     app:WTextView_font="bold"
                     android:textSize="25sp"
                     android:textAllCaps="true"
+                    android:letterSpacing="0.02"
                     android:textColor="@color/green"
                     />
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -205,6 +212,7 @@
                     android:textSize="25sp"
                     android:textColor="@color/black"
                     android:textAllCaps="true"
+                    android:letterSpacing="0.02"
                     android:layout_marginLeft="5dp"
                     />
 
@@ -217,6 +225,7 @@
                 android:textSize="12sp"
                 android:textColor="#80000000"
                 android:textAllCaps="true"
+                android:letterSpacing="0.02"
                 android:layout_marginTop="7dp"
                 />
             </LinearLayout>
@@ -264,6 +273,7 @@
                         app:WTextView_font="bold"
                         android:textSize="25sp"
                         android:textAllCaps="true"
+                        android:letterSpacing="0.02"
                         android:textColor="@color/green"
                         />
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -274,6 +284,7 @@
                         android:textSize="25sp"
                         android:textColor="@color/black"
                         android:textAllCaps="true"
+                        android:letterSpacing="0.02"
                         android:layout_marginLeft="5dp"
                         />
 
@@ -286,6 +297,7 @@
                     android:textSize="12sp"
                     android:textColor="#80000000"
                     android:textAllCaps="true"
+                    android:letterSpacing="0.02"
                     android:layout_marginTop="7dp"
                     />
             </LinearLayout>
@@ -333,6 +345,7 @@
                         app:WTextView_font="bold"
                         android:textSize="25sp"
                         android:textAllCaps="true"
+                        android:letterSpacing="0.02"
                         android:textColor="@color/green"
                         />
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -343,6 +356,7 @@
                         android:textSize="25sp"
                         android:textColor="@color/black"
                         android:textAllCaps="true"
+                        android:letterSpacing="0.02"
                         android:layout_marginLeft="5dp"
                         />
 
@@ -355,6 +369,7 @@
                     android:textSize="12sp"
                     android:textColor="#80000000"
                     android:textAllCaps="true"
+                    android:letterSpacing="0.02"
                     android:layout_marginTop="7dp"
                     />
             </LinearLayout>

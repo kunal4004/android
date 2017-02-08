@@ -23,13 +23,14 @@ public class TierInfoLoyal extends Fragment implements StatusInfoActivity.InfoFr
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tier_info_loyal, container, false);
-        for (Tier t : mVouchers.tiers){
-            if (t.rank == 2){
-                ((TextView)view.findViewById(R.id.tier_info_loyal_spend)).setText(getString(R.string.loyal_spend, WFormatter.formatAmount(t.lowerBoundValue),WFormatter.formatAmount(t.upperBoundValue)));
+        for (Tier t : mVouchers.tiers) {
+            if (t.rank == 2) {
+                ((TextView) view.findViewById(R.id.tier_info_loyal_spend)).setText(getString(R.string.loyal_spend, WFormatter.formatAmount(t.lowerBoundValue), WFormatter.formatAmount(t.upperBoundValue)));
             }
         }
         return view;
     }
+
 
     @Override
     public void setVouchers(VoucherResponse vouchers) {

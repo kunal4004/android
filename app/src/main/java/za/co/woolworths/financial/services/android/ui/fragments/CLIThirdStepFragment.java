@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -42,10 +41,8 @@ import za.co.woolworths.financial.services.android.ui.adapters.CLIIncomeProofAda
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WEmpyViewDialogFragment;
-import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
@@ -75,15 +72,17 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     public WButton mBtnSendMail;
     private PopWindowValidationMessage mPopWindowValidationMessage;
     private String mEmail = "";
-    private ProgressDialog mUpdateBankDetailProgressDialog;
     private PopupWindow mDarkenScreen;
     private PopupWindow mPopWindow;
     private FragmentManager fm;
-    private WProgressDialogFragment mGetAccountsProgressDialog;
+    private WEmpyViewDialogFragment mEmailEmpyViewDialogFragment;
+    private ProgressBar mEmailProgressBar;
     private ProgressBar mProgressBar;
     private WEmpyViewDialogFragment mEmpyViewDialogFragment;
 
-    public CLIThirdStepFragment() {}
+
+    public CLIThirdStepFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,6 +91,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mConnectionDetector = new ConnectionDetector();
         view = inflater.inflate(R.layout.cli_fragment_step_three, container, false);
         SharePreferenceHelper mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
+        setRetainInstance(true);
         fm = getActivity().getSupportFragmentManager();
         mEmail = mSharePreferenceHelper.getValue("email");
         CLIStepIndicatorActivity mStepIndicator = (CLIStepIndicatorActivity) getActivity();
@@ -99,7 +99,8 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         mLinProofLayout = (LinearLayout) view.findViewById(R.id.linProofLayout);
         mLinBankLayout = (LinearLayout) view.findViewById(R.id.linBankLayout);
-        mProgressBar = (ProgressBar)view.findViewById(R.id.mWoolworthsProgressBar);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.mWoolworthsProgressBar);
+        mEmailProgressBar = (ProgressBar) view.findViewById(R.id.mEmailWoolworthsProgressBar);
 
         initUI();
         setListener();
@@ -317,7 +318,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
     public void sendEmail() {
         if (mConnectionDetector.isOnline(getActivity())) {
-            mGetAccountsProgressDialog = WProgressDialogFragment.newInstance("gettingAccount");
             new HttpAsyncTask<String, String, CLIEmailResponse>() {
                 @Override
                 protected CLIEmailResponse httpDoInBackground(String... params) {
@@ -326,8 +326,9 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
                 @Override
                 protected CLIEmailResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                    stopEmailProgressDialog();
+                    stopProgressDialog();
                     CLIEmailResponse cliEmailResponse = new CLIEmailResponse();
+                    stopEmailProgressDialog();
                     cliEmailResponse.response = new Response();
                     return cliEmailResponse;
                 }
@@ -339,14 +340,14 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
                 @Override
                 protected void onPreExecute() {
-                    mGetAccountsProgressDialog.show(fm, "gettingAccount");
+                    showEmailProgressBar();
                     super.onPreExecute();
                 }
 
                 @Override
                 protected void onPostExecute(CLIEmailResponse cliEmailResponse) {
                     super.onPostExecute(cliEmailResponse);
-                    stopEmailProgressDialog();
+                    stopProgressDialog();
                     int httpCode = cliEmailResponse.httpCode;
                     String desc = cliEmailResponse.response.desc;
                     if (httpCode == 200) {
@@ -356,7 +357,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                                 PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     }
 
-
+                    stopEmailProgressDialog();
                 }
 
             }.execute();
@@ -366,15 +367,9 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    public void stopEmailProgressDialog() {
-        if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
-            mGetAccountsProgressDialog.dismiss();
-        }
-    }
-
     public void updateBankDetail() {
         if (mConnectionDetector.isOnline(getActivity())) {
-            mGetAccountsProgressDialog = WProgressDialogFragment.newInstance("gettingAccount");
+            showProgressBar();
             new HttpAsyncTask<String, String, UpdateBankDetailResponse>() {
                 @Override
                 protected UpdateBankDetailResponse httpDoInBackground(String... params) {
@@ -384,7 +379,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                 @Override
                 protected UpdateBankDetailResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                     UpdateBankDetailResponse updateBankDetailResponse = new UpdateBankDetailResponse();
-                    stopUpadateBankProgressDialog();
+                    stopProgressDialog();
                     return updateBankDetailResponse;
                 }
 
@@ -395,7 +390,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
                 @Override
                 protected void onPreExecute() {
-                    mGetAccountsProgressDialog.show(fm, "gettingAccount");
                     super.onPreExecute();
                 }
 
@@ -410,18 +404,12 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                                     PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                         }
                     }
-                    stopUpadateBankProgressDialog();
+                    stopProgressDialog();
                 }
             }.execute();
         } else {
             mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_enter_acc_number_error),
                     PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
-        }
-    }
-
-    public void stopUpadateBankProgressDialog() {
-        if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
-            mGetAccountsProgressDialog.dismiss();
         }
     }
 
@@ -458,19 +446,19 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         return mDarkenScreen;
     }
 
+
     public void showProgressBar() {
-        if (mProgressBar != null) {
-            mEmpyViewDialogFragment = WEmpyViewDialogFragment.newInstance("blank");
-            mEmpyViewDialogFragment.setCancelable(false);
-            mEmpyViewDialogFragment.show(fm,"blank");
-            mProgressBar.bringToFront();
-            mProgressBar.setVisibility(View.VISIBLE);
-            mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
-        }
+        mEmpyViewDialogFragment = WEmpyViewDialogFragment.newInstance("blank");
+        mEmpyViewDialogFragment.setCancelable(false);
+        mEmpyViewDialogFragment.show(fm, "blank");
+        mProgressBar.bringToFront();
+        mProgressBar.setVisibility(View.VISIBLE);
+        mBtnContinue.setVisibility(View.GONE);
+        mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
     }
 
     public void stopProgressDialog() {
-        if (mProgressBar != null) {
+        if (mEmpyViewDialogFragment != null) {
             if (mEmpyViewDialogFragment.isVisible()) {
                 mEmpyViewDialogFragment.dismiss();
             }
@@ -479,5 +467,31 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
             mProgressBar.setVisibility(View.GONE);
             mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         }
+        mBtnContinue.setVisibility(View.VISIBLE);
+    }
+
+    public void showEmailProgressBar() {
+        mEmailProgressBar.bringToFront();
+        mEmailProgressBar.setVisibility(View.VISIBLE);
+        mBtnSendMail.setVisibility(View.GONE);
+        mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+        mEmailEmpyViewDialogFragment = WEmpyViewDialogFragment.newInstance("blank");
+        mEmailEmpyViewDialogFragment.setCancelable(false);
+        mEmailEmpyViewDialogFragment.show(fm, "blank");
+        mEmailProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+
+    }
+
+    public void stopEmailProgressDialog() {
+        if (mEmailEmpyViewDialogFragment != null) {
+            if (mEmailEmpyViewDialogFragment.isVisible()) {
+                mEmailEmpyViewDialogFragment.dismiss();
+            }
+        }
+        if (mEmailProgressBar != null) {
+            mEmailProgressBar.setVisibility(View.GONE);
+            mEmailProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+        }
+        mBtnSendMail.setVisibility(View.VISIBLE);
     }
 }

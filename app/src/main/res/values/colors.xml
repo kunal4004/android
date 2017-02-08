@@ -36,7 +36,10 @@
     <color name="semi_per_black">#30000000</color>
     <color name="description_color">#80000000</color>
     <color name="black_desc_opacity">#75000000</color>
-
+    <color name="press_bg">#10000000</color>
+    <color name="charcoal_grey">#4F5051</color>
+    <color name="bg_status_bar_pl">#2F2439</color>
+    <color name="bg_charcoalGreyThree">#2E353B</color>
 
     <!-- step indicator -->
     <color name="background_default">#A5D6A7</color>
@@ -49,4 +52,20 @@
     <color name="horizontal_line">#10000000</color>
     <color name="reward_status_bar_color">#cc000000</color>
     <color name="default_background">#ececec</color>
+
+    <color name="product_search_hint">#20000000</color>
+    <color name="primary">#3F51B5</color>
+    <color name="primary_dark">#303F9F</color>
+    <color name="primary_light">#C5CAE9</color>
+    <color name="accent">#E040FB</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="divider">#B6B6B6</color>
+    <color name="viewfinder_mask">#000</color>
+    <color name="viewfinder_laser">#00cc0000</color>
+    <color name="viewfinder_border">#000</color>
+    <color name="horizontal_line_bg">#15000000</color>
+    <color name="colorAccent">#00000000</color>
+
 </resources>

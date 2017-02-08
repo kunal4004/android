@@ -43,6 +43,7 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
     private String mDrawanDownAmount;
     private String mAvailableFund;
     private String mCreditLimit;
+    private int mRepaymentPeriod;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +58,7 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
             mDrawanDownAmount = intent.getString("drawnDownAmount");
             mAvailableFund = intent.getString("availableFunds");
             mCreditLimit = intent.getString("creditLimit");
+            mRepaymentPeriod = intent.getInt("repaymentPeriod");
         }
 
         String sInstallment_amount = mSharePreferenceHelper.getValue("lw_installment_amount");
@@ -96,7 +98,7 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
     private void setContent() {
         mScrollLoanWithdrawal.setVisibility(View.VISIBLE);
         mTextDrawnAmount.setText(mDrawanDownAmount);
-        mTextMonths.setText(mSharePreferenceHelper.getValue("lw_months") + " months");
+        mTextMonths.setText(String.valueOf(mRepaymentPeriod) + " months");
         mTextAdditionalMonthAmount.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(installment_amount), 1, this)));
     }
 
@@ -119,14 +121,13 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
                 protected AuthoriseLoanResponse httpDoInBackground(String... params) {
                     int productOfferingId = Integer.valueOf(mSharePreferenceHelper.getValue("lw_product_offering_id"));
                     int drawDownAmount = Integer.valueOf(mSharePreferenceHelper.getValue("lw_amount_drawn_cent"));
-                    int repaymentPeriod = Integer.valueOf(mSharePreferenceHelper.getValue("lw_months"));
                     String sCreditLimit = (mSharePreferenceHelper.getValue("lw_credit_limit")).replace("R ", "").replace(" ", "").replace("R", "");
                     int creditLimit = 0;
                     if (sCreditLimit.length() > 0) {
                         creditLimit = Integer.parseInt(sCreditLimit.substring(0, sCreditLimit.indexOf(".")));
                     }
                     AuthoriseLoanRequest authoriseLoanRequest
-                            = new AuthoriseLoanRequest(productOfferingId, drawDownAmount, repaymentPeriod, installment_amount, creditLimit * 100);
+                            = new AuthoriseLoanRequest(productOfferingId, drawDownAmount, mRepaymentPeriod, installment_amount, creditLimit * 100);
                     return ((WoolworthsApplication) getApplication()).getApi().authoriseLoan(authoriseLoanRequest);
                 }
 

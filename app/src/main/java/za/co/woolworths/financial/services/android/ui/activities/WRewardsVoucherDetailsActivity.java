@@ -1,11 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -22,6 +24,7 @@ import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsVouchersAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SwipeStack;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.toolbar;
@@ -32,14 +35,17 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements
     private SwipeStack mSwipeStack;
     WRewardsVouchersAdapter mAdapter;
     VoucherCollection voucherCollection;
+    public WTextView termsAndCondtions;
     int postion;
     List<Voucher> vouchers;
+    public static final String TAG ="VoucherDetailsActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.updateStatusBarBackground(this,R.color.reward_status_bar_color);
         setContentView(R.layout.wrewards_voucher_details);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        termsAndCondtions=(WTextView)findViewById(R.id.termsCondition);
         mSwipeStack = (SwipeStack) findViewById(R.id.swipeStack);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -51,6 +57,14 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements
         mAdapter = new WRewardsVouchersAdapter(WRewardsVoucherDetailsActivity.this,vouchers);
         mSwipeStack.setAdapter(mAdapter);
         mSwipeStack.setListener(this);
+        termsAndCondtions.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String terms=vouchers.get(mSwipeStack.getCurrentPosition()).termsAndConditions;
+                startActivity(new Intent(WRewardsVoucherDetailsActivity.this,WRewardsVoucherTermAndConditions.class).putExtra("TERMS",terms));
+            }
+        });
+
     }
 
     @Override
@@ -66,7 +80,7 @@ public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+        //overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
 
     }
 

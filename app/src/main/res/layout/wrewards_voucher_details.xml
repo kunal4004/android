@@ -3,8 +3,8 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="vertical"
               android:background="#cc000000"
+              android:orientation="vertical"
 
     >
 
@@ -20,15 +20,39 @@
         app:title="">
     </android.support.v7.widget.Toolbar>
 
-    <za.co.woolworths.financial.services.android.ui.views.SwipeStack
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:id="@+id/swipeStack"
-        android:padding="16dp"
-        app:stack_rotation="0"
-        app:stack_spacing="-10dp"
-        app:stack_size="3"
-        />
+        android:layout_height="match_parent">
+
+        <za.co.woolworths.financial.services.android.ui.views.SwipeStack
+            android:id="@+id/swipeStack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/termsAndCondtions"
+            android:layout_alignParentTop="true"
+            android:background="@android:color/transparent"
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            app:stack_rotation="0"
+            app:stack_size="3"
+            app:stack_spacing="-10dp"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/termsCondition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:padding="24dp"
+            android:gravity="center"
+            android:text="@string/view_terms_conditions"
+            android:textAllCaps="true"
+            android:textColor="#b3ffffff"
+            android:textSize="12sp"
+            android:letterSpacing="0.1"
+            app:WTextView_font="medium"
+            />
+    </RelativeLayout>
 
 </LinearLayout>

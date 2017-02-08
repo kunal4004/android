@@ -1,20 +1,29 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
+import com.google.android.gms.iid.InstanceID;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -26,12 +35,16 @@ import java.util.UUID;
 
 import io.jsonwebtoken.Jwts;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static android.R.attr.data;
+import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class SSOActivity extends WebViewActivity {
 
@@ -66,8 +79,7 @@ public class SSOActivity extends WebViewActivity {
     public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 
     private Toolbar mToolbar;
-    // TODO: This redirectURIString be pulled from MCS.
-    private String redirectURIString = "http://wfs-appserver-dev.wigroup.co:8080/wfs/app/v4/sso/redirect/successful";
+    private String redirectURIString = WoolworthsApplication.getSsoRedirectURI();
     private Protocol protocol;
     private Host host;
     private Path path;
@@ -75,8 +87,9 @@ public class SSOActivity extends WebViewActivity {
 
     private final String state;
     private final String nonce;
+    public ProgressDialog progressDialog;
 
-    public SSOActivity (){
+    public SSOActivity() {
         this.state = UUID.randomUUID().toString();
         this.nonce = UUID.randomUUID().toString();
     }
@@ -87,8 +100,18 @@ public class SSOActivity extends WebViewActivity {
         this.instantiateWebView();
     }
 
-    private void instantiateWebView(){
-
+    private void instantiateWebView() {
+        progressDialog = new ProgressDialog(SSOActivity.this, R.style.full_screen_dialog) {
+            @Override
+            protected void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+                setContentView(R.layout.sso_progress_dialog);
+                getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+                ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.progressBar1);
+                mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+            }
+        };
+        progressDialog.setCancelable(false);
         this.webView.setWebViewClient(this.webviewClient);
         this.webView.getSettings().setUseWideViewPort(true);
         this.webView.getSettings().setLoadWithOverviewMode(true);
@@ -141,7 +164,7 @@ public class SSOActivity extends WebViewActivity {
     }
 
     public enum Host implements SSORequiredParameter {
-        STS("sts.woolworths.co.za");
+        STS(WoolworthsApplication.getStsURI());
 
         private String host;
 
@@ -189,15 +212,14 @@ public class SSOActivity extends WebViewActivity {
 
     private String constructAndGetAuthorisationRequestURL(String scope) {
 
-        if(scope == null){
+        if (scope == null) {
             scope = "";
         }
         scope = scope.concat(" openid email profile");//default scope
 
 
         Uri.Builder builder = new Uri.Builder();
-        builder.scheme(this.protocol.rawValue())
-                .authority(this.host.rawValue())
+        builder.scheme(this.host.rawValue()) // moved host.rawValue() from authority to schema as MCS returns host with " https:// "
                 .appendEncodedPath(this.path.rawValue())
                 .appendQueryParameter("client_id", "WWOneApp")
                 .appendQueryParameter("response_type", "id_token") // Identity token
@@ -208,8 +230,8 @@ public class SSOActivity extends WebViewActivity {
                 .appendQueryParameter("scope", scope)
         ;
 
-        if(this.extraQueryStringParams != null){
-            for(Map.Entry<String, String> param : this.extraQueryStringParams.entrySet()){
+        if (this.extraQueryStringParams != null) {
+            for (Map.Entry<String, String> param : this.extraQueryStringParams.entrySet()) {
                 builder.appendQueryParameter(param.getKey(), param.getValue());
             }
         }
@@ -265,9 +287,9 @@ public class SSOActivity extends WebViewActivity {
         }
 
         String constructedURL = "";
-        try{
+        try {
             constructedURL = URLDecoder.decode(builder.build().toString(), "UTF-8").toString();
-        }catch(Exception e){
+        } catch (Exception e) {
             constructedURL = builder.build().toString();
         }
         return constructedURL;
@@ -277,7 +299,7 @@ public class SSOActivity extends WebViewActivity {
         @Override
         public void onPageStarted(WebView view, final String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-
+            showProgressBar();
             Log.d(TAG, url);
 
             if (url.equals(SSOActivity.this.redirectURIString)) {
@@ -297,11 +319,19 @@ public class SSOActivity extends WebViewActivity {
                         Intent intent = new Intent();
 
                         if (state.equals(webviewState)) {
-                            sendRegistrationToServer();
+
 
                             String jwt = list.get(1);
                             intent.putExtra(SSOActivity.TAG_JWT, jwt);
-
+                            //Save JWT
+                            SessionDao sessionDao = new SessionDao(SSOActivity.this, SessionDao.KEY.USER_TOKEN);
+                            sessionDao.value = jwt;
+                            try {
+                                sessionDao.save();
+                            } catch (Exception e) {
+                                Log.e(TAG, e.getMessage());
+                            }
+                            sendRegistrationToServer();
                             setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
                         } else {
                             setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
@@ -309,13 +339,13 @@ public class SSOActivity extends WebViewActivity {
                         finish();
                     }
                 });
-            }else if (extraQueryStringParams != null){
+            } else if (extraQueryStringParams != null) {
                 int indexOfQuestionMark = url.indexOf("?");
-                if(indexOfQuestionMark > -1){
+                if (indexOfQuestionMark > -1) {
                     String urlWithoutQueryString = url.substring(0, indexOfQuestionMark);
 
                     String redirectURI = extraQueryStringParams.get("post_logout_redirect_uri");
-                    if (urlWithoutQueryString.equals(redirectURI)){
+                    if (urlWithoutQueryString.equals(redirectURI)) {
                         Intent intent = new Intent();
                         setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
                         finish();
@@ -338,19 +368,33 @@ public class SSOActivity extends WebViewActivity {
         }
     };
 
-    public void hideProgressBar(){
-        if (progressBar!=null){
-            if(progressBar.getVisibility()==View.VISIBLE){
-                progressBar.setVisibility(View.GONE);
+    public void hideProgressBar() {
+        if (progressDialog != null) {
+            if (progressDialog.isShowing()) {
+                progressDialog.dismiss();
+                progressDialog = null;
             }
         }
     }
+
+    public void showProgressBar() {
+        if (progressDialog != null) {
+            if (!progressDialog.isShowing()) {
+                progressDialog.show();
+            }
+        }
+    }
+
+
+    //1. sendRegistrationToServer is created twice: SSOActivity and WFirebaseInstanceIDSService
+    //
+
+
     private void sendRegistrationToServer() {
         // sending gcm token to server
-
-        final CreateUpdateDevice device=new CreateUpdateDevice();
-        device.appInstanceId= UUID.randomUUID().toString();
-        device.pushNotificationToken=getSharedPreferences(Utils.SHARED_PREF,0).getString("regId",null);
+        final CreateUpdateDevice device = new CreateUpdateDevice();
+        device.appInstanceId = InstanceID.getInstance(getApplicationContext()).getId();
+        device.pushNotificationToken = getSharedPreferences(Utils.SHARED_PREF, 0).getString("regId", null);
 
         //Sending Token and app instance Id to App server
         //Need to be done after Login
@@ -382,8 +426,6 @@ public class SSOActivity extends WebViewActivity {
             @Override
             protected void onPostExecute(CreateUpdateDeviceResponse createUpdateResponse) {
                 super.onPostExecute(createUpdateResponse);
-
-
             }
         }.execute();
 

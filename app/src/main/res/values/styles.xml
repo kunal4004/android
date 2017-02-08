@@ -96,6 +96,18 @@
         <item name="android:actionBarStyle">@style/LoanWithdrawalStyle</item>
     </style>
 
+    <style name="FaqStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
+        <item name="android:actionBarItemBackground">@null</item>
+        <item name="actionBarItemBackground">@null</item>
+    </style>
+
+
     <style name="WSearchViewStyle" parent="Widget.AppCompat.SearchView">
         <item name="searchHintIcon">@null</item>
         <item name="queryBackground">@null</item>
@@ -115,14 +127,14 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:homeAsUpIndicator">@drawable/close_24</item>
-
     </style>
 
     <style name="MyAccountCards" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="android:background">@android:color/transparent</item>
         <item name="android:homeAsUpIndicator">@drawable/back_white</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowActionBarOverlay">false</item>
 
     </style>
 
@@ -137,6 +149,8 @@
     <style name="OneAppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 
     <style name="WTransaction" parent="Theme.AppCompat.Light.NoActionBar">
@@ -166,6 +180,7 @@
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:homeAsUpIndicator">@drawable/close_white</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
 
     </style>
 
@@ -219,6 +234,7 @@
         <item name="android:gravity">center</item>
         <item name="android:textSize">12sp</item>
         <item name="android:letterSpacing">0.15</item>
+        <item name="WButton_font">medium_bold</item>
         <item name="android:stateListAnimator">@null</item>
     </style>
 
@@ -395,6 +411,17 @@
         <item name="android:lineSpacingExtra">2.1dp</item>
     </style>
 
+    <style name="apply_now_btn" parent="android:Theme">
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="WTextView_font">medium</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
     <style name="spin_progress_style" parent="@android:style/Theme.Dialog">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -403,5 +430,84 @@
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
+
+    <style name="full_screen_dialog" parent="Theme.AppCompat.Light">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
+
+    </style>
+
+
+    <style name="account_logged_out_list_bullet_gray" parent="android:Theme">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:gravity">start|top</item>
+        <item name="android:textColor">@color/black_desc_opacity</item>
+        <item name="android:textSize">15sp</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:lineSpacingExtra">2.1dp</item>
+    </style>
+
+    <style name="account_logged_out_bullet_gray" parent="android:Theme">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:gravity">start|center</item>
+        <item name="android:textColor">@color/black_desc_opacity</item>
+        <item name="android:text">@string/bullet</item>
+        <item name="android:layout_marginRight">@dimen/default_margin</item>
+        <item name="android:textSize">15sp</item>
+        <item name="WTextView_font">medium_bold</item>
+    </style>
+
+    <style name="AppOverlayTheme" parent="@style/Theme.AppCompat.Light">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="TransparentToolbar" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:windowActionBarOverlay">true</item>
+        <!-- Support Library compability -->
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+
+    <style name="Toolbar" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorAccent">@color/white</item>
+    </style>
+
+    <style name="ToolbarWhiteTheme" parent="android:Theme.Holo">
+        <item name="android:actionBarStyle">@null</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="windowActionBarOverlay">true</item>
+        <item name="android:windowActionBarOverlay">@null</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="AppTheme.ActionBar" parent="android:Widget.ActionBar">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/popup_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/popup_exit</item>
+        <item name="android:activityCloseEnterAnimation">@anim/popup_enter</item>
+        <item name="android:activityCloseExitAnimation">@anim/popup_exit</item>
+    </style>
+
+    <style name="Theme.AppCompat.Translucent">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+    </style>
+
 
 </resources>

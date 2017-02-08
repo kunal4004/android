@@ -71,6 +71,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         mWoolworthsApplication = (WoolworthsApplication)getActivity().getApplication();
         mConnectionDetector = new ConnectionDetector();
         mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
+        setRetainInstance(true);
         initUI();
         setListener();
         setText();

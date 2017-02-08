@@ -38,6 +38,8 @@
             android:textColor="@color/black"
             android:textSize="20sp"
             app:WTextView_font="medium_bold"
+            android:textAllCaps="true"
+            android:letterSpacing="-0.02"
             />
 
         <LinearLayout
@@ -63,6 +65,8 @@
                 android:text="@string/reward_status_info_1"
                 android:textColor="@color/black"
                 android:textSize="15sp"
+                android:lineSpacingExtra="4sp"
+                android:letterSpacing="-0.02"
                 app:WTextView_font="myriadpro_regular"
                 />
         </LinearLayout>
@@ -90,6 +94,8 @@
                 android:text="@string/reward_status_info_2"
                 android:textColor="@color/black"
                 android:textSize="15sp"
+                android:lineSpacingExtra="4sp"
+                android:letterSpacing="-0.02"
                 app:WTextView_font="myriadpro_regular"
                 />
         </LinearLayout>
@@ -117,6 +123,8 @@
                 android:text="@string/reward_status_info_3"
                 android:textColor="@color/black"
                 android:textSize="15sp"
+                android:lineSpacingExtra="4sp"
+                android:letterSpacing="-0.02"
                 app:WTextView_font="myriadpro_regular"
                 />
         </LinearLayout>
@@ -144,6 +152,8 @@
                 android:text="@string/reward_status_info_4"
                 android:textColor="@color/black"
                 android:textSize="15sp"
+                android:lineSpacingExtra="4sp"
+                android:letterSpacing="-0.02"
                 app:WTextView_font="myriadpro_regular"
                 />
         </LinearLayout>
@@ -171,6 +181,8 @@
                 android:text="@string/reward_status_info_5"
                 android:textColor="@color/black"
                 android:textSize="15sp"
+                android:lineSpacingExtra="4sp"
+                android:letterSpacing="-0.02"
                 app:WTextView_font="myriadpro_regular"
                 />
         </LinearLayout>
@@ -198,6 +210,8 @@
                 android:text="@string/reward_status_info_6"
                 android:textColor="@color/black"
                 android:textSize="15sp"
+                android:lineSpacingExtra="4sp"
+                android:letterSpacing="-0.02"
                 app:WTextView_font="myriadpro_regular"
                 />
         </LinearLayout>
@@ -222,6 +236,8 @@
             android:text="@string/w_reward_line_1"
             android:textColor="#80000000"
             android:textSize="12sp"
+            android:lineSpacingExtra="3sp"
+            android:letterSpacing="-0.02"
             app:WTextView_font="myriadpro_regular"
             />
 
@@ -232,6 +248,8 @@
             android:text="@string/w_reward_line_2"
             android:textColor="#80000000"
             android:textSize="12sp"
+            android:lineSpacingExtra="3sp"
+            android:letterSpacing="-0.02"
             app:WTextView_font="myriadpro_regular"
             />
 
@@ -242,6 +260,8 @@
             android:text="@string/w_reward_line_3"
             android:textColor="#80000000"
             android:textSize="12sp"
+            android:lineSpacingExtra="3sp"
+            android:letterSpacing="-0.02"
             app:WTextView_font="myriadpro_regular"
             />
     </LinearLayout>

@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -32,52 +33,51 @@ public class WRewardsSavingsFragment extends Fragment {
     public WTextView wRewardsGreenEarned;
     public WTextView quarterlyVoucherEarned;
     public WTextView yearToDateSpend;
+    public WTextView yearToDateSpendText;
+    public RelativeLayout noSavingsView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.wrewards_savings_fragment, container, false);
-        Bundle bundle=getArguments();
-        voucherResponse=new Gson().fromJson(bundle.getString("WREWARDS"),VoucherResponse.class);
-
-        recyclerView=(RecyclerView)view.findViewById(R.id.recycler_view);
-        tireStatus=(WTextView)view.findViewById(R.id.tireStatus);
-        wRewardsInstantSaving=(WTextView)view.findViewById(R.id.wrewardsInstantSavings);
-        wRewardsGreenEarned=(WTextView)view.findViewById(R.id.wrewardsGreenEarned);
-        quarterlyVoucherEarned=(WTextView)view.findViewById(R.id.quarterlyVouchersEarned);
-        yearToDateSpend=(WTextView)view.findViewById(R.id.yearToDateSpend);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        tireStatus = (WTextView) view.findViewById(R.id.tireStatus);
+        wRewardsInstantSaving = (WTextView) view.findViewById(R.id.wrewardsInstantSavings);
+        wRewardsGreenEarned = (WTextView) view.findViewById(R.id.wrewardsGreenEarned);
+        quarterlyVoucherEarned = (WTextView) view.findViewById(R.id.quarterlyVouchersEarned);
+        yearToDateSpend = (WTextView) view.findViewById(R.id.yearToDateSpend);
+        yearToDateSpendText = (WTextView) view.findViewById(R.id.yearToDateSpendText);
+        noSavingsView = (RelativeLayout) view.findViewById(R.id.noSavingsView);
         mLayoutManager = new LinearLayoutManager(
                 getActivity(),
                 LinearLayoutManager.HORIZONTAL,
                 false
         );
         recyclerView.setLayoutManager(mLayoutManager);
-        mAdapter=new WRewardsSavingsHorizontalScrollAdapter(getActivity(),voucherResponse.tierHistoryList);
-        recyclerView.setAdapter(mAdapter);
-        if(voucherResponse.tierHistoryList.size()>0)
-        {
-            tireStatus.setText(voucherResponse.tierHistoryList.get(0).tier);
-            wRewardsInstantSaving.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(0).monthlySavings));
-            wRewardsGreenEarned.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(0).monthlyGreenValueEarned));
-            quarterlyVoucherEarned.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(0).wVouchers));
-            yearToDateSpend.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(0).monthlySpend));
-
+        Bundle bundle = getArguments();
+        voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
+        if (voucherResponse.tierInfo == null) {
+            displayNoSavingsView();
+        } else {
+            displaySavingsView();
         }
-        recyclerView.addOnItemTouchListener(new RecycleViewClickListner(getActivity(),recyclerView, new RecycleViewClickListner.ClickListener() {
+        recyclerView.addOnItemTouchListener(new RecycleViewClickListner(getActivity(), recyclerView, new RecycleViewClickListner.ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 //Zero position belongs to recycleview header view
-                if(position>0) {
-                    mAdapter.setSelectedPosition(position);
-                    mAdapter.notifyDataSetChanged();
-
+                if (position == 0) {
+                    setUpYearToDateValue();
+                } else {
+                    yearToDateSpendText.setText(getString(R.string.wrewards_monthly_spend));
                     //Get data on Position-1 from Array List. And bind to UI
-                    tireStatus.setText(voucherResponse.tierHistoryList.get(position-1).tier);
-                    wRewardsInstantSaving.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position-1).monthlySavings));
-                    wRewardsGreenEarned.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position-1).monthlyGreenValueEarned));
-                    quarterlyVoucherEarned.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position-1).wVouchers));
-                    yearToDateSpend.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position-1).monthlySpend));
+                    tireStatus.setText(voucherResponse.tierHistoryList.get(position - 1).tier);
+                    wRewardsInstantSaving.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position - 1).monthlySavings));
+                    wRewardsGreenEarned.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position - 1).monthlyGreenValueEarned));
+                    quarterlyVoucherEarned.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position - 1).wVouchers));
+                    yearToDateSpend.setText(WFormatter.formatAmount(voucherResponse.tierHistoryList.get(position - 1).monthlySpend));
                 }
+                mAdapter.setSelectedPosition(position);
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -85,6 +85,43 @@ public class WRewardsSavingsFragment extends Fragment {
             }
         }));
         return view;
+
+
     }
 
+    public void setUpYearToDateValue() {
+        yearToDateSpendText.setText(getString(R.string.year_to_date_spend));
+        tireStatus.setText(voucherResponse.tierInfo.currentTier);
+        wRewardsInstantSaving.setText(WFormatter.formatAmount(voucherResponse.tierInfo.earned));
+        wRewardsGreenEarned.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateGreenValue));
+        quarterlyVoucherEarned.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateWVouchers));
+        yearToDateSpend.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateSpend));
+
+    }
+
+    public void displayNoSavingsView() {
+        recyclerView.setVisibility(View.GONE);
+        noSavingsView.setVisibility(View.VISIBLE);
+        yearToDateSpendText.setText(getString(R.string.year_to_date_spend));
+        //tireStatus.setText(voucherResponse.tierInfo.currentTier);
+        wRewardsInstantSaving.setText(WFormatter.formatAmount(0));
+        wRewardsGreenEarned.setText(WFormatter.formatAmount(0));
+        quarterlyVoucherEarned.setText(WFormatter.formatAmount(0));
+        yearToDateSpend.setText(WFormatter.formatAmount(0));
+    }
+
+    public void displaySavingsView() {
+        if (voucherResponse.tierHistoryList == null || voucherResponse.tierHistoryList.size() == 0) {
+            recyclerView.setVisibility(View.GONE);
+            noSavingsView.setVisibility(View.VISIBLE);
+            setUpYearToDateValue();
+
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            noSavingsView.setVisibility(View.GONE);
+            mAdapter = new WRewardsSavingsHorizontalScrollAdapter(getActivity(), voucherResponse.tierHistoryList);
+            recyclerView.setAdapter(mAdapter);
+            setUpYearToDateValue();
+        }
+    }
 }

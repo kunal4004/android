@@ -78,7 +78,7 @@
                         android:textSize="20sp"/>
                 </LinearLayout>
 
-                <include layout="@layout/cli_button_wrap"/>
+                <include layout="@layout/cli_button_progress"/>
 
             </LinearLayout>
 
