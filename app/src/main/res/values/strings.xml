@@ -479,4 +479,13 @@
     <string name="confirm">Confirm</string>
     <string name="no_tire_history_to_display">NO TIRE HISTORY TO DISPLAY</string>
     <string name="no_vouchers">NO VOUCHERS</string>
+    <string name="product_from">From</string>
+    <string name="product_item_found">items found</string>
+    <string name="product_size">Size</string>
+    <string name="shop_online_woolies">Shop Woolworths online</string>
+    <string name="add_to_shopping_list">Add to shopping list</string>
+    <string name="product_description">Update your modern wardrobe with this crisp short sleeved stretch cotton shirt, designed with polka dots for a pop of urban cool. Wear it with jeans for easy casual flair, or with fitted chinos for a smarter update.</string>
+    <string name="product_code">Product Code</string>
+    <string name="product_colour">Colour</string>
+
 </resources>

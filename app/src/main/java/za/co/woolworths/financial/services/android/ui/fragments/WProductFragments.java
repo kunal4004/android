@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +21,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -56,6 +55,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
 
     private WProgressDialogFragment mGetMessageProgressDialog;
     private FragmentManager fm;
+    private WTextView mToolbarText;
 
     public interface HideActionBarComponent {
         void onActionBarComponent(boolean actionbarIsVisible);
@@ -87,7 +87,9 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         View view = inflater.inflate(R.layout.product_search_fragment, container, false);
         mContext = this;
@@ -98,9 +100,15 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
 
         initUI(view);
         setUIListener();
-        getRootCategoryRequest();
+        showAccountToolbar();
         mNestedScrollview.getParent().requestChildFocus(mNestedScrollview, mNestedScrollview);
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getRootCategoryRequest();
     }
 
     @Override
@@ -123,6 +131,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         mTBBarcodeScanner = (ImageView) v.findViewById(R.id.imTBBarcodeScanner);
         mTextTBProductSearch = (WTextView) v.findViewById(R.id.textTBProductSearch);
         mTextProductSearch = (WTextView) v.findViewById(R.id.textProductSearch);
+        mToolbarText = (WTextView) v.findViewById(R.id.toolbarText);
     }
 
     private void setUIListener() {
@@ -239,6 +248,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
             case R.id.imBurgerButtonPressed:
                 hideActionBarComponent.onBurgerButtonPressed();
                 break;
+
         }
     }
 
@@ -246,14 +256,18 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
     }
 
+    boolean toolbarIsChanged = false;
+
     @Override
     public void onScrollChanged(LDObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
         // TODO Auto-generated method stub
-        int searchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight() / 2));
+        // int searchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight() / 2));
+        int searchRowHeight = Math.round(mRelSearchRowLayout.getHeight() - (getToolBarHeight()));
+
         if (searchRowHeight > y) {
-            showSearchBar();
+            showViews();
         } else {
-            hideSearchBar();
+            hideViews();
         }
     }
 
@@ -265,44 +279,44 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         return toolBarHeight;
     }
 
-    private void hideSearchBar() {
-        mRelSearchRowLayout.setAlpha(0);
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        assert actionBar != null;
-        actionBar.hide();
-        actionBar.setElevation(0);
-        mProductToolbar.setVisibility(View.VISIBLE);
-        mRelSearchRowLayout.setEnabled(false);
-        mImProductSearch.setEnabled(false);
-        mImBarcodeScanner.setEnabled(false);
-        mTextProductSearch.setEnabled(false);
-        hideActionBarComponent.onActionBarComponent(false);
-    }
-
-    private void showSearchBar() {
-        mRelSearchRowLayout.setAlpha(1);
-        mRelSearchRowLayout.setEnabled(true);
-        mImProductSearch.setEnabled(true);
-        mImBarcodeScanner.setEnabled(true);
-        mTextProductSearch.setEnabled(true);
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        assert actionBar != null;
-        actionBar.show();
-        actionBar.setElevation(0);
-        mProductToolbar.setAlpha(0);
-        mProductToolbar
-                .animate()
-                .setDuration(200)
-                .alpha(1.0f)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        mRelSearchRowLayout.animate().setListener(null);
-                    }
-                });
-        //hideActionBarComponent.onActionBarComponent(true);
-    }
+//    private void hideSearchBar() {
+//        mRelSearchRowLayout.setAlpha(0);
+//        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+//        assert actionBar != null;
+//        actionBar.hide();
+//       actionBar.setElevation(0);
+//        mProductToolbar.setVisibility(View.VISIBLE);
+//        mRelSearchRowLayout.setEnabled(false);
+//        mImProductSearch.setEnabled(false);
+//        mImBarcodeScanner.setEnabled(false);
+//        mTextProductSearch.setEnabled(false);
+//        hideActionBarComponent.onActionBarComponent(false);
+//    }
+//
+//    private void showSearchBar() {
+//        mRelSearchRowLayout.setAlpha(1);
+//        mRelSearchRowLayout.setEnabled(true);
+//        mImProductSearch.setEnabled(true);
+//        mImBarcodeScanner.setEnabled(true);
+//        mTextProductSearch.setEnabled(true);
+//        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+//        assert actionBar != null;
+//        actionBar.show();
+//        actionBar.setElevation(0);
+//        mProductToolbar.setAlpha(0);
+//        mProductToolbar
+//                .animate()
+//                .setDuration(200)
+//                .alpha(1.0f)
+//                .setListener(new AnimatorListenerAdapter() {
+//                    @Override
+//                    public void onAnimationEnd(Animator animation) {
+//                        super.onAnimationEnd(animation);
+//                        mRelSearchRowLayout.animate().setListener(null);
+//                    }
+//                });
+//        //hideActionBarComponent.onActionBarComponent(true);
+//    }
 
 
     public boolean hasPermissions() {
@@ -364,18 +378,73 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         }
     }
 
-//
-//    private void hideViews() {
-//        mToolbar.animate().translationY(-mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
-//    }
-//
-//    private void showViews() {
-//        mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
-//    }
+
+    private void hideViews() {
+        mProductToolbar.animate()
+                .translationY(-mProductToolbar.getBottom())
+                .setInterpolator(new AccelerateInterpolator())
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        showBarcodeToolbar();
+                        mRelSearchRowLayout.setAlpha(0);
+                        mProductToolbar
+                                .animate()
+                                .translationY(0)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .start();
+                    }
+                }).start();
+        toolbarIsChanged = true;
+    }
+
+    private void showViews() {
+        mProductToolbar.animate()
+                .translationY(0)
+                .setInterpolator(new DecelerateInterpolator())
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        showAccountToolbar();
+                        mRelSearchRowLayout.setAlpha(1);
+                        mProductToolbar
+                                .animate()
+                                .translationY(0)
+                                .setInterpolator(new DecelerateInterpolator())
+                                .start();
+                    }
+                }).start();
+
+        toolbarIsChanged = false;
+    }
 
     private void hideProgress() {
         if (mGetMessageProgressDialog.isVisible())
             mGetMessageProgressDialog.dismiss();
     }
 
+    private void showAccountToolbar() {
+        mToolbarText.setVisibility(View.VISIBLE);
+        mTBBarcodeScanner.setVisibility(View.GONE);
+        mTextTBProductSearch.setVisibility(View.GONE);
+    }
+
+    private void showBarcodeToolbar() {
+        mToolbarText.setVisibility(View.GONE);
+        mTBBarcodeScanner.setVisibility(View.VISIBLE);
+        mTextTBProductSearch.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+
+    }
 }

@@ -15,8 +15,13 @@
         android:layout_width="match_parent"
         android:layout_height="120dp"
         fresco:fadeDuration="50"
-        fresco:placeholderImage="@color/semi_transparent_black"
-        fresco:placeholderImageScaleType="fitXY"
+        android:background="@color/divider"
+        fresco:placeholderImage="@drawable/ic_search"
+        fresco:placeholderImageScaleType="fitCenter"
+        fresco:roundAsCircle="true"
+        fresco:roundedCornerRadius="10dp"
+        fresco:actualImageScaleType="fitXY"
+        fresco:roundingBorderWidth="5dp"
         fresco:viewAspectRatio="1.33" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView

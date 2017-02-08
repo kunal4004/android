@@ -11,6 +11,7 @@ import com.squareup.okhttp.OkHttpClient;
 
 
 import retrofit.RestAdapter;
+
 import java.util.concurrent.TimeUnit;
 
 import retrofit.client.OkClient;
@@ -38,6 +39,7 @@ import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Product;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
@@ -47,6 +49,7 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionHistory
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.models.dto.WProduct;
 
 public class WfsApi {
 
@@ -54,7 +57,7 @@ public class WfsApi {
     private ApiInterface mApiInterface;
     public static final String TAG = "WfsApi";
 
-    protected WfsApi(Context mContext) {
+    WfsApi(Context mContext) {
 
         this.mContext = mContext;
         OkHttpClient client = new OkHttpClient();
@@ -157,21 +160,34 @@ public class WfsApi {
     public PromotionsResponse getPromotions() {
         return mApiInterface.getPromotions(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "");
     }
+
     public RootCategories getRootCategory() {
-        return mApiInterface.getRootCategories(getOsVersion(),getApiId(),getOS(), getSha1Password(),getDeviceModel(),getNetworkCarrier(),getOsVersion(),"Android");
+        return mApiInterface.getRootCategories(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), "Android");
     }
 
     public SubCategories getSubCategory(String category_id) {
-        return mApiInterface.getSubCategory(getOsVersion(),getApiId(),getOS(), getSha1Password(),getDeviceModel(),getNetworkCarrier(),getOsVersion(),"Android",category_id);
+        return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), "Android", category_id);
+    }
+
+    public ProductView productViewRequest(LatLng loc, boolean isBarcode, int pageSize, int pageNumber, String product_id) {
+        return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), 18.5046653, -33.8877679, isBarcode, pageSize, pageNumber, product_id);
     }
 
     public Product getProductSearchList(String search_item, LatLng loc, boolean isBarcode, int pageSize, int pageNumber) {
-        return mApiInterface.getProductSearch(getOsVersion(),getDeviceModel(),getOsVersion(),getOS(),getNetworkCarrier(),getApiId(),"","",getSha1Password(),loc.longitude,loc.latitude,isBarcode,search_item,pageSize,pageNumber);
+        return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.longitude, loc.latitude, isBarcode, search_item, pageSize, pageNumber);
     }
 
     public FAQ getFAQ() {
         return mApiInterface.getFAQ(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "");
     }
+
+
+    public WProduct getProductDetailView(String productId, String skuId) {
+        return mApiInterface.getProductDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
+                getOS(), getNetworkCarrier(), getApiId(), "", "",
+                getSha1Password(), productId, skuId);
+    }
+
 
     private String getOsVersion() {
         String osVersion = Util.getOsVersion();

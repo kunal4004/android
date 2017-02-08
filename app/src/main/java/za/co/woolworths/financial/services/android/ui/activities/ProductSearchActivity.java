@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,7 +16,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -29,12 +30,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.util.Attributes;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -47,6 +51,8 @@ import za.co.woolworths.financial.services.android.models.dto.Product;
 import za.co.woolworths.financial.services.android.models.dto.Product_;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
+import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
@@ -87,6 +93,8 @@ public class ProductSearchActivity extends BaseActivity
     private WProgressDialogFragment mGetProgressDialog;
     private FragmentManager fm;
     private ProductSearchActivity mContext;
+    private RelativeLayout mRelProgressBar;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,11 +119,15 @@ public class ProductSearchActivity extends BaseActivity
 
     private void initUI() {
         fm = getSupportFragmentManager();
+        mGetProgressDialog = WProgressDialogFragment.newInstance("v");
+        mGetProgressDialog.setCancelable(true);
         mLayoutManager = new LinearLayoutManager(ProductSearchActivity.this);
         productListview = (RecyclerView) findViewById(R.id.productSearchList);
         mEditSearchProduct = (WEditTextView) findViewById(R.id.toolbarText);
         mTextNoProductFound = (WTextView) findViewById(R.id.textNoProductFound);
         recentSearchLayout = (LinearLayout) findViewById(R.id.recentSearchLayout);
+        mRelProgressBar = (RelativeLayout) findViewById(R.id.relProgressBar);
+        mProgressBar = (ProgressBar) findViewById(R.id.mProgressBar);
         mPopWindowValidationMessage = new PopWindowValidationMessage(this);
     }
 
@@ -282,6 +294,7 @@ public class ProductSearchActivity extends BaseActivity
                 super.onPreExecute();
                 mIsLoading = true;
                 mCurrentPage += 1;
+                showProgress();
             }
 
             @Override
@@ -301,6 +314,7 @@ public class ProductSearchActivity extends BaseActivity
                 Product productResponse = new Product();
                 productResponse.response = new Response();
                 mIsLoading = false;
+                hideProgress();
                 return productResponse;
             }
 
@@ -308,6 +322,11 @@ public class ProductSearchActivity extends BaseActivity
             protected void onPostExecute(Product productResponse) {
                 super.onPostExecute(productResponse);
                 mIsLoading = false;
+                moreProductList = null;
+                moreProductList = new ArrayList<>();
+                if (moreProductList != null) {
+                    moreProductList.clear();
+                }
                 moreProductList = productResponse.products;
                 if (moreProductList != null && moreProductList.size() != 0) {
                     if (moreProductList.size() < PAGE_SIZE) {
@@ -316,6 +335,7 @@ public class ProductSearchActivity extends BaseActivity
                     productList.addAll(moreProductList);
                     mProductListAdapter.notifyDataSetChanged();
                 }
+                hideProgress();
             }
         }.execute();
     }
@@ -355,18 +375,7 @@ public class ProductSearchActivity extends BaseActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                searchProductBrand = mEditSearchProduct.getText().toString();
-                if (!TextUtils.isEmpty(searchProductBrand)) {
-                    if (productList != null) {
-                        productList.clear();
-                    }
-                    productListview.setVisibility(View.VISIBLE);
-                    showRecentSearchHistoryView(false);
-                    getProductRequest(searchProductBrand);
-                } else {
-                    productListview.setVisibility(View.GONE);
-                    showRecentSearchHistoryView(true);
-                }
+                searchProduct();
                 return true;
             case R.id.action_search:
                 canGoBack();
@@ -374,6 +383,22 @@ public class ProductSearchActivity extends BaseActivity
         }
         return false;
     }
+
+    private void searchProduct() {
+        searchProductBrand = mEditSearchProduct.getText().toString();
+        if (!TextUtils.isEmpty(searchProductBrand)) {
+            if (productList != null) {
+                productList.clear();
+            }
+            productListview.setVisibility(View.VISIBLE);
+            showRecentSearchHistoryView(false);
+            getProductRequest(searchProductBrand);
+        } else {
+            productListview.setVisibility(View.GONE);
+            showRecentSearchHistoryView(true);
+        }
+    }
+
 
     private void showNoProductFound() {
         mTextNoProductFound.setVisibility(View.VISIBLE);
@@ -490,6 +515,7 @@ public class ProductSearchActivity extends BaseActivity
         searchProductBrand = getRecentSearch().get(pos).searchedValue;
         mEditSearchProduct.setText(searchProductBrand);
         mEditSearchProduct.setSelection(searchProductBrand.length());
+        searchProduct();
     }
 
     public void saveCurrentSearch(String query) {
@@ -581,7 +607,80 @@ public class ProductSearchActivity extends BaseActivity
 
     @Override
     public void onProductSelected(View v, int position) {
-        mProductListAdapter.notifyDataSetChanged();
-        Log.e("mPosition", String.valueOf(position));
+        try {
+            String productId = productList.get(position).productId;
+            String sku = productList.get(position).sku;
+            mProductListAdapter.notifyDataSetChanged();
+            getProductDetail(productId, sku);
+        } catch (NullPointerException ignored) {
+        }
+    }
+
+
+    private void getProductDetail(final String productId, final String skuId) {
+        new HttpAsyncTask<String, String, WProduct>() {
+            @Override
+            protected WProduct httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getApplication()).getApi().getProductDetailView(productId, skuId);
+            }
+
+            @Override
+            protected WProduct httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                Log.e("errorMessage", String.valueOf(errorMessage) + " " + httpErrorCode);
+                dismissFragmentDialog();
+                return new WProduct();
+            }
+
+            @Override
+            protected Class<WProduct> httpDoInBackgroundReturnType() {
+                return WProduct.class;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                try {
+                    mGetProgressDialog.show(fm, "v");
+                } catch (NullPointerException ignored) {
+                }
+            }
+
+            @Override
+            protected void onPostExecute(WProduct product) {
+                super.onPostExecute(product);
+                WProductDetail productList = product.product;
+                ArrayList<WProductDetail> mProductList = new ArrayList<>();
+                if (productList != null) {
+                    mProductList.add(productList);
+                }
+                if (productList != null) {
+                    GsonBuilder builder = new GsonBuilder();
+                    Gson gson = builder.create();
+                    Intent openDetailView = new Intent(mContext, ProductDetailViewActivity.class);
+                    openDetailView.putExtra("product_detail", gson.toJson(mProductList));
+                    startActivity(openDetailView);
+                }
+                dismissFragmentDialog();
+            }
+        }.execute();
+    }
+
+
+    private void dismissFragmentDialog() {
+        if (mGetProgressDialog != null) {
+            if (mGetProgressDialog.isVisible()) {
+                mGetProgressDialog.dismiss();
+            }
+        }
+    }
+
+    private void showProgress() {
+        mRelProgressBar.setVisibility(View.VISIBLE);
+        mProgressBar.getIndeterminateDrawable().setColorFilter(null);
+        mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+    }
+
+    private void hideProgress() {
+        mRelProgressBar.setVisibility(View.GONE);
     }
 }

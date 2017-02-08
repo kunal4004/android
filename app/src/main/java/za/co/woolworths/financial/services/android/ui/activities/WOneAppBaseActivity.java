@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -36,7 +37,7 @@ import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 
-public class WOneAppBaseActivity extends BaseActivity implements WFragmentDrawer.FragmentDrawerListener
+public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
         , WProductFragments.HideActionBarComponent, HideActionBar {
 
     public static Toolbar mToolbar;
@@ -120,25 +121,7 @@ public class WOneAppBaseActivity extends BaseActivity implements WFragmentDrawer
             mToolbarTitle.setText(title);
             fragmentList.add(fragment);
         }
-
-
     }
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.w_store_locator_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                startActivity(new Intent(WOneAppBaseActivity.this, SearchStoresActivity.class));
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -165,7 +148,7 @@ public class WOneAppBaseActivity extends BaseActivity implements WFragmentDrawer
 
     @Override
     public void onActionBarComponent(boolean actionbarIsVisible) {
-
+        Log.e("mmActionBar",String.valueOf(actionbarIsVisible));
     }
 
     public void hideActionBar(boolean actionbarIsVisible) {

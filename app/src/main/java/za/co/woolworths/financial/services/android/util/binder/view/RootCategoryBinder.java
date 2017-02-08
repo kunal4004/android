@@ -5,8 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
 import com.awfs.coordination.R;
@@ -24,8 +22,6 @@ import za.co.woolworths.financial.services.android.util.binder.DataBindAdapter;
 import za.co.woolworths.financial.services.android.util.binder.DataBinder;
 
 public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder> {
-
-    private int lastPosition = -1;
 
     public interface OnClickListener {
         void onClick(View v, int position);
@@ -60,7 +56,9 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
             DraweeController controller = Fresco.newDraweeControllerBuilder()
                     .setImageRequest(request)
                     .setOldController(holder.mImageProductCategory.getController()).build();
-
+            //holder.mImageProductCategory.getHierarchy().setPlaceholderImage(ContextCompat
+            //     .getDrawable(holder.mImageProductCategory.getContext(),R.drawable.barcode_img),
+            //      ScalingUtils.ScaleType.FIT_XY);
             holder.mImageProductCategory.setController(controller);
         }
 
@@ -70,10 +68,6 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
                 mOnClickListener.onClick(view, holder.getAdapterPosition());
             }
         });
-
-        Animation animation = AnimationUtils.loadAnimation(holder.itemView.getContext(), (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
-        holder.itemView.startAnimation(animation);
-        lastPosition = position;
 
     }
 

@@ -20,6 +20,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,12 +33,16 @@ import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Product;
 import za.co.woolworths.financial.services.android.models.dto.Product_;
+import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Const;
@@ -55,14 +60,17 @@ public class EnterBarcodeActivity extends AppCompatActivity {
     private static final int PERMS_REQUEST_CODE = 1234;
     private WTextView mTextInfo;
     private PopWindowValidationMessage mPopWindowValidationMessage;
+    private EnterBarcodeActivity mContext;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         updateStatusBarBackground(EnterBarcodeActivity.this);
+        mContext = this;
         setContentView(R.layout.enter_barcode_activity);
         mPopWindowValidationMessage = new PopWindowValidationMessage(this);
+
         initUI();
         setActionBar();
         if (hasPermissions()) {
@@ -130,9 +138,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
         imm.showSoftInput(mEditBarcodeNumber, InputMethodManager.SHOW_IMPLICIT);
     }
 
-
     public void getProductRequest(final String query) {
-        showProgressBar();
         new HttpAsyncTask<String, String, Product>() {
             @Override
             protected Product httpDoInBackground(String... params) {
@@ -155,17 +161,18 @@ public class EnterBarcodeActivity extends AppCompatActivity {
                 ArrayList<Product_> mProduct = product.products;
                 if (mProduct != null) {
                     if (mProduct.size() > 0) {
-
+                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
                     } else {
+                        hideProgressBar();
                         errorScanCode();
                     }
                 }
-                hideProgressBar();
             }
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+                showProgressBar();
             }
 
             @Override
@@ -294,5 +301,52 @@ public class EnterBarcodeActivity extends AppCompatActivity {
         mPopWindowValidationMessage.displayValidationMessage("",
                 PopWindowValidationMessage.OVERLAY_TYPE.BARCODE_ERROR);
     }
+
+
+    private void getProductDetail(final String productId, final String skuId) {
+        new HttpAsyncTask<String, String, WProduct>() {
+            @Override
+            protected WProduct httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getApplication()).getApi().getProductDetailView(productId, skuId);
+            }
+
+            @Override
+            protected WProduct httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                Log.e("errorMessage", String.valueOf(errorMessage) + " " + httpErrorCode);
+                hideProgressBar();
+                return new WProduct();
+            }
+
+            @Override
+            protected Class<WProduct> httpDoInBackgroundReturnType() {
+                return WProduct.class;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(WProduct product) {
+                super.onPostExecute(product);
+                WProductDetail productList = product.product;
+                ArrayList<WProductDetail> mProductList = new ArrayList<>();
+                if (productList != null) {
+                    mProductList.add(productList);
+                }
+                if (productList != null) {
+                    GsonBuilder builder = new GsonBuilder();
+                    Gson gson = builder.create();
+                    Intent openDetailView = new Intent(mContext, ProductDetailViewActivity.class);
+                    openDetailView.putExtra("product_detail", gson.toJson(mProductList));
+                    startActivity(openDetailView);
+                    overridePendingTransition(0, 0);
+                }
+                hideProgressBar();
+            }
+        }.execute();
+    }
+
 
 }

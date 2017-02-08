@@ -1,12 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -17,6 +17,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -34,6 +37,7 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.ScrollState;
+import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.binder.view.SubCategoryBinder;
 
 public class ProductSearchSubCategoryActivity extends BaseActivity implements View.OnClickListener,
@@ -47,12 +51,15 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
     private PSSubCategoryAdapter mPSRootCategoryAdapter;
     private ProductSearchSubCategoryActivity mContext;
     private WTextView mTextNoProductFound;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private int mCatStep;
     private String mRootCategoryName;
     private String mRootCategoryId;
     private String mSubCategoriesName;
     private PopWindowValidationMessage mPopWindowValidationMessage;
+    private ImageView mImBurgerButtonPressed;
+    private ProgressBar mProgressBar;
+    private RelativeLayout mSearchStore;
+    private ImageView mImSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,24 +76,9 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
             mSubCategoriesName = bundleSubCategory.getString("sub_category_name");
         }
         mConnectionDetector = new ConnectionDetector();
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
         mPopWindowValidationMessage = new PopWindowValidationMessage(this);
         initUI();
         loadData();
-
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mSwipeRefreshLayout.setRefreshing(true);
-                if (mConnectionDetector.isOnline(ProductSearchSubCategoryActivity.this)) {
-                    loadData();
-                } else {
-//                    mSlidingUpViewLayout.openOverlayView(getString(R.string.connect_to_server),
-//                            SlidingUpViewLayout.OVERLAY_TYPE.ERROR);
-                    hideRefreshView();
-                }
-            }
-        });
     }
 
     private void initUI() {
@@ -94,11 +86,16 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
         WTextView mToolBarTitle = (WTextView) findViewById(R.id.toolbarText);
         recyclerView = (WObservableRecyclerView) findViewById(R.id.productSearchList);
         mTextNoProductFound = (WTextView) findViewById(R.id.textNoProductFound);
+        mImBurgerButtonPressed = (ImageView) findViewById(R.id.imBurgerButtonPressed);
+        mSearchStore = (RelativeLayout) findViewById(R.id.search_store_activity);
+        mProgressBar = (ProgressBar) findViewById(R.id.mProgressBar);
+        mImSearch = (ImageView) findViewById(R.id.imSearch);
+
+        mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setScrollViewCallbacks(this);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        mImSearch.setOnClickListener(this);
+        mImBurgerButtonPressed.setOnClickListener(this);
         if (mCatStep == 0)
             mToolBarTitle.setText(mRootCategoryName);
         else
@@ -119,6 +116,16 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
 
     @Override
     public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.imBurgerButtonPressed:
+                onBackPressed();
+                break;
+            case R.id.imSearch:
+                Intent openSearchActivity = new Intent(this, ProductSearchActivity.class);
+                startActivity(openSearchActivity);
+                break;
+        }
     }
 
     @Override
@@ -153,7 +160,8 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
                 @Override
                 protected SubCategories httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                     SubCategories subCategories = new SubCategories();
-                    hideRefreshView();
+                    hideProgressBar();
+                    //  hideRefreshView();
                     return subCategories;
                 }
 
@@ -165,6 +173,7 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
                 @Override
                 protected void onPreExecute() {
                     super.onPreExecute();
+                    showProgressBar();
                 }
 
                 @Override
@@ -179,6 +188,7 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
                                 mLayoutManager = new LinearLayoutManager(ProductSearchSubCategoryActivity.this);
                                 mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                                 recyclerView.setLayoutManager(mLayoutManager);
+                                recyclerView.addItemDecoration(new SimpleDividerItemDecoration(mContext));
                                 recyclerView.setNestedScrollingEnabled(false);
                                 recyclerView.setAdapter(mPSRootCategoryAdapter);
                                 mPSRootCategoryAdapter.setCLIContent();
@@ -186,6 +196,8 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
                             } else {
                                 showNoProductFound();
                             }
+
+                            hideProgressBar();
                             break;
 
                         default:
@@ -193,7 +205,8 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
                                     PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                             break;
                     }
-                    hideRefreshView();
+                    mProgressBar.setVisibility(View.GONE);
+                    //  hideRefreshView();
                 }
 
             }.execute();
@@ -236,12 +249,6 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
         }, 200);
     }
 
-    public void hideRefreshView() {
-        if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
-            mSwipeRefreshLayout.setRefreshing(false);
-        }
-    }
-
     public void loadData() {
         if (mConnectionDetector.isOnline(ProductSearchSubCategoryActivity.this)) {
             getSubCategoryRequest(mRootCategoryId);
@@ -258,16 +265,22 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        ActionBar ab = getSupportActionBar();
-        if (ab == null) {
-            return;
-        }
         if (scrollState == ScrollState.UP) {
-
             mToolbar.animate().translationY(-mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
-
+            mSearchStore.setBackgroundColor(Color.WHITE);
         } else if (scrollState == ScrollState.DOWN) {
             mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
+            mSearchStore.setBackgroundColor(Color.WHITE);
         }
+    }
+
+    private void hideProgressBar() {
+        mProgressBar.setVisibility(View.GONE);
+        mProgressBar.getIndeterminateDrawable().setColorFilter(null);
+    }
+
+    private void showProgressBar() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
     }
 }
