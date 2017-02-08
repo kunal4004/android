@@ -106,7 +106,8 @@ public class WOnboardingActivity extends FragmentActivity implements WOnboarding
                 case 3:
                     fragment = new WOnboardingFourFragment();
                     break;
-                default:break;
+                default:
+                    break;
             }
 
             return fragment;
@@ -128,30 +129,31 @@ public class WOnboardingActivity extends FragmentActivity implements WOnboarding
 
             switch (position) {
                 case 0:
-                    ((ImageView)findViewById(R.id.dotimg0)).setImageDrawable(pageControlActive);
-                    ((ImageView)findViewById(R.id.dotimg1)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg2)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg3)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg0)).setImageDrawable(pageControlActive);
+                    ((ImageView) findViewById(R.id.dotimg1)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg2)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg3)).setImageDrawable(pageControlInactive);
                     break;
                 case 1:
-                    ((ImageView)findViewById(R.id.dotimg0)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg1)).setImageDrawable(pageControlActive);
-                    ((ImageView)findViewById(R.id.dotimg2)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg3)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg0)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg1)).setImageDrawable(pageControlActive);
+                    ((ImageView) findViewById(R.id.dotimg2)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg3)).setImageDrawable(pageControlInactive);
                     break;
                 case 2:
-                    ((ImageView)findViewById(R.id.dotimg0)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg1)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg2)).setImageDrawable(pageControlActive);
-                    ((ImageView)findViewById(R.id.dotimg3)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg0)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg1)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg2)).setImageDrawable(pageControlActive);
+                    ((ImageView) findViewById(R.id.dotimg3)).setImageDrawable(pageControlInactive);
                     break;
                 case 3:
-                    ((ImageView)findViewById(R.id.dotimg0)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg1)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg2)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg3)).setImageDrawable(pageControlActive);
+                    ((ImageView) findViewById(R.id.dotimg0)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg1)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg2)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg3)).setImageDrawable(pageControlActive);
                     break;
-                default:break;
+                default:
+                    break;
             }
         }
 
@@ -170,12 +172,12 @@ public class WOnboardingActivity extends FragmentActivity implements WOnboarding
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()){
+        if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             this.navigateToMain();
         }
     }
 
-    private void navigateToMain(){
+    private void navigateToMain() {
         startActivity(new Intent(WOnboardingActivity.this, WOneAppBaseActivity.class));
         finish();
     }

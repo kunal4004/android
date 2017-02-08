@@ -60,6 +60,7 @@ public class WProgressDialogFragment extends DialogFragment {
         }
 
         ProgressBar mProgressBar = (ProgressBar) view.findViewById(R.id.mWoolworthsProgressBar);
+        mProgressBar.getIndeterminateDrawable().setColorFilter(null);
         mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
     }
 }

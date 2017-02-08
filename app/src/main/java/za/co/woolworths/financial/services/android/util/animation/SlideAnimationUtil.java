@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.util;
+package za.co.woolworths.financial.services.android.util.animation;
 
 import android.content.Context;
 import android.view.View;
@@ -59,6 +59,18 @@ public class SlideAnimationUtil {
         view.startAnimation(AnimationUtils.loadAnimation(
                 context, animationId
         ));
+    }
+
+    public void SlideUP(View view,Context context)
+    {
+        view.startAnimation(AnimationUtils.loadAnimation(context,
+                R.anim.anim_side_down));
+    }
+
+    public void SlideDown(View view,Context context)
+    {
+        view.startAnimation(AnimationUtils.loadAnimation(context,
+                R.anim.anim_slide_up));
     }
 
 }

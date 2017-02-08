@@ -182,7 +182,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                 protected void onPostExecute(OfferActive offerActive) {
                     super.onPostExecute(offerActive);
                     int httpCode = offerActive.httpCode;
-                    Log.e("isOfferActive-store",String.valueOf(isOfferActive));
+                    Log.e("isOfferActive-store", String.valueOf(isOfferActive));
                     String httpDesc = offerActive.response.desc;
                     if (httpCode == 200) {
                         isOfferActive = offerActive.offerActive;

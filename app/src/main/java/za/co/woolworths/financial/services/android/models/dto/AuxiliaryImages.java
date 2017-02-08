@@ -9,11 +9,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class AuxiliaryImages {
 
-    @SerializedName("colour_BACK")
     @Expose
     public ColourBACK colourBACK;
     @SerializedName("colour_SIDE")
     @Expose
     public ColourSIDE colourSIDE;
-
 }
