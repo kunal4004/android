@@ -242,7 +242,9 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
     @Override
     public void onSelectedProduct(View v, int position) {
-        getProductDetail(mProduct.get(position).productId, mProduct.get(position).otherSkus.get(0).sku);
+        try {
+            getProductDetail(mProduct.get(position).productId, mProduct.get(position).otherSkus.get(0).sku);
+        }catch (Exception ex){}
 
     }
 
