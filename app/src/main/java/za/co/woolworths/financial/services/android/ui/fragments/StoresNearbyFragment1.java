@@ -267,75 +267,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         return v;
     }
 
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e("RequestSETTINGRESULT", String.valueOf(requestCode));
-        switch (requestCode) {
-            // Check for the integer request code originally supplied to startResolutionForResult().
-            case REQUEST_CHECK_SETTINGS:
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        // startLocationUpdates();
-                        searchForCurrentLocation();
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        settingsRequest();//keep asking if imp or do whatever
-                        break;
-                }
-                break;
-        }
-    }
-
-    public void settingsRequest() {
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(30 * 1000);
-        locationRequest.setFastestInterval(5 * 1000);
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest);
-        builder.setAlwaysShow(true); //this is the key ingredient
-        PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(LocationSettingsResult result) {
-                status = result.getStatus();
-                final LocationSettingsStates state = result.getLocationSettingsStates();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        // All location settings are satisfied. The client can initialize location
-                        // requests here.
-                        if (Utils.getLastSavedLocation(getActivity()) != null) {
-                            Location location = Utils.getLastSavedLocation(getActivity());
-                            updateMyCurrentLocationOnMap(location);
-                        }
-                        searchForCurrentLocation();
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        // Location settings are not satisfied. But could be fixed by showing the user
-                        // a dialog.
-                        if (Utils.getLastSavedLocation(getActivity()) == null) {
-                            checkLocationServiceAndSetLayout(false);
-                            try {
-                                status.startResolutionForResult(getActivity(), REQUEST_CHECK_SETTINGS);
-                            } catch (IntentSender.SendIntentException e) {
-                                ;
-                            }
-
-                        } else {
-                            onLocationChanged(Utils.getLastSavedLocation(getActivity()));
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        // Location settings are not satisfied. However, we have no way to fix the
-                        // settings so we won't show the dialog.
-                        break;
-                }
-            }
-        });
-    }
-
     public void initMap() {
         if (googleMap == null) {
             mapFragment = (SupportMapFragment) this.getChildFragmentManager().findFragmentById(R.id.map);
@@ -351,17 +282,25 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         googleMap = map;
         //If permission is not granted, request permission.
         if (hasPermissions()) {
+              /*
+             *This process of setting adapter to googleMap is related to making
+             *selected marker come in front of unselected marker.
+             */
+            googleMap.setInfoWindowAdapter(new MapWindowAdapter(getContext()));
+
             googleMap.setMyLocationEnabled(false);
             googleMap.setOnMarkerClickListener(this);
             unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
             selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
         } else {
-            requestPerms();
-            /*
+              /*
              *This process of setting adapter to googleMap is related to making
              *selected marker come in front of unselected marker.
              */
             googleMap.setInfoWindowAdapter(new MapWindowAdapter(getContext()));
+
+            requestPerms();
+
         }
     }
 
@@ -620,6 +559,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             initMap();
             googleMap.setMyLocationEnabled(false);
             googleMap.setOnMarkerClickListener(this);
+
         } else {
             // we will give warning to user that they haven't granted permissions.
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -692,7 +632,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         }
     }
 
-    public void settingsrequest() {
+    public void settingsRequest() {
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(30 * 1000);
@@ -738,6 +678,25 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 }
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("RequestSETTINGRESULT", String.valueOf(requestCode));
+        switch (requestCode) {
+            // Check for the integer request code originally supplied to startResolutionForResult().
+            case REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        // startLocationUpdates();
+                        searchForCurrentLocation();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        settingsRequest();//keep asking if imp or do whatever
+                        break;
+                }
+                break;
+        }
     }
 
     public void searchForCurrentLocation() {
@@ -851,4 +810,3 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 
 }
-

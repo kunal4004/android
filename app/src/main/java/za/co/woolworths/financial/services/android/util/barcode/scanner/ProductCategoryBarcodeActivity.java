@@ -33,6 +33,8 @@ import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +42,10 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Product;
 import za.co.woolworths.financial.services.android.models.dto.Product_;
+import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ProductDetailViewActivity;
 import za.co.woolworths.financial.services.android.util.Const;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -103,9 +108,10 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             protected IViewFinder createViewFinderView(Context context) {
                 ViewFinderView finderView = new ViewFinderView(context);
                 finderView.setLaserColor(Color.TRANSPARENT);
-                finderView.setMaskColor(ContextCompat.getColor(ProductCategoryBarcodeActivity.this, R.color.black_desc_opacity));
+                finderView.setMaskColor(ContextCompat.getColor(ProductCategoryBarcodeActivity.this,
+                        R.color.black_desc_opacity));
                 finderView.setBorderColor(Color.WHITE);
-                finderView.setBorderStrokeWidth(6);
+                finderView.setBorderStrokeWidth(4);
                 return finderView;
             }
         };
@@ -138,7 +144,8 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         }
 
         getProductRequest(rawResult.getContents());
-        Toast.makeText(this, rawResult.getContents(), Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, rawResult.getContents(), Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
@@ -185,7 +192,6 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     }
 
     public void getProductRequest(final String query) {
-        showProgressBar();
         new HttpAsyncTask<String, String, Product>() {
             @Override
             protected Product httpDoInBackground(String... params) {
@@ -198,6 +204,19 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             @Override
             protected Product httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 hideProgressBar();
+                try {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mScannerView.setResultHandler(mContext);
+                            mScannerView.startCamera(mCameraId);
+                            mScannerView.setFlash(mFlash);
+                            mScannerView.setAutoFocus(mAutoFocus);
+                        }
+                    }, 50);
+                } catch (Exception ignored) {
+                }
                 errorScanCode();
                 return new Product();
             }
@@ -208,17 +227,18 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
                 ArrayList<Product_> mProduct = product.products;
                 if (mProduct != null) {
                     if (mProduct.size() > 0) {
-
+                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
                     } else {
+                        hideProgressBar();
                         errorScanCode();
                     }
                 }
-                hideProgressBar();
             }
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+                showProgressBar();
             }
 
             @Override
@@ -329,7 +349,9 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         try {
             FusedLocationSingleton.getInstance().stopLocationUpdates();
             // unregister observer
-            LocalBroadcastManager.getInstance(ProductCategoryBarcodeActivity.this).unregisterReceiver(mLocationUpdated);
+            LocalBroadcastManager
+                    .getInstance(ProductCategoryBarcodeActivity.this)
+                    .unregisterReceiver(mLocationUpdated);
         } catch (NullPointerException ignored) {
         }
     }
@@ -362,5 +384,50 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
                         }, 500);
                     }
                 });
+    }
+
+    private void getProductDetail(final String productId, final String skuId) {
+        new HttpAsyncTask<String, String, WProduct>() {
+            @Override
+            protected WProduct httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getApplication()).getApi().getProductDetailView(productId, skuId);
+            }
+
+            @Override
+            protected WProduct httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                hideProgressBar();
+                return new WProduct();
+            }
+
+            @Override
+            protected Class<WProduct> httpDoInBackgroundReturnType() {
+                return WProduct.class;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(WProduct product) {
+                super.onPostExecute(product);
+                WProductDetail productList = product.product;
+                ArrayList<WProductDetail> mProductList = new ArrayList<>();
+                if (productList != null) {
+                    mProductList.add(productList);
+                }
+                if (productList != null) {
+                    GsonBuilder builder = new GsonBuilder();
+                    Gson gson = builder.create();
+                    Intent openDetailView = new Intent(mContext, ProductDetailViewActivity.class);
+                    openDetailView.putExtra("product_name", mProductList.get(0).productName);
+                    openDetailView.putExtra("product_detail", gson.toJson(mProductList));
+                    startActivity(openDetailView);
+                    overridePendingTransition(0, 0);
+                }
+                hideProgressBar();
+            }
+        }.execute();
     }
 }

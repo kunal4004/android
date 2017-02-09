@@ -77,12 +77,6 @@ public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQ
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        //  overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         dismissProgress();
@@ -164,7 +158,7 @@ public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQ
                 openFAQDetail.putExtra("Answer", faqDetail.answer);
                 startActivity(openFAQDetail);
             }
-        }, 300);
+        }, 50);
     }
 
     @Override
