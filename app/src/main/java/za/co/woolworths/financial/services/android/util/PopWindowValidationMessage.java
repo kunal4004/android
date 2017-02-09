@@ -305,15 +305,18 @@ public class PopWindowValidationMessage {
     }
 
     private void popupWindowSetting(View view) {
-        hideStatusBar((Activity) mContext);
-        mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
-        mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
-        mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
-        mDarkenScreen.setOutsideTouchable(true);
-        mDarkenScreen.setFocusable(true);
-        mDarkenScreen.setAnimationStyle(R.style.Animations_popup);
-        mRelPopContainer = (RelativeLayout) view.findViewById(R.id.relPopContainer);
-        mRelRootContainer = (RelativeLayout) view.findViewById(R.id.relContainerRootMessage);
+        try {
+            hideStatusBar((Activity) mContext);
+            mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
+            mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
+            mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
+            mDarkenScreen.setOutsideTouchable(true);
+            mDarkenScreen.setFocusable(true);
+            mDarkenScreen.setAnimationStyle(R.style.Animations_popup);
+            mRelPopContainer = (RelativeLayout) view.findViewById(R.id.relPopContainer);
+            mRelRootContainer = (RelativeLayout) view.findViewById(R.id.relContainerRootMessage);
+        } catch (Exception ignored) {
+        }
     }
 
     private void startExitAnimation(final OVERLAY_TYPE type) {
@@ -400,5 +403,5 @@ public class PopWindowValidationMessage {
         window.addFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-     }
+    }
 }

@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
@@ -10,7 +11,7 @@ public class ProductView {
 
     @SerializedName("products")
     @Expose
-    public List<ProductList> products = null;
+    public ArrayList<ProductList> products = null;
     @SerializedName("response")
     @Expose
     public Response response;

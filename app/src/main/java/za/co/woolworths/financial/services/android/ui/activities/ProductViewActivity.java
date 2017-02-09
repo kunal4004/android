@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,17 +36,10 @@ import com.awfs.coordination.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import retrofit.RestAdapter;
-import retrofit.client.OkClient;
-import za.co.wigroup.androidutils.Util;
-import za.co.woolworths.financial.services.android.models.ApiInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
@@ -57,7 +51,6 @@ import za.co.woolworths.financial.services.android.ui.views.WObservableScrollVie
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Const;
-import za.co.woolworths.financial.services.android.util.DynamicJsonConverter;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
@@ -91,6 +84,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     private ProgressBar mProgressVBar;
     private FragmentManager fm;
     private WProgressDialogFragment mGetProgressDialog;
+    private String searchItem = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +95,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         initUI();
         actionBar();
         bundle();
-        productConfig();
         if (hasPermissions()) {
             startLocationUpdate();
         } else {
@@ -111,10 +104,19 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         mGetProgressDialog = WProgressDialogFragment.newInstance("v");
         mGetProgressDialog.setCancelable(false);
         hideProgressBar();
-        loadProduct();
+        Bundle extras = getIntent().getExtras();
+        searchItem = extras.getString("searchProduct");
+        if (TextUtils.isEmpty(searchItem)) {
+            productConfig(productName);
+            searchItem = "";
+            loadProduct();
+        } else {
+            productConfig(searchItem);
+            searchProduct();
+        }
     }
 
-    private void productConfig() {
+    private void productConfig(String productName) {
         mLocation = new LatLng(0, 0);
         mToolBarTitle.setText(productName);
 
@@ -244,7 +246,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     public void onSelectedProduct(View v, int position) {
         try {
             getProductDetail(mProduct.get(position).productId, mProduct.get(position).otherSkus.get(0).sku);
-        }catch (Exception ex){}
+        } catch (Exception ex) {
+        }
 
     }
 
@@ -347,6 +350,57 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 mIsLastPage = false;
                 return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(mLocation, false,
                         mCurrentPage, PAGE_SIZE, productId);
+            }
+
+            @Override
+            protected Class<ProductView> httpDoInBackgroundReturnType() {
+                return ProductView.class;
+            }
+
+            @Override
+            protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                ProductView productResponse = new ProductView();
+                productResponse.response = new Response();
+                hideVProgressBar();
+                return productResponse;
+            }
+
+            @Override
+            protected void onPostExecute(ProductView pv) {
+                super.onPostExecute(pv);
+                mProduct = null;
+                mProduct = new ArrayList<>();
+                if (pv.products != null && pv.products.size() != 0) {
+                    mProduct = pv.products;
+                    mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
+                    bindDataWithUI(mProduct);
+                    mIsLastPage = false;
+                    mCurrentPage = 1;
+                    mIsLoading = false;
+                }
+                hideVProgressBar();
+            }
+        }.execute();
+    }
+
+
+    public void searchProduct() {
+
+        new HttpAsyncTask<String, String, ProductView>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                showVProgressBar();
+            }
+
+            @Override
+            protected ProductView httpDoInBackground(String... params) {
+                mCurrentPage = 1;
+                mIsLastPage = false;
+
+                return ((WoolworthsApplication) getApplication()).getApi()
+                        .getProductSearchList(searchItem,
+                                mLocation, false, mCurrentPage, PAGE_SIZE);
             }
 
             @Override
@@ -521,4 +575,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         super.onBackPressed();
         overridePendingTransitionExit();
     }
+
+
 }

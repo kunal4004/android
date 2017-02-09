@@ -5,10 +5,12 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -29,25 +31,31 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.ProductFragmentPager;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.ProductViewPagerFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.ui.views.WViewPager;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.awfs.coordination.R.id.imNewImage;
@@ -75,7 +83,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private SimpleDraweeView mImSelectedColor;
     private ImageView mColorArrow;
     private WTextView mTextProductSize;
-    private WViewPager mViewPagerProduct;
+    private ViewPager mViewPagerProduct;
     private SimpleDraweeView mImProductView;
     private ImageView mImCloseProduct;
     private RelativeLayout mLinColor;
@@ -86,15 +94,57 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private SimpleDraweeView mVitalityView;
     private WButton mBtnShopOnlineWoolies;
     private String mCheckOutLink;
+    private ArrayList<String> mAuxiliaryImages;
+    private int mAuxiliaryImageSize = 0;
+    private ProductFragmentPager mProductFragmentPager;
+    private String mProductJSON;
+    private RelativeLayout mRelViewPager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.updateStatusBarBackground(ProductDetailViewActivity.this,R.color.black);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.product_view_detail);
         mContext = this;
+        SessionDao sessionDao;
+        try {
+            sessionDao = new SessionDao(ProductDetailViewActivity.this, SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
+            mProductJSON = sessionDao.value;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         initUI();
         bundle();
+    }
+
+    private void retrieveJson(String colour) {
+        JSONObject jsProduct;
+        try {
+            // Instantiate a JSON object from the request response
+            jsProduct = new JSONObject(mProductJSON);
+            mAuxiliaryImages = new ArrayList<>();
+            String mProduct = jsProduct.getString("product");
+            JSONObject jsProductList = new JSONObject(mProduct);
+            String auxiliaryImages = jsProductList.getString("auxiliaryImages");
+            JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
+            Iterator<String> keysIterator = jsAuxiliaryImages.keys();
+            while (keysIterator.hasNext()) {
+                String keyStr = keysIterator.next();
+                if (keyStr.toLowerCase().contains(colour.toLowerCase())) {
+                    String valueStr = jsAuxiliaryImages.getString(keyStr);
+                    JSONObject jsonObject = new JSONObject(valueStr);
+                    mAuxiliaryImages.add(jsonObject.getString("imagePath"));
+                }
+            }
+            mAuxiliaryImageSize = mAuxiliaryImages.size();
+            mProductFragmentPager = new ProductFragmentPager(getSupportFragmentManager());
+            mProductFragmentPager = addFragment(mAuxiliaryImages);
+            mViewPagerProduct.setAdapter(mProductFragmentPager);
+        } catch (Exception e) {
+            Log.e("sessionDao", e.toString());
+        }
+
     }
 
     private void bundle() {
@@ -126,8 +176,9 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
         mDescription = (WTextView) findViewById(R.id.description);
         mTextTitle = (WTextView) findViewById(R.id.textTitle);
-        mViewPagerProduct = (WViewPager) findViewById(R.id.mProductDetailPager);
+        mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
         mTextPrice = (WTextView) findViewById(R.id.textPrice);
+        mRelViewPager = (RelativeLayout) findViewById(R.id.relViewPager);
         mCategoryName = (WTextView) findViewById(R.id.textType);
         mTextSelectColor = (WTextView) findViewById(R.id.textSelectColour);
         mProductCode = (WTextView) findViewById(R.id.product_code);
@@ -223,6 +274,17 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 if (mPColourWindow.isShowing()) {
                     mPColourWindow.dismiss();
                 }
+                String colour = uniqueColorList.get(position).colour;
+                if (TextUtils.isEmpty(colour)) {
+                    colour = "";
+                }
+//                retrieveJson(colour);
+//                if (mAuxiliaryImageSize > 0) {
+//                    mImProductView.setVisibility(View.GONE);
+//                    mRelViewPager.setVisibility(View.VISIBLE);
+//                } else {
+                mImProductView.setVisibility(View.VISIBLE);
+                mRelViewPager.setVisibility(View.GONE);
                 String selectedProductList = uniqueColorList.get(position).externalColourRef;
                 String mImagePath = otherSkusList.get(0).imagePath;
                 if (!TextUtils.isEmpty(selectedProductList)) {
@@ -481,6 +543,13 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             }
             index++;
         }
+    }
+
+    private ProductFragmentPager addFragment(ArrayList<String> mAuxiliaryImages) {
+        for (String url : mAuxiliaryImages) {
+            mProductFragmentPager.addFragment(new ProductViewPagerFragment().newInstance(url), url);
+        }
+        return mProductFragmentPager;
     }
 }
 

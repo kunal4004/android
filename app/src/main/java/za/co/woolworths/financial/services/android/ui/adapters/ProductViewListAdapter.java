@@ -198,6 +198,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
                         .setImageRequest(request)
                         .build();
 
+
                 simpleDraweeView.setController(controller);
                 simpleDraweeView.setImageURI(uri);
                 return true;

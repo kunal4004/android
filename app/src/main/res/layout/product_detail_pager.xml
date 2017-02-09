@@ -8,19 +8,35 @@
     android:background="@color/viewpager_bg"
     android:orientation="vertical">
 
-    <za.co.woolworths.financial.services.android.ui.views.WViewPager
-        android:id="@+id/mProductDetailPager"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:fitsSystemWindows="true"
-        android:nestedScrollingEnabled="false"
-        app:layout_collapseMode="pin" />
+        android:id="@+id/relViewPager"
+        android:visibility="gone"
+        android:layout_height="wrap_content">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/mProductDetailPager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+        <LinearLayout
+            android:id="@+id/pager_dots"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:background="@android:color/transparent"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"></LinearLayout>
+
+    </RelativeLayout>
+
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/imProductView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="400dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:src="@drawable/rectangle"

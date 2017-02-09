@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.util;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -14,28 +15,31 @@ import retrofit.converter.ConversionException;
 import retrofit.converter.Converter;
 import retrofit.mime.TypedInput;
 import retrofit.mime.TypedOutput;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 
 public class DynamicJsonConverter implements Converter {
+
+    private Context mContext;
+
+    public DynamicJsonConverter(Context mContext) {
+        this.mContext = mContext;
+    }
 
     @Override
     public Object fromBody(TypedInput typedInput, Type type) throws ConversionException {
         try {
             InputStream in = typedInput.in(); // convert the typedInput to String
             String string = fromStream(in);
-            Log.e("JSONTYPSTRING---", string);
             in.close(); // we are responsible to close the InputStream after use
 
             if (String.class.equals(type)) {
-               // return string;
+                return string;
             } else {
-                String result = new Gson().fromJson(string, type);
-                Log.e("JSONTYPE---", result);
-                //return new Gson().fromJson(string, type); // convert to the supplied type, typically Object, JsonObject or Map<String, Object>
+                return new Gson().fromJson(string, type); // convert to the supplied type, typically Object, JsonObject or Map<String, Object>
             }
         } catch (Exception e) { // a lot may happen here, whatever happens
             throw new ConversionException(e); // wrap it into ConversionException so retrofit can process it
         }
-        return null;
     }
 
     @Override
@@ -51,6 +55,21 @@ public class DynamicJsonConverter implements Converter {
             out.append(line);
             out.append("\r\n");
         }
+        // save json value
+        try {
+            SessionDao sessionDao = new SessionDao(mContext);
+            sessionDao.key = SessionDao.KEY.STORES_LATEST_PAYLOAD;
+            sessionDao.value = out.toString();
+            try {
+                sessionDao.save();
+            } catch (Exception e) {
+                Log.e("TAG", e.getMessage());
+            }
+        } catch (Exception e) {
+            Log.e("exception", String.valueOf(e));
+        }
+
+        System.out.println(out.toString());
         return out.toString();
     }
 }
