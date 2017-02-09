@@ -38,8 +38,8 @@ android {
         minSdkVersion 19 //kitkat 4.4
         targetSdkVersion 24
         multiDexEnabled true
-        versionCode 28
-        versionName '4.7.28'
+        versionCode 29
+        versionName '4.7.29'
     }
 
     compileSdkVersion 23
