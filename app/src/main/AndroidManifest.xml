@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.awfs.coordination">
+    package="com.awfs.coordination"
+    android:versionCode="28"
+    android:versionName="4.7.28">
 
     <permission
         android:name="com.awfs.coordination.permission.MAPS_RECEIVE"

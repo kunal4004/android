@@ -8,7 +8,7 @@ android {
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
-        job = "4";
+        job = "5";
     }
 
     def buildNumber = major + "." + minor + "." + fix
@@ -38,8 +38,8 @@ android {
         minSdkVersion 19 //kitkat 4.4
         targetSdkVersion 24
         multiDexEnabled true
-        versionCode(job.toInteger() + 1)
-        versionName buildNumber
+        versionCode 28
+        versionName '4.7.28'
     }
 
     compileSdkVersion 23
