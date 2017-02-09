@@ -361,7 +361,7 @@ public class SSOActivity extends WebViewActivity {
         }
 
         @Override
-        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+        public void onReceivedSslError(WebView view, final SslErrorHandler handler, SslError error) {
             //super.onReceivedSslError(view, handler, error);
             hideProgressBar();
             handler.proceed();
