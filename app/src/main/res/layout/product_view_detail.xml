@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relProductContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/product_detail_pager" />
+
+            <include
+                layout="@layout/line"
+                android:layout_width="match_parent"
+                android:layout_height="0.4dp"
+                android:layout_marginBottom="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginStart="0dp"
+                android:visibility="visible" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/textType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="@dimen/default_margin"
+                android:layout_marginStart="@dimen/default_margin"
+                android:layout_marginTop="24dp"
+                android:ellipsize="end"
+                android:gravity="top|start"
+                android:letterSpacing="0.1"
+                android:text="new arrivals"
+                android:textAllCaps="true"
+                android:textColor="@color/black_desc_opacity"
+                android:textSize="12sp"
+                app:WTextView_font="medium" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/textTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/default_margin"
+                android:layout_marginEnd="@dimen/default_margin"
+                android:layout_marginStart="@dimen/default_margin"
+                android:gravity="top|start"
+                android:letterSpacing="-0.05"
+                android:text="Navy Blue Polka Dot Cotton Shirt"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                app:WTextView_font="medium_bold" />
+
+            <include layout="@layout/line" />
+
+            <RelativeLayout
+                android:id="@+id/relPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:orientation="vertical">
+
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/textPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginEnd="@dimen/default_margin"
+                        android:layout_marginStart="@dimen/default_margin"
+                        android:gravity="top|start"
+                        android:letterSpacing="-0.05"
+                        android:text="FROM: R 399.00"
+                        android:textAllCaps="true"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        app:WTextView_font="medium_bold" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/textPromo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginBottom="@dimen/default_margin"
+                        android:layout_marginEnd="@dimen/default_margin"
+                        android:layout_marginStart="@dimen/default_margin"
+                        android:gravity="top|start"
+                        android:letterSpacing="0.1"
+                        android:text="FROM: R 399.00"
+                        android:textAllCaps="true"
+                        android:textColor="@color/red"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        app:WTextView_font="medium" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="@dimen/default_margin"
+                    android:orientation="horizontal">
+
+                    <com.facebook.drawee.view.SimpleDraweeView
+                        android:id="@+id/imNewImage"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_marginLeft="8dp"
+                        fresco:fadeDuration="10"
+                        fresco:viewAspectRatio="1.33" />
+
+                    <com.facebook.drawee.view.SimpleDraweeView
+                        android:id="@+id/imSave"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_marginLeft="8dp"
+                        fresco:fadeDuration="10"
+                        fresco:viewAspectRatio="1.33" />
+
+                    <com.facebook.drawee.view.SimpleDraweeView
+                        android:id="@+id/imReward"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_marginLeft="8dp"
+                        fresco:fadeDuration="10"
+                        fresco:viewAspectRatio="1.33" />
+
+                    <com.facebook.drawee.view.SimpleDraweeView
+                        android:id="@+id/imVitality"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_marginLeft="8dp"
+                        fresco:fadeDuration="10"
+                        fresco:viewAspectRatio="1.33" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <include
+                layout="@layout/line"
+                android:layout_width="match_parent"
+                android:layout_height="0.4dp"
+                android:layout_marginBottom="0dp"
+                android:layout_marginLeft="@dimen/default_margin"
+                android:layout_marginRight="@dimen/default_margin" />
+
+            <include layout="@layout/test" />
+
+
+            <include layout="@layout/line" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:id="@+id/btnShopOnlineWoolies"
+                style="@style/blackButtonStyle"
+                android:layout_marginBottom="@dimen/default_margin"
+                android:layout_marginEnd="@dimen/default_margin"
+                android:layout_marginStart="@dimen/default_margin"
+                android:text="@string/shop_online_woolies" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:id="@+id/btnAddShoppingList"
+                style="@style/whiteWButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/default_margin"
+                android:layout_marginStart="@dimen/default_margin"
+                android:text="@string/add_to_shopping_list" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/default_margin"
+                android:layout_marginStart="@dimen/default_margin"
+                android:layout_marginTop="24dp"
+                android:letterSpacing="0"
+                android:lineSpacingExtra="1.4dp"
+                android:text="@string/product_description"
+                android:textColor="@color/black_desc_opacity"
+                android:textSize="15sp"
+                app:WTextView_font="myriadpro_regular" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/product_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="?attr/actionBarSize"
+                android:layout_marginEnd="@dimen/default_margin"
+                android:layout_marginStart="@dimen/default_margin"
+                android:layout_marginTop="24dp"
+                android:gravity="start|top"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                app:WTextView_font="myriadpro_regular" />
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
+        <ImageView
+            android:id="@+id/imCloseProduct"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="@dimen/default_margin"
+            android:layout_marginTop="@dimen/default_margin"
+            android:src="@drawable/closecircle" />
+    </RelativeLayout>
+</RelativeLayout>

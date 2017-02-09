@@ -22,12 +22,12 @@ import za.co.woolworths.financial.services.android.models.dao.ApiResponseDao;
  * Created by eesajacobs on 2016/12/29.
  */
 
-public class WfsApiInterceptor implements Interceptor{
+public class WfsApiInterceptor implements Interceptor {
     public static final String TAG = "WfsApiInterceptor";
     private final Context mContext;
     private final Gson gson;
 
-    public WfsApiInterceptor(Context mContext){
+    public WfsApiInterceptor(Context mContext) {
         this.mContext = mContext;
         this.gson = new GsonBuilder().create();
     }
@@ -45,7 +45,7 @@ public class WfsApiInterceptor implements Interceptor{
         String cacheTimeHeaderValue = request.header("cacheTime");
         final long cacheTime = Integer.parseInt(cacheTimeHeaderValue == null ? "0" : cacheTimeHeaderValue);//cache time in seconds
 
-        if(cacheTime == 0){
+        if (cacheTime == 0) {
             return chain.proceed(request);
         }
 
@@ -55,7 +55,7 @@ public class WfsApiInterceptor implements Interceptor{
 
         ApiRequestDao apiRequestDao = new ApiRequestDao(mContext, cacheTime).get(request.method(), endpoint, headers, parametersJson);
         ApiResponseDao apiResponseDao = new ApiResponseDao(this.mContext).getByApiRequestId(apiRequestDao.id);
-        if(apiResponseDao.id != null){  //cache exists. return cached response
+        if (apiResponseDao.id != null) {  //cache exists. return cached response
 
             return new Response.Builder()
                     .code(apiResponseDao.code)
@@ -81,11 +81,9 @@ public class WfsApiInterceptor implements Interceptor{
 
         //save the newly created apiResponseDao
         apiResponseDao.save();
-
-
         long t2 = System.nanoTime();
 
-        String responseLog = String.format("Received response for %s in %.1fms%n%s", response.request().url(), (t2 - t1) / 1e6d, apiResponseDao.headers);
+        String responseLog = String.format("Received response for %s in %.1fms%n%s", apiResponseDao.body + response.request().url(), (t2 - t1) / 1e6d, apiResponseDao.headers);
 
         return response.newBuilder()
                 .body(ResponseBody.create(MediaType.parse(apiResponseDao.contentType), apiResponseDao.body))

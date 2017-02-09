@@ -131,17 +131,17 @@ public class ViewFinderView extends View implements IViewFinder {
 
     public void drawViewFinderBorder(Canvas canvas) {
         Rect framingRect = getFramingRect();
-        canvas.drawLine(framingRect.left - 40, framingRect.top - 40, framingRect.left - 40, framingRect.top - 40 + mBorderLineLength, mBorderPaint);
-        canvas.drawLine(framingRect.left - 40, framingRect.top - 40, framingRect.left - 40 + mBorderLineLength, framingRect.top - 40, mBorderPaint);
+        canvas.drawLine(framingRect.left - 30, framingRect.top - 30, framingRect.left - 30, framingRect.top - 30 + mBorderLineLength, mBorderPaint);
+        canvas.drawLine(framingRect.left - 30, framingRect.top - 30, framingRect.left - 30 + mBorderLineLength, framingRect.top - 30, mBorderPaint);
 
-        canvas.drawLine(framingRect.left - 40, framingRect.bottom + 40, framingRect.left - 40, framingRect.bottom + 40 - mBorderLineLength, mBorderPaint);
-        canvas.drawLine(framingRect.left - 40, framingRect.bottom + 40, framingRect.left - 40 + mBorderLineLength, framingRect.bottom + 40, mBorderPaint);
+        canvas.drawLine(framingRect.left - 30, framingRect.bottom + 30, framingRect.left - 30, framingRect.bottom + 30 - mBorderLineLength, mBorderPaint);
+        canvas.drawLine(framingRect.left - 30, framingRect.bottom + 30, framingRect.left - 30 + mBorderLineLength, framingRect.bottom + 30, mBorderPaint);
 
-        canvas.drawLine(framingRect.right + 40, framingRect.top - 40, framingRect.right + 40, framingRect.top - 40 + mBorderLineLength, mBorderPaint);
-        canvas.drawLine(framingRect.right + 40, framingRect.top - 40, framingRect.right + 40 - mBorderLineLength, framingRect.top - 40, mBorderPaint);
+        canvas.drawLine(framingRect.right + 30, framingRect.top - 30, framingRect.right + 30, framingRect.top - 30 + mBorderLineLength, mBorderPaint);
+        canvas.drawLine(framingRect.right + 30, framingRect.top - 30, framingRect.right + 30 - mBorderLineLength, framingRect.top - 30, mBorderPaint);
 
-        canvas.drawLine(framingRect.right + 40, framingRect.bottom + 40, framingRect.right + 40, framingRect.bottom + 40 - mBorderLineLength, mBorderPaint);
-        canvas.drawLine(framingRect.right + 40, framingRect.bottom + 40, framingRect.right + 40 - mBorderLineLength, framingRect.bottom + 40, mBorderPaint);
+        canvas.drawLine(framingRect.right + 30, framingRect.bottom + 30, framingRect.right + 30, framingRect.bottom + 30 - mBorderLineLength, mBorderPaint);
+        canvas.drawLine(framingRect.right + 30, framingRect.bottom + 30, framingRect.right + 30 - mBorderLineLength, framingRect.bottom + 30, mBorderPaint);
     }
 
     private int cntr = 0;
@@ -154,19 +154,19 @@ public class ViewFinderView extends View implements IViewFinder {
         scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
         int middle = mFramingRect.height() / 2 + mFramingRect.top;
         middle = middle + cntr;
-        if ((cntr < 60) && (goingup == false)) {
+        if ((cntr < 50) && (goingup == false)) {
             canvas.drawRect(mFramingRect.left + 2, middle - 1, mFramingRect.right - 1, middle + 2, mLaserPaint);
             cntr = cntr + 4;
         }
 
-        if ((cntr >= 60) && (goingup == false)) goingup = true;
+        if ((cntr >= 50) && (goingup == false)) goingup = true;
 
-        if ((cntr > -60) && (goingup == true)) {
+        if ((cntr > -50) && (goingup == true)) {
             canvas.drawRect(mFramingRect.left + 2, middle - 1, mFramingRect.right - 1, middle + 2, mLaserPaint);
             cntr = cntr - 4;
         }
 
-        if ((cntr <= -60) && (goingup == true)) goingup = false;
+        if ((cntr <= -50) && (goingup == true)) goingup = false;
 
         postInvalidateDelayed(ANIMATION_DELAY,
                 mFramingRect.left - POINT_SIZE,

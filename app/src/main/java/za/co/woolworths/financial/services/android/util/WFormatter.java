@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.text.TextUtils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -26,6 +28,25 @@ public class WFormatter {
         }
         return String.format("R%s.%02d", stringBuilder.reverse().toString(), amount % 100);
     }
+
+
+    public static String formatAmount(double amount) {
+        String sAmount = roundDouble(amount);
+        double mAmount = Double.valueOf(sAmount);
+        int mIntAmount = (int) (mAmount * 100);
+        String[] split = String.valueOf((mIntAmount / 100)).split("");
+        StringBuilder stringBuilder = new StringBuilder();
+        int counter = 0;
+        for (int i = split.length - 1; i > 0; i--) {
+            if (counter != 0 && counter % 3 == 0) {
+                stringBuilder.append(" ");
+            }
+            stringBuilder.append(split[i]);
+            counter++;
+        }
+        return String.format("R %s.%02d", stringBuilder.reverse().toString(), mIntAmount % 100);
+    }
+
     public static String formatAmountNoDecimal(int amount) {
 
         return String.format("R%d", amount / 100);
@@ -56,6 +77,7 @@ public class WFormatter {
         DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         return new SimpleDateFormat("dd/MM/yyyy").format(m_ISO8601Local.parse(validFromDate));
     }
+
     public static String formatDateTOddMMMMYYYY(String validFromDate) throws ParseException {
         if (validFromDate == null) {
             return "N/A";
@@ -64,27 +86,23 @@ public class WFormatter {
         return new SimpleDateFormat("dd MMMM yyyy").format(m_ISO8601Local.parse(validFromDate));
     }
 
-    public  static String formatMessagingDate(Date validDate) throws  ParseException
-    {
+    public static String formatMessagingDate(Date validDate) throws ParseException {
         DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy/MM/dd");
-        Date today=new Date();
-        long diff=0;
-        try{
-            today=m_ISO8601Local.parse(m_ISO8601Local.format(today));
+        Date today = new Date();
+        long diff = 0;
+        try {
+            today = m_ISO8601Local.parse(m_ISO8601Local.format(today));
 
-            diff=(today.getTime()-m_ISO8601Local.parse(m_ISO8601Local.format(validDate)).getTime())/(86400000);
-        }catch (Exception e){}
-
-          diff=Math.abs(diff);
-        String days="Today";
-        if(diff==1)
-        {
-            days="Yesterday";
+            diff = (today.getTime() - m_ISO8601Local.parse(m_ISO8601Local.format(validDate)).getTime()) / (86400000);
+        } catch (Exception e) {
         }
-        else
-        if(diff>1)
-        {
-            days=new SimpleDateFormat("dd MMM").format(validDate);
+
+        diff = Math.abs(diff);
+        String days = "Today";
+        if (diff == 1) {
+            days = "Yesterday";
+        } else if (diff > 1) {
+            days = new SimpleDateFormat("dd MMM").format(validDate);
         }
 
         return days;
@@ -93,25 +111,27 @@ public class WFormatter {
 
     }
 
-    public static String formatMeter(double meter)
-    {
-        double km=meter*.001;
-        String metertToKm=String.valueOf(new DecimalFormat("##.#").format(km));
-     return  metertToKm;
+    public static String formatMeter(double meter) {
+        double km = meter * .001;
+        String metertToKm = String.valueOf(new DecimalFormat("##.#").format(km));
+        return metertToKm;
     }
 
-    public static String formatOfferingString(List<StoreOfferings> offerings)
-    {
+    public static String formatOfferingString(List<StoreOfferings> offerings) {
 
-       String offeringString= TextUtils.join(" \u2022 ",offerings);
-       return offeringString;
+        String offeringString = TextUtils.join(" \u2022 ", offerings);
+        return offeringString;
     }
 
-    public static String formatOpenUntilTime(String openTime)
-    {
-        String[] splitTime=openTime.split("-");
-        String resultTime=splitTime[1].trim();
+    public static String formatOpenUntilTime(String openTime) {
+        String[] splitTime = openTime.split("-");
+        String resultTime = splitTime[1].trim();
         return resultTime;
+    }
+
+    public static String roundDouble(double value) {
+        DecimalFormat myFormatter = new DecimalFormat("00.00");
+        return myFormatter.format(value);
     }
 
 }

@@ -104,4 +104,6 @@
         <attr name="scale_factor" format="float"/>
         <attr name="disable_hw_acceleration" format="boolean"/>
     </declare-styleable>
+
+
 </resources>

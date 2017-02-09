@@ -57,28 +57,25 @@ public class ApiRequestDao extends BaseDao {
             Log.e(TAG, e.getMessage());
         }
 
-        for(Map.Entry<String, String> entry: result.entrySet()){
+        for (Map.Entry<String, String> entry : result.entrySet()) {
 
-            if(entry.getKey().equals("id")){
+            if (entry.getKey().equals("id")) {
                 this.id = entry.getValue();
-            }
-            else if(entry.getKey().equals("endpoint")){
+            } else if (entry.getKey().equals("endpoint")) {
                 this.endpoint = entry.getValue();
-            }
-            else if(entry.getKey().equals("headers")){
+            } else if (entry.getKey().equals("headers")) {
                 this.headers = entry.getValue();
-            }
-            else if(entry.getKey().equals("parameters")){
+            } else if (entry.getKey().equals("parameters")) {
                 this.parameters = entry.getValue();
             }
         }
         return this;
     }
 
-    public void save(){
+    public void save() {
         //ApiRequest will never be updated, only new records will be inserted.
         try {
-             this.dateExpires = PersistenceLayer.getInstance(mContext).executeReturnableQuery("SELECT DATETIME(datetime(), '+"+ this.cacheTime +" seconds') as cacheTime",
+            this.dateExpires = PersistenceLayer.getInstance(mContext).executeReturnableQuery("SELECT DATETIME(datetime(), '+" + this.cacheTime + " seconds') as cacheTime",
                     new String[]{}).get("cacheTime");
 
             Log.d(TAG, dateExpires);
@@ -91,7 +88,7 @@ public class ApiRequestDao extends BaseDao {
             arguments.put("dateExpires", this.dateExpires);
 
             long rowid = PersistenceLayer.getInstance(mContext).executeInsertQuery(getTableName(), arguments);
-            this.id =  "" + rowid;
+            this.id = "" + rowid;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
