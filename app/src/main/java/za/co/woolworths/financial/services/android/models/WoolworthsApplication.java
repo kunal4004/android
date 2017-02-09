@@ -10,11 +10,19 @@ import android.support.multidex.MultiDex;
 
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
+import com.facebook.common.logging.FLog;
+import com.facebook.drawee.backends.pipeline.DraweeConfig;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.facebook.imagepipeline.listener.RequestListener;
+import com.facebook.imagepipeline.listener.RequestLoggingListener;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONObject;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.wigroup.androidutils.Util;
@@ -179,8 +187,16 @@ public class WoolworthsApplication extends Application {
 
     @Override
     public void onCreate() {
-        Fresco.initialize(this);
         super.onCreate();
+        FLog.setMinimumLoggingLevel(FLog.VERBOSE);
+        Set<RequestListener> listeners = new HashSet<>();
+        listeners.add(new RequestLoggingListener());
+        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
+                .setRequestListeners(listeners)
+                .build();
+        DraweeConfig draweeConfig = DraweeConfig.newBuilder()
+                .build();
+        Fresco.initialize(this, config, draweeConfig);
         updateBankDetail = new UpdateBankDetail();
         WoolworthsApplication.context = this.getApplicationContext();
         // set app context

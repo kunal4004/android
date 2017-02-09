@@ -45,5 +45,7 @@
     <dimen name="image_final_width">32dp</dimen>
     <dimen name="spacing_normal">16dp</dimen>
     <dimen name="product_search_top_margin">105dp</dimen>
+    <dimen name="barcode_margin">16dp</dimen>
+
 </resources>
 

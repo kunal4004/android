@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Product;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
@@ -42,6 +43,7 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionHistory
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.models.dto.WProduct;
 
 public interface ApiInterface {
 
@@ -378,7 +380,7 @@ public interface ApiInterface {
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json","cacheTime:900"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:1000"})
     @GET("/categories")
     RootCategories getRootCategories(
             @Header("osVersion") String osVersion,
@@ -389,6 +391,25 @@ public interface ApiInterface {
             @Header("network") String network,
             @Header("deviceVersion") String deviceVersion,
             @Header("apiKey") String userAgent);
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @GET("/categories/{cat}/products")
+    ProductView getProduct(
+            @Header("osVersion") String osVersion,
+            @Header("deviceModel") String deviceModel,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("os") String os,
+            @Header("network") String network,
+            @Header("apiId") String apiId,
+            @Header("userAgent") String userAgent,
+            @Header("userAgentVersion") String userAgentVersion,
+            @Header("sha1Password") String sha1Password,
+            @Header("logitude") double longitude,
+            @Header("latitude") double latitude,
+            @Header("isBarCode") boolean isBarcode,
+            @Query("pageOffset") int pageOffset,
+            @Query("pageSize") int pageSize,
+            @Path("cat") String category);
 
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @GET("/categories/{cat}")
@@ -434,5 +455,20 @@ public interface ApiInterface {
             @Header("osVersion") String osVersion,
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion);
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @GET("/products/{productId}")
+    WProduct getProductDetail(
+            @Header("osVersion") String osVersion,
+            @Header("deviceModel") String deviceModel,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("os") String os,
+            @Header("network") String network,
+            @Header("apiId") String apiId,
+            @Header("userAgent") String userAgent,
+            @Header("userAgentVersion") String userAgentVersion,
+            @Header("sha1Password") String sha1Password,
+            @Path("productId") String productId,
+            @Query("sku") String sku);
 
 }

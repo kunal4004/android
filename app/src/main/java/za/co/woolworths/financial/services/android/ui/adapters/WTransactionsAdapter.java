@@ -87,10 +87,11 @@ public class WTransactionsAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
-    public String removeNegativeSymbol(SpannableString amount){
+    public String formatNegativeAmounts(SpannableString amount){
         String currentAmount = amount.toString();
         if(currentAmount.contains("-")){
-            currentAmount = currentAmount.replace("-","")+" CR";
+            currentAmount = currentAmount.replace("-","");
+            currentAmount = currentAmount.replace("R", "R-");
         }
         return currentAmount;
     }
@@ -106,18 +107,28 @@ public class WTransactionsAdapter extends BaseExpandableListAdapter {
         WTextView transactionDate=(WTextView)convertView.findViewById(R.id.transactionDate);
         WTextView transactionAmount=(WTextView)convertView.findViewById(R.id.transactionAmount);
         WTextView transactionDescription=(WTextView)convertView.findViewById(R.id.transactionDescription);
-        //Display date in the format DD/MM/YYYY
-        SimpleDateFormat dateFormat= new SimpleDateFormat("dd/MM/yyyy");
+
+        //Setting Date to the format dd/MM/yyyy
+        String actualDate = transaction.date;
+        String oldFormat = "yyyy-MM-dd";
+        String newFormat = "dd / MM / yyyy";
+
+        String formatedDate = "";
+        SimpleDateFormat dateFormat = new SimpleDateFormat(oldFormat);
+        Date myDate = null;
         try {
-            Date formattedDate = dateFormat.parse(transaction.date);
-            transactionDate.setText(formattedDate.toString());
+            myDate = dateFormat.parse(actualDate);
         }catch (Exception e) {
             e.printStackTrace();
         }
+        SimpleDateFormat timeFormat = new SimpleDateFormat(newFormat);
+        formatedDate = timeFormat.format(myDate);
+        transactionDate.setText(formatedDate);
+
         //convert amount to int
         int amount = Math.round(transaction.amount);
         //remove negative sign from negative amount
-        String newAmount = removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(amount * 100), 1, mContext));
+        String newAmount = formatNegativeAmounts(FontHyperTextParser.getSpannable(WFormatter.formatAmount(amount), 1, mContext));
         transactionAmount.setText(newAmount);
         transactionDescription.setText(transaction.description);
 
