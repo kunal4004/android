@@ -5,12 +5,10 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.awfs.coordination.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.squareup.okhttp.OkHttpClient;
 
 
-import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 
 import java.util.concurrent.TimeUnit;
@@ -71,6 +69,7 @@ public class WfsApi {
                 .setClient(new OkClient(client))
                 .setEndpoint(WoolworthsApplication.getBaseURL())
                 .setLogLevel(Util.isDebug(mContext) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
+                .setConverter(new DynamicJsonConverter(mContext))
                 .build()
                 .create(ApiInterface.class);
 

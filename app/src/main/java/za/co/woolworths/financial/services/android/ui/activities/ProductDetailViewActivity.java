@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -29,11 +30,14 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.ProductFragmentPager;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.ProductViewPagerFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WViewPager;
@@ -45,9 +49,12 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.awfs.coordination.R.id.imNewImage;
@@ -86,6 +93,10 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private SimpleDraweeView mVitalityView;
     private WButton mBtnShopOnlineWoolies;
     private String mCheckOutLink;
+    private ArrayList<String> mAuxiliaryImages;
+    private int mAuxiliaryImageSize = 0;
+    private ProductFragmentPager mProductFragmentPager;
+    private String mProductJSON;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,8 +104,45 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.product_view_detail);
         mContext = this;
+        SessionDao sessionDao = null;
+        try {
+            sessionDao = new SessionDao(ProductDetailViewActivity.this, SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
+            mProductJSON = sessionDao.value;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         initUI();
         bundle();
+
+    }
+
+    private void retrieveJson(String colour) {
+        JSONObject jsProduct;
+        try {
+            // Instantiate a JSON object from the request response
+            jsProduct = new JSONObject(mProductJSON);
+            mAuxiliaryImages = new ArrayList<>();
+            String mProduct = jsProduct.getString("product");
+            JSONObject jsProductList = new JSONObject(mProduct);
+            String auxiliaryImages = jsProductList.getString("auxiliaryImages");
+            JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
+            Iterator<String> keysIterator = jsAuxiliaryImages.keys();
+            while (keysIterator.hasNext()) {
+                String keyStr = keysIterator.next();
+                if (keyStr.toLowerCase().contains(colour.toLowerCase())) {
+                    String valueStr = jsAuxiliaryImages.getString(keyStr);
+                    JSONObject jsonObject = new JSONObject(valueStr);
+                    mAuxiliaryImages.add(jsonObject.getString("imagePath"));
+                }
+            }
+            mAuxiliaryImageSize = mAuxiliaryImages.size();
+            mProductFragmentPager = new ProductFragmentPager(getSupportFragmentManager());
+            mProductFragmentPager = addFragment(mAuxiliaryImages);
+            mViewPagerProduct.setAdapter(mProductFragmentPager);
+        } catch (Exception e) {
+            Log.e("sessionDao", e.toString());
+        }
+
     }
 
     private void bundle() {
@@ -223,27 +271,27 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 if (mPColourWindow.isShowing()) {
                     mPColourWindow.dismiss();
                 }
-                String selectedProductList = uniqueColorList.get(position).externalColourRef;
-                String mImagePath = otherSkusList.get(0).imagePath;
-                if (!TextUtils.isEmpty(selectedProductList)) {
-                    mImSelectedColor.setVisibility(View.VISIBLE);
-                    ImageRequest request = ImageRequest.fromUri(Uri.parse(selectedProductList));
-                    DraweeController controller = Fresco.newDraweeControllerBuilder()
-                            .setImageRequest(request)
-                            .setAutoPlayAnimations(true)
-                            .setOldController(mImSelectedColor.getController()).build();
-                    mImSelectedColor.setController(controller);
-                    if (!TextUtils.isEmpty(mImagePath)) {
-                        ImageRequest mRequest = ImageRequest.fromUri(Uri.parse(mImagePath));
-                        DraweeController mController = Fresco.newDraweeControllerBuilder()
-                                .setImageRequest(mRequest)
-                                .setAutoPlayAnimations(true)
-                                .setOldController(mImProductView.getController()).build();
-                        mImProductView.setController(mController);
-                    }
+                String colour = uniqueColorList.get(position).colour;
+                if (TextUtils.isEmpty(colour)) {
+                    colour = "";
+                }
+                retrieveJson(colour);
+                if (mAuxiliaryImageSize > 0) {
+                    mImProductView.setVisibility(View.GONE);
+                    mViewPagerProduct.setVisibility(View.VISIBLE);
                 } else {
-                    try {
-                        mImSelectedColor.setVisibility(View.GONE);
+                    mImProductView.setVisibility(View.VISIBLE);
+                    mViewPagerProduct.setVisibility(View.GONE);
+                    String selectedProductList = uniqueColorList.get(position).externalColourRef;
+                    String mImagePath = otherSkusList.get(0).imagePath;
+                    if (!TextUtils.isEmpty(selectedProductList)) {
+                        mImSelectedColor.setVisibility(View.VISIBLE);
+                        ImageRequest request = ImageRequest.fromUri(Uri.parse(selectedProductList));
+                        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                                .setImageRequest(request)
+                                .setAutoPlayAnimations(true)
+                                .setOldController(mImSelectedColor.getController()).build();
+                        mImSelectedColor.setController(controller);
                         if (!TextUtils.isEmpty(mImagePath)) {
                             ImageRequest mRequest = ImageRequest.fromUri(Uri.parse(mImagePath));
                             DraweeController mController = Fresco.newDraweeControllerBuilder()
@@ -252,7 +300,19 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                                     .setOldController(mImProductView.getController()).build();
                             mImProductView.setController(mController);
                         }
-                    } catch (Exception ignored) {
+                    } else {
+                        try {
+                            mImSelectedColor.setVisibility(View.GONE);
+                            if (!TextUtils.isEmpty(mImagePath)) {
+                                ImageRequest mRequest = ImageRequest.fromUri(Uri.parse(mImagePath));
+                                DraweeController mController = Fresco.newDraweeControllerBuilder()
+                                        .setImageRequest(mRequest)
+                                        .setAutoPlayAnimations(true)
+                                        .setOldController(mImProductView.getController()).build();
+                                mImProductView.setController(mController);
+                            }
+                        } catch (Exception ignored) {
+                        }
                     }
                 }
             }
@@ -481,6 +541,13 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             }
             index++;
         }
+    }
+
+    private ProductFragmentPager addFragment(ArrayList<String> mAuxiliaryImages) {
+        for (String url : mAuxiliaryImages) {
+            mProductFragmentPager.addFragment(new ProductViewPagerFragment(), url);
+        }
+        return mProductFragmentPager;
     }
 }
 
