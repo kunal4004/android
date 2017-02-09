@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -364,7 +366,22 @@ public class SSOActivity extends WebViewActivity {
         public void onReceivedSslError(WebView view, final SslErrorHandler handler, SslError error) {
             //super.onReceivedSslError(view, handler, error);
             hideProgressBar();
-            handler.proceed();
+            final AlertDialog.Builder builder = new AlertDialog.Builder(SSOActivity.this);
+            builder.setMessage(R.string.ssl_error);
+            builder.setPositiveButton("continue", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    handler.proceed();
+                }
+            });
+            builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    handler.cancel();
+                }
+            });
+            final AlertDialog dialog = builder.create();
+            dialog.show();
         }
     };
 
