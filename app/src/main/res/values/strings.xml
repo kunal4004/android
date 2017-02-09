@@ -482,4 +482,5 @@
     <string name="confirm">Confirm</string>
     <string name="no_tire_history_to_display">NO TIRE HISTORY TO DISPLAY</string>
     <string name="no_vouchers">NO VOUCHERS</string>
+    <string name="ssl_error">SSL certificate invalid</string>
 </resources>
