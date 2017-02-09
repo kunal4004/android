@@ -40,8 +40,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.Product;
-import za.co.woolworths.financial.services.android.models.dto.Product_;
+import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
@@ -192,9 +192,9 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     }
 
     public void getProductRequest(final String query) {
-        new HttpAsyncTask<String, String, Product>() {
+        new HttpAsyncTask<String, String, ProductView>() {
             @Override
-            protected Product httpDoInBackground(String... params) {
+            protected ProductView httpDoInBackground(String... params) {
                 LatLng location1 = new LatLng(mLocation.latitude, mLocation.longitude);
                 return ((WoolworthsApplication) getApplication()).getApi()
                         .getProductSearchList(query,
@@ -202,7 +202,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             }
 
             @Override
-            protected Product httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+            protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 hideProgressBar();
                 try {
                     Handler handler = new Handler();
@@ -218,13 +218,13 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
                 } catch (Exception ignored) {
                 }
                 errorScanCode();
-                return new Product();
+                return new ProductView();
             }
 
             @Override
-            protected void onPostExecute(Product product) {
+            protected void onPostExecute(ProductView product) {
                 super.onPostExecute(product);
-                ArrayList<Product_> mProduct = product.products;
+                ArrayList<ProductList> mProduct = product.products;
                 if (mProduct != null) {
                     if (mProduct.size() > 0) {
                         getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
@@ -242,8 +242,8 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             }
 
             @Override
-            protected Class<Product> httpDoInBackgroundReturnType() {
-                return Product.class;
+            protected Class<ProductView> httpDoInBackgroundReturnType() {
+                return ProductView.class;
             }
         }.execute();
     }

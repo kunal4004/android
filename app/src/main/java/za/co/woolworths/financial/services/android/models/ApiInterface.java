@@ -426,7 +426,7 @@ public interface ApiInterface {
 
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @GET("/search")
-    Product getProductSearch(
+    ProductView getProductSearch(
             @Header("osVersion") String osVersion,
             @Header("deviceModel") String deviceModel,
             @Header("deviceVersion") String deviceVersion,

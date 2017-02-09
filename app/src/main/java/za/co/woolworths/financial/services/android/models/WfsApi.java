@@ -177,7 +177,7 @@ public class WfsApi {
         return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), 18.5046653, -33.8877679, isBarcode, pageSize, pageNumber, product_id);
     }
 
-    public Product getProductSearchList(String search_item, LatLng loc, boolean isBarcode, int pageSize, int pageNumber) {
+    public ProductView getProductSearchList(String search_item, LatLng loc, boolean isBarcode, int pageSize, int pageNumber) {
         return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.longitude, loc.latitude, isBarcode, search_item, pageSize, pageNumber);
     }
 
