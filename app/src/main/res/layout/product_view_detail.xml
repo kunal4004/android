@@ -17,7 +17,28 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <include layout="@layout/product_detail_pager" />
+            <RelativeLayout
+                android:id="@+id/relViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="400dp">
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/mProductDetailPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp" />
+
+
+                <LinearLayout
+                    android:id="@+id/pager_dots"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="10dp"
+                    android:background="@android:color/transparent"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"></LinearLayout>
+
+            </RelativeLayout>
 
             <include
                 layout="@layout/line"
@@ -114,6 +135,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_marginRight="@dimen/default_margin"
+                    android:gravity="right"
                     android:orientation="horizontal">
 
                     <com.facebook.drawee.view.SimpleDraweeView
@@ -153,6 +175,7 @@
             </RelativeLayout>
 
             <include
+                android:id="@+id/colorView"
                 layout="@layout/line"
                 android:layout_width="match_parent"
                 android:layout_height="0.4dp"

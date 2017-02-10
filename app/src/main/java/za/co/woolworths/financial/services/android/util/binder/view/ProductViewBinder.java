@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util.binder.view;
 
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,7 @@ public class ProductViewBinder extends DataBinder<ProductViewBinder.ViewHolder> 
             String productName = productItem.productName;
             double price = productItem.fromPrice;
             String imagePath = productItem.imagePath;
+            Log.e("mPrice",String.valueOf(price));
             holder.productName.setText(productName);
             holder.mTextAmount.setText(holder.mTextAmount.getContext().getString(R.string.product_from) + " : "
                     + WFormatter.formatAmount(price));
