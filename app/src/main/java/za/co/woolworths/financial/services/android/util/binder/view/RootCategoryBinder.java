@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.util.binder.view;
 
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,16 +7,14 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.awfs.coordination.R;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.request.ImageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.binder.DataBindAdapter;
 import za.co.woolworths.financial.services.android.util.binder.DataBinder;
 
@@ -51,15 +48,8 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
         String imageUrl = rootCategory.imgUrl;
 
         if (imageUrl != null) {
-            Uri imageUri = Uri.parse(imageUrl);
-            ImageRequest request = ImageRequest.fromUri(imageUri);
-            DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setImageRequest(request)
-                    .setOldController(holder.mImageProductCategory.getController()).build();
-            //holder.mImageProductCategory.getHierarchy().setPlaceholderImage(ContextCompat
-            //     .getDrawable(holder.mImageProductCategory.getContext(),R.drawable.barcode_img),
-            //      ScalingUtils.ScaleType.FIT_XY);
-            holder.mImageProductCategory.setController(controller);
+            DrawImage drawImage = new DrawImage(holder.mTextProduct.getContext());
+            drawImage.placeholderSetupImage(holder.mImageProductCategory,imageUrl);
         }
 
         holder.mFrameRootCategory.setOnClickListener(new View.OnClickListener() {

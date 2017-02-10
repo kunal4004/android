@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -305,6 +307,7 @@ public class PopWindowValidationMessage {
     }
 
     private void popupWindowSetting(View view) {
+        view.bringToFront();
         hideStatusBar((Activity) mContext);
         mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
         mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
@@ -400,5 +403,13 @@ public class PopWindowValidationMessage {
         window.addFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-     }
+        Utils.updateStatusBarBackground(activity);
+        View decor = activity.getWindow().getDecorView();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            decor.setSystemUiVisibility(0);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
+    }
 }

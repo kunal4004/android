@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.multidex.MultiDex;
 
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
+import com.facebook.cache.disk.DiskCacheConfig;
 import com.facebook.common.logging.FLog;
 import com.facebook.drawee.backends.pipeline.DraweeConfig;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -21,6 +23,7 @@ import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -188,15 +191,19 @@ public class WoolworthsApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         FLog.setMinimumLoggingLevel(FLog.VERBOSE);
-        Set<RequestListener> listeners = new HashSet<>();
-        listeners.add(new RequestLoggingListener());
-        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
-                .setRequestListeners(listeners)
+        //Fresco.initialize(this);
+        DiskCacheConfig diskCacheConfig = DiskCacheConfig.newBuilder(this)
+                .setBaseDirectoryPath(new File(Environment.getExternalStorageDirectory().getAbsoluteFile(), "Moe Studio"))
+                .setBaseDirectoryName("fresco_sample")
+                .setMaxCacheSize(200 * 1024 * 1024)//200MB
                 .build();
-        DraweeConfig draweeConfig = DraweeConfig.newBuilder()
+        ImagePipelineConfig imagePipelineConfig = ImagePipelineConfig.newBuilder(this)
+                .setMainDiskCacheConfig(diskCacheConfig)
                 .build();
-        Fresco.initialize(this, config, draweeConfig);
+        Fresco.initialize(this, imagePipelineConfig);
+
         updateBankDetail = new UpdateBankDetail();
         WoolworthsApplication.context = this.getApplicationContext();
         // set app context

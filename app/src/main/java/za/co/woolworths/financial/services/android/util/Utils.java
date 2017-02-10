@@ -78,6 +78,7 @@ public class Utils {
     public static final String SILVER_CARD = "400154";
     public static final String GOLD_CARD = "410374";
     public static final String BLACK_CARD = "410375";
+    public static final int ACCOUNTS_PROGRESS_BAR_MAX_VALUE=10000;
 
     public static void saveLastLocation(Location loc, Context mContext) {
 

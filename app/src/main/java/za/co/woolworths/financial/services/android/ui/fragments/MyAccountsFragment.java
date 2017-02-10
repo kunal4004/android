@@ -245,7 +245,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 applyStoreCardView.setVisibility(View.GONE);
 
                 sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                scProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
+                scProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds,account.creditLimit));
 
             } else if (account.productGroupCode.equals("CC")) {
                 linkedCreditCardView.setVisibility(View.VISIBLE);
@@ -260,14 +260,14 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 }
 
                 cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                ccProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
+                ccProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds,account.creditLimit));
 
             } else if (account.productGroupCode.equals("PL")) {
                 linkedPersonalCardView.setVisibility(View.VISIBLE);
                 applyPersonalCardView.setVisibility(View.GONE);
 
                 pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                plProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
+                plProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds,account.creditLimit));
             }
         }
 
@@ -349,25 +349,31 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
     private void setUiPageViewController() {
 
-        pager_indicator.removeAllViews();
-        dotsCount = adapter.getCount();
-        dots = new ImageView[dotsCount];
+        try {
+            pager_indicator.removeAllViews();
+            dotsCount = adapter.getCount();
+            dots = new ImageView[dotsCount];
 
-        for (int i = 0; i < dotsCount; i++) {
-            dots[i] = new ImageView(getActivity());
-            dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_default));
+            for (int i = 0; i < dotsCount; i++) {
+                dots[i] = new ImageView(getActivity());
+                dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_default));
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
 
-            params.setMargins(10, 0, 10, 0);
+                params.setMargins(10, 0, 10, 0);
 
-            pager_indicator.addView(dots[i], params);
+                pager_indicator.addView(dots[i], params);
+            }
+
+            dots[0].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_selected));
+        } catch (Exception ex) {
+            Log.e("ExceptionExx", ex.toString());
+            //adapter = new MyAccountOverViewPagerAdapter(getActivity());
+
         }
-
-        dots[0].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_selected));
     }
 
     private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
@@ -710,5 +716,15 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
     }
 
+    public int getAvailableFundsPercentage(int availableFund, int creditLimit)
+    {
+        // Progressbar MAX value is 10000 to manage float values
+        int percentage=Math.round((100*((float)availableFund/(float)creditLimit))*100);
+
+        if(percentage<0 || percentage>Utils.ACCOUNTS_PROGRESS_BAR_MAX_VALUE)
+            return Utils.ACCOUNTS_PROGRESS_BAR_MAX_VALUE;
+        else
+            return percentage;
+    }
 
 }

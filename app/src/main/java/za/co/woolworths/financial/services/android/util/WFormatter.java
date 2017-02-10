@@ -32,6 +32,9 @@ public class WFormatter {
 
     public static String formatAmount(double amount) {
         String sAmount = roundDouble(amount);
+        if (sAmount.contains(",")) {
+            sAmount = sAmount.replace(",", ".");
+        }
         double mAmount = Double.valueOf(sAmount);
         int mIntAmount = (int) (mAmount * 100);
         String[] split = String.valueOf((mIntAmount / 100)).split("");

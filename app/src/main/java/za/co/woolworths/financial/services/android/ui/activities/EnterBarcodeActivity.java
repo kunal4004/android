@@ -12,6 +12,7 @@ import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -37,10 +38,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.Product;
-import za.co.woolworths.financial.services.android.models.dto.Product_;
+import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
@@ -61,6 +63,10 @@ public class EnterBarcodeActivity extends AppCompatActivity {
     private WTextView mTextInfo;
     private PopWindowValidationMessage mPopWindowValidationMessage;
     private EnterBarcodeActivity mContext;
+    Handler handler = new Handler();
+
+    private final int DELAY_SOFT_KEYBOARD = 100;
+    private final int DELAY_POPUP = 200;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -70,7 +76,6 @@ public class EnterBarcodeActivity extends AppCompatActivity {
         mContext = this;
         setContentView(R.layout.enter_barcode_activity);
         mPopWindowValidationMessage = new PopWindowValidationMessage(this);
-
         initUI();
         setActionBar();
         if (hasPermissions()) {
@@ -138,10 +143,15 @@ public class EnterBarcodeActivity extends AppCompatActivity {
         imm.showSoftInput(mEditBarcodeNumber, InputMethodManager.SHOW_IMPLICIT);
     }
 
+    private void hideSoftKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mEditBarcodeNumber.getWindowToken(), 0);
+    }
+
     public void getProductRequest(final String query) {
-        new HttpAsyncTask<String, String, Product>() {
+        new HttpAsyncTask<String, String, ProductView>() {
             @Override
-            protected Product httpDoInBackground(String... params) {
+            protected ProductView httpDoInBackground(String... params) {
                 LatLng location1 = new LatLng(mLocation.latitude, mLocation.longitude);
                 return ((WoolworthsApplication) getApplication()).getApi()
                         .getProductSearchList(query,
@@ -149,22 +159,48 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             }
 
             @Override
-            protected Product httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+            protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 hideProgressBar();
-                errorScanCode();
-                return new Product();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Do something after 100ms
+                        hideSoftKeyboard();
+                    }
+                }, DELAY_SOFT_KEYBOARD);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Do something after 100ms
+                        errorScanCode();
+                    }
+                }, DELAY_POPUP);
+                return new ProductView();
             }
 
             @Override
-            protected void onPostExecute(Product product) {
+            protected void onPostExecute(ProductView product) {
                 super.onPostExecute(product);
-                ArrayList<Product_> mProduct = product.products;
+                List<ProductList> mProduct = product.products;
                 if (mProduct != null) {
                     if (mProduct.size() > 0) {
                         getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
                     } else {
                         hideProgressBar();
-                        errorScanCode();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                //Do something after 100ms
+                                hideSoftKeyboard();
+                            }
+                        }, DELAY_SOFT_KEYBOARD);
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                //Do something after 100ms
+                                errorScanCode();
+                            }
+                        }, DELAY_POPUP);
                     }
                 }
             }
@@ -176,8 +212,8 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             }
 
             @Override
-            protected Class<Product> httpDoInBackgroundReturnType() {
-                return Product.class;
+            protected Class<ProductView> httpDoInBackgroundReturnType() {
+                return ProductView.class;
             }
         }.execute();
     }
@@ -308,13 +344,26 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             @Override
             protected WProduct httpDoInBackground(String... params) {
                 return ((WoolworthsApplication) getApplication()).getApi().getProductDetailView(productId, skuId);
-
             }
 
             @Override
             protected WProduct httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 Log.e("errorMessage", String.valueOf(errorMessage) + " " + httpErrorCode);
                 hideProgressBar();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Do something after 100ms
+                        hideSoftKeyboard();
+                    }
+                }, DELAY_SOFT_KEYBOARD);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Do something after 100ms
+                        errorScanCode();
+                    }
+                }, DELAY_POPUP);
                 return new WProduct();
             }
 
@@ -331,6 +380,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(WProduct product) {
                 super.onPostExecute(product);
+                hideProgressBar();
                 WProductDetail productList = product.product;
                 ArrayList<WProductDetail> mProductList = new ArrayList<>();
                 if (productList != null) {
@@ -344,11 +394,23 @@ public class EnterBarcodeActivity extends AppCompatActivity {
                     openDetailView.putExtra("product_detail", gson.toJson(mProductList));
                     startActivity(openDetailView);
                     overridePendingTransition(0, 0);
+                } else {
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Do something after 100ms
+                            hideSoftKeyboard();
+                        }
+                    }, DELAY_SOFT_KEYBOARD);
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Do something after 100ms
+                            errorScanCode();
+                        }
+                    }, DELAY_POPUP);
                 }
-                hideProgressBar();
             }
         }.execute();
     }
-
-
 }

@@ -279,46 +279,6 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         return toolBarHeight;
     }
 
-//    private void hideSearchBar() {
-//        mRelSearchRowLayout.setAlpha(0);
-//        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-//        assert actionBar != null;
-//        actionBar.hide();
-//       actionBar.setElevation(0);
-//        mProductToolbar.setVisibility(View.VISIBLE);
-//        mRelSearchRowLayout.setEnabled(false);
-//        mImProductSearch.setEnabled(false);
-//        mImBarcodeScanner.setEnabled(false);
-//        mTextProductSearch.setEnabled(false);
-//        hideActionBarComponent.onActionBarComponent(false);
-//    }
-//
-//    private void showSearchBar() {
-//        mRelSearchRowLayout.setAlpha(1);
-//        mRelSearchRowLayout.setEnabled(true);
-//        mImProductSearch.setEnabled(true);
-//        mImBarcodeScanner.setEnabled(true);
-//        mTextProductSearch.setEnabled(true);
-//        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-//        assert actionBar != null;
-//        actionBar.show();
-//        actionBar.setElevation(0);
-//        mProductToolbar.setAlpha(0);
-//        mProductToolbar
-//                .animate()
-//                .setDuration(200)
-//                .alpha(1.0f)
-//                .setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationEnd(Animator animation) {
-//                        super.onAnimationEnd(animation);
-//                        mRelSearchRowLayout.animate().setListener(null);
-//                    }
-//                });
-//        //hideActionBarComponent.onActionBarComponent(true);
-//    }
-
-
     public boolean hasPermissions() {
         int res;
         //string array of permissions,
@@ -395,7 +355,6 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                                 .start();
                     }
                 }).start();
-        toolbarIsChanged = true;
     }
 
     private void showViews() {
@@ -414,8 +373,6 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                                 .start();
                     }
                 }).start();
-
-        toolbarIsChanged = false;
     }
 
     private void hideProgress() {
@@ -445,6 +402,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     public void onDestroy() {
         super.onDestroy();
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
-
     }
+
+
 }

@@ -106,9 +106,9 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/toolbarText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="left"
+            android:gravity="center"
             android:letterSpacing="0.06"
             android:textAllCaps="true"
             android:textColor="@color/black"

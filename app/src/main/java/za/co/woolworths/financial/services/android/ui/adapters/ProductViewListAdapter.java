@@ -2,30 +2,22 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 
 import android.app.Activity;
-import android.net.Uri;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
-import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
@@ -133,17 +125,17 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
 
     private void productImage(SimpleViewHolder holder, String imgUrl) {
         if (imgUrl != null) {
-            holder.mSimpleDraweeView.getHierarchy().setPlaceholderImage(ContextCompat
-                            .getDrawable(holder.mSimpleDraweeView.getContext(), R.drawable.rectangle),
-                    ScalingUtils.ScaleType.CENTER_INSIDE);
             try {
-                setupImage(holder.mSimpleDraweeView, imgUrl);
+                DrawImage drawImage = new DrawImage(mContext);
+                drawImage.setupImage(holder.mSimpleDraweeView, imgUrl);
             } catch (IllegalArgumentException ignored) {
             }
         }
     }
 
     private void promoImages(SimpleViewHolder holder, PromotionImages imPromo) {
+
+        DrawImage drawImage = new DrawImage(mContext);
         if (imPromo != null) {
             String wSave = imPromo.save;
             String wReward = imPromo.wRewards;
@@ -152,57 +144,32 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
 
             if (!TextUtils.isEmpty(wSave)) {
                 holder.mImSave.setVisibility(View.VISIBLE);
-                setupImage(holder.mImSave, wSave);
+                drawImage.setupImage(holder.mImSave, wSave);
             } else {
                 holder.mImSave.setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(wReward)) {
                 holder.mImReward.setVisibility(View.VISIBLE);
-                setupImage(holder.mImSave, wReward);
+                drawImage.setupImage(holder.mImSave, wReward);
             } else {
                 holder.mImReward.setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(wVitality)) {
                 holder.mVitalityView.setVisibility(View.VISIBLE);
-                setupImage(holder.mImSave, wVitality);
+                drawImage.setupImage(holder.mImSave, wVitality);
             } else {
                 holder.mVitalityView.setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(wNewImage)) {
                 holder.imNewImage.setVisibility(View.VISIBLE);
-                setupImage(holder.mImSave, wNewImage);
+                drawImage.setupImage(holder.mImSave, wNewImage);
 
             } else {
                 holder.imNewImage.setVisibility(View.GONE);
             }
         }
-    }
-
-    private void setupImage(final SimpleDraweeView simpleDraweeView, final String uri) {
-
-        if (TextUtils.isEmpty(uri))
-            return;
-
-        simpleDraweeView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                simpleDraweeView.getViewTreeObserver().removeOnPreDrawListener(this);
-                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(uri))
-                        //.setResizeOptions(new ResizeOptions(simpleDraweeView.getWidth(), simpleDraweeView.getHeight()))
-                        .build();
-                PipelineDraweeController controller = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()
-                        .setOldController(simpleDraweeView.getController())
-                        .setImageRequest(request)
-                        .build();
-
-                simpleDraweeView.setController(controller);
-                simpleDraweeView.setImageURI(uri);
-                return true;
-
-            }
-        });
     }
 }
