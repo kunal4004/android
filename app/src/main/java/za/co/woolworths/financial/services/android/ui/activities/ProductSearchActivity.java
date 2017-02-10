@@ -36,6 +36,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
@@ -286,6 +287,7 @@ public class ProductSearchActivity extends BaseActivity
             try {
                 Location location = intent.getParcelableExtra(Const.LBM_EVENT_LOCATION_UPDATE);
                 mLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                ((WoolworthsApplication)getApplication()).setLastKnowLatLng(mLocation);
             } catch (NullPointerException e) {
                 mLocation = new LatLng(0, 0);
             }

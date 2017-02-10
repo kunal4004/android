@@ -111,14 +111,10 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             case "clothingProducts":
                 holder.mTextAmount.setText(holder.mTextAmount.getContext().getString(R.string.product_from) + " : "
                         + WFormatter.formatAmount(fromPrice));
-
-                //  holder.mSimpleDraweeView.getLayoutParams().height = 200;
-
                 break;
             default:
                 holder.mTextAmount.setText(
                         WFormatter.formatAmount(fromPrice));
-                // holder.mSimpleDraweeView.getLayoutParams().height = 150;
                 break;
         }
     }

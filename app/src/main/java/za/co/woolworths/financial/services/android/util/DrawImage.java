@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.awfs.coordination.R;
 import com.facebook.common.logging.FLog;
@@ -23,6 +24,9 @@ import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.image.QualityInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class DrawImage {
 
@@ -91,10 +95,12 @@ public class DrawImage {
         simpleDraweeView.setHierarchy(hierarchy);
     }
 
-    public void placeholderSetupImage(final SimpleDraweeView simpleDraweeView, final String uri) {
+    public void placeholderSetupImage(final SimpleDraweeView simpleDraweeView, String uri) {
 
         if (TextUtils.isEmpty(uri))
             return;
+
+        uri = uri.replace(" ", "");
 
         ControllerListener controllerListener = new BaseControllerListener<ImageInfo>() {
             @Override
@@ -142,8 +148,8 @@ public class DrawImage {
 
         GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(mContext.getResources());
         GenericDraweeHierarchy hierarchy = builder
-                .setFailureImage(ContextCompat.getDrawable(mContext, R.drawable.rectangle), ScalingUtils.ScaleType.CENTER)
-                .setRetryImage(ContextCompat.getDrawable(mContext, R.drawable.rectangle), ScalingUtils.ScaleType.CENTER)
+                //.setFailureImage(ContextCompat.getDrawable(mContext, R.drawable.rectangle), ScalingUtils.ScaleType.CENTER)
+                //.setRetryImage(ContextCompat.getDrawable(mContext, R.drawable.rectangle), ScalingUtils.ScaleType.CENTER)
                 //.setProgressBarImage(new ProgressBarDrawable())
                 //.setPlaceholderImage(ContextCompat.getDrawable(mContext, R.drawable.rectangle))
                 .build();

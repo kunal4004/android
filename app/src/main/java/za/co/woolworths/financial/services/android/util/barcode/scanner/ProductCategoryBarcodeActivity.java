@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,7 +18,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -195,7 +195,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     }
 
     public void getProductRequest(final String query) {
-        new HttpAsyncTask<String, String, ProductView>() {
+        AsyncTask<String, String, ProductView> asyncTask = new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected ProductView httpDoInBackground(String... params) {
                 LatLng location1 = new LatLng(mLocation.latitude, mLocation.longitude);
@@ -207,16 +207,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             @Override
             protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 hideProgressBar();
-                try {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            resetCamera();
-                        }
-                    }, 50);
-                } catch (Exception ignored) {
-                }
+                resetCamera();
                 errorScanCode();
                 return new ProductView();
             }
@@ -225,13 +216,26 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             protected void onPostExecute(ProductView product) {
                 super.onPostExecute(product);
                 ArrayList<ProductList> mProduct = product.products;
+
+
                 if (mProduct != null) {
                     if (mProduct.size() > 0) {
                         getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
                     } else {
-                        resetCamera();
                         hideProgressBar();
-                        errorScanCode();
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                resetCamera();
+                            }
+                        }, 100);
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorScanCode();
+                            }
+                        }, 200);
                     }
                 }
             }
@@ -246,7 +250,9 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             protected Class<ProductView> httpDoInBackgroundReturnType() {
                 return ProductView.class;
             }
-        }.execute();
+        };
+
+        asyncTask.execute();
     }
 
 
@@ -262,6 +268,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             try {
                 Location location = intent.getParcelableExtra(Const.LBM_EVENT_LOCATION_UPDATE);
                 mLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                ((WoolworthsApplication) getApplication()).setLastKnowLatLng(mLocation);
             } catch (NullPointerException e) {
                 mLocation = new LatLng(0, 0);
             }

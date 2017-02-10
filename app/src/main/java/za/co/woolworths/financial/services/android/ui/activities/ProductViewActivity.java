@@ -238,6 +238,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             try {
                 Location location = intent.getParcelableExtra(Const.LBM_EVENT_LOCATION_UPDATE);
                 mLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                ((WoolworthsApplication)getApplication()).setLastKnowLatLng(mLocation);
             } catch (NullPointerException e) {
                 mLocation = new LatLng(0, 0);
             }

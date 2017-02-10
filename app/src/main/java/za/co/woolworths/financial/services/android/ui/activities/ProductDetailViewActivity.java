@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,7 +33,6 @@ import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
-import za.co.woolworths.financial.services.android.ui.views.LDObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
@@ -101,7 +99,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         setContentView(R.layout.product_view_detail);
         mContext = this;
         SessionDao sessionDao;
-
 
         try {
             sessionDao = new SessionDao(ProductDetailViewActivity.this, SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
@@ -201,7 +198,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
     private void initUI() {
 
-        mColorView = (View) findViewById(R.id.colorView);
+        mColorView = findViewById(R.id.colorView);
         mTextSelectSize = (WTextView) findViewById(R.id.textSelectSize);
         WTextView mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
         mDescription = (WTextView) findViewById(R.id.description);

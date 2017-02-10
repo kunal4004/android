@@ -20,6 +20,7 @@ import com.facebook.imagepipeline.listener.RequestListener;
 import com.facebook.imagepipeline.listener.RequestLoggingListener;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONObject;
 
@@ -63,6 +64,7 @@ public class WoolworthsApplication extends Application {
     private boolean isDEABank = false;
     private boolean isOther = false;
     private int productOfferingId;
+    private LatLng lastKnowLatLng;
 
     private static int NumVouchers = 0;
 
@@ -362,6 +364,14 @@ public class WoolworthsApplication extends Application {
 
     public void setProductOfferingId(int productOfferingId) {
         this.productOfferingId = productOfferingId;
+    }
+
+    public LatLng getLastKnowLatLng() {
+        return lastKnowLatLng;
+    }
+
+    public void setLastKnowLatLng(LatLng lastKnowLatLng) {
+        this.lastKnowLatLng = lastKnowLatLng;
     }
 
     /**
