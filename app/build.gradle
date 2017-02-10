@@ -39,7 +39,7 @@ android {
         targetSdkVersion 24
         multiDexEnabled true
         versionCode 30
-        versionName '4.7.30'
+        versionName '5.0.0'
     }
 
     compileSdkVersion 23
