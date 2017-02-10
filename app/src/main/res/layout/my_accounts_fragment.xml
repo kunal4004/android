@@ -281,7 +281,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:letterSpacing="0.1"
-            android:text="@string/my_accounts"
+            android:text="@string/nav_item_products"
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="12sp"
