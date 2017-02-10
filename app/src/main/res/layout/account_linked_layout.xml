@@ -88,6 +88,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
                     android:layout_gravity="bottom"
+                    android:max="10000"
                     android:progressDrawable="@drawable/progressbar_store_card" />
 
 
@@ -150,6 +151,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
                     android:layout_gravity="bottom"
+                    android:max="10000"
                     android:progressDrawable="@drawable/progressbar_credit_card" />
 
 
@@ -210,6 +212,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
                     android:layout_gravity="bottom"
+                    android:max="10000"
                     android:progressDrawable="@drawable/progressbar_personal_loan" />
 
 
