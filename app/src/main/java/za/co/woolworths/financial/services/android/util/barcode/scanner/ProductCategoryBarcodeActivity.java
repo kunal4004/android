@@ -10,9 +10,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.location.Location;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -127,25 +124,31 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     @Override
     public void onResume() {
         super.onResume();
-        mScannerView.setResultHandler(this);
-        mScannerView.startCamera(mCameraId);
-        mScannerView.setFlash(mFlash);
-        mScannerView.setAutoFocus(mAutoFocus);
+        resetCamera();
+    }
+
+    private void resetCamera() {
+        try {
+            mScannerView.setResultHandler(this);
+            mScannerView.startCamera(mCameraId);
+            mScannerView.setFlash(mFlash);
+            mScannerView.setAutoFocus(mAutoFocus);
+        } catch (NullPointerException ignored) {
+        }
     }
 
     @Override
-    public void handleResult(Result rawResult) {
+    public void handleResult(final Result rawResult) {
         try {
-            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-            r.play();
-        } catch (Exception e) {
-            Log.e("Exception", e.toString());
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    // Code here will run in UI thread
+                    getProductRequest(rawResult.getContents());
+                }
+            });
+        } catch (NullPointerException ignored) {
         }
-
-        getProductRequest(rawResult.getContents());
-        // Toast.makeText(this, rawResult.getContents(), Toast.LENGTH_SHORT).show();
-
     }
 
     @Override
@@ -209,10 +212,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            mScannerView.setResultHandler(mContext);
-                            mScannerView.startCamera(mCameraId);
-                            mScannerView.setFlash(mFlash);
-                            mScannerView.setAutoFocus(mAutoFocus);
+                            resetCamera();
                         }
                     }, 50);
                 } catch (Exception ignored) {
@@ -229,6 +229,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
                     if (mProduct.size() > 0) {
                         getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
                     } else {
+                        resetCamera();
                         hideProgressBar();
                         errorScanCode();
                     }
@@ -367,6 +368,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     }
 
     private void errorScanCode() {
+        resetCamera();
         mPopWindowValidationMessage.displayValidationMessage("",
                 PopWindowValidationMessage.OVERLAY_TYPE.BARCODE_ERROR)
                 .setOnDismissListener(new PopupWindow.OnDismissListener() {
@@ -376,10 +378,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                mScannerView.setResultHandler(mContext);
-                                mScannerView.startCamera(mCameraId);
-                                mScannerView.setFlash(mFlash);
-                                mScannerView.setAutoFocus(mAutoFocus);
+                                resetCamera();
                             }
                         }, 500);
                     }

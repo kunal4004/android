@@ -114,6 +114,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             productConfig(searchItem);
             searchProduct();
         }
+
+        registerReceiver(broadcast_reciever, new IntentFilter("closeProductView"));
     }
 
     private void productConfig(String productName) {
@@ -576,5 +578,17 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         overridePendingTransitionExit();
     }
 
+    BroadcastReceiver broadcast_reciever = new BroadcastReceiver() {
 
+        @Override
+        public void onReceive(Context arg0, Intent intent) {
+            finish();
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcast_reciever);
+    }
 }

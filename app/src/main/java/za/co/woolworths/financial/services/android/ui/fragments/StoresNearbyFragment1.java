@@ -180,8 +180,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         provider = locationManager.getBestProvider(criteria, false);
-        unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
-        selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
+        try {
+            unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
+            selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
+        }catch (NullPointerException ignored){}
         //  locationManager.requestLocationUpdates(provider, 40000, 10, this);
         pager.addOnPageChangeListener(this);
         pager.setOnItemClickListener(new WCustomViewPager.OnItemClickListener() {

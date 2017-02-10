@@ -38,11 +38,10 @@
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:layout_alignEnd="@+id/imColorArrow"
-            android:layout_alignTop="@+id/imColorArrow"
             android:focusableInTouchMode="false"
             android:focusable="false"
+            android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/default_margin"
-            android:src="@drawable/path_3"
             fresco:roundAsCircle="true" />
 
         <ImageView

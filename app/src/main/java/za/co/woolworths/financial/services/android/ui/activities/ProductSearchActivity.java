@@ -16,12 +16,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.awfs.coordination.R;
@@ -75,6 +78,17 @@ public class ProductSearchActivity extends BaseActivity
         } else {
             requestPerms();
         }
+        
+        mEditSearchProduct.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    searchProduct();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void initUI() {
@@ -110,6 +124,7 @@ public class ProductSearchActivity extends BaseActivity
         } catch (NullPointerException ex) {
             Log.e("onPauseFusedLoc", ex.toString());
         }
+
     }
 
     private void startLocationUpdate() {
@@ -141,6 +156,8 @@ public class ProductSearchActivity extends BaseActivity
     private void searchProduct() {
         searchProductBrand = mEditSearchProduct.getText().toString();
         if (searchProductBrand.length() > 2) {
+            Intent intent = new Intent("closeProductView");
+            sendBroadcast(intent);
             SearchHistory search = new SearchHistory();
             search.searchedValue = searchProductBrand;
             saveRecentSearch(search);

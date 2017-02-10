@@ -349,25 +349,31 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
     private void setUiPageViewController() {
 
-        pager_indicator.removeAllViews();
-        dotsCount = adapter.getCount();
-        dots = new ImageView[dotsCount];
+        try {
+            pager_indicator.removeAllViews();
+            dotsCount = adapter.getCount();
+            dots = new ImageView[dotsCount];
 
-        for (int i = 0; i < dotsCount; i++) {
-            dots[i] = new ImageView(getActivity());
-            dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_default));
+            for (int i = 0; i < dotsCount; i++) {
+                dots[i] = new ImageView(getActivity());
+                dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_default));
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
 
-            params.setMargins(10, 0, 10, 0);
+                params.setMargins(10, 0, 10, 0);
 
-            pager_indicator.addView(dots[i], params);
+                pager_indicator.addView(dots[i], params);
+            }
+
+            dots[0].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_selected));
+        } catch (Exception ex) {
+            Log.e("ExceptionExx", ex.toString());
+            //adapter = new MyAccountOverViewPagerAdapter(getActivity());
+
         }
-
-        dots[0].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_selected));
     }
 
     private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
