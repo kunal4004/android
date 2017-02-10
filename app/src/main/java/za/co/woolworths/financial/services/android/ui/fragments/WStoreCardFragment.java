@@ -212,6 +212,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     }
 
     public void disableIncreaseLimit() {
+
         txtIncreseLimit.setEnabled(false);
         txtIncreseLimit.setTextColor(Color.GRAY);
         mImageArrow.setImageAlpha(75);
