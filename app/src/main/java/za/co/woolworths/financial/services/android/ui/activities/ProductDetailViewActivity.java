@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -102,15 +101,14 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mContext = this;
         SessionDao sessionDao;
 
-
         try {
             sessionDao = new SessionDao(ProductDetailViewActivity.this, SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
             mProductJSON = sessionDao.value;
+            initUI();
+            bundle();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        initUI();
-        bundle();
     }
 
     private void retrieveJson(String colour) {

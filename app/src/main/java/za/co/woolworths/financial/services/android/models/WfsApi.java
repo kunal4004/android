@@ -69,11 +69,9 @@ public class WfsApi {
                 .setClient(new OkClient(client))
                 .setEndpoint(WoolworthsApplication.getBaseURL())
                 .setLogLevel(Util.isDebug(mContext) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
-                .setConverter(new DynamicJsonConverter(mContext))
+               // .setConverter(new DynamicJsonConverter(mContext))
                 .build()
                 .create(ApiInterface.class);
-
-
     }
 
     public LoginResponse login(LoginRequest loginRequest) {
