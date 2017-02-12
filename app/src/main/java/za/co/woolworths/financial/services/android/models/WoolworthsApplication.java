@@ -6,27 +6,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.multidex.MultiDex;
 
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
-import com.facebook.cache.disk.DiskCacheConfig;
-import com.facebook.common.logging.FLog;
-import com.facebook.drawee.backends.pipeline.DraweeConfig;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.facebook.imagepipeline.listener.RequestListener;
-import com.facebook.imagepipeline.listener.RequestLoggingListener;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONObject;
-
-import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.wigroup.androidutils.Util;
@@ -194,18 +182,6 @@ public class WoolworthsApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        FLog.setMinimumLoggingLevel(FLog.VERBOSE);
-        //Fresco.initialize(this);
-        DiskCacheConfig diskCacheConfig = DiskCacheConfig.newBuilder(this)
-                .setBaseDirectoryPath(new File(Environment.getExternalStorageDirectory().getAbsoluteFile(), "Moe Studio"))
-                .setBaseDirectoryName("fresco_sample")
-                .setMaxCacheSize(200 * 1024 * 1024)//200MB
-                .build();
-        ImagePipelineConfig imagePipelineConfig = ImagePipelineConfig.newBuilder(this)
-                .setMainDiskCacheConfig(diskCacheConfig)
-                .build();
-        Fresco.initialize(this, imagePipelineConfig);
-
         updateBankDetail = new UpdateBankDetail();
         WoolworthsApplication.context = this.getApplicationContext();
         // set app context
@@ -251,7 +227,6 @@ public class WoolworthsApplication extends Application {
 
 
         });
-        Fresco.initialize(this);
     }
 
     public UserManager getUserManager() {

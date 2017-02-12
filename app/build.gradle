@@ -113,9 +113,8 @@ dependencies {
     compile 'jp.wasabeef:recyclerview-animators:2.0.0'
     compile 'jp.wasabeef:recyclerview-animators:2.2.5'
     compile 'me.dm7.barcodescanner:zxing:1.9'
-    compile 'com.facebook.fresco:fresco:1.0.1'
     compile 'com.klinkerapps:sliding-activity:1.4.4'
-    compile "com.facebook.fresco:imagepipeline-okhttp:1.0.1"
     compile files('libs/zbar.jar')
+    compile 'com.github.bumptech.glide:glide:3.7.0'
 }
 apply plugin: 'com.google.gms.google-services'

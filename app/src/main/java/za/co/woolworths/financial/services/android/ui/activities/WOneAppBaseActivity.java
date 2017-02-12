@@ -30,7 +30,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.WRewardsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.WProductFragments;
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
@@ -146,10 +145,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         return result;
     }
 
-    @Override
-    public void onActionBarComponent(boolean actionbarIsVisible) {
-        Log.e("mmActionBar",String.valueOf(actionbarIsVisible));
-    }
 
     public void hideActionBar(boolean actionbarIsVisible) {
         mToolbar.setVisibility(View.GONE);

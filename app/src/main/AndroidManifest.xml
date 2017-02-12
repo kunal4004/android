@@ -32,6 +32,7 @@
         android:name="za.co.woolworths.financial.services.android.models.WoolworthsApplication"
         android:icon="@drawable/appicon"
         android:label="@string/app_label"
+        android:largeHeap="true"
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.gms.version"
@@ -261,10 +262,9 @@
             android:taskAffinity=""
             android:theme="@style/Theme.Sliding.Light" />
 
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.NormalActivity"
-            android:excludeFromRecents="true"
-            android:taskAffinity=""
-            android:theme="@style/Theme.Sliding.Light" />
+        <meta-data
+            android:name="za.co.woolworths.financial.services.android.util.GlideConfiguration"
+            android:value="GlideModule" />
+
     </application>
 </manifest>

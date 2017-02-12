@@ -40,26 +40,25 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchSubCategoryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductViewActivity;
-import za.co.woolworths.financial.services.android.ui.adapters.PSRootCategoryAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.ProductCategoryAdapter;
 import za.co.woolworths.financial.services.android.ui.views.LDObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
+import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.barcode.scanner.ProductCategoryBarcodeActivity;
 import za.co.woolworths.financial.services.android.util.binder.view.RootCategoryBinder;
 
 public class WProductFragments extends Fragment implements RootCategoryBinder.OnClickListener, View.OnClickListener,
-        AppBarLayout.OnOffsetChangedListener, LDObservableScrollView.LDObservableScrollViewListener {
+        AppBarLayout.OnOffsetChangedListener, LDObservableScrollView.LDObservableScrollViewListener, SelectedProductView {
 
     private WProgressDialogFragment mGetMessageProgressDialog;
     private FragmentManager fm;
     private WTextView mToolbarText;
 
     public interface HideActionBarComponent {
-        void onActionBarComponent(boolean actionbarIsVisible);
-
         void onBurgerButtonPressed();
     }
 
@@ -74,12 +73,9 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     private ConnectionDetector mConnectionDetector;
     public WTextView mTextProductSearch;
     private RecyclerView mRecycleProductSearch;
-    private PSRootCategoryAdapter mPSRootCategoryAdapter;
-    private LinearLayoutManager mLayoutManager;
     private WProductFragments mContext;
     private List<RootCategory> mRootCategories;
     private WTextView mTextTBProductSearch;
-
     private RelativeLayout mRelSearchRowLayout;
     private Toolbar mProductToolbar;
     private LDObservableScrollView mNestedScrollview;
@@ -90,8 +86,13 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        View view = inflater.inflate(R.layout.product_search_fragment, container, false);
+       // getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        return inflater.inflate(R.layout.product_search_fragment, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mContext = this;
         mConnectionDetector = new ConnectionDetector();
         mProductToolbar = (Toolbar) view.findViewById(R.id.productToolbar);
@@ -102,7 +103,6 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         setUIListener();
         showAccountToolbar();
         mNestedScrollview.getParent().requestChildFocus(mNestedScrollview, mNestedScrollview);
-        return view;
     }
 
     @Override
@@ -179,20 +179,8 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                             case 200:
                                 if (rootCategories.rootCategories != null) {
                                     mRootCategories = rootCategories.rootCategories;
-                                    mPSRootCategoryAdapter = new PSRootCategoryAdapter(rootCategories.rootCategories, mContext);
-                                    AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mPSRootCategoryAdapter);
-                                    mRecycleProductSearch.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(2f)));
-                                    mRecycleProductSearch.getItemAnimator().setAddDuration(1500);
-                                    mRecycleProductSearch.getItemAnimator().setRemoveDuration(1500);
-                                    mRecycleProductSearch.getItemAnimator().setMoveDuration(1500);
-                                    mRecycleProductSearch.getItemAnimator().setChangeDuration(1500);
-                                    mRecycleProductSearch.getItemAnimator().setMoveDuration(1500);
-                                    mLayoutManager = new LinearLayoutManager(getActivity());
-                                    mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                                    mRecycleProductSearch.setLayoutManager(mLayoutManager);
-                                    mRecycleProductSearch.setNestedScrollingEnabled(false);
-                                    mRecycleProductSearch.setAdapter(alphaAdapter);
-                                    mPSRootCategoryAdapter.setCLIContent();
+
+                                    bindViewWithUI(mRootCategories);
                                 }
                                 break;
 
@@ -214,21 +202,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
 
     @Override
     public void onClick(View v, int position) {
-        RootCategory rootCategory = mRootCategories.get(position);
-        if (rootCategory.hasChildren) {
-            Intent openSubCategory = new Intent(getActivity(), ProductSearchSubCategoryActivity.class);
-            openSubCategory.putExtra("root_category_id", rootCategory.categoryId);
-            openSubCategory.putExtra("root_category_name", rootCategory.categoryName);
-            openSubCategory.putExtra("catStep", 0);
-            startActivity(openSubCategory);
-            getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-        } else {
-            Intent openProductListIntent = new Intent(getActivity(), ProductViewActivity.class);
-            openProductListIntent.putExtra("sub_category_name", rootCategory.categoryName);
-            openProductListIntent.putExtra("sub_category_id", rootCategory.categoryId);
-            startActivity(openProductListIntent);
-            getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-        }
+
     }
 
     @Override
@@ -255,8 +229,6 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
     }
-
-    boolean toolbarIsChanged = false;
 
     @Override
     public void onScrollChanged(LDObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
@@ -338,7 +310,6 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         }
     }
 
-
     private void hideViews() {
         mProductToolbar.animate()
                 .translationY(-mProductToolbar.getBottom())
@@ -404,5 +375,39 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
 
+    private void bindViewWithUI(List<RootCategory> categories) {
+        ProductCategoryAdapter mCategoryAdapter = new ProductCategoryAdapter(categories, mContext);
+        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mCategoryAdapter);
+        mRecycleProductSearch.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(2f)));
+        mRecycleProductSearch.getItemAnimator().setAddDuration(1500);
+        mRecycleProductSearch.getItemAnimator().setRemoveDuration(1500);
+        mRecycleProductSearch.getItemAnimator().setMoveDuration(1500);
+        mRecycleProductSearch.getItemAnimator().setChangeDuration(1500);
+        mRecycleProductSearch.getItemAnimator().setMoveDuration(1500);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecycleProductSearch.setLayoutManager(mLayoutManager);
+        mRecycleProductSearch.setNestedScrollingEnabled(false);
+        mRecycleProductSearch.setAdapter(alphaAdapter);
+    }
+
+    @Override
+    public void onSelectedProduct(View v, int position) {
+        RootCategory rootCategory = mRootCategories.get(position);
+        if (rootCategory.hasChildren) {
+            Intent openSubCategory = new Intent(getActivity(), ProductSearchSubCategoryActivity.class);
+            openSubCategory.putExtra("root_category_id", rootCategory.categoryId);
+            openSubCategory.putExtra("root_category_name", rootCategory.categoryName);
+            openSubCategory.putExtra("catStep", 0);
+            startActivity(openSubCategory);
+            getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+        } else {
+            Intent openProductListIntent = new Intent(getActivity(), ProductViewActivity.class);
+            openProductListIntent.putExtra("sub_category_name", rootCategory.categoryName);
+            openProductListIntent.putExtra("sub_category_id", rootCategory.categoryId);
+            startActivity(openProductListIntent);
+            getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+        }
+    }
 
 }

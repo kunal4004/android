@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:id="@+id/relProductContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -36,7 +35,7 @@
                     android:layout_marginBottom="10dp"
                     android:background="@android:color/transparent"
                     android:gravity="center_horizontal"
-                    android:orientation="horizontal"></LinearLayout>
+                    android:orientation="horizontal" />
 
             </RelativeLayout>
 
@@ -105,7 +104,7 @@
                         android:layout_marginEnd="@dimen/default_margin"
                         android:layout_marginStart="@dimen/default_margin"
                         android:gravity="top|start"
-                        android:letterSpacing="-0.05"
+                        android:letterSpacing="-0.01"
                         android:text="FROM: R 399.00"
                         android:textAllCaps="true"
                         android:textColor="@color/black"
@@ -138,37 +137,33 @@
                     android:gravity="right"
                     android:orientation="horizontal">
 
-                    <com.facebook.drawee.view.SimpleDraweeView
+                    <ImageView
                         android:id="@+id/imNewImage"
                         android:layout_width="15dp"
+                        android:contentDescription="@string/app_name"
                         android:layout_height="15dp"
-                        android:layout_marginLeft="8dp"
-                        fresco:fadeDuration="10"
-                        fresco:viewAspectRatio="1.33" />
+                        android:layout_marginLeft="8dp" />
 
-                    <com.facebook.drawee.view.SimpleDraweeView
+                    <ImageView
                         android:id="@+id/imSave"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
-                        android:layout_marginLeft="8dp"
-                        fresco:fadeDuration="10"
-                        fresco:viewAspectRatio="1.33" />
+                        android:contentDescription="@string/app_name"
+                        android:layout_marginLeft="8dp" />
 
-                    <com.facebook.drawee.view.SimpleDraweeView
+                    <ImageView
                         android:id="@+id/imReward"
                         android:layout_width="15dp"
+                        android:contentDescription="@string/app_name"
                         android:layout_height="15dp"
-                        android:layout_marginLeft="8dp"
-                        fresco:fadeDuration="10"
-                        fresco:viewAspectRatio="1.33" />
+                        android:layout_marginLeft="8dp" />
 
-                    <com.facebook.drawee.view.SimpleDraweeView
+                    <ImageView
                         android:id="@+id/imVitality"
                         android:layout_width="15dp"
+                        android:contentDescription="@string/app_name"
                         android:layout_height="15dp"
-                        android:layout_marginLeft="8dp"
-                        fresco:fadeDuration="10"
-                        fresco:viewAspectRatio="1.33" />
+                        android:layout_marginLeft="8dp" />
 
                 </LinearLayout>
 
@@ -212,7 +207,6 @@
                 android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginTop="24dp"
-                android:letterSpacing="0"
                 android:lineSpacingExtra="1.4dp"
                 android:text="@string/product_description"
                 android:textColor="@color/black_desc_opacity"
@@ -247,6 +241,7 @@
             android:layout_height="35dp"
             android:layout_marginLeft="@dimen/default_margin"
             android:layout_marginTop="@dimen/default_margin"
-            android:src="@drawable/closecircle" />
+            android:src="@drawable/closecircle"
+            android:contentDescription="@string/app_name" />
     </RelativeLayout>
 </RelativeLayout>

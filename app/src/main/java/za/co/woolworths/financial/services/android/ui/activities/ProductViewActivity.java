@@ -238,7 +238,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             try {
                 Location location = intent.getParcelableExtra(Const.LBM_EVENT_LOCATION_UPDATE);
                 mLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                ((WoolworthsApplication)getApplication()).setLastKnowLatLng(mLocation);
+                ((WoolworthsApplication) getApplication()).setLastKnowLatLng(mLocation);
             } catch (NullPointerException e) {
                 mLocation = new LatLng(0, 0);
             }
@@ -339,7 +339,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
 
     public void loadProduct() {
-
+        mNumberOfItem.setText(String.valueOf(0));
         new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected void onPreExecute() {
@@ -380,6 +380,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                     mIsLastPage = false;
                     mCurrentPage = 1;
                     mIsLoading = false;
+                } else {
+                    mNumberOfItem.setText(String.valueOf(0));
                 }
                 hideVProgressBar();
             }

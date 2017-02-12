@@ -2,15 +2,16 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 
 import android.app.Activity;
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
@@ -37,21 +38,21 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
 
         WTextView productName;
         WTextView mTextAmount;
-        SimpleDraweeView mSimpleDraweeView;
-        SimpleDraweeView imNewImage;
-        SimpleDraweeView mImSave;
-        SimpleDraweeView mImReward;
-        SimpleDraweeView mVitalityView;
+        ImageView mSimpleDraweeView;
+        ImageView imNewImage;
+        ImageView mImSave;
+        ImageView mImReward;
+        ImageView mVitalityView;
 
         SimpleViewHolder(View view) {
             super(view);
             productName = (WTextView) view.findViewById(R.id.textTitle);
             mTextAmount = (WTextView) view.findViewById(R.id.textAmount);
-            mSimpleDraweeView = (SimpleDraweeView) view.findViewById(R.id.imProduct);
-            imNewImage = (SimpleDraweeView) view.findViewById(R.id.imNewImage);
-            mImSave = (SimpleDraweeView) view.findViewById(R.id.imSave);
-            mImReward = (SimpleDraweeView) view.findViewById(R.id.imReward);
-            mVitalityView = (SimpleDraweeView) view.findViewById(R.id.imVitality);
+            mSimpleDraweeView = (ImageView) view.findViewById(R.id.imProduct);
+            imNewImage = (ImageView) view.findViewById(R.id.imNewImage);
+            mImSave = (ImageView) view.findViewById(R.id.imSave);
+            mImReward = (ImageView) view.findViewById(R.id.imReward);
+            mVitalityView = (ImageView) view.findViewById(R.id.imVitality);
         }
     }
 
@@ -94,17 +95,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
     public int getSwipeLayoutResourceId(int position) {
         return R.id.swipe;
     }
-
-    @Override
-    public void onViewRecycled(SimpleViewHolder holder) {
-        super.onViewRecycled(holder);
-        if (holder.mSimpleDraweeView.getController() != null) {
-            holder.mSimpleDraweeView.getController().onDetach();
-        }
-        if (holder.mSimpleDraweeView.getTopLevelDrawable() != null) {
-            holder.mSimpleDraweeView.getTopLevelDrawable().setCallback(null);
-        }
-    }
+    
 
     private void productType(SimpleViewHolder holder, String productType, double fromPrice) {
         switch (productType) {
@@ -117,13 +108,16 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
                         WFormatter.formatAmount(fromPrice));
                 break;
         }
+
+        holder.mTextAmount.setPaintFlags( holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
     }
 
     private void productImage(SimpleViewHolder holder, String imgUrl) {
         if (imgUrl != null) {
             try {
                 DrawImage drawImage = new DrawImage(mContext);
-                drawImage.setupImage(holder.mSimpleDraweeView, imgUrl);
+                drawImage.displayImage(holder.mSimpleDraweeView, imgUrl);
             } catch (IllegalArgumentException ignored) {
             }
         }
@@ -140,28 +134,28 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
 
             if (!TextUtils.isEmpty(wSave)) {
                 holder.mImSave.setVisibility(View.VISIBLE);
-                drawImage.setupImage(holder.mImSave, wSave);
+                drawImage.displayImage(holder.mImSave, wSave);
             } else {
                 holder.mImSave.setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(wReward)) {
                 holder.mImReward.setVisibility(View.VISIBLE);
-                drawImage.setupImage(holder.mImSave, wReward);
+                drawImage.displayImage(holder.mImSave, wReward);
             } else {
                 holder.mImReward.setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(wVitality)) {
                 holder.mVitalityView.setVisibility(View.VISIBLE);
-                drawImage.setupImage(holder.mImSave, wVitality);
+                drawImage.displayImage(holder.mImSave, wVitality);
             } else {
                 holder.mVitalityView.setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(wNewImage)) {
                 holder.imNewImage.setVisibility(View.VISIBLE);
-                drawImage.setupImage(holder.mImSave, wNewImage);
+                drawImage.displayImage(holder.mImSave, wNewImage);
 
             } else {
                 holder.imNewImage.setVisibility(View.GONE);

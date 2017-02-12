@@ -15,6 +15,7 @@ public class WProductDetail {
     public String imagePath;
     public Float fromPrice;
     public String sku;
+    public String saveText;
     public String checkOutLink;
     //public AuxiliaryImages auxiliaryImages;
     public String productType;

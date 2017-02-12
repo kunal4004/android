@@ -19,10 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.awfs.coordination.R;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.request.ImageRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -78,18 +74,19 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     public ViewPager mViewPagerProduct;
     public ImageView mImCloseProduct;
     public RelativeLayout mLinSize;
-    public SimpleDraweeView mImNewImage;
-    public SimpleDraweeView mImSave;
-    public SimpleDraweeView mImReward;
-    public SimpleDraweeView mVitalityView;
+    public ImageView mImNewImage;
+    public ImageView mImSave;
+    public ImageView mImReward;
+    public ImageView mVitalityView;
     public String mCheckOutLink;
     private ArrayList<String> mAuxiliaryImages;
     private String mProductJSON;
     private LinearLayout mLlPagerDots;
     private ImageView[] ivArrayDotsPager;
     private String mDefaultImage;
-    private SimpleDraweeView mImSelectedColor;
+    private ImageView mImSelectedColor;
     private View mColorView;
+    private WTextView mTextPromo;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -132,7 +129,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             ProductViewPagerAdapter mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
             mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
             mProductViewPagerAdapter.notifyDataSetChanged();
-            setupPagerIndidcatorDots();
+            setupPagerIndicatorDots();
             mViewPagerProduct.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -166,12 +163,8 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         } else {
             Log.e("colourUrl", url);
             mImSelectedColor.setImageAlpha(255);
-            ImageRequest request = ImageRequest.fromUri(Uri.parse(url));
-            DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setImageRequest(request)
-                    .setAutoPlayAnimations(true)
-                    .setOldController(mImSelectedColor.getController()).build();
-            mImSelectedColor.setController(controller);
+            DrawImage drawImage = new DrawImage(this);
+            drawImage.displayImage(mImSelectedColor, url);
         }
     }
 
@@ -193,6 +186,15 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             promoImages(mproductDetail.get(0).promotionImages);
             displayProduct(mProductName);
             initColorParam(0);
+
+            String saveText = mproductDetail.get(0).saveText;
+            if (TextUtils.isEmpty(saveText)) {
+
+                mTextPromo.setVisibility(View.GONE);
+            } else {
+                mTextPromo.setVisibility(View.VISIBLE);
+                mTextPromo.setText(mproductDetail.get(0).saveText);
+            }
         }
     }
 
@@ -206,6 +208,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
         mTextPrice = (WTextView) findViewById(R.id.textPrice);
         mCategoryName = (WTextView) findViewById(R.id.textType);
+        mTextPromo = (WTextView) findViewById(R.id.textPromo);
         mTextSelectColor = (WTextView) findViewById(R.id.textSelectColour);
         mProductCode = (WTextView) findViewById(R.id.product_code);
         mRelContainer = (LinearLayout) findViewById(R.id.linProductContainer);
@@ -214,14 +217,14 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         WButton mBtnShopOnlineWoolies = (WButton) findViewById(R.id.btnShopOnlineWoolies);
         ImageView mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
         mImCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
-        mImSelectedColor = (SimpleDraweeView) findViewById(R.id.imSelectedColor);
+        mImSelectedColor = (ImageView) findViewById(R.id.imSelectedColor);
         mLlPagerDots = (LinearLayout) findViewById(R.id.pager_dots);
         ImageView mImColorArrow = (ImageView) findViewById(R.id.imColorArrow);
 
-        mImNewImage = (SimpleDraweeView) findViewById(R.id.imNewImage);
-        mImSave = (SimpleDraweeView) findViewById(R.id.imSave);
-        mImReward = (SimpleDraweeView) findViewById(R.id.imReward);
-        mVitalityView = (SimpleDraweeView) findViewById(R.id.imVitality);
+        mImNewImage = (ImageView) findViewById(R.id.imNewImage);
+        mImSave = (ImageView) findViewById(R.id.imSave);
+        mImReward = (ImageView) findViewById(R.id.imReward);
+        mVitalityView = (ImageView) findViewById(R.id.imVitality);
 
         mTextSelectColor.setOnClickListener(this);
         mTextSelectSize.setOnClickListener(this);
@@ -500,28 +503,28 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             DrawImage drawImage = new DrawImage(mContext);
             if (!TextUtils.isEmpty(wSave)) {
                 mImSave.setVisibility(View.VISIBLE);
-                drawImage.setupImage(mImSave, wSave);
+                drawImage.displayImage(mImSave, wSave);
             } else {
                 mImSave.setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(wReward)) {
                 mImReward.setVisibility(View.VISIBLE);
-                drawImage.setupImage(mImSave, wReward);
+                drawImage.displayImage(mImSave, wReward);
             } else {
                 mImReward.setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(wVitality)) {
                 mVitalityView.setVisibility(View.VISIBLE);
-                drawImage.setupImage(mImSave, wVitality);
+                drawImage.displayImage(mImSave, wVitality);
             } else {
                 mVitalityView.setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(wNewImage)) {
                 mImNewImage.setVisibility(View.VISIBLE);
-                drawImage.setupImage(mImSave, wNewImage);
+                drawImage.displayImage(mImSave, wNewImage);
 
             } else {
                 mImNewImage.setVisibility(View.GONE);
@@ -542,7 +545,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         }
     }
 
-    private void setupPagerIndidcatorDots() {
+    private void setupPagerIndicatorDots() {
         ivArrayDotsPager = null;
         mLlPagerDots.removeAllViews();
         if (mAuxiliaryImages.size() > 1) {
