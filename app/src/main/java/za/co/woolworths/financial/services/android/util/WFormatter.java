@@ -127,8 +127,13 @@ public class WFormatter {
     }
 
     public static String formatOpenUntilTime(String openTime) {
-        String[] splitTime = openTime.split("-");
-        String resultTime = splitTime[1].trim();
+        String resultTime;
+        if (openTime.contains("-")) {
+            String[] splitTime = openTime.split("-");
+            resultTime = splitTime[1].trim();
+        } else {
+            resultTime = openTime;
+        }
         return resultTime;
     }
 
