@@ -63,7 +63,8 @@ public class WRewardsVouchersAdapter extends BaseAdapter{
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = mContext.getLayoutInflater().inflate(R.layout.wrewards_voucher_details_item, parent, false);
-            holder.beforeDate=(WTextView)convertView.findViewById(R.id.useBefore);
+            holder.validFromDate=(WTextView)convertView.findViewById(R.id.validFrom);
+            holder.validUntilDate=(WTextView)convertView.findViewById(R.id.validUntil);
             holder.value=(WTextView)convertView.findViewById(R.id.value);
             holder.message=(WTextView)convertView.findViewById(R.id.message);
             holder.voucherNumber=(WTextView)convertView.findViewById(R.id.voucherNumber);
@@ -76,9 +77,11 @@ public class WRewardsVouchersAdapter extends BaseAdapter{
         }
 
         try {
-            holder.beforeDate.setText(WFormatter.formatDateTOddMMMMYYYY(vouchers.get(position).validToDate));
+            holder.validFromDate.setText(WFormatter.formatDate(vouchers.get(position).validFromDate));
+            holder.validUntilDate.setText(WFormatter.formatDate(vouchers.get(position).validToDate));
         } catch (ParseException e) {
-            holder.beforeDate.setText(String.valueOf(vouchers.get(position).validToDate));
+            holder.validFromDate.setText(String.valueOf(vouchers.get(position).validFromDate));
+            holder.validUntilDate.setText(String.valueOf(vouchers.get(position).validToDate));
         }
 
         if ("PERCENTAGE".equals(vouchers.get(position).type))
@@ -101,7 +104,8 @@ public class WRewardsVouchersAdapter extends BaseAdapter{
     }
     public class ViewHolder
     {
-        WTextView beforeDate;
+        WTextView validFromDate;
+        WTextView validUntilDate;
         WTextView value;
         WTextView message;
         WTextView voucherNumber;
