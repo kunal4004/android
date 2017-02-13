@@ -36,6 +36,8 @@ import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
@@ -47,6 +49,7 @@ import za.co.woolworths.financial.services.android.util.Const;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.barcode.core.IViewFinder;
 import za.co.woolworths.financial.services.android.util.barcode.core.ViewFinderView;
 
@@ -393,47 +396,40 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     }
 
     private void getProductDetail(final String productId, final String skuId) {
-        new HttpAsyncTask<String, String, WProduct>() {
+        ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
             @Override
-            protected WProduct httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().getProductDetailView(productId, skuId);
-            }
-
-            @Override
-            protected WProduct httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+            public void success(String strProduct, retrofit.client.Response response) {
                 hideProgressBar();
-                return new WProduct();
-            }
+                WProduct wProduct = Utils.stringToJson(mContext, strProduct);
+                if (wProduct != null) {
+                    switch (wProduct.httpCode) {
+                        case 200:
+                            ArrayList<WProductDetail> mProductList;
+                            WProductDetail productList = wProduct.product;
+                            mProductList = new ArrayList<>();
+                            if (productList != null) {
+                                mProductList.add(productList);
+                            }
+                            GsonBuilder builder = new GsonBuilder();
+                            Gson gson = builder.create();
+                            Intent openDetailView = new Intent(mContext, ProductDetailViewActivity.class);
+                            openDetailView.putExtra("product_name", mProductList.get(0).productName);
+                            openDetailView.putExtra("product_detail", gson.toJson(mProductList));
+                            startActivity(openDetailView);
+                            overridePendingTransition(0, R.anim.anim_slide_up);
+                            break;
 
-            @Override
-            protected Class<WProduct> httpDoInBackgroundReturnType() {
-                return WProduct.class;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(WProduct product) {
-                super.onPostExecute(product);
-                WProductDetail productList = product.product;
-                ArrayList<WProductDetail> mProductList = new ArrayList<>();
-                if (productList != null) {
-                    mProductList.add(productList);
+                        default:
+                            hideProgressBar();
+                            break;
+                    }
                 }
-                if (productList != null) {
-                    GsonBuilder builder = new GsonBuilder();
-                    Gson gson = builder.create();
-                    Intent openDetailView = new Intent(mContext, ProductDetailViewActivity.class);
-                    openDetailView.putExtra("product_name", mProductList.get(0).productName);
-                    openDetailView.putExtra("product_detail", gson.toJson(mProductList));
-                    startActivity(openDetailView);
-                    overridePendingTransition(0, 0);
-                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
                 hideProgressBar();
             }
-        }.execute();
+        });
     }
 }

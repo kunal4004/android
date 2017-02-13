@@ -10,6 +10,7 @@ import android.support.multidex.MultiDex;
 
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
+
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.model.LatLng;
@@ -31,6 +32,7 @@ public class WoolworthsApplication extends Application {
     private static Context mContextApplication;
     private UserManager mUserManager;
     private WfsApi mWfsApi;
+    private RetrofitAsyncClient mRetrofitClient;
     private Tracker mTracker;
     private boolean swapSecondFragment = false;
     private static String applyNowLink;
@@ -243,11 +245,19 @@ public class WoolworthsApplication extends Application {
         return mWfsApi;
     }
 
+    public RetrofitAsyncClient getAsyncApi() {
+        if (mRetrofitClient == null) {
+            mRetrofitClient = new RetrofitAsyncClient(this);
+        }
+        return mRetrofitClient;
+    }
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();
         mUserManager = null;
         mWfsApi = null;
+        mRetrofitClient = null;
     }
 
     public Tracker getTracker() {

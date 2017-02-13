@@ -41,7 +41,6 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -150,8 +149,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 }
             });
 
-
-        } catch (JSONException e) {
+        } catch (Exception e) {
             Log.e("sessionDao", e.toString());
         }
 
