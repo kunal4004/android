@@ -155,7 +155,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             });
 
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
             Log.e("sessionDao", e.toString());
         }
 
