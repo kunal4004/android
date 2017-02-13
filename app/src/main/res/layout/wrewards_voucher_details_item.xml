@@ -68,7 +68,6 @@
                     android:orientation="vertical"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:paddingBottom="16dp"
                     >
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -104,7 +103,8 @@
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/message"
                         android:layout_width="wrap_content"
-                        android:layout_height="50dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="50dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
                         android:gravity="center"
@@ -112,8 +112,7 @@
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         app:WTextView_font="medium"
-                        android:maxLines="3"
-                        android:ellipsize="end"
+                        android:maxLines="4"
                         />
 
                     <ImageView
@@ -131,6 +130,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
                         android:gravity="center"
                         android:textColor="@color/black"
                         android:textSize="17sp"
