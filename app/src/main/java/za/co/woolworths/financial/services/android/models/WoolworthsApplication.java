@@ -13,19 +13,14 @@ import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
 import com.facebook.cache.disk.DiskCacheConfig;
 import com.facebook.common.logging.FLog;
-import com.facebook.drawee.backends.pipeline.DraweeConfig;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.facebook.imagepipeline.listener.RequestListener;
-import com.facebook.imagepipeline.listener.RequestLoggingListener;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.wigroup.androidutils.Util;
@@ -42,6 +37,7 @@ public class WoolworthsApplication extends Application {
     private static Context mContextApplication;
     private UserManager mUserManager;
     private WfsApi mWfsApi;
+    private RetrofitAsyncClient mRetrofitClient;
     private Tracker mTracker;
     private boolean swapSecondFragment = false;
     private static String applyNowLink;
@@ -266,11 +262,19 @@ public class WoolworthsApplication extends Application {
         return mWfsApi;
     }
 
+    public RetrofitAsyncClient getAsyncApi() {
+        if (mRetrofitClient == null) {
+            mRetrofitClient = new RetrofitAsyncClient(this);
+        }
+        return mRetrofitClient;
+    }
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();
         mUserManager = null;
         mWfsApi = null;
+        mRetrofitClient = null;
     }
 
     public Tracker getTracker() {

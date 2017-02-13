@@ -33,7 +33,6 @@ import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
-import za.co.woolworths.financial.services.android.ui.views.LDObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
@@ -46,7 +45,6 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -104,11 +102,11 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         try {
             sessionDao = new SessionDao(ProductDetailViewActivity.this, SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
             mProductJSON = sessionDao.value;
-            initUI();
-            bundle();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        initUI();
+        bundle();
     }
 
     private void retrieveJson(String colour) {
@@ -154,7 +152,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 }
             });
 
-
         } catch (Exception e) {
             Log.e("sessionDao", e.toString());
         }
@@ -199,7 +196,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
     private void initUI() {
 
-        mColorView = (View) findViewById(R.id.colorView);
+        mColorView = findViewById(R.id.colorView);
         mTextSelectSize = (WTextView) findViewById(R.id.textSelectSize);
         WTextView mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
         mDescription = (WTextView) findViewById(R.id.description);

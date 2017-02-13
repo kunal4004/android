@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models;
 
 
+import retrofit.Callback;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
@@ -35,7 +36,6 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
-import za.co.woolworths.financial.services.android.models.dto.Product;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
@@ -471,4 +471,20 @@ public interface ApiInterface {
             @Path("productId") String productId,
             @Query("sku") String sku);
 
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @GET("/products/{productId}")
+    void getProductDetail(
+            @Header("osVersion") String osVersion,
+            @Header("deviceModel") String deviceModel,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("os") String os,
+            @Header("network") String network,
+            @Header("apiId") String apiId,
+            @Header("userAgent") String userAgent,
+            @Header("userAgentVersion") String userAgentVersion,
+            @Header("sha1Password") String sha1Password,
+            @Path("productId") String productId,
+            @Query("sku") String sku,
+            Callback<String> callback);
 }
