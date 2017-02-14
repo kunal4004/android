@@ -79,8 +79,6 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     private Toolbar mProductToolbar;
     private LDObservableScrollView mNestedScrollview;
     private PopWindowValidationMessage mPopWindowValidationMessage;
-    private final int ANIMATION_START_DURATION = 500;
-    private final int ANIMATION_END_DURATION = 100;
 
     @Nullable
     @Override

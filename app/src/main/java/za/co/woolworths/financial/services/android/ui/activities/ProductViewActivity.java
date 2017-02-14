@@ -250,7 +250,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     @Override
     public void onSelectedProduct(View v, int position) {
         try {
-            getProductDetail(mProduct.get(position).productId, mProduct.get(position).otherSkus.get(0).sku,false);
+            getProductDetail(mProduct.get(position).productId, mProduct.get(position).otherSkus.get(0).sku, false);
         } catch (Exception ex) {
             Log.e("ExceptionProduct", ex.toString());
         }
@@ -379,7 +379,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 if (pv.products != null && pv.products.size() != 0) {
                     mProduct = pv.products;
                     if (pv.products.size() == 1) {
-                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku,true);
+                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku, true);
                     } else {
                         mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
                         bindDataWithUI(mProduct);
