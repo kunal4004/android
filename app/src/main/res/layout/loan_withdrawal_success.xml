@@ -1,52 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:id="@+id/linLoanWithdrawalSuccess"
     android:layout_width="match_parent"
-    android:background="@color/purple"
-    android:visibility="gone"
-    android:layout_marginTop="?attr/actionBarSize"
-    android:paddingRight="@dimen/bank_spacing_width"
-    android:paddingLeft="@dimen/bank_spacing_width"
     android:layout_height="match_parent"
-    android:id="@+id/linLoanWithdrawalSuccess">
+    android:layout_marginTop="?attr/actionBarSize"
+    android:background="@color/purple"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/bank_spacing_width"
+    android:paddingRight="@dimen/bank_spacing_width"
+    android:visibility="visible">
 
     <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/btnOk"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:text="Ok"
-        android:textAllCaps="true"
-        android:letterSpacing="0.08"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="32dp"
         android:background="@color/white"
-        android:id="@+id/btnOk" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/personalloansuccessful"
-        android:id="@+id/imgSmiley"
-        android:layout_marginBottom="12dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp" />
+        android:letterSpacing="0.08"
+        android:text="Ok"
+        android:textAllCaps="true" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/btnOk"
+        android:layout_alignParentStart="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="150dp"
+        android:gravity="center"
+        android:lineSpacingExtra="4sp"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:WTextView_font="myriadpro_regular" />
+
+    <ImageView
+        android:id="@+id/imgSmiley"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="37dp"
+        android:src="@drawable/personalloansuccessful" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/imgSmiley"
+        android:layout_gravity="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="33dp"
+        android:gravity="center"
+        android:letterSpacing="0.06"
+        android:lineSpacingExtra="2sp"
         android:text="@string/your_cash_will_be_in_your_account"
         android:textAllCaps="true"
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        android:layout_marginTop="12dp"
-        android:letterSpacing="0.06"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:lineSpacingExtra="2sp"
-        app:WTextView_font="medium_bold"
-        android:id="@+id/title"
-        android:layout_below="@+id/imgSmiley"
-        android:layout_alignParentStart="true" />
+        app:WTextView_font="medium_bold" />
 </RelativeLayout>

@@ -19,6 +19,7 @@
     <string name="credit_card_line_one">|!b|GET THE CREDIT CARD THAT REWARDS YOU EACH AND EVERY TIME YOU SWIPE.|!?|</string>
     <string name="credit_card_line_two">With a Woolworths Credit Card you will earn |!b|W|!?|Vouchers each and every time you shop with your card.  As a Woolworths Credit card holder, you\'re automatically part of our great |!b|W|!?|Rewards programme that gives you the opportunity to save from 10% instantly on thousands of items throughout the store.</string>
     <string name="my_accounts">MY ACCOUNTS</string>
+    <string name="rewards">WREWARDS</string>
     <string name="last_transactions">VIEW PREVIOUS TRANSACTIONS</string>
     <string name="credit_limit">Credit limit</string>
     <string name="available_funds">Available funds</string>
@@ -122,6 +123,7 @@
     <string name="vip_spend">SPEND OVER %1$s PER YEAR AT WOOLWORTHS</string>
     <string name="my_vouchers">MY VOUCHERS</string>
     <string name="stores_nearby">STORES NEARBY</string>
+    <string name="wrewards">WREWARDS</string>
     <string name="recent_search">RECENT SEARCHES</string>
     <string name="google_maps">GOOGLE MAPS</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -480,7 +482,7 @@
     <string name="barcode_error_title">BARCODE ERROR</string>
     <string name="barcode_error_desc">Please re-enter the barcode</string>
     <string name="confirm">Confirm</string>
-    <string name="no_tire_history_to_display">NO TIRE HISTORY TO DISPLAY</string>
+    <string name="no_tier_history_to_display">NO TIER HISTORY TO DISPLAY</string>
     <string name="no_vouchers">NO VOUCHERS</string>
     <string name="ssl_error">SSL certificate invalid</string>
     <string name="product_from">From:</string>

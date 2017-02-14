@@ -33,15 +33,16 @@ import static android.graphics.Color.WHITE;
  * Created by W7099877 on 12/01/2017.
  */
 
-public class WRewardsVouchersAdapter extends BaseAdapter{
+public class WRewardsVouchersAdapter extends BaseAdapter {
 
     public Activity mContext;
     public List<Voucher> vouchers;
-    public WRewardsVouchersAdapter(Activity mContext, List<Voucher> vouchers)
-    {
-        this.mContext=mContext;
-        this.vouchers=vouchers;
+
+    public WRewardsVouchersAdapter(Activity mContext, List<Voucher> vouchers) {
+        this.mContext = mContext;
+        this.vouchers = vouchers;
     }
+
     @Override
     public int getCount() {
         return vouchers.size();
@@ -59,20 +60,19 @@ public class WRewardsVouchersAdapter extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-       ViewHolder holder;
+        ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = mContext.getLayoutInflater().inflate(R.layout.wrewards_voucher_details_item, parent, false);
-            holder.beforeDate=(WTextView)convertView.findViewById(R.id.useBefore);
-            holder.value=(WTextView)convertView.findViewById(R.id.value);
-            holder.message=(WTextView)convertView.findViewById(R.id.message);
-            holder.voucherNumber=(WTextView)convertView.findViewById(R.id.voucherNumber);
-            holder.minimumSpend=(WTextView)convertView.findViewById(R.id.minSpend);
-            holder.barCode=(ImageView) convertView.findViewById(R.id.barcode);
+            holder.beforeDate = (WTextView) convertView.findViewById(R.id.useBefore);
+            holder.value = (WTextView) convertView.findViewById(R.id.value);
+            holder.message = (WTextView) convertView.findViewById(R.id.message);
+            holder.voucherNumber = (WTextView) convertView.findViewById(R.id.voucherNumber);
+            holder.minimumSpend = (WTextView) convertView.findViewById(R.id.minSpend);
+            holder.barCode = (ImageView) convertView.findViewById(R.id.barcode);
             convertView.setTag(holder);
-        }
-        else {
-            holder = (ViewHolder)convertView.getTag();
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
 
         try {
@@ -81,26 +81,23 @@ public class WRewardsVouchersAdapter extends BaseAdapter{
             holder.beforeDate.setText(String.valueOf(vouchers.get(position).validToDate));
         }
 
-        if ("PERCENTAGE".equals(vouchers.get(position).type))
-        {
+        if ("PERCENTAGE".equals(vouchers.get(position).type)) {
             holder.value.setText(String.valueOf(WFormatter.formatPercent(vouchers.get(position).amount)));
-        }
-        else
-        {
-            holder.value.setText(String.valueOf(WFormatter.formatAmountNoDecimal(vouchers.get(position).amount)));
+        } else {
+            holder.value.setText(String.valueOf("R" + vouchers.get(position).amount));
         }
         holder.message.setText(vouchers.get(position).description);
         holder.voucherNumber.setText(WFormatter.formatVoucher(vouchers.get(position).voucherNumber));
         holder.minimumSpend.setText(String.valueOf(WFormatter.formatAmount(vouchers.get(position).minimumSpend)));
         try {
-            holder.barCode.setImageBitmap(encodeAsBitmap(vouchers.get(position).voucherNumber,BarcodeFormat.CODE_128,convertView.getWidth(),60));
+            holder.barCode.setImageBitmap(encodeAsBitmap(vouchers.get(position).voucherNumber, BarcodeFormat.CODE_128, convertView.getWidth(), 60));
         } catch (WriterException e) {
             e.printStackTrace();
         }
         return convertView;
     }
-    public class ViewHolder
-    {
+
+    public class ViewHolder {
         WTextView beforeDate;
         WTextView value;
         WTextView message;
@@ -108,6 +105,7 @@ public class WRewardsVouchersAdapter extends BaseAdapter{
         WTextView minimumSpend;
         ImageView barCode;
     }
+
     Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int img_width, int img_height) throws WriterException {
 
         String contentsToEncode = contents;

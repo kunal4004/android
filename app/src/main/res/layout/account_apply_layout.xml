@@ -108,7 +108,7 @@
                         android:gravity="center_vertical"
                         android:text="@string/apply_now"
                         android:textColor="@color/black_off"
-                        android:textSize="@dimen/acc_fourteen_sp"
+                        android:textSize="@dimen/acc_fifteen_dp"
                         app:WTextView_font="medium_bold" />
                 </RelativeLayout>
 
@@ -176,7 +176,7 @@
                         android:gravity="center_vertical"
                         android:text="@string/apply_now"
                         android:textColor="@color/black_off"
-                        android:textSize="@dimen/acc_fourteen_sp"
+                        android:textSize="@dimen/acc_fifteen_dp"
                         app:WTextView_font="medium_bold" />
                 </RelativeLayout>
 
@@ -221,29 +221,32 @@
                         android:focusable="false"
                         android:focusableInTouchMode="false" />
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/sectionCardLight"
-                        android:layout_toRightOf="@+id/imgPersonalLoan"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:textSize="@dimen/acc_thirteen_sp"
-                        android:text="@string/personal_loan"
-                        app:WTextView_font="medium" />
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            style="@style/sectionCardLight"
+                            android:layout_toRightOf="@+id/imgPersonalLoan"
+                            android:focusable="false"
+                            android:layout_weight="6"
+                            android:focusableInTouchMode="false"
+                            android:textSize="@dimen/acc_thirteen_sp"
+                            android:text="@string/personal_loan"
+                            app:WTextView_font="medium"
+                            android:layout_marginBottom="16dp"/>
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/applyNowPersonalLoan"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:drawableRight="@drawable/ic_caret_black"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:gravity="center_vertical"
-                        android:text="@string/apply_now"
-                        android:textColor="@color/black_off"
-                        android:textSize="@dimen/acc_fourteen_sp"
-                        app:WTextView_font="medium_bold" />
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/applyNowPersonalLoan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_weight="4"
+                            android:drawableRight="@drawable/ic_caret_black"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:gravity="center_vertical"
+                            android:text="@string/apply_now"
+                            android:textColor="@color/black_off"
+                            android:textSize="@dimen/acc_fifteen_dp"
+                            app:WTextView_font="medium_bold" />
                 </RelativeLayout>
             </FrameLayout>
         </LinearLayout>

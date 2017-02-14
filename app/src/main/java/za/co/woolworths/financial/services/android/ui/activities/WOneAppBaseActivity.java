@@ -34,10 +34,11 @@ import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
 
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
-        , WProductFragments.HideActionBarComponent, HideActionBar {
+        , WProductFragments.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle {
 
     public static Toolbar mToolbar;
     public static AppBarLayout appbar;
@@ -83,6 +84,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     }
 
     private void displayView(int position) {
+        boolean isRewardFragment = false;
         WOneAppBaseActivity.appbar.animate().translationY(WOneAppBaseActivity.appbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
         Fragment fragment = null;
         String title = getString(R.string.app_name);
@@ -100,8 +102,9 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
                 title = getString(R.string.nav_item_store);
                 break;
             case 3:
+                isRewardFragment = true;
                 fragment = new WRewardsFragment();
-                title = "";
+                title = getString(R.string.wrewards);
                 break;
             case 4:
                 fragment = new MyAccountsFragment();
@@ -115,10 +118,26 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.container_body, fragment);
             fragmentTransaction.commit();
-
             // set the toolbar title
             mToolbarTitle.setText(title);
             fragmentList.add(fragment);
+/*            if (isRewardFragment) {
+                JWTDecodedModel jwtDecodedModel = this.getJWTDecoded();
+                if(jwtDecodedModel.AtgSession == null){
+                    //user is signed out
+                    mToolbarTitle.setText("");
+                }else{
+                    if(jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")){
+                        //Signed in and linked
+                        mToolbarTitle.setText(title);
+                    } else{
+                        //signed in but NOT linked
+                        title = "";
+                    }
+
+                }
+
+            }*/
         }
     }
 
@@ -166,6 +185,11 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onTitleUpdate(String value) {
+        mToolbarTitle.setText(value);
     }
 }
 
