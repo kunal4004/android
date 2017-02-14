@@ -71,12 +71,24 @@ public class WFormatter {
     }
 
     public static String formatAmountNoDecimal(int amount) {
-
         return String.format("R%d", amount / 100);
+    }
+
+    public static String formatAmountNoDecimal(String amount) {
+        if (TextUtils.isEmpty(amount))
+            return "0";
+        return String.format("%d%%", Integer.valueOf(amount) / 100);
     }
 
     public static String formatPercent(int amount) {
         return String.format("%d%%", amount / 100);
+    }
+
+    public static String formatPercent(String amount) {
+        if (TextUtils.isEmpty(amount))
+            return "0";
+
+        return String.format("%d%%", Integer.valueOf(amount) / 100);
     }
 
     public static String formatVoucher(String voucherNumber) {
