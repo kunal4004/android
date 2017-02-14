@@ -2,10 +2,13 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.content.Context;
 
+import android.graphics.Bitmap;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 
 public class DrawImage {
 
@@ -15,12 +18,29 @@ public class DrawImage {
         mContext = context;
     }
 
-    public void displayImage(ImageView imageView, String url) {
+    public void displayImage(final ImageView imageView, String url) {
+        Glide.with(mContext)
+                .load(url)
+                .asBitmap()
+                .atMost()
+                .override(500, 500)
+                .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                        // do something with the bitmap
+                        imageView.setImageBitmap(bitmap);
+                    }
+                });
+    }
+
+    public void widthDisplayImage(ImageView imageView, String url) {
         Glide.with(mContext)
                 .load(url)
                 .dontAnimate()
                 .centerCrop()
-                //.diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageView);
     }
 }

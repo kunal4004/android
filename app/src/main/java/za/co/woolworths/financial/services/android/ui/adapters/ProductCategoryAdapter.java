@@ -53,7 +53,7 @@ public class ProductCategoryAdapter extends RecyclerSwipeAdapter<ProductCategory
 
         if (imageUrl != null) {
             DrawImage drawImage = new DrawImage(holder.mTextProduct.getContext());
-            drawImage.displayImage(holder.mImageProductCategory, imageUrl);
+            drawImage.widthDisplayImage(holder.mImageProductCategory, imageUrl);
         }
 
         holder.mFrameRootCategory.setOnClickListener(new View.OnClickListener() {

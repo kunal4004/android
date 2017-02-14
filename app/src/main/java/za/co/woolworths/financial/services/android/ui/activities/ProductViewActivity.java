@@ -250,7 +250,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     @Override
     public void onSelectedProduct(View v, int position) {
         try {
-            getProductDetail(mProduct.get(position).productId, mProduct.get(position).otherSkus.get(0).sku);
+            getProductDetail(mProduct.get(position).productId, mProduct.get(position).otherSkus.get(0).sku,false);
         } catch (Exception ex) {
             Log.e("ExceptionProduct", ex.toString());
         }
@@ -378,19 +378,23 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 mProduct = new ArrayList<>();
                 if (pv.products != null && pv.products.size() != 0) {
                     mProduct = pv.products;
-                    mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
-                    bindDataWithUI(mProduct);
-                    mIsLastPage = false;
-                    mCurrentPage = 1;
-                    mIsLoading = false;
+                    if (pv.products.size() == 1) {
+                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku,true);
+                    } else {
+                        mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
+                        bindDataWithUI(mProduct);
+                        mIsLastPage = false;
+                        mCurrentPage = 1;
+                        mIsLoading = false;
+                        hideVProgressBar();
+                    }
                 } else {
                     mNumberOfItem.setText(String.valueOf(0));
+                    hideVProgressBar();
                 }
-                hideVProgressBar();
             }
         }.execute();
     }
-
 
     public void searchProduct() {
 
@@ -497,7 +501,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         }.execute();
     }
 
-    private void getProductDetail(final String productId, final String skuId) {
+    private void getProductDetail(final String productId, final String skuId, final boolean closeProductView) {
         try {
             mGetProgressDialog.show(fm, "v");
         } catch (NullPointerException ignored) {
@@ -505,7 +509,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
             @Override
             public void success(String strProduct, retrofit.client.Response response) {
-                Log.e("StringValue", String.valueOf(response));
                 dismissFragmentDialog();
                 WProduct wProduct = Utils.stringToJson(mContext, strProduct);
                 if (wProduct != null) {
@@ -524,6 +527,9 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                             openDetailView.putExtra("product_detail", gson.toJson(mProductList));
                             startActivity(openDetailView);
                             overridePendingTransition(0, R.anim.anim_slide_up);
+                            if (closeProductView) { //close ProductView activity when 1 row exist
+                                finish();
+                            }
                             break;
 
                         default:

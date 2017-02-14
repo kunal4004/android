@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -32,6 +33,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
+import za.co.woolworths.financial.services.android.util.CircularImageView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
@@ -48,7 +50,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
 
 public class ProductDetailViewActivity extends BaseActivity implements SelectedProductView, View.OnClickListener {
 
@@ -83,9 +84,12 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private LinearLayout mLlPagerDots;
     private ImageView[] ivArrayDotsPager;
     private String mDefaultImage;
-    private ImageView mImSelectedColor;
+    private CircularImageView mImSelectedColor;
     private View mColorView;
     private WTextView mTextPromo;
+    private WTextView mTextActualPrice;
+    private WTextView mTextLabelPrice;
+    private WTextView mTextColour;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -159,7 +163,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         if (TextUtils.isEmpty(url)) {
             mImSelectedColor.setImageAlpha(0);
         } else {
-            Log.e("colourUrl", url);
             mImSelectedColor.setImageAlpha(255);
             DrawImage drawImage = new DrawImage(this);
             drawImage.displayImage(mImSelectedColor, url);
@@ -200,9 +203,12 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
         mColorView = findViewById(R.id.colorView);
         mTextSelectSize = (WTextView) findViewById(R.id.textSelectSize);
+        mTextColour = (WTextView) findViewById(R.id.textColour);
         WTextView mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
         mDescription = (WTextView) findViewById(R.id.description);
         mTextTitle = (WTextView) findViewById(R.id.textTitle);
+        mTextLabelPrice = (WTextView) findViewById(R.id.textLabelPrice);
+        mTextActualPrice = (WTextView) findViewById(R.id.textActualPrice);
         mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
         mTextPrice = (WTextView) findViewById(R.id.textPrice);
         mCategoryName = (WTextView) findViewById(R.id.textType);
@@ -215,7 +221,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         WButton mBtnShopOnlineWoolies = (WButton) findViewById(R.id.btnShopOnlineWoolies);
         ImageView mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
         mImCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
-        mImSelectedColor = (ImageView) findViewById(R.id.imSelectedColor);
+        mImSelectedColor = (CircularImageView) findViewById(R.id.imSelectedColor);
         mLlPagerDots = (LinearLayout) findViewById(R.id.pager_dots);
         ImageView mImColorArrow = (ImageView) findViewById(R.id.imColorArrow);
 
@@ -325,6 +331,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         if (TextUtils.isEmpty(colour)) {
             colour = "";
         }
+        mTextColour.setText(colour);
         mAuxiliaryImages = null;
         mAuxiliaryImages = new ArrayList<>();
         //show default image when imageUrl is empty
@@ -339,11 +346,16 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
     private void initColorParam(int position) {
         String colour = mproductDetail.get(position).otherSkus.get(position).colour;
+        String mPSize = mproductDetail.get(position).otherSkus.get(position).size;
         String defaultUrl = mproductDetail.get(position).otherSkus.get(position).externalColourRef;
         String imageUrl = mproductDetail.get(position).otherSkus.get(position).imagePath;
         if (TextUtils.isEmpty(colour)) {
             colour = "";
         }
+        if (!TextUtils.isEmpty(mPSize)) {
+            mTextSelectSize.setText(mPSize);
+        }
+        mTextColour.setText(colour);
         mAuxiliaryImages = null;
         mAuxiliaryImages = new ArrayList<>();
         //show default image when imageUrl is empty
@@ -360,16 +372,34 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         WProductDetail productDetail = mproductDetail.get(0);
         mDescription.setText(Html.fromHtml(isEmpty(productDetail.longDescription)));
         mTextTitle.setText(isEmpty(productDetail.productName));
-        mProductCode.setText(isEmpty(getString(R.string.product_code) + " : " + productDetail.productId));
+        mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
+        String mWasPrice = productDetail.otherSkus.get(0).wasPrice;
         if (productDetail.productType.equalsIgnoreCase("clothingProducts")) {
             mRelContainer.setVisibility(View.VISIBLE);
             mColorView.setVisibility(View.VISIBLE);
-            mTextPrice.setText(isEmpty(getString(R.string.product_from) + ": "
-                    + WFormatter.formatAmount(productDetail.fromPrice)));
+            mTextPrice.setText(isEmpty(WFormatter.formatAmount(productDetail.fromPrice)));
+            if (!TextUtils.isEmpty(mWasPrice)) {
+                mTextActualPrice.setText(WFormatter.formatAmount(productDetail.fromPrice));
+                mTextPrice.setText(WFormatter.formatAmount(mWasPrice));
+                mTextPrice.setPaintFlags(mTextPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                mTextLabelPrice.setVisibility(View.VISIBLE);
+            } else {
+                mTextActualPrice.setText("");
+                mTextLabelPrice.setVisibility(View.VISIBLE);
+            }
         } else {
             mColorView.setVisibility(View.GONE);
             mRelContainer.setVisibility(View.GONE);
-            mTextPrice.setText(WFormatter.formatAmount(productDetail.fromPrice));
+            mTextPrice.setText(WFormatter.formatAmount(productDetail.otherSkus.get(0).price));
+            if (!TextUtils.isEmpty(mWasPrice)) {
+                mTextActualPrice.setText(WFormatter.formatAmount(productDetail.otherSkus.get(0).price));
+                mTextPrice.setText(WFormatter.formatAmount(mWasPrice));
+                mTextPrice.setPaintFlags(mTextPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                mTextLabelPrice.setVisibility(View.VISIBLE);
+            } else {
+                mTextActualPrice.setText("");
+                mTextLabelPrice.setVisibility(View.GONE);
+            }
         }
         mCategoryName.setText(productDetail.categoryName);
     }
@@ -508,21 +538,21 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
             if (!TextUtils.isEmpty(wReward)) {
                 mImReward.setVisibility(View.VISIBLE);
-                drawImage.displayImage(mImSave, wReward);
+                drawImage.displayImage(mImReward, wReward);
             } else {
                 mImReward.setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(wVitality)) {
                 mVitalityView.setVisibility(View.VISIBLE);
-                drawImage.displayImage(mImSave, wVitality);
+                drawImage.displayImage(mVitalityView, wVitality);
             } else {
                 mVitalityView.setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(wNewImage)) {
                 mImNewImage.setVisibility(View.VISIBLE);
-                drawImage.displayImage(mImSave, wNewImage);
+                drawImage.displayImage(mImNewImage, wNewImage);
 
             } else {
                 mImNewImage.setVisibility(View.GONE);

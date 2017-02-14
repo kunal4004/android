@@ -71,7 +71,7 @@ public abstract class BarcodeScannerView extends FrameLayout implements Camera.P
      * <p>Override it to provide your own view for visual appearance of a barcode scanner</p>
      *
      * @param context {@link Context}
-     * @return {@link android.view.View} that implements {@link ViewFinderView}
+     * @return {@link View} that implements {@link ViewFinderView}
      */
     protected IViewFinder createViewFinderView(Context context) {
         return new ViewFinderView(context);

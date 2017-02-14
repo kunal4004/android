@@ -220,7 +220,6 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
                 super.onPostExecute(product);
                 ArrayList<ProductList> mProduct = product.products;
 
-
                 if (mProduct != null) {
                     if (mProduct.size() > 0) {
                         getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);

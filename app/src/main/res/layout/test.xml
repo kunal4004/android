@@ -26,16 +26,15 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/textColour"
             style="@style/colorSizeStyle"
-
             android:layout_alignParentStart="true"
             android:focusableInTouchMode="false"
             android:focusable="false"
             android:text="@string/product_colour" />
 
-        <ImageView
+        <za.co.woolworths.financial.services.android.util.CircularImageView
             android:id="@+id/imSelectedColor"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:layout_alignEnd="@+id/imColorArrow"
             android:focusableInTouchMode="false"
             android:focusable="false"

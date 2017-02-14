@@ -10,18 +10,6 @@
     android:paddingLeft="@dimen/default_margin"
     android:paddingRight="@dimen/default_margin">
 
-    <!--<com.facebook.drawee.view.SimpleDraweeView-->
-    <!--android:id="@+id/imProductCategory"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="120dp"-->
-    <!--android:background="@color/product_search_hint"-->
-    <!--fresco:actualImageScaleType="fitXY"-->
-    <!--fresco:fadeDuration="50"-->
-    <!--fresco:placeholderImageScaleType="fitCenter"-->
-    <!--fresco:roundAsCircle="true"-->
-    <!--fresco:roundedCornerRadius="10dp"-->
-    <!--fresco:roundingBorderWidth="5dp"-->
-    <!--fresco:viewAspectRatio="1.33" />-->
 
     <ImageView
         android:id="@+id/imProductCategory"
