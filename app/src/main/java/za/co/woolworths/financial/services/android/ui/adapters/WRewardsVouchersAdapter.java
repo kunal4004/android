@@ -87,7 +87,7 @@ public class WRewardsVouchersAdapter extends BaseAdapter {
         if ("PERCENTAGE".equals(vouchers.get(position).type)) {
             holder.value.setText(String.valueOf(WFormatter.formatPercent(vouchers.get(position).amount)));
         } else {
-            holder.value.setText(String.valueOf("R" + vouchers.get(position).amount));
+            holder.value.setText(String.valueOf(WFormatter.formatAmountNoDecimal(vouchers.get(position).amount)));
         }
         holder.message.setText(vouchers.get(position).description);
         holder.voucherNumber.setText(WFormatter.formatVoucher(vouchers.get(position).voucherNumber));

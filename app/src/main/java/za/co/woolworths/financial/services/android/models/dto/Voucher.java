@@ -6,7 +6,7 @@ public class Voucher{
     public String validFromDate;
     public String validToDate;
     public String voucherNumber;
-    public String amount;
+    public int amount;
     public int minimumSpend;
     public String description;
     public String termsAndConditions;
