@@ -482,7 +482,7 @@
     <string name="barcode_error_title">BARCODE ERROR</string>
     <string name="barcode_error_desc">Please re-enter the barcode</string>
     <string name="confirm">Confirm</string>
-    <string name="no_tire_history_to_display">NO TIRE HISTORY TO DISPLAY</string>
+    <string name="no_tier_history_to_display">NO TIER HISTORY TO DISPLAY</string>
     <string name="no_vouchers">NO VOUCHERS</string>
     <string name="ssl_error">SSL certificate invalid</string>
     <string name="product_from">From</string>
