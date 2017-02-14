@@ -1,20 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 
 import com.awfs.coordination.R;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import java.util.List;
 
@@ -34,11 +27,10 @@ public class ProductViewPagerAdapter extends PagerAdapter {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         ViewGroup v = (ViewGroup) inflater.inflate(R.layout.product_view,
                 collection, false);
-        String image = mViewPager.get(position).toString();
-        Log.e("imagepp",image);
-        SimpleDraweeView mProductImage = (SimpleDraweeView) v.findViewById(R.id.imProductView);
+        String image = mViewPager.get(position);
+        ImageView mProductImage = (ImageView) v.findViewById(R.id.imProductView);
         DrawImage drawImage = new DrawImage(mContext);
-        drawImage.setupImage(mProductImage, image);
+        drawImage.displayImage(mProductImage, image);
         collection.addView(v, 0);
         return v;
     }

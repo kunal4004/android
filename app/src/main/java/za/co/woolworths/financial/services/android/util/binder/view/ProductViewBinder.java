@@ -6,18 +6,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.awfs.coordination.R;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.request.ImageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.binder.DataBindAdapter;
@@ -48,17 +46,12 @@ public class ProductViewBinder extends DataBinder<ProductViewBinder.ViewHolder> 
             String productName = productItem.productName;
             double price = productItem.fromPrice;
             String imagePath = productItem.imagePath;
-            Log.e("mPrice",String.valueOf(price));
             holder.productName.setText(productName);
             holder.mTextAmount.setText(holder.mTextAmount.getContext().getString(R.string.product_from) + " : "
                     + WFormatter.formatAmount(price));
             if (productItem.imagePath != null) {
-                Uri imageUri = Uri.parse(imagePath);
-                ImageRequest request = ImageRequest.fromUri(imageUri);
-                DraweeController controller = Fresco.newDraweeControllerBuilder()
-                        .setImageRequest(request)
-                        .setOldController(holder.mSimpleDraweeView.getController()).build();
-                holder.mSimpleDraweeView.setController(controller);
+                DrawImage drawImage = new DrawImage(holder.mSimpleDraweeView.getContext());
+                drawImage.displayImage(holder.mSimpleDraweeView,imagePath);
             }
         }
     }
@@ -82,13 +75,13 @@ public class ProductViewBinder extends DataBinder<ProductViewBinder.ViewHolder> 
 
         WTextView productName;
         WTextView mTextAmount;
-        SimpleDraweeView mSimpleDraweeView;
+        ImageView mSimpleDraweeView;
 
         public ViewHolder(View view) {
             super(view);
             productName = (WTextView) view.findViewById(R.id.textTitle);
             mTextAmount = (WTextView) view.findViewById(R.id.textAmount);
-            mSimpleDraweeView = (SimpleDraweeView) view.findViewById(R.id.imProduct);
+            mSimpleDraweeView = (ImageView) view.findViewById(R.id.imProduct);
         }
     }
 }

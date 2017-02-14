@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fresco="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/card_shadow"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
     android:gravity="center_horizontal"
     android:orientation="vertical">
 
@@ -13,17 +13,17 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="0.1dp"
+        android:layout_height="0.2dp"
         android:layout_marginBottom="15dp"
-        android:background="@color/recent_search_bg" />
+        android:background="@color/semi_transparent_black" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/textTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/default_margin"
-        android:layout_marginLeft="@dimen/default_margin"
-        android:layout_marginRight="@dimen/default_margin"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:ellipsize="end"
         android:gravity="top|start"
         android:letterSpacing="0.05"
@@ -33,17 +33,52 @@
         android:textSize="14sp"
         app:WTextView_font="medium" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/textAmount"
+    <LinearLayout
+        android:id="@+id/linPriceContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="17dp"
-        android:layout_marginLeft="@dimen/default_margin"
-        android:layout_marginRight="@dimen/default_margin"
-        android:gravity="bottom|start"
-        android:letterSpacing="0.05"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:WTextView_font="medium_bold" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/textLabelAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom|start"
+            android:letterSpacing="0.03"
+            android:layout_marginRight="5dp"
+            android:text="@string/product_from"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:visibility="gone"
+            app:WTextView_font="medium_bold" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/textAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="bottom|start"
+            android:letterSpacing="0.03"
+            android:text="10e0djdjdhfh"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:WTextView_font="medium_bold" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/textWasPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="4dp"
+            android:layout_toEndOf="@+id/textAmount"
+            android:gravity="bottom|start"
+            android:letterSpacing="0.03"
+            android:textColor="@color/red"
+            android:textSize="14sp"
+            app:WTextView_font="medium_bold" />
+    </LinearLayout>
 
 </LinearLayout>

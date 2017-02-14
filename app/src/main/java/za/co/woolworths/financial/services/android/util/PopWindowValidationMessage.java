@@ -403,7 +403,7 @@ public class PopWindowValidationMessage {
         window.addFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Utils.updateStatusBarBackground(activity);
+        //Utils.updateStatusBarBackground(activity);
         View decor = activity.getWindow().getDecorView();
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             decor.setSystemUiVisibility(0);

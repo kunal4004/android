@@ -12,4 +12,8 @@ public class OtherSkus {
     @Expose
     public String price;
 
+    @SerializedName("wasPrice")
+    @Expose
+    public String wasPrice;
+
 }

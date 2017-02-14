@@ -34,4 +34,8 @@ public class OtherSku {
     @Expose
     public String externalImageRef;
 
+    @SerializedName("wasPrice")
+    @Expose
+    public String wasPrice;
+
 }

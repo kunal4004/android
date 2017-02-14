@@ -2,15 +2,16 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 
 import android.app.Activity;
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
     public Activity mContext;
     private List<ProductList> mProductList;
     private SelectedProductView mSelectedProductView;
+    private ProductList productItem;
 
     public ProductViewListAdapter(Activity mContext, List<ProductList> mProductList,
                                   SelectedProductView selectedProductView) {
@@ -37,36 +39,39 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
 
         WTextView productName;
         WTextView mTextAmount;
-        SimpleDraweeView mSimpleDraweeView;
-        SimpleDraweeView imNewImage;
-        SimpleDraweeView mImSave;
-        SimpleDraweeView mImReward;
-        SimpleDraweeView mVitalityView;
+        WTextView mTextWasPrice;
+        WTextView mTextLabelAmount;
+        ImageView mSimpleDraweeView;
+        ImageView imNewImage;
+        ImageView mImSave;
+        ImageView mImReward;
+        ImageView mVitalityView;
 
         SimpleViewHolder(View view) {
             super(view);
             productName = (WTextView) view.findViewById(R.id.textTitle);
             mTextAmount = (WTextView) view.findViewById(R.id.textAmount);
-            mSimpleDraweeView = (SimpleDraweeView) view.findViewById(R.id.imProduct);
-            imNewImage = (SimpleDraweeView) view.findViewById(R.id.imNewImage);
-            mImSave = (SimpleDraweeView) view.findViewById(R.id.imSave);
-            mImReward = (SimpleDraweeView) view.findViewById(R.id.imReward);
-            mVitalityView = (SimpleDraweeView) view.findViewById(R.id.imVitality);
+            mTextWasPrice = (WTextView) view.findViewById(R.id.textWasPrice);
+            mTextLabelAmount = (WTextView) view.findViewById(R.id.textLabelAmount);
+            mSimpleDraweeView = (ImageView) view.findViewById(R.id.imProduct);
+            imNewImage = (ImageView) view.findViewById(R.id.imNewImage);
+            mImSave = (ImageView) view.findViewById(R.id.imSave);
+            mImReward = (ImageView) view.findViewById(R.id.imReward);
+            mVitalityView = (ImageView) view.findViewById(R.id.imVitality);
         }
     }
 
     @Override
     public void onBindViewHolder(final SimpleViewHolder holder, final int position) {
-        ProductList productItem = mProductList.get(position);
+        productItem = mProductList.get(position);
         if (productItem != null) {
             String productName = productItem.productName;
-            double fromPrice = productItem.fromPrice;
             String imgUrl = productItem.imagePath;
             String productType = productItem.productType;
             PromotionImages promo = productItem.promotionImages;
             holder.productName.setText(productName);
 
-            productType(holder, productType, fromPrice);
+            productType(holder, productType);
             productImage(holder, imgUrl);
             promoImages(holder, promo);
         }
@@ -95,30 +100,40 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         return R.id.swipe;
     }
 
-    @Override
-    public void onViewRecycled(SimpleViewHolder holder) {
-        super.onViewRecycled(holder);
-        if (holder.mSimpleDraweeView.getController() != null) {
-            holder.mSimpleDraweeView.getController().onDetach();
-        }
-        if (holder.mSimpleDraweeView.getTopLevelDrawable() != null) {
-            holder.mSimpleDraweeView.getTopLevelDrawable().setCallback(null);
-        }
-    }
 
-    private void productType(SimpleViewHolder holder, String productType, double fromPrice) {
+    private void productType(SimpleViewHolder holder, String productType) {
+        String price = "";
+        if ("clothingProducts".equalsIgnoreCase(productType)) {
+            price = String.valueOf(productItem.fromPrice);
+        } else {
+            price = productItem.otherSkus.get(0).price;
+        }
+
         switch (productType) {
             case "clothingProducts":
-                holder.mTextAmount.setText(holder.mTextAmount.getContext().getString(R.string.product_from) + " : "
-                        + WFormatter.formatAmount(fromPrice));
+                holder.mTextAmount.setText(WFormatter.formatAmount(price));
 
-                //  holder.mSimpleDraweeView.getLayoutParams().height = 200;
+                if (!TextUtils.isEmpty(productItem.otherSkus.get(0).wasPrice)) {
+                    holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    holder.mTextAmount.setText(WFormatter.formatAmount(productItem.otherSkus.get(0).wasPrice));
+                    holder.mTextWasPrice.setText(WFormatter.formatAmount(price));
+                    holder.mTextLabelAmount.setVisibility(View.VISIBLE);
+                } else {
+                    holder.mTextLabelAmount.setVisibility(View.VISIBLE);
+                }
 
                 break;
             default:
                 holder.mTextAmount.setText(
-                        WFormatter.formatAmount(fromPrice));
-                // holder.mSimpleDraweeView.getLayoutParams().height = 150;
+                        WFormatter.formatAmount(productItem.fromPrice));
+                if (!TextUtils.isEmpty(productItem.otherSkus.get(0).wasPrice)) {
+                    holder.mTextLabelAmount.setVisibility(View.VISIBLE);
+                    holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    holder.mTextAmount.setText(WFormatter.formatAmount(productItem.otherSkus.get(0).wasPrice));
+                    holder.mTextWasPrice.setText(WFormatter.formatAmount(price));
+                } else {
+                    holder.mTextLabelAmount.setVisibility(View.GONE);
+                }
                 break;
         }
     }
@@ -127,7 +142,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         if (imgUrl != null) {
             try {
                 DrawImage drawImage = new DrawImage(mContext);
-                drawImage.setupImage(holder.mSimpleDraweeView, imgUrl);
+                drawImage.displayImage(holder.mSimpleDraweeView, imgUrl);
             } catch (IllegalArgumentException ignored) {
             }
         }
@@ -144,32 +159,33 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
 
             if (!TextUtils.isEmpty(wSave)) {
                 holder.mImSave.setVisibility(View.VISIBLE);
-                drawImage.setupImage(holder.mImSave, wSave);
+                drawImage.displayImage(holder.mImSave, wSave);
             } else {
                 holder.mImSave.setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(wReward)) {
                 holder.mImReward.setVisibility(View.VISIBLE);
-                drawImage.setupImage(holder.mImSave, wReward);
+                drawImage.displayImage(holder.mImReward, wReward);
             } else {
                 holder.mImReward.setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(wVitality)) {
                 holder.mVitalityView.setVisibility(View.VISIBLE);
-                drawImage.setupImage(holder.mImSave, wVitality);
+                drawImage.displayImage(holder.mVitalityView, wVitality);
             } else {
                 holder.mVitalityView.setVisibility(View.GONE);
             }
 
             if (!TextUtils.isEmpty(wNewImage)) {
                 holder.imNewImage.setVisibility(View.VISIBLE);
-                drawImage.setupImage(holder.mImSave, wNewImage);
+                drawImage.displayImage(holder.imNewImage, wNewImage);
 
             } else {
                 holder.imNewImage.setVisibility(View.GONE);
             }
         }
     }
+
 }
