@@ -55,6 +55,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     private WProgressDialogFragment mGetMessageProgressDialog;
     private FragmentManager fm;
     private WTextView mToolbarText;
+    private boolean actionBarIsHidden = false;
 
     public interface HideActionBarComponent {
         void onBurgerButtonPressed();
@@ -84,7 +85,6 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        // getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         return inflater.inflate(R.layout.product_search_fragment, container, false);
     }
 
@@ -323,39 +323,50 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     }
 
     private void hideViews() {
-        mProductToolbar.animate()
-                .translationY(-mProductToolbar.getBottom())
-                .setInterpolator(new AccelerateInterpolator())
-                .withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        showBarcodeToolbar();
-                        mRelSearchRowLayout.setAlpha(0);
-                        mProductToolbar
-                                .animate()
-                                .translationY(0)
-                                .setInterpolator(new DecelerateInterpolator())
-                                .start();
-                    }
-                }).start();
+        if (!actionBarIsHidden) {
+            mProductToolbar.animate()
+                    .translationY(-mProductToolbar.getBottom())
+                    .setInterpolator(new AccelerateInterpolator())
+                    .withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            showBarcodeToolbar();
+                            actionBarIsHidden = true;
+                            mRelSearchRowLayout.setAlpha(0);
+                            mProductToolbar
+                                    .animate()
+                                    .translationY(0)
+                                    .start();
+                        }
+                    }).start();
+        }
     }
 
     private void showViews() {
-        mProductToolbar.animate()
-                .translationY(0)
-                .setInterpolator(new DecelerateInterpolator())
-                .withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        showAccountToolbar();
-                        mRelSearchRowLayout.setAlpha(1);
-                        mProductToolbar
-                                .animate()
-                                .translationY(0)
-                                .setInterpolator(new DecelerateInterpolator())
-                                .start();
-                    }
-                }).start();
+        if (actionBarIsHidden) {
+            mProductToolbar.animate()
+                    .translationY(-mProductToolbar.getBottom())
+                    .setInterpolator(new DecelerateInterpolator())
+                    .withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            showAccountToolbar();
+                            mRelSearchRowLayout.setAlpha(1);
+                            mProductToolbar
+                                    .animate()
+                                    .translationY(0)
+                                    .setInterpolator(new DecelerateInterpolator())
+                                    .withEndAction(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            showAccountToolbar();
+                                        }
+                                    })
+                                    .start();
+                            actionBarIsHidden = false;
+                        }
+                    }).start();
+        }
     }
 
     private void hideProgress() {
