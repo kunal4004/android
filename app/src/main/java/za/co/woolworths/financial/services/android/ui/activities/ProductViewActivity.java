@@ -114,6 +114,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             loadProduct();
         } else {
             productConfig(searchItem);
+            productId=searchItem;
             searchProduct();
         }
 
