@@ -378,12 +378,18 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         mToolbarText.setVisibility(View.VISIBLE);
         mTBBarcodeScanner.setVisibility(View.GONE);
         mTextTBProductSearch.setVisibility(View.GONE);
+        mImProductSearch.setEnabled(true);
+        mImBarcodeScanner.setEnabled(true);
+        mTextProductSearch.setEnabled(true);
     }
 
     private void showBarcodeToolbar() {
         mToolbarText.setVisibility(View.GONE);
         mTBBarcodeScanner.setVisibility(View.VISIBLE);
         mTextTBProductSearch.setVisibility(View.VISIBLE);
+        mImProductSearch.setEnabled(false);
+        mImBarcodeScanner.setEnabled(false);
+        mTextProductSearch.setEnabled(false);
     }
 
     @Override
