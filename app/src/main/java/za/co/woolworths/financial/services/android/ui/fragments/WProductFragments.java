@@ -79,6 +79,8 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     private Toolbar mProductToolbar;
     private LDObservableScrollView mNestedScrollview;
     private PopWindowValidationMessage mPopWindowValidationMessage;
+    private final int ANIMATION_START_DURATION = 100;
+    private final int ANIMATION_END_DURATION = 50;
 
     @Nullable
     @Override
@@ -246,7 +248,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     public void onScrollChanged(LDObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
         // TODO Auto-generated method stub
         // int searchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight() / 2));
-        int searchRowHeight = Math.round(mRelSearchRowLayout.getHeight() - (getToolBarHeight()));
+        int searchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight() / 3));
 
         if (searchRowHeight > y) {
             showViews();
@@ -327,6 +329,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
             mProductToolbar.animate()
                     .translationY(-mProductToolbar.getBottom())
                     .setInterpolator(new AccelerateInterpolator())
+                    .setDuration(ANIMATION_START_DURATION)
                     .withEndAction(new Runnable() {
                         @Override
                         public void run() {
@@ -336,6 +339,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                             mProductToolbar
                                     .animate()
                                     .translationY(0)
+                                    .setDuration(ANIMATION_END_DURATION)
                                     .start();
                         }
                     }).start();
@@ -347,6 +351,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
             mProductToolbar.animate()
                     .translationY(-mProductToolbar.getBottom())
                     .setInterpolator(new DecelerateInterpolator())
+                    .setDuration(ANIMATION_START_DURATION)
                     .withEndAction(new Runnable() {
                         @Override
                         public void run() {
@@ -355,6 +360,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                             mProductToolbar
                                     .animate()
                                     .translationY(0)
+                                    .setDuration(ANIMATION_END_DURATION)
                                     .setInterpolator(new DecelerateInterpolator())
                                     .withEndAction(new Runnable() {
                                         @Override
