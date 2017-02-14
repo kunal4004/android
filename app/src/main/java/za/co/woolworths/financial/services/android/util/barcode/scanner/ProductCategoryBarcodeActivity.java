@@ -171,9 +171,14 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             }
         }
 
-        for (int index : mSelectedIndices) {
-            formats.add(BarcodeFormat.ALL_FORMATS.get(index));
-        }
+        formats.add(BarcodeFormat.EAN13);
+        formats.add(BarcodeFormat.EAN8);
+        formats.add(BarcodeFormat.UPCA);
+        formats.add(BarcodeFormat.UPCE);
+        formats.add(BarcodeFormat.ISBN13);
+        formats.add(BarcodeFormat.EAN13);
+        formats.add(BarcodeFormat.CODE128);
+
         if (mScannerView != null) {
             mScannerView.setFormats(formats);
         }
