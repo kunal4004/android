@@ -45,7 +45,6 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -100,7 +99,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mContext = this;
         SessionDao sessionDao;
 
-
         try {
             sessionDao = new SessionDao(ProductDetailViewActivity.this, SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
             mProductJSON = sessionDao.value;
@@ -154,8 +152,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 }
             });
 
-
-        } catch (JSONException e) {
+        } catch (Exception e) {
             Log.e("sessionDao", e.toString());
         }
 
@@ -199,7 +196,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
     private void initUI() {
 
-        mColorView = (View) findViewById(R.id.colorView);
+        mColorView = findViewById(R.id.colorView);
         mTextSelectSize = (WTextView) findViewById(R.id.textSelectSize);
         WTextView mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
         mDescription = (WTextView) findViewById(R.id.description);

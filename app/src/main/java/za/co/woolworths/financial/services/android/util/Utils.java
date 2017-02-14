@@ -41,9 +41,11 @@ import java.util.Locale;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
+import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.fragments.CLISecondStepFragment;
 
 import static android.Manifest.permission_group.STORAGE;
@@ -78,7 +80,7 @@ public class Utils {
     public static final String SILVER_CARD = "400154";
     public static final String GOLD_CARD = "410374";
     public static final String BLACK_CARD = "410375";
-    public static final int ACCOUNTS_PROGRESS_BAR_MAX_VALUE=10000;
+    public static final int ACCOUNTS_PROGRESS_BAR_MAX_VALUE = 10000;
 
     public static void saveLastLocation(Location loc, Context mContext) {
 
@@ -283,5 +285,27 @@ public class Utils {
 
     public static int getTabsHeight(Context context) {
         return (int) context.getResources().getDimension(R.dimen.bank_spacing_width);
+    }
+
+    public static WProduct stringToJson(Context context, String value) {
+        if (TextUtils.isEmpty(value))
+            return null;
+
+        try {
+            SessionDao sessionDao = new SessionDao(context);
+            sessionDao.key = SessionDao.KEY.STORES_LATEST_PAYLOAD;
+            sessionDao.value = value;
+            try {
+                sessionDao.save();
+            } catch (Exception e) {
+                Log.e("TAG", e.getMessage());
+            }
+        } catch (Exception e) {
+            Log.e("exception", String.valueOf(e));
+        }
+
+        TypeToken<WProduct> token = new TypeToken<WProduct>() {
+        };
+        return new Gson().fromJson(value, token.getType());
     }
 }

@@ -54,7 +54,7 @@
                 android:text="R 2.50"
                 android:textColor="@color/white"
                 android:textSize="45sp"
-                app:WTextView_font="light"/>
+                app:WTextView_font="light" />
 
         </LinearLayout>
 
@@ -132,23 +132,43 @@
             android:id="@+id/relConfirmLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="bottom">
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            android:gravity="bottom|center_horizontal">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/btnConfirm"
+            <LinearLayout
+                android:id="@+id/linConfirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
+                android:minHeight="48dp"
                 android:layout_marginTop="124dp"
                 android:background="@color/white"
+
                 android:gravity="center"
-                android:letterSpacing="0.08"
-                android:minHeight="48dp"
-                android:text="CONFIRM"
-                android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="12sp" />
+                android:orientation="horizontal">
+
+                <ProgressBar
+                    android:id="@+id/mConfirmProgressBar"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:paddingTop="5dp"
+                    android:visibility="gone" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/btnConfirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:letterSpacing="0.08"
+                    android:text="CONFIRM"
+                    android:minHeight="48dp"
+                    android:textAllCaps="true"
+                    app:WTextView_font="medium"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:visibility="visible" />
+            </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
 
