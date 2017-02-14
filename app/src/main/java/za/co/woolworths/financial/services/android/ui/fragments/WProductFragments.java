@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ProductSearchAc
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchSubCategoryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductViewActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.PSRootCategoryAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.ProductCategoryAdapter;
 import za.co.woolworths.financial.services.android.ui.views.LDObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -374,10 +375,10 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
 
-    private void bindViewWithUI(List<RootCategory> rootCategories) {
-        mRootCategories = rootCategories;
-        PSRootCategoryAdapter mPSRootCategoryAdapter = new PSRootCategoryAdapter(rootCategories, mContext);
-        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mPSRootCategoryAdapter);
+    private void bindViewWithUI(List<RootCategory> categories) {
+        mRootCategories = categories;
+        ProductCategoryAdapter mCategoryAdapter = new ProductCategoryAdapter(categories, mContext);
+        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mCategoryAdapter);
         mRecycleProductSearch.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(2f)));
         mRecycleProductSearch.getItemAnimator().setAddDuration(1500);
         mRecycleProductSearch.getItemAnimator().setRemoveDuration(1500);
@@ -389,7 +390,6 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         mRecycleProductSearch.setLayoutManager(mLayoutManager);
         mRecycleProductSearch.setNestedScrollingEnabled(false);
         mRecycleProductSearch.setAdapter(alphaAdapter);
-        mPSRootCategoryAdapter.setCLIContent();
     }
 
     @Override
