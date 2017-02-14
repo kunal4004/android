@@ -39,7 +39,7 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchSubCategoryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductViewActivity;
-import za.co.woolworths.financial.services.android.ui.adapters.ProductCategoryAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.PSRootCategoryAdapter;
 import za.co.woolworths.financial.services.android.ui.views.LDObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -85,7 +85,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-       // getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        // getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         return inflater.inflate(R.layout.product_search_fragment, container, false);
     }
 
@@ -374,9 +374,10 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
 
-    private void bindViewWithUI(List<RootCategory> categories) {
-        ProductCategoryAdapter mCategoryAdapter = new ProductCategoryAdapter(categories, mContext);
-        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mCategoryAdapter);
+    private void bindViewWithUI(List<RootCategory> rootCategories) {
+        mRootCategories = rootCategories;
+        PSRootCategoryAdapter mPSRootCategoryAdapter = new PSRootCategoryAdapter(rootCategories, mContext);
+        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mPSRootCategoryAdapter);
         mRecycleProductSearch.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(2f)));
         mRecycleProductSearch.getItemAnimator().setAddDuration(1500);
         mRecycleProductSearch.getItemAnimator().setRemoveDuration(1500);
@@ -388,6 +389,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         mRecycleProductSearch.setLayoutManager(mLayoutManager);
         mRecycleProductSearch.setNestedScrollingEnabled(false);
         mRecycleProductSearch.setAdapter(alphaAdapter);
+        mPSRootCategoryAdapter.setCLIContent();
     }
 
     @Override
