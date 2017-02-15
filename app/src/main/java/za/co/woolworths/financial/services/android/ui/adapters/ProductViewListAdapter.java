@@ -131,6 +131,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
                     holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                     holder.mTextAmount.setText(WFormatter.formatAmount(productItem.otherSkus.get(0).wasPrice));
                     holder.mTextWasPrice.setText(WFormatter.formatAmount(price));
+                    holder.mTextLabelAmount.setVisibility(View.GONE);
                 } else {
                     holder.mTextLabelAmount.setVisibility(View.GONE);
                 }
