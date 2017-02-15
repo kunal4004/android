@@ -66,7 +66,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     private WTextView mToolBarTitle;
     private String productId;
     private String productName;
-    private final int PAGE_SIZE = 30;
     private final int PERMS_REQUEST_CODE = 1234;
     private LatLng mLocation;
     private int mCurrentPage = 1;
@@ -114,7 +113,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             loadProduct();
         } else {
             productConfig(searchItem);
-            productId=searchItem;
+            productId = searchItem;
             searchProduct();
         }
 
@@ -284,7 +283,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 if (!mIsLoading && !mIsLastPage) {
                     if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                             && firstVisibleItemPosition >= 0
-                            && totalItemCount >= PAGE_SIZE) {
+                            && totalItemCount >= Utils.PAGE_SIZE) {
                         loadMoreProduct();
                     }
                 }
@@ -356,7 +355,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 mCurrentPage = 1;
                 mIsLastPage = false;
                 return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(mLocation, false,
-                        mCurrentPage, PAGE_SIZE, productId);
+                        mCurrentPage, Utils.PAGE_SIZE, productId);
             }
 
             @Override
@@ -413,7 +412,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
                 return ((WoolworthsApplication) getApplication()).getApi()
                         .getProductSearchList(searchItem,
-                                mLocation, false, mCurrentPage, PAGE_SIZE);
+                                mLocation, false, mCurrentPage, Utils.PAGE_SIZE);
             }
 
             @Override
@@ -471,7 +470,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             @Override
             protected ProductView httpDoInBackground(String... params) {
                 return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(mLocation, false,
-                        mCurrentPage, PAGE_SIZE, productId);
+                        mCurrentPage, Utils.PAGE_SIZE, productId);
             }
 
             @Override
@@ -495,7 +494,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 List<ProductList> moreProductList;
                 moreProductList = productResponse.products;
                 if (moreProductList != null && moreProductList.size() != 0) {
-                    if (moreProductList.size() < PAGE_SIZE) {
+                    if (moreProductList.size() < Utils.PAGE_SIZE) {
                         mIsLastPage = true;
                     }
                     mProduct.addAll(moreProductList);

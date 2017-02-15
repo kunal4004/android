@@ -55,7 +55,6 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         ZBarScannerView.ResultHandler,
         CameraSelectorDialogFragment.CameraSelectorDialogListener, View.OnClickListener {
 
-    public static int PAGE_SIZE = 20;
     private static final String FLASH_STATE = "FLASH_STATE";
     private static final String AUTO_FOCUS_STATE = "AUTO_FOCUS_STATE";
     private static final String SELECTED_FORMATS = "SELECTED_FORMATS";
@@ -215,7 +214,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
                 LatLng location1 = new LatLng(mLocation.latitude, mLocation.longitude);
                 return ((WoolworthsApplication) getApplication()).getApi()
                         .getProductSearchList(query,
-                                location1, true, 1, PAGE_SIZE);
+                                location1, true, 1, Utils.PAGE_SIZE);
             }
 
             @Override

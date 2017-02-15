@@ -60,7 +60,6 @@ public class EnterBarcodeActivity extends AppCompatActivity {
     private WLoanEditTextView mEditBarcodeNumber;
     private ProgressBar mProgressBar;
     private LatLng mLocation;
-    public static int PAGE_SIZE = 20;
     private static final int PERMS_REQUEST_CODE = 1234;
     private WTextView mTextInfo;
     private EnterBarcodeActivity mContext;
@@ -155,7 +154,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
                 LatLng location1 = new LatLng(mLocation.latitude, mLocation.longitude);
                 return ((WoolworthsApplication) getApplication()).getApi()
                         .getProductSearchList(query,
-                                location1, true, 1, PAGE_SIZE);
+                                location1, true, 1, Utils.PAGE_SIZE);
             }
 
             @Override
