@@ -435,11 +435,15 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 mProduct = new ArrayList<>();
                 if (pv.products != null && pv.products.size() != 0) {
                     mProduct = pv.products;
-                    mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
-                    bindDataWithUI(mProduct);
-                    mIsLastPage = false;
-                    mCurrentPage = 1;
-                    mIsLoading = false;
+                    if (pv.products.size() == 1) {
+                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku, true);
+                    } else {
+                        mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
+                        bindDataWithUI(mProduct);
+                        mIsLastPage = false;
+                        mCurrentPage = 1;
+                        mIsLoading = false;
+                    }
                 }
                 hideVProgressBar();
             }
