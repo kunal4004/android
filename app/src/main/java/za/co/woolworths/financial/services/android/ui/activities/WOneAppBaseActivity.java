@@ -92,7 +92,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         switch (position) {
             case 0:
                 fragment = new WTodayFragment();
-                title = getString(R.string.nav_item_today);
+                title = getString(R.string.nw_today_title);
                 break;
             case 1:
                 fragment = new WProductFragments();
