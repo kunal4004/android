@@ -529,11 +529,15 @@ public class MyAccountCardsActivity extends BaseActivity
     }
 
     private void fragmentInterfaceListener(int position) {
-        FragmentLifecycle fragmentToShow = (FragmentLifecycle) fragmentsAdapter.getItem(position);
-        fragmentToShow.onResumeFragment();
+        try {
+            FragmentLifecycle fragmentToShow = (FragmentLifecycle) fragmentsAdapter.getItem(position);
+            fragmentToShow.onResumeFragment();
 
-        FragmentLifecycle fragmentToHide = (FragmentLifecycle) fragmentsAdapter.getItem(position);
-        fragmentToHide.onPauseFragment();
+            FragmentLifecycle fragmentToHide = (FragmentLifecycle) fragmentsAdapter.getItem(position);
+            fragmentToHide.onPauseFragment();
+        } catch (ClassCastException ignore){
+            
+        }
 
     }
 }
