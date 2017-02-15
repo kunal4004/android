@@ -144,7 +144,7 @@
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
 
-    <string name="nav_item_today">TODAY</string>
+    <string name="nav_item_today">W TODAY</string>
     <string name="nav_item_products">PRODUCTS</string>
     <string name="nav_item_store">STORES</string>
     <string name="screen_title_store">STORES NEARBY</string>

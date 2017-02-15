@@ -122,23 +122,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             // set the toolbar title
             mToolbarTitle.setText(title);
             fragmentList.add(fragment);
-/*            if (isRewardFragment) {
-                JWTDecodedModel jwtDecodedModel = this.getJWTDecoded();
-                if(jwtDecodedModel.AtgSession == null){
-                    //user is signed out
-                    mToolbarTitle.setText("");
-                }else{
-                    if(jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")){
-                        //Signed in and linked
-                        mToolbarTitle.setText(title);
-                    } else{
-                        //signed in but NOT linked
-                        title = "";
-                    }
-
-                }
-
-            }*/
         }
     }
 
