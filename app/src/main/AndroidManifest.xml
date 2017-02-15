@@ -267,5 +267,9 @@
                 android:value="splitActionBarWhenNarrow" />
         </activity>
 
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.TransludentActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
     </application>
 </manifest>
