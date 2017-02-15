@@ -506,7 +506,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     }
 
     private void getProductDetail(final String productId, final String skuId, final boolean closeProductView) {
-        if (!TextUtils.isEmpty(searchItem)) {
+        if (TextUtils.isEmpty(searchItem)) {
             try {
                 mGetProgressDialog.show(fm, "v");
             } catch (NullPointerException ignored) {
