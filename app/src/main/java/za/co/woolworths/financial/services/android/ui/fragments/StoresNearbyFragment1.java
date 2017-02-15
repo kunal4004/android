@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
@@ -36,6 +38,7 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -88,6 +91,8 @@ import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static android.content.Context.LOCATION_SERVICE;
+import static com.awfs.coordination.R.id.mProgressBar;
+import static com.awfs.coordination.R.id.textView;
 import static com.google.android.gms.wearable.DataMap.TAG;
 
 public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener {
@@ -120,6 +125,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     LinearLayout detailsLayout;
     LinearLayout timeingsLayout;
     LinearLayout brandsLayout;
+    RelativeLayout storeTimingView;
     WTextView storeName;
     WTextView storeOfferings;
     WTextView storeAddress;
@@ -128,7 +134,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
     WTextView nativeMap;
     WTextView cancel;
-
+    ProgressBar progressBar;
 
     //Location Service Layouts
     LinearLayout layoutLocationServiceOff;
@@ -168,6 +174,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         storeAddress = (WTextView) v.findViewById(R.id.storeAddress);
         storeNumber = (WTextView) v.findViewById(R.id.storeNumber);
         timeingsLayout = (LinearLayout) v.findViewById(R.id.timeingsLayout);
+        storeTimingView=(RelativeLayout)v.findViewById(R.id.storeTimingView);
         brandsLayout = (LinearLayout) v.findViewById(R.id.brandsLayout);
         relBrandLayout = (RelativeLayout) v.findViewById(R.id.relBrandLayout);
         direction = (RelativeLayout) v.findViewById(R.id.direction);
@@ -175,6 +182,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         layoutLocationServiceOff = (LinearLayout) v.findViewById(R.id.layoutLocationServiceOff);
         layoutLocationServiceOn = (RelativeLayout) v.findViewById(R.id.layoutLocationServiceOn);
         btnOnLocationService = (WButton) v.findViewById(R.id.buttonLocationOn);
+        progressBar=(ProgressBar)v.findViewById(R.id.storesProgressBar);
+        progressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
         // Chcek of location Service Enable
         //  checkLocationServiceAndSetLayout(Utils.isLocationServiceEnabled(getActivity()));
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
@@ -412,7 +421,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     public void backToAllStoresPage(int position) {
         googleMap.getUiSettings().setScrollGesturesEnabled(true);
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markers.get(position).getPosition(), 13), 500, null);
-        WOneAppBaseActivity.appbar.animate().translationY(WOneAppBaseActivity.appbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
+        WOneAppBaseActivity.mToolbar.animate().translationY(WOneAppBaseActivity.mToolbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
         showAllMarkers(markers);
 
     }
@@ -428,7 +437,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         googleMap.animateCamera(centerCam, CAMERA_ANIMATION_SPEED, null);
         googleMap.getUiSettings().setScrollGesturesEnabled(false);
         if (mLayout.getAnchorPoint() == 1.0f) {
-            WOneAppBaseActivity.appbar.animate().translationY(-WOneAppBaseActivity.appbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
+            WOneAppBaseActivity.mToolbar.animate().translationY(-WOneAppBaseActivity.mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
             mLayout.setAnchorPoint(0.7f);
             mLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
 
@@ -469,7 +478,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         if (storeDetail.phoneNumber != null)
             storeNumber.setText(storeDetail.phoneNumber);
         SpannableMenuOption spannableMenuOption = new SpannableMenuOption(getActivity());
-        storeDistance.setText(spannableMenuOption.distanceKm(WFormatter.formatMeter(storeDetail.distance)));
+        storeDistance.setText(WFormatter.formatMeter(storeDetail.distance)+getActivity().getResources().getString(R.string.distance_in_km));
         if (storeDetail.offerings != null) {
             storeOfferings.setText(WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department")));
             List<StoreOfferings> brandslist = getOfferingByType(storeDetail.offerings, "Brand");
@@ -492,18 +501,24 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         } else {
             relBrandLayout.setVisibility(View.GONE);
         }
-        if (storeDetail.times != null) {
-            WTextView textView;
-            for (int i = 0; i < storeDetail.times.size(); i++) {
-                View v = getActivity().getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
-                textView = (WTextView) v.findViewById(R.id.openingHours);
-                textView.setText(storeDetail.times.get(i).day + " " + storeDetail.times.get(i).hours);
-                if (i == 0)
-                    textView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Semibold.otf"));
-                timeingsLayout.addView(textView);
-            }
+        if (storeDetail.times != null && storeDetail.times.size()!=0) {
+            storeTimingView.setVisibility(View.VISIBLE);
+                WTextView textView;
+                for (int i = 0; i < storeDetail.times.size(); i++) {
+                    View v = getActivity().getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
+                    textView = (WTextView) v.findViewById(R.id.openingHours);
+                    textView.setText(storeDetail.times.get(i).day + " " + storeDetail.times.get(i).hours);
+                    if (i == 0)
+                        textView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Semibold.otf"));
+                    timeingsLayout.addView(textView);
+                }
+
 
         }
+        else {
+            storeTimingView.setVisibility(View.GONE);
+        }
+
         makeCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -595,12 +610,15 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             protected LocationResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 LocationResponse locationResponse = new LocationResponse();
                 locationResponse.response = new Response();
+                hideProgressBar();
                 return locationResponse;
             }
 
             @Override
             protected void onPostExecute(LocationResponse locationResponse) {
                 super.onPostExecute(locationResponse);
+                hideProgressBar();
+
                 storeDetailsList = new ArrayList<>();
                 storeDetailsList = locationResponse.Locations;
                 if (storeDetailsList != null && storeDetailsList.size() != 0) {
@@ -810,5 +828,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         }
     }
 
+    public void hideProgressBar()
+    {
+        if(progressBar != null )
+            progressBar.setVisibility(View.GONE);
+    }
 
 }

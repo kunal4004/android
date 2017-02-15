@@ -12,4 +12,5 @@
     android:letterSpacing="0.2"
     app:WTextView_font="medium"
     android:gravity="center_vertical"
+    android:background="@drawable/recent_search_header_background"
     android:textColor="#80000000" />

@@ -136,8 +136,8 @@
     <string name="sign_out">Sign Out</string>
     <string name="brands">Brands</string>
     <string name="why_we_need_location_services">Why we need Location Services</string>
-    <string name="location_off_message">Message for user who does not have location services switched on. It will prompt them to go to settings and turn it on. Still to be designed. Alternatively, you can search by Store or Location in the top right corner.</string>
-    <string name="go_to_settings">GO TO SETTINGS</string>
+    <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
+    <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
     <string name="title_activity_wmain">WMainActivity</string>
 
 
