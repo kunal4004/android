@@ -38,7 +38,7 @@ import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
 
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
-        , WProductFragments.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle {
+        , WProductFragments.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle,WRewardsFragment.HideActionBarComponent {
 
     public static Toolbar mToolbar;
   //  public static AppBarLayout appbar;
@@ -190,6 +190,16 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     @Override
     public void onTitleUpdate(String value) {
         mToolbarTitle.setText(value);
+    }
+
+    @Override
+    public void onWRewardsDrawerPressed() {
+        if (!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            //drawer is open
+            mDrawerLayout.openDrawer(Gravity.LEFT); //OPEN Nav Drawer!
+        } else {
+            super.onBackPressed();
+        }
     }
 }
 
