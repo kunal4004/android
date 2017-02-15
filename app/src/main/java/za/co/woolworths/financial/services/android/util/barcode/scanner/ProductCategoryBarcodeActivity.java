@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,19 +17,15 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.awfs.coordination.R;
-import com.google.android.gms.analytics.ExceptionParser;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -47,10 +42,11 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductDetailViewActivity;
+import za.co.woolworths.financial.services.android.ui.activities.TransludentActivity;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.Const;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.barcode.core.IViewFinder;
 import za.co.woolworths.financial.services.android.util.barcode.core.ViewFinderView;
@@ -73,8 +69,8 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     private LatLng mLocation;
     private TextView mTextInfo;
     private RelativeLayout mRelProgressBar;
-    private PopWindowValidationMessage mPopWindowValidationMessage;
     private ProductCategoryBarcodeActivity mContext;
+    private WButton mBtnManual;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -82,7 +78,6 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         super.onCreate(state);
         updateStatusBarBackground(this);
         mContext = this;
-        mPopWindowValidationMessage = new PopWindowValidationMessage(this);
         if (state != null) {
             mFlash = state.getBoolean(FLASH_STATE, false);
             mAutoFocus = state.getBoolean(AUTO_FOCUS_STATE, true);
@@ -96,7 +91,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         }
 
         setContentView(R.layout.activity_full_scanner);
-        Button mBtnManual = (Button) findViewById(R.id.btnManual);
+        mBtnManual = (WButton) findViewById(R.id.btnManual);
         mBtnManual.setOnClickListener(this);
         setupToolbar();
         ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
@@ -129,28 +124,36 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     @Override
     public void onResume() {
         super.onResume();
-        resetCamera();
+        mScannerView.setResultHandler(this);
+        mScannerView.startCamera(mCameraId);
+        mScannerView.setFlash(mFlash);
+        mScannerView.setAutoFocus(mAutoFocus);
     }
 
     private void resetCamera() {
-        try {
-
+        mBtnManual.setEnabled(true);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mScannerView.resumeCameraPreview(ProductCategoryBarcodeActivity.this);
+                }
+            }, 500);
+        } else {
             mScannerView.setResultHandler(this);
             mScannerView.startCamera(mCameraId);
             mScannerView.setFlash(mFlash);
             mScannerView.setAutoFocus(mAutoFocus);
-        } catch (Exception ex) {
-            Log.e("NullPointer",ex.toString());
         }
     }
 
     @Override
     public void handleResult(final Result rawResult) {
         try {
-            new Handler().post(new Runnable() {
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    // Code here will run in UI thread
                     getProductRequest(rawResult.getContents());
                 }
             });
@@ -206,7 +209,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     }
 
     public void getProductRequest(final String query) {
-        AsyncTask<String, String, ProductView> asyncTask = new HttpAsyncTask<String, String, ProductView>() {
+        new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected ProductView httpDoInBackground(String... params) {
                 LatLng location1 = new LatLng(mLocation.latitude, mLocation.longitude);
@@ -232,11 +235,11 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
                     if (mProduct.size() > 0) {
                         getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
                     } else {
-                        hideProgressBar();
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                hideProgressBar();
                                 resetCamera();
                             }
                         }, 100);
@@ -260,9 +263,8 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             protected Class<ProductView> httpDoInBackgroundReturnType() {
                 return ProductView.class;
             }
-        };
+        }.execute();
 
-        asyncTask.execute();
     }
 
 
@@ -358,7 +360,6 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         decor.setSystemUiVisibility(0);
     }
 
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -377,29 +378,19 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     private void showProgressBar() {
         mRelProgressBar.setVisibility(View.VISIBLE);
         mTextInfo.setVisibility(View.GONE);
+        mBtnManual.setEnabled(false);
     }
 
     private void hideProgressBar() {
         mRelProgressBar.setVisibility(View.GONE);
         mTextInfo.setVisibility(View.VISIBLE);
+        mBtnManual.setEnabled(true);
     }
 
     private void errorScanCode() {
-        resetCamera();
-        mPopWindowValidationMessage.displayValidationMessage("",
-                PopWindowValidationMessage.OVERLAY_TYPE.BARCODE_ERROR)
-                .setOnDismissListener(new PopupWindow.OnDismissListener() {
-                    @Override
-                    public void onDismiss() {
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                resetCamera();
-                            }
-                        }, 500);
-                    }
-                });
+        Intent intent = new Intent(ProductCategoryBarcodeActivity.this, TransludentActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
     }
 
     private void getProductDetail(final String productId, final String skuId) {
@@ -425,7 +416,6 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
                             startActivity(openDetailView);
                             overridePendingTransition(0, R.anim.anim_slide_up);
                             break;
-
                         default:
                             hideProgressBar();
                             break;
@@ -439,4 +429,5 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             }
         });
     }
+
 }

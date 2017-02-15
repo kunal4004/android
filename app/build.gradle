@@ -111,8 +111,8 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:10.0.0'
     compile 'jp.wasabeef:recyclerview-animators:2.2.5'
     compile 'me.dm7.barcodescanner:zxing:1.9'
-    compile 'me.dm7.barcodescanner:zbar:1.9'
     compile 'com.klinkerapps:sliding-activity:1.4.4'
     compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile files('libs/zbar.jar')
 }
 apply plugin: 'com.google.gms.google-services'
