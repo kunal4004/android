@@ -1,4 +1,5 @@
 package za.co.woolworths.financial.services.android.util.barcode.scanner;
+
 import net.sourceforge.zbar.Symbol;
 
 
@@ -30,23 +31,24 @@ public class BarcodeFormat {
     public static final List<BarcodeFormat> ALL_FORMATS = new ArrayList<BarcodeFormat>();
 
     static {
-        ALL_FORMATS.add(BarcodeFormat.PARTIAL);
+        // ALL_FORMATS.add(BarcodeFormat.PARTIAL);
         ALL_FORMATS.add(BarcodeFormat.EAN8);
         ALL_FORMATS.add(BarcodeFormat.UPCE);
-        ALL_FORMATS.add(BarcodeFormat.ISBN10);
+        // ALL_FORMATS.add(BarcodeFormat.ISBN10);
         ALL_FORMATS.add(BarcodeFormat.UPCA);
         ALL_FORMATS.add(BarcodeFormat.EAN13);
         ALL_FORMATS.add(BarcodeFormat.ISBN13);
-        ALL_FORMATS.add(BarcodeFormat.I25);
-        ALL_FORMATS.add(BarcodeFormat.DATABAR);
-        ALL_FORMATS.add(BarcodeFormat.DATABAR_EXP);
-        ALL_FORMATS.add(BarcodeFormat.CODABAR);
-        ALL_FORMATS.add(BarcodeFormat.CODE39);
-        ALL_FORMATS.add(BarcodeFormat.PDF417);
+        // ALL_FORMATS.add(BarcodeFormat.I25);
+        //ALL_FORMATS.add(BarcodeFormat.DATABAR);
+        //ALL_FORMATS.add(BarcodeFormat.DATABAR_EXP);
+        //ALL_FORMATS.add(BarcodeFormat.CODABAR);
+        //ALL_FORMATS.add(BarcodeFormat.CODE39);
+        //ALL_FORMATS.add(BarcodeFormat.PDF417);
         //ALL_FORMATS.add(BarcodeFormat.QRCODE);
-        ALL_FORMATS.add(BarcodeFormat.CODE93);
+        //ALL_FORMATS.add(BarcodeFormat.CODE93);
         ALL_FORMATS.add(BarcodeFormat.CODE128);
     }
+
 
     public BarcodeFormat(int id, String name) {
         mId = id;
@@ -62,8 +64,8 @@ public class BarcodeFormat {
     }
 
     public static BarcodeFormat getFormatById(int id) {
-        for(BarcodeFormat format : ALL_FORMATS) {
-            if(format.getId() == id) {
+        for (BarcodeFormat format : ALL_FORMATS) {
+            if (format.getId() == id) {
                 return format;
             }
         }

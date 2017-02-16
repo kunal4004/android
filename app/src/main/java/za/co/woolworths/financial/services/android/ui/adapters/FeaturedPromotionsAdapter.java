@@ -1,27 +1,22 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.awfs.coordination.R;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Promotion;
-
-/**
- * Created by W7099877 on 18/01/2017.
- */
+import za.co.woolworths.financial.services.android.util.DrawImage;
 
 public class FeaturedPromotionsAdapter extends PagerAdapter {
     public Activity mContext;
-    public List<Promotion> promotions;
+    private List<Promotion> promotions;
     public FeaturedPromotionsAdapter(Activity mContext, List<Promotion> promotions)
     {
         this.mContext=mContext;
@@ -41,8 +36,9 @@ public class FeaturedPromotionsAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         View cView=mContext.getLayoutInflater().inflate(R.layout.featured_prmotion_list_item,container,false);
-        SimpleDraweeView image=(SimpleDraweeView)cView.findViewById(R.id.promotionImage);
-        image.setImageURI(Uri.parse(promotions.get(position).image));
+        ImageView image=(ImageView)cView.findViewById(R.id.promotionImage);
+        DrawImage drawImage = new DrawImage(container.getContext());
+        drawImage.displayImage(image,promotions.get(position).image);
         container.addView(cView);
         return cView;
     }

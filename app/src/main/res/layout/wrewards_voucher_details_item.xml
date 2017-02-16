@@ -32,33 +32,70 @@
                 android:orientation="vertical"
                 >
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="42dp"
                     android:orientation="horizontal"
                     android:background="@color/green"
                     android:gravity="center"
                     >
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/useBeforeText"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAllCaps="true"
-                        android:textColor="@color/black"
-                        android:textSize="13.5sp"
-                        app:WTextView_font="medium"
-                        android:text="@string/use_before"
-                        />
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/useBefore"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAllCaps="true"
-                    android:textColor="@color/black"
-                    android:textSize="13.5sp"
-                    app:WTextView_font="medium_bold"
-                    />
-                </LinearLayout>
+                        android:layout_alignParentLeft="true"
+                        android:paddingLeft="12dp"
+                        android:layout_marginRight="5dp">
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/validFromText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAllCaps="true"
+                            android:textColor="@color/black"
+                            android:textSize="11sp"
+                            app:WTextView_font="medium"
+                            android:text="@string/valid_from"
+
+                            />
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/validFrom"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAllCaps="true"
+                            android:textColor="@color/black"
+                            android:textSize="11sp"
+                            app:WTextView_font="medium_bold"
+                            android:paddingLeft="5dp"
+                            />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:paddingRight="12dp"
+                        android:layout_marginLeft="5dp">
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/validUntilText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAllCaps="true"
+                            android:textColor="@color/black"
+                            android:textSize="11sp"
+                            app:WTextView_font="medium"
+                            android:text="@string/valid_until"
+                            />
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/validUntil"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAllCaps="true"
+                            android:textColor="@color/black"
+                            android:textSize="11sp"
+                            app:WTextView_font="medium_bold"
+                            android:paddingLeft="5dp"
+                            />
+                    </LinearLayout>
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -68,7 +105,6 @@
                     android:orientation="vertical"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:paddingBottom="16dp"
                     >
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -104,7 +140,8 @@
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/message"
                         android:layout_width="wrap_content"
-                        android:layout_height="50dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="50dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
                         android:gravity="center"
@@ -112,7 +149,7 @@
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         app:WTextView_font="medium"
-                        android:maxLines="3"
+                        android:maxLines="4"
                         android:ellipsize="end"
                         />
 
@@ -131,6 +168,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
                         android:gravity="center"
                         android:textColor="@color/black"
                         android:textSize="17sp"

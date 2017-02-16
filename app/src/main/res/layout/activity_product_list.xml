@@ -5,6 +5,7 @@
     android:id="@+id/activity_product_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/default_background"
     android:orientation="vertical"
     tools:context="za.co.woolworths.financial.services.android.ui.activities.ProductViewActivity">
 
@@ -111,6 +112,7 @@
             android:gravity="center"
             android:letterSpacing="0.06"
             android:textAllCaps="true"
+            android:layout_marginRight="@dimen/default_margin"
             android:textColor="@color/black"
             android:textSize="12sp"
             app:WTextView_font="medium_bold" />

@@ -5,13 +5,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,13 +24,13 @@ import com.google.gson.Gson;
 import java.text.ParseException;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
-import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -44,11 +43,7 @@ import za.co.woolworths.financial.services.android.util.PopWindowValidationMessa
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 
-/**
- * Created by W7099877 on 22/11/2016.
- */
-
-public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener {
+public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle {
 
 
     private PersonalLoanAmount personalLoanInfo;
@@ -68,6 +63,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     private ImageView mImageArrow;
     private PopWindowValidationMessage mPopWindowValidationMessage;
     private SharePreferenceHelper mSharePreferenceHelper;
+    private HttpAsyncTask<String, String, OfferActive> asyncRequestPersonalLoan;
 
     @Nullable
     @Override
@@ -96,12 +92,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         return view;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getActiveOffer();
-    }
-
     //To remove negative signs from negative balance and add "CR" after the negative balance
     public String removeNegativeSymbol(SpannableString amount) {
         String currentAmount = amount.toString();
@@ -113,7 +103,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
     //To remove negative signs from negative balance and add "CR" after the negative balance
     public String removeNegativeSymbol(String amount) {
-        String currentAmount = amount.toString();
+        String currentAmount = amount;
         if (currentAmount.contains("-")) {
             currentAmount = currentAmount.replace("-", "") + " CR";
         }
@@ -161,7 +151,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
             case R.id.txtIncreseLimit:
+                Log.e("productOfferIdStore", String.valueOf(productOfferingId));
                 if (!isOfferActive) {
+                    ((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
                     startActivity(openCLIIncrease);
                     getActivity().overridePendingTransition(0, 0);
@@ -172,7 +164,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
     private void getActiveOffer() {
         if (connectionDetector.isOnline(getActivity())) {
-            AsyncTask<String, String, OfferActive> asyncActiveOfferRequestLoan = new HttpAsyncTask<String, String, OfferActive>() {
+            asyncRequestPersonalLoan = new HttpAsyncTask<String, String, OfferActive>() {
                 @Override
                 protected OfferActive httpDoInBackground(String... params) {
                     return (woolworthsApplication.getApi().getActiveOfferRequest(productOfferingId));
@@ -221,7 +213,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                     return OfferActive.class;
                 }
             };
-            asyncActiveOfferRequestLoan.execute();
+
+            asyncRequestPersonalLoan.execute();
         } else {
             hideProgressBar();
             mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
@@ -252,7 +245,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         dueDate.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
         minAmountDue.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
         currentBalance.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-
         Typeface mMyriaProFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Regular.otf");
         dueDate.setTypeface(mMyriaProFont);
         minAmountDue.setTypeface(mMyriaProFont);
@@ -269,7 +261,24 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     public void onAttach(Context context) {
         super.onAttach(context);
         personalLoanInfo = (PersonalLoanAmount) context;
+    }
 
+    @Override
+    public void onPauseFragment() {
+        if (asyncRequestPersonalLoan != null) {
+            asyncRequestPersonalLoan.isCancelled();
+        }
+    }
+
+    @Override
+    public void onResumeFragment() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                getActiveOffer();
+            }
+        }, 100);
     }
 }
 

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.awfs.coordination.R;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers;
 
+import za.co.woolworths.financial.services.android.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Defaults;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -20,7 +21,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
  * Created by W7099877 on 30/11/2016.
  */
 
-public class WPersonalLoanEmptyFragment extends Fragment{
+public class WPersonalLoanEmptyFragment extends Fragment implements FragmentLifecycle{
 
     public WButton applyNow;
     @Nullable
@@ -28,4 +29,14 @@ public class WPersonalLoanEmptyFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.logged_out_state_personal_loan, container, false);
         return view;    }
+
+    @Override
+    public void onPauseFragment() {
+
+    }
+
+    @Override
+    public void onResumeFragment() {
+
+    }
 }

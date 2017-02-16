@@ -1,10 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -12,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
@@ -20,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanResponse;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -28,7 +31,7 @@ import za.co.woolworths.financial.services.android.util.PopWindowValidationMessa
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.OnClickListener {
 
     private ScrollView mScrollLoanWithdrawal;
     private SharePreferenceHelper mSharePreferenceHelper;
@@ -39,11 +42,10 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
     private PopWindowValidationMessage mPopWindowValidationMessage;
     private WTextView mBtnConfirm;
     private Integer installment_amount;
-    private ProgressDialog mGetProgressDialog;
     private String mDrawanDownAmount;
-    private String mAvailableFund;
-    private String mCreditLimit;
     private int mRepaymentPeriod;
+    private ProgressBar mConfirmProgressBar;
+    private AsyncTask<String, String, AuthoriseLoanResponse> authoriseLoanRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +58,8 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
         Bundle intent = getIntent().getExtras();
         if (intent != null) {
             mDrawanDownAmount = intent.getString("drawnDownAmount");
-            mAvailableFund = intent.getString("availableFunds");
-            mCreditLimit = intent.getString("creditLimit");
+            String mAvailableFund = intent.getString("availableFunds");
+            String mCreditLimit = intent.getString("creditLimit");
             mRepaymentPeriod = intent.getInt("repaymentPeriod");
         }
 
@@ -76,6 +78,7 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
         mTextMonths = (WTextView) findViewById(R.id.textMonths);
         mTextAdditionalMonthAmount = (WTextView) findViewById(R.id.textAdditionalMonthAmount);
         mBtnConfirm = (WTextView) findViewById(R.id.btnConfirm);
+        mConfirmProgressBar = (ProgressBar) findViewById(R.id.mConfirmProgressBar);
     }
 
     private void clickListener() {
@@ -116,7 +119,7 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
 
     public void authoriseLoanWithdrawal() {
         if (mConnectionDetector.isOnline()) {
-            new HttpAsyncTask<String, String, AuthoriseLoanResponse>() {
+            authoriseLoanRequest = new HttpAsyncTask<String, String, AuthoriseLoanResponse>() {
                 @Override
                 protected AuthoriseLoanResponse httpDoInBackground(String... params) {
                     int productOfferingId = Integer.valueOf(mSharePreferenceHelper.getValue("lw_product_offering_id"));
@@ -133,21 +136,17 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
 
                 @Override
                 protected void onPreExecute() {
-                    mGetProgressDialog = new ProgressDialog(LoanWithdrawalConfirmActivity.this);
-                    mGetProgressDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.issueing_loan), 1, LoanWithdrawalConfirmActivity.this));
-                    mGetProgressDialog.setCancelable(false);
-                    mGetProgressDialog.show();
+                    showProgressBar();
                     super.onPreExecute();
                 }
 
                 @Override
                 protected void onPostExecute(AuthoriseLoanResponse authoriseLoanResponse) {
                     super.onPostExecute(authoriseLoanResponse);
-                    hideProgressDialog();
+                    hideProgressBar();
                     if (authoriseLoanResponse.httpCode == 200) {
                         Intent intent = new Intent(LoanWithdrawalConfirmActivity.this, LoanWithdrawalSuccessActivity.class);
                         startActivity(intent);
-                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         finish();
                     } else {
                         mPopWindowValidationMessage.displayValidationMessage(authoriseLoanResponse.response.desc,
@@ -158,7 +157,7 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
                 @Override
                 protected AuthoriseLoanResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                     AuthoriseLoanResponse authoriseLoanResponse = new AuthoriseLoanResponse();
-                    hideProgressDialog();
+                    hideProgressBar();
                     return authoriseLoanResponse;
                 }
 
@@ -166,16 +165,12 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
                 protected Class<AuthoriseLoanResponse> httpDoInBackgroundReturnType() {
                     return AuthoriseLoanResponse.class;
                 }
-            }.execute();
+            };
+
+            authoriseLoanRequest.execute();
 
         } else {
             mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server), PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
-        }
-    }
-
-    public void hideProgressDialog() {
-        if (mGetProgressDialog != null && mGetProgressDialog.isShowing()) {
-            mGetProgressDialog.dismiss();
         }
     }
 
@@ -228,4 +223,25 @@ public class LoanWithdrawalConfirmActivity extends AppCompatActivity implements 
     }
 
 
+    private void showProgressBar() {
+        mConfirmProgressBar.setVisibility(View.VISIBLE);
+        mBtnConfirm.setVisibility(View.GONE);
+        mConfirmProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+    }
+
+    private void hideProgressBar() {
+        mConfirmProgressBar.setVisibility(View.GONE);
+        mBtnConfirm.setVisibility(View.VISIBLE);
+        mConfirmProgressBar.getIndeterminateDrawable().setColorFilter(null);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (authoriseLoanRequest != null) {
+            if (!authoriseLoanRequest.isCancelled()) {
+                authoriseLoanRequest.cancel(true);
+            }
+        }
+    }
 }

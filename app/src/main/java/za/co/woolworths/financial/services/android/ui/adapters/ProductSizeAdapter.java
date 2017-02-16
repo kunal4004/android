@@ -35,12 +35,8 @@ public class ProductSizeAdapter extends RecyclerView.Adapter<ProductSizeAdapter.
 
     @Override
     public void onBindViewHolder(final SimpleViewHolder holder, final int position) {
-
         OtherSku productSize = mProductSizeList.get(position);
-        if (productSize != null) {
-            holder.productName.setText(productSize.size);
-        }
-
+        holder.productName.setText(productSize.size);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

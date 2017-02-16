@@ -1,19 +1,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:id="@+id/relPromotion"
     android:layout_width="match_parent"
     android:layout_height="204dp"
-    android:layout_marginLeft="@dimen/default_margin"
-    android:layout_marginRight="@dimen/default_margin">
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp">
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <ImageView
         android:id="@+id/imProduct"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        fresco:fadeDuration="10"
         android:adjustViewBounds="true"
-        fresco:placeholderImage="@drawable/rectangle"
-        fresco:viewAspectRatio="1.33" />
+        android:scaleType="fitXY" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -29,40 +26,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <com.facebook.drawee.view.SimpleDraweeView
+            <ImageView
                 android:id="@+id/imNewImage"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_marginLeft="8dp"
-                fresco:fadeDuration="10"
-                fresco:viewAspectRatio="1.33" />
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY" />
 
-            <com.facebook.drawee.view.SimpleDraweeView
+            <ImageView
                 android:id="@+id/imSave"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_marginLeft="8dp"
-                fresco:fadeDuration="10"
-                fresco:viewAspectRatio="1.33" />
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY" />
 
-
-            <com.facebook.drawee.view.SimpleDraweeView
+            <ImageView
                 android:id="@+id/imReward"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_marginLeft="8dp"
-                fresco:fadeDuration="10"
-                fresco:viewAspectRatio="1.33" />
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY" />
 
-            <com.facebook.drawee.view.SimpleDraweeView
+            <ImageView
                 android:id="@+id/imVitality"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_marginLeft="8dp"
-                fresco:fadeDuration="10"
-                fresco:viewAspectRatio="1.33" />
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY" />
         </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>

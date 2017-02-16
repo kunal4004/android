@@ -21,7 +21,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +39,8 @@ import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
@@ -50,7 +51,8 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Const;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
+import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.barcode.scanner.ProductCategoryBarcodeActivity;
 
 public class EnterBarcodeActivity extends AppCompatActivity {
 
@@ -61,7 +63,6 @@ public class EnterBarcodeActivity extends AppCompatActivity {
     public static int PAGE_SIZE = 20;
     private static final int PERMS_REQUEST_CODE = 1234;
     private WTextView mTextInfo;
-    private PopWindowValidationMessage mPopWindowValidationMessage;
     private EnterBarcodeActivity mContext;
     Handler handler = new Handler();
 
@@ -75,7 +76,6 @@ public class EnterBarcodeActivity extends AppCompatActivity {
         updateStatusBarBackground(EnterBarcodeActivity.this);
         mContext = this;
         setContentView(R.layout.enter_barcode_activity);
-        mPopWindowValidationMessage = new PopWindowValidationMessage(this);
         initUI();
         setActionBar();
         if (hasPermissions()) {
@@ -310,7 +310,6 @@ public class EnterBarcodeActivity extends AppCompatActivity {
         decor.setSystemUiVisibility(0);
     }
 
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -334,83 +333,66 @@ public class EnterBarcodeActivity extends AppCompatActivity {
     }
 
     private void errorScanCode() {
-        mPopWindowValidationMessage.displayValidationMessage("",
-                PopWindowValidationMessage.OVERLAY_TYPE.BARCODE_ERROR);
+        Intent intent = new Intent(EnterBarcodeActivity.this, TransludentActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
     }
 
 
     private void getProductDetail(final String productId, final String skuId) {
-        new HttpAsyncTask<String, String, WProduct>() {
+        ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
             @Override
-            protected WProduct httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().getProductDetailView(productId, skuId);
-            }
-
-            @Override
-            protected WProduct httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                Log.e("errorMessage", String.valueOf(errorMessage) + " " + httpErrorCode);
+            public void success(String strProduct, retrofit.client.Response response) {
                 hideProgressBar();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Do something after 100ms
-                        hideSoftKeyboard();
+                WProduct wProduct = Utils.stringToJson(mContext, strProduct);
+                if (wProduct != null) {
+                    switch (wProduct.httpCode) {
+                        case 200:
+                            ArrayList<WProductDetail> mProductList;
+                            WProductDetail productList = wProduct.product;
+                            mProductList = new ArrayList<>();
+                            if (productList != null) {
+                                mProductList.add(productList);
+                            }
+                            GsonBuilder builder = new GsonBuilder();
+                            Gson gson = builder.create();
+                            Intent openDetailView = new Intent(mContext, ProductDetailViewActivity.class);
+                            openDetailView.putExtra("product_name", mProductList.get(0).productName);
+                            openDetailView.putExtra("product_detail", gson.toJson(mProductList));
+                            startActivity(openDetailView);
+                            overridePendingTransition(0, R.anim.anim_slide_up);
+                            break;
+
+                        default:
+                            handleError();
+                            break;
                     }
-                }, DELAY_SOFT_KEYBOARD);
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Do something after 100ms
-                        errorScanCode();
-                    }
-                }, DELAY_POPUP);
-                return new WProduct();
-            }
-
-            @Override
-            protected Class<WProduct> httpDoInBackgroundReturnType() {
-                return WProduct.class;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected void onPostExecute(WProduct product) {
-                super.onPostExecute(product);
-                hideProgressBar();
-                WProductDetail productList = product.product;
-                ArrayList<WProductDetail> mProductList = new ArrayList<>();
-                if (productList != null) {
-                    mProductList.add(productList);
-                }
-                if (productList != null) {
-                    GsonBuilder builder = new GsonBuilder();
-                    Gson gson = builder.create();
-                    Intent openDetailView = new Intent(mContext, ProductDetailViewActivity.class);
-                    openDetailView.putExtra("product_name", mProductList.get(0).productName);
-                    openDetailView.putExtra("product_detail", gson.toJson(mProductList));
-                    startActivity(openDetailView);
-                    overridePendingTransition(0, 0);
-                } else {
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            //Do something after 100ms
-                            hideSoftKeyboard();
-                        }
-                    }, DELAY_SOFT_KEYBOARD);
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            //Do something after 100ms
-                            errorScanCode();
-                        }
-                    }, DELAY_POPUP);
                 }
             }
-        }.execute();
+
+            @Override
+            public void failure(RetrofitError error) {
+                handleError();
+            }
+        });
     }
+
+    private void handleError() {
+        hideProgressBar();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 100ms
+                hideSoftKeyboard();
+            }
+        }, DELAY_SOFT_KEYBOARD);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 100ms
+                errorScanCode();
+            }
+        }, DELAY_POPUP);
+    }
+
 }

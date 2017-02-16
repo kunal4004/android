@@ -40,6 +40,8 @@ import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
@@ -112,6 +114,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             loadProduct();
         } else {
             productConfig(searchItem);
+            productId=searchItem;
             searchProduct();
         }
 
@@ -238,6 +241,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             try {
                 Location location = intent.getParcelableExtra(Const.LBM_EVENT_LOCATION_UPDATE);
                 mLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                ((WoolworthsApplication) getApplication()).setLastKnowLatLng(mLocation);
             } catch (NullPointerException e) {
                 mLocation = new LatLng(0, 0);
             }
@@ -247,8 +251,9 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     @Override
     public void onSelectedProduct(View v, int position) {
         try {
-            getProductDetail(mProduct.get(position).productId, mProduct.get(position).otherSkus.get(0).sku);
+            getProductDetail(mProduct.get(position).productId, mProduct.get(position).otherSkus.get(0).sku, false);
         } catch (Exception ex) {
+            Log.e("ExceptionProduct", ex.toString());
         }
 
     }
@@ -338,7 +343,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
 
     public void loadProduct() {
-
+        mNumberOfItem.setText(String.valueOf(0));
         new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected void onPreExecute() {
@@ -374,17 +379,23 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 mProduct = new ArrayList<>();
                 if (pv.products != null && pv.products.size() != 0) {
                     mProduct = pv.products;
-                    mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
-                    bindDataWithUI(mProduct);
-                    mIsLastPage = false;
-                    mCurrentPage = 1;
-                    mIsLoading = false;
+                    if (pv.products.size() == 1) {
+                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku, true);
+                    } else {
+                        mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
+                        bindDataWithUI(mProduct);
+                        mIsLastPage = false;
+                        mCurrentPage = 1;
+                        mIsLoading = false;
+                        hideVProgressBar();
+                    }
+                } else {
+                    mNumberOfItem.setText(String.valueOf(0));
+                    hideVProgressBar();
                 }
-                hideVProgressBar();
             }
         }.execute();
     }
-
 
     public void searchProduct() {
 
@@ -425,11 +436,15 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 mProduct = new ArrayList<>();
                 if (pv.products != null && pv.products.size() != 0) {
                     mProduct = pv.products;
-                    mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
-                    bindDataWithUI(mProduct);
-                    mIsLastPage = false;
-                    mCurrentPage = 1;
-                    mIsLoading = false;
+                    if (pv.products.size() == 1) {
+                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku, true);
+                    } else {
+                        mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
+                        bindDataWithUI(mProduct);
+                        mIsLastPage = false;
+                        mCurrentPage = 1;
+                        mIsLoading = false;
+                    }
                 }
                 hideVProgressBar();
             }
@@ -477,8 +492,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             protected void onPostExecute(ProductView productResponse) {
                 super.onPostExecute(productResponse);
                 mIsLoading = false;
-                List<ProductList> moreProductList = null;
-                moreProductList = new ArrayList<>();
+                List<ProductList> moreProductList;
                 moreProductList = productResponse.products;
                 if (moreProductList != null && moreProductList.size() != 0) {
                     if (moreProductList.size() < PAGE_SIZE) {
@@ -492,55 +506,52 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         }.execute();
     }
 
-    private void getProductDetail(final String productId, final String skuId) {
-        new HttpAsyncTask<String, String, WProduct>() {
-            @Override
-            protected WProduct httpDoInBackground(String... params) {
-                WProduct product = ((WoolworthsApplication) getApplication()).getApi().getProductDetailView(productId, skuId);
-                return product;
+    private void getProductDetail(final String productId, final String skuId, final boolean closeProductView) {
+        if (TextUtils.isEmpty(searchItem)) {
+            try {
+                mGetProgressDialog.show(fm, "v");
+            } catch (NullPointerException ignored) {
             }
-
+        }
+        ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
             @Override
-            protected WProduct httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+            public void success(String strProduct, retrofit.client.Response response) {
                 dismissFragmentDialog();
-                return new WProduct();
-            }
+                WProduct wProduct = Utils.stringToJson(mContext, strProduct);
+                if (wProduct != null) {
+                    switch (wProduct.httpCode) {
+                        case 200:
+                            ArrayList<WProductDetail> mProductList;
+                            WProductDetail productList = wProduct.product;
+                            mProductList = new ArrayList<>();
+                            if (productList != null) {
+                                mProductList.add(productList);
+                            }
+                            GsonBuilder builder = new GsonBuilder();
+                            Gson gson = builder.create();
+                            Intent openDetailView = new Intent(mContext, ProductDetailViewActivity.class);
+                            openDetailView.putExtra("product_name", mProductList.get(0).productName);
+                            openDetailView.putExtra("product_detail", gson.toJson(mProductList));
+                            startActivity(openDetailView);
+                            overridePendingTransition(0, R.anim.anim_slide_up);
+                            if (closeProductView) { //close ProductView activity when 1 row exist
+                                finish();
+                            }
+                            break;
 
-            @Override
-            protected Class<WProduct> httpDoInBackgroundReturnType() {
-                return WProduct.class;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                try {
-                    mGetProgressDialog.show(fm, "v");
-                } catch (NullPointerException ignored) {
+                        default:
+                            dismissFragmentDialog();
+                            break;
+                    }
                 }
             }
 
             @Override
-            protected void onPostExecute(WProduct product) {
-                super.onPostExecute(product);
-                ArrayList<WProductDetail> mProductList = null;
-                WProductDetail productList = product.product;
-                mProductList = new ArrayList<>();
-                if (productList != null) {
-                    mProductList.add(productList);
-                }
-                if (productList != null) {
-                    GsonBuilder builder = new GsonBuilder();
-                    Gson gson = builder.create();
-                    Intent openDetailView = new Intent(mContext, ProductDetailViewActivity.class);
-                    openDetailView.putExtra("product_name", mProductList.get(0).productName);
-                    openDetailView.putExtra("product_detail", gson.toJson(mProductList));
-                    startActivity(openDetailView);
-                    overridePendingTransition(0, R.anim.anim_slide_up);
-                }
+            public void failure(RetrofitError error) {
+                Log.e("StringValuexx", error.toString());
                 dismissFragmentDialog();
             }
-        }.execute();
+        });
     }
 
     private void dismissFragmentDialog() {

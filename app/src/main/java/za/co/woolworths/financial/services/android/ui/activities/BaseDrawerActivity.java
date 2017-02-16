@@ -79,8 +79,8 @@ public abstract class BaseDrawerActivity extends LibBaseDrawerActivity {
             }
         });
         counterSelectedLogoDrawerItem.setDrawerItemView(R.layout.w_drawer_item_counter_view);
-       // TextView tv = (TextView)findViewById(R.id.drawer_item_counter);
-      //  tv.setText("5");
+        // TextView tv = (TextView)findViewById(R.id.drawer_item_counter);
+        //  tv.setText("5");
         drawerItems.add(counterSelectedLogoDrawerItem);
 
         SelectedLogoDrawerItem selectedLogoDrawerItem = new SelectedLogoDrawerItem(getString(R.string.drawer_accounts), R.drawable.ic_dr_account, new DrawerOnClickListener() {
@@ -104,9 +104,9 @@ public abstract class BaseDrawerActivity extends LibBaseDrawerActivity {
             @Override
             public void onClick(boolean b) {
                 if (!b) {
-                    Intent i =new Intent(BaseDrawerActivity.this, WebViewActivity.class);
+                    Intent i = new Intent(BaseDrawerActivity.this, WebViewActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putString("title","Apply Now");
+                    bundle.putString("title", "Apply Now");
                     bundle.putString("link", WoolworthsApplication.getApplyNowLink());
                     i.putExtra("Bundle", bundle);
                     startActivity(i);
@@ -120,19 +120,15 @@ public abstract class BaseDrawerActivity extends LibBaseDrawerActivity {
         drawerItems.add(applyNowLogoDrawerItem);
 
 
-
-
-
-
         SelectedLogoDrawerItem object = new SelectedLogoDrawerItem(getString(R.string.drawer_faq), R.drawable.ic_dr_faq, new DrawerOnClickListener() {
             @Override
             public void onClick(boolean b) {
                 if (!b) {
-                    Intent i =new Intent(BaseDrawerActivity.this, WebViewActivity.class);
+                    Intent i = new Intent(BaseDrawerActivity.this, WebViewActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putString("title","FAQ");
+                    bundle.putString("title", "FAQ");
                     bundle.putString("link", WoolworthsApplication.getFaqLink());
-                    i.putExtra("Bundle",bundle);
+                    i.putExtra("Bundle", bundle);
                     startActivity(i);
                     //Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.settings_faq_url)));
                     //startActivity(browserIntent);
@@ -203,17 +199,17 @@ public abstract class BaseDrawerActivity extends LibBaseDrawerActivity {
         public View getView(int position, View view, ViewGroup viewGroup, Context c) {
             View view1 = super.getView(position, view, viewGroup, c);
             int se = getCurrentItemIndex();
-            if(se == 0){
+            if (se == 0) {
                 view1.findViewById(za.co.wigroup.menudrawerlib.R.id.drawer_item_selected).setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 view1.findViewById(za.co.wigroup.menudrawerlib.R.id.drawer_item_selected).setVisibility(View.INVISIBLE);
             }
             int num = WoolworthsApplication.getNumVouchers();
-            if(num==0){
+            if (num == 0) {
                 (view1.findViewById(za.co.wigroup.menudrawerlib.R.id.drawer_item_counter)).setVisibility(View.INVISIBLE);
-            }else {
+            } else {
                 (view1.findViewById(za.co.wigroup.menudrawerlib.R.id.drawer_item_counter)).setVisibility(View.VISIBLE);
-                ((TextView)view1.findViewById(za.co.wigroup.menudrawerlib.R.id.drawer_item_counter)).setText(String.valueOf(WoolworthsApplication.getNumVouchers()));
+                ((TextView) view1.findViewById(za.co.wigroup.menudrawerlib.R.id.drawer_item_counter)).setText(String.valueOf(WoolworthsApplication.getNumVouchers()));
             }
             return view1;
         }
@@ -231,12 +227,11 @@ public abstract class BaseDrawerActivity extends LibBaseDrawerActivity {
 
         public View getView(int position, View view, ViewGroup viewGroup, Context c) {
             View logoView = super.getView(position, view, viewGroup, c);
-            ((ImageView)logoView.findViewById(za.co.wigroup.menudrawerlib.R.id.drawer_item_logo)).setImageResource(this.mLogo);
-            ((TextView)logoView.findViewById(za.co.wigroup.menudrawerlib.R.id.drawer_item_counter)).setText("");
+            ((ImageView) logoView.findViewById(za.co.wigroup.menudrawerlib.R.id.drawer_item_logo)).setImageResource(this.mLogo);
+            ((TextView) logoView.findViewById(za.co.wigroup.menudrawerlib.R.id.drawer_item_counter)).setText("");
             return logoView;
         }
     }
-
 
 
 }

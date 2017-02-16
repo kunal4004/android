@@ -10,12 +10,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
@@ -98,6 +99,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         int[] cards = {R.drawable.w_store_card, R.drawable.w_credi_card, R.drawable.w_personal_loan_card};
         mImageAccount.setImageResource(cards[id]);
         setCLIContent(id);
+
     }
 
     public void setCLIContent(int position) {
@@ -107,10 +109,12 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         mTextToolbar.setText(cli.getmTitle());
         mCollapsingToolbarLayout.setBackgroundResource(cli.getmImage());
         mCollapsingToolbarLayout.setContentScrimColor(Color.TRANSPARENT);
+        mCollapsingToolbarLayout.setScrimsShown(false);
         mTextCreditLimit.setText(cli.getmSubTitle());
         mTextBeforeStart.setText(cli.getmBoldText());
         mTextClIContent.setText(cli.getmDescription());
         mToolbar.setBackgroundColor(mColor);
+        //closeButton.setBackgroundColor(mColor);
         Utils.updateStatusBarBackground(CLIActivity.this, cli.getmColor());
     }
 
@@ -140,19 +144,6 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
                 getString(R.string.cli_psl_before_we_get_started),
                 getString(R.string.cli_activity_desc)));
         return arrCLI;
-    }
-
-    private void setAppBarDragging(final boolean newValue) {
-        CoordinatorLayout.LayoutParams params =
-                (CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams();
-        AppBarLayout.Behavior behavior = new AppBarLayout.Behavior();
-        behavior.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
-            @Override
-            public boolean canDrag(AppBarLayout appBarLayout) {
-                return newValue;
-            }
-        });
-        params.setBehavior(behavior);
     }
 
 
@@ -186,19 +177,6 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    public void lockAppBar(boolean locked) {
-        if (locked) {
-            mAppBarLayout.setExpanded(false, true);
-            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
-            CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams();
-            lp.height = px;
-            mAppBarLayout.setLayoutParams(lp);
-        } else {
-            mAppBarLayout.setExpanded(true, false);
-            mAppBarLayout.setActivated(true);
-        }
-    }
-
     private void setStatusBarColor(int position) {
         switch (position) {
             case 0:
@@ -208,7 +186,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
 
             case 1:
                 int creditCardColor = ContextCompat.getColor(this, R.color.cli_credit_card);
-                Utils.updateStatusBarBackground(this, creditCardColor);
+                //Utils.updateStatusBarBackground(this, creditCardColor);
                 break;
 
             case 2:

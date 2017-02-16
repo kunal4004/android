@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:id="@+id/relProductContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -27,7 +26,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="400dp" />
 
-
                 <LinearLayout
                     android:id="@+id/pager_dots"
                     android:layout_width="match_parent"
@@ -36,7 +34,7 @@
                     android:layout_marginBottom="10dp"
                     android:background="@android:color/transparent"
                     android:gravity="center_horizontal"
-                    android:orientation="horizontal"></LinearLayout>
+                    android:orientation="horizontal" />
 
             </RelativeLayout>
 
@@ -88,29 +86,66 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:orientation="vertical">
 
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/textPrice"
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginEnd="@dimen/default_margin"
                         android:layout_marginStart="@dimen/default_margin"
-                        android:gravity="top|start"
-                        android:letterSpacing="-0.05"
-                        android:text="FROM: R 399.00"
-                        android:textAllCaps="true"
-                        android:textColor="@color/black"
-                        android:textSize="20sp"
-                        app:WTextView_font="medium_bold" />
+                        android:orientation="horizontal">
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/textLabelPrice"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginBottom="2dp"
+                            android:layout_marginEnd="2dp"
+                            android:gravity="top|start"
+                            android:letterSpacing="-0.01"
+                            android:text="@string/product_from"
+                            android:textAllCaps="true"
+                            android:textColor="@color/black"
+                            android:textSize="20sp"
+                            android:visibility="gone"
+                            app:WTextView_font="medium_bold" />
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/textPrice"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginBottom="2dp"
+                            android:layout_marginEnd="4dp"
+                            android:gravity="top|start"
+                            android:letterSpacing="-0.01"
+                            android:text="R 399.00"
+                            android:textAllCaps="true"
+                            android:textColor="@color/black"
+                            android:textSize="20sp"
+                            app:WTextView_font="medium_bold" />
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/textActualPrice"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginEnd="@dimen/default_margin"
+                            android:gravity="top|start"
+                            android:letterSpacing="-0.01"
+                            android:text="R 399.00"
+                            android:textAllCaps="true"
+                            android:textColor="@color/red"
+                            android:textSize="20sp"
+                            android:visibility="visible"
+                            app:WTextView_font="medium_bold" />
+
+                    </LinearLayout>
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/textPromo"
@@ -130,6 +165,7 @@
                         app:WTextView_font="medium" />
                 </LinearLayout>
 
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -138,37 +174,33 @@
                     android:gravity="right"
                     android:orientation="horizontal">
 
-                    <com.facebook.drawee.view.SimpleDraweeView
+                    <ImageView
                         android:id="@+id/imNewImage"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginLeft="8dp"
-                        fresco:fadeDuration="10"
-                        fresco:viewAspectRatio="1.33" />
+                        android:contentDescription="@string/app_name" />
 
-                    <com.facebook.drawee.view.SimpleDraweeView
+                    <ImageView
                         android:id="@+id/imSave"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginLeft="8dp"
-                        fresco:fadeDuration="10"
-                        fresco:viewAspectRatio="1.33" />
+                        android:contentDescription="@string/app_name" />
 
-                    <com.facebook.drawee.view.SimpleDraweeView
+                    <ImageView
                         android:id="@+id/imReward"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginLeft="8dp"
-                        fresco:fadeDuration="10"
-                        fresco:viewAspectRatio="1.33" />
+                        android:contentDescription="@string/app_name" />
 
-                    <com.facebook.drawee.view.SimpleDraweeView
+                    <ImageView
                         android:id="@+id/imVitality"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginLeft="8dp"
-                        fresco:fadeDuration="10"
-                        fresco:viewAspectRatio="1.33" />
+                        android:contentDescription="@string/app_name" />
 
                 </LinearLayout>
 
@@ -184,7 +216,6 @@
                 android:layout_marginRight="@dimen/default_margin" />
 
             <include layout="@layout/test" />
-
 
             <include layout="@layout/line" />
 
@@ -212,7 +243,6 @@
                 android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginTop="24dp"
-                android:letterSpacing="0"
                 android:lineSpacingExtra="1.4dp"
                 android:text="@string/product_description"
                 android:textColor="@color/black_desc_opacity"
@@ -226,9 +256,9 @@
                 android:layout_marginBottom="?attr/actionBarSize"
                 android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginStart="@dimen/default_margin"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="10dp"
                 android:gravity="start|top"
-                android:textColor="@color/white"
+                android:textColor="@color/black_desc_opacity"
                 android:textSize="15sp"
                 app:WTextView_font="myriadpro_regular" />
 
@@ -247,6 +277,7 @@
             android:layout_height="35dp"
             android:layout_marginLeft="@dimen/default_margin"
             android:layout_marginTop="@dimen/default_margin"
+            android:contentDescription="@string/app_name"
             android:src="@drawable/closecircle" />
     </RelativeLayout>
 </RelativeLayout>

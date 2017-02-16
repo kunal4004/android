@@ -34,6 +34,7 @@
         android:name="za.co.woolworths.financial.services.android.models.WoolworthsApplication"
         android:icon="@drawable/appicon"
         android:label="@string/app_label"
+        android:largeHeap="true"
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.gms.version"
@@ -236,15 +237,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/CLI"></activity>
         <activity
-            android:name="za.co.woolworths.financial.services.android.util.barcode.scanner.ProductCategoryBarcodeActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppOverlayTheme"
-            android:uiOptions="splitActionBarWhenNarrow">
-            <meta-data
-                android:name="android.support.UI_OPTIONS"
-                android:value="splitActionBarWhenNarrow" />
-        </activity>
-        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity"
             android:label="@string/app_name"
             android:theme="@style/MyAccountCards"
@@ -263,10 +255,23 @@
             android:taskAffinity=""
             android:theme="@style/Theme.Sliding.Light" />
 
+        <meta-data
+            android:name="za.co.woolworths.financial.services.android.util.GlideConfiguration"
+            android:value="GlideModule" />
+
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.NormalActivity"
-            android:excludeFromRecents="true"
-            android:taskAffinity=""
-            android:theme="@style/Theme.Sliding.Light" />
+            android:name="za.co.woolworths.financial.services.android.util.barcode.scanner.ProductCategoryBarcodeActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppOverlayTheme"
+            android:uiOptions="splitActionBarWhenNarrow">
+            <meta-data
+                android:name="android.support.UI_OPTIONS"
+                android:value="splitActionBarWhenNarrow" />
+        </activity>
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.TransludentActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
     </application>
 </manifest>

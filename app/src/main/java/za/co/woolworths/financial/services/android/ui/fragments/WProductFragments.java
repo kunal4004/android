@@ -20,7 +20,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
@@ -56,10 +55,9 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     private WProgressDialogFragment mGetMessageProgressDialog;
     private FragmentManager fm;
     private WTextView mToolbarText;
+    private boolean actionBarIsHidden = false;
 
     public interface HideActionBarComponent {
-        void onActionBarComponent(boolean actionbarIsVisible);
-
         void onBurgerButtonPressed();
     }
 
@@ -74,12 +72,9 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     private ConnectionDetector mConnectionDetector;
     public WTextView mTextProductSearch;
     private RecyclerView mRecycleProductSearch;
-    private PSRootCategoryAdapter mPSRootCategoryAdapter;
-    private LinearLayoutManager mLayoutManager;
     private WProductFragments mContext;
     private List<RootCategory> mRootCategories;
     private WTextView mTextTBProductSearch;
-
     private RelativeLayout mRelSearchRowLayout;
     private Toolbar mProductToolbar;
     private LDObservableScrollView mNestedScrollview;
@@ -90,8 +85,12 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        View view = inflater.inflate(R.layout.product_search_fragment, container, false);
+        return inflater.inflate(R.layout.product_search_fragment, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mContext = this;
         mConnectionDetector = new ConnectionDetector();
         mProductToolbar = (Toolbar) view.findViewById(R.id.productToolbar);
@@ -102,7 +101,6 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         setUIListener();
         showAccountToolbar();
         mNestedScrollview.getParent().requestChildFocus(mNestedScrollview, mNestedScrollview);
-        return view;
     }
 
     @Override
@@ -179,20 +177,8 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                             case 200:
                                 if (rootCategories.rootCategories != null) {
                                     mRootCategories = rootCategories.rootCategories;
-                                    mPSRootCategoryAdapter = new PSRootCategoryAdapter(rootCategories.rootCategories, mContext);
-                                    AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mPSRootCategoryAdapter);
-                                    mRecycleProductSearch.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(2f)));
-                                    mRecycleProductSearch.getItemAnimator().setAddDuration(1500);
-                                    mRecycleProductSearch.getItemAnimator().setRemoveDuration(1500);
-                                    mRecycleProductSearch.getItemAnimator().setMoveDuration(1500);
-                                    mRecycleProductSearch.getItemAnimator().setChangeDuration(1500);
-                                    mRecycleProductSearch.getItemAnimator().setMoveDuration(1500);
-                                    mLayoutManager = new LinearLayoutManager(getActivity());
-                                    mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                                    mRecycleProductSearch.setLayoutManager(mLayoutManager);
-                                    mRecycleProductSearch.setNestedScrollingEnabled(false);
-                                    mRecycleProductSearch.setAdapter(alphaAdapter);
-                                    mPSRootCategoryAdapter.setCLIContent();
+
+                                    bindViewWithUI(mRootCategories);
                                 }
                                 break;
 
@@ -256,13 +242,11 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
     }
 
-    boolean toolbarIsChanged = false;
-
     @Override
     public void onScrollChanged(LDObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
         // TODO Auto-generated method stub
         // int searchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight() / 2));
-        int searchRowHeight = Math.round(mRelSearchRowLayout.getHeight() - (getToolBarHeight()));
+        int searchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight() / 3));
 
         if (searchRowHeight > y) {
             showViews();
@@ -338,41 +322,55 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         }
     }
 
-
     private void hideViews() {
-        mProductToolbar.animate()
-                .translationY(-mProductToolbar.getBottom())
-                .setInterpolator(new AccelerateInterpolator())
-                .withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        showBarcodeToolbar();
-                        mRelSearchRowLayout.setAlpha(0);
-                        mProductToolbar
-                                .animate()
-                                .translationY(0)
-                                .setInterpolator(new DecelerateInterpolator())
-                                .start();
-                    }
-                }).start();
+        if (!actionBarIsHidden) {
+            mProductToolbar.animate()
+                    .translationY(-mProductToolbar.getBottom())
+                    .setInterpolator(new AccelerateInterpolator())
+                    //  .setDuration(ANIMATION_START_DURATION)
+                    .withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            showBarcodeToolbar();
+                            actionBarIsHidden = true;
+                            mRelSearchRowLayout.setAlpha(0);
+                            mProductToolbar
+                                    .animate()
+                                    .translationY(0)
+                                    // .setDuration(ANIMATION_END_DURATION)
+                                    .start();
+                        }
+                    }).start();
+        }
     }
 
     private void showViews() {
-        mProductToolbar.animate()
-                .translationY(0)
-                .setInterpolator(new DecelerateInterpolator())
-                .withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        showAccountToolbar();
-                        mRelSearchRowLayout.setAlpha(1);
-                        mProductToolbar
-                                .animate()
-                                .translationY(0)
-                                .setInterpolator(new DecelerateInterpolator())
-                                .start();
-                    }
-                }).start();
+        if (actionBarIsHidden) {
+            mProductToolbar.animate()
+                    .translationY(-mProductToolbar.getBottom())
+                    .setInterpolator(new DecelerateInterpolator())
+                    //  .setDuration(ANIMATION_START_DURATION)
+                    .withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            showAccountToolbar();
+                            mRelSearchRowLayout.setAlpha(1);
+                            mProductToolbar
+                                    .animate()
+                                    .translationY(0)
+                                    //  .setDuration(ANIMATION_END_DURATION)
+                                    .setInterpolator(new DecelerateInterpolator())
+                                    .withEndAction(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            showAccountToolbar();
+                                        }
+                                    })
+                                    .start();
+                            actionBarIsHidden = false;
+                        }
+                    }).start();
+        }
     }
 
     private void hideProgress() {
@@ -384,12 +382,18 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         mToolbarText.setVisibility(View.VISIBLE);
         mTBBarcodeScanner.setVisibility(View.GONE);
         mTextTBProductSearch.setVisibility(View.GONE);
+        mImProductSearch.setEnabled(true);
+        mImBarcodeScanner.setEnabled(true);
+        mTextProductSearch.setEnabled(true);
     }
 
     private void showBarcodeToolbar() {
         mToolbarText.setVisibility(View.GONE);
         mTBBarcodeScanner.setVisibility(View.VISIBLE);
         mTextTBProductSearch.setVisibility(View.VISIBLE);
+        mImProductSearch.setEnabled(false);
+        mImBarcodeScanner.setEnabled(false);
+        mTextProductSearch.setEnabled(false);
     }
 
     @Override
@@ -404,5 +408,22 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
 
+    private void bindViewWithUI(List<RootCategory> rootCategories) {
+        mRootCategories = rootCategories;
+        PSRootCategoryAdapter mPSRootCategoryAdapter = new PSRootCategoryAdapter(rootCategories, mContext);
+        AlphaInAnimationAdapter alphaAdapter = new AlphaInAnimationAdapter(mPSRootCategoryAdapter);
+        mRecycleProductSearch.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(2f)));
+        mRecycleProductSearch.getItemAnimator().setAddDuration(1500);
+        mRecycleProductSearch.getItemAnimator().setRemoveDuration(1500);
+        mRecycleProductSearch.getItemAnimator().setMoveDuration(1500);
+        mRecycleProductSearch.getItemAnimator().setChangeDuration(1500);
+        mRecycleProductSearch.getItemAnimator().setMoveDuration(1500);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecycleProductSearch.setLayoutManager(mLayoutManager);
+        mRecycleProductSearch.setNestedScrollingEnabled(false);
+        mRecycleProductSearch.setAdapter(alphaAdapter);
+        mPSRootCategoryAdapter.setCLIContent();
+    }
 
 }

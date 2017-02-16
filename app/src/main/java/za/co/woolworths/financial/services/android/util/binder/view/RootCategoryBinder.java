@@ -5,9 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.awfs.coordination.R;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
 
         if (imageUrl != null) {
             DrawImage drawImage = new DrawImage(holder.mTextProduct.getContext());
-            drawImage.placeholderSetupImage(holder.mImageProductCategory,imageUrl);
+            drawImage.widthDisplayImage(holder.mImageProductCategory, imageUrl);
         }
 
         holder.mFrameRootCategory.setOnClickListener(new View.OnClickListener() {
@@ -78,17 +78,15 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        SimpleDraweeView mImageProductCategory;
+        ImageView mImageProductCategory;
         WTextView mTextProduct;
         FrameLayout mFrameRootCategory;
 
         public ViewHolder(View view) {
             super(view);
-            mImageProductCategory = (SimpleDraweeView) view.findViewById(R.id.imProductCategory);
+            mImageProductCategory = (ImageView) view.findViewById(R.id.imProductCategory);
             mTextProduct = (WTextView) view.findViewById(R.id.textProduct);
             mFrameRootCategory = (FrameLayout) view.findViewById(R.id.frameRootCategory);
         }
-
-
     }
 }
