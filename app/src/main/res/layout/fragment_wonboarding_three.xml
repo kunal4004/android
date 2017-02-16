@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="FINANCIAL SERVICES"
-                android:letterSpacing="0.1"
+                android:letterSpacing="0.04"
                 android:gravity="center_horizontal"
                 android:lineSpacingExtra="1.3dp"
                 app:WTextView_font="medium_bold"
@@ -53,6 +53,7 @@
                 android:paddingTop="16dp"
                 android:paddingLeft="32dp"
                 android:paddingRight="32dp"
+                android:lineSpacingExtra="4dp"
                 />
         </LinearLayout>
     </RelativeLayout>

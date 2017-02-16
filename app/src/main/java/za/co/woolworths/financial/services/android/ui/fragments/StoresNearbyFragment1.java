@@ -152,6 +152,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     private Status status;
     private static final int PERMS_REQUEST_CODE = 1234;
     private boolean permissionIsAllowed = false;
+    private boolean navigateMenuState=false;
 
     private PopWindowValidationMessage mPopWindowValidationMessage;
 
@@ -259,6 +260,9 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         });
         if (Utils.isLocationServiceEnabled(getActivity()) && Utils.getLastSavedLocation(getActivity()) == null) {
             checkLocationServiceAndSetLayout(false);
+        }
+        else {
+            checkLocationServiceAndSetLayout(true);
         }
         settingsRequest();
         initMap();
@@ -645,10 +649,14 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         if (!locationServiceStatus) {
             layoutLocationServiceOn.setVisibility(View.GONE);
             layoutLocationServiceOff.setVisibility(View.VISIBLE);
-
+            navigateMenuState=false;
+            getActivity().invalidateOptionsMenu();
         } else {
             layoutLocationServiceOff.setVisibility(View.GONE);
             layoutLocationServiceOn.setVisibility(View.VISIBLE);
+            navigateMenuState=true;
+            getActivity().invalidateOptionsMenu();
+
         }
     }
 
@@ -746,6 +754,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.w_store_locator_menu, menu);
+        if (navigateMenuState) {
+            menu.findItem(R.id.action_locate).setVisible(true);
+        }
+        else {
+            menu.findItem(R.id.action_locate).setVisible(false);
+        }
 
     }
 

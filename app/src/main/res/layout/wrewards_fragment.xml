@@ -34,7 +34,7 @@
                 android:layout_marginLeft="@dimen/bank_spacing_width"
                 android:layout_toRightOf="@+id/imBurgerButtonPressed"
                 android:gravity="left"
-                android:letterSpacing="0.1"
+                android:letterSpacing="0.2"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="12sp"

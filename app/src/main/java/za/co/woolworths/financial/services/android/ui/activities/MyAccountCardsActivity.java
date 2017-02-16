@@ -116,7 +116,7 @@ public class MyAccountCardsActivity extends BaseActivity
             fragmentPager.setAdapter(fragmentsAdapter);
             fragmentPager.setCurrentItem(getIntent().getIntExtra("position", 0));
             cards.add(R.drawable.w_store_card);
-            cards.add(R.drawable.w_credi_card);
+            cards.add(R.drawable.creditcardbenfits);
             cards.add(R.drawable.w_personal_loan_card);
             setUpAdapter(cards);
         }
@@ -266,7 +266,7 @@ public class MyAccountCardsActivity extends BaseActivity
                         }
                     }
                     if (!containsCreditCard) {
-                        cards.add(R.drawable.w_credi_card);
+                        cards.add(R.drawable.creditcardbenfits);
                     }
                     cards.add(R.drawable.w_personal_loan_card);
                     setUpAdapter(cards);
