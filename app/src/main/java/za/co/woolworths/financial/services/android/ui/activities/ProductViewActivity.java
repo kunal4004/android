@@ -87,6 +87,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     private FragmentManager fm;
     private WProgressDialogFragment mGetProgressDialog;
     private String searchItem = "";
+    private String mTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,13 +109,18 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         hideProgressBar();
         Bundle extras = getIntent().getExtras();
         searchItem = extras.getString("searchProduct");
+        mTitle = extras.getString("title");
         if (TextUtils.isEmpty(searchItem)) {
             productConfig(productName);
             searchItem = "";
             loadProduct();
         } else {
-            productConfig(searchItem);
-            productId=searchItem;
+            if (TextUtils.isEmpty(mTitle)) {
+                productConfig(searchItem);
+            }else {
+                productConfig(mTitle);
+            }
+            productId = searchItem;
             searchProduct();
         }
 
