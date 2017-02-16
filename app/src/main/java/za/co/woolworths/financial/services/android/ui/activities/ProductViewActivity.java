@@ -24,6 +24,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -140,7 +141,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     @Override
     public void onSelectedProduct(View v, int position) {
         try {
-            getProductDetail(mProduct.get(position).productId, mProduct.get(position).otherSkus.get(0).sku);
+            getProductDetail(mProduct.get(position).productId, mProduct.get(position).otherSkus.get(0).sku, false);
         } catch (Exception ex) {
             Log.e("ExceptionProduct", ex.toString());
         }
@@ -269,7 +270,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 if (pv.products != null && pv.products.size() != 0) {
                     mProduct = pv.products;
                     if (pv.products.size() == 1) {
-                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
+                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku, true);
                     } else {
                         mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
                         bindDataWithUI(mProduct);
@@ -302,7 +303,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
                 return ((WoolworthsApplication) getApplication()).getApi()
                         .getProductSearchList(searchItem,
-                                 false, mCurrentPage, PAGE_SIZE);
+                                false, mCurrentPage, PAGE_SIZE);
             }
 
             @Override
@@ -326,7 +327,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 if (pv.products != null && pv.products.size() != 0) {
                     mProduct = pv.products;
                     if (pv.products.size() == 1) {
-                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
+                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku, true);
                     } else {
                         mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
                         bindDataWithUI(mProduct);
@@ -359,7 +360,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
             @Override
             protected ProductView httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().productViewRequest( false,
+                return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(false,
                         mCurrentPage, PAGE_SIZE, productId);
             }
 
@@ -395,7 +396,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         }.execute();
     }
 
-    private void getProductDetail(final String productId, final String skuId) {
+    private void getProductDetail(final String productId, final String skuId, final boolean closeActivity) {
         if (TextUtils.isEmpty(searchItem)) {
             try {
                 mGetProgressDialog.show(fm, "v");
@@ -423,7 +424,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                             openDetailView.putExtra("product_detail", gson.toJson(mProductList));
                             startActivity(openDetailView);
                             overridePendingTransition(0, R.anim.anim_slide_up);
-                            if (mProductList.size() == 1) { //close ProductView activity when 1 row exist
+                            if (closeActivity) { //close ProductView activity when 1 row exist
                                 finish();
                             }
                             break;
