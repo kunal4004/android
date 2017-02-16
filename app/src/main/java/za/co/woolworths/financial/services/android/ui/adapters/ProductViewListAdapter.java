@@ -115,11 +115,12 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
 
                 if (!TextUtils.isEmpty(productItem.otherSkus.get(0).wasPrice)) {
                     holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                    holder.mTextAmount.setText(WFormatter.formatAmount(productItem.otherSkus.get(0).wasPrice));
+                    holder.mTextAmount.setText("From: " + WFormatter.formatAmount(productItem.otherSkus.get(0).wasPrice));
                     holder.mTextWasPrice.setText(WFormatter.formatAmount(price));
-                    holder.mTextLabelAmount.setVisibility(View.VISIBLE);
+                    holder.mTextLabelAmount.setVisibility(View.GONE);
                 } else {
-                    holder.mTextLabelAmount.setVisibility(View.VISIBLE);
+                    holder.mTextAmount.setText("From: " + WFormatter.formatAmount(price));
+                    holder.mTextLabelAmount.setVisibility(View.GONE);
                 }
 
                 break;

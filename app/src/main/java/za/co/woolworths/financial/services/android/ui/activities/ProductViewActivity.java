@@ -164,7 +164,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         for (String perms : permissions) {
             res = checkCallingOrSelfPermission(perms);
             if (!(res == PackageManager.PERMISSION_GRANTED)) {
-                return false;
+                    return false;
             }
         }
         return true;
