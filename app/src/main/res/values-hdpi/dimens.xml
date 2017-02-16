@@ -1,7 +1,7 @@
 <resources>
 <dimen name="barcode_margin">16.0dp</dimen>
-<dimen name="acc_thirteen_sp">10.0sp</dimen>
-    <dimen name="account_margin">20.0dp</dimen>
+<dimen name="acc_thirteen_sp">12.0sp</dimen>
+    <dimen name="account_margin">5.0dp</dimen>
     <dimen name="card_padding_margin">16dp</dimen>
     <dimen name="acc_fourteen_sp">12sp</dimen>
     <dimen name="acc_fifteen_dp">10sp</dimen>
