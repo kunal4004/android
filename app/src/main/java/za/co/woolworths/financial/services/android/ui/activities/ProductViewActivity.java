@@ -74,6 +74,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     private FragmentManager fm;
     private WProgressDialogFragment mGetProgressDialog;
     private String searchItem = "";
+    private String mTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,12 +91,18 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         hideProgressBar();
         Bundle extras = getIntent().getExtras();
         searchItem = extras.getString("searchProduct");
+        mTitle = extras.getString("title");
         if (TextUtils.isEmpty(searchItem)) {
             productConfig(productName);
             searchItem = "";
             loadProduct();
         } else {
-            productConfig(searchItem);
+            if (TextUtils.isEmpty(mTitle)) {
+                productConfig(searchItem);
+            } else {
+                productConfig(mTitle);
+            }
+
             productId = searchItem;
             searchProduct();
         }
@@ -396,11 +403,9 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     }
 
     private void getProductDetail(final String productId, final String skuId, final boolean closeActivity) {
-        if (TextUtils.isEmpty(searchItem)) {
-            try {
-                mGetProgressDialog.show(fm, "v");
-            } catch (NullPointerException ignored) {
-            }
+        try {
+            mGetProgressDialog.show(fm, "v");
+        } catch (NullPointerException ignored) {
         }
         ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
             @Override
