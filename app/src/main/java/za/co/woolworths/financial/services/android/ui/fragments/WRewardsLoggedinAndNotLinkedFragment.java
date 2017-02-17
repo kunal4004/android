@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -50,7 +51,11 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
         vipMember.setOnClickListener(this);
         wRewars_linkaccounts.setOnClickListener(this);
         applyForWRewards.setOnClickListener(this);
-        wRewardsTagLine.setText(getResources().getText(R.string.wrewards_tag_line_notlinked));
+        wRewardsTagLine.setText(getResources().getText(R.string.wrewards_unlinked_tag_line));
+        wRewardsTagLine.setTextColor(getResources().getColor(R.color.black_50));
+        Typeface tf = Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Regular.otf");
+        wRewardsTagLine.setTypeface(tf);
+        wRewardsTagLine.setTextSize(15);
         return view;
     }
 
