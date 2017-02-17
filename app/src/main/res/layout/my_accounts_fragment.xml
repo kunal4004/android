@@ -63,6 +63,7 @@
                         android:layout_marginRight="4dp"
                         android:layout_weight="1"
                         android:text="@string/log_in"
+                        android:letterSpacing="0.2"
                         app:WButton_font="medium_bold" />
 
                     <za.co.woolworths.financial.services.android.ui.views.WButton
@@ -70,6 +71,7 @@
                         style="@style/whiteButtonStyle"
                         android:layout_marginLeft="4dp"
                         android:text="register"
+                        android:letterSpacing="0.2"
                         app:WButton_font="medium_bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -281,7 +283,7 @@
             android:id="@+id/toolbarText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:letterSpacing="0.1"
+            android:letterSpacing="0.2"
             android:text="@string/my_accounts"
             android:textAllCaps="true"
             android:textColor="@color/black"

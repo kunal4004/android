@@ -6,6 +6,7 @@
         android:id="@+id/action_locate"
         android:icon="@drawable/locate_me"
         app:showAsAction="always"
+        android:visible="false"
         android:title="" />
     <item
         android:id="@+id/action_search"

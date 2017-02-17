@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +17,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.os.Bundle;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.Toast;
 
 import com.awfs.coordination.R;
 
@@ -35,13 +38,14 @@ import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
-        , WProductFragments.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle {
+        , WProductFragments.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle,WRewardsFragment.HideActionBarComponent {
 
     public static Toolbar mToolbar;
-    public static AppBarLayout appbar;
+  //  public static AppBarLayout appbar;
     private WFragmentDrawer drawerFragment;
     public WTextView mToolbarTitle;
     private List<Fragment> fragmentList;
@@ -64,7 +68,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         mActionBar.setDisplayShowHomeEnabled(false);
         mActionBar.setDisplayShowTitleEnabled(false); // false for hiding the title from actoinBar
         mToolbarTitle = (WTextView) findViewById(R.id.toolbar_title);
-        appbar = (AppBarLayout) findViewById(R.id.appbar);
+       // appbar = (AppBarLayout) findViewById(R.id.appbar);
         fragmentList = new ArrayList<>();
 
         mToolbar.setNavigationIcon(R.drawable.ic_drawer_menu);
@@ -85,13 +89,13 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 
     private void displayView(int position) {
         boolean isRewardFragment = false;
-        WOneAppBaseActivity.appbar.animate().translationY(WOneAppBaseActivity.appbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
+       // WOneAppBaseActivity.appbar.animate().translationY(WOneAppBaseActivity.appbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
         Fragment fragment = null;
         String title = getString(R.string.app_name);
         switch (position) {
             case 0:
                 fragment = new WTodayFragment();
-                title = getString(R.string.nav_item_today);
+                title = getString(R.string.nw_today_title);
                 break;
             case 1:
                 fragment = new WProductFragments();
@@ -99,7 +103,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
                 break;
             case 2:
                 fragment = new StoresNearbyFragment1();
-                title = getString(R.string.nav_item_store);
+                title = getString(R.string.screen_title_store);
                 break;
             case 3:
                 isRewardFragment = true;
@@ -121,23 +125,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             // set the toolbar title
             mToolbarTitle.setText(title);
             fragmentList.add(fragment);
-/*            if (isRewardFragment) {
-                JWTDecodedModel jwtDecodedModel = this.getJWTDecoded();
-                if(jwtDecodedModel.AtgSession == null){
-                    //user is signed out
-                    mToolbarTitle.setText("");
-                }else{
-                    if(jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")){
-                        //Signed in and linked
-                        mToolbarTitle.setText(title);
-                    } else{
-                        //signed in but NOT linked
-                        title = "";
-                    }
-
-                }
-
-            }*/
         }
     }
 
@@ -190,6 +177,16 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     @Override
     public void onTitleUpdate(String value) {
         mToolbarTitle.setText(value);
+    }
+
+    @Override
+    public void onWRewardsDrawerPressed() {
+        if (!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            //drawer is open
+            mDrawerLayout.openDrawer(Gravity.LEFT); //OPEN Nav Drawer!
+        } else {
+            super.onBackPressed();
+        }
     }
 }
 

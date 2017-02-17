@@ -116,12 +116,12 @@ public class MyAccountCardsActivity extends BaseActivity
             fragmentPager.setAdapter(fragmentsAdapter);
             fragmentPager.setCurrentItem(getIntent().getIntExtra("position", 0));
             cards.add(R.drawable.w_store_card);
-            cards.add(R.drawable.w_credi_card);
+            cards.add(R.drawable.creditcardbenfits);
             cards.add(R.drawable.w_personal_loan_card);
             setUpAdapter(cards);
         }
 
-        setStatusBarColor(position);
+
         mSharePreferenceHelper.save("acc_card_activity", "acc_card_activity");
         this.registerReceiver(this.finishAlert, new IntentFilter(mSharePreferenceHelper.getValue("acc_card_activity")));
 
@@ -160,6 +160,7 @@ public class MyAccountCardsActivity extends BaseActivity
             public void onPageScrollStateChanged(int state) {
             }
         });
+        setStatusBarColor(position);
     }
 
     public void setActionBar() {
@@ -266,7 +267,7 @@ public class MyAccountCardsActivity extends BaseActivity
                         }
                     }
                     if (!containsCreditCard) {
-                        cards.add(R.drawable.w_credi_card);
+                        cards.add(R.drawable.creditcardbenfits);
                     }
                     cards.add(R.drawable.w_personal_loan_card);
                     setUpAdapter(cards);
@@ -495,7 +496,6 @@ public class MyAccountCardsActivity extends BaseActivity
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.setStatusBarColor(color);
-            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
 
         llRootLayout.setBackgroundColor(color);

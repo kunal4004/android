@@ -6,8 +6,8 @@
     android:layout_marginTop="5dp"
     android:background="@android:color/transparent"
     android:orientation="vertical"
-    android:paddingLeft="11dp"
-    android:paddingRight="11dp">
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp">
 
         <LinearLayout
             android:id="@+id/cardItem"
@@ -58,7 +58,7 @@
                         android:textAllCaps="true"
                         android:textColor="@color/black"
                         android:textSize="14sp"
-                        android:letterSpacing="0.1"
+                        android:letterSpacing="0.08"
                         app:WTextView_font="medium" />
 
                 </LinearLayout>
@@ -121,6 +121,7 @@
                     android:paddingRight="42dp"
                     android:textColor="@color/black"
                     android:textSize="13sp"
+                    android:lineSpacingExtra="2.4dp"
                     app:WTextView_font="myriadpro_regular"
 
                     />
