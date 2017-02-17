@@ -222,11 +222,12 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
 
     private String getRandomVideos() {
         ArrayList<String> listOfVideo = new ArrayList<>();
-        listOfVideo.add("android.resource://" + getPackageName() + "/" + R.raw.wsplash_screen_video);
-        listOfVideo.add("android.resource://" + getPackageName() + "/" + R.raw.fashion_edit_02_studiow_men);
-        listOfVideo.add("android.resource://" + getPackageName() + "/" + R.raw.fashion_edit_04_summertime);
-        listOfVideo.add("android.resource://" + getPackageName() + "/" + R.raw.food_edit_04_broccoli);
-        listOfVideo.add("android.resource://" + getPackageName() + "/" + R.raw.food_edit_05_chocolate);
+        String rawFolderPath = "android.resource://" + getPackageName() + "/";
+        listOfVideo.add(rawFolderPath + R.raw.wsplash_screen_video);
+        listOfVideo.add(rawFolderPath + R.raw.fashion_edit_02_studiow_men);
+        listOfVideo.add(rawFolderPath+ R.raw.fashion_edit_04_summertime);
+        listOfVideo.add(rawFolderPath+ R.raw.food_edit_04_broccoli);
+        listOfVideo.add(rawFolderPath+ R.raw.food_edit_05_chocolate);
         Collections.shuffle(listOfVideo);
         return listOfVideo.get(0);
     }
