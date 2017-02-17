@@ -46,6 +46,15 @@
     <dimen name="spacing_normal">16dp</dimen>
     <dimen name="product_search_top_margin">105dp</dimen>
     <dimen name="barcode_margin">16dp</dimen>
-
+    <dimen name="voucher_message_layout_height">191dp</dimen>
+    <dimen name="voucher_barcode_margin">16dp</dimen>
+    <dimen name="voucher_barcode_number_margintop">18dp</dimen>
+    <dimen name="voucher_min_spend_margintop">18dp</dimen>
+    <dimen name="voucher_min_spend_padding">16dp</dimen>
+    <dimen name="voucher_barcode_number_margin">16.5dp</dimen>
+    <dimen name="voucher_barcode_number_text_size">17.5dp</dimen>
+    <dimen name="terms_and_conditions_margin">16dp</dimen>
+    <dimen name="voucher_card_margin">8dp</dimen>
+    <dimen name="voucher_card_layout_padding">8dp</dimen>
 </resources>
 

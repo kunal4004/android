@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="WREWARDS AT A GLANCE"
-                android:letterSpacing="0.1"
+                android:letterSpacing="0.04"
                 android:gravity="center_horizontal"
                 app:WTextView_font="medium_bold"
                 style="@style/TitleWSemiBoldWhite"
@@ -52,6 +52,7 @@
                 app:WTextView_font="myriadpro_regular"
                 android:paddingLeft="32dp"
                 android:paddingRight="32dp"
+                android:lineSpacingExtra="4dp"
                 />
         </LinearLayout>
     </RelativeLayout>

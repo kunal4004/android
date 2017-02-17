@@ -15,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -245,7 +246,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 applyStoreCardView.setVisibility(View.GONE);
 
                 sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                scProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds,account.creditLimit));
+                scProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
 
             } else if (account.productGroupCode.equals("CC")) {
                 linkedCreditCardView.setVisibility(View.VISIBLE);
@@ -260,14 +261,14 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 }
 
                 cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                ccProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds,account.creditLimit));
+                ccProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
 
             } else if (account.productGroupCode.equals("PL")) {
                 linkedPersonalCardView.setVisibility(View.VISIBLE);
                 applyPersonalCardView.setVisibility(View.GONE);
 
                 pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                plProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds,account.creditLimit));
+                plProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
             }
         }
 
@@ -599,9 +600,13 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 super.onPostExecute(messageResponse);
                 if (messageResponse.unreadCount > 0) {
                     messageCounter.setVisibility(View.VISIBLE);
-                    messageCounter.setText(String.valueOf(messageResponse.unreadCount));
-
+                    int unreadCount = messageResponse.unreadCount;
+                    if (TextUtils.isEmpty(String.valueOf(unreadCount)))
+                        unreadCount = 0;
+                    Utils.setBadgeCounter(getActivity(), unreadCount);
+                    messageCounter.setText(String.valueOf(unreadCount));
                 } else {
+                    Utils.removeBadgeCounter(getActivity());
                     messageCounter.setVisibility(View.GONE);
                 }
             }
@@ -716,12 +721,11 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
     }
 
-    public int getAvailableFundsPercentage(int availableFund, int creditLimit)
-    {
+    public int getAvailableFundsPercentage(int availableFund, int creditLimit) {
         // Progressbar MAX value is 10000 to manage float values
-        int percentage=Math.round((100*((float)availableFund/(float)creditLimit))*100);
+        int percentage = Math.round((100 * ((float) availableFund / (float) creditLimit)) * 100);
 
-        if(percentage<0 || percentage>Utils.ACCOUNTS_PROGRESS_BAR_MAX_VALUE)
+        if (percentage < 0 || percentage > Utils.ACCOUNTS_PROGRESS_BAR_MAX_VALUE)
             return Utils.ACCOUNTS_PROGRESS_BAR_MAX_VALUE;
         else
             return percentage;
