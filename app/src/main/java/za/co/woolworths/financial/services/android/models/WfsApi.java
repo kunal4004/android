@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models;
 
 import android.content.Context;
+import android.location.Location;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
@@ -48,6 +49,7 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WfsApi {
 
@@ -168,12 +170,24 @@ public class WfsApi {
         return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), "Android", category_id);
     }
 
-    public ProductView productViewRequest(LatLng loc, boolean isBarcode, int pageSize, int pageNumber, String product_id) {
-        return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), 18.5046653, -33.8877679, isBarcode, pageSize, pageNumber, product_id);
+    public ProductView productViewRequest(boolean isBarcode, int pageSize, int pageNumber, String product_id) {
+        Location loc = Utils.getLastSavedLocation(mContext);
+        if (loc == null) {
+            loc = new Location("");//provider name is unecessary
+            loc.setLatitude(0.0d);//your coords of course
+            loc.setLongitude(0.0d);
+        }
+        return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), isBarcode, pageSize, pageNumber, product_id);
     }
 
-    public ProductView getProductSearchList(String search_item, LatLng loc, boolean isBarcode, int pageSize, int pageNumber) {
-        return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.longitude, loc.latitude, isBarcode, search_item, pageSize, pageNumber);
+    public ProductView getProductSearchList(String search_item, boolean isBarcode, int pageSize, int pageNumber) {
+        Location loc = Utils.getLastSavedLocation(mContext);
+        if (loc == null) {
+            loc = new Location("");//provider name is unecessary
+            loc.setLatitude(0.0d);//your coords of course
+            loc.setLongitude(0.0d);
+        }
+        return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLongitude(), loc.getLatitude(), isBarcode, search_item, pageSize, pageNumber);
     }
 
     public FAQ getFAQ() {
