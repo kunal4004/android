@@ -95,7 +95,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         switch (position) {
             case 0:
                 fragment = new WTodayFragment();
-                title = getString(R.string.nav_item_today);
+                title = getString(R.string.nw_today_title);
                 break;
             case 1:
                 fragment = new WProductFragments();
@@ -125,23 +125,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             // set the toolbar title
             mToolbarTitle.setText(title);
             fragmentList.add(fragment);
-/*            if (isRewardFragment) {
-                JWTDecodedModel jwtDecodedModel = this.getJWTDecoded();
-                if(jwtDecodedModel.AtgSession == null){
-                    //user is signed out
-                    mToolbarTitle.setText("");
-                }else{
-                    if(jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")){
-                        //Signed in and linked
-                        mToolbarTitle.setText(title);
-                    } else{
-                        //signed in but NOT linked
-                        title = "";
-                    }
-
-                }
-
-            }*/
         }
     }
 
