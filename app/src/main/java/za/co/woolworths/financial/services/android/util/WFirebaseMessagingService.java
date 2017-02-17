@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.Map;
 
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity;
 
@@ -48,6 +49,16 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage == null)
             return;
 
+        String unreadCountValue = Utils.getSessionDaoValue(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT);
+
+        if (TextUtils.isEmpty(unreadCountValue)) {
+            Utils.sessionDaoSave(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT, "0");
+            Utils.setBadgeCounter(this, 1);
+        } else {
+            int unreadCount = Integer.valueOf(unreadCountValue) + 1;
+            Utils.setBadgeCounter(this, unreadCount);
+        }
+
         Map<String, String> data = remoteMessage.getData();
         if (data.size() > 0 && NotificationUtils.isAppIsInBackground(getApplicationContext())) {// Check if message contains a data payload.
             Intent myIntent = new Intent(this, WSplashScreenActivity.class);
@@ -68,8 +79,8 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             builder.setAutoCancel(true);
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.notify(id, builder.build());
-        }else if(!NotificationUtils.isAppIsInBackground(getApplicationContext())){
-            Intent intent=new Intent("UpdateCounter");
+        } else if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
+            Intent intent = new Intent("UpdateCounter");
             LocalBroadcastManager.
                     getInstance(getApplicationContext()).sendBroadcast(intent);
         }

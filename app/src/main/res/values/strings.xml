@@ -110,7 +110,7 @@
     <string name="month_description">YOUR TIER STATUS FOR THE MONTH</string>
     <string name="information">INFORMATION</string>
     <string name="voucher_terms_button_text">VIEW GENERAL TERMS &amp; CONDITIONS</string>
-    <string name="reward_status_info_1">Instant WRewards savings on more than 1000 items, plus an additional 5% off when paying with your Woolies Credit or Store Card</string>
+    <string name="reward_status_info_1">Swipe your WRewards or MySchool card and get an extra 10\%% off selected items.  Pay with your Woolies card and get a further 5\%%.</string>
     <string name="reward_status_info_2">Invitations to preview sales</string>
     <string name="reward_status_info_3">WRewards Green</string>
     <string name="reward_status_info_4">Free WMagazine</string>
@@ -136,8 +136,8 @@
     <string name="sign_out">Sign Out</string>
     <string name="brands">Brands</string>
     <string name="why_we_need_location_services">Why we need Location Services</string>
-    <string name="location_off_message">Message for user who does not have location services switched on. It will prompt them to go to settings and turn it on. Still to be designed. Alternatively, you can search by Store or Location in the top right corner.</string>
-    <string name="go_to_settings">GO TO SETTINGS</string>
+    <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
+    <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
     <string name="title_activity_wmain">WMainActivity</string>
 
 
@@ -145,6 +145,7 @@
     <string name="drawer_close">Close</string>
 
     <string name="nav_item_today">TODAY</string>
+    <string name="nw_today_title">W TODAY</string>
     <string name="nav_item_products">PRODUCTS</string>
     <string name="nav_item_store">STORES</string>
     <string name="screen_title_store">STORES NEARBY</string>
@@ -170,7 +171,7 @@
     <string name="funds_within_48_hours">Funds within 48 hours</string>
     <string name="funds_within_48_hours_description">Once your application has been approved the cash will be in your account within 48 hours.</string>
     <string name="easy_access">Easy access</string>
-    <string name="easy_access_description">Simply contact our Call Centre on 0861 50 20 20 to apply for additional funds.</string>
+    <string name="easy_access_description">Withdraw funds 24/7 in the app using the personal loan withdrawal.</string>
     <string name="interest_changed">Interest charged</string>
     <string name="interest_changed_description">Interest will be charged according to the National Credit Act (NCA) and will never exceed the maximum allowed by the NCA. The interest rate charged is a variable interest rate that is linked to the Repo Rate, which may change from time to time.</string>
     <string name="personal_loan_points_to_qualify">\u2022Be 18 or older \n\u2022Have a valid South African ID \n\u2022Earn a minimum of R2 000 per month \n\u2022Provide your latest three payslips or your last three months’ bank statements Have your own bank account</string>
@@ -181,8 +182,8 @@
     <string name="your_in_control">You\'re in control</string>
     <string name="your_in_control_description">With a Woolworths Store Card you decide how much you want to repay each month and your preferred payment method.</string>
     <string name="easy_payment_methods">Easy payment methods</string>
-    <string name="easy_payment_methods_description">Your purchases are automatically billed to your account and you’ll get a monthly statement. You could pay your account using any of the below methods:</string>
-    <string name="convenient">Convenient</string>
+    <string name="easy_payment_methods_description">You could pay your account using one of the following methods:</string>
+    <string name="convenient">It’s Convenient</string>
     f
     <string name="sc_points_to_qualify">\u2022 \t Be 18 or older \n\u2022 \t Have a valid RSA ID number \n\u2022 \t Earn a minimum of R2000 per month</string>
     <string name="please_enter_the_amount">PLEASE ENTER THE AMOUNT YOU WOULD LIKE TO WITHDRAW:</string>
@@ -238,10 +239,10 @@
     <string name="link_products">https://woolies.herokuapp.com/products</string>
     <string name="withdraw_cash_now">WITHDRAW CASH NOW</string>
 
-    <string name="accounts_walkthrough_desc_1">The new Woolies app gives you easy access to fashion trends, recipes, store locators and more</string>
-    <string name="accounts_walkthrough_desc_2">See how much you’ve saved, track your tier status and access your exclusive vouchers.</string>
-    <string name="accounts_walkthrough_desc_3">Conveniently view your credit balance, next payment due, available funds, apply for a personal loan and more.</string>
-    <string name="accounts_walkthrough_desc_4">Create an account or use your existing Woolies logins to get started. Your login details will be the same on the app, mobi site and website.</string>
+    <string name="accounts_walkthrough_desc_1">The new Woolies app gives you easy access to fashion trends, recipes, stores, account information and so much more.</string>
+    <string name="accounts_walkthrough_desc_2">See how much you’ve saved, track your tier status and access all your vouchers.</string>
+    <string name="accounts_walkthrough_desc_3">Conveniently view your available funds, next payment due, recent transactions and so much more.</string>
+    <string name="accounts_walkthrough_desc_4">Create a profile or use your existing Woolies online sign in to get started. Your sign in details will be the same on the app, mobi site and website.</string>
     <string name="accounts_walkthrough_title_1">welcome</string>
     <string name="accounts_walkthrough_title_2">WRewards at a glance</string>
     <string name="accounts_walkthrough_title_3">Financial services</string>
@@ -345,10 +346,10 @@
     <string name="cli_pop_insolvency_title">SORRY, WE CANNOT PROCEED WITH YOUR APPLICATION</string>
     <string name="cli_pop_insolvency_desc">Unfortunately we can’t proceed until you no longer have any of these conditions in place.</string>
 
-    <string name="onboarding_desc_screen_1">The new Woolies app gives you access to everything you love in the palm of your hand. Simply scroll, tap and enjoy!</string>
-    <string name="onboarding_desc_screen_2">See how much you’ve saved, track your tier status and access your exclusive vouchers.</string>
-    <string name="onboarding_desc_screen_3">Conveniently view your credit balance, next payment due, available funds, apply for a personal loan and more.</string>
-    <string name="onboarding_desc_screen_4">Create an account or use your existing Woolies logins to get started. Your login details will be the same on the app, mobi site and website.</string>
+    <string name="onboarding_desc_screen_1">The new Woolies app gives you easy access to fashion trends, recipes, stores, account information and so much more.</string>
+    <string name="onboarding_desc_screen_2">See how much you’ve saved, track your tier status and access all your vouchers.</string>
+    <string name="onboarding_desc_screen_3">Create a profile or use your existing Woolies online sign in to get started. Your sign in details will be the same on the app, mobi site and website.</string>
+    <string name="onboarding_desc_screen_4">Conveniently view your available funds, next payment due, recent transactions and so much more.</string>
     <string name="welcome_back">Welcome back</string>
     <string name="cli_activity_desc">To help us calculate how much additional credit you can qualify for, please answer a few quick and easy questions.  Once you have completed this, you will need to submit proof of income in order for us to proceed with your application.</string>
     <string name="cli_attach_drive_desc">Select your existing saved documents from your device and email it to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.</string>
@@ -364,10 +365,11 @@
     <string name="issueing_loan">Processing your loan...</string>
 
     <string name="wrewards_tag_line">|!b|W|!?|Rewards is our way of rewarding customers INSTANTLY.|!b|W|!?|Rewards members save millions every week.</string>
+    <string name="wrewards_unlinked_tag_line">We see that your account is not yet linked. To see how much you\'ve saved, track your tier status and access all your vouchers, please link your account now.</string>
     <string name="link_account">link account</string>
-    <string name="apply_for_wrewards">apply for WREWARDS</string>
+    <string name="apply_for_wrewards">JOIN WREWARDS</string>
     <string name="get_more">Get more</string>
-    <string name="wrewards_three_levels">There are three levels to WRewards - the more you spend, the more guaranteed rewards you\'ll enjoy. You\'ll start out on the Valued level, and we\'ll review your status every quarter, upgrading your status automatically as you qualify for a higher level.</string>
+    <string name="wrewards_three_levels">There are three tiers to WRewards - the more you spend, the more guaranteed rewards you\'ll enjoy. You\'ll start out on the Valued tier, and we\'ll upgrade your status automatically as you qualify for the next tier.</string>
     <string name="member">MEMBER</string>
     <string name="swipe_and_save_instantly">SWIPE AND SAVE INSTANTLY</string>
     <string name="spend_30000">SPEND R30 000 OR MORE ANNUALLY</string>
@@ -376,8 +378,8 @@
     <string name="savings">SAVINGS</string>
     <string name="to_next_tier">TO NEXT TIER</string>
     <string name="info_valued_header">SWIPE AND SAVE INSTANTLY</string>
-    <string name="info_loyal_header">SPEND BETWEEN R9 000 AND R27 000 PER YEAR at woolworths</string>
-    <string name="info_vip_header">SPEND OVER R27 000 PER YEAR AT WOOLWORTHS</string>
+    <string name="info_loyal_header">SPEND BETWEEN R10 000 AND R29 999 PER YEAR at woolworths</string>
+    <string name="info_vip_header">SPEND OVER R30 000 PER YEAR AT WOOLWORTHS</string>
     <string name="overview">OVERVIEW</string>
     <string name="vouchers">VOUCHERS</string>
     <string name="year">YEAR</string>
@@ -389,7 +391,7 @@
     <string name="year_to_date_spend">Year to Date Spend</string>
     <string name="value">VALUE</string>
     <string name="minimum_spend">Minimum Spend</string>
-    <string name="view_terms_conditions">VIEW TERMS &amp; CONDITIONS</string>
+    <string name="view_terms_conditions">TERMS &amp; CONDITIONS</string>
     <string name="expires">"Expires: "</string>
     <string name="use_before">"USE BEFORE "</string>
     <string name="register">REGISTER</string>
@@ -404,9 +406,9 @@
     <string name="sc_points_to_qualify_2">Have a valid RSA ID number</string>
     <string name="sc_points_to_qualify_3">Earn a minimum of R2000 per month</string>
 
-    <string name="points_convinent_1">Use your Store Card at any Woolies &amp; Woolies </string>
+    <string name="points_convinent_1">Use your Store Card at any Woolies &amp; Food </string>
     <string name="points_convinent_2">Foodstops at Engen</string>
-    <string name="points_convinent_3">Pay your utility bills</string>
+    <string name="points_convinent_3">Pay utility bills</string>
     <string name="points_convinent_4">Buy airtime</string>
     <string name="points_convinent_5">Shop Woolies online 24/7</string>
 
@@ -493,5 +495,16 @@
     <string name="product_description">Update your modern wardrobe with this crisp short sleeved stretch cotton shirt, designed with polka dots for a pop of urban cool. Wear it with jeans for easy casual flair, or with fitted chinos for a smarter update.</string>
     <string name="product_code">Product Code</string>
     <string name="product_colour">Colour</string>
+    <string name="unlinked_account_copy">We see that your account is not yet linked. To conveniently view your available funds, next payment due, recent transactions and so much more, please link your account now.</string>
+    <string name="get_more_back_at_woolies">Get more back at Woolies</string>
+    <string name="get_more_description">Get up to 3\%% back in WRewards quarterly vouchers when shopping at Woolies.</string>
+    <string name="cc_cash_when_you_need_it">Cash When You Need It</string>
+    <string name="cc_cash_when_you_need_it_description">Use your Woolworths Credit Card to draw cash at any ATM displaying the Visa logo, worldwide.</string>
+    <string name="pay_for_fuel">Pay for Fuel</string>
+    <string name="pay_fuel_description">Pay for your fuel with your Woolies Credit Card and get up to 1\%% back in WRewards quarterly vouchers.</string>
+    <string name="plus_for_black_credit_card_only">PLUS (for Black Credit Card only)</string>
+    <string name="cc_plus_1">Free Taste magazine vouchers monthly</string>
+    <string name="cc_plus_2">2 free coffee vouchers monthly that can be used at any Woolworths Cafe, To Go or Tapas Bar.</string>
+    <string name="cc_plus_3">Automatic VIP tier status for the first 12 months and free online delivery for Woolies online purchases (when you pay with your Woolies Black credit card).</string>
 
 </resources>

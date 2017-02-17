@@ -66,12 +66,13 @@ public class WRewardsVouchersAdapter extends BaseAdapter {
             convertView = mContext.getLayoutInflater().inflate(R.layout.wrewards_voucher_details_item, parent, false);
             holder.validFromDate=(WTextView)convertView.findViewById(R.id.validFrom);
             holder.validUntilDate=(WTextView)convertView.findViewById(R.id.validUntil);
-            holder.value = (WTextView) convertView.findViewById(R.id.value);
+            //holder.value = (WTextView) convertView.findViewById(R.id.value);
             holder.message = (WTextView) convertView.findViewById(R.id.message);
             holder.voucherNumber = (WTextView) convertView.findViewById(R.id.voucherNumber);
             holder.minimumSpend = (WTextView) convertView.findViewById(R.id.minSpend);
             holder.barCode = (ImageView) convertView.findViewById(R.id.barcode);
             convertView.setTag(holder);
+
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
@@ -84,11 +85,11 @@ public class WRewardsVouchersAdapter extends BaseAdapter {
             holder.validUntilDate.setText(String.valueOf(vouchers.get(position).validToDate));
         }
 
-        if ("PERCENTAGE".equals(vouchers.get(position).type)) {
+        /*if ("PERCENTAGE".equals(vouchers.get(position).type)) {
             holder.value.setText(String.valueOf(WFormatter.formatPercent(vouchers.get(position).amount)));
         } else {
             holder.value.setText(String.valueOf(WFormatter.formatAmountNoDecimal(vouchers.get(position).amount)));
-        }
+        }*/
         holder.message.setText(vouchers.get(position).description);
         holder.voucherNumber.setText(WFormatter.formatVoucher(vouchers.get(position).voucherNumber));
         holder.minimumSpend.setText(String.valueOf(WFormatter.formatAmount(vouchers.get(position).minimumSpend)));
