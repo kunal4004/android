@@ -11,7 +11,7 @@
     android:background="@color/dark_grey"
     tools:context="za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity">
 
-    <VideoView
+    <za.co.woolworths.financial.services.android.ui.views.WVideoView
         android:id="@+id/activity_wsplash_screen_videoview"
         android:layout_width="fill_parent"
         android:layout_alignParentRight="true"

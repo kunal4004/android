@@ -25,6 +25,7 @@ import za.co.woolworths.financial.services.android.models.ApiInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
+import za.co.woolworths.financial.services.android.ui.views.WVideoView;
 import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
@@ -34,7 +35,7 @@ import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCompletionListener {
 
     private boolean mVideoPlayerShouldPlay = false;
-    private VideoView videoView;
+    private WVideoView videoView;
     private boolean isMinimized = false;
     PersistenceLayer dbHelper = null;
 
@@ -42,7 +43,7 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wsplash_screen);
-        this.videoView = (VideoView) findViewById(R.id.activity_wsplash_screen_videoview);
+        this.videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
 
         Uri videoUri = Uri.parse(getRandomVideos());
         this.videoView.setVideoURI(videoUri);
