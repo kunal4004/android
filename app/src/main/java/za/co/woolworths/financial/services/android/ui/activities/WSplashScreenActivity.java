@@ -14,6 +14,10 @@ import android.widget.VideoView;
 
 import com.awfs.coordination.R;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.ApiInterface;
@@ -39,7 +43,7 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
         setContentView(R.layout.activity_wsplash_screen);
         this.videoView = (VideoView) findViewById(R.id.activity_wsplash_screen_videoview);
 
-        Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.wsplash_screen_video);
+        Uri videoUri = Uri.parse(getRandomVideos());
         this.videoView.setVideoURI(videoUri);
         this.videoView.start();
 
@@ -212,5 +216,18 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
             isMinimized = false;
             finish();
         }
+    }
+
+    private String getRandomVideos() {
+        ArrayList<String> listOfVideo = new ArrayList<>();
+        listOfVideo.add("android.resource://" + getPackageName() + "/" + R.raw.wsplash_screen_video);
+        listOfVideo.add("android.resource://" + getPackageName() + "/" + R.raw.fashion_edit_02_studiow_men);
+        listOfVideo.add("android.resource://" + getPackageName() + "/" + R.raw.fashion_edit_04_summertime);
+        listOfVideo.add("android.resource://" + getPackageName() + "/" + R.raw.food_edit_04_broccoli);
+        listOfVideo.add("android.resource://" + getPackageName() + "/" + R.raw.food_edit_05_chocolate);
+        Random random = new Random();
+        int listSize = listOfVideo.size();
+        int randomIndex = random.nextInt(listSize);
+        return listOfVideo.get(randomIndex);
     }
 }
