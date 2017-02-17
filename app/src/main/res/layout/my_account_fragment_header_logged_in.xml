@@ -127,25 +127,45 @@
             android:textSize="20sp"
             app:WTextView_font="medium_bold"
             />
-        <za.co.woolworths.financial.services.android.ui.views.WButton
+        <LinearLayout
+            android:id="@+id/llUnlinkedAccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:id="@+id/linkAccountsBtn"
-            android:text="LINK ACCOUNTS"
-            android:textAllCaps="true"
-            android:gravity="center"
-            android:focusableInTouchMode="false"
-            android:focusable="false"
-            android:background="@color/black"
-            android:textColor="@color/white"
-            app:WButton_font="medium"
-            android:textSize="13sp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:visibility="gone"
-            android:layout_marginBottom="16dp"
-            />
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginLeft="@dimen/unlinked_account_copy_padding_left_right"
+                android:layout_marginRight="@dimen/unlinked_account_copy_padding_left_right"
+                android:layout_marginBottom="36dp"
+                android:text="@string/unlinked_account_copy"
+                android:lineSpacingExtra="4sp"
+                app:WTextView_font="myriadpro_regular"
+                android:textSize="15sp"
+                android:textColor="@color/black_50"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:id="@+id/linkAccountsBtn"
+                android:text="@string/link_account"
+                android:textAllCaps="true"
+                android:gravity="center"
+                android:focusableInTouchMode="false"
+                style="@style/whiteWButtonStyle"
+                android:focusable="false"
+                android:letterSpacing="0.2"
+                app:WButton_font="medium_bold"
+                android:textSize="12sp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                />
+        </LinearLayout>
     </LinearLayout>
 
 

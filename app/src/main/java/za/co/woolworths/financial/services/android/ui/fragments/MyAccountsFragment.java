@@ -96,6 +96,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
     LinearLayout applyNowAccountsLayout;
     LinearLayout loggedOutHeaderLayout;
     LinearLayout loggedInHeaderLayout;
+    LinearLayout unlinkedLayout;
     WButton linkAccountsBtn;
     RelativeLayout signOutBtn;
     ViewPager viewPager;
@@ -160,6 +161,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         applyNowAccountsLayout = (LinearLayout) view.findViewById(R.id.applyNowLayout);
         loggedOutHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedOutHeaderLayout);
         loggedInHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedInHeaderLayout);
+        unlinkedLayout = (LinearLayout) view.findViewById(R.id.llUnlinkedAccount);
         linkAccountsBtn = (WButton) view.findViewById(R.id.linkAccountsBtn);
         signOutBtn = (RelativeLayout) view.findViewById(R.id.signOutBtn);
         viewPager = (ViewPager) view.findViewById(R.id.pager);
@@ -322,7 +324,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 } else {
                     //user is not linked
                     //but signed in
-                    linkAccountsBtn.setVisibility(View.VISIBLE);
+                    unlinkedLayout.setVisibility(View.VISIBLE);
                     setUiPageViewController();
                 }
             } else {
@@ -345,7 +347,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         applyNowAccountsLayout.setVisibility(View.GONE);
         contactUs.setVisibility(View.GONE);
         relFAQ.setVisibility(View.GONE);
-        linkAccountsBtn.setVisibility(View.GONE);
+        unlinkedLayout.setVisibility(View.GONE);
     }
 
     private void setUiPageViewController() {

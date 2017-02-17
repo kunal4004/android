@@ -37,9 +37,9 @@
         android:layout_marginRight="32dp"
         android:layout_marginTop="40dp"
         android:gravity="center"
-        android:textColor="#80000000"
-        android:textSize="15sp"
-        app:WTextView_font="myriadpro_regular"
+        android:textColor="#e6000000"
+        android:textSize="17.5sp"
+        app:WTextView_font="medium"
         android:lineSpacingExtra="4sp"
         android:layout_marginBottom="48dp"
         />
