@@ -77,7 +77,7 @@
                 android:layout_marginLeft="@dimen/bank_spacing_width"
                 android:layout_toRightOf="@+id/imBurgerButtonPressed"
                 android:gravity="left"
-                android:letterSpacing="0.1"
+                android:letterSpacing="0.2"
                 android:text="@string/nav_item_products"
                 android:textAllCaps="true"
                 android:textColor="@color/black"

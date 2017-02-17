@@ -38,16 +38,74 @@
 
                 <ImageView
                     style="@style/account_logged_out_icon"
-                    android:background="@drawable/myschool"
+                    android:background="@drawable/convenient"
                     android:contentDescription="@string/app_name" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/account_logged_out_reward_title"
-                    android:text="@string/make_difference" />
+                    android:text="@string/convenient" />
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/account_logged_out_reward_detail"
-                    android:text="@string/make_difference_description" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView style="@style/account_logged_out_bullet" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        style="@style/account_logged_out_list_bullet"
+                        android:text="@string/points_convinent_1" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView style="@style/account_logged_out_bullet" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        style="@style/account_logged_out_list_bullet"
+                        android:text="@string/points_convinent_2" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView style="@style/account_logged_out_bullet" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        style="@style/account_logged_out_list_bullet"
+                        android:text="@string/points_convinent_3" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView style="@style/account_logged_out_bullet" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        style="@style/account_logged_out_list_bullet"
+                        android:text="@string/points_convinent_4" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/bank_spacing_width"
+                    android:orientation="horizontal">
+
+                    <TextView style="@style/account_logged_out_bullet" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        style="@style/account_logged_out_list_bullet"
+                        android:text="@string/points_convinent_5" />
+                </LinearLayout>
+
             </LinearLayout>
 
             <include layout="@layout/account_horizontal_line" />
@@ -138,80 +196,22 @@
             </LinearLayout>
 
             <include layout="@layout/account_horizontal_line" />
-
             <LinearLayout style="@style/account_logged_out_container">
 
                 <ImageView
                     style="@style/account_logged_out_icon"
-                    android:background="@drawable/convenient"
+                    android:background="@drawable/myschool"
                     android:contentDescription="@string/app_name" />
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/account_logged_out_reward_title"
-                    android:text="@string/convenient" />
+                    android:text="@string/make_difference" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_convinent_1" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_convinent_2" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_convinent_3" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_convinent_4" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/bank_spacing_width"
-                    android:orientation="horizontal">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_convinent_5" />
-                </LinearLayout>
-
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/account_logged_out_reward_detail"
+                    android:text="@string/make_difference_description" />
             </LinearLayout>
+            <include layout="@layout/account_horizontal_line" />
 
             <LinearLayout
                 style="@style/account_logged_out_container"
@@ -266,6 +266,7 @@
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/account_logged_out_reward_bold"
+                    android:lineSpacingExtra="3.5dp"
                     android:text="@string/bring_following_while_collecting" />
 
                 <LinearLayout
@@ -283,6 +284,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
                     android:layout_marginBottom="100dp"
                     android:orientation="horizontal">
 

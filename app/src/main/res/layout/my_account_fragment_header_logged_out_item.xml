@@ -32,15 +32,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/accountsWalkthroughDescription"
-        android:layout_marginTop="22dp"
-        android:text="@string/app_name"
+        android:layout_marginTop="16dp"
         app:WTextView_font="myriadpro_regular"
         android:minHeight="65dp"
         android:textColor="@color/black_desc_opacity"
-        android:lineSpacingExtra="1.9dp"
-        android:textSize="14sp"
+        android:lineSpacingExtra="4dp"
+        android:textSize="15sp"
         android:layout_gravity="center_horizontal"
-        android:gravity="center"
+        android:gravity="center|top"
         />
 
 
