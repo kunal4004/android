@@ -403,11 +403,9 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     }
 
     private void getProductDetail(final String productId, final String skuId, final boolean closeActivity) {
-        if (TextUtils.isEmpty(searchItem)) {
-            try {
-                mGetProgressDialog.show(fm, "v");
-            } catch (NullPointerException ignored) {
-            }
+        try {
+            mGetProgressDialog.show(fm, "v");
+        } catch (NullPointerException ignored) {
         }
         ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
             @Override
