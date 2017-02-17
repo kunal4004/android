@@ -15,6 +15,7 @@ import android.widget.VideoView;
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -225,9 +226,7 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
         listOfVideo.add("android.resource://" + getPackageName() + "/" + R.raw.fashion_edit_04_summertime);
         listOfVideo.add("android.resource://" + getPackageName() + "/" + R.raw.food_edit_04_broccoli);
         listOfVideo.add("android.resource://" + getPackageName() + "/" + R.raw.food_edit_05_chocolate);
-        Random random = new Random();
-        int listSize = listOfVideo.size();
-        int randomIndex = random.nextInt(listSize);
-        return listOfVideo.get(randomIndex);
+        Collections.shuffle(listOfVideo);
+        return listOfVideo.get(0);
     }
 }
