@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +17,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.os.Bundle;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.Toast;
 
 import com.awfs.coordination.R;
 
@@ -35,6 +38,7 @@ import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener

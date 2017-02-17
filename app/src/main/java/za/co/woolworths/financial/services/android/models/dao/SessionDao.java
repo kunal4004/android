@@ -23,6 +23,7 @@ public class SessionDao extends BaseDao {
         STORES_USER_SEARCH("STORES_USER_SEARCH"),
         STORES_PRODUCT_SEARCH("STORES_PRODUCT_SEARCH"),
         STORES_LATEST_PAYLOAD("STORES_LATEST_PAYLOAD"),
+        UNREAD_MESSAGE_COUNT("UNREAD_MESSAGE_COUNT"),
         USER_TOKEN("USER_TOKEN");
 
         private final String text;

@@ -200,7 +200,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     }
 
     private void initUI() {
-
         mColorView = findViewById(R.id.colorView);
         mTextSelectSize = (WTextView) findViewById(R.id.textSelectSize);
         mTextColour = (WTextView) findViewById(R.id.textColour);

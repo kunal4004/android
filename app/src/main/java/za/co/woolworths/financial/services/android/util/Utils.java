@@ -10,12 +10,9 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,32 +24,20 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Type;
 import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Currency;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
-import za.co.woolworths.financial.services.android.ui.fragments.CLISecondStepFragment;
 
 import static android.Manifest.permission_group.STORAGE;
-
-/**
- * Created by W7099877 on 26/10/2016.
- */
 
 public class Utils {
 
@@ -307,5 +292,36 @@ public class Utils {
         TypeToken<WProduct> token = new TypeToken<WProduct>() {
         };
         return new Gson().fromJson(value, token.getType());
+    }
+
+
+    public static void sessionDaoSave(Context context, SessionDao.KEY key, String value) {
+        SessionDao sessionDao = new SessionDao(context);
+        sessionDao.key = key;
+        sessionDao.value = value;
+        try {
+            sessionDao.save();
+        } catch (Exception e) {
+            Log.e("TAG", e.getMessage());
+        }
+    }
+
+    public static String getSessionDaoValue(Context context, SessionDao.KEY key) {
+        SessionDao sessionDao = null;
+        try {
+            sessionDao = new SessionDao(context, key).get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sessionDao.value;
+    }
+
+    public static void setBadgeCounter(Context context, int badgeCount) {
+        ShortcutBadger.applyCount(context, badgeCount);
+        sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT,String.valueOf(badgeCount));
+    }
+
+    public static void removeBadgeCounter(Context context) {
+        ShortcutBadger.applyCount(context, 0);
     }
 }
