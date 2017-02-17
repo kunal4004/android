@@ -383,12 +383,13 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             mTextPrice.setText(isEmpty(WFormatter.formatAmount(productDetail.fromPrice)));
             if (!TextUtils.isEmpty(mWasPrice)) {
                 mTextActualPrice.setText(WFormatter.formatAmount(productDetail.fromPrice));
-                mTextPrice.setText(WFormatter.formatAmount(mWasPrice));
+                mTextPrice.setText("From: " + WFormatter.formatAmount(mWasPrice));
                 mTextPrice.setPaintFlags(mTextPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                mTextLabelPrice.setVisibility(View.VISIBLE);
+                mTextLabelPrice.setVisibility(View.GONE);
             } else {
                 mTextActualPrice.setText("");
-                mTextLabelPrice.setVisibility(View.VISIBLE);
+                mTextPrice.setText("From: " + WFormatter.formatAmount(productDetail.fromPrice));
+                mTextLabelPrice.setVisibility(View.GONE);
             }
         } else {
             mColorView.setVisibility(View.GONE);
@@ -398,7 +399,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 mTextActualPrice.setText(WFormatter.formatAmount(productDetail.otherSkus.get(0).price));
                 mTextPrice.setText(WFormatter.formatAmount(mWasPrice));
                 mTextPrice.setPaintFlags(mTextPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                mTextLabelPrice.setVisibility(View.VISIBLE);
+                mTextLabelPrice.setVisibility(View.GONE);
             } else {
                 mTextActualPrice.setText("");
                 mTextLabelPrice.setVisibility(View.GONE);

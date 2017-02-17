@@ -136,7 +136,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         mProductScroll.setScrollViewCallbacks(this);
     }
 
-
     @Override
     public void onSelectedProduct(View v, int position) {
         try {
