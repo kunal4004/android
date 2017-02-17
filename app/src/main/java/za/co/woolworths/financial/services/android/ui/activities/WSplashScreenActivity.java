@@ -10,14 +10,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.widget.VideoView;
 
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.Random;
 
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
@@ -224,10 +221,10 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
         ArrayList<String> listOfVideo = new ArrayList<>();
         String rawFolderPath = "android.resource://" + getPackageName() + "/";
         listOfVideo.add(rawFolderPath + R.raw.wsplash_screen_video);
-        listOfVideo.add(rawFolderPath + R.raw.fashion_edit_02_studiow_men);
-        listOfVideo.add(rawFolderPath+ R.raw.fashion_edit_04_summertime);
-        listOfVideo.add(rawFolderPath+ R.raw.food_edit_04_broccoli);
-        listOfVideo.add(rawFolderPath+ R.raw.food_edit_05_chocolate);
+        listOfVideo.add(rawFolderPath + R.raw.fashion_studiow_men);
+        listOfVideo.add(rawFolderPath+ R.raw.fashion_summertime);
+        listOfVideo.add(rawFolderPath+ R.raw.food_broccoli);
+        listOfVideo.add(rawFolderPath+ R.raw.food_chocolate);
         Collections.shuffle(listOfVideo);
         return listOfVideo.get(0);
     }
