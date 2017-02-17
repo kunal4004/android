@@ -51,7 +51,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
 
         String unreadCountValue = Utils.getSessionDaoValue(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT);
 
-        if (TextUtils.isEmpty(unreadCountValue)) {
+        if (TextUtils.isEmpty(unreadCountValue)||unreadCountValue==null) {
             Utils.sessionDaoSave(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT, "0");
             Utils.setBadgeCounter(this, 1);
         } else {
