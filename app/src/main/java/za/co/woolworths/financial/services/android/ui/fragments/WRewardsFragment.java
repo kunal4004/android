@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -79,9 +80,12 @@ public class WRewardsFragment extends Fragment{
             reloadFragment();
         }
         else if(resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()){
-            removeAllChildFragments();
-
-            reloadFragment();
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    removeAllChildFragments();
+                    reloadFragment();
+                }
+            }, 100);
         }
     }
     public void initialize()

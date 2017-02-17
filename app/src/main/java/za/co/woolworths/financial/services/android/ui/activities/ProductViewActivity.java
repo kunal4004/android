@@ -56,7 +56,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     private WTextView mToolBarTitle;
     private String productId;
     private String productName;
-    private int mCurrentPage = 1;
+    private int mCurrentPage = 0;
     private RecyclerView mProductList;
     private ProductViewActivity mContext;
     private List<ProductList> mProduct;
@@ -75,6 +75,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     private WProgressDialogFragment mGetProgressDialog;
     private String searchItem = "";
     private String mTitle;
+    private String mTitleNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +93,13 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         Bundle extras = getIntent().getExtras();
         searchItem = extras.getString("searchProduct");
         mTitle = extras.getString("title");
+        mTitleNav = extras.getString("titleNav");
+
         if (TextUtils.isEmpty(searchItem)) {
+            if (!TextUtils.isEmpty(mTitle)) {
+                productName = mTitleNav;
+                productId = mTitle;
+            }
             productConfig(productName);
             searchItem = "";
             loadProduct();
@@ -495,5 +502,63 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(broadcast_reciever);
+    }
+
+
+    /***
+     * LOAD MORE PRODUCT FROM SEARCH
+     ***/
+
+    public void searchMoreProduct() {
+
+        new HttpAsyncTask<String, String, ProductView>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                showVProgressBar();
+            }
+
+            @Override
+            protected ProductView httpDoInBackground(String... params) {
+                mIsLastPage = false;
+
+                return ((WoolworthsApplication) getApplication()).getApi()
+                        .getProductSearchList(searchItem, false, mCurrentPage, Utils.PAGE_SIZE);
+
+            }
+
+            @Override
+            protected Class<ProductView> httpDoInBackgroundReturnType() {
+                return ProductView.class;
+            }
+
+            @Override
+            protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                ProductView productResponse = new ProductView();
+                productResponse.response = new Response();
+                hideVProgressBar();
+                return productResponse;
+            }
+
+            @Override
+            protected void onPostExecute(ProductView pv) {
+                super.onPostExecute(pv);
+                mProduct = null;
+                mProduct = new ArrayList<>();
+                if (pv.products != null && pv.products.size() != 0) {
+                    mProduct = pv.products;
+                    if (pv.products.size() == 1) {
+                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku, true);
+                    } else {
+                        mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
+                        bindDataWithUI(mProduct);
+                        mIsLastPage = false;
+                        mCurrentPage = 1;
+                        mIsLoading = false;
+                    }
+                }
+                hideVProgressBar();
+            }
+        }.execute();
     }
 }
