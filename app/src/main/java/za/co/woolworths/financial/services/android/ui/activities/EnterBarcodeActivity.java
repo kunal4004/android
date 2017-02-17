@@ -47,8 +47,6 @@ public class EnterBarcodeActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private WLoanEditTextView mEditBarcodeNumber;
     private ProgressBar mProgressBar;
-    public static int PAGE_SIZE = 20;
-    private static final int PERMS_REQUEST_CODE = 1234;
     private WTextView mTextInfo;
     private EnterBarcodeActivity mContext;
     Handler handler = new Handler();
@@ -136,7 +134,8 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             protected ProductView httpDoInBackground(String... params) {
                 return ((WoolworthsApplication) getApplication()).getApi()
                         .getProductSearchList(query,
-                                 true, 1, PAGE_SIZE);
+                                 true, 1, Utils.PAGE_SIZE);
+
             }
 
             @Override
