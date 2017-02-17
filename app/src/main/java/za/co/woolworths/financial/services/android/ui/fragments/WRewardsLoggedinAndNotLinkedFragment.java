@@ -50,7 +50,7 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
         vipMember.setOnClickListener(this);
         wRewars_linkaccounts.setOnClickListener(this);
         applyForWRewards.setOnClickListener(this);
-        wRewardsTagLine.setText(getResources().getText(R.string.wrewards_tag_line));
+        wRewardsTagLine.setText(getResources().getText(R.string.wrewards_tag_line_notlinked));
         return view;
     }
 

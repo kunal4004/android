@@ -66,7 +66,7 @@
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 android:lineSpacingExtra="4sp"
-                android:letterSpacing="-0.02"
+
                 app:WTextView_font="myriadpro_regular"
                 />
         </LinearLayout>
@@ -74,7 +74,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal"
             >
 
@@ -95,7 +95,7 @@
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 android:lineSpacingExtra="4sp"
-                android:letterSpacing="-0.02"
+
                 app:WTextView_font="myriadpro_regular"
                 />
         </LinearLayout>
@@ -103,7 +103,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal"
             >
 
@@ -124,7 +124,7 @@
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 android:lineSpacingExtra="4sp"
-                android:letterSpacing="-0.02"
+
                 app:WTextView_font="myriadpro_regular"
                 />
         </LinearLayout>
@@ -132,8 +132,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal"
+            android:visibility="gone"
             >
 
             <ImageView
@@ -153,7 +154,7 @@
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 android:lineSpacingExtra="4sp"
-                android:letterSpacing="-0.02"
+
                 app:WTextView_font="myriadpro_regular"
                 />
         </LinearLayout>
@@ -161,7 +162,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal"
             >
 
@@ -182,7 +183,7 @@
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 android:lineSpacingExtra="4sp"
-                android:letterSpacing="-0.02"
+
                 app:WTextView_font="myriadpro_regular"
                 />
         </LinearLayout>
@@ -190,7 +191,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:orientation="horizontal"
             >
 
@@ -211,7 +212,7 @@
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 android:lineSpacingExtra="4sp"
-                android:letterSpacing="-0.02"
+
                 app:WTextView_font="myriadpro_regular"
                 />
         </LinearLayout>
@@ -237,7 +238,7 @@
             android:textColor="#80000000"
             android:textSize="12sp"
             android:lineSpacingExtra="3sp"
-            android:letterSpacing="-0.02"
+
             app:WTextView_font="myriadpro_regular"
             />
 
@@ -249,7 +250,7 @@
             android:textColor="#80000000"
             android:textSize="12sp"
             android:lineSpacingExtra="3sp"
-            android:letterSpacing="-0.02"
+
             app:WTextView_font="myriadpro_regular"
             />
 
@@ -261,7 +262,6 @@
             android:textColor="#80000000"
             android:textSize="12sp"
             android:lineSpacingExtra="3sp"
-            android:letterSpacing="-0.02"
             app:WTextView_font="myriadpro_regular"
             />
     </LinearLayout>

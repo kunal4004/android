@@ -1,16 +1,17 @@
 <za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/sliding_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="bottom"
-    sothree:umanoDragView="@+id/detailsView"
-    sothree:umanoOverlay="true"
-    sothree:umanoPanelHeight="0dp"
-    sothree:umanoParallaxOffset="100dp"
-    sothree:umanoScrollableView="@+id/list"
-    sothree:umanoShadowHeight="4dp">
+                                                                           xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                                           xmlns:sothree="http://schemas.android.com/apk/res-auto"
+                                                                           android:id="@+id/sliding_layout"
+                                                                           android:layout_width="match_parent"
+                                                                           android:layout_height="match_parent"
+                                                                           android:gravity="bottom"
+                                                                           sothree:umanoDragView="@+id/detailsView"
+                                                                           sothree:umanoOverlay="false"
+                                                                           sothree:umanoFadeColor="@android:color/transparent"
+                                                                           sothree:umanoPanelHeight="0dp"
+                                                                           sothree:umanoParallaxOffset="100dp"
+                                                                           sothree:umanoScrollableView="@+id/list"
+                                                                           sothree:umanoShadowHeight="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,7 +19,7 @@
 
         <include
             layout="@layout/location_service_off_layout"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <RelativeLayout
             android:id="@+id/layoutLocationServiceOn"
@@ -30,7 +31,7 @@
                 android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
 
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -49,13 +50,29 @@
                     />
             </RelativeLayout>
 
-            <za.co.woolworths.financial.services.android.util.WCustomViewPager
-                android:id="@+id/cardPager"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="145dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="4dp" />
+                android:background="@drawable/storecarousellegradient"
+                >
+
+                <za.co.woolworths.financial.services.android.util.WCustomViewPager
+                    android:id="@+id/cardPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="145dp"
+                    android:paddingBottom="2dp"
+                    />
+
+                <ProgressBar
+                    android:id="@+id/storesProgressBar"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    />
+            </FrameLayout>
         </RelativeLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -67,7 +84,7 @@
         android:focusable="false"
         android:orientation="vertical">
 
-        <include layout="@layout/store_details_layout_common" />
+        <include layout="@layout/store_details_layout_common"/>
 
     </LinearLayout>
 
