@@ -236,18 +236,29 @@
                 android:layout_marginStart="@dimen/default_margin"
                 android:text="@string/add_to_shopping_list" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/description"
+            <za.co.woolworths.financial.services.android.ui.views.WrapContentWebView
+                android:id="@+id/webDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginTop="24dp"
-                android:lineSpacingExtra="1.4dp"
-                android:text="@string/product_description"
-                android:textColor="@color/black_desc_opacity"
-                android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular" />
+                android:nestedScrollingEnabled="false">
+
+            </za.co.woolworths.financial.services.android.ui.views.WrapContentWebView>
+
+            <!--<za.co.woolworths.financial.services.android.ui.views.WTextView-->
+            <!--android:id="@+id/description"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginEnd="@dimen/default_margin"-->
+            <!--android:layout_marginStart="@dimen/default_margin"-->
+            <!--android:layout_marginTop="24dp"-->
+            <!--android:lineSpacingExtra="1.4dp"-->
+            <!--android:text="@string/product_description"-->
+            <!--android:textColor="@color/black_desc_opacity"-->
+            <!--android:textSize="15sp"-->
+            <!--app:WTextView_font="myriadpro_regular" />-->
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/product_code"

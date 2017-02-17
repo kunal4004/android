@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapte
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.CircularImageView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
@@ -57,7 +58,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private RecyclerView mRecyclerviewSize;
     private ProductDetailViewActivity mContext;
     private ArrayList<WProductDetail> mproductDetail;
-    private WTextView mDescription;
+    //private WTextView mDescription;
     private WTextView mTextTitle;
     private WTextView mTextPrice;
     private WTextView mCategoryName;
@@ -90,6 +91,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private WTextView mTextActualPrice;
     private WTextView mTextLabelPrice;
     private WTextView mTextColour;
+    private WrapContentWebView mWebDescription;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -205,7 +207,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mTextSelectSize = (WTextView) findViewById(R.id.textSelectSize);
         mTextColour = (WTextView) findViewById(R.id.textColour);
         WTextView mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
-        mDescription = (WTextView) findViewById(R.id.description);
+        //  mDescription = (WTextView) findViewById(R.id.description);
         mTextTitle = (WTextView) findViewById(R.id.textTitle);
         mTextLabelPrice = (WTextView) findViewById(R.id.textLabelPrice);
         mTextActualPrice = (WTextView) findViewById(R.id.textActualPrice);
@@ -224,6 +226,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mImSelectedColor = (CircularImageView) findViewById(R.id.imSelectedColor);
         mLlPagerDots = (LinearLayout) findViewById(R.id.pager_dots);
         ImageView mImColorArrow = (ImageView) findViewById(R.id.imColorArrow);
+        mWebDescription = (WrapContentWebView) findViewById(R.id.webDescription);
 
         mImNewImage = (ImageView) findViewById(R.id.imNewImage);
         mImSave = (ImageView) findViewById(R.id.imSave);
@@ -370,7 +373,11 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
     private void populateView() {
         WProductDetail productDetail = mproductDetail.get(0);
-        mDescription.setText(Html.fromHtml(isEmpty(productDetail.longDescription)));
+
+        String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>body {color: #A9A9A9;text-align: justify;}</style></head><body>";
+        String footerTag = "</body></html>";
+
+        mWebDescription.loadData("<body>" + headerTag + isEmpty(productDetail.longDescription) + footerTag, "text/html; charset=UTF-8", null);
         mTextTitle.setText(isEmpty(productDetail.productName));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
         String mWasPrice = productDetail.otherSkus.get(0).wasPrice;
