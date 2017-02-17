@@ -1,20 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -30,10 +24,8 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -52,8 +44,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAd
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.Const;
-import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.ScrollState;
@@ -66,9 +56,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     private WTextView mToolBarTitle;
     private String productId;
     private String productName;
-    private final int PAGE_SIZE = 30;
-    private final int PERMS_REQUEST_CODE = 1234;
-    private LatLng mLocation;
     private int mCurrentPage = 1;
     private RecyclerView mProductList;
     private ProductViewActivity mContext;
@@ -97,11 +84,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         initUI();
         actionBar();
         bundle();
-        if (hasPermissions()) {
-            startLocationUpdate();
-        } else {
-            requestPerms();
-        }
         fm = getSupportFragmentManager();
         mGetProgressDialog = WProgressDialogFragment.newInstance("v");
         mGetProgressDialog.setCancelable(false);
@@ -114,7 +96,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             loadProduct();
         } else {
             productConfig(searchItem);
-            productId=searchItem;
+            productId = searchItem;
             searchProduct();
         }
 
@@ -122,7 +104,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     }
 
     private void productConfig(String productName) {
-        mLocation = new LatLng(0, 0);
         mToolBarTitle.setText(productName);
 
     }
@@ -154,99 +135,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         mProductScroll = (WObservableScrollView) findViewById(R.id.scrollProduct);
         mProductScroll.setScrollViewCallbacks(this);
     }
-
-    public boolean hasPermissions() {
-        int res;
-        //string array of permissions,
-        String[] permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION};
-
-        for (String perms : permissions) {
-            res = checkCallingOrSelfPermission(perms);
-            if (!(res == PackageManager.PERMISSION_GRANTED)) {
-                    return false;
-            }
-        }
-        return true;
-    }
-
-    private void startLocationUpdate() {
-        // start location updates
-        FusedLocationSingleton.getInstance().startLocationUpdates();
-        // register observer for location updates
-        LocalBroadcastManager.getInstance(ProductViewActivity.this).registerReceiver(mLocationUpdated,
-                new IntentFilter(Const.INTENT_FILTER_LOCATION_UPDATE));
-    }
-
-    private void requestPerms() {
-        String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION};
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(permissions, PERMS_REQUEST_CODE);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        boolean permissionIsAllowed = true;
-        switch (requestCode) {
-            case PERMS_REQUEST_CODE:
-                for (int res : grantResults) {
-                    // if user granted all permissions.
-                    permissionIsAllowed = permissionIsAllowed && (res == PackageManager.PERMISSION_GRANTED);
-                }
-                break;
-            default:
-                // if user not granted permissions.
-                permissionIsAllowed = false;
-                break;
-        }
-        if (permissionIsAllowed) {
-            //user granted all permissions we can perform our task.
-            startLocationUpdate();
-            loadProduct();
-        } else {
-            // we will give warning to user that they haven't granted permissions.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)
-                        && shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    Toast.makeText(this, "Location Permissions denied.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // stop location updates
-        try {
-            FusedLocationSingleton.getInstance().stopLocationUpdates();
-            // unregister observer
-            LocalBroadcastManager.getInstance(ProductViewActivity.this).unregisterReceiver(mLocationUpdated);
-        } catch (NullPointerException ex) {
-            Log.e("onPauseFusedLoc", ex.toString());
-        }
-    }
-
-    /***********************************************************************************************
-     * local broadcast receiver
-     **********************************************************************************************/
-    /**
-     * handle new location
-     */
-    private BroadcastReceiver mLocationUpdated = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                Location location = intent.getParcelableExtra(Const.LBM_EVENT_LOCATION_UPDATE);
-                mLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                ((WoolworthsApplication) getApplication()).setLastKnowLatLng(mLocation);
-            } catch (NullPointerException e) {
-                mLocation = new LatLng(0, 0);
-            }
-        }
-    };
 
     @Override
     public void onSelectedProduct(View v, int position) {
@@ -284,7 +172,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 if (!mIsLoading && !mIsLastPage) {
                     if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                             && firstVisibleItemPosition >= 0
-                            && totalItemCount >= PAGE_SIZE) {
+                            && totalItemCount >= Utils.PAGE_SIZE) {
                         loadMoreProduct();
                     }
                 }
@@ -355,8 +243,9 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             protected ProductView httpDoInBackground(String... params) {
                 mCurrentPage = 1;
                 mIsLastPage = false;
-                return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(mLocation, false,
-                        mCurrentPage, PAGE_SIZE, productId);
+                return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(false,
+                        mCurrentPage, Utils.PAGE_SIZE, productId);
+
             }
 
             @Override
@@ -412,8 +301,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 mIsLastPage = false;
 
                 return ((WoolworthsApplication) getApplication()).getApi()
-                        .getProductSearchList(searchItem,
-                                mLocation, false, mCurrentPage, PAGE_SIZE);
+                        .getProductSearchList(searchItem, false, mCurrentPage, Utils.PAGE_SIZE);
+
             }
 
             @Override
@@ -470,8 +359,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
             @Override
             protected ProductView httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(mLocation, false,
-                        mCurrentPage, PAGE_SIZE, productId);
+                return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(false,
+                        mCurrentPage, Utils.PAGE_SIZE, productId);
             }
 
             @Override
@@ -495,7 +384,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 List<ProductList> moreProductList;
                 moreProductList = productResponse.products;
                 if (moreProductList != null && moreProductList.size() != 0) {
-                    if (moreProductList.size() < PAGE_SIZE) {
+                    if (moreProductList.size() < Utils.PAGE_SIZE) {
                         mIsLastPage = true;
                     }
                     mProduct.addAll(moreProductList);
@@ -506,7 +395,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         }.execute();
     }
 
-    private void getProductDetail(final String productId, final String skuId, final boolean closeProductView) {
+    private void getProductDetail(final String productId, final String skuId, final boolean closeActivity) {
         if (TextUtils.isEmpty(searchItem)) {
             try {
                 mGetProgressDialog.show(fm, "v");
@@ -534,7 +423,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                             openDetailView.putExtra("product_detail", gson.toJson(mProductList));
                             startActivity(openDetailView);
                             overridePendingTransition(0, R.anim.anim_slide_up);
-                            if (closeProductView) { //close ProductView activity when 1 row exist
+                            if (closeActivity) { //close ProductView activity when 1 row exist
                                 finish();
                             }
                             break;

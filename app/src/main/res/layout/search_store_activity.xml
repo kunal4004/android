@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="@drawable/appbar_background"
         app:elevation="0dp">
 
         <android.support.v7.widget.Toolbar
@@ -66,5 +67,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none"
+        android:paddingTop="12dp"
+        android:clipToPadding="false"
         />
 </LinearLayout>

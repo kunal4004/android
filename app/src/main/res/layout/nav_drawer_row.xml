@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView"
         android:textSize="12.1sp"
-        android:letterSpacing="0.1"
+        android:letterSpacing="0.2"
         app:WTextView_font="medium_bold"
         android:textColor="@color/black"
         android:layout_toRightOf="@+id/imageView"
