@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,7 +57,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private RecyclerView mRecyclerviewSize;
     private ProductDetailViewActivity mContext;
     private ArrayList<WProductDetail> mproductDetail;
-    //private WTextView mDescription;
     private WTextView mTextTitle;
     private WTextView mTextPrice;
     private WTextView mCategoryName;
@@ -207,7 +205,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mTextSelectSize = (WTextView) findViewById(R.id.textSelectSize);
         mTextColour = (WTextView) findViewById(R.id.textColour);
         WTextView mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
-        //  mDescription = (WTextView) findViewById(R.id.description);
         mTextTitle = (WTextView) findViewById(R.id.textTitle);
         mTextLabelPrice = (WTextView) findViewById(R.id.textLabelPrice);
         mTextActualPrice = (WTextView) findViewById(R.id.textActualPrice);

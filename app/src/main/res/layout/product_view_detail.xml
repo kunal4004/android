@@ -247,19 +247,6 @@
 
             </za.co.woolworths.financial.services.android.ui.views.WrapContentWebView>
 
-            <!--<za.co.woolworths.financial.services.android.ui.views.WTextView-->
-            <!--android:id="@+id/description"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginEnd="@dimen/default_margin"-->
-            <!--android:layout_marginStart="@dimen/default_margin"-->
-            <!--android:layout_marginTop="24dp"-->
-            <!--android:lineSpacingExtra="1.4dp"-->
-            <!--android:text="@string/product_description"-->
-            <!--android:textColor="@color/black_desc_opacity"-->
-            <!--android:textSize="15sp"-->
-            <!--app:WTextView_font="myriadpro_regular" />-->
-
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/product_code"
                 android:layout_width="match_parent"
