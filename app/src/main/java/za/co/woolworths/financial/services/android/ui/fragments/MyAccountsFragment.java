@@ -48,6 +48,7 @@ import za.co.woolworths.financial.services.android.ui.activities.MessagesActivit
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
@@ -426,7 +427,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 redirectToMyAccountsCardsActivity(2);
                 break;
             case R.id.contactUs:
-                startActivity(new Intent(getActivity(), WContactUsActivity.class));
+                startActivity(new Intent(getActivity(), WContactUsActivityNew.class));
                 getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
             case R.id.relFAQ:
