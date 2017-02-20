@@ -385,7 +385,8 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         WProductDetail productDetail = mproductDetail.get(0);
 
         String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
-                "<style>body {text-align: justify;font-size:15px;}</style></head><body>";
+                "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
+                "</style></head><body>";
         String footerTag = "</body></html>";
 
         mWebDescription.loadData(headerTag + isEmpty(productDetail.longDescription) + footerTag, "text/html; charset=UTF-8", null);
