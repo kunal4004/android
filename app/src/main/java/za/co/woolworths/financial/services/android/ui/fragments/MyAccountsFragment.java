@@ -43,10 +43,12 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.ui.activities.FAQActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
@@ -434,6 +436,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
             case R.id.openShoppingList:
+                Intent openShoppingList = new Intent(getActivity(), ShoppingListActivity.class);
+                startActivity(openShoppingList);
                 break;
             case R.id.signOutBtn:
                 mPopWindowValidationMessage.displayValidationMessage("", PopWindowValidationMessage.OVERLAY_TYPE.SIGN_OUT);

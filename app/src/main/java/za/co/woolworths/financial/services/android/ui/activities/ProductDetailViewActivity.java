@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -25,16 +26,19 @@ import com.google.gson.reflect.TypeToken;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.CircularImageView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -90,24 +94,51 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private WTextView mTextLabelPrice;
     private WTextView mTextColour;
     private WrapContentWebView mWebDescription;
+    private WButton mBtnAddShoppingList;
+    private PopWindowValidationMessage mPopWindowValidationMessage;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.updateStatusBarBackground(ProductDetailViewActivity.this, R.color.black);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.product_view_detail);
         mContext = this;
         SessionDao sessionDao;
 
+        mPopWindowValidationMessage = new PopWindowValidationMessage(this);
+
+
         try {
-            sessionDao = new SessionDao(ProductDetailViewActivity.this, SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
+            sessionDao = new SessionDao(ProductDetailViewActivity.this,
+                    SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
             mProductJSON = sessionDao.value;
         } catch (Exception e) {
             e.printStackTrace();
         }
         initUI();
         bundle();
+        addButton();
+    }
+
+    private void addButton() {
+        mBtnAddShoppingList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopWindowValidationMessage.displayValidationMessage("viewShoppingList",
+                        PopWindowValidationMessage.OVERLAY_TYPE.SHOPPING_LIST_INFO)
+                        .setOnDismissListener(new PopupWindow.OnDismissListener() {
+                            @Override
+                            public void onDismiss() {
+                                Utils.addToShoppingCart(ProductDetailViewActivity.this, new ShoppingList(
+                                        mproductDetail.get(0).productId,
+                                        mproductDetail.get(0).productName, false));
+                            }
+                        });
+            }
+        });
     }
 
     private void retrieveJson(String colour) {
@@ -115,6 +146,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         try {
             // Instantiate a JSON object from the request response
             jsProduct = new JSONObject(mProductJSON);
+
 
             String mProduct = jsProduct.getString("product");
             JSONObject jsProductList = new JSONObject(mProduct);
@@ -179,6 +211,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             TypeToken<List<WProductDetail>> token = new TypeToken<List<WProductDetail>>() {
             };
             mproductDetail = new Gson().fromJson(mProductList, token.getType());
+
             assert mproductDetail != null;
             otherSkusList = mproductDetail.get(0).otherSkus;
             mCheckOutLink = mproductDetail.get(0).checkOutLink;
@@ -216,6 +249,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mRelContainer = (LinearLayout) findViewById(R.id.linProductContainer);
         RelativeLayout mLinColor = (RelativeLayout) findViewById(R.id.linColour);
         mLinSize = (RelativeLayout) findViewById(R.id.linSize);
+        mBtnAddShoppingList = (WButton) findViewById(R.id.btnAddShoppingList);
         WButton mBtnShopOnlineWoolies = (WButton) findViewById(R.id.btnShopOnlineWoolies);
         ImageView mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
         mImCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
@@ -298,6 +332,11 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     @Override
     public void onSelectedProduct(View v, int position) {
         selectedProduct(position);
+    }
+
+    @Override
+    public void onLongPressState(View v, int position) {
+
     }
 
     private void selectedProduct(int position) {

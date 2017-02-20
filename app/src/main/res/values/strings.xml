@@ -506,5 +506,10 @@
     <string name="cc_plus_1">Free Taste magazine vouchers monthly</string>
     <string name="cc_plus_2">2 free coffee vouchers monthly that can be used at any Woolworths Cafe, To Go or Tapas Bar.</string>
     <string name="cc_plus_3">Automatic VIP tier status for the first 12 months and free online delivery for Woolies online purchases (when you pay with your Woolies Black credit card).</string>
-
+    <string name="checked_item">checked items</string>
+    <string name="shopping_list_header">shopping list</string>
+    <string name="added_to_shopping_list">added to shopping list</string>
+    <string name="added_to_shopping_list_desc">Your shopping list items can be found in Accounts</string>
+    <string name="view_shopping_list">view shopping list</string>
+    <string name="shopping_list_empty">shopping list empty</string>
 </resources>

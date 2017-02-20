@@ -109,10 +109,10 @@
             android:id="@+id/toolbarText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/default_margin"
             android:gravity="center"
             android:letterSpacing="0.06"
             android:textAllCaps="true"
-            android:layout_marginRight="@dimen/default_margin"
             android:textColor="@color/black"
             android:textSize="12sp"
             app:WTextView_font="medium_bold" />

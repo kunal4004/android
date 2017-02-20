@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
+import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
@@ -82,6 +84,15 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
                 mSelectedProductView.onSelectedProduct(v, holder.getAdapterPosition());
             }
         });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+              mSelectedProductView.onLongPressState(v,position);
+                return false;
+            }
+        });
+
     }
 
     @Override

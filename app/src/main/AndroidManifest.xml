@@ -154,11 +154,12 @@
             android:theme="@style/CLI"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountTestActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingList" />
+
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountTestActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/ShoppingList" />
         <activity

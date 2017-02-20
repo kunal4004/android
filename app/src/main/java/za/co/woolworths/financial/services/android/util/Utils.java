@@ -24,6 +24,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,6 +35,7 @@ import java.util.List;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
@@ -318,10 +320,63 @@ public class Utils {
 
     public static void setBadgeCounter(Context context, int badgeCount) {
         ShortcutBadger.applyCount(context, badgeCount);
-        sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT,String.valueOf(badgeCount));
+        sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
     }
 
     public static void removeBadgeCounter(Context context) {
         ShortcutBadger.applyCount(context, 0);
+    }
+
+
+    public static void addToShoppingCart(Context context, ShoppingList addtoShoppingCart) {
+        List<ShoppingList> addtoShoppingCarts = getShoppingList(context);
+        SessionDao sessionDao = new SessionDao(context);
+        sessionDao.key = SessionDao.KEY.STORE_SHOPPING_LIST;
+        Gson gson = new Gson();
+        boolean isExist = false;
+        if (addtoShoppingCarts == null) {
+            addtoShoppingCarts = new ArrayList<>();
+            addtoShoppingCarts.add(0, addtoShoppingCart);
+            sessionDao.value = gson.toJson(addtoShoppingCarts);
+            try {
+                sessionDao.save();
+            } catch (Exception e) {
+                Log.e("TAG", e.getMessage());
+            }
+        } else {
+            for (ShoppingList s : addtoShoppingCarts) {
+                if (s.getProduct_id().equalsIgnoreCase(addtoShoppingCart.getProduct_id())) {
+                    isExist = true;
+                }
+            }
+            if (!isExist) {
+                addtoShoppingCarts.add(0, addtoShoppingCart);
+                sessionDao.value = gson.toJson(addtoShoppingCarts);
+                try {
+                    sessionDao.save();
+                } catch (Exception e) {
+                    Log.e("TAG", e.getMessage());
+                }
+            }
+        }
+    }
+
+    public static List<ShoppingList> getShoppingList(Context context) {
+        List<ShoppingList> historyList = null;
+        try {
+            SessionDao sessionDao = new SessionDao(context,
+                    SessionDao.KEY.STORE_SHOPPING_LIST).get();
+            if (sessionDao.value == null) {
+                historyList = new ArrayList<>();
+            } else {
+                Gson gson = new Gson();
+                Type type = new TypeToken<List<ShoppingList>>() {
+                }.getType();
+                historyList = gson.fromJson(sessionDao.value, type);
+            }
+        } catch (Exception e) {
+            Log.e("TAG", e.getMessage());
+        }
+        return historyList;
     }
 }
