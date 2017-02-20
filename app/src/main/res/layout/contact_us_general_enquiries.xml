@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#efefef"
-            android:scrollbars="none"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#efefef"
+              android:scrollbars="none"
     >
     <LinearLayout
         android:layout_width="match_parent"
@@ -62,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:text="@string/online_local_caller_number"
+            android:text="@string/customer_service_local_caller_number"
             android:textSize="15sp"
             android:textColor="#4d000000"
             app:WTextView_font="myriadpro_regular"
@@ -108,7 +108,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:text="@string/online_inter_national_caller_number"
+            android:text="@string/customer_service_inter_national_caller_number"
             android:textSize="15sp"
             android:textColor="#4d000000"
             app:WTextView_font="myriadpro_regular"
@@ -118,6 +118,57 @@
             android:gravity="center_vertical"
             />
     </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#0a000000"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#0a000000"
+            android:layout_marginTop="16dp"
+            />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="50dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:background="@color/white"
+            >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_fax"
+                android:id="@+id/faxImg"
+                android:layout_centerVertical="true"
+                />
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/faxImg"
+                android:layout_marginLeft="16dp"
+                android:text="@string/fax"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                app:WTextView_font="myriadpro_regular"
+                android:layout_centerVertical="true"
+                />
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:text="@string/customer_service_inter_national_caller_number"
+                android:textSize="15sp"
+                android:textColor="#4d000000"
+                app:WTextView_font="myriadpro_regular"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:gravity="center_vertical"
+                />
+        </RelativeLayout>
+
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -154,7 +205,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="122dp"
-            android:text="@string/online_call_center_opening_hours"
+            android:text="@string/general_call_center_opening_hours"
             android:textColor="@color/black"
             app:WTextView_font="myriadpro_regular"
             android:textSize="15sp"
@@ -181,7 +232,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/onlineShop"
+            android:id="@+id/productQuery"
             android:minHeight="70dp"
             android:padding="16dp"
             android:background="@color/white"
@@ -206,12 +257,12 @@
                 >
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/contact_us_item_header_textview"
-                    android:text="@string/online_shop_reg_login"
+                    android:text="@string/txt_product_query"
                     />
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/contact_us_item_desc_textview"
                     android:layout_marginTop="5dp"
-                    android:text="@string/email_online_shop"
+                    android:text="@string/email_custserv"
                     />
             </LinearLayout>
             <ImageView
@@ -232,7 +283,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/deliveryQueries"
+            android:id="@+id/storeQuery"
             android:minHeight="70dp"
             android:padding="16dp"
             android:background="@color/white"
@@ -257,12 +308,12 @@
                 >
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/contact_us_item_header_textview"
-                    android:text="@string/txt_delivery_queries"
+                    android:text="@string/txt_store_query"
                     />
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/contact_us_item_desc_textview"
                     android:layout_marginTop="5dp"
-                    android:text="@string/email_online_shop"
+                    android:text="@string/email_custserv"
                     />
             </LinearLayout>
             <ImageView
@@ -283,7 +334,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/technicalProblem"
+            android:id="@+id/complaints"
             android:minHeight="70dp"
             android:padding="16dp"
             android:background="@color/white"
@@ -308,12 +359,12 @@
                 >
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/contact_us_item_header_textview"
-                    android:text="@string/txt_general_technical_problem"
+                    android:text="@string/txt_complaint"
                     />
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/contact_us_item_desc_textview"
                     android:layout_marginTop="5dp"
-                    android:text="@string/email_online_shop"
+                    android:text="@string/email_custserv"
                     />
             </LinearLayout>
             <ImageView
@@ -334,7 +385,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/orderQueries"
+            android:id="@+id/technicalProblem"
             android:minHeight="70dp"
             android:padding="16dp"
             android:background="@color/white"
@@ -359,12 +410,12 @@
                 >
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/contact_us_item_header_textview"
-                    android:text="@string/txt_order_queries"
+                    android:text="@string/txt_general_technical_problem"
                     />
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/contact_us_item_desc_textview"
                     android:layout_marginTop="5dp"
-                    android:text="@string/email_online_shop"
+                    android:text="@string/email_custserv"
                     />
             </LinearLayout>
             <ImageView
@@ -378,14 +429,12 @@
 
         </RelativeLayout>
 
-
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#0a000000"
         />
 
+    </LinearLayout>
 
-
-</LinearLayout>
-    </ScrollView>
+</ScrollView>
