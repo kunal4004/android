@@ -23,6 +23,7 @@
         android:textColor="@color/black"
         app:WTextView_font="medium_bold"
         android:textSize="12sp"
+        android:letterSpacing="0.2"
         android:gravity="center_vertical"
         />
         <View
@@ -121,6 +122,11 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#0a000000"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#0a000000"
             android:layout_marginTop="16dp"
             />
         <RelativeLayout
@@ -162,11 +168,7 @@
                 android:gravity="center_vertical"
                 />
         </RelativeLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#0a000000"
-            />
+
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -178,6 +180,7 @@
         android:textColor="@color/black"
         app:WTextView_font="medium_bold"
         android:textSize="12sp"
+        android:letterSpacing="0.2"
         android:gravity="center_vertical"
         android:textAllCaps="true"
         />
@@ -185,10 +188,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="122dp"
         android:orientation="horizontal"
         android:background="@color/white"
-        android:padding="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="6dp"
         >
         <ImageView
             android:layout_width="wrap_content"
@@ -219,6 +224,7 @@
         android:textColor="@color/black"
         app:WTextView_font="medium_bold"
         android:textSize="12sp"
+        android:letterSpacing="0.2"
         android:gravity="center_vertical"
         android:textAllCaps="true"
         />

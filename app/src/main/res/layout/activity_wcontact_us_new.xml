@@ -13,7 +13,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/appbar_background"
+        android:background="@color/white"
         android:minHeight="?attr/actionBarSize"
         app:popupTheme="@style/ContactUs"
         app:theme="@style/ContactUs"
@@ -30,6 +30,11 @@
             android:letterSpacing="0.2"
             />
     </android.support.v7.widget.Toolbar>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#1a000000"
+        />
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
