@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -31,7 +30,6 @@ import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
@@ -412,7 +410,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>body {color: #A9A9A9;text-align: justify;}</style></head><body>";
         String footerTag = "</body></html>";
 
-        mWebDescription.loadData("<body>" + headerTag + productDetail.longDescription + footerTag, "text/html; charset=UTF-8", null);
+        mWebDescription.loadData(headerTag + productDetail.longDescription + footerTag, "text/html; charset=UTF-8", null);
         mTextTitle.setText(isEmpty(productDetail.productName));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
         String mWasPrice = productDetail.otherSkus.get(0).wasPrice;

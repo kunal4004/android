@@ -7,6 +7,8 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 
 
+import org.json.JSONObject;
+
 import za.co.woolworths.financial.services.android.ui.activities.ProductViewActivity;
 
 public class WebAppInterface {
@@ -31,7 +33,7 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface   // must be added for API 17 or higher
-    public void addToShoppingList(Object ingredients) {
-        Log.e("ingredient", ingredients.toString());
+    public void addToShoppingList(JSONObject ingredients) {
+        Log.e("ingredient", "ingredients");
     }
 }
