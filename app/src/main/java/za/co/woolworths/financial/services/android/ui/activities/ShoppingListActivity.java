@@ -29,12 +29,13 @@ import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListCheck
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingUnCheckedListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WOnItemClickListener;
 
-public class ShoppingListActivity extends AppCompatActivity implements WOnItemClickListener, ObservableScrollViewCallbacks {
+public class ShoppingListActivity extends BaseActivity implements WOnItemClickListener, ObservableScrollViewCallbacks {
 
     private RecyclerView mUncheckedItem;
     private RecyclerView mCheckItem;
@@ -108,6 +109,9 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
 
         mGetShoppingList = Utils.getShoppingList(this);
 
+        if (mGetShoppingList == null) {
+            mGetShoppingList = new ArrayList<>();
+        }
         uncheckedItemList = new ArrayList<>();
         checkedItemList = new ArrayList<>();
 
@@ -119,11 +123,13 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
             checkedItemList.clear();
         }
 
-        for (ShoppingList s : mGetShoppingList) {
-            if (s.isProductIsChecked()) {
-                checkedItemList.add(s);
-            } else {
-                uncheckedItemList.add(s);
+        if (mGetShoppingList != null && mGetShoppingList.size() > 0) {
+            for (ShoppingList s : mGetShoppingList) {
+                if (s.isProductIsChecked()) {
+                    checkedItemList.add(s);
+                } else {
+                    uncheckedItemList.add(s);
+                }
             }
         }
 

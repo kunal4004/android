@@ -81,9 +81,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         drawerFragment.setDrawerListener(this);
         displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 
-        Intent openShoppingList = new Intent(this, ShoppingListActivity.class);
-        startActivity(openShoppingList);
-
     }
 
     @Override

@@ -412,7 +412,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>body {color: #A9A9A9;text-align: justify;}</style></head><body>";
         String footerTag = "</body></html>";
 
-        mWebDescription.loadData("<body>" + headerTag + isEmpty(productDetail.longDescription) + footerTag, "text/html; charset=UTF-8", null);
+        mWebDescription.loadData("<body>" + headerTag + productDetail.longDescription + footerTag, "text/html; charset=UTF-8", null);
         mTextTitle.setText(isEmpty(productDetail.productName));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
         String mWasPrice = productDetail.otherSkus.get(0).wasPrice;

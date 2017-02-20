@@ -34,7 +34,6 @@ import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
-import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
@@ -207,7 +206,11 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                             && totalItemCount >= Utils.PAGE_SIZE) {
                         if (mProduct.size() < num_of_item) {
 
-                            loadMoreProduct();
+                            if (TextUtils.isEmpty(searchItem)) {
+                                loadMoreProduct();
+                            } else {
+                                searchMoreProduct();
+                            }
                         }
                     }
                 }
@@ -363,13 +366,14 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 mProduct = new ArrayList<>();
                 if (pv.products != null && pv.products.size() != 0) {
                     mProduct = pv.products;
+                    num_of_item = pv.pagingResponse.numItemsInTotal;
+
                     if (pv.products.size() == 1) {
                         getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku, true);
                     } else {
                         mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
                         bindDataWithUI(mProduct);
                         mIsLastPage = false;
-                        pageNumber = 0;
                         mIsLoading = false;
                     }
                 }
@@ -535,12 +539,14 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
      ***/
 
     public void searchMoreProduct() {
-
         new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                showVProgressBar();
+                showProgressBar();
+                mIsLoading = true;
+                pageNumber += 1;
+                pagination();
             }
 
             @Override
@@ -561,28 +567,25 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 ProductView productResponse = new ProductView();
                 productResponse.response = new Response();
-                hideVProgressBar();
+                hideProgressBar();
+                mIsLoading = false;
                 return productResponse;
             }
 
             @Override
             protected void onPostExecute(ProductView pv) {
                 super.onPostExecute(pv);
-                mProduct = null;
-                mProduct = new ArrayList<>();
-                if (pv.products != null && pv.products.size() != 0) {
-                    mProduct = pv.products;
-                    if (pv.products.size() == 1) {
-                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku, true);
-                    } else {
-                        mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
-                        bindDataWithUI(mProduct);
-                        mIsLastPage = false;
-                        pageNumber = 1;
-                        mIsLoading = false;
+                mIsLoading = false;
+                List<ProductList> moreProductList;
+                moreProductList = pv.products;
+                if (moreProductList != null && moreProductList.size() != 0) {
+                    if (moreProductList.size() < Utils.PAGE_SIZE) {
+                        mIsLastPage = true;
                     }
+                    mProduct.addAll(moreProductList);
+                    mProductAdapter.notifyDataSetChanged();
                 }
-                hideVProgressBar();
+                hideProgressBar();
             }
         }.execute();
     }
