@@ -56,6 +56,7 @@ public class WfsApi {
     private Context mContext;
     private ApiInterface mApiInterface;
     public static final String TAG = "WfsApi";
+    private Location loc;
 
     public WfsApi(Context mContext) {
 
@@ -171,22 +172,12 @@ public class WfsApi {
     }
 
     public ProductView productViewRequest(boolean isBarcode, int pageSize, int pageNumber, String product_id) {
-        Location loc = Utils.getLastSavedLocation(mContext);
-        if (loc == null) {
-            loc = new Location("");//provider name is unecessary
-            loc.setLatitude(0.0d);//your coords of course
-            loc.setLongitude(0.0d);
-        }
+        getMyLocation();
         return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), isBarcode, pageSize, pageNumber, product_id);
     }
 
     public ProductView getProductSearchList(String search_item, boolean isBarcode, int pageSize, int pageNumber) {
-        Location loc = Utils.getLastSavedLocation(mContext);
-        if (loc == null) {
-            loc = new Location("");//provider name is unecessary
-            loc.setLatitude(0.0d);//your coords of course
-            loc.setLongitude(0.0d);
-        }
+        getMyLocation();
         return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLongitude(), loc.getLatitude(), isBarcode, search_item, pageSize, pageNumber);
     }
 
@@ -255,12 +246,21 @@ public class WfsApi {
         }
         return "";
     }
-/*   public ConfigResponse getConfig(){
-        ApiInterface mApiInterface = new RestAdapter.Builder()
-                .setEndpoint(mContext.getString(R.string.config_endpoint))
-                .setLogLevel(Util.isDebug(mContext) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
-                .build()
-                .create(ApiInterface.class);
-        return mApiInterface.getConfig("wfsAndroid",getDeviceID());
-    }*/
+
+    private void getMyLocation() {
+        boolean locationIsEnabled = Utils.isLocationEnabled(mContext);
+        if (locationIsEnabled) {
+            loc = Utils.getLastSavedLocation(mContext);
+            if (loc == null) {
+                loc = new Location("");//provider name is unecessary
+                loc.setLatitude(0.0d);//your coords of course
+                loc.setLongitude(0.0d);
+            }
+        } else {
+            loc = new Location("");//provider name is unecessary
+            loc.setLatitude(0.0d);//your coords of course
+            loc.setLongitude(0.0d);
+        }
+        Log.e("locationIsEnabled", String.valueOf(locationIsEnabled) + " LocationIsEnabled " + String.valueOf(loc));
+    }
 }

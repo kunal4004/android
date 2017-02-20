@@ -49,14 +49,17 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage == null)
             return;
 
-        String unreadCountValue = Utils.getSessionDaoValue(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT);
+        try {
+            String unreadCountValue = Utils.getSessionDaoValue(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT);
 
-        if (TextUtils.isEmpty(unreadCountValue)||unreadCountValue==null) {
-            Utils.sessionDaoSave(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT, "0");
-            Utils.setBadgeCounter(this, 1);
-        } else {
-            int unreadCount = Integer.valueOf(unreadCountValue) + 1;
-            Utils.setBadgeCounter(this, unreadCount);
+            if (TextUtils.isEmpty(unreadCountValue) || unreadCountValue == null) {
+                Utils.sessionDaoSave(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT, "0");
+                Utils.setBadgeCounter(this, 1);
+            } else {
+                int unreadCount = Integer.valueOf(unreadCountValue) + 1;
+                Utils.setBadgeCounter(this, unreadCount);
+            }
+        } catch (NullPointerException ignored) {
         }
 
         Map<String, String> data = remoteMessage.getData();

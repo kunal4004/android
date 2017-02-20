@@ -31,4 +31,6 @@ public class WebAppInterface {
         mContext.startActivity(openProductName);
         ((AppCompatActivity) mContext).overridePendingTransition(0, 0);
     }
+
+    //addToShoppingList(array ingredients)
 }
