@@ -426,11 +426,11 @@
     <string name="points_cash_when_you_need_it_6">Make additional payments towards your loan</string>
     <string name="points_cash_when_you_need_it_7">Easily access your cash using our mobi app or our interactive voice message system</string>
 
-    <string name="personal_loan_points_to_qualify_1">Be 18 or older</string>
+    <string name="personal_loan_points_to_qualify_1">Be 18 years of age or older</string>
     <string name="personal_loan_points_to_qualify_2">Have a valid South African ID</string>
-    <string name="personal_loan_points_to_qualify_3">Earn a minimum of R2 000 per month</string>
-    <string name="personal_loan_points_to_qualify_4">Provide your latest three payslips or your last three months’ bank statements Have your own bank account</string>
-
+    <string name="personal_loan_points_to_qualify_3">Earn a minimum of R2,000.00 per month</string>
+    <string name="personal_loan_points_to_qualify_4">Provide your latest three payslips or your last three months’ bank statements</string>
+    <string name="personal_loan_points_to_qualify_5">Have a bank account in your own name</string>
     <string name="points_to_qualify_1">Be 18 or older</string>
     <string name="points_to_qualify_2">Have a valid RSA ID number</string>
     <string name="points_to_qualify_3">Earn in excess of R3,000.00 per month</string>
