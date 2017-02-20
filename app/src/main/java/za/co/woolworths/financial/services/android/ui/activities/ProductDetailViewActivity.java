@@ -117,20 +117,9 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         try {
             // Instantiate a JSON object from the request response
             jsProduct = new JSONObject(mProductJSON);
-
             String mProduct = jsProduct.getString("product");
             JSONObject jsProductList = new JSONObject(mProduct);
-
-
-            String ingredients = jsProductList.getString("auxiliaryImages");
-            if (TextUtils.isEmpty(ingredients)){
-                mLinIngredient.setVisibility(View.GONE);
-
-            }else {
-                mLinIngredient.setVisibility(View.VISIBLE);
-                mIngredientList.setText(ingredients);
-            }
-
+            setIngredients(jsProductList.getString("ingredients"));
             String auxiliaryImages = jsProductList.getString("auxiliaryImages");
             JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
             Iterator<String> keysIterator = jsAuxiliaryImages.keys();
@@ -170,6 +159,16 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             Log.e("sessionDao", e.toString());
         }
 
+    }
+
+    private void setIngredients(String ingredients) {
+        if (TextUtils.isEmpty(ingredients)) {
+            mLinIngredient.setVisibility(View.GONE);
+
+        } else {
+            mLinIngredient.setVisibility(View.VISIBLE);
+            mIngredientList.setText(ingredients);
+        }
     }
 
     private void selectedColor(String url) {
@@ -222,9 +221,9 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mTextActualPrice = (WTextView) findViewById(R.id.textActualPrice);
         mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
         mTextPrice = (WTextView) findViewById(R.id.textPrice);
-        mLinIngredient=  (LinearLayout)findViewById(R.id.linIngredient);
+        mLinIngredient = (LinearLayout) findViewById(R.id.linIngredient);
         mCategoryName = (WTextView) findViewById(R.id.textType);
-        mIngredientList = (WTextView)findViewById(R.id.ingredientList);
+        mIngredientList = (WTextView) findViewById(R.id.ingredientList);
         mTextPromo = (WTextView) findViewById(R.id.textPromo);
         mTextSelectColor = (WTextView) findViewById(R.id.textSelectColour);
         mProductCode = (WTextView) findViewById(R.id.product_code);
@@ -385,10 +384,11 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private void populateView() {
         WProductDetail productDetail = mproductDetail.get(0);
 
-        String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>body {color: #A9A9A9;text-align: justify;}</style></head><body>";
+        String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
+                "<style>body {text-align: justify;font-size:15px;}</style></head><body>";
         String footerTag = "</body></html>";
 
-        mWebDescription.loadData("<body>" + headerTag + isEmpty(productDetail.longDescription) + footerTag, "text/html; charset=UTF-8", null);
+        mWebDescription.loadData(headerTag + isEmpty(productDetail.longDescription) + footerTag, "text/html; charset=UTF-8", null);
         mTextTitle.setText(isEmpty(productDetail.productName));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
         String mWasPrice = productDetail.otherSkus.get(0).wasPrice;
