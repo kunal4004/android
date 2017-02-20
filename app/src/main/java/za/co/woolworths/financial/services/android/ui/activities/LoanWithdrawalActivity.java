@@ -53,7 +53,7 @@ public class LoanWithdrawalActivity extends BaseActivity {
     private SharePreferenceHelper mSharePreferenceHelper;
     private ConnectionDetector mConnectionDetector;
     private PopWindowValidationMessage mPopWindowValidationMessage;
-    Handler handler = new Handler();
+    Handler handler = new Handler();//not nice
     private String mDrawnDownAmount;
     private String mCreditLimit;
     private String mAvailableFunds;
