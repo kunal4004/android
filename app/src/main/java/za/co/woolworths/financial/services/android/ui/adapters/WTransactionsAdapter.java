@@ -87,13 +87,19 @@ public class WTransactionsAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
-    public String formatNegativeAmounts(SpannableString amount){
-        String currentAmount = amount.toString();
-        if(currentAmount.contains("-")){
-            currentAmount = currentAmount.replace("-","");
-            currentAmount = currentAmount.replace("R", "R-");
-        }
-        return currentAmount;
+    public String formatTransactionAmount(float transactionAmount){
+        //convert amount to int
+        int amount = Math.round(transactionAmount);
+        String formatedAmount;
+        //Convert amount to +ve
+        if (amount < 0)
+            formatedAmount = WFormatter.formatAmount(-amount);
+        else
+            formatedAmount = WFormatter.formatAmount(amount);
+        if (transactionAmount < 0)
+            return formatedAmount.replace("R", "R-");
+        else
+            return formatedAmount;
     }
 
     @Override
@@ -125,11 +131,8 @@ public class WTransactionsAdapter extends BaseExpandableListAdapter {
         formatedDate = timeFormat.format(myDate);
         transactionDate.setText(formatedDate);
 
-        //convert amount to int
-        int amount = Math.round(transaction.amount);
-        //remove negative sign from negative amount
-        String newAmount = formatNegativeAmounts(FontHyperTextParser.getSpannable(WFormatter.formatAmount(amount), 1, mContext));
-        transactionAmount.setText(newAmount);
+
+        transactionAmount.setText(formatTransactionAmount(transaction.amount));
         transactionDescription.setText(transaction.description);
 
         return convertView;

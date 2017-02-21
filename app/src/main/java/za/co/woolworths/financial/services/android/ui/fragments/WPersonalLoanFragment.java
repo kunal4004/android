@@ -65,6 +65,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     private SharePreferenceHelper mSharePreferenceHelper;
     private HttpAsyncTask<String, String, OfferActive> asyncRequestPersonalLoan;
 
+    private AccountsResponse temp = null;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -84,8 +86,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
         txtIncreseLimit.setOnClickListener(this);
         transactions.setOnClickListener(this);
-        AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
-        bindData(accountsResponse);
+        temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
         disableIncreaseLimit();
         hideProgressBar();
         setTextSize();
@@ -254,6 +255,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     @Override
     public void onResume() {
         super.onResume();
+        mSharePreferenceHelper.removeValue("lw_installment_amount");
+        mSharePreferenceHelper.removeValue("lwf_drawDownAmount");
+        mSharePreferenceHelper.removeValue("lw_months");
+        mSharePreferenceHelper.removeValue("lw_product_offering_id");
+        mSharePreferenceHelper.removeValue("lw_amount_drawn_cent");
+
+        if(temp != null)
+            bindData(temp);
         setTextSize();
     }
 

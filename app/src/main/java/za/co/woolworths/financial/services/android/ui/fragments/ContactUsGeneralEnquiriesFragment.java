@@ -14,18 +14,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity;
 import za.co.woolworths.financial.services.android.util.binder.ContactUsFragmentChange;
 
 /**
- * Created by W7099877 on 01/12/2016.
+ * Created by W7099877 on 18/02/2017.
  */
 
-public class ContactUsFinancialServiceFragment extends Fragment implements View.OnClickListener {
+public class ContactUsGeneralEnquiriesFragment extends Fragment implements View.OnClickListener {
     public ContactUsFragmentChange contactUsFragmentChange;
     private static final int REQUEST_CALL = 1;
     Intent callIntent;
@@ -33,19 +31,13 @@ public class ContactUsFinancialServiceFragment extends Fragment implements View.
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.contact_us_financial_services, container, false);
+        View view=inflater.inflate(R.layout.contact_us_general_enquiries, container, false);
         view.findViewById(R.id.localCaller).setOnClickListener(this);
         view.findViewById(R.id.internationalCaller).setOnClickListener(this);
-        view.findViewById(R.id.blackCrediCardQuery).setOnClickListener(this);
-        view.findViewById(R.id.complains).setOnClickListener(this);
-        view.findViewById(R.id.creditCardQuery).setOnClickListener(this);
-        view.findViewById(R.id.wRewardsQuery).setOnClickListener(this);
-        view.findViewById(R.id.insuranceClaim).setOnClickListener(this);
-        view.findViewById(R.id.paymentQuery).setOnClickListener(this);
-        view.findViewById(R.id.storeCardPesonalLoanQuery).setOnClickListener(this);
-        view.findViewById(R.id.proofOfIncome).setOnClickListener(this);
-        view.findViewById(R.id.technical).setOnClickListener(this);
-
+        view.findViewById(R.id.productQuery).setOnClickListener(this);
+        view.findViewById(R.id.storeQuery).setOnClickListener(this);
+        view.findViewById(R.id.complaints).setOnClickListener(this);
+        view.findViewById(R.id.technicalProblem).setOnClickListener(this);
 
         return view;    }
     @Override
@@ -61,49 +53,32 @@ public class ContactUsFinancialServiceFragment extends Fragment implements View.
     @Override
     public void onResume() {
         super.onResume();
-        contactUsFragmentChange.onFragmentChanged(getActivity().getResources().getString(R.string.contact_us_financial_services));
+        contactUsFragmentChange.onFragmentChanged(getActivity().getResources().getString(R.string.txt_general_enquiry));
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId())
-        {
+        switch (v.getId()) {
             case R.id.localCaller:
-                 makeCall(getActivity().getResources().getString(R.string.fs_local_caller_number));
-                 break;
+                makeCall(getActivity().getResources().getString(R.string.customer_service_local_caller_number));
+                break;
             case R.id.internationalCaller:
-                makeCall(getActivity().getResources().getString(R.string.fs_inter_national_caller_number));
+                makeCall(getActivity().getResources().getString(R.string.customer_service_inter_national_caller_number));
                 break;
-            case R.id.blackCrediCardQuery:
-                sendEmail(getActivity().getResources().getString(R.string.email_black_credit_card_query));
+            case R.id.productQuery:
+                sendEmail(getActivity().getResources().getString(R.string.email_custserv));
                 break;
-            case R.id.complains:
-                sendEmail(getActivity().getResources().getString(R.string.email_complaints));
+            case R.id.storeQuery:
+                sendEmail(getActivity().getResources().getString(R.string.email_custserv));
                 break;
-            case R.id.creditCardQuery:
-                sendEmail(getActivity().getResources().getString(R.string.email_credicard_query));
+            case R.id.complaints:
+                sendEmail(getActivity().getResources().getString(R.string.email_custserv));
                 break;
-            case R.id.wRewardsQuery:
-                sendEmail(getActivity().getResources().getString(R.string.email_wrewards_query));
-                break;
-            case R.id.insuranceClaim:
-                sendEmail(getActivity().getResources().getString(R.string.email_insurance_claim));
-                break;
-            case R.id.paymentQuery:
-                sendEmail(getActivity().getResources().getString(R.string.email_payment_query));
-                break;
-            case R.id.storeCardPesonalLoanQuery:
-                sendEmail(getActivity().getResources().getString(R.string.email_sc_and_pl_query));
-                break;
-            case R.id.proofOfIncome:
-                sendEmail(getActivity().getResources().getString(R.string.email_proof_of_income));
-                break;
-            case R.id.technical:
-                sendEmail(getActivity().getResources().getString(R.string.email_technical));
+            case R.id.technicalProblem:
+                sendEmail(getActivity().getResources().getString(R.string.email_custserv));
                 break;
         }
     }
-
     public void makeCall(String number){
         callIntent = new Intent(Intent.ACTION_CALL);
         callIntent.setData(Uri.parse("tel:" + number));
