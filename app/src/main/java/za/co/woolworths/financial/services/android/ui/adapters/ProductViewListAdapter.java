@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -12,6 +13,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 
 import java.util.List;
@@ -61,6 +65,8 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             mImReward = (ImageView) view.findViewById(R.id.imReward);
             mVitalityView = (ImageView) view.findViewById(R.id.imVitality);
         }
+
+
     }
 
     @Override
@@ -200,5 +206,6 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             }
         }
     }
+
 
 }

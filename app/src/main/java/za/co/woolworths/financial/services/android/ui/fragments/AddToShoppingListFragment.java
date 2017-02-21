@@ -78,7 +78,7 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
             case R.id.btnAddShoppingList:
                 Utils.addToShoppingCart(getActivity(), new ShoppingList(
                         productId,
-                        productName, true));
+                        productName, false));
 
                 new PopWindowValidationMessage(getActivity()).displayValidationMessage("",
                         PopWindowValidationMessage.OVERLAY_TYPE.SHOPPING_LIST_INFO);
