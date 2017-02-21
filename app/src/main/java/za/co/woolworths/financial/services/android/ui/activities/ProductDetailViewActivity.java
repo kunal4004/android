@@ -174,6 +174,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             mLinIngredient.setVisibility(View.GONE);
             ingredientLine.setVisibility(View.GONE);
         } else {
+            mIngredientList.setText(ingredients);
             mLinIngredient.setVisibility(View.VISIBLE);
             ingredientLine.setVisibility(View.VISIBLE);
         }
