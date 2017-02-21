@@ -20,8 +20,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -165,6 +163,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
     }
 
+<<<<<<< HEAD
     @Override
     public void onLongPressState(View v, int position) {
         String productId = mProduct.get(position).productId;
@@ -185,6 +184,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
     }
 
+=======
+>>>>>>> a929c9e4eec4a29c967e8f3b200bbab59d8b946e
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
         this.mScrollY = scrollY;
@@ -222,19 +223,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        try {
-            switch (scrollState) {
-                case UP:
-                    hideViews();
-                    break;
-                case DOWN:
-                    showViews();
-                    break;
-                default:
-                    break;
-            }
-        } catch (Exception ignored) {
-        }
     }
 
     @Override
@@ -446,7 +434,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
             @Override
             public void success(String strProduct, retrofit.client.Response response) {
-                dismissFragmentDialog();
                 WProduct wProduct = Utils.stringToJson(mContext, strProduct);
                 if (wProduct != null) {
                     switch (wProduct.httpCode) {
@@ -474,6 +461,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                             break;
                     }
                 }
+
+                dismissFragmentDialog();
             }
 
             @Override
@@ -485,10 +474,13 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     }
 
     private void dismissFragmentDialog() {
-        if (mGetProgressDialog != null) {
-            if (mGetProgressDialog.isVisible()) {
-                mGetProgressDialog.dismiss();
+        try {
+            if (mGetProgressDialog != null) {
+                if (mGetProgressDialog.isVisible()) {
+                    mGetProgressDialog.dismiss();
+                }
             }
+        } catch (IllegalStateException ignored) {
         }
     }
 
@@ -590,6 +582,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         }.execute();
     }
 
+<<<<<<< HEAD
     private void pagination() {
 
         if (mProduct.size() < num_of_item) {
@@ -604,4 +597,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             }
         }
     }
+=======
+>>>>>>> a929c9e4eec4a29c967e8f3b200bbab59d8b946e
 }
