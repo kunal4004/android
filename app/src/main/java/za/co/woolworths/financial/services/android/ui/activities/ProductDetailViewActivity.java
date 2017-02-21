@@ -92,14 +92,11 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private WTextView mTextLabelPrice;
     private WTextView mTextColour;
     private WrapContentWebView mWebDescription;
-<<<<<<< HEAD
     private WButton mBtnAddShoppingList;
     private PopWindowValidationMessage mPopWindowValidationMessage;
-=======
     private WTextView mIngredientList;
     private LinearLayout mLinIngredient;
     private View ingredientLine;
->>>>>>> a929c9e4eec4a29c967e8f3b200bbab59d8b946e
 
 
     @Override
@@ -150,11 +147,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         try {
             // Instantiate a JSON object from the request response
             jsProduct = new JSONObject(mProductJSON);
-<<<<<<< HEAD
-
-
-=======
->>>>>>> a929c9e4eec4a29c967e8f3b200bbab59d8b946e
             String mProduct = jsProduct.getString("product");
             JSONObject jsProductList = new JSONObject(mProduct);
             if (jsProductList.has("ingredients")) {
@@ -440,14 +432,8 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
                 "</style></head><body>";
         String footerTag = "</body></html>";
-
-<<<<<<< HEAD
-        mWebDescription.loadData(headerTag + productDetail.longDescription + footerTag, "text/html; charset=UTF-8", null);
-=======
         String descriptionWithoutExtraTag = productDetail.longDescription.replaceAll("</ul>\n\n<ul>\n", " ");
-
         mWebDescription.loadData(headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag, "text/html; charset=UTF-8", null);
->>>>>>> a929c9e4eec4a29c967e8f3b200bbab59d8b946e
         mTextTitle.setText(isEmpty(productDetail.productName));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
         String mWasPrice = productDetail.otherSkus.get(0).wasPrice;

@@ -163,7 +163,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
     }
 
-<<<<<<< HEAD
     @Override
     public void onLongPressState(View v, int position) {
         String productId = mProduct.get(position).productId;
@@ -175,17 +174,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         mAddToShoppingListFragment.show(fm, "addToShop");
     }
 
-    private void hideViews() {
-        mToolbar.animate().translationY(-mToolbar.getBottom())
-                .setInterpolator(new AccelerateInterpolator()).start();
-    }
 
-    private void showViews() {
-        mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
-    }
-
-=======
->>>>>>> a929c9e4eec4a29c967e8f3b200bbab59d8b946e
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
         this.mScrollY = scrollY;
@@ -582,7 +571,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         }.execute();
     }
 
-<<<<<<< HEAD
     private void pagination() {
 
         if (mProduct.size() < num_of_item) {
@@ -597,6 +585,5 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             }
         }
     }
-=======
->>>>>>> a929c9e4eec4a29c967e8f3b200bbab59d8b946e
+
 }
