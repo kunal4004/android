@@ -260,7 +260,7 @@
                 android:textSize="15sp"
                 app:WTextView_font="myriadpro_regular" />
 
-            <include layout="@layout/line" />
+            <include layout="@layout/line" android:id="@+id/ingredientLine"/>
 
             <LinearLayout
                 android:id="@+id/linIngredient"

@@ -92,6 +92,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private WrapContentWebView mWebDescription;
     private WTextView mIngredientList;
     private LinearLayout mLinIngredient;
+    private View ingredientLine;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,7 +120,13 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             jsProduct = new JSONObject(mProductJSON);
             String mProduct = jsProduct.getString("product");
             JSONObject jsProductList = new JSONObject(mProduct);
-            setIngredients(jsProductList.getString("ingredients"));
+            if (jsProductList.has("ingredients")) {
+
+                setIngredients(jsProductList.getString("ingredients"));
+            } else {
+                ingredientLine.setVisibility(View.GONE);
+                mLinIngredient.setVisibility(View.GONE);
+            }
             String auxiliaryImages = jsProductList.getString("auxiliaryImages");
             JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
             Iterator<String> keysIterator = jsAuxiliaryImages.keys();
@@ -164,9 +171,10 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private void setIngredients(String ingredients) {
         if (TextUtils.isEmpty(ingredients)) {
             mLinIngredient.setVisibility(View.GONE);
-
+            ingredientLine.setVisibility(View.GONE);
         } else {
             mLinIngredient.setVisibility(View.VISIBLE);
+            ingredientLine.setVisibility(View.VISIBLE);
             mIngredientList.setText(ingredients);
         }
     }
@@ -237,6 +245,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mLlPagerDots = (LinearLayout) findViewById(R.id.pager_dots);
         ImageView mImColorArrow = (ImageView) findViewById(R.id.imColorArrow);
         mWebDescription = (WrapContentWebView) findViewById(R.id.webDescription);
+        ingredientLine = findViewById(R.id.ingredientLine);
 
         mImNewImage = (ImageView) findViewById(R.id.imNewImage);
         mImSave = (ImageView) findViewById(R.id.imSave);
