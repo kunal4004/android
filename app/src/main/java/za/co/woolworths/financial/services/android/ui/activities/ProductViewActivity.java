@@ -174,7 +174,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         mAddToShoppingListFragment.show(fm, "addToShop");
     }
 
-
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
         this.mScrollY = scrollY;
@@ -258,7 +257,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
             @Override
             protected ProductView httpDoInBackground(String... params) {
-                pageNumber = 1;
+                pageNumber = 0;
                 mIsLastPage = false;
                 return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(false,
                         pageNumber, Utils.PAGE_SIZE, productId);
@@ -292,7 +291,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                         mNumberOfItem.setText(String.valueOf(num_of_item));
                         bindDataWithUI(mProduct);
                         mIsLastPage = false;
-                        pageNumber = 1;
+                        pageNumber = 0;
                         mIsLoading = false;
                         hideVProgressBar();
                     }
@@ -315,7 +314,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
             @Override
             protected ProductView httpDoInBackground(String... params) {
-                pageNumber = 1;
+                pageNumber = 0;
                 mIsLastPage = false;
 
                 return ((WoolworthsApplication) getApplication()).getApi()

@@ -261,7 +261,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         mSharePreferenceHelper.removeValue("lw_product_offering_id");
         mSharePreferenceHelper.removeValue("lw_amount_drawn_cent");
 
-        if(temp != null)
+        if (temp != null)
             bindData(temp);
         setTextSize();
     }
