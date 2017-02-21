@@ -528,6 +528,5 @@
     <string name="email_rewards">rewards@woolworths.co.za</string>
     <string name="email_myschool">cs@myschool.co.za</string>
     <string name="my_school_local_caller_number">0860 100 445</string>
-
-
+    <string name="ingredients">ingredients</string>
 </resources>

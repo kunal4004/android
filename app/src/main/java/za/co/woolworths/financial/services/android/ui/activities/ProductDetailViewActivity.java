@@ -90,6 +90,10 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private WTextView mTextLabelPrice;
     private WTextView mTextColour;
     private WrapContentWebView mWebDescription;
+    private WTextView mIngredientList;
+    private LinearLayout mLinIngredient;
+    private View ingredientLine;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,9 +119,15 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         try {
             // Instantiate a JSON object from the request response
             jsProduct = new JSONObject(mProductJSON);
-
             String mProduct = jsProduct.getString("product");
             JSONObject jsProductList = new JSONObject(mProduct);
+            if (jsProductList.has("ingredients")) {
+
+                setIngredients(jsProductList.getString("ingredients"));
+            } else {
+                ingredientLine.setVisibility(View.GONE);
+                mLinIngredient.setVisibility(View.GONE);
+            }
             String auxiliaryImages = jsProductList.getString("auxiliaryImages");
             JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
             Iterator<String> keysIterator = jsAuxiliaryImages.keys();
@@ -157,6 +167,16 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             Log.e("sessionDao", e.toString());
         }
 
+    }
+
+    private void setIngredients(String ingredients) {
+        if (TextUtils.isEmpty(ingredients)) {
+            mLinIngredient.setVisibility(View.GONE);
+            ingredientLine.setVisibility(View.GONE);
+        } else {
+            mLinIngredient.setVisibility(View.VISIBLE);
+            ingredientLine.setVisibility(View.VISIBLE);
+        }
     }
 
     private void selectedColor(String url) {
@@ -209,7 +229,9 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mTextActualPrice = (WTextView) findViewById(R.id.textActualPrice);
         mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
         mTextPrice = (WTextView) findViewById(R.id.textPrice);
+        mLinIngredient = (LinearLayout) findViewById(R.id.linIngredient);
         mCategoryName = (WTextView) findViewById(R.id.textType);
+        mIngredientList = (WTextView) findViewById(R.id.ingredientList);
         mTextPromo = (WTextView) findViewById(R.id.textPromo);
         mTextSelectColor = (WTextView) findViewById(R.id.textSelectColour);
         mProductCode = (WTextView) findViewById(R.id.product_code);
@@ -223,6 +245,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mLlPagerDots = (LinearLayout) findViewById(R.id.pager_dots);
         ImageView mImColorArrow = (ImageView) findViewById(R.id.imColorArrow);
         mWebDescription = (WrapContentWebView) findViewById(R.id.webDescription);
+        ingredientLine = findViewById(R.id.ingredientLine);
 
         mImNewImage = (ImageView) findViewById(R.id.imNewImage);
         mImSave = (ImageView) findViewById(R.id.imSave);
@@ -370,10 +393,14 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private void populateView() {
         WProductDetail productDetail = mproductDetail.get(0);
 
-        String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>body {color: #A9A9A9;text-align: justify;}</style></head><body>";
+        String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
+                "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
+                "</style></head><body>";
         String footerTag = "</body></html>";
 
-        mWebDescription.loadData("<body>" + headerTag + isEmpty(productDetail.longDescription) + footerTag, "text/html; charset=UTF-8", null);
+        String descriptionWithoutExtraTag = productDetail.longDescription.replaceAll("</ul>\n\n<ul>\n", " ");
+
+        mWebDescription.loadData(headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag, "text/html; charset=UTF-8", null);
         mTextTitle.setText(isEmpty(productDetail.productName));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
         String mWasPrice = productDetail.otherSkus.get(0).wasPrice;
