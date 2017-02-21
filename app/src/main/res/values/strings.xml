@@ -194,46 +194,47 @@
     <string name="fs_inter_national_caller_number">+27 21 411 5000</string>
     <string name="txt_international_caller">International caller</string>
     <string name="txt_call_center_opening_hours">Call Centre Operating Hours</string>
-    <string name="fs_call_center_opening_hours">Monday - Friday 7.30am - 9pm\n \nSaturday 7:30am - 9pm\n \nSunday 7.30am - 9pm\n \nPublic Holidays 7.30am - 9pm</string>
+    <string name="fs_call_center_opening_hours">Daily 7.30am - 9pm</string>
     <string name="email_us">email us</string>
-    <string name="txt_black_credit_card_query">Black Credit Card Query</string>
-    <string name="txt_complaint">Complaint</string>
-    <string name="txt_visa_cc_query">Visa Credit Card Query</string>
-    <string name="txt_wrewards_query">WRewards Query</string>
-    <string name="txt_insurance_claim">Insurance Claim</string>
-    <string name="txt_payment_query">Payment Query</string>
-    <string name="txt_sc_and_pl_query">Store Card &amp; Personal Loan Query</string>
-    <string name="txt_proof_of_income">Proof of Income</string>
-    <string name="txt_technical_problem">Technical Problem</string>
+    <string name="txt_black_credit_card_query">Black Credit Card query</string>
+    <string name="txt_complaint">Complaints</string>
+    <string name="txt_cc_query">Credit Card query</string>
+    <string name="txt_wrewards_query">WRewards query</string>
+    <string name="txt_insurance_claim">Insurance claim</string>
+    <string name="txt_payment_query">Payment query</string>
+    <string name="txt_sc_and_pl_query">Store Card &amp; Personal Loan query</string>
+    <string name="txt_proof_of_income">Proof of income</string>
+    <string name="txt_technical_problem">Technical</string>
     <string name="online_local_caller_number">0860 100 987</string>
     <string name="online_inter_national_caller_number">+27 21 407 6137</string>
     <string name="online_call_center_opening_hours">Monday - Friday 8am - 7.30pm \n\nSaturday 8am - 5pm \n\nSunday 8am - 1pm \n\nPublic Holidays 8am - 5pm</string>
+    <string name="general_call_center_opening_hours">Monday - Friday 8am - 5.30pm \n\nSaturday 8am - 5pm \n\nSunday 9am - 1pm \n\nPublic Holidays 9am - 1pm</string>
     <string name="online_shop_reg_login">Online shop registration /Login</string>
     <string name="txt_delivery_queries">Delivery queries</string>
     <string name="txt_order_queries">Order queries</string>
     <string name="customer_service_local_caller_number">0860 022 002</string>
     <string name="customer_service_inter_national_caller_number">+27 21 407 7002</string>
-    <string name="txt_product_query">Product Query</string>
-    <string name="txt_store_query">Store Query</string>
+    <string name="txt_product_query">Product query</string>
+    <string name="txt_store_query">Store query</string>
     <string name="wrewards_local_caller_number">0861 502 050</string>
     <string name="wrewards_inter_national_caller_number">+27 21 407 7003</string>
     <string name="wrewards_call_center_opening_hours">Monday - Friday 8am - 5.30pm \n\nSaturday 8:30am - 2pm \n\nSunday 9am - 1pm \n\nPublic Holidays 9am - 1pm</string>
-    <string name="txt_wrewards_card">WRewards Card</string>
-    <string name="txt_wrewards_loyalty_vouchers">WRewards Loyalty Vouchers</string>
+    <string name="txt_wrewards_card">WRewards card</string>
+    <string name="txt_wrewards_loyalty_vouchers">WRewards loyalty vouchers</string>
     <string name="txt_littleworld">Littleworld</string>
     <string name="txt_general">General</string>
     <string name="myschool_call_center_opening_hours">Monday - Friday 8am - 5pm \n\nNo Weekends \n\nNo Public Holidays</string>
     <string name="txt_myschool_card">MySchool card</string>
-    <string name="txt_general_enquiry">General enquiry</string>
+    <string name="txt_general_enquiry">General enquiries</string>
 
     <string name="title_activity_animated_splash_screen">AnimatedSplashScreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="contact_us_financial_services">Financial Services</string>
     <string name="contact_us_online">online</string>
-    <string name="contact_us_customer_service">customer service</string>
+    <string name="contact_us_customer_service">Customer Services</string>
     <string name="contact_us_wrewards">WRewards</string>
-    <string name="contact_us_myschool">MySchool</string>
+    <string name="contact_us_myschool">MySchool enquiries</string>
 
     <string name="link_wtoday">https://woolies.herokuapp.com</string>
     <string name="link_products">https://woolies.herokuapp.com/products</string>
@@ -425,14 +426,14 @@
     <string name="points_cash_when_you_need_it_6">Make additional payments towards your loan</string>
     <string name="points_cash_when_you_need_it_7">Easily access your cash using our mobi app or our interactive voice message system</string>
 
-    <string name="personal_loan_points_to_qualify_1">Be 18 or older</string>
+    <string name="personal_loan_points_to_qualify_1">Be 18 years of age or older</string>
     <string name="personal_loan_points_to_qualify_2">Have a valid South African ID</string>
-    <string name="personal_loan_points_to_qualify_3">Earn a minimum of R2 000 per month</string>
-    <string name="personal_loan_points_to_qualify_4">Provide your latest three payslips or your last three months’ bank statements Have your own bank account</string>
-
+    <string name="personal_loan_points_to_qualify_3">Earn a minimum of R2,000.00 per month</string>
+    <string name="personal_loan_points_to_qualify_4">Provide your latest three payslips or your last three months’ bank statements</string>
+    <string name="personal_loan_points_to_qualify_5">Have a bank account in your own name</string>
     <string name="points_to_qualify_1">Be 18 or older</string>
     <string name="points_to_qualify_2">Have a valid RSA ID number</string>
-    <string name="points_to_qualify_3">Earn over R41 666 per month</string>
+    <string name="points_to_qualify_3">Earn in excess of R3,000.00 per month</string>
 
     <string name="points_bring_following_while_collecting_1">A valid South African ID</string>
     <string name="points_bring_following_while_collecting_2">Your latest three payslips or your last three months’ bank statements</string>
@@ -512,4 +513,28 @@
     <string name="added_to_shopping_list_desc">Your shopping list items can be found in Accounts</string>
     <string name="view_shopping_list">view shopping list</string>
     <string name="shopping_list_empty">shopping list empty</string>
+    <string name="contact_us_financial_services_desc">Store Card /Credit Card and Personal Loan</string>
+    <string name="contact_us_customer_service_desc">General enquiries, Online, WRewards, MySchool</string>
+    <string name="general_enquiry_desc">Producs and instore</string>
+    <string name="woolworths_online">Woolworths online</string>
+    <string name="website_and_online_shoppping">Website and online shoppping</string>
+    <string name="email_black_credit_card_query">woolworthsblack@wfs.co.za</string>
+    <string name="email_complaints">complaints@wfs.co.za</string>
+    <string name="email_credicard_query">creditcard@wfs.co.za</string>
+    <string name="email_wrewards_query">creditcard@wfs.co.za</string>
+    <string name="email_insurance_claim">insuranceclaims@wfs.co.za</string>
+    <string name="email_payment_query">payments@wfs.co.za</string>
+    <string name="email_sc_and_pl_query">queries@wfs.co.za</string>
+    <string name="email_proof_of_income">income@wfs.co.za</string>
+    <string name="email_technical">queries@wfs.co.za</string>
+    <string name="fax">Fax</string>
+    <string name="email_custserv">custserv@woolworths.co.za</string>
+    <string name="txt_general_technical_problem">Technical problem</string>
+    <string name="email_online_shop">shop@woolworths.co.za</string>
+    <string name="email_rewards">rewards@woolworths.co.za</string>
+    <string name="email_myschool">cs@myschool.co.za</string>
+    <string name="my_school_local_caller_number">0860 100 445</string>
+
+
+>>>>>>> a615684f8aebdf061798cc0c6375c34ecc5e419f
 </resources>

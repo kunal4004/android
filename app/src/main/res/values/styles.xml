@@ -584,4 +584,24 @@
         <item name="android:letterSpacing">0.12</item>
         <item name="android:stateListAnimator">@null</item>
     </style>
+
+    <style name="contact_us_item_header_textview" parent="android:Theme">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:singleLine">true</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:textSize">15sp</item>
+
+    </style>
+
+    <style name="contact_us_item_desc_textview" parent="android:Theme">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">#4d000000</item>
+        <item name="android:singleLine">true</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:textSize">13sp</item>
+
+    </style>
 </resources>
