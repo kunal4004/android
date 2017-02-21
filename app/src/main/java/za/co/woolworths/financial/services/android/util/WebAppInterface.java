@@ -47,6 +47,16 @@ public class WebAppInterface {
                             i.id, i.displayName, false));
                 }
             }
+
+            ((AppCompatActivity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+                    PopWindowValidationMessage popWindowValidationMessage = new PopWindowValidationMessage(mContext);
+                    popWindowValidationMessage.displayValidationMessage("viewShoppingList",
+                            PopWindowValidationMessage.OVERLAY_TYPE.SHOPPING_LIST_INFO);
+                }
+            });
+
         }
+
     }
 }
