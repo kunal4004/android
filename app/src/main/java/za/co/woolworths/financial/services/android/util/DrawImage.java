@@ -24,43 +24,43 @@ public class DrawImage {
     }
 
     public void displayImage(final ImageView imageView, String url) {
-    Log.e("displayImage",url);
-        String imageRep = url.replace(" ","%20");
-        Glide.with(mContext)
-                .load(imageRep)
-                .dontAnimate()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .listener(new RequestListener<String, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        Log.e("IMAGE_EXCEPTION", "Exception " + e.toString());
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        return false;
-                    }
-                })
-                .into(imageView);
-
+//    Log.e("displayImage",url);
+//        String imageRep = url.replace(" ","%20");
 //        Glide.with(mContext)
-//                .load(url)
-//                .asBitmap()
-//                .atMost()
-//                .override(500, 500)
+//                .load(imageRep)
 //                .dontAnimate()
 //                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .into(new SimpleTarget<Bitmap>() {
+//                .listener(new RequestListener<String, GlideDrawable>() {
 //                    @Override
-//                    public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-//                        // do something with the bitmap
-//
-//
-//
-//                        imageView.setImageBitmap(bitmap);
+//                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+//                        Log.e("IMAGE_EXCEPTION", "Exception " + e.toString());
+//                        return false;
 //                    }
-//                });
+//
+//                    @Override
+//                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+//                        return false;
+//                    }
+//                })
+//                .into(imageView);
+
+        Log.e("ImageHeight", String.valueOf(imageView.getWidth() + " -- " + String.valueOf(imageView.getHeight())));
+
+        Glide.with(mContext)
+                .load(url)
+                .asBitmap()
+                .atMost()
+                .placeholder(R.drawable.rectangle)
+                .override(500, 500)
+                .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                        // do something with the bitmap
+                        imageView.setImageBitmap(bitmap);
+                    }
+                });
     }
 
     public void widthDisplayImage(ImageView imageView, String url) {

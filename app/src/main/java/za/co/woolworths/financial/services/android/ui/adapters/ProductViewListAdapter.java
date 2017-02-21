@@ -2,8 +2,6 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -13,22 +11,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
-import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewListAdapter.SimpleViewHolder> {
+    private final DrawImage drawImage;
     public Activity mContext;
     private List<ProductList> mProductList;
     private SelectedProductView mSelectedProductView;
@@ -39,6 +34,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         this.mContext = mContext;
         this.mProductList = mProductList;
         this.mSelectedProductView = selectedProductView;
+        drawImage = new DrawImage(mContext);
     }
 
     class SimpleViewHolder extends RecyclerView.ViewHolder {
@@ -65,8 +61,6 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             mImReward = (ImageView) view.findViewById(R.id.imReward);
             mVitalityView = (ImageView) view.findViewById(R.id.imVitality);
         }
-
-
     }
 
     @Override
@@ -94,7 +88,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-              mSelectedProductView.onLongPressState(v,position);
+                mSelectedProductView.onLongPressState(v, position);
                 return false;
             }
         });
@@ -160,7 +154,6 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
     private void productImage(SimpleViewHolder holder, String imgUrl) {
         if (imgUrl != null) {
             try {
-                DrawImage drawImage = new DrawImage(mContext);
                 drawImage.displayImage(holder.mSimpleDraweeView, imgUrl);
             } catch (IllegalArgumentException ignored) {
             }
