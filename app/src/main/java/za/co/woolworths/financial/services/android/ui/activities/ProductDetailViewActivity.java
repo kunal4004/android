@@ -94,6 +94,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private LinearLayout mLinIngredient;
     private View ingredientLine;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,7 +176,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         } else {
             mLinIngredient.setVisibility(View.VISIBLE);
             ingredientLine.setVisibility(View.VISIBLE);
-            mIngredientList.setText(ingredients);
         }
     }
 
@@ -398,7 +398,9 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 "</style></head><body>";
         String footerTag = "</body></html>";
 
-        mWebDescription.loadData(headerTag + isEmpty(productDetail.longDescription) + footerTag, "text/html; charset=UTF-8", null);
+        String descriptionWithoutExtraTag = productDetail.longDescription.replaceAll("</ul>\n\n<ul>\n", " ");
+
+        mWebDescription.loadData(headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag, "text/html; charset=UTF-8", null);
         mTextTitle.setText(isEmpty(productDetail.productName));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
         String mWasPrice = productDetail.otherSkus.get(0).wasPrice;

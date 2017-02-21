@@ -507,7 +507,6 @@
     <string name="cc_plus_1">Free Taste magazine vouchers monthly</string>
     <string name="cc_plus_2">2 free coffee vouchers monthly that can be used at any Woolworths Cafe, To Go or Tapas Bar.</string>
     <string name="cc_plus_3">Automatic VIP tier status for the first 12 months and free online delivery for Woolies online purchases (when you pay with your Woolies Black credit card).</string>
-    <string name="ingredients">ingredients</string>
     <string name="contact_us_financial_services_desc">Store Card /Credit Card and Personal Loan</string>
     <string name="contact_us_customer_service_desc">General enquiries, Online, WRewards, MySchool</string>
     <string name="general_enquiry_desc">Producs and instore</string>
@@ -529,6 +528,5 @@
     <string name="email_rewards">rewards@woolworths.co.za</string>
     <string name="email_myschool">cs@myschool.co.za</string>
     <string name="my_school_local_caller_number">0860 100 445</string>
-
-
+    <string name="ingredients">ingredients</string>
 </resources>
