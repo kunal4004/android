@@ -20,8 +20,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -41,6 +39,7 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -56,7 +55,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     private WTextView mToolBarTitle;
     private String productId;
     private String productName;
-    private int mCurrentPage = 0;
+    private int pageNumber = 0;
     private RecyclerView mProductList;
     private ProductViewActivity mContext;
     private List<ProductList> mProduct;
@@ -76,6 +75,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     private String searchItem = "";
     private String mTitle;
     private String mTitleNav;
+    private int num_of_item;
+    private int pageOffset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +134,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         if (mActionBar != null) {
             mActionBar.setDisplayHomeAsUpEnabled(true);
             mActionBar.setDisplayShowTitleEnabled(false);
-            mActionBar.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.appbar_background));
+            mActionBar.setBackgroundDrawable(ContextCompat.getDrawable(this,
+                    R.drawable.appbar_background));
         }
     }
 
@@ -153,20 +155,25 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     @Override
     public void onSelectedProduct(View v, int position) {
         try {
-            getProductDetail(mProduct.get(position).productId, mProduct.get(position).otherSkus.get(0).sku, false);
+            getProductDetail(mProduct.get(position).productId,
+                    mProduct.get(position).otherSkus.get(0).sku, false);
         } catch (Exception ex) {
             Log.e("ExceptionProduct", ex.toString());
         }
 
     }
 
-    private void hideViews() {
-        mToolbar.animate().translationY(-mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
+    @Override
+    public void onLongPressState(View v, int position) {
+        String productId = mProduct.get(position).productId;
+        String productName = mProduct.get(position).productName;
+        String externalImageRef = mProduct.get(position).externalImageRef;
+        android.app.FragmentManager fm = mContext.getFragmentManager();
+        AddToShoppingListFragment mAddToShoppingListFragment =
+                AddToShoppingListFragment.newInstance(productId, productName, externalImageRef);
+        mAddToShoppingListFragment.show(fm, "addToShop");
     }
 
-    private void showViews() {
-        mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
-    }
 
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
@@ -187,7 +194,14 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                     if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                             && firstVisibleItemPosition >= 0
                             && totalItemCount >= Utils.PAGE_SIZE) {
-                        loadMoreProduct();
+                        if (mProduct.size() < num_of_item) {
+
+                            if (TextUtils.isEmpty(searchItem)) {
+                                loadMoreProduct();
+                            } else {
+                                searchMoreProduct();
+                            }
+                        }
                     }
                 }
             } catch (NullPointerException ignored) {
@@ -198,19 +212,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        try {
-            switch (scrollState) {
-                case UP:
-                    hideViews();
-                    break;
-                case DOWN:
-                    showViews();
-                    break;
-                default:
-                    break;
-            }
-        } catch (Exception ignored) {
-        }
     }
 
     @Override
@@ -224,7 +225,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                Intent openSearchBarActivity = new Intent(ProductViewActivity.this, ProductSearchActivity.class);
+                Intent openSearchBarActivity = new Intent(ProductViewActivity.this,
+                        ProductSearchActivity.class);
                 startActivity(openSearchBarActivity);
                 break;
             case android.R.id.home:
@@ -236,7 +238,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
     private void showProgressBar() {
         mRelProgressBar.setVisibility(View.VISIBLE);
-        mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+        mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK,
+                PorterDuff.Mode.MULTIPLY);
     }
 
     public void hideProgressBar() {
@@ -255,10 +258,10 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
             @Override
             protected ProductView httpDoInBackground(String... params) {
-                mCurrentPage = 1;
+                pageNumber = 1;
                 mIsLastPage = false;
                 return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(false,
-                        mCurrentPage, Utils.PAGE_SIZE, productId);
+                        pageNumber, Utils.PAGE_SIZE, productId);
 
             }
 
@@ -285,10 +288,11 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                     if (pv.products.size() == 1) {
                         getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku, true);
                     } else {
-                        mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
+                        num_of_item = pv.pagingResponse.numItemsInTotal;
+                        mNumberOfItem.setText(String.valueOf(num_of_item));
                         bindDataWithUI(mProduct);
                         mIsLastPage = false;
-                        mCurrentPage = 1;
+                        pageNumber = 1;
                         mIsLoading = false;
                         hideVProgressBar();
                     }
@@ -311,11 +315,11 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
             @Override
             protected ProductView httpDoInBackground(String... params) {
-                mCurrentPage = 1;
+                pageNumber = 1;
                 mIsLastPage = false;
 
                 return ((WoolworthsApplication) getApplication()).getApi()
-                        .getProductSearchList(searchItem, false, mCurrentPage, Utils.PAGE_SIZE);
+                        .getProductSearchList(searchItem, false, pageNumber, Utils.PAGE_SIZE);
 
             }
 
@@ -339,13 +343,14 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 mProduct = new ArrayList<>();
                 if (pv.products != null && pv.products.size() != 0) {
                     mProduct = pv.products;
+                    num_of_item = pv.pagingResponse.numItemsInTotal;
+
                     if (pv.products.size() == 1) {
                         getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku, true);
                     } else {
                         mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
                         bindDataWithUI(mProduct);
                         mIsLastPage = false;
-                        mCurrentPage = 1;
                         mIsLoading = false;
                     }
                 }
@@ -368,13 +373,14 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 super.onPreExecute();
                 showProgressBar();
                 mIsLoading = true;
-                mCurrentPage += 1;
+                pageNumber += 1;
+                pagination();
             }
 
             @Override
             protected ProductView httpDoInBackground(String... params) {
                 return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(false,
-                        mCurrentPage, Utils.PAGE_SIZE, productId);
+                        pageOffset, Utils.PAGE_SIZE, productId);
             }
 
             @Override
@@ -417,7 +423,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
             @Override
             public void success(String strProduct, retrofit.client.Response response) {
-                dismissFragmentDialog();
                 WProduct wProduct = Utils.stringToJson(mContext, strProduct);
                 if (wProduct != null) {
                     switch (wProduct.httpCode) {
@@ -445,6 +450,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                             break;
                     }
                 }
+
+                dismissFragmentDialog();
             }
 
             @Override
@@ -456,10 +463,13 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     }
 
     private void dismissFragmentDialog() {
-        if (mGetProgressDialog != null) {
-            if (mGetProgressDialog.isVisible()) {
-                mGetProgressDialog.dismiss();
+        try {
+            if (mGetProgressDialog != null) {
+                if (mGetProgressDialog.isVisible()) {
+                    mGetProgressDialog.dismiss();
+                }
             }
+        } catch (IllegalStateException ignored) {
         }
     }
 
@@ -510,12 +520,14 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
      ***/
 
     public void searchMoreProduct() {
-
         new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                showVProgressBar();
+                showProgressBar();
+                mIsLoading = true;
+                pageNumber += 1;
+                pagination();
             }
 
             @Override
@@ -523,7 +535,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 mIsLastPage = false;
 
                 return ((WoolworthsApplication) getApplication()).getApi()
-                        .getProductSearchList(searchItem, false, mCurrentPage, Utils.PAGE_SIZE);
+                        .getProductSearchList(searchItem, false, pageNumber, Utils.PAGE_SIZE);
 
             }
 
@@ -536,29 +548,42 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 ProductView productResponse = new ProductView();
                 productResponse.response = new Response();
-                hideVProgressBar();
+                hideProgressBar();
+                mIsLoading = false;
                 return productResponse;
             }
 
             @Override
             protected void onPostExecute(ProductView pv) {
                 super.onPostExecute(pv);
-                mProduct = null;
-                mProduct = new ArrayList<>();
-                if (pv.products != null && pv.products.size() != 0) {
-                    mProduct = pv.products;
-                    if (pv.products.size() == 1) {
-                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku, true);
-                    } else {
-                        mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
-                        bindDataWithUI(mProduct);
-                        mIsLastPage = false;
-                        mCurrentPage = 1;
-                        mIsLoading = false;
+                mIsLoading = false;
+                List<ProductList> moreProductList;
+                moreProductList = pv.products;
+                if (moreProductList != null && moreProductList.size() != 0) {
+                    if (moreProductList.size() < Utils.PAGE_SIZE) {
+                        mIsLastPage = true;
                     }
+                    mProduct.addAll(moreProductList);
+                    mProductAdapter.notifyDataSetChanged();
                 }
-                hideVProgressBar();
+                hideProgressBar();
             }
         }.execute();
     }
+
+    private void pagination() {
+
+        if (mProduct.size() < num_of_item) {
+
+            if (pageNumber == 1) {
+                pageOffset = Utils.PAGE_SIZE;
+            } else {
+
+                //           let offset = ((pageNumber - 1) * pageSize + 1).description
+                pageOffset = ((pageNumber - 1) * Utils.PAGE_SIZE + 1);
+
+            }
+        }
+    }
+
 }

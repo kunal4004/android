@@ -91,13 +91,12 @@
                 android:layout_marginLeft="@dimen/bank_spacing_width"
                 android:background="@android:color/transparent"
                 android:gravity="start|center"
-                android:letterSpacing="0.06"
                 android:paddingStart="@dimen/recent_search_margin"
                 android:text="@string/product_search_hint"
                 android:textColor="@color/product_search_hint"
                 android:textSize="16sp"
                 android:visibility="gone"
-                app:WEditTextView_font="myriadpro_regular" />
+                app:WTextView_font="myriadpro_regular" />
 
             <ImageView
                 android:id="@+id/imTBBarcodeScanner"

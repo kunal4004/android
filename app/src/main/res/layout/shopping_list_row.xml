@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardLayout"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/light_gray">
+
+    <com.daimajia.swipe.SwipeLayout
+        android:id="@+id/swipe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp">
+
+        <RelativeLayout
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:paddingRight="16dp"
+            android:tag="Bottom2">
+
+            <ImageView
+                android:id="@+id/msgDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:padding="15dp"
+                android:src="@drawable/delete_24" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/card_shadow"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingBottom="8dp"
+                        android:paddingLeft="@dimen/default_margin"
+                        android:paddingRight="@dimen/default_margin">
+
+                        <ImageView
+                            android:id="@+id/checkedItem"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/tickerinactive" />
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/productName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/default_margin"
+                            android:layout_marginRight="@dimen/default_margin"
+                            android:gravity="center_vertical"
+                            android:letterSpacing="0.07"
+                            android:minHeight="80dp"
+                            android:text="@string/app_name"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            app:WTextView_font="medium_bold" />
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+
+            </FrameLayout>
+        </LinearLayout>
+
+
+    </com.daimajia.swipe.SwipeLayout>
+
+</LinearLayout>

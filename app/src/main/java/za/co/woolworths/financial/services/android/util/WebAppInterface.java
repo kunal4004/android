@@ -4,11 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.webkit.JavascriptInterface;
 
-import org.w3c.dom.Text;
 
+import com.google.gson.Gson;
+
+
+import za.co.woolworths.financial.services.android.models.dto.Ingredient;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.ui.activities.ProductViewActivity;
 
 public class WebAppInterface {
@@ -16,12 +19,13 @@ public class WebAppInterface {
 
     /**
      * Instantiate the interface and set the context
+     * must be added for API 17 or higher
      */
     public WebAppInterface(Context c) {
         mContext = c;
     }
 
-    @JavascriptInterface   // must be added for API 17 or higher
+    @JavascriptInterface
     public void showProducts(String id, String productName) {
 
         Intent openProductName = new Intent(mContext, ProductViewActivity.class);
@@ -32,5 +36,27 @@ public class WebAppInterface {
         ((AppCompatActivity) mContext).overridePendingTransition(0, 0);
     }
 
-    //addToShoppingList(array ingredients)
+    @JavascriptInterface
+    public void addToShoppingList(String ingredients) {
+        if (!TextUtils.isEmpty(ingredients)) {
+            Gson gson = new Gson();
+            Ingredient ingredient[] = gson.fromJson(ingredients, Ingredient[].class);
+            if (ingredient.length > 0) {
+                for (Ingredient i : ingredient) {
+                    Utils.addToShoppingCart(mContext, new ShoppingList(
+                            i.id, i.displayName, false));
+                }
+            }
+
+            ((AppCompatActivity) mContext).runOnUiThread(new Runnable() {
+                public void run() {
+                    PopWindowValidationMessage popWindowValidationMessage = new PopWindowValidationMessage(mContext);
+                    popWindowValidationMessage.displayValidationMessage("viewShoppingList",
+                            PopWindowValidationMessage.OVERLAY_TYPE.SHOPPING_LIST_INFO);
+                }
+            });
+
+        }
+
+    }
 }

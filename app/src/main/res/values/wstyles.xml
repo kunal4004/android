@@ -204,4 +204,9 @@
 		<item name="WTextView_font">medium</item>
         <item name="android:textCursorDrawable">@drawable/cursor_custom_color</item>
 	</style>
+
+	<style name="BlurDialogFragment.Default.Animation" parent="@android:style/Animation.Activity">
+		<item name="android:windowEnterAnimation">@anim/default_dialog_in</item>
+		<item name="android:windowExitAnimation">@anim/default_dialog_out</item>
+	</style>
 </resources>

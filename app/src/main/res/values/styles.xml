@@ -284,6 +284,7 @@
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">16dp</item>
     </style>
+
     <style name="listStyleLoggedOut" parent="android:Theme">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
@@ -566,4 +567,41 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
+    <style name="FragmentDialogStyle" parent="Base.Theme.AppCompat.Dialog">
+        <item name="android:windowMinWidthMajor">100%</item>
+        <item name="android:windowMinWidthMinor">100%</item>
+    </style>
+
+    <style name="shoppingListTitle" parent="android:Theme">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/description_color</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">left</item>
+        <item name="WTextView_font">medium</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="contact_us_item_header_textview" parent="android:Theme">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:singleLine">true</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:textSize">15sp</item>
+
+    </style>
+
+    <style name="contact_us_item_desc_textview" parent="android:Theme">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">#4d000000</item>
+        <item name="android:singleLine">true</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:textSize">13sp</item>
+
+    </style>
 </resources>
