@@ -417,7 +417,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
             @Override
             public void success(String strProduct, retrofit.client.Response response) {
-                dismissFragmentDialog();
                 WProduct wProduct = Utils.stringToJson(mContext, strProduct);
                 if (wProduct != null) {
                     switch (wProduct.httpCode) {
@@ -445,6 +444,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                             break;
                     }
                 }
+
+                dismissFragmentDialog();
             }
 
             @Override
@@ -456,10 +457,13 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     }
 
     private void dismissFragmentDialog() {
-        if (mGetProgressDialog != null) {
-            if (mGetProgressDialog.isVisible()) {
-                mGetProgressDialog.dismiss();
+        try {
+            if (mGetProgressDialog != null) {
+                if (mGetProgressDialog.isVisible()) {
+                    mGetProgressDialog.dismiss();
+                }
             }
+        } catch (IllegalStateException ignored) {
         }
     }
 
@@ -561,4 +565,5 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             }
         }.execute();
     }
+
 }
