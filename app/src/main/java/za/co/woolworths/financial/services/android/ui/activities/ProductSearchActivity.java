@@ -56,7 +56,6 @@ public class ProductSearchActivity extends BaseActivity
         initUI();
         showRecentSearchHistoryView(true);
 
-
         mEditSearchProduct.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -222,7 +221,7 @@ public class ProductSearchActivity extends BaseActivity
 
     private void canGoBack() {
         this.finish();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        overridePendingTransition(0, R.anim.fade_out);
     }
 
     @Override

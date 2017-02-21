@@ -4,6 +4,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -11,6 +13,7 @@ import com.awfs.coordination.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -19,6 +22,8 @@ import za.co.woolworths.financial.services.android.util.binder.DataBindAdapter;
 import za.co.woolworths.financial.services.android.util.binder.DataBinder;
 
 public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder> {
+
+    private int lastPosition = -1;
 
     public interface OnClickListener {
         void onClick(View v, int position);
@@ -43,7 +48,6 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
     @Override
     public void bindViewHolder(final ViewHolder holder, int position) {
         RootCategory rootCategory = mDataSet.get(position);
-
         holder.mTextProduct.setText(rootCategory.categoryName);
         String imageUrl = rootCategory.imgUrl;
 
@@ -59,6 +63,8 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
             }
         });
 
+        // call Animation function
+        setAnimation(holder.itemView, position);
     }
 
     @Override
@@ -88,5 +94,15 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
             mTextProduct = (WTextView) view.findViewById(R.id.textProduct);
             mFrameRootCategory = (FrameLayout) view.findViewById(R.id.frameRootCategory);
         }
+    }
+
+    private void setAnimation(View viewToAnimate, int position) {
+        // If the bound view wasn't previously displayed on screen, it's animated
+//        if (position > lastPosition) {
+//            ScaleAnimation anim = new ScaleAnimation(0.0f, 1.0f, 0.0f, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+//            anim.setDuration(new Random().nextInt(501));//to make duration random number between [0,501)
+//            viewToAnimate.startAnimation(anim);
+//            lastPosition = position;
+//        }
     }
 }

@@ -22,7 +22,6 @@
     <dimen name="cli_button_height">40dp</dimen>
     <dimen name="cli_button_height_popup">50dp</dimen>
     <dimen name="cli_eight_dp">8dp</dimen>
-    <dimen name="ten_dp">10dp</dimen>
     <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:
          https://developer.android.com/design/patterns/navigation-drawer.html -->
     <dimen name="navigation_drawer_width">240dp</dimen>
@@ -57,6 +56,7 @@
     <dimen name="terms_and_conditions_margin">16dp</dimen>
     <dimen name="voucher_card_margin">8dp</dimen>
     <dimen name="voucher_card_layout_padding">8dp</dimen>
+    <dimen name="ten_dp">10dp</dimen>
 
 </resources>
 

@@ -170,14 +170,14 @@ public class WfsApi {
         return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), "Android", category_id);
     }
 
-    public ProductView productViewRequest(boolean isBarcode, int pageSize, int pageNumber, String product_id) {
+    public ProductView productViewRequest(boolean isBarcode, int page0ffset, int pageSize, String product_id) {
         Location loc = Utils.getLastSavedLocation(mContext);
         if (loc == null) {
             loc = new Location("");//provider name is unecessary
             loc.setLatitude(0.0d);//your coords of course
             loc.setLongitude(0.0d);
         }
-        return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), isBarcode, pageSize, pageNumber, product_id);
+        return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), isBarcode, page0ffset, pageSize, product_id);
     }
 
     public ProductView getProductSearchList(String search_item, boolean isBarcode, int pageSize, int pageNumber) {
