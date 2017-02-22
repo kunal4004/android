@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -45,13 +44,14 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WEmpyViewDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICreditLimitContentBinder;
 
-public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnClickListener,
+public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickListener,
         CLICreditLimitContentBinder.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private WEditTextView mTextAmount;
@@ -332,12 +332,11 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View v, int position) {
-
         if (mArrCreditLimit != null) {
-            mPopSlideValidation.displayValidationMessage(mArrCreditLimit.get(position).getDescription(),
-                    PopWindowValidationMessage.OVERLAY_TYPE.INFO);
+            Utils.displayValidationMessage(CLISupplyInfoActivity.this,
+                    TransientActivity.VALIDATION_MESSAGE_LIST.INFO,
+                    mArrCreditLimit.get(position).getDescription());
         }
-
     }
 
     @Override
@@ -369,7 +368,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                 Intent openPreviousActivity = new Intent(CLISupplyInfoActivity.this, CLIActivity.class);
                 startActivity(openPreviousActivity);
                 finish();
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                 return true;
         }
         return false;
@@ -408,7 +407,11 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                                 openBankDetails();
                                 break;
                             default:
-                                mPopSlideValidation.displayValidationMessage(createOfferResponse.response.desc, PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+                                if (!TextUtils.isEmpty(createOfferResponse.response.desc)) {
+                                    Utils.displayValidationMessage(CLISupplyInfoActivity.this,
+                                            TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                            createOfferResponse.response.desc);
+                                }
                                 break;
                         }
                     }
@@ -421,7 +424,9 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
                 }
             }.execute();
         } else {
-            mPopSlideValidation.displayValidationMessage(getString(R.string.connect_to_server), PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+            Utils.displayValidationMessage(CLISupplyInfoActivity.this,
+                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                    getString(R.string.connect_to_server));
         }
     }
 
@@ -434,7 +439,7 @@ public class CLISupplyInfoActivity extends AppCompatActivity implements View.OnC
 
     public void canGoBack() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
     }
 
 

@@ -4,71 +4,78 @@
     android:id="@+id/relPopContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="bottom">
+    android:background="@color/black_50">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/relContainerRootMessage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/bank_spacing_width"
-        android:paddingRight="@dimen/bank_spacing_width">
+        android:layout_height="match_parent"
+        android:gravity="bottom">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/textEmailSent"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="@dimen/bank_spacing_width"
-            android:gravity="center"
-            android:letterSpacing="0.07"
-            android:text="@string/cli_send_to_title"
-            android:textColor="@color/black"
-            android:textSize="13sp"
-            app:WTextView_font="medium" />
-
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/textEmailAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="18dp"
-            android:gravity="center"
-            android:letterSpacing="0.05"
-            android:lineSpacingExtra="4dp"
-            android:text="@string/cli_send_to_title"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:WTextView_font="medium_bold" />
-
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/textProofIncome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:gravity="center"
-            android:letterSpacing="0.05"
-            android:lineSpacingExtra="4dp"
-            android:text="@string/cli_process_email_content"
-            android:textColor="@color/description_color"
-            android:textSize="15sp"
-            app:WTextView_font="myriadpro_regular" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.4dp"
-            android:layout_marginTop="@dimen/bank_spacing_width"
-            android:background="@color/description_color" />
-
-        <za.co.woolworths.financial.services.android.ui.views.WButton
-            android:id="@+id/btnOk"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="90dp"
             android:background="@color/white"
-            android:gravity="center"
-            android:letterSpacing="0.2"
-            android:text="OK"
-            android:textSize="12sp"
-            app:WButton_font="medium_bold" />
-    </LinearLayout>
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/bank_spacing_width"
+            android:paddingRight="@dimen/bank_spacing_width">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/textEmailSent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="@dimen/bank_spacing_width"
+                android:gravity="center"
+                android:letterSpacing="0.07"
+                android:text="@string/cli_send_to_title"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:WTextView_font="medium" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/textEmailAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                android:gravity="center"
+                android:letterSpacing="0.05"
+                android:lineSpacingExtra="4dp"
+                android:text="@string/cli_send_to_title"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:WTextView_font="medium_bold" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/textProofIncome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:gravity="center"
+                android:letterSpacing="0.05"
+                android:lineSpacingExtra="4dp"
+                android:text="@string/cli_process_email_content"
+                android:textColor="@color/description_color"
+                android:textSize="15sp"
+                app:WTextView_font="myriadpro_regular" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.4dp"
+                android:layout_marginTop="@dimen/bank_spacing_width"
+                android:background="@color/description_color" />
+
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:id="@+id/btnEmailOk"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:background="@color/white"
+                android:gravity="center"
+                android:letterSpacing="0.2"
+                android:text="OK"
+                android:textSize="12sp"
+                app:WButton_font="medium_bold" />
+        </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

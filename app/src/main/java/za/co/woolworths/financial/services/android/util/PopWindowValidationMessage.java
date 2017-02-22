@@ -260,7 +260,6 @@ public class PopWindowValidationMessage {
                 textEmailContent.setText(description);
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
-
                 mRelPopContainer
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
