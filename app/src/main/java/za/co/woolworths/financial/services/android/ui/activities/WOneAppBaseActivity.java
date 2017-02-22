@@ -45,7 +45,6 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
         , WProductFragments.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle, WRewardsFragment.HideActionBarComponent {
 
-    private FragmentLifecycle fragmentLifecycle;
     public static Toolbar mToolbar;
     //  public static AppBarLayout appbar;
     private WFragmentDrawer drawerFragment;
@@ -76,10 +75,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         mToolbar.setNavigationIcon(R.drawable.ic_drawer_menu);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        Class[] interfaces = this.getClass().getInterfaces();
-        for(int i = 0; i < interfaces.length; i++)
-        { Log.d("DEBUG_TAG", interfaces[i].toString()); Log.d("DEBUG_TAG", WOneAppBaseActivity.class.toString()); }
 
         drawerFragment = (WFragmentDrawer)
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
