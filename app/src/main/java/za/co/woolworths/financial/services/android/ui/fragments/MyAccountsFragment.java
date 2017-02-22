@@ -354,7 +354,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
     }
 
     private void setUiPageViewController() {
-
         try {
             pager_indicator.removeAllViews();
             dotsCount = adapter.getCount();
@@ -375,10 +374,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
             }
 
             dots[0].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_selected));
-        } catch (Exception ex) {
-            Log.e("ExceptionExx", ex.toString());
-            //adapter = new MyAccountOverViewPagerAdapter(getActivity());
-
+        } catch (Exception ignored) {
         }
     }
 
