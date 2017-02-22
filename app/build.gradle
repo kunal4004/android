@@ -38,7 +38,7 @@ android {
         minSdkVersion 19 //kitkat 4.4
         targetSdkVersion 24
         multiDexEnabled true
-        versionCode 31
+        versionCode 32
         versionName '5.0.0'
     }
 
