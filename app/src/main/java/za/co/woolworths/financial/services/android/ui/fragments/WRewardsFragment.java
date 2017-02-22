@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -22,33 +20,34 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.AbstractFragmentListener;
 import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
-
-import static com.awfs.coordination.R.id.toolbarText;
-import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 /**
  * Created by W7099877 on 05/01/2017.
  */
 
-public class WRewardsFragment extends Fragment{
-    public static final int FRAGMENT_CODE_1=1;
-    public static final int FRAGMENT_CODE_2=2;
-    public static final int FRAGMENT_CODE_3=2;
+public class WRewardsFragment extends AbstractFragmentListener {
+    public static final int FRAGMENT_CODE_1 = 1;
+    public static final int FRAGMENT_CODE_2 = 2;
+    public static final int FRAGMENT_CODE_3 = 2;
 
     UpdateNavDrawerTitle updateTitle;
     ImageView mBurgerButtonPressed;
     WTextView wRewarsToolbarTitle;
+
     public interface HideActionBarComponent {
         void onWRewardsDrawerPressed();
     }
+
     private HideActionBarComponent hideActionBarComponent;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.wrewards_fragment, container, false);
+        View view = inflater.inflate(R.layout.wrewards_fragment, container, false);
         mBurgerButtonPressed = (ImageView) view.findViewById(R.id.imBurgerButtonPressed);
-        wRewarsToolbarTitle=(WTextView)view.findViewById(R.id.toolbarText) ;
+        wRewarsToolbarTitle = (WTextView) view.findViewById(R.id.toolbarText);
         /*FragmentManager childFragMan = getChildFragmentManager();
         FragmentTransaction childFragTrans = childFragMan.beginTransaction();
         childFragTrans.add(R.id.content_frame,new WRewardsLoggedinAndNotLinkedFragment());
@@ -63,6 +62,7 @@ public class WRewardsFragment extends Fragment{
         initialize();
         return view;
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -72,70 +72,78 @@ public class WRewardsFragment extends Fragment{
             Log.e("Interface", ex.toString());
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == FRAGMENT_CODE_1 && resultCode == Activity.RESULT_OK) {
-
+        if (requestCode == FRAGMENT_CODE_1 && resultCode == Activity.RESULT_OK) {
             reloadFragment();
-        }
-        else if(resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()){
-            new Handler().postDelayed(new Runnable() {
-                public void run() {
-                    removeAllChildFragments();
+        } else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+            getAvailableActivity(new IActivityEnabledListener() {
+                @Override
+                public void onActivityEnabled(AppCompatActivity activity) {
+                    // Do manipulations with your activity
+                    removeAllChildFragments(activity);
                     reloadFragment();
                 }
-            }, 100);
+            });
         }
     }
-    public void initialize()
-    {
-        removeAllChildFragments();
-        JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity)getActivity()).getJWTDecoded();
-        if(jwtDecodedModel.AtgSession != null){
-            if(jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")){
+
+    public void initialize() {
+        getAvailableActivity(new IActivityEnabledListener() {
+            @Override
+            public void onActivityEnabled(AppCompatActivity activity) {
+                // Do manipulations with your activity
+                removeAllChildFragments(activity);
+            }
+        });
+        JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity) getActivity()).getJWTDecoded();
+        if (jwtDecodedModel.AtgSession != null) {
+            if (jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
                 FragmentManager childFragMan = getChildFragmentManager();
                 FragmentTransaction childFragTrans = childFragMan.beginTransaction();
                 WRewardsLoggedinAndLinkedFragment fragmentChild = new WRewardsLoggedinAndLinkedFragment();
                 fragmentChild.setTargetFragment(this, FRAGMENT_CODE_1);
-                childFragTrans.add(R.id.content_frame,fragmentChild);
+                childFragTrans.add(R.id.content_frame, fragmentChild);
                 childFragTrans.commit();
                 //user is linked and signed in
                 wRewarsToolbarTitle.setText(getString(R.string.wrewards));
-            } else{
+            } else {
                 //user is not linked
                 //but signed in
                 FragmentManager childFragMan = getChildFragmentManager();
                 FragmentTransaction childFragTrans = childFragMan.beginTransaction();
                 WRewardsLoggedinAndNotLinkedFragment fragmentChild = new WRewardsLoggedinAndNotLinkedFragment();
                 fragmentChild.setTargetFragment(this, FRAGMENT_CODE_3);
-                childFragTrans.add(R.id.content_frame,fragmentChild);
+                childFragTrans.add(R.id.content_frame, fragmentChild);
                 childFragTrans.commit();
                 wRewarsToolbarTitle.setText("");
             }
-        }else{
+        } else {
             //user is signed out
             FragmentManager childFragMan = getChildFragmentManager();
             FragmentTransaction childFragTrans = childFragMan.beginTransaction();
             WRewardsLoggedOutFragment fragmentChild = new WRewardsLoggedOutFragment();
             fragmentChild.setTargetFragment(this, FRAGMENT_CODE_2);
-            childFragTrans.add(R.id.content_frame,fragmentChild);
+            childFragTrans.add(R.id.content_frame, fragmentChild);
             childFragTrans.commit();
             wRewarsToolbarTitle.setText("");
         }
     }
 
-    public void removeAllChildFragments()
-    {
-        FragmentManager fm = getFragmentManager(); // or 'getSupportFragmentManager();'
+    public void removeAllChildFragments(AppCompatActivity activity) {
+        FragmentManager fm = activity.getSupportFragmentManager(); // or 'getSupportFragmentManager();'
         int count = fm.getBackStackEntryCount();
-        for(int i = 0; i < count; ++i) {
-            fm.popBackStack();
+        if (count > 0) {
+            for (int i = 0; i < count; ++i) {
+                fm.popBackStack();
+            }
+        } else {
+            Log.e("fragmentNull", "fragmentNull");
         }
-
     }
 
-    public void reloadFragment()
-    {
+    public void reloadFragment() {
         WRewardsFragment fragment = (WRewardsFragment)
                 getFragmentManager().findFragmentById(R.id.container_body);
 

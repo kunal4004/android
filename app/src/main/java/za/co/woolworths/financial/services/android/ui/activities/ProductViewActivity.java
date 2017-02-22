@@ -174,7 +174,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         mAddToShoppingListFragment.show(fm, "addToShop");
     }
 
-
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
         this.mScrollY = scrollY;
@@ -195,7 +194,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                             && firstVisibleItemPosition >= 0
                             && totalItemCount >= Utils.PAGE_SIZE) {
                         if (mProduct.size() < num_of_item) {
-
                             if (TextUtils.isEmpty(searchItem)) {
                                 loadMoreProduct();
                             } else {
@@ -258,7 +256,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
             @Override
             protected ProductView httpDoInBackground(String... params) {
-                pageNumber = 1;
+                pageNumber = 0;
                 mIsLastPage = false;
                 return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(false,
                         pageNumber, Utils.PAGE_SIZE, productId);
@@ -292,7 +290,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                         mNumberOfItem.setText(String.valueOf(num_of_item));
                         bindDataWithUI(mProduct);
                         mIsLastPage = false;
-                        pageNumber = 1;
+                        pageNumber = 0;
                         mIsLoading = false;
                         hideVProgressBar();
                     }
@@ -315,7 +313,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
             @Override
             protected ProductView httpDoInBackground(String... params) {
-                pageNumber = 1;
+                pageNumber = 0;
                 mIsLastPage = false;
 
                 return ((WoolworthsApplication) getApplication()).getApi()
@@ -576,13 +574,15 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         if (mProduct.size() < num_of_item) {
 
             if (pageNumber == 1) {
-                pageOffset = Utils.PAGE_SIZE;
+                pageOffset = Utils.PAGE_SIZE + 1;
             } else {
 
-                //           let offset = ((pageNumber - 1) * pageSize + 1).description
-                pageOffset = ((pageNumber - 1) * Utils.PAGE_SIZE + 1);
+                // let offset = ((pageNumber - 1) * pageSize + 1).description
+                // pageOffset = ((pageNumber - 1) * Utils.PAGE_SIZE + 1);
+                pageOffset = pageOffset + Utils.PAGE_SIZE;
 
             }
+            Log.e("pageoffset", String.valueOf(pageOffset));
         }
     }
 

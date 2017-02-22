@@ -40,6 +40,7 @@ public class DrawImage {
 //                })
 //                .into(imageView);
 
+
         Glide.with(mContext)
                 .load(url)
                 .asBitmap()

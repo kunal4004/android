@@ -42,7 +42,6 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         WTextView productName;
         WTextView mTextAmount;
         WTextView mTextWasPrice;
-        WTextView mTextLabelAmount;
         ImageView mSimpleDraweeView;
         ImageView imNewImage;
         ImageView mImSave;
@@ -54,7 +53,6 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             productName = (WTextView) view.findViewById(R.id.textTitle);
             mTextAmount = (WTextView) view.findViewById(R.id.textAmount);
             mTextWasPrice = (WTextView) view.findViewById(R.id.textWasPrice);
-            mTextLabelAmount = (WTextView) view.findViewById(R.id.textLabelAmount);
             mSimpleDraweeView = (ImageView) view.findViewById(R.id.imProduct);
             imNewImage = (ImageView) view.findViewById(R.id.imNewImage);
             mImSave = (ImageView) view.findViewById(R.id.imSave);
@@ -113,7 +111,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
 
 
     private void productType(SimpleViewHolder holder, String productType) {
-        String price = "";
+        String price;
         if ("clothingProducts".equalsIgnoreCase(productType)) {
             price = String.valueOf(productItem.fromPrice);
         } else {
@@ -123,29 +121,22 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         switch (productType) {
             case "clothingProducts":
                 holder.mTextAmount.setText(WFormatter.formatAmount(price));
-
                 if (!TextUtils.isEmpty(productItem.otherSkus.get(0).wasPrice)) {
-                    holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                     holder.mTextAmount.setText("From: " + WFormatter.formatAmount(productItem.otherSkus.get(0).wasPrice));
                     holder.mTextWasPrice.setText(WFormatter.formatAmount(price));
-                    holder.mTextLabelAmount.setVisibility(View.GONE);
+                    holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 } else {
                     holder.mTextAmount.setText("From: " + WFormatter.formatAmount(price));
-                    holder.mTextLabelAmount.setVisibility(View.GONE);
                 }
-
                 break;
             default:
                 holder.mTextAmount.setText(
-                        WFormatter.formatAmount(productItem.fromPrice));
+                        WFormatter.formatAmount(productItem.otherSkus.get(0).price));
+
                 if (!TextUtils.isEmpty(productItem.otherSkus.get(0).wasPrice)) {
-                    holder.mTextLabelAmount.setVisibility(View.VISIBLE);
-                    holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                     holder.mTextAmount.setText(WFormatter.formatAmount(productItem.otherSkus.get(0).wasPrice));
                     holder.mTextWasPrice.setText(WFormatter.formatAmount(price));
-                    holder.mTextLabelAmount.setVisibility(View.GONE);
-                } else {
-                    holder.mTextLabelAmount.setVisibility(View.GONE);
+                    holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 }
                 break;
         }

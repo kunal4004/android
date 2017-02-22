@@ -438,7 +438,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         if (productDetail.productType.equalsIgnoreCase("clothingProducts")) {
             mRelContainer.setVisibility(View.VISIBLE);
             mColorView.setVisibility(View.VISIBLE);
-            mTextPrice.setText(isEmpty(WFormatter.formatAmount(productDetail.fromPrice)));
             if (!TextUtils.isEmpty(mWasPrice)) {
                 mTextActualPrice.setText(WFormatter.formatAmount(productDetail.fromPrice));
                 mTextPrice.setText("From: " + WFormatter.formatAmount(mWasPrice));

@@ -180,18 +180,15 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
     private void setStatusBarColor(int position) {
         switch (position) {
             case 0:
-                int storeCardColor = ContextCompat.getColor(this, R.color.cli_store_card);
-                Utils.updateStatusBarBackground(this, storeCardColor);
+                Utils.updateStatusBarBackground(this, R.color.cli_store_card);
                 break;
 
             case 1:
-                int creditCardColor = ContextCompat.getColor(this, R.color.cli_credit_card);
-                //Utils.updateStatusBarBackground(this, creditCardColor);
+                Utils.updateStatusBarBackground(this, R.color.cli_credit_card);
                 break;
 
             case 2:
-                int personalLoanColor = ContextCompat.getColor(this, R.color.cli_personal_loan);
-                Utils.updateStatusBarBackground(this, personalLoanColor);
+                Utils.updateStatusBarBackground(this, R.color.cli_personal_loan);
                 break;
         }
     }
