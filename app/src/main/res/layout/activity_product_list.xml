@@ -43,8 +43,8 @@
                 android:id="@+id/llScrollLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:layout_marginTop="37dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="@dimen/bank_spacing_width"
                 android:orientation="horizontal"
                 android:paddingLeft="@dimen/default_margin"
                 android:paddingRight="@dimen/default_margin">
@@ -78,10 +78,9 @@
                 android:id="@+id/productList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="17dp"
                 android:nestedScrollingEnabled="false"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp" />
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp" />
 
             <RelativeLayout
                 android:id="@+id/relProgressBar"

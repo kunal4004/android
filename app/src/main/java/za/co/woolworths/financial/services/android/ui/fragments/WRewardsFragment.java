@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;

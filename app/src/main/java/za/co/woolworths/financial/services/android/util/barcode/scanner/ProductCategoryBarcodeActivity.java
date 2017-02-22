@@ -92,7 +92,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
                 ViewFinderView finderView = new ViewFinderView(context);
                 finderView.setLaserColor(Color.TRANSPARENT);
                 finderView.setMaskColor(ContextCompat.getColor(ProductCategoryBarcodeActivity.this,
-                        R.color.black_desc_opacity));
+                        R.color.mask_opacity));
                 finderView.setBorderColor(Color.WHITE);
                 finderView.setBorderStrokeWidth(4);
                 return finderView;

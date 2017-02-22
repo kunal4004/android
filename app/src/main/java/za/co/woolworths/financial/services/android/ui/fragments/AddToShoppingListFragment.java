@@ -48,7 +48,7 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getDialog().getWindow().setBackgroundDrawableResource(
-                android.R.color.transparent);
+                R.color.semi_per_black);
         return inflater.inflate(R.layout.add_shopping_list_fragment, container);
     }
 

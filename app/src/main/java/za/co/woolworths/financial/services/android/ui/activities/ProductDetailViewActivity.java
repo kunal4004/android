@@ -89,7 +89,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private View mColorView;
     private WTextView mTextPromo;
     private WTextView mTextActualPrice;
-    private WTextView mTextLabelPrice;
     private WTextView mTextColour;
     private WrapContentWebView mWebDescription;
     private WButton mBtnAddShoppingList;
@@ -97,7 +96,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private WTextView mIngredientList;
     private LinearLayout mLinIngredient;
     private View ingredientLine;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,9 +106,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         setContentView(R.layout.product_view_detail);
         mContext = this;
         SessionDao sessionDao;
-
         mPopWindowValidationMessage = new PopWindowValidationMessage(this);
-
 
         try {
             sessionDao = new SessionDao(ProductDetailViewActivity.this,
@@ -255,7 +251,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mTextColour = (WTextView) findViewById(R.id.textColour);
         WTextView mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
         mTextTitle = (WTextView) findViewById(R.id.textTitle);
-        mTextLabelPrice = (WTextView) findViewById(R.id.textLabelPrice);
         mTextActualPrice = (WTextView) findViewById(R.id.textActualPrice);
         mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
         mTextPrice = (WTextView) findViewById(R.id.textPrice);
@@ -429,8 +424,10 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private void populateView() {
         WProductDetail productDetail = mproductDetail.get(0);
 
+        String head = "<head><style>@font-face {font-family: 'myriadpro-regular';src: url('file://"+ this.getFilesDir().getAbsolutePath()+ "/fonts/MyriadPro-Regular.otf');}body {font-family: 'myriadpro-regular';}</style></head>";
+
         String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
-                "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
+                "<style type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
                 "</style></head><body>";
         String footerTag = "</body></html>";
         String descriptionWithoutExtraTag = productDetail.longDescription.replaceAll("</ul>\n\n<ul>\n", " ");
@@ -446,11 +443,9 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 mTextActualPrice.setText(WFormatter.formatAmount(productDetail.fromPrice));
                 mTextPrice.setText("From: " + WFormatter.formatAmount(mWasPrice));
                 mTextPrice.setPaintFlags(mTextPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                mTextLabelPrice.setVisibility(View.GONE);
             } else {
                 mTextActualPrice.setText("");
                 mTextPrice.setText("From: " + WFormatter.formatAmount(productDetail.fromPrice));
-                mTextLabelPrice.setVisibility(View.GONE);
             }
         } else {
             mColorView.setVisibility(View.GONE);
@@ -460,10 +455,8 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 mTextActualPrice.setText(WFormatter.formatAmount(productDetail.otherSkus.get(0).price));
                 mTextPrice.setText(WFormatter.formatAmount(mWasPrice));
                 mTextPrice.setPaintFlags(mTextPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                mTextLabelPrice.setVisibility(View.GONE);
             } else {
                 mTextActualPrice.setText("");
-                mTextLabelPrice.setVisibility(View.GONE);
             }
         }
         mCategoryName.setText(productDetail.categoryName);
@@ -646,7 +639,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             for (int i = 0; i < ivArrayDotsPager.length; i++) {
                 ivArrayDotsPager[i] = new ImageView(this);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.setMargins(10, 0, 10, 0);
+                params.setMargins(16, 0, 16, 0);
                 ivArrayDotsPager[i].setLayoutParams(params);
                 ivArrayDotsPager[i].setImageResource(R.drawable.unselected_drawable);
                 //ivArrayDotsPager[i].setAlpha(0.4f);
