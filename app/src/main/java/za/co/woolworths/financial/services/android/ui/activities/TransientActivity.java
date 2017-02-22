@@ -37,9 +37,10 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.updateStatusBarBackground(this,android.R.color.transparent);
+        Utils.updateStatusBarBackground(this, android.R.color.transparent);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
         Bundle mBundle = getIntent().getExtras();
         if (mBundle != null) {
             current_view = (VALIDATION_MESSAGE_LIST) mBundle.getSerializable("key");
@@ -80,6 +81,18 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
                 wBtnViewShoppingList.setOnClickListener(this);
                 mRelPopContainer.setOnClickListener(this);
                 break;
+
+            case SIGN_OUT:
+                setContentView(R.layout.sign_out);
+                mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+                mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+                setAnimation();
+                WButton mBtnSignOutCancel = (WButton) findViewById(R.id.btnSignOutCancel);
+                WButton mBtnSignOut = (WButton) findViewById(R.id.btnSignOut);
+                mBtnSignOutCancel.setOnClickListener(this);
+                mBtnSignOut.setOnClickListener(this);
+                mRelPopContainer.setOnClickListener(this);
+                break;
         }
     }
 
@@ -108,6 +121,33 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    private void exitAnimation() {
+        if (!viewWasClicked) { // prevent more than one click
+            viewWasClicked = true;
+            TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+            animation.setFillAfter(true);
+            animation.setDuration(ANIM_DOWN_DURATION);
+            animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    Intent intent = new Intent("logOutReceiver");
+                    sendBroadcast(intent);
+                    dismissLayout();
+                }
+            });
+            mRelRootContainer.startAnimation(animation);
+        }
+    }
+
     private void dismissLayout() {
         finish();
         overridePendingTransition(0, 0);
@@ -122,25 +162,29 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
     private void setAnimation() {
         mPopEnterAnimation = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.popup_enter);
         mRelRootContainer.startAnimation(mPopEnterAnimation);
-
     }
 
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
+            case R.id.btnSignOutCancel:
             case R.id.btnBarcodeOk:
             case R.id.relPopContainer:
             case R.id.btnShopOk:
             case R.id.btnOK:
                 startExitAnimation();
                 break;
-
             case R.id.btnViewShoppingList:
                 Intent shoppingList = new Intent(this, ShoppingListActivity.class);
                 startActivity(shoppingList);
                 dismissLayout();
                 break;
+
+            case R.id.btnSignOut:
+                Log.e("ButtonSignOut", "SignOut");
+                exitAnimation();
+                break;
+
         }
     }
 }

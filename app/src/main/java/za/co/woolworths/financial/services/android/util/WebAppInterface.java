@@ -54,7 +54,6 @@ public class WebAppInterface {
                     Utils.displayValidationMessage(mContext,
                             TransientActivity.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
                             "viewShoppingList");
-
                 }
             });
 

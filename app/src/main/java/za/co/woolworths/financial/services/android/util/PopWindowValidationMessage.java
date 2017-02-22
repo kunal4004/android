@@ -242,14 +242,6 @@ public class PopWindowValidationMessage {
                             }
                         });
 
-                mView.findViewById(R.id.btCancel)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startExitAnimation(overlay_type.ERROR);
-                            }
-                        });
-
                 mRelPopContainer
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
