@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -345,12 +346,13 @@ public class PopWindowValidationMessage {
         hideStatusBar((Activity) mContext);
         mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
         mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
-        mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
+        mDarkenScreen.showAtLocation(view, Gravity.AXIS_PULL_BEFORE, 0, 0);
         mDarkenScreen.setOutsideTouchable(true);
         mDarkenScreen.setFocusable(true);
         mDarkenScreen.setAnimationStyle(R.style.Animations_popup);
         mRelPopContainer = (RelativeLayout) view.findViewById(R.id.relPopContainer);
         mRelRootContainer = (RelativeLayout) view.findViewById(R.id.relContainerRootMessage);
+
     }
 
     private void startExitAnimation(final OVERLAY_TYPE type) {

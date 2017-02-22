@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
@@ -80,11 +81,9 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
                         productId,
                         productName, false));
 
-                new PopWindowValidationMessage(getActivity()).displayValidationMessage("",
-                        PopWindowValidationMessage.OVERLAY_TYPE.SHOPPING_LIST_INFO);
-
-                dismiss();
-
+                Utils.displayValidationMessage(getActivity(),
+                        TransientActivity.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
+                        "viewShoppingList");
                 break;
         }
     }

@@ -2,13 +2,16 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -40,6 +43,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 
 import static android.Manifest.permission_group.STORAGE;
 
@@ -399,5 +403,15 @@ public class Utils {
             Log.e("TAG", e.getMessage());
         }
         return historyList;
+    }
+
+    public static void displayValidationMessage(Context context,TransientActivity.VALIDATION_MESSAGE_LIST key, String description) {
+        Intent openMsg = new Intent(context, TransientActivity.class);
+        Bundle args = new Bundle();
+        args.putSerializable("key", key);
+        args.putString("description", description);
+        openMsg.putExtras(args);
+        context.startActivity(openMsg);
+        ((AppCompatActivity) context).overridePendingTransition(0, 0);
     }
 }

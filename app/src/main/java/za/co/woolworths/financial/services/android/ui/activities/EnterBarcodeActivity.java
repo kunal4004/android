@@ -134,7 +134,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             protected ProductView httpDoInBackground(String... params) {
                 return ((WoolworthsApplication) getApplication()).getApi()
                         .getProductSearchList(query,
-                                 true, 0, Utils.PAGE_SIZE);
+                                true, 0, Utils.PAGE_SIZE);
 
             }
 
@@ -223,11 +223,9 @@ public class EnterBarcodeActivity extends AppCompatActivity {
     }
 
     private void errorScanCode() {
-        Intent intent = new Intent(EnterBarcodeActivity.this, TransludentActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
+        Utils.displayValidationMessage(this,
+                TransientActivity.VALIDATION_MESSAGE_LIST.BARCODE_ERROR, "");
     }
-
 
     private void getProductDetail(final String productId, final String skuId) {
         ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {

@@ -1,9 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,8 +13,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.os.Bundle;
-import android.view.animation.AccelerateInterpolator;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 
@@ -38,7 +33,6 @@ import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
-import me.leolin.shortcutbadger.ShortcutBadger;
 
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
@@ -80,7 +74,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         drawerFragment.setUp(R.id.fragment_navigation_drawer, mDrawerLayout, mToolbar);
         drawerFragment.setDrawerListener(this);
         displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
-
     }
 
     @Override
@@ -90,7 +83,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 
     private void displayView(int position) {
         boolean isRewardFragment = false;
-        // WOneAppBaseActivity.appbar.animate().translationY(WOneAppBaseActivity.appbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
         Fragment fragment = null;
         String title = getString(R.string.app_name);
         switch (position) {
