@@ -89,7 +89,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private View mColorView;
     private WTextView mTextPromo;
     private WTextView mTextActualPrice;
-    private WTextView mTextLabelPrice;
     private WTextView mTextColour;
     private WrapContentWebView mWebDescription;
     private WButton mBtnAddShoppingList;
@@ -255,7 +254,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mTextColour = (WTextView) findViewById(R.id.textColour);
         WTextView mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
         mTextTitle = (WTextView) findViewById(R.id.textTitle);
-        mTextLabelPrice = (WTextView) findViewById(R.id.textLabelPrice);
         mTextActualPrice = (WTextView) findViewById(R.id.textActualPrice);
         mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
         mTextPrice = (WTextView) findViewById(R.id.textPrice);
@@ -441,16 +439,13 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         if (productDetail.productType.equalsIgnoreCase("clothingProducts")) {
             mRelContainer.setVisibility(View.VISIBLE);
             mColorView.setVisibility(View.VISIBLE);
-            mTextPrice.setText(isEmpty(WFormatter.formatAmount(productDetail.fromPrice)));
             if (!TextUtils.isEmpty(mWasPrice)) {
                 mTextActualPrice.setText(WFormatter.formatAmount(productDetail.fromPrice));
                 mTextPrice.setText("From: " + WFormatter.formatAmount(mWasPrice));
                 mTextPrice.setPaintFlags(mTextPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                mTextLabelPrice.setVisibility(View.GONE);
             } else {
                 mTextActualPrice.setText("");
                 mTextPrice.setText("From: " + WFormatter.formatAmount(productDetail.fromPrice));
-                mTextLabelPrice.setVisibility(View.GONE);
             }
         } else {
             mColorView.setVisibility(View.GONE);
@@ -460,10 +455,8 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 mTextActualPrice.setText(WFormatter.formatAmount(productDetail.otherSkus.get(0).price));
                 mTextPrice.setText(WFormatter.formatAmount(mWasPrice));
                 mTextPrice.setPaintFlags(mTextPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                mTextLabelPrice.setVisibility(View.GONE);
             } else {
                 mTextActualPrice.setText("");
-                mTextLabelPrice.setVisibility(View.GONE);
             }
         }
         mCategoryName.setText(productDetail.categoryName);

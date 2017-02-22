@@ -134,7 +134,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             protected ProductView httpDoInBackground(String... params) {
                 return ((WoolworthsApplication) getApplication()).getApi()
                         .getProductSearchList(query,
-                                 true, 1, Utils.PAGE_SIZE);
+                                 true, 0, Utils.PAGE_SIZE);
 
             }
 

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,10 +21,7 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-import java.util.Locale;
-
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
-import za.co.woolworths.financial.services.android.ui.activities.ProductDetailViewActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
