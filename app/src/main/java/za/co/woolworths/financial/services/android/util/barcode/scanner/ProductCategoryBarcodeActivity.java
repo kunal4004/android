@@ -1,32 +1,23 @@
 package za.co.woolworths.financial.services.android.util.barcode.scanner;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -44,8 +35,6 @@ import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeAct
 import za.co.woolworths.financial.services.android.ui.activities.ProductDetailViewActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransludentActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
-import za.co.woolworths.financial.services.android.util.Const;
-import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.barcode.core.IViewFinder;
@@ -55,7 +44,6 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         ZBarScannerView.ResultHandler,
         CameraSelectorDialogFragment.CameraSelectorDialogListener, View.OnClickListener {
 
-    public static int PAGE_SIZE = 20;
     private static final String FLASH_STATE = "FLASH_STATE";
     private static final String AUTO_FOCUS_STATE = "AUTO_FOCUS_STATE";
     private static final String SELECTED_FORMATS = "SELECTED_FORMATS";
@@ -65,8 +53,6 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     private boolean mAutoFocus;
     private ArrayList<Integer> mSelectedIndices;
     private int mCameraId = -1;
-    private static final int PERMS_REQUEST_CODE = 1234;
-    private LatLng mLocation;
     private TextView mTextInfo;
     private RelativeLayout mRelProgressBar;
     private ProductCategoryBarcodeActivity mContext;
@@ -114,11 +100,6 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         };
         setupFormats();
         contentFrame.addView(mScannerView);
-        if (hasPermissions()) {
-            startLocationUpdate();
-        } else {
-            requestPerms();
-        }
     }
 
     @Override
@@ -212,10 +193,8 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected ProductView httpDoInBackground(String... params) {
-                LatLng location1 = new LatLng(mLocation.latitude, mLocation.longitude);
                 return ((WoolworthsApplication) getApplication()).getApi()
-                        .getProductSearchList(query,
-                                location1, true, 1, PAGE_SIZE);
+                        .getProductSearchList(query, true, 0, Utils.PAGE_SIZE);
             }
 
             @Override
@@ -267,86 +246,6 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
 
     }
 
-
-    /***********************************************************************************************
-     * local broadcast receiver
-     **********************************************************************************************/
-    /**
-     * handle new location
-     */
-    private BroadcastReceiver mLocationUpdated = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                Location location = intent.getParcelableExtra(Const.LBM_EVENT_LOCATION_UPDATE);
-                mLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                ((WoolworthsApplication) getApplication()).setLastKnowLatLng(mLocation);
-            } catch (NullPointerException e) {
-                mLocation = new LatLng(0, 0);
-            }
-        }
-    };
-
-    public boolean hasPermissions() {
-        int res;
-        //string array of permissions,
-        String[] permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION};
-
-        for (String perms : permissions) {
-            res = checkCallingOrSelfPermission(perms);
-            if (!(res == PackageManager.PERMISSION_GRANTED)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void requestPerms() {
-        String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION};
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(permissions, PERMS_REQUEST_CODE);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        boolean permissionIsAllowed = true;
-        switch (requestCode) {
-            case PERMS_REQUEST_CODE:
-                for (int res : grantResults) {
-                    // if user granted all permissions.
-                    permissionIsAllowed = permissionIsAllowed && (res == PackageManager.PERMISSION_GRANTED);
-                }
-                break;
-            default:
-                // if user not granted permissions.
-                permissionIsAllowed = false;
-                break;
-        }
-        if (permissionIsAllowed) {
-            //user granted all permissions we can perform our task.
-            startLocationUpdate();
-        } else {
-            // we will give warning to user that they haven't granted permissions.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)
-                        && shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    Toast.makeText(this, "Location Permissions denied.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }
-
-    private void startLocationUpdate() {
-        // start location updates
-        FusedLocationSingleton.getInstance().startLocationUpdates();
-        // register observer for location updates
-        LocalBroadcastManager.getInstance(ProductCategoryBarcodeActivity.this).registerReceiver(mLocationUpdated,
-                new IntentFilter(Const.INTENT_FILTER_LOCATION_UPDATE));
-    }
-
     @Override
     public void finish() {
         super.finish();
@@ -365,14 +264,6 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         super.onPause();
         // stop location updates
         mScannerView.stopCamera();
-        try {
-            FusedLocationSingleton.getInstance().stopLocationUpdates();
-            // unregister observer
-            LocalBroadcastManager
-                    .getInstance(ProductCategoryBarcodeActivity.this)
-                    .unregisterReceiver(mLocationUpdated);
-        } catch (NullPointerException ignored) {
-        }
     }
 
     private void showProgressBar() {

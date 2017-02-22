@@ -7,15 +7,13 @@ import android.content.res.TypedArray;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,36 +27,28 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Currency;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
+
+import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
-import za.co.woolworths.financial.services.android.ui.fragments.CLISecondStepFragment;
 
 import static android.Manifest.permission_group.STORAGE;
-
-/**
- * Created by W7099877 on 26/10/2016.
- */
 
 public class Utils {
 
     public final static float BIG_SCALE = 2.4f;
     public final static float SMALL_SCALE = 1.9f;
     public final static float DIFF_SCALE = BIG_SCALE - SMALL_SCALE;
+    public final static int PAGE_SIZE = 60;
     public static int FIRST_PAGE = 0;
     public static int DEFAULT_SELECTED_NAVIGATION_ITEM = 0;
 
@@ -215,8 +205,6 @@ public class Utils {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.setStatusBarColor(ContextCompat.getColor(activity, color));
-            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-
         }
     }
 
@@ -307,5 +295,109 @@ public class Utils {
         TypeToken<WProduct> token = new TypeToken<WProduct>() {
         };
         return new Gson().fromJson(value, token.getType());
+    }
+
+
+    public static void sessionDaoSave(Context context, SessionDao.KEY key, String value) {
+        SessionDao sessionDao = new SessionDao(context);
+        sessionDao.key = key;
+        sessionDao.value = value;
+        try {
+            sessionDao.save();
+        } catch (Exception e) {
+            Log.e("TAG", e.getMessage());
+        }
+    }
+
+    public static String getSessionDaoValue(Context context, SessionDao.KEY key) {
+        SessionDao sessionDao = null;
+        try {
+            sessionDao = new SessionDao(context, key).get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sessionDao.value;
+    }
+
+    public static void setBadgeCounter(Context context, int badgeCount) {
+        ShortcutBadger.applyCount(context, badgeCount);
+        sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
+    }
+
+    public static void removeBadgeCounter(Context context) {
+        ShortcutBadger.applyCount(context, 0);
+    }
+
+    public static boolean isLocationEnabled(Context context) {
+        int locationMode = 0;
+        String locationProviders;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+
+        } else {
+            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            return !TextUtils.isEmpty(locationProviders);
+        }
+    }
+
+    public static void addToShoppingCart(Context context, ShoppingList addtoShoppingCart) {
+        List<ShoppingList> addtoShoppingCarts = getShoppingList(context);
+        SessionDao sessionDao = new SessionDao(context);
+        sessionDao.key = SessionDao.KEY.STORE_SHOPPING_LIST;
+        Gson gson = new Gson();
+        boolean isExist = false;
+        if (addtoShoppingCarts == null) {
+            addtoShoppingCarts = new ArrayList<>();
+            addtoShoppingCarts.add(0, addtoShoppingCart);
+            sessionDao.value = gson.toJson(addtoShoppingCarts);
+            try {
+                sessionDao.save();
+            } catch (Exception e) {
+                Log.e("TAG", e.getMessage());
+            }
+        } else {
+            for (ShoppingList s : addtoShoppingCarts) {
+                if (s.getProduct_id().equalsIgnoreCase(addtoShoppingCart.getProduct_id())) {
+                    isExist = true;
+                }
+            }
+            if (!isExist) {
+                addtoShoppingCarts.add(0, addtoShoppingCart);
+                sessionDao.value = gson.toJson(addtoShoppingCarts);
+                try {
+                    sessionDao.save();
+                } catch (Exception e) {
+                    Log.e("TAG", e.getMessage());
+                }
+            }
+        }
+    }
+
+    public static List<ShoppingList> getShoppingList(Context context) {
+        List<ShoppingList> historyList = null;
+        try {
+            SessionDao sessionDao = new SessionDao(context,
+                    SessionDao.KEY.STORE_SHOPPING_LIST).get();
+            if (sessionDao.value == null) {
+                historyList = new ArrayList<>();
+            } else {
+                Gson gson = new Gson();
+                Type type = new TypeToken<List<ShoppingList>>() {
+                }.getType();
+                historyList = gson.fromJson(sessionDao.value, type);
+            }
+        } catch (Exception e) {
+            Log.e("TAG", e.getMessage());
+        }
+        return historyList;
     }
 }

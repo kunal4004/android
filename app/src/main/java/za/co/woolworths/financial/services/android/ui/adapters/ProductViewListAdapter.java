@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewListAdapter.SimpleViewHolder> {
+    private final DrawImage drawImage;
     public Activity mContext;
     private List<ProductList> mProductList;
     private SelectedProductView mSelectedProductView;
@@ -33,6 +34,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         this.mContext = mContext;
         this.mProductList = mProductList;
         this.mSelectedProductView = selectedProductView;
+        drawImage = new DrawImage(mContext);
     }
 
     class SimpleViewHolder extends RecyclerView.ViewHolder {
@@ -40,7 +42,6 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         WTextView productName;
         WTextView mTextAmount;
         WTextView mTextWasPrice;
-        WTextView mTextLabelAmount;
         ImageView mSimpleDraweeView;
         ImageView imNewImage;
         ImageView mImSave;
@@ -52,7 +53,6 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             productName = (WTextView) view.findViewById(R.id.textTitle);
             mTextAmount = (WTextView) view.findViewById(R.id.textAmount);
             mTextWasPrice = (WTextView) view.findViewById(R.id.textWasPrice);
-            mTextLabelAmount = (WTextView) view.findViewById(R.id.textLabelAmount);
             mSimpleDraweeView = (ImageView) view.findViewById(R.id.imProduct);
             imNewImage = (ImageView) view.findViewById(R.id.imNewImage);
             mImSave = (ImageView) view.findViewById(R.id.imSave);
@@ -82,6 +82,15 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
                 mSelectedProductView.onSelectedProduct(v, holder.getAdapterPosition());
             }
         });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mSelectedProductView.onLongPressState(v, position);
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -102,7 +111,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
 
 
     private void productType(SimpleViewHolder holder, String productType) {
-        String price = "";
+        String price;
         if ("clothingProducts".equalsIgnoreCase(productType)) {
             price = String.valueOf(productItem.fromPrice);
         } else {
@@ -112,28 +121,22 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         switch (productType) {
             case "clothingProducts":
                 holder.mTextAmount.setText(WFormatter.formatAmount(price));
-
                 if (!TextUtils.isEmpty(productItem.otherSkus.get(0).wasPrice)) {
-                    holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                    holder.mTextAmount.setText(WFormatter.formatAmount(productItem.otherSkus.get(0).wasPrice));
+                    holder.mTextAmount.setText("From: " + WFormatter.formatAmount(productItem.otherSkus.get(0).wasPrice));
                     holder.mTextWasPrice.setText(WFormatter.formatAmount(price));
-                    holder.mTextLabelAmount.setVisibility(View.VISIBLE);
+                    holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 } else {
-                    holder.mTextLabelAmount.setVisibility(View.VISIBLE);
+                    holder.mTextAmount.setText("From: " + WFormatter.formatAmount(price));
                 }
-
                 break;
             default:
                 holder.mTextAmount.setText(
-                        WFormatter.formatAmount(productItem.fromPrice));
+                        WFormatter.formatAmount(productItem.otherSkus.get(0).price));
+
                 if (!TextUtils.isEmpty(productItem.otherSkus.get(0).wasPrice)) {
-                    holder.mTextLabelAmount.setVisibility(View.VISIBLE);
-                    holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                     holder.mTextAmount.setText(WFormatter.formatAmount(productItem.otherSkus.get(0).wasPrice));
                     holder.mTextWasPrice.setText(WFormatter.formatAmount(price));
-                    holder.mTextLabelAmount.setVisibility(View.GONE);
-                } else {
-                    holder.mTextLabelAmount.setVisibility(View.GONE);
+                    holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 }
                 break;
         }
@@ -142,7 +145,6 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
     private void productImage(SimpleViewHolder holder, String imgUrl) {
         if (imgUrl != null) {
             try {
-                DrawImage drawImage = new DrawImage(mContext);
                 drawImage.displayImage(holder.mSimpleDraweeView, imgUrl);
             } catch (IllegalArgumentException ignored) {
             }
@@ -188,5 +190,6 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             }
         }
     }
+
 
 }

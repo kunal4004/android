@@ -404,13 +404,30 @@ public interface ApiInterface {
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion,
             @Header("sha1Password") String sha1Password,
-            @Header("logitude") double longitude,
+            @Header("longitude") double longitude,
             @Header("latitude") double latitude,
             @Header("isBarCode") boolean isBarcode,
             @Query("pageOffset") int pageOffset,
             @Query("pageSize") int pageSize,
             @Path("cat") String category);
 
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @GET("/categories/{cat}/products")
+    ProductView getProduct(
+            @Header("osVersion") String osVersion,
+            @Header("deviceModel") String deviceModel,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("os") String os,
+            @Header("network") String network,
+            @Header("apiId") String apiId,
+            @Header("userAgent") String userAgent,
+            @Header("userAgentVersion") String userAgentVersion,
+            @Header("sha1Password") String sha1Password,
+            @Header("isBarCode") boolean isBarcode,
+            @Query("pageOffset") int pageOffset,
+            @Query("pageSize") int pageSize,
+            @Path("cat") String category);
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @GET("/categories/{cat}")
     SubCategories getSubCategory(
@@ -436,12 +453,31 @@ public interface ApiInterface {
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion,
             @Header("sha1Password") String sha1Password,
-            @Header("logitude") double longitude,
+            @Header("longitude") double longitude,
             @Header("latitude") double latitude,
             @Header("isBarCode") boolean isBarcode,
             @Query("searchTerm") String searchTerm,
             @Query("pageOffset") int pageOffset,
             @Query("pageSize") int pageSize);
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @GET("/search")
+    ProductView getProductSearch(
+            @Header("osVersion") String osVersion,
+            @Header("deviceModel") String deviceModel,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("os") String os,
+            @Header("network") String network,
+            @Header("apiId") String apiId,
+            @Header("userAgent") String userAgent,
+            @Header("userAgentVersion") String userAgentVersion,
+            @Header("sha1Password") String sha1Password,
+            @Header("isBarCode") boolean isBarcode,
+            @Query("searchTerm") String searchTerm,
+            @Query("pageOffset") int pageOffset,
+            @Query("pageSize") int pageSize);
+
+
 
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:30"})
     @GET("/content/faq")

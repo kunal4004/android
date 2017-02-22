@@ -77,7 +77,7 @@
                 android:layout_marginLeft="@dimen/bank_spacing_width"
                 android:layout_toRightOf="@+id/imBurgerButtonPressed"
                 android:gravity="left"
-                android:letterSpacing="0.1"
+                android:letterSpacing="0.2"
                 android:text="@string/nav_item_products"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
@@ -91,13 +91,12 @@
                 android:layout_marginLeft="@dimen/bank_spacing_width"
                 android:background="@android:color/transparent"
                 android:gravity="start|center"
-                android:letterSpacing="0.06"
                 android:paddingStart="@dimen/recent_search_margin"
                 android:text="@string/product_search_hint"
                 android:textColor="@color/product_search_hint"
                 android:textSize="16sp"
                 android:visibility="gone"
-                app:WEditTextView_font="myriadpro_regular" />
+                app:WTextView_font="myriadpro_regular" />
 
             <ImageView
                 android:id="@+id/imTBBarcodeScanner"

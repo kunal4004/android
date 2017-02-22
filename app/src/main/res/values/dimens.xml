@@ -22,7 +22,6 @@
     <dimen name="cli_button_height">40dp</dimen>
     <dimen name="cli_button_height_popup">50dp</dimen>
     <dimen name="cli_eight_dp">8dp</dimen>
-    <dimen name="ten_dp">10dp</dimen>
     <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:
          https://developer.android.com/design/patterns/navigation-drawer.html -->
     <dimen name="navigation_drawer_width">240dp</dimen>
@@ -36,7 +35,7 @@
     <dimen name="page_margin">16dp</dimen>
     <dimen name="card_margin">45dp</dimen>
     <dimen name="card_padding_margin">16dp</dimen>
-    <dimen name="account_margin">22dp</dimen>
+    <dimen name="account_margin">10dp</dimen>
     <dimen name="acc_fifteen_dp">12sp</dimen>
     <dimen name="acc_fourteen_sp">14sp</dimen>
     <dimen name="acc_thirteen_sp">13sp</dimen>
@@ -46,6 +45,18 @@
     <dimen name="spacing_normal">16dp</dimen>
     <dimen name="product_search_top_margin">105dp</dimen>
     <dimen name="barcode_margin">16dp</dimen>
+    <dimen name="unlinked_account_copy_padding_left_right">33dp</dimen>
+    <dimen name="voucher_message_layout_height">191dp</dimen>
+    <dimen name="voucher_barcode_margin">16dp</dimen>
+    <dimen name="voucher_barcode_number_margintop">18dp</dimen>
+    <dimen name="voucher_min_spend_margintop">18dp</dimen>
+    <dimen name="voucher_min_spend_padding">16dp</dimen>
+    <dimen name="voucher_barcode_number_margin">16.5dp</dimen>
+    <dimen name="voucher_barcode_number_text_size">17.5dp</dimen>
+    <dimen name="terms_and_conditions_margin">16dp</dimen>
+    <dimen name="voucher_card_margin">8dp</dimen>
+    <dimen name="voucher_card_layout_padding">8dp</dimen>
+    <dimen name="ten_dp">10dp</dimen>
 
 </resources>
 

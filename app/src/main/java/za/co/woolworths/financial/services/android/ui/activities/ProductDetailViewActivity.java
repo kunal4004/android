@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,15 +25,18 @@ import com.google.gson.reflect.TypeToken;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.CircularImageView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -57,7 +59,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private RecyclerView mRecyclerviewSize;
     private ProductDetailViewActivity mContext;
     private ArrayList<WProductDetail> mproductDetail;
-    private WTextView mDescription;
     private WTextView mTextTitle;
     private WTextView mTextPrice;
     private WTextView mCategoryName;
@@ -88,26 +89,56 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private View mColorView;
     private WTextView mTextPromo;
     private WTextView mTextActualPrice;
-    private WTextView mTextLabelPrice;
     private WTextView mTextColour;
+    private WrapContentWebView mWebDescription;
+    private WButton mBtnAddShoppingList;
+    private PopWindowValidationMessage mPopWindowValidationMessage;
+    private WTextView mIngredientList;
+    private LinearLayout mLinIngredient;
+    private View ingredientLine;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.updateStatusBarBackground(ProductDetailViewActivity.this, R.color.black);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.product_view_detail);
         mContext = this;
         SessionDao sessionDao;
 
+        mPopWindowValidationMessage = new PopWindowValidationMessage(this);
+
+
         try {
-            sessionDao = new SessionDao(ProductDetailViewActivity.this, SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
+            sessionDao = new SessionDao(ProductDetailViewActivity.this,
+                    SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
             mProductJSON = sessionDao.value;
         } catch (Exception e) {
             e.printStackTrace();
         }
         initUI();
         bundle();
+        addButton();
+    }
+
+    private void addButton() {
+        mBtnAddShoppingList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopWindowValidationMessage.displayValidationMessage("viewShoppingList",
+                        PopWindowValidationMessage.OVERLAY_TYPE.SHOPPING_LIST_INFO)
+                        .setOnDismissListener(new PopupWindow.OnDismissListener() {
+                            @Override
+                            public void onDismiss() {
+                                Utils.addToShoppingCart(ProductDetailViewActivity.this, new ShoppingList(
+                                        mproductDetail.get(0).productId,
+                                        mproductDetail.get(0).productName, false));
+                            }
+                        });
+            }
+        });
     }
 
     private void retrieveJson(String colour) {
@@ -115,9 +146,15 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         try {
             // Instantiate a JSON object from the request response
             jsProduct = new JSONObject(mProductJSON);
-
             String mProduct = jsProduct.getString("product");
             JSONObject jsProductList = new JSONObject(mProduct);
+            if (jsProductList.has("ingredients")) {
+
+                setIngredients(jsProductList.getString("ingredients"));
+            } else {
+                ingredientLine.setVisibility(View.GONE);
+                mLinIngredient.setVisibility(View.GONE);
+            }
             String auxiliaryImages = jsProductList.getString("auxiliaryImages");
             JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
             Iterator<String> keysIterator = jsAuxiliaryImages.keys();
@@ -159,6 +196,17 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
     }
 
+    private void setIngredients(String ingredients) {
+        if (TextUtils.isEmpty(ingredients)) {
+            mLinIngredient.setVisibility(View.GONE);
+            ingredientLine.setVisibility(View.GONE);
+        } else {
+            mIngredientList.setText(ingredients);
+            mLinIngredient.setVisibility(View.VISIBLE);
+            ingredientLine.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void selectedColor(String url) {
         if (TextUtils.isEmpty(url)) {
             mImSelectedColor.setImageAlpha(0);
@@ -179,6 +227,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             TypeToken<List<WProductDetail>> token = new TypeToken<List<WProductDetail>>() {
             };
             mproductDetail = new Gson().fromJson(mProductList, token.getType());
+
             assert mproductDetail != null;
             otherSkusList = mproductDetail.get(0).otherSkus;
             mCheckOutLink = mproductDetail.get(0).checkOutLink;
@@ -200,30 +249,32 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     }
 
     private void initUI() {
-
         mColorView = findViewById(R.id.colorView);
         mTextSelectSize = (WTextView) findViewById(R.id.textSelectSize);
         mTextColour = (WTextView) findViewById(R.id.textColour);
         WTextView mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
-        mDescription = (WTextView) findViewById(R.id.description);
         mTextTitle = (WTextView) findViewById(R.id.textTitle);
-        mTextLabelPrice = (WTextView) findViewById(R.id.textLabelPrice);
         mTextActualPrice = (WTextView) findViewById(R.id.textActualPrice);
         mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
         mTextPrice = (WTextView) findViewById(R.id.textPrice);
+        mLinIngredient = (LinearLayout) findViewById(R.id.linIngredient);
         mCategoryName = (WTextView) findViewById(R.id.textType);
+        mIngredientList = (WTextView) findViewById(R.id.ingredientList);
         mTextPromo = (WTextView) findViewById(R.id.textPromo);
         mTextSelectColor = (WTextView) findViewById(R.id.textSelectColour);
         mProductCode = (WTextView) findViewById(R.id.product_code);
         mRelContainer = (LinearLayout) findViewById(R.id.linProductContainer);
         RelativeLayout mLinColor = (RelativeLayout) findViewById(R.id.linColour);
         mLinSize = (RelativeLayout) findViewById(R.id.linSize);
+        mBtnAddShoppingList = (WButton) findViewById(R.id.btnAddShoppingList);
         WButton mBtnShopOnlineWoolies = (WButton) findViewById(R.id.btnShopOnlineWoolies);
         ImageView mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
         mImCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
         mImSelectedColor = (CircularImageView) findViewById(R.id.imSelectedColor);
         mLlPagerDots = (LinearLayout) findViewById(R.id.pager_dots);
         ImageView mImColorArrow = (ImageView) findViewById(R.id.imColorArrow);
+        mWebDescription = (WrapContentWebView) findViewById(R.id.webDescription);
+        ingredientLine = findViewById(R.id.ingredientLine);
 
         mImNewImage = (ImageView) findViewById(R.id.imNewImage);
         mImSave = (ImageView) findViewById(R.id.imSave);
@@ -301,6 +352,11 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         selectedProduct(position);
     }
 
+    @Override
+    public void onLongPressState(View v, int position) {
+
+    }
+
     private void selectedProduct(int position) {
         if (productIsColored) {
             if (mPColourWindow != null) {
@@ -370,22 +426,26 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
     private void populateView() {
         WProductDetail productDetail = mproductDetail.get(0);
-        mDescription.setText(Html.fromHtml(isEmpty(productDetail.longDescription)));
+
+        String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
+                "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
+                "</style></head><body>";
+        String footerTag = "</body></html>";
+        String descriptionWithoutExtraTag = productDetail.longDescription.replaceAll("</ul>\n\n<ul>\n", " ");
+        mWebDescription.loadData(headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag, "text/html; charset=UTF-8", null);
         mTextTitle.setText(isEmpty(productDetail.productName));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
         String mWasPrice = productDetail.otherSkus.get(0).wasPrice;
         if (productDetail.productType.equalsIgnoreCase("clothingProducts")) {
             mRelContainer.setVisibility(View.VISIBLE);
             mColorView.setVisibility(View.VISIBLE);
-            mTextPrice.setText(isEmpty(WFormatter.formatAmount(productDetail.fromPrice)));
             if (!TextUtils.isEmpty(mWasPrice)) {
                 mTextActualPrice.setText(WFormatter.formatAmount(productDetail.fromPrice));
-                mTextPrice.setText(WFormatter.formatAmount(mWasPrice));
+                mTextPrice.setText("From: " + WFormatter.formatAmount(mWasPrice));
                 mTextPrice.setPaintFlags(mTextPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                mTextLabelPrice.setVisibility(View.VISIBLE);
             } else {
                 mTextActualPrice.setText("");
-                mTextLabelPrice.setVisibility(View.VISIBLE);
+                mTextPrice.setText("From: " + WFormatter.formatAmount(productDetail.fromPrice));
             }
         } else {
             mColorView.setVisibility(View.GONE);
@@ -395,10 +455,8 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 mTextActualPrice.setText(WFormatter.formatAmount(productDetail.otherSkus.get(0).price));
                 mTextPrice.setText(WFormatter.formatAmount(mWasPrice));
                 mTextPrice.setPaintFlags(mTextPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                mTextLabelPrice.setVisibility(View.VISIBLE);
             } else {
                 mTextActualPrice.setText("");
-                mTextLabelPrice.setVisibility(View.GONE);
             }
         }
         mCategoryName.setText(productDetail.categoryName);

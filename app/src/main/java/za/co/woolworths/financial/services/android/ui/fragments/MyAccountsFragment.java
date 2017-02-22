@@ -15,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,11 +43,14 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.ui.activities.FAQActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
@@ -95,6 +99,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
     LinearLayout applyNowAccountsLayout;
     LinearLayout loggedOutHeaderLayout;
     LinearLayout loggedInHeaderLayout;
+    LinearLayout unlinkedLayout;
     WButton linkAccountsBtn;
     RelativeLayout signOutBtn;
     ViewPager viewPager;
@@ -159,6 +164,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         applyNowAccountsLayout = (LinearLayout) view.findViewById(R.id.applyNowLayout);
         loggedOutHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedOutHeaderLayout);
         loggedInHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedInHeaderLayout);
+        unlinkedLayout = (LinearLayout) view.findViewById(R.id.llUnlinkedAccount);
         linkAccountsBtn = (WButton) view.findViewById(R.id.linkAccountsBtn);
         signOutBtn = (RelativeLayout) view.findViewById(R.id.signOutBtn);
         viewPager = (ViewPager) view.findViewById(R.id.pager);
@@ -245,7 +251,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 applyStoreCardView.setVisibility(View.GONE);
 
                 sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                scProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds,account.creditLimit));
+                scProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
 
             } else if (account.productGroupCode.equals("CC")) {
                 linkedCreditCardView.setVisibility(View.VISIBLE);
@@ -260,14 +266,14 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 }
 
                 cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                ccProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds,account.creditLimit));
+                ccProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
 
             } else if (account.productGroupCode.equals("PL")) {
                 linkedPersonalCardView.setVisibility(View.VISIBLE);
                 applyPersonalCardView.setVisibility(View.GONE);
 
                 pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                plProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds,account.creditLimit));
+                plProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
             }
         }
 
@@ -321,7 +327,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 } else {
                     //user is not linked
                     //but signed in
-                    linkAccountsBtn.setVisibility(View.VISIBLE);
+                    unlinkedLayout.setVisibility(View.VISIBLE);
                     setUiPageViewController();
                 }
             } else {
@@ -344,11 +350,10 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         applyNowAccountsLayout.setVisibility(View.GONE);
         contactUs.setVisibility(View.GONE);
         relFAQ.setVisibility(View.GONE);
-        linkAccountsBtn.setVisibility(View.GONE);
+        unlinkedLayout.setVisibility(View.GONE);
     }
 
     private void setUiPageViewController() {
-
         try {
             pager_indicator.removeAllViews();
             dotsCount = adapter.getCount();
@@ -369,10 +374,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
             }
 
             dots[0].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_selected));
-        } catch (Exception ex) {
-            Log.e("ExceptionExx", ex.toString());
-            //adapter = new MyAccountOverViewPagerAdapter(getActivity());
-
+        } catch (Exception ignored) {
         }
     }
 
@@ -423,7 +425,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 redirectToMyAccountsCardsActivity(2);
                 break;
             case R.id.contactUs:
-                startActivity(new Intent(getActivity(), WContactUsActivity.class));
+                startActivity(new Intent(getActivity(), WContactUsActivityNew.class));
                 getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
             case R.id.relFAQ:
@@ -431,6 +433,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
             case R.id.openShoppingList:
+                Intent openShoppingList = new Intent(getActivity(), ShoppingListActivity.class);
+                startActivity(openShoppingList);
                 break;
             case R.id.signOutBtn:
                 mPopWindowValidationMessage.displayValidationMessage("", PopWindowValidationMessage.OVERLAY_TYPE.SIGN_OUT);
@@ -599,9 +603,13 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 super.onPostExecute(messageResponse);
                 if (messageResponse.unreadCount > 0) {
                     messageCounter.setVisibility(View.VISIBLE);
-                    messageCounter.setText(String.valueOf(messageResponse.unreadCount));
-
+                    int unreadCount = messageResponse.unreadCount;
+                    if (TextUtils.isEmpty(String.valueOf(unreadCount)))
+                        unreadCount = 0;
+                    Utils.setBadgeCounter(getActivity(), unreadCount);
+                    messageCounter.setText(String.valueOf(unreadCount));
                 } else {
+                    Utils.removeBadgeCounter(getActivity());
                     messageCounter.setVisibility(View.GONE);
                 }
             }
@@ -716,12 +724,11 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
     }
 
-    public int getAvailableFundsPercentage(int availableFund, int creditLimit)
-    {
+    public int getAvailableFundsPercentage(int availableFund, int creditLimit) {
         // Progressbar MAX value is 10000 to manage float values
-        int percentage=Math.round((100*((float)availableFund/(float)creditLimit))*100);
+        int percentage = Math.round((100 * ((float) availableFund / (float) creditLimit)) * 100);
 
-        if(percentage<0 || percentage>Utils.ACCOUNTS_PROGRESS_BAR_MAX_VALUE)
+        if (percentage < 0 || percentage > Utils.ACCOUNTS_PROGRESS_BAR_MAX_VALUE)
             return Utils.ACCOUNTS_PROGRESS_BAR_MAX_VALUE;
         else
             return percentage;

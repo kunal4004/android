@@ -144,7 +144,9 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         final MenuItem searchViewItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchViewItem);
         searchView.setIconified(false);
-        ImageView mCloseButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
+        final ImageView mCloseButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
+        mCloseButton.setImageResource(R.drawable.close_24);
+        mCloseButton.setVisibility(View.GONE);
         SpannableMenuOption spannableMenuOption = new SpannableMenuOption(this);
         searchView.setQueryHint(spannableMenuOption.customSpannableSearch(getString(R.string.search_by_store_loc)));
        // ImageView searchCloseIcon = (ImageView)searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
@@ -156,6 +158,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         mCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 searchText.setText("");
                 searchView.clearFocus();
                 searchErrorLayout.setVisibility(View.GONE);
@@ -163,6 +166,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
                 if (storeDetailsList != null) {
                     storeDetailsList.clear();
                 }
+                mCloseButton.setVisibility(View.GONE);
             }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -175,6 +179,8 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
             @Override
             public boolean onQueryTextChange(final String newText) {
 
+                mCloseButton.setVisibility(newText.isEmpty() ? View.GONE : View.VISIBLE);
+
                 mHandler.removeCallbacksAndMessages(null);
 
                 mHandler.postDelayed(new Runnable() {
@@ -183,7 +189,8 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
                         //clear the array and repopulate it each time user types in a letter
                         if (storeDetailsList!=null) {
                             storeDetailsList.clear();
-                            searchAdapter.notifyDataSetChanged();
+                            if(searchAdapter!=null)
+                                  searchAdapter.notifyDataSetChanged();
                         }
                         if(newText.isEmpty()) {
                             searchErrorLayout.setVisibility(View.GONE);

@@ -1,20 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -26,14 +20,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -49,11 +39,10 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.Const;
-import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.ScrollState;
@@ -66,10 +55,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     private WTextView mToolBarTitle;
     private String productId;
     private String productName;
-    private final int PAGE_SIZE = 30;
-    private final int PERMS_REQUEST_CODE = 1234;
-    private LatLng mLocation;
-    private int mCurrentPage = 1;
+    private int pageNumber = 0;
     private RecyclerView mProductList;
     private ProductViewActivity mContext;
     private List<ProductList> mProduct;
@@ -87,6 +73,10 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     private FragmentManager fm;
     private WProgressDialogFragment mGetProgressDialog;
     private String searchItem = "";
+    private String mTitle;
+    private String mTitleNav;
+    private int num_of_item;
+    private int pageOffset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,24 +87,31 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         initUI();
         actionBar();
         bundle();
-        if (hasPermissions()) {
-            startLocationUpdate();
-        } else {
-            requestPerms();
-        }
         fm = getSupportFragmentManager();
         mGetProgressDialog = WProgressDialogFragment.newInstance("v");
         mGetProgressDialog.setCancelable(false);
         hideProgressBar();
         Bundle extras = getIntent().getExtras();
         searchItem = extras.getString("searchProduct");
+        mTitle = extras.getString("title");
+        mTitleNav = extras.getString("titleNav");
+
         if (TextUtils.isEmpty(searchItem)) {
+            if (!TextUtils.isEmpty(mTitle)) {
+                productName = mTitleNav;
+                productId = mTitle;
+            }
             productConfig(productName);
             searchItem = "";
             loadProduct();
         } else {
-            productConfig(searchItem);
-            productId=searchItem;
+            if (TextUtils.isEmpty(mTitle)) {
+                productConfig(searchItem);
+            } else {
+                productConfig(mTitle);
+            }
+
+            productId = searchItem;
             searchProduct();
         }
 
@@ -122,7 +119,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     }
 
     private void productConfig(String productName) {
-        mLocation = new LatLng(0, 0);
         mToolBarTitle.setText(productName);
 
     }
@@ -138,7 +134,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         if (mActionBar != null) {
             mActionBar.setDisplayHomeAsUpEnabled(true);
             mActionBar.setDisplayShowTitleEnabled(false);
-            mActionBar.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.appbar_background));
+            mActionBar.setBackgroundDrawable(ContextCompat.getDrawable(this,
+                    R.drawable.appbar_background));
         }
     }
 
@@ -155,115 +152,26 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         mProductScroll.setScrollViewCallbacks(this);
     }
 
-    public boolean hasPermissions() {
-        int res;
-        //string array of permissions,
-        String[] permissions = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION};
-
-        for (String perms : permissions) {
-            res = checkCallingOrSelfPermission(perms);
-            if (!(res == PackageManager.PERMISSION_GRANTED)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void startLocationUpdate() {
-        // start location updates
-        FusedLocationSingleton.getInstance().startLocationUpdates();
-        // register observer for location updates
-        LocalBroadcastManager.getInstance(ProductViewActivity.this).registerReceiver(mLocationUpdated,
-                new IntentFilter(Const.INTENT_FILTER_LOCATION_UPDATE));
-    }
-
-    private void requestPerms() {
-        String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION};
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(permissions, PERMS_REQUEST_CODE);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        boolean permissionIsAllowed = true;
-        switch (requestCode) {
-            case PERMS_REQUEST_CODE:
-                for (int res : grantResults) {
-                    // if user granted all permissions.
-                    permissionIsAllowed = permissionIsAllowed && (res == PackageManager.PERMISSION_GRANTED);
-                }
-                break;
-            default:
-                // if user not granted permissions.
-                permissionIsAllowed = false;
-                break;
-        }
-        if (permissionIsAllowed) {
-            //user granted all permissions we can perform our task.
-            startLocationUpdate();
-            loadProduct();
-        } else {
-            // we will give warning to user that they haven't granted permissions.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)
-                        && shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    Toast.makeText(this, "Location Permissions denied.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // stop location updates
-        try {
-            FusedLocationSingleton.getInstance().stopLocationUpdates();
-            // unregister observer
-            LocalBroadcastManager.getInstance(ProductViewActivity.this).unregisterReceiver(mLocationUpdated);
-        } catch (NullPointerException ex) {
-            Log.e("onPauseFusedLoc", ex.toString());
-        }
-    }
-
-    /***********************************************************************************************
-     * local broadcast receiver
-     **********************************************************************************************/
-    /**
-     * handle new location
-     */
-    private BroadcastReceiver mLocationUpdated = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            try {
-                Location location = intent.getParcelableExtra(Const.LBM_EVENT_LOCATION_UPDATE);
-                mLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                ((WoolworthsApplication) getApplication()).setLastKnowLatLng(mLocation);
-            } catch (NullPointerException e) {
-                mLocation = new LatLng(0, 0);
-            }
-        }
-    };
-
     @Override
     public void onSelectedProduct(View v, int position) {
         try {
-            getProductDetail(mProduct.get(position).productId, mProduct.get(position).otherSkus.get(0).sku, false);
+            getProductDetail(mProduct.get(position).productId,
+                    mProduct.get(position).otherSkus.get(0).sku, false);
         } catch (Exception ex) {
             Log.e("ExceptionProduct", ex.toString());
         }
 
     }
 
-    private void hideViews() {
-        mToolbar.animate().translationY(-mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
-    }
-
-    private void showViews() {
-        mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
+    @Override
+    public void onLongPressState(View v, int position) {
+        String productId = mProduct.get(position).productId;
+        String productName = mProduct.get(position).productName;
+        String externalImageRef = mProduct.get(position).externalImageRef;
+        android.app.FragmentManager fm = mContext.getFragmentManager();
+        AddToShoppingListFragment mAddToShoppingListFragment =
+                AddToShoppingListFragment.newInstance(productId, productName, externalImageRef);
+        mAddToShoppingListFragment.show(fm, "addToShop");
     }
 
     @Override
@@ -284,8 +192,14 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 if (!mIsLoading && !mIsLastPage) {
                     if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                             && firstVisibleItemPosition >= 0
-                            && totalItemCount >= PAGE_SIZE) {
-                        loadMoreProduct();
+                            && totalItemCount >= Utils.PAGE_SIZE) {
+                        if (mProduct.size() < num_of_item) {
+                            if (TextUtils.isEmpty(searchItem)) {
+                                loadMoreProduct();
+                            } else {
+                                searchMoreProduct();
+                            }
+                        }
                     }
                 }
             } catch (NullPointerException ignored) {
@@ -296,19 +210,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        try {
-            switch (scrollState) {
-                case UP:
-                    hideViews();
-                    break;
-                case DOWN:
-                    showViews();
-                    break;
-                default:
-                    break;
-            }
-        } catch (Exception ignored) {
-        }
     }
 
     @Override
@@ -322,7 +223,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                Intent openSearchBarActivity = new Intent(ProductViewActivity.this, ProductSearchActivity.class);
+                Intent openSearchBarActivity = new Intent(ProductViewActivity.this,
+                        ProductSearchActivity.class);
                 startActivity(openSearchBarActivity);
                 break;
             case android.R.id.home:
@@ -334,7 +236,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
     private void showProgressBar() {
         mRelProgressBar.setVisibility(View.VISIBLE);
-        mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+        mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK,
+                PorterDuff.Mode.MULTIPLY);
     }
 
     public void hideProgressBar() {
@@ -353,10 +256,11 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
             @Override
             protected ProductView httpDoInBackground(String... params) {
-                mCurrentPage = 1;
+                pageNumber = 0;
                 mIsLastPage = false;
-                return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(mLocation, false,
-                        mCurrentPage, PAGE_SIZE, productId);
+                return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(false,
+                        pageNumber, Utils.PAGE_SIZE, productId);
+
             }
 
             @Override
@@ -382,10 +286,11 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                     if (pv.products.size() == 1) {
                         getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku, true);
                     } else {
-                        mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
+                        num_of_item = pv.pagingResponse.numItemsInTotal;
+                        mNumberOfItem.setText(String.valueOf(num_of_item));
                         bindDataWithUI(mProduct);
                         mIsLastPage = false;
-                        mCurrentPage = 1;
+                        pageNumber = 0;
                         mIsLoading = false;
                         hideVProgressBar();
                     }
@@ -408,12 +313,12 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
             @Override
             protected ProductView httpDoInBackground(String... params) {
-                mCurrentPage = 1;
+                pageNumber = 0;
                 mIsLastPage = false;
 
                 return ((WoolworthsApplication) getApplication()).getApi()
-                        .getProductSearchList(searchItem,
-                                mLocation, false, mCurrentPage, PAGE_SIZE);
+                        .getProductSearchList(searchItem, false, pageNumber, Utils.PAGE_SIZE);
+
             }
 
             @Override
@@ -436,13 +341,14 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 mProduct = new ArrayList<>();
                 if (pv.products != null && pv.products.size() != 0) {
                     mProduct = pv.products;
+                    num_of_item = pv.pagingResponse.numItemsInTotal;
+
                     if (pv.products.size() == 1) {
                         getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku, true);
                     } else {
                         mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
                         bindDataWithUI(mProduct);
                         mIsLastPage = false;
-                        mCurrentPage = 1;
                         mIsLoading = false;
                     }
                 }
@@ -465,13 +371,14 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 super.onPreExecute();
                 showProgressBar();
                 mIsLoading = true;
-                mCurrentPage += 1;
+                pageNumber += 1;
+                pagination();
             }
 
             @Override
             protected ProductView httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(mLocation, false,
-                        mCurrentPage, PAGE_SIZE, productId);
+                return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(false,
+                        pageOffset, Utils.PAGE_SIZE, productId);
             }
 
             @Override
@@ -495,7 +402,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 List<ProductList> moreProductList;
                 moreProductList = productResponse.products;
                 if (moreProductList != null && moreProductList.size() != 0) {
-                    if (moreProductList.size() < PAGE_SIZE) {
+                    if (moreProductList.size() < Utils.PAGE_SIZE) {
                         mIsLastPage = true;
                     }
                     mProduct.addAll(moreProductList);
@@ -506,17 +413,14 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         }.execute();
     }
 
-    private void getProductDetail(final String productId, final String skuId, final boolean closeProductView) {
-        if (TextUtils.isEmpty(searchItem)) {
-            try {
-                mGetProgressDialog.show(fm, "v");
-            } catch (NullPointerException ignored) {
-            }
+    private void getProductDetail(final String productId, final String skuId, final boolean closeActivity) {
+        try {
+            mGetProgressDialog.show(fm, "v");
+        } catch (NullPointerException ignored) {
         }
         ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
             @Override
             public void success(String strProduct, retrofit.client.Response response) {
-                dismissFragmentDialog();
                 WProduct wProduct = Utils.stringToJson(mContext, strProduct);
                 if (wProduct != null) {
                     switch (wProduct.httpCode) {
@@ -534,7 +438,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                             openDetailView.putExtra("product_detail", gson.toJson(mProductList));
                             startActivity(openDetailView);
                             overridePendingTransition(0, R.anim.anim_slide_up);
-                            if (closeProductView) { //close ProductView activity when 1 row exist
+                            if (closeActivity) { //close ProductView activity when 1 row exist
                                 finish();
                             }
                             break;
@@ -544,6 +448,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                             break;
                     }
                 }
+
+                dismissFragmentDialog();
             }
 
             @Override
@@ -555,10 +461,13 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     }
 
     private void dismissFragmentDialog() {
-        if (mGetProgressDialog != null) {
-            if (mGetProgressDialog.isVisible()) {
-                mGetProgressDialog.dismiss();
+        try {
+            if (mGetProgressDialog != null) {
+                if (mGetProgressDialog.isVisible()) {
+                    mGetProgressDialog.dismiss();
+                }
             }
+        } catch (IllegalStateException ignored) {
         }
     }
 
@@ -602,4 +511,79 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         super.onDestroy();
         unregisterReceiver(broadcast_reciever);
     }
+
+
+    /***
+     * LOAD MORE PRODUCT FROM SEARCH
+     ***/
+
+    public void searchMoreProduct() {
+        new HttpAsyncTask<String, String, ProductView>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                showProgressBar();
+                mIsLoading = true;
+                pageNumber += 1;
+                pagination();
+            }
+
+            @Override
+            protected ProductView httpDoInBackground(String... params) {
+                mIsLastPage = false;
+
+                return ((WoolworthsApplication) getApplication()).getApi()
+                        .getProductSearchList(searchItem, false, pageNumber, Utils.PAGE_SIZE);
+
+            }
+
+            @Override
+            protected Class<ProductView> httpDoInBackgroundReturnType() {
+                return ProductView.class;
+            }
+
+            @Override
+            protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                ProductView productResponse = new ProductView();
+                productResponse.response = new Response();
+                hideProgressBar();
+                mIsLoading = false;
+                return productResponse;
+            }
+
+            @Override
+            protected void onPostExecute(ProductView pv) {
+                super.onPostExecute(pv);
+                mIsLoading = false;
+                List<ProductList> moreProductList;
+                moreProductList = pv.products;
+                if (moreProductList != null && moreProductList.size() != 0) {
+                    if (moreProductList.size() < Utils.PAGE_SIZE) {
+                        mIsLastPage = true;
+                    }
+                    mProduct.addAll(moreProductList);
+                    mProductAdapter.notifyDataSetChanged();
+                }
+                hideProgressBar();
+            }
+        }.execute();
+    }
+
+    private void pagination() {
+
+        if (mProduct.size() < num_of_item) {
+
+            if (pageNumber == 1) {
+                pageOffset = Utils.PAGE_SIZE + 1;
+            } else {
+
+                // let offset = ((pageNumber - 1) * pageSize + 1).description
+                // pageOffset = ((pageNumber - 1) * Utils.PAGE_SIZE + 1);
+                pageOffset = pageOffset + Utils.PAGE_SIZE;
+
+            }
+            Log.e("pageoffset", String.valueOf(pageOffset));
+        }
+    }
+
 }

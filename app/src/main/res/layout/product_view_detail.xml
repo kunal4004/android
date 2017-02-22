@@ -99,22 +99,6 @@
                         android:orientation="horizontal">
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
-                            android:id="@+id/textLabelPrice"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_marginBottom="2dp"
-                            android:layout_marginEnd="2dp"
-                            android:gravity="top|start"
-                            android:letterSpacing="-0.01"
-                            android:text="@string/product_from"
-                            android:textAllCaps="true"
-                            android:textColor="@color/black"
-                            android:textSize="20sp"
-                            android:visibility="gone"
-                            app:WTextView_font="medium_bold" />
-
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
                             android:id="@+id/textPrice"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -236,24 +220,22 @@
                 android:layout_marginStart="@dimen/default_margin"
                 android:text="@string/add_to_shopping_list" />
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/description"
+            <za.co.woolworths.financial.services.android.ui.views.WrapContentWebView
+                android:id="@+id/webDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginTop="24dp"
-                android:lineSpacingExtra="1.4dp"
-                android:text="@string/product_description"
-                android:textColor="@color/black_desc_opacity"
-                android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular" />
+                android:nestedScrollingEnabled="false">
+
+            </za.co.woolworths.financial.services.android.ui.views.WrapContentWebView>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/product_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="?attr/actionBarSize"
+                android:layout_marginBottom="30dp"
                 android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginTop="10dp"
@@ -262,6 +244,44 @@
                 android:textSize="15sp"
                 app:WTextView_font="myriadpro_regular" />
 
+            <include layout="@layout/line" android:id="@+id/ingredientLine"/>
+
+            <LinearLayout
+                android:id="@+id/linIngredient"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:orientation="vertical">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginEnd="@dimen/default_margin"
+                    android:layout_marginStart="@dimen/default_margin"
+                    android:gravity="start|top"
+                    android:letterSpacing="0.2"
+                    android:text="@string/ingredients"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:WTextView_font="medium_bold" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/ingredientList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="?attr/actionBarSize"
+                    android:layout_marginEnd="@dimen/default_margin"
+                    android:layout_marginStart="@dimen/default_margin"
+                    android:layout_marginTop="4dp"
+                    android:lineSpacingExtra="2dp"
+                    android:gravity="start|top"
+                    android:textColor="@color/black_desc_opacity"
+                    android:textSize="15sp"
+                    app:WTextView_font="myriadpro_regular" />
+
+            </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

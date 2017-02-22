@@ -54,7 +54,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-                    android:letterSpacing="0.1"
+                    android:letterSpacing="0.2"
                     android:paddingRight="10dp"
                     android:text="0"
                     android:textAllCaps="true"
@@ -66,7 +66,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"
-                    android:letterSpacing="0.1"
+                    android:letterSpacing="0.15"
                     android:text="@string/product_item_found"
                     android:textAllCaps="true"
                     android:textColor="@color/black_desc_opacity"
@@ -80,8 +80,8 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="17dp"
                 android:nestedScrollingEnabled="false"
-                android:paddingLeft="14dp"
-                android:paddingRight="14dp" />
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp" />
 
             <RelativeLayout
                 android:id="@+id/relProgressBar"
@@ -109,10 +109,10 @@
             android:id="@+id/toolbarText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:letterSpacing="0.06"
-            android:textAllCaps="true"
             android:layout_marginRight="@dimen/default_margin"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+            android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="12sp"
             app:WTextView_font="medium_bold" />

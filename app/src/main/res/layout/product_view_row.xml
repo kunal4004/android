@@ -44,19 +44,6 @@
         android:orientation="horizontal">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/textLabelAmount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="bottom|start"
-            android:letterSpacing="0.03"
-            android:layout_marginRight="5dp"
-            android:text="@string/product_from"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            android:visibility="gone"
-            app:WTextView_font="medium_bold" />
-
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/textAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -11,6 +11,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.MessageDetails;
 import za.co.woolworths.financial.services.android.models.dto.MessageRead;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
@@ -56,7 +58,6 @@ public class MessagesActivity extends BaseActivity {
     public int visibleThreshold = 5;
     ConnectionDetector connectionDetector;
     private FragmentManager fm;
-    private WProgressDialogFragment mGetMessageProgressDialog;
     private WTextView noMessagesText;
 
 
@@ -130,12 +131,9 @@ public class MessagesActivity extends BaseActivity {
 
     public void loadMessages() {
         fm = getSupportFragmentManager();
-        mGetMessageProgressDialog = WProgressDialogFragment.newInstance("message");
-        mGetMessageProgressDialog.setCancelable(false);
         new HttpAsyncTask<String, String, MessageResponse>() {
             @Override
             protected void onPreExecute() {
-                mGetMessageProgressDialog.show(fm, "message");
                 super.onPreExecute();
             }
 
@@ -155,7 +153,6 @@ public class MessagesActivity extends BaseActivity {
             protected MessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 MessageResponse messageResponse = new MessageResponse();
                 messageResponse.response = new Response();
-                dismissProgress();
                 hideRefreshView();
                 return messageResponse;
             }
@@ -169,6 +166,16 @@ public class MessagesActivity extends BaseActivity {
                 if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
                     messageList = messageResponse.messagesList;
                     bindDataWithUI(messageList);
+
+                    String unreadCountValue = Utils.getSessionDaoValue(MessagesActivity.this,
+                            SessionDao.KEY.UNREAD_MESSAGE_COUNT);
+                    if (TextUtils.isEmpty(unreadCountValue)) {
+                        Utils.setBadgeCounter(MessagesActivity.this, 0);
+                    } else {
+                        int unreadCount = Integer.valueOf(unreadCountValue)-messageList.size();
+                        Utils.setBadgeCounter(MessagesActivity.this, unreadCount);
+                    }
+
                     setMeassagesAsRead(messageList);
                     mIsLastPage = false;
                     mCurrentPage = 1;
@@ -177,7 +184,6 @@ public class MessagesActivity extends BaseActivity {
                     messsageListview.setVisibility(View.GONE);
                     noMessagesText.setVisibility(View.VISIBLE);
                 }
-                dismissProgress();
                 hideRefreshView();
             }
         }.execute();
@@ -352,9 +358,4 @@ public class MessagesActivity extends BaseActivity {
         return false;
     }
 
-    private void dismissProgress() {
-        if (mGetMessageProgressDialog != null && mGetMessageProgressDialog.isVisible()) {
-            mGetMessageProgressDialog.dismiss();
-        }
-    }
 }

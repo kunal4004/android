@@ -41,6 +41,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
                 android:orientation="horizontal">
 
                 <TextView style="@style/account_logged_out_bullet" />
@@ -53,6 +54,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
                 android:orientation="horizontal">
 
                 <TextView style="@style/account_logged_out_bullet" />
@@ -65,6 +67,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
                 android:orientation="horizontal">
 
                 <TextView style="@style/account_logged_out_bullet" />
@@ -77,6 +80,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
                 android:orientation="horizontal">
 
                 <TextView style="@style/account_logged_out_bullet" />
@@ -89,6 +93,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
                 android:orientation="horizontal">
 
                 <TextView style="@style/account_logged_out_bullet" />
@@ -101,6 +106,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
                 android:layout_marginBottom="@dimen/bank_spacing_width"
                 android:orientation="horizontal">
 
@@ -150,7 +156,7 @@
 
         <include layout="@layout/account_horizontal_line" />
 
-        <LinearLayout style="@style/account_logged_out_container">
+        <!--<LinearLayout style="@style/account_logged_out_container">
 
             <ImageView
                 style="@style/account_logged_out_icon"
@@ -165,7 +171,7 @@
                 android:text="@string/interest_changed_description" />
         </LinearLayout>
 
-        <include layout="@layout/account_horizontal_line" />
+        <include layout="@layout/account_horizontal_line" />-->
 
         <LinearLayout
             style="@style/account_logged_out_container"
@@ -190,6 +196,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
                 android:orientation="horizontal">
 
                 <TextView style="@style/account_logged_out_bullet" />
@@ -202,6 +209,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
                 android:orientation="horizontal">
 
                 <TextView style="@style/account_logged_out_bullet" />
@@ -210,11 +218,10 @@
                     style="@style/account_logged_out_list_bullet"
                     android:text="@string/personal_loan_points_to_qualify_3" />
             </LinearLayout>
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="40dp"
+                android:layout_marginTop="7dp"
                 android:orientation="horizontal">
 
                 <TextView style="@style/account_logged_out_bullet" />
@@ -222,6 +229,20 @@
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/account_logged_out_list_bullet"
                     android:text="@string/personal_loan_points_to_qualify_4" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="40dp"
+                android:orientation="horizontal">
+
+                <TextView style="@style/account_logged_out_bullet" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/account_logged_out_list_bullet"
+                    android:text="@string/personal_loan_points_to_qualify_5" />
             </LinearLayout>
         </LinearLayout>
 

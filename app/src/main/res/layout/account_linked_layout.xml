@@ -39,8 +39,8 @@
             android:id="@+id/linkedStoreCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginLeft="@dimen/account_margin"
+            android:layout_marginRight="@dimen/account_margin"
             android:background="@drawable/card_shadow"
             android:visibility="gone">
 
@@ -66,7 +66,7 @@
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         style="@style/sectionCardLight"
-                        android:layout_marginLeft="12dp"
+                        android:layout_marginLeft="@dimen/acc_thirteen_sp"
                         android:layout_toRightOf="@+id/imgStoreCard"
                         android:text="@string/store_card"
                         app:WTextView_font="medium" />
@@ -78,7 +78,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:textColor="@color/black_off"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/acc_thirteen_sp"
                         app:WTextView_font="medium_bold" />
                 </RelativeLayout>
 
@@ -100,8 +100,8 @@
             android:id="@+id/linkedCrediCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginLeft="@dimen/account_margin"
+            android:layout_marginRight="@dimen/account_margin"
             android:background="@drawable/card_shadow"
             android:visibility="gone"
 
@@ -131,7 +131,7 @@
                         style="@style/sectionCardLight"
                         android:layout_toRightOf="@+id/imgCreditCard"
                         android:text="@string/credit_card"
-                        android:textSize="13sp"
+                        android:textSize="@dimen/acc_thirteen_sp"
                         app:WTextView_font="medium" />
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -141,7 +141,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:textColor="@color/black_off"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/acc_thirteen_sp"
                         app:WTextView_font="medium_bold" />
                 </RelativeLayout>
 
@@ -162,8 +162,8 @@
             android:id="@+id/linkedPersonalLoan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginLeft="@dimen/account_margin"
+            android:layout_marginRight="@dimen/account_margin"
             android:background="@drawable/card_shadow"
             android:visibility="gone"
 
@@ -193,6 +193,7 @@
                         style="@style/sectionCardLight"
                         android:layout_toRightOf="@+id/imgPersonalLoan"
                         android:text="@string/personal_loan"
+                        android:textSize="@dimen/acc_thirteen_sp"
                         app:WTextView_font="medium" />
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -202,7 +203,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:textColor="@color/black_off"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/acc_thirteen_sp"
                         app:WTextView_font="medium_bold" />
                 </RelativeLayout>
 

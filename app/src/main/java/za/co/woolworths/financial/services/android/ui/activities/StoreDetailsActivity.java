@@ -27,6 +27,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -73,6 +74,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
     RelativeLayout direction;
     RelativeLayout makeCall;
     RelativeLayout relBrandLayout;
+    RelativeLayout storeTimingView;
     WTextView storeName;
     WTextView storeOfferings;
     WTextView storeAddress;
@@ -80,6 +82,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
     WTextView storeNumber;
     WTextView nativeMap;
     WTextView cancel;
+    ImageView closePage;
 
     LinearLayout mapLayout;
     private SlidingUpPanelLayout mLayout;
@@ -100,9 +103,11 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
         storeDistance = (WTextView) findViewById(R.id.distance);
         storeAddress = (WTextView) findViewById(R.id.storeAddress);
         timeingsLayout = (LinearLayout) findViewById(R.id.timeingsLayout);
+        storeTimingView=(RelativeLayout)findViewById(R.id.storeTimingView);
         brandsLayout = (LinearLayout) findViewById(R.id.brandsLayout);
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         mapLayout =(LinearLayout) findViewById(R.id.mapLayout);
+        closePage=(ImageView)findViewById(R.id.closePage);
         //getting height of device
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -121,12 +126,12 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
         storeDetails = gson.fromJson(getIntent().getStringExtra("store"), StoreDetails.class);
         initStoreDetailsView(storeDetails);
 
-       /* direction.setOnClickListener(new View.OnClickListener() {
+        closePage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openNativeMapWindow();
+                onBackPressed();
             }
-        });*/
+        });
         /*makeCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,7 +224,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
         if (storeDetail.phoneNumber != null)
             storeNumber.setText(storeDetail.phoneNumber);
         SpannableMenuOption spannableMenuOption = new SpannableMenuOption(this);
-        storeDistance.setText(spannableMenuOption.distanceKm(WFormatter.formatMeter(storeDetail.distance)));
+        storeDistance.setText(WFormatter.formatMeter(storeDetail.distance)+getResources().getString(R.string.distance_in_km));
         if (storeDetail.offerings != null) {
             storeOfferings.setText(WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department")));
             List<StoreOfferings> brandslist = getOfferingByType(storeDetail.offerings, "Brand");
@@ -243,7 +248,8 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
             relBrandLayout.setVisibility(View.GONE);
         }
         WTextView textView;
-        if (storeDetail.times != null) {
+        if (storeDetail.times != null && storeDetail.times.size()!=0) {
+            storeTimingView.setVisibility(View.VISIBLE);
             for (int i = 0; i < storeDetail.times.size(); i++) {
                 View v = getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
                 textView = (WTextView) v.findViewById(R.id.openingHours);
@@ -252,6 +258,9 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
                     textView.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Semibold.otf"));
                 timeingsLayout.addView(textView);
             }
+        }
+        else {
+            storeTimingView.setVisibility(View.GONE);
         }
 
         makeCall.setOnClickListener(new View.OnClickListener() {

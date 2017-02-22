@@ -1,22 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
 import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
@@ -35,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
-import io.jsonwebtoken.Jwts;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
@@ -44,9 +38,6 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static android.R.attr.data;
-import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class SSOActivity extends WebViewActivity {
 
@@ -100,6 +91,7 @@ public class SSOActivity extends WebViewActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.instantiateWebView();
+        Utils.updateStatusBarBackground(this, R.color.black);
     }
 
     private void instantiateWebView() {

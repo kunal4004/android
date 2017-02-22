@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,9 +21,8 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-import java.util.Locale;
-
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
@@ -43,7 +41,8 @@ public class PopWindowValidationMessage {
 
     public enum OVERLAY_TYPE {
         CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
-        HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR
+        HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
+        SHOPPING_LIST_INFO
     }
 
     public PopWindowValidationMessage(Context context) {
@@ -288,6 +287,41 @@ public class PopWindowValidationMessage {
                 touchToDismiss(overlay_type);
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
+                mView.findViewById(R.id.btnOk)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startExitAnimation(overlay_type);
+                            }
+                        });
+                break;
+
+            case SHOPPING_LIST_INFO:
+                mView = mLayoutInflater.inflate(R.layout.shopping_list_info, null);
+                popupWindowSetting(mView);
+                setAnimation();
+                if (description.equalsIgnoreCase("viewShoppingList")) {
+                    mView.findViewById(R.id.shoppingListDivider).setVisibility(View.VISIBLE);
+                    mView.findViewById(R.id.btnViewShoppingList).setVisibility(View.VISIBLE);
+                }
+
+                mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startExitAnimation(overlay_type);
+                    }
+                });
+//                touchToDismiss(overlay_type);
+                mRelPopContainer.setAnimation(mFadeInAnimation);
+                mRelRootContainer.setAnimation(mPopEnterAnimation);
+                mView.findViewById(R.id.btnViewShoppingList).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent shoppingList = new Intent(mContext, ShoppingListActivity.class);
+                        mContext.startActivity(shoppingList);
+                        dismissLayout();
+                    }
+                });
                 mView.findViewById(R.id.btnOk)
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
