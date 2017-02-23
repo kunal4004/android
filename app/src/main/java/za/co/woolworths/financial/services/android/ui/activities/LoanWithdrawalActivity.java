@@ -248,8 +248,7 @@ public class LoanWithdrawalActivity extends BaseActivity {
             }, 200);
         } else {
             Utils.displayValidationMessage(LoanWithdrawalActivity.this,
-                    TransientActivity.VALIDATION_MESSAGE_LIST.HIGH_LOAN_AMOUNT,
-                    "");
+                    TransientActivity.VALIDATION_MESSAGE_LIST.HIGH_LOAN_AMOUNT, "");
         }
     }
 

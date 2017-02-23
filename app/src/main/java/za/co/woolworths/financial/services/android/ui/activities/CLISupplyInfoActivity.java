@@ -1,6 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
@@ -21,7 +24,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -47,7 +49,6 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICreditLimitContentBinder;
 
@@ -74,7 +75,6 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
     private UpdateBankDetail mUpdateBankDetail;
     ConnectionDetector connectionDetector;
     private WTextView mTextACreditLimit;
-    private PopWindowValidationMessage mPopSlideValidation;
     private WTextView mTextProceedToSolvency;
 
     private Typeface mRdioGroupTypeFace;
@@ -92,7 +92,6 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
         connectionDetector = new ConnectionDetector();
         mWoolworthsApplication = (WoolworthsApplication) getApplication();
         mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
-        mPopSlideValidation = new PopWindowValidationMessage(this);
         mProgressBar = (ProgressBar) findViewById(R.id.mWoolworthsProgressBar);
         mRdioGroupTypeFace = Typeface.createFromAsset(getAssets(), "fonts/WFutura-Medium.ttf");
         mRdioGroupTypeFaceBold = Typeface.createFromAsset(getAssets(), "fonts/WFutura-SemiBold.ttf");
@@ -105,6 +104,9 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
         hideSoftKeyboard();
         radioCheckStateChanged();
 
+        registerReceiver(confidentialBroadcastCheck, new IntentFilter("confidentialBroadcastCheck"));
+        registerReceiver(insolvencyBroadcastCheck, new IntentFilter("insolvencyBroadcastCheck"));
+
 //        new Handler().postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
@@ -116,60 +118,8 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
     }
 
     private void radioCheckStateChanged() {
-        mRadApplySolvency.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.radioNoSolvency:
-                        break;
-                    case R.id.radioYesSolvency:
-                        mPopSlideValidation.displayValidationMessage("",
-                                PopWindowValidationMessage.OVERLAY_TYPE.INSOLVENCY)
-                                .setOnDismissListener(new PopupWindow.OnDismissListener() {
-                                    @Override
-                                    public void onDismiss() {
-                                        mRadApplySolvency.clearCheck();
-                                        mRadioYesSolvency.setTypeface(mRdioGroupTypeFace);
-                                        mRadioNoSolvency.setTypeface(mRdioGroupTypeFace);
-                                        mPopSlideValidation.dismissLayout();
-                                    }
-                                });
-                        break;
-                    default:
-                        break;
-                }
-                hideSoftKeyboard();
-            }
-        });
-
-        mRadConfidentialCredit.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.radioYesConfidentialCredit:
-                        break;
-                    case R.id.radioNoConfidentialCredit:
-                        mPopSlideValidation.displayValidationMessage("",
-                                PopWindowValidationMessage.OVERLAY_TYPE.CONFIDENTIAL)
-                                .setOnDismissListener(new PopupWindow.OnDismissListener() {
-                                    @Override
-                                    public void onDismiss() {
-                                        mRadConfidentialCredit.clearCheck();
-                                        mRadioNoConfidentialCredit.setTypeface(mRdioGroupTypeFace);
-                                        mRadioYesConfidentialCredit.setTypeface(mRdioGroupTypeFace);
-                                        mPopSlideValidation.dismissLayout();
-                                    }
-                                });
-                        break;
-                    default:
-                        break;
-                }
-                hideSoftKeyboard();
-            }
-        });
-
+        mRadApplySolvency.setOnCheckedChangeListener(solvencyCheckListener);
+        mRadConfidentialCredit.setOnCheckedChangeListener(confidentialCheckListener);
     }
 
     private void initViews() {
@@ -279,7 +229,9 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
                 }
 
                 if (!pageIsValid) {
-                    mPopSlideValidation.displayValidationMessage(getString(R.string.cli_cancel_application), PopWindowValidationMessage.OVERLAY_TYPE.MANDATORY_FIELD);
+                    Utils.displayValidationMessage(CLISupplyInfoActivity.this,
+                            TransientActivity.VALIDATION_MESSAGE_LIST.MANDATORY_FIELD,
+                            getString(R.string.cli_cancel_application));
                     return;
                 }
 
@@ -543,4 +495,75 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
         }
         mBtnContinue.setVisibility(View.VISIBLE);
     }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(confidentialBroadcastCheck);
+        unregisterReceiver(insolvencyBroadcastCheck);
+    }
+
+    BroadcastReceiver confidentialBroadcastCheck = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mRadConfidentialCredit.setOnCheckedChangeListener(null);
+            mRadConfidentialCredit.clearCheck();
+            mRadConfidentialCredit.setOnCheckedChangeListener(confidentialCheckListener);
+            mRadioNoConfidentialCredit.setTypeface(mRdioGroupTypeFace);
+            mRadioYesConfidentialCredit.setTypeface(mRdioGroupTypeFace);
+        }
+    };
+
+
+    BroadcastReceiver insolvencyBroadcastCheck = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mRadApplySolvency.setOnCheckedChangeListener(null);
+            mRadApplySolvency.clearCheck();
+            mRadApplySolvency.setOnCheckedChangeListener(solvencyCheckListener);
+            mRadioYesSolvency.setTypeface(mRdioGroupTypeFace);
+            mRadioNoSolvency.setTypeface(mRdioGroupTypeFace);
+        }
+    };
+
+
+    private RadioGroup.OnCheckedChangeListener confidentialCheckListener = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            switch (checkedId) {
+                case R.id.radioYesConfidentialCredit:
+                    break;
+                case R.id.radioNoConfidentialCredit:
+                    Utils.displayValidationMessage(CLISupplyInfoActivity.this,
+                            TransientActivity.VALIDATION_MESSAGE_LIST.CONFIDENTIAL,
+                            "");
+                    break;
+                default:
+                    break;
+            }
+            hideSoftKeyboard();
+        }
+    };
+
+    private RadioGroup.OnCheckedChangeListener solvencyCheckListener = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            switch (checkedId) {
+                case R.id.radioNoSolvency:
+                    break;
+                case R.id.radioYesSolvency:
+                    Utils.displayValidationMessage(CLISupplyInfoActivity.this,
+                            TransientActivity.VALIDATION_MESSAGE_LIST.INSOLVENCY,
+                            "");
+                    break;
+                default:
+                    break;
+            }
+            hideSoftKeyboard();
+        }
+    };
+
 }

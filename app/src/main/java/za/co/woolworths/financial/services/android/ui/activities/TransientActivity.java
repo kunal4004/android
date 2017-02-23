@@ -148,6 +148,16 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
                 mRelPopContainer.setOnClickListener(this);
                 break;
 
+            case MANDATORY_FIELD:
+                setContentView(R.layout.cli_mandatory_error);
+                mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+                mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+                WButton btnMandatoryOK = (WButton) findViewById(R.id.btnMandatoryOK);
+                setAnimation();
+                btnMandatoryOK.setOnClickListener(this);
+                mRelPopContainer.setOnClickListener(this);
+                break;
+
             case LOW_LOAN_AMOUNT:
                 setContentView(R.layout.lw_too_high_error);
                 mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
@@ -162,6 +172,26 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
                 setAnimation();
                 mLowLoanAmount.setOnClickListener(this);
                 mRelPopContainer.setOnClickListener(this);
+                break;
+
+            case INSOLVENCY:
+                setContentView(R.layout.cli_insolvency_popup);
+                mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+                mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+                WButton btnInsolvencyOK = (WButton) findViewById(R.id.btnInsolvencyOK);
+                setAnimation();
+                btnInsolvencyOK.setOnClickListener(this);
+                //mRelPopContainer.setOnClickListener(this);
+                break;
+
+            case CONFIDENTIAL:
+                setContentView(R.layout.cli_confidential_popup);
+                mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+                mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+                WButton btnConfidentialOk = (WButton) findViewById(R.id.btnConfidentialOk);
+                setAnimation();
+                btnConfidentialOk.setOnClickListener(this);
+                //mRelPopContainer.setOnClickListener(this);
                 break;
         }
     }
@@ -246,6 +276,60 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    private void insolvencyAnimation() {
+        if (!viewWasClicked) { // prevent more than one click
+            viewWasClicked = true;
+            TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+            animation.setFillAfter(true);
+            animation.setDuration(ANIM_DOWN_DURATION);
+            animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    Intent intent = new Intent("insolvencyBroadcastCheck");
+                    sendBroadcast(intent);
+                    dismissLayout();
+                }
+            });
+            mRelRootContainer.startAnimation(animation);
+        }
+    }
+
+    private void confidentialAnimation() {
+        if (!viewWasClicked) { // prevent more than one click
+            viewWasClicked = true;
+            TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+            animation.setFillAfter(true);
+            animation.setDuration(ANIM_DOWN_DURATION);
+            animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    Intent intent = new Intent("confidentialBroadcastCheck");
+                    sendBroadcast(intent);
+                    dismissLayout();
+                }
+            });
+            mRelRootContainer.startAnimation(animation);
+        }
+    }
+
     private void dismissLayout() {
         finish();
         overridePendingTransition(0, 0);
@@ -271,9 +355,9 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
             case R.id.btnBarcodeOk:
             case R.id.relPopContainer:
             case R.id.btnShopOk:
-            case R.id.btnOK:
                 startExitAnimation();
                 break;
+
             case R.id.btnViewShoppingList:
                 Intent shoppingList = new Intent(this, ShoppingListActivity.class);
                 startActivity(shoppingList);
@@ -286,6 +370,14 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 
             case R.id.btnEmailOk:
                 exitEmailAnimation();
+                break;
+
+            case R.id.btnInsolvencyOK:
+                insolvencyAnimation();
+                break;
+
+            case R.id.btnConfidentialOk:
+                confidentialAnimation();
                 break;
 
         }

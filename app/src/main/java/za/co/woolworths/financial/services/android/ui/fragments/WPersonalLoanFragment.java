@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -153,12 +152,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
             case R.id.txtIncreseLimit:
-                if (!isOfferActive) {
+               // if (!isOfferActive) {
                     ((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
                     startActivity(openCLIIncrease);
                     getActivity().overridePendingTransition(0, 0);
-                }
+              //  }
                 break;
         }
     }
@@ -238,7 +237,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     }
 
     public void disableIncreaseLimit() {
-        txtIncreseLimit.setEnabled(false);
+        txtIncreseLimit.setEnabled(true);
         txtIncreseLimit.setTextColor(Color.GRAY);
         mImageArrow.setImageAlpha(75);
     }
