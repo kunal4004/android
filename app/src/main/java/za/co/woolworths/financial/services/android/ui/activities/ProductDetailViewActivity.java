@@ -127,16 +127,13 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mBtnAddShoppingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPopWindowValidationMessage.displayValidationMessage("viewShoppingList",
-                        PopWindowValidationMessage.OVERLAY_TYPE.SHOPPING_LIST_INFO)
-                        .setOnDismissListener(new PopupWindow.OnDismissListener() {
-                            @Override
-                            public void onDismiss() {
-                                Utils.addToShoppingCart(ProductDetailViewActivity.this, new ShoppingList(
-                                        mproductDetail.get(0).productId,
-                                        mproductDetail.get(0).productName, false));
-                            }
-                        });
+                Utils.addToShoppingCart(ProductDetailViewActivity.this, new ShoppingList(
+                        mproductDetail.get(0).productId,
+                        mproductDetail.get(0).productName, false));
+
+                Utils.displayValidationMessage(ProductDetailViewActivity.this,
+                        TransientActivity.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
+                        "viewShoppingList");
             }
         });
     }
@@ -431,7 +428,10 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
                 "</style></head><body>";
         String footerTag = "</body></html>";
-        String descriptionWithoutExtraTag = productDetail.longDescription.replaceAll("</ul>\n\n<ul>\n", " ");
+        String descriptionWithoutExtraTag = "";
+        if (!TextUtils.isEmpty(productDetail.longDescription)) {
+            descriptionWithoutExtraTag = productDetail.longDescription.replaceAll("</ul>\n\n<ul>\n", " ");
+        }
         mWebDescription.loadData(headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag, "text/html; charset=UTF-8", null);
         mTextTitle.setText(isEmpty(productDetail.productName));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
@@ -581,6 +581,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     }
 
     private void promoImages(PromotionImages imPromo) {
+
         if (imPromo != null) {
             String wSave = imPromo.save;
             String wReward = imPromo.wRewards;

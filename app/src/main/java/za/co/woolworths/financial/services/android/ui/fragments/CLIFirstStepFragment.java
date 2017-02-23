@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanksResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CLISupplyInfoActivity;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIDeaBankMapAdapter;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -31,6 +34,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICbxContentBinder;
 
 
@@ -170,15 +174,20 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                             relButtonCLIDeaBank.setVisibility(View.GONE);
                         }
                     } else {
-                        mPopWindowValidationMessage.displayValidationMessage(deaBanks.response.desc,
-                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+
+                        if (!TextUtils.isEmpty(deaBanks.response.desc)) {
+                            Utils.displayValidationMessage(getActivity(),
+                                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                    deaBanks.response.desc);
+                        }
                     }
                     stopProgressDialog();
                 }
             }.execute();
         } else {
-            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
-                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+            Utils.displayValidationMessage(getActivity(),
+                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                    getString(R.string.connect_to_server));
         }
     }
 
@@ -204,17 +213,19 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                             mWoolworthsApplication.setOther(false);
                             stepNavigatorCallback.openNextFragment(1);
                         }
-                    } else {
-                        mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_select_bank_error),
-                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+                        Utils.displayValidationMessage(getActivity(),
+                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                getString(R.string.cli_select_bank_error));
                     }
                 } else {
                     if (mConnectionDetector.isOnline(getActivity())) {
-                        mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_select_bank_error),
-                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+                        Utils.displayValidationMessage(getActivity(),
+                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                getString(R.string.cli_select_bank_error));
                     } else {
-                        mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
-                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+                        Utils.displayValidationMessage(getActivity(),
+                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                getString(R.string.connect_to_server));
                     }
                 }
                 break;
@@ -244,7 +255,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
             }
         }
     }
-
 
     @SuppressLint("ValidFragment")
     public CLIFirstStepFragment(StepNavigatorCallback stepNavigatorCallback) {
