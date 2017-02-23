@@ -111,13 +111,13 @@ public class PopWindowValidationMessage {
                 setAnimation();
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
-                mView.findViewById(R.id.btnOK)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startExitAnimation(overlay_type);
-                            }
-                        });
+//                mView.findViewById(R.id.btnOK)
+//                        .setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                startExitAnimation(overlay_type);
+//                            }
+//                        });
                 break;
 
             case INSOLVENCY:
@@ -126,13 +126,13 @@ public class PopWindowValidationMessage {
                 setAnimation();
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
-                mView.findViewById(R.id.btnOK)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startExitAnimation(overlay_type);
-                            }
-                        });
+//                mView.findViewById(R.id.btnOK)
+//                        .setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                startExitAnimation(overlay_type);
+//                            }
+//                        });
                 break;
 
             case CONFIDENTIAL:
@@ -143,13 +143,13 @@ public class PopWindowValidationMessage {
                 setAnimation();
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
-                mView.findViewById(R.id.btnOK)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startExitAnimation(overlay_type);
-                            }
-                        });
+//                mView.findViewById(R.id.btnOK)
+//                        .setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                startExitAnimation(overlay_type);
+//                            }
+//                        });
                 break;
 
             case STORE_LOCATOR_DIRECTION:
@@ -234,13 +234,13 @@ public class PopWindowValidationMessage {
                 setAnimation();
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
-                mView.findViewById(R.id.btnOK)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startExitAnimation(overlay_type);
-                            }
-                        });
+//                mView.findViewById(R.id.btnOK)
+//                        .setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                startExitAnimation(overlay_type);
+//                            }
+//                        });
 
                 mRelPopContainer
                         .setOnClickListener(new View.OnClickListener() {
@@ -260,7 +260,6 @@ public class PopWindowValidationMessage {
                 textEmailContent.setText(description);
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
-
                 mRelPopContainer
                         .setOnClickListener(new View.OnClickListener() {
                             @Override

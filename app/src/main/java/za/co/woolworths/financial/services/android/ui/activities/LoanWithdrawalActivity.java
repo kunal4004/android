@@ -63,7 +63,6 @@ public class LoanWithdrawalActivity extends BaseActivity {
     private ProgressBar mLoanWithdrawalProgress;
     private boolean arrowIsVisible = false;
     private AsyncTask<String, String, IssueLoanResponse> issueLoanRequest;
-    private ScrollView mScrollLoanWithdrawal;
     private RelativeLayout mLinLoanWithdrawalSuccess;
 
     @Override
@@ -103,7 +102,7 @@ public class LoanWithdrawalActivity extends BaseActivity {
         mEditWithdrawalAmount = (WLoanEditTextView) findViewById(R.id.editWithdrawAmount);
         mRelLoanWithdrawal = (RelativeLayout) findViewById(R.id.relLoanWithdrawal);
         mLoanWithdrawalProgress = (ProgressBar) findViewById(R.id.mLoanWithdrawalProgress);
-        mScrollLoanWithdrawal = (ScrollView) findViewById(R.id.scrollLoanWithdrawal);
+        ScrollView mScrollLoanWithdrawal = (ScrollView) findViewById(R.id.scrollLoanWithdrawal);
         mLinLoanWithdrawalSuccess = (RelativeLayout) findViewById(R.id.linLoanWithdrawalSuccess);
         mScrollLoanWithdrawal.setVisibility(View.GONE);
         mLinLoanWithdrawalSuccess.setVisibility(View.GONE);
@@ -233,26 +232,9 @@ public class LoanWithdrawalActivity extends BaseActivity {
 
     private void setAmount() {
         if (getDrawnDownAmount() < wminDrawnDownAmount) {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    hideKeyboard();
-                }
-            }, 100);
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mPopWindowValidationMessage.displayValidationMessage(String.valueOf(wminDrawnDownAmount),
-                            PopWindowValidationMessage.OVERLAY_TYPE.LOW_LOAN_AMOUNT)
-                            .setOnDismissListener(new PopupWindow.OnDismissListener() {
-                                @Override
-                                public void onDismiss() {
-                                    showSoftKeyboard();
-                                    Utils.updateStatusBarBackground(LoanWithdrawalActivity.this, R.color.purple);
-                                }
-                            });
-                }
-            }, 200);
+            Utils.displayValidationMessage(LoanWithdrawalActivity.this,
+                    TransientActivity.VALIDATION_MESSAGE_LIST.LOW_LOAN_AMOUNT,
+                    String.valueOf(wminDrawnDownAmount));
         } else if (getDrawnDownAmount() >= wminDrawnDownAmount
                 && getDrawnDownAmount() <= getAvailableFund()) {
             handler.postDelayed(new Runnable() {
@@ -265,26 +247,8 @@ public class LoanWithdrawalActivity extends BaseActivity {
                 }
             }, 200);
         } else {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    hideKeyboard();
-                }
-            }, 100);
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mPopWindowValidationMessage.displayValidationMessage("",
-                            PopWindowValidationMessage.OVERLAY_TYPE.HIGH_LOAN_AMOUNT)
-                            .setOnDismissListener(new PopupWindow.OnDismissListener() {
-                                @Override
-                                public void onDismiss() {
-                                    showSoftKeyboard();
-                                    Utils.updateStatusBarBackground(LoanWithdrawalActivity.this, R.color.purple);
-                                }
-                            });
-                }
-            }, 200);
+            Utils.displayValidationMessage(LoanWithdrawalActivity.this,
+                    TransientActivity.VALIDATION_MESSAGE_LIST.HIGH_LOAN_AMOUNT, "");
         }
     }
 
@@ -387,15 +351,11 @@ public class LoanWithdrawalActivity extends BaseActivity {
                             hideKeyboard();
                             String responseDesc = issueLoanResponse.response.desc;
                             if (responseDesc != null) {
-                                mPopWindowValidationMessage.displayValidationMessage(responseDesc,
-                                        PopWindowValidationMessage.OVERLAY_TYPE.ERROR)
-                                        .setOnDismissListener(new PopupWindow.OnDismissListener() {
-                                            @Override
-                                            public void onDismiss() {
-                                                showSoftKeyboard();
-                                                Utils.updateStatusBarBackground(LoanWithdrawalActivity.this, R.color.purple);
-                                            }
-                                        });
+                                if (!TextUtils.isEmpty(responseDesc)) {
+                                    Utils.displayValidationMessage(LoanWithdrawalActivity.this,
+                                            TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                            responseDesc);
+                                }
                             }
                         } catch (NullPointerException ignored) {
                         }
@@ -418,8 +378,9 @@ public class LoanWithdrawalActivity extends BaseActivity {
             issueLoanRequest.execute();
 
         } else {
-            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
-                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+            Utils.displayValidationMessage(LoanWithdrawalActivity.this,
+                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                    getString(R.string.connect_to_server));
         }
     }
 
