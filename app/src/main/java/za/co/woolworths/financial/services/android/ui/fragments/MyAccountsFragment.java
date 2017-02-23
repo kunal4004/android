@@ -43,19 +43,17 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.ui.activities.FAQActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
-import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseFragment;
@@ -115,7 +113,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
     WTextView userInitials;
     RelativeLayout signoutLayer;
 
-    private WProgressDialogFragment mGetAccountsProgressDialog;
+    private ProgressDialogFragment mGetAccountsProgressDialog;
     private ProgressBar scProgressBar;
     private ProgressBar ccProgressBar;
     private ProgressBar plProgressBar;
@@ -468,7 +466,19 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
     private void loadAccounts() {
         fm = getActivity().getSupportFragmentManager();
-        mGetAccountsProgressDialog = WProgressDialogFragment.newInstance("gettingAccount");
+        mGetAccountsProgressDialog = ProgressDialogFragment.newInstance();
+        try {
+            if (!mGetAccountsProgressDialog.isAdded()) {
+                mGetAccountsProgressDialog.show(fm, "v");
+            } else {
+                mGetAccountsProgressDialog.dismiss();
+                mGetAccountsProgressDialog = ProgressDialogFragment.newInstance();
+                mGetAccountsProgressDialog.show(fm, "v");
+            }
+
+
+        } catch (NullPointerException ignored) {
+        }
         new HttpAsyncTask<String, String, AccountsResponse>() {
 
             @Override
@@ -476,8 +486,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
                 relFAQ.setVisibility(View.GONE);
                 showViews();
-                mGetAccountsProgressDialog.show(fm, "account");
-                mGetAccountsProgressDialog.setCancelable(false);
             }
 
             @Override

@@ -523,4 +523,22 @@ public interface ApiInterface {
             @Path("productId") String productId,
             @Query("sku") String sku,
             Callback<String> callback);
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @GET("/products/{productId}")
+    void getProductDetail(
+            @Header("osVersion") String osVersion,
+            @Header("deviceModel") String deviceModel,
+            @Header("deviceVersion") String deviceVersion,
+            @Header("os") String os,
+            @Header("network") String network,
+            @Header("apiId") String apiId,
+            @Header("userAgent") String userAgent,
+            @Header("userAgentVersion") String userAgentVersion,
+            @Header("sha1Password") String sha1Password,
+            @Header("longitude") double longitude,
+            @Header("latitude") double latitude,
+            @Path("productId") String productId,
+            @Query("sku") String sku,
+            Callback<String> callback);
 }

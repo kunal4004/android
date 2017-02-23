@@ -28,8 +28,8 @@ import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicato
 import za.co.woolworths.financial.services.android.ui.activities.CLISupplyInfoActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIDeaBankMapAdapter;
+import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
-import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -46,7 +46,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     private CLIStepIndicatorActivity.OnFragmentRefresh onFragmentRefresh;
     private PopWindowValidationMessage mPopWindowValidationMessage;
     private FragmentManager fm;
-    private WProgressDialogFragment mGetAccountsProgressDialog;
+    private ProgressDialogFragment mGetAccountsProgressDialog;
 
     public interface StepNavigatorCallback {
         void openNextFragment(int index);
@@ -114,14 +114,24 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 
     public void setDeaBanks() {
         fm = getActivity().getSupportFragmentManager();
-        mGetAccountsProgressDialog = WProgressDialogFragment.newInstance("gettingAccount");
+        mGetAccountsProgressDialog = ProgressDialogFragment.newInstance();
+        try {
+            if (!mGetAccountsProgressDialog.isAdded()) {
+                mGetAccountsProgressDialog.show(fm, "v");
+            } else {
+                mGetAccountsProgressDialog.dismiss();
+                mGetAccountsProgressDialog = ProgressDialogFragment.newInstance();
+                mGetAccountsProgressDialog.show(fm, "v");
+            }
+
+        } catch (NullPointerException ignored) {
+        }
         if (mConnectionDetector.isOnline(getActivity())) {
 
             new HttpAsyncTask<String, String, DeaBanks>() {
 
                 @Override
                 protected void onPreExecute() {
-                    mGetAccountsProgressDialog.show(fm, "gettingAccount");
                     super.onPreExecute();
                 }
 
@@ -164,6 +174,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                             relButtonCLIDeaBank.setVisibility(View.GONE);
                         }
                     } else {
+
                         if (!TextUtils.isEmpty(deaBanks.response.desc)) {
                             Utils.displayValidationMessage(getActivity(),
                                     TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
@@ -202,7 +213,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                             mWoolworthsApplication.setOther(false);
                             stepNavigatorCallback.openNextFragment(1);
                         }
-                    } else {
                         Utils.displayValidationMessage(getActivity(),
                                 TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
                                 getString(R.string.cli_select_bank_error));

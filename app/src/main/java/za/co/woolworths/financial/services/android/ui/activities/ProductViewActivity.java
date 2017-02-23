@@ -40,8 +40,8 @@ import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
+import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
-import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
@@ -71,12 +71,12 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     private int mScrollY = 0;
     private ProgressBar mProgressVBar;
     private FragmentManager fm;
-    private WProgressDialogFragment mGetProgressDialog;
     private String searchItem = "";
     private String mTitle;
     private String mTitleNav;
     private int num_of_item;
     private int pageOffset;
+    private ProgressDialogFragment mProgressDialogFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,8 +88,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         actionBar();
         bundle();
         fm = getSupportFragmentManager();
-        mGetProgressDialog = WProgressDialogFragment.newInstance("v");
-        mGetProgressDialog.setCancelable(false);
+        mProgressDialogFragment = ProgressDialogFragment.newInstance();
         hideProgressBar();
         Bundle extras = getIntent().getExtras();
         searchItem = extras.getString("searchProduct");
@@ -120,7 +119,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
     private void productConfig(String productName) {
         mToolBarTitle.setText(productName);
-
     }
 
     private void bundle() {
@@ -415,7 +413,14 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
     private void getProductDetail(final String productId, final String skuId, final boolean closeActivity) {
         try {
-            mGetProgressDialog.show(fm, "v");
+            if (!mProgressDialogFragment.isAdded()) {
+                mProgressDialogFragment.show(fm, "v");
+            } else {
+                mProgressDialogFragment.dismiss();
+                mProgressDialogFragment = ProgressDialogFragment.newInstance();
+                mProgressDialogFragment.show(fm, "v");
+            }
+
         } catch (NullPointerException ignored) {
         }
         ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
@@ -437,7 +442,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                             openDetailView.putExtra("product_name", mProductList.get(0).productName);
                             openDetailView.putExtra("product_detail", gson.toJson(mProductList));
                             startActivity(openDetailView);
-                            overridePendingTransition(0, R.anim.anim_slide_up);
+                            overridePendingTransition(R.anim.slide_down, R.anim.anim_slide_up);
                             if (closeActivity) { //close ProductView activity when 1 row exist
                                 finish();
                             }
@@ -462,9 +467,9 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
     private void dismissFragmentDialog() {
         try {
-            if (mGetProgressDialog != null) {
-                if (mGetProgressDialog.isVisible()) {
-                    mGetProgressDialog.dismiss();
+            if (mProgressDialogFragment != null) {
+                if (mProgressDialogFragment.isVisible()) {
+                    mProgressDialogFragment.dismiss();
                 }
             }
         } catch (IllegalStateException ignored) {
@@ -576,13 +581,9 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             if (pageNumber == 1) {
                 pageOffset = Utils.PAGE_SIZE + 1;
             } else {
-
-                // let offset = ((pageNumber - 1) * pageSize + 1).description
-                // pageOffset = ((pageNumber - 1) * Utils.PAGE_SIZE + 1);
                 pageOffset = pageOffset + Utils.PAGE_SIZE;
 
             }
-            Log.e("pageoffset", String.valueOf(pageOffset));
         }
     }
 
