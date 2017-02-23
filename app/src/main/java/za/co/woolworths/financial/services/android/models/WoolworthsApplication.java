@@ -51,6 +51,7 @@ public class WoolworthsApplication extends Application {
     private static String stsURI;
     private static String ssoRedirectURILogout;
     private static String wwTodayURI;
+    private static String creditCardType;
     private boolean isDEABank = false;
     private boolean isOther = false;
     private int productOfferingId;
@@ -170,6 +171,14 @@ public class WoolworthsApplication extends Application {
 
     public static void setWwTodayURI(String wwTodayURI) {
         WoolworthsApplication.wwTodayURI = wwTodayURI;
+    }
+
+    public static String getCreditCardType() {
+        return creditCardType;
+    }
+
+    public static void setCreditCardType(String creditCardType) {
+        WoolworthsApplication.creditCardType = creditCardType;
     }
 
     public static String getStsURI() {
