@@ -57,17 +57,7 @@
                         android:text="@string/points_convinent_1" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView style="@style/account_logged_out_bullet" />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/account_logged_out_list_bullet"
-                        android:text="@string/points_convinent_2" />
-                </LinearLayout>
+                
 
                 <LinearLayout
                     android:layout_width="match_parent"
