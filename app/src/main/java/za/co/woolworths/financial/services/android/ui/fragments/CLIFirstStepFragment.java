@@ -128,7 +128,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 
                 @Override
                 protected void onPreExecute() {
-                    mGetAccountsProgressDialog.show(fm, "gettingAccount");
                     super.onPreExecute();
                 }
 

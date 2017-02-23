@@ -80,7 +80,7 @@ public class ProgressDialogFragment extends DialogFragment {
                              Bundle savedInstanceState) {
         getDialog().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getDialog().getWindow().setBackgroundDrawableResource(
-                R.color.white);
+                android.R.color.transparent);
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             // Marshmallow+

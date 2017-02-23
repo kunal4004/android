@@ -475,6 +475,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 mGetAccountsProgressDialog.show(fm, "v");
             }
 
+
         } catch (NullPointerException ignored) {
         }
         new HttpAsyncTask<String, String, AccountsResponse>() {
