@@ -436,7 +436,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 startActivity(openShoppingList);
                 break;
             case R.id.signOutBtn:
-                Utils.displayValidationMessage(getActivity(), TransientActivity.VALIDATION_MESSAGE_LIST.SIGN_OUT,"");
+                Utils.displayValidationMessage(getActivity(), TransientActivity.VALIDATION_MESSAGE_LIST.SIGN_OUT, "");
                 break;
             case R.id.imgBurgerButton:
                 hideActionBar.onBurgerButtonPressed();

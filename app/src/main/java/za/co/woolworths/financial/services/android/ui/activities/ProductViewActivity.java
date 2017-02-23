@@ -538,7 +538,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 mIsLastPage = false;
 
                 return ((WoolworthsApplication) getApplication()).getApi()
-                        .getProductSearchList(searchItem, false, pageNumber, Utils.PAGE_SIZE);
+                        .getProductSearchList(searchItem, false, pageOffset, Utils.PAGE_SIZE);
 
             }
 
@@ -584,6 +584,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 pageOffset = pageOffset + Utils.PAGE_SIZE;
 
             }
+            Log.e("xxxPageOffset",String.valueOf(pageOffset));
         }
     }
 
