@@ -27,8 +27,8 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
+import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
-import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
@@ -45,7 +45,6 @@ public class ProductSearchActivity extends BaseActivity
     private LinearLayout recentSearchList;
 
     PopWindowValidationMessage mPopWindowValidationMessage;
-    private WProgressDialogFragment mGetProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +68,6 @@ public class ProductSearchActivity extends BaseActivity
     }
 
     private void initUI() {
-        mGetProgressDialog = WProgressDialogFragment.newInstance("v");
-        mGetProgressDialog.setCancelable(true);
         mLayoutManager = new LinearLayoutManager(ProductSearchActivity.this);
         productListview = (RecyclerView) findViewById(R.id.productSearchList);
         mEditSearchProduct = (WEditTextView) findViewById(R.id.toolbarText);

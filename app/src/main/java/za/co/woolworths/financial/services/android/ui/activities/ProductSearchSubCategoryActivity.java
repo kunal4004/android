@@ -68,7 +68,6 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
         Utils.updateStatusBarBackground(this);
         setContentView(R.layout.product_search_sub_category);
         mContext = this;
-
         Bundle bundleSubCategory = getIntent().getExtras();
         if (bundleSubCategory != null) {
             mRootCategoryId = bundleSubCategory.getString("root_category_id");

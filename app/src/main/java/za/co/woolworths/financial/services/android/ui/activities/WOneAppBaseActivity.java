@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
 import za.co.woolworths.financial.services.android.ui.fragments.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WProductFragments;
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
+import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.JWTHelper;

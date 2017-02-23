@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models;
 
 import android.content.Context;
+import android.location.Location;
 import android.text.TextUtils;
 
 import com.squareup.okhttp.OkHttpClient;
@@ -13,13 +14,15 @@ import retrofit.client.OkClient;
 
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.util.StringConverter;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class RetrofitAsyncClient {
 
     private ApiInterface mApiInterface;
     private Context mContext;
+    private Location loc;
 
-   public RetrofitAsyncClient(Context mContext) {
+    public RetrofitAsyncClient(Context mContext) {
         this.mContext = mContext;
 
         OkHttpClient client = new OkHttpClient();
@@ -68,9 +71,32 @@ public class RetrofitAsyncClient {
     }
 
     public void getProductDetail(String productId, String skuId, Callback<String> callback) {
-        mApiInterface.getProductDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
-                getOS(), getNetworkCarrier(), getApiId(), "", "",
-                getSha1Password(), productId, skuId,callback);
+        getMyLocation();
+        if (Utils.isLocationEnabled(mContext)) {
+            mApiInterface.getProductDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
+                    getOS(), getNetworkCarrier(), getApiId(), "", "",
+                    getSha1Password(), loc.getLongitude(), loc.getLatitude(), productId, skuId, callback);
+        } else {
+            mApiInterface.getProductDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
+                    getOS(), getNetworkCarrier(), getApiId(), "", "",
+                    getSha1Password(), productId, skuId, callback);
+        }
+    }
+
+    private void getMyLocation() {
+        boolean locationIsEnabled = Utils.isLocationEnabled(mContext);
+        if (locationIsEnabled) {
+            loc = Utils.getLastSavedLocation(mContext);
+            if (loc == null) {
+                loc = new Location("");//provider name is unecessary
+                loc.setLatitude(0.0d);//your coords of course
+                loc.setLongitude(0.0d);
+            }
+        } else {
+            loc = new Location("");//provider name is unecessary
+            loc.setLatitude(0.0d);//your coords of course
+            loc.setLongitude(0.0d);
+        }
     }
 }
 
