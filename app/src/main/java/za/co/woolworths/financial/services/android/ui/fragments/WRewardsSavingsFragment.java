@@ -65,6 +65,7 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
                 LinearLayoutManager.HORIZONTAL,
                 false
         );
+        savingSinceInfo.setOnClickListener(this);
         recyclerView.setLayoutManager(mLayoutManager);
         Bundle bundle = getArguments();
         voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
