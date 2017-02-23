@@ -367,6 +367,7 @@
 
     <string name="wrewards_tag_line">|!b|W|!?|Rewards is our way of rewarding customers INSTANTLY.|!b|W|!?|Rewards members save millions every week.</string>
     <string name="wrewards_unlinked_tag_line">We see that your account is not yet linked. To see how much you\'ve saved, track your tier status and access all your vouchers, please link your account now.</string>
+    <string name="wrewards_logout_tag_line">WRewards is our way of rewarding customers INSTANTLY. WRewards members save millions every week.</string>
     <string name="link_account">link account</string>
     <string name="apply_for_wrewards">JOIN WREWARDS</string>
     <string name="get_more">Get more</string>

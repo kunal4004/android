@@ -42,7 +42,7 @@ public class WRewardsLoggedOutFragment extends Fragment implements View.OnClickL
         vipMember=(RelativeLayout)view.findViewById(R.id.layoutVipMember);
         applyForWRewards=(WTextView) view.findViewById(R.id.applyForWRewards);
         wRewardsTagLine=(WTextView) view.findViewById(R.id.wRewards_tag_line);
-        wRewardsTagLine.setText(getResources().getText(R.string.unlinked_account_copy));
+        wRewardsTagLine.setText(getResources().getText(R.string.wrewards_logout_tag_line));
         login.setOnClickListener(this);
         register.setOnClickListener(this);
         valuedMember.setOnClickListener(this);
