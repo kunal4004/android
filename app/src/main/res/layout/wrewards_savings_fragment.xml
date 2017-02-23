@@ -180,13 +180,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 >
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:id="@+id/savingSinceInfo"
-                    android:background="@drawable/icon_info"
-                    />
+
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -198,6 +192,14 @@
                 app:WTextView_font="myriadpro_regular"
                 android:layout_gravity="center_vertical"
                 />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/savingSinceInfo"
+                    android:background="@drawable/icon_info"
+                    />
             </LinearLayout>
         </RelativeLayout>
 
