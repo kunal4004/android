@@ -15,6 +15,7 @@ import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class TransientActivity extends AppCompatActivity implements View.OnClickListener {
@@ -153,6 +154,8 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
                 mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
                 mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
                 WButton btnMandatoryOK = (WButton) findViewById(R.id.btnMandatoryOK);
+                WTextView mTextProceed = (WTextView) findViewById(R.id.textApplicationNotProceed);
+                mTextProceed.setText(description);
                 setAnimation();
                 btnMandatoryOK.setOnClickListener(this);
                 mRelPopContainer.setOnClickListener(this);
@@ -355,6 +358,7 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
             case R.id.btnBarcodeOk:
             case R.id.relPopContainer:
             case R.id.btnShopOk:
+            case R.id.btnMandatoryOK:
                 startExitAnimation();
                 break;
 
