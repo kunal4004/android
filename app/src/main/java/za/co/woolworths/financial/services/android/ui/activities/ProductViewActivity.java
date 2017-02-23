@@ -88,7 +88,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         actionBar();
         bundle();
         fm = getSupportFragmentManager();
-        mProgressDialogFragment = ProgressDialogFragment.newInstance();
         hideProgressBar();
         Bundle extras = getIntent().getExtras();
         searchItem = extras.getString("searchProduct");
@@ -158,7 +157,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         } catch (Exception ex) {
             Log.e("ExceptionProduct", ex.toString());
         }
-
     }
 
     @Override
@@ -414,14 +412,14 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     private void getProductDetail(final String productId, final String skuId, final boolean closeActivity) {
         try {
             if (!mProgressDialogFragment.isAdded()) {
+                mProgressDialogFragment = ProgressDialogFragment.newInstance();
                 mProgressDialogFragment.show(fm, "v");
             } else {
                 mProgressDialogFragment.dismiss();
                 mProgressDialogFragment = ProgressDialogFragment.newInstance();
                 mProgressDialogFragment.show(fm, "v");
             }
-
-        } catch (NullPointerException ignored) {
+        } catch (Exception ignored) {
         }
         ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
             @Override
@@ -536,10 +534,8 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             @Override
             protected ProductView httpDoInBackground(String... params) {
                 mIsLastPage = false;
-
                 return ((WoolworthsApplication) getApplication()).getApi()
                         .getProductSearchList(searchItem, false, pageNumber, Utils.PAGE_SIZE);
-
             }
 
             @Override
@@ -575,16 +571,12 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     }
 
     private void pagination() {
-
         if (mProduct.size() < num_of_item) {
-
             if (pageNumber == 1) {
                 pageOffset = Utils.PAGE_SIZE + 1;
             } else {
                 pageOffset = pageOffset + Utils.PAGE_SIZE;
-
             }
         }
     }
-
 }
