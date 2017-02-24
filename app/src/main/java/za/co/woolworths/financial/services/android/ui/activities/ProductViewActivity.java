@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.IllegalFormatException;
 import java.util.List;
 
 import retrofit.Callback;
@@ -301,7 +302,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     }
 
     public void searchProduct() {
-
         new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected void onPreExecute() {
@@ -421,7 +421,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                 mProgressDialogFragment.show(fm, "v");
             }
 
-        } catch (NullPointerException ignored) {
+        } catch (IllegalFormatException ignored) {
         }
         ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
             @Override
@@ -587,5 +587,4 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             Log.e("xxxPageOffset",String.valueOf(pageOffset));
         }
     }
-
 }
