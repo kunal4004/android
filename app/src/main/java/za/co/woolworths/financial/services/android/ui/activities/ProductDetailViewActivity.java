@@ -36,7 +36,6 @@ import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.CircularImageView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -92,7 +91,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private WTextView mTextColour;
     private WrapContentWebView mWebDescription;
     private WButton mBtnAddShoppingList;
-    private PopWindowValidationMessage mPopWindowValidationMessage;
     private WTextView mIngredientList;
     private LinearLayout mLinIngredient;
     private View ingredientLine;
@@ -108,7 +106,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mContext = this;
         SessionDao sessionDao;
 
-        mPopWindowValidationMessage = new PopWindowValidationMessage(this);
 
 
         try {

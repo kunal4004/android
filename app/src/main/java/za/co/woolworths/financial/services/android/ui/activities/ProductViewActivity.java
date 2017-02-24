@@ -93,7 +93,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
         searchItem = extras.getString("searchProduct");
         mTitle = extras.getString("title");
         mTitleNav = extras.getString("titleNav");
-
         if (TextUtils.isEmpty(searchItem)) {
             if (!TextUtils.isEmpty(mTitle)) {
                 productName = mTitleNav;
@@ -112,7 +111,6 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
             productId = searchItem;
             searchProduct();
         }
-
         registerReceiver(broadcast_reciever, new IntentFilter("closeProductView"));
     }
 
@@ -341,6 +339,10 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
                     if (pv.products.size() == 1) {
                         getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku, true);
+                        mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
+                        bindDataWithUI(mProduct);
+                        mIsLastPage = false;
+                        mIsLoading = false;
                     } else {
                         mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
                         bindDataWithUI(mProduct);
@@ -410,18 +412,16 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
     }
 
     private void getProductDetail(final String productId, final String skuId, final boolean closeActivity) {
-        try {
-            if (!mProgressDialogFragment.isAdded()) {
-                mProgressDialogFragment = ProgressDialogFragment.newInstance();
-                mProgressDialogFragment.show(fm, "v");
-            } else {
-                mProgressDialogFragment.dismiss();
-                mProgressDialogFragment = ProgressDialogFragment.newInstance();
-                mProgressDialogFragment.show(fm, "v");
-            }
-        } catch (Exception ignored) {
+        mProgressDialogFragment = ProgressDialogFragment.newInstance();
+        if (!mProgressDialogFragment.isAdded()) {
+            mProgressDialogFragment = ProgressDialogFragment.newInstance();
+            mProgressDialogFragment.show(fm, "v");
+        } else {
+            mProgressDialogFragment.show(fm, "v");
         }
+
         ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
+
             @Override
             public void success(String strProduct, retrofit.client.Response response) {
                 WProduct wProduct = Utils.stringToJson(mContext, strProduct);
@@ -441,7 +441,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                             openDetailView.putExtra("product_detail", gson.toJson(mProductList));
                             startActivity(openDetailView);
                             overridePendingTransition(R.anim.slide_down, R.anim.anim_slide_up);
-                            if (closeActivity) { //close ProductView activity when 1 row exist
+                            if (closeActivity) { //close ProductView activity when maximum row 1
                                 finish();
                             }
                             break;
@@ -470,7 +470,7 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
                     mProgressDialogFragment.dismiss();
                 }
             }
-        } catch (IllegalStateException ignored) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -489,10 +489,9 @@ public class ProductViewActivity extends AppCompatActivity implements SelectedPr
 
     private void showVProgressBar() {
         mRelViewProgressBar.setVisibility(View.VISIBLE);
-        mProductScroll.setVisibility(View.GONE);
+        mRelViewProgressBar.bringToFront();
         mProgressVBar.getIndeterminateDrawable().setColorFilter(null);
         mProgressVBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-
     }
 
     @Override
