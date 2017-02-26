@@ -38,7 +38,6 @@
         android:id="@+id/linProductSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:clipToPadding="false"
         android:orientation="vertical">
 
@@ -65,29 +64,6 @@
             layout="@layout/recent_serachs_layout"
             android:visibility="gone" />
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipeToRefresh"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/productSearchList"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="none" />
-        </android.support.v4.widget.SwipeRefreshLayout>
-
     </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/relProgressBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ProgressBar
-            android:id="@+id/mProgressBar"
-            android:layout_width="24dp"
-            android:layout_height="24dp" />
-    </RelativeLayout>
 
 </LinearLayout>

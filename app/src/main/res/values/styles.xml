@@ -568,8 +568,7 @@
         <item name="content_background">@color/light_background</item>
         <item name="popup_theme">@style/ThemeOverlay.AppCompat.Light</item>
     </style>
-
-
+x
     <!-- Customize theme for transparent activity -->
     <style name="Theme.AppCompat.Transparent.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
@@ -577,7 +576,7 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">false</item>
-        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:backgroundDimEnabled">true</item>
     </style>
 
     <style name="FragmentDialogStyle" parent="Base.Theme.AppCompat.Dialog">

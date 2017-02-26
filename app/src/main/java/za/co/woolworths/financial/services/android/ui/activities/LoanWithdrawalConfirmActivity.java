@@ -149,8 +149,12 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
                         startActivity(intent);
                         finish();
                     } else {
-                        mPopWindowValidationMessage.displayValidationMessage(authoriseLoanResponse.response.desc,
-                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+                        String desc = authoriseLoanResponse.response.desc;
+                        if (desc != null && !TextUtils.isEmpty(desc)) {
+                            Utils.displayValidationMessage(LoanWithdrawalConfirmActivity.this,
+                                    TransientActivity.VALIDATION_MESSAGE_LIST.HIGH_LOAN_AMOUNT,
+                                    desc);
+                        }
                     }
                 }
 

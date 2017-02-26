@@ -28,7 +28,6 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
-import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
@@ -40,13 +39,11 @@ public class ProductSearchActivity extends BaseActivity
     public RecyclerView productListview;
     public LinearLayoutManager mLayoutManager;
     public Toolbar toolbar;
-    private String searchProductBrand;
     private WEditTextView mEditSearchProduct;
     private LinearLayout recentSearchLayout;
     private LinearLayout recentSearchList;
 
     PopWindowValidationMessage mPopWindowValidationMessage;
-    private WProgressDialogFragment mGetProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +58,7 @@ public class ProductSearchActivity extends BaseActivity
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    searchProduct();
+                    searchProduct(mEditSearchProduct.getText().toString());
                     return true;
                 }
                 return false;
@@ -70,8 +67,6 @@ public class ProductSearchActivity extends BaseActivity
     }
 
     private void initUI() {
-        mGetProgressDialog = WProgressDialogFragment.newInstance("v");
-        mGetProgressDialog.setCancelable(true);
         mLayoutManager = new LinearLayoutManager(ProductSearchActivity.this);
         productListview = (RecyclerView) findViewById(R.id.productSearchList);
         mEditSearchProduct = (WEditTextView) findViewById(R.id.toolbarText);
@@ -105,7 +100,7 @@ public class ProductSearchActivity extends BaseActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                searchProduct();
+                searchProduct(mEditSearchProduct.getText().toString());
                 return true;
             case R.id.action_search:
                 canGoBack();
@@ -114,17 +109,18 @@ public class ProductSearchActivity extends BaseActivity
         return false;
     }
 
-    private void searchProduct() {
-        searchProductBrand = mEditSearchProduct.getText().toString();
+    private void searchProduct(String searchProductBrand) {
         if (searchProductBrand.length() > 2) {
             Intent intent = new Intent("closeProductView");
             sendBroadcast(intent);
             SearchHistory search = new SearchHistory();
             search.searchedValue = searchProductBrand;
             saveRecentSearch(search);
-            Intent searchProduct = new Intent(ProductSearchActivity.this, ProductViewActivity.class);
+            Intent searchProduct = new Intent(ProductSearchActivity.this, ProductViewGridActivity.class);
             searchProduct.putExtra("searchProduct", searchProductBrand);
             startActivity(searchProduct);
+            mEditSearchProduct.setText("");
+            overridePendingTransition(0, R.anim.fade_in);
         }
     }
 
@@ -229,10 +225,7 @@ public class ProductSearchActivity extends BaseActivity
     public void onClick(View v) {
         int pos = (Integer) v.getTag();
         showRecentSearchHistoryView(false);
-        searchProductBrand = getRecentSearch().get(pos).searchedValue;
-        mEditSearchProduct.setText(searchProductBrand);
-        mEditSearchProduct.setSelection(searchProductBrand.length());
-        searchProduct();
+        searchProduct(getRecentSearch().get(pos).searchedValue);
     }
 
     @Override
@@ -246,4 +239,6 @@ public class ProductSearchActivity extends BaseActivity
         super.onDestroy();
         hideSoftKeyboard();
     }
+
+
 }

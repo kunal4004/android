@@ -27,9 +27,10 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CLI;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class CLIActivity extends AppCompatActivity implements View.OnClickListener {
+public class CLIActivity extends BaseActivity implements View.OnClickListener {
 
     private WTextView mTextToolbar;
     private Toolbar mToolbar;
@@ -172,7 +173,7 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
                 Intent openCLIStepIndicator = new Intent(CLIActivity.this, CLISupplyInfoActivity.class);
                 startActivity(openCLIStepIndicator);
                 finish();
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
         }
     }

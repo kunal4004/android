@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,6 +63,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     private PopWindowValidationMessage mPopWindowValidationMessage;
     private SharePreferenceHelper mSharePreferenceHelper;
     private HttpAsyncTask<String, String, OfferActive> asyncRequestPersonalLoan;
+    private boolean cardHasId = false;
 
     private AccountsResponse temp = null;
 
@@ -152,7 +152,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
             case R.id.txtIncreseLimit:
-                Log.e("productOfferIdStore", String.valueOf(productOfferingId));
                 if (!isOfferActive) {
                     ((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
@@ -195,6 +194,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                     int httpCode = offerActive.httpCode;
                     String httpDesc = offerActive.response.desc;
                     if (httpCode == 200) {
+                        cardHasId = true;
                         isOfferActive = offerActive.offerActive;
                         if (isOfferActive) {
                             disableIncreaseLimit();
@@ -285,7 +285,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                getActiveOffer();
+                if (!cardHasId) {
+                    getActiveOffer();
+                }
             }
         }, 100);
     }

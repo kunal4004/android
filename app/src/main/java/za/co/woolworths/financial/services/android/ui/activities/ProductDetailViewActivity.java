@@ -36,7 +36,6 @@ import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.CircularImageView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -92,7 +91,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private WTextView mTextColour;
     private WrapContentWebView mWebDescription;
     private WButton mBtnAddShoppingList;
-    private PopWindowValidationMessage mPopWindowValidationMessage;
     private WTextView mIngredientList;
     private LinearLayout mLinIngredient;
     private View ingredientLine;
@@ -106,8 +104,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         setContentView(R.layout.product_view_detail);
         mContext = this;
         SessionDao sessionDao;
-        mPopWindowValidationMessage = new PopWindowValidationMessage(this);
-
         try {
             sessionDao = new SessionDao(ProductDetailViewActivity.this,
                     SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
@@ -124,16 +120,13 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mBtnAddShoppingList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPopWindowValidationMessage.displayValidationMessage("viewShoppingList",
-                        PopWindowValidationMessage.OVERLAY_TYPE.SHOPPING_LIST_INFO)
-                        .setOnDismissListener(new PopupWindow.OnDismissListener() {
-                            @Override
-                            public void onDismiss() {
-                                Utils.addToShoppingCart(ProductDetailViewActivity.this, new ShoppingList(
-                                        mproductDetail.get(0).productId,
-                                        mproductDetail.get(0).productName, false));
-                            }
-                        });
+                Utils.addToShoppingCart(ProductDetailViewActivity.this, new ShoppingList(
+                        mproductDetail.get(0).productId,
+                        mproductDetail.get(0).productName, false));
+
+                Utils.displayValidationMessage(ProductDetailViewActivity.this,
+                        TransientActivity.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
+                        "viewShoppingList");
             }
         });
     }
@@ -354,6 +347,11 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
     }
 
+    @Override
+    public void onSelectedColor(View v, int position) {
+
+    }
+
     private void selectedProduct(int position) {
         if (productIsColored) {
             if (mPColourWindow != null) {
@@ -430,7 +428,10 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 "<style type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
                 "</style></head><body>";
         String footerTag = "</body></html>";
-        String descriptionWithoutExtraTag = productDetail.longDescription.replaceAll("</ul>\n\n<ul>\n", " ");
+        String descriptionWithoutExtraTag = "";
+        if (!TextUtils.isEmpty(productDetail.longDescription)) {
+            descriptionWithoutExtraTag = productDetail.longDescription.replaceAll("</ul>\n\n<ul>\n", " ");
+        }
         mWebDescription.loadData(headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag, "text/html; charset=UTF-8", null);
         mTextTitle.setText(isEmpty(productDetail.productName));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
@@ -580,6 +581,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     }
 
     private void promoImages(PromotionImages imPromo) {
+
         if (imPromo != null) {
             String wSave = imPromo.save;
             String wReward = imPromo.wRewards;

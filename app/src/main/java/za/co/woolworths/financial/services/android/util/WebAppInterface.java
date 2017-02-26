@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import za.co.woolworths.financial.services.android.models.dto.Ingredient;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.ui.activities.ProductViewActivity;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 
 public class WebAppInterface {
     Context mContext;
@@ -50,9 +51,9 @@ public class WebAppInterface {
 
             ((AppCompatActivity) mContext).runOnUiThread(new Runnable() {
                 public void run() {
-                    PopWindowValidationMessage popWindowValidationMessage = new PopWindowValidationMessage(mContext);
-                    popWindowValidationMessage.displayValidationMessage("viewShoppingList",
-                            PopWindowValidationMessage.OVERLAY_TYPE.SHOPPING_LIST_INFO);
+                    Utils.displayValidationMessage(mContext,
+                            TransientActivity.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
+                            "viewShoppingList");
                 }
             });
 

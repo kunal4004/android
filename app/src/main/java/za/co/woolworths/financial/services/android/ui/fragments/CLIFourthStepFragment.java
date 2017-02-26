@@ -1,9 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-/**
- * Created by dimitrij on 2016/12/20.
- */
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,46 +12,40 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
-
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 
 public class CLIFourthStepFragment extends Fragment implements View.OnClickListener {
 
-    private SharePreferenceHelper mSharePreference;
-
-    public interface CloseActivity{
-        public void closeActivity();
-    }
-
-
     private View view;
     private WButton mBtnBackToAccounts;
 
-    public CLIFourthStepFragment() {}
+    public CLIFourthStepFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-         view = inflater.inflate(R.layout.cli_fragment_step_four, container, false);
-         setHasOptionsMenu(true);
-         mSharePreference = SharePreferenceHelper.getInstance(getContext());
-         Intent i = new Intent(mSharePreference.getValue(mSharePreference.getValue("acc_card_activity")));
-         getActivity().sendBroadcast(i);
-         initUI();
-         setListener();
-         setContent();
+        view = inflater.inflate(R.layout.cli_fragment_step_four, container, false);
+        setHasOptionsMenu(true);
+        SharePreferenceHelper mSharePreference = SharePreferenceHelper.getInstance(getContext());
+        Intent i = new Intent(mSharePreference.getValue(mSharePreference.getValue("acc_card_activity")));
+        getActivity().sendBroadcast(i);
+        initUI();
+        setListener();
+        setContent();
+
         return view;
     }
 
-    private  void initUI(){
-        mBtnBackToAccounts = (WButton)view.findViewById(R.id.btnContinue);
+    private void initUI() {
+        mBtnBackToAccounts = (WButton) view.findViewById(R.id.btnContinue);
     }
 
-    private void setListener(){
+    private void setListener() {
         mBtnBackToAccounts.setOnClickListener(this);
     }
 
-    private void setContent(){
+    private void setContent() {
         mBtnBackToAccounts.setText(getActivity().getResources().getString(R.string.cli_back_to_acc));
     }
 
@@ -76,7 +66,7 @@ public class CLIFourthStepFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btnContinue:
                 closeActivity();
                 break;
@@ -91,13 +81,12 @@ public class CLIFourthStepFragment extends Fragment implements View.OnClickListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-                closeActivity();
+        closeActivity();
         return false;
     }
 
-    public void closeActivity(){
-
+    public void closeActivity() {
         getActivity().finish();
-        getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        getActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
     }
 }

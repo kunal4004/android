@@ -59,6 +59,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     private ImageView mImageArrow;
     private PopWindowValidationMessage mPopWindowValidationMessage;
     private AsyncTask<String, String, OfferActive> asyncTaskStore;
+    private boolean cardHasId = false;
 
     @Nullable
     @Override
@@ -174,6 +175,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                     if (httpCode == 200) {
                         isOfferActive = offerActive.offerActive;
                         if (isOfferActive) {
+                            cardHasId = true;
                             disableIncreaseLimit();
                         } else {
                             enableIncreaseLimit();
@@ -257,7 +259,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                getActiveOffer();
+                if (!cardHasId) {
+                    getActiveOffer();
+                }
             }
         }, 100);
     }

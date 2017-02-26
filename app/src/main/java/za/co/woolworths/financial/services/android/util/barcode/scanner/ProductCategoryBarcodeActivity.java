@@ -33,7 +33,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductDetailViewActivity;
-import za.co.woolworths.financial.services.android.ui.activities.TransludentActivity;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -279,9 +279,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     }
 
     private void errorScanCode() {
-        Intent intent = new Intent(ProductCategoryBarcodeActivity.this, TransludentActivity.class);
-        startActivity(intent);
-        overridePendingTransition(0, 0);
+        Utils.displayValidationMessage(this, TransientActivity.VALIDATION_MESSAGE_LIST.BARCODE_ERROR, "");
     }
 
     private void getProductDetail(final String productId, final String skuId) {
