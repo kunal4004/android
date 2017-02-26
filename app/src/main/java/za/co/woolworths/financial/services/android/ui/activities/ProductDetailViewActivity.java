@@ -106,8 +106,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mContext = this;
         SessionDao sessionDao;
 
-
-
         try {
             sessionDao = new SessionDao(ProductDetailViewActivity.this,
                     SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
@@ -348,6 +346,11 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
     @Override
     public void onLongPressState(View v, int position) {
+
+    }
+
+    @Override
+    public void onSelectedColor(View v, int position) {
 
     }
 

@@ -77,6 +77,11 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
 
     }
 
+    @Override
+    public void onSelectedColor(View v, int position) {
+
+    }
+
     public interface HideActionBarComponent {
         void onBurgerButtonPressed();
     }

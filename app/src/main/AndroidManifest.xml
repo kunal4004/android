@@ -247,8 +247,8 @@
             android:theme="@style/WTransaction" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity"
-            android:noHistory="true"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible"
             android:theme="@style/CLI" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ProductSearchSubCategoryActivity"
@@ -262,6 +262,10 @@
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ProductViewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductViewGridActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity

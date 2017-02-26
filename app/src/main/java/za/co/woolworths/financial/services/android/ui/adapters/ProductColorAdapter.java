@@ -42,7 +42,7 @@ public class ProductColorAdapter extends RecyclerView.Adapter<ProductColorAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSelectedProductView.onSelectedProduct(v, holder.getAdapterPosition());
+                mSelectedProductView.onSelectedColor(v, holder.getAdapterPosition());
             }
         });
     }

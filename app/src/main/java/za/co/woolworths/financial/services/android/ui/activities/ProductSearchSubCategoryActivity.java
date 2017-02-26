@@ -230,7 +230,7 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
                     openProductCategory.putExtra("catStep", 1);
                     startActivity(openProductCategory);
                 } else {
-                    Intent openProductListIntent = new Intent(ProductSearchSubCategoryActivity.this, ProductViewActivity.class);
+                    Intent openProductListIntent = new Intent(ProductSearchSubCategoryActivity.this, ProductViewGridActivity.class);
                     openProductListIntent.putExtra("sub_category_name", subCategory.categoryName);
                     openProductListIntent.putExtra("sub_category_id", subCategory.categoryId);
                     startActivity(openProductListIntent);

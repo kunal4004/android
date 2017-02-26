@@ -40,7 +40,7 @@ public class ProductSizeAdapter extends RecyclerView.Adapter<ProductSizeAdapter.
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSelectedProductView.onSelectedProduct(v, holder.getAdapterPosition());
+                mSelectedProductView.onSelectedColor(v, holder.getAdapterPosition());
             }
         });
     }
