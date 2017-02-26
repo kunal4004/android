@@ -251,30 +251,36 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         int scrollingHeight = mProductScroll.getChildAt(0).getHeight() - mProductScroll.getHeight();
         if (scrollingHeight <= mScrollY) {
             //scroll reached bottom
-            try {
-                int visibleItemCount = recyclerViewLayoutManager.getChildCount();
-                int totalItemCount = recyclerViewLayoutManager.getItemCount();
-                int firstVisibleItemPosition = recyclerViewLayoutManager.findFirstVisibleItemPosition();
-                if (!mIsLoading && !mIsLastPage) {
-                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
-                            && firstVisibleItemPosition >= 0
-                            && totalItemCount >= Utils.PAGE_SIZE) {
-                        if (mProduct.size() < num_of_item) {
-                            if (TextUtils.isEmpty(searchItem)) {
-                                loadMoreProduct();
-                            } else {
-                                searchMoreProduct();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        int visibleItemCount = recyclerViewLayoutManager.getChildCount();
+                        int totalItemCount = recyclerViewLayoutManager.getItemCount();
+                        int firstVisibleItemPosition = recyclerViewLayoutManager.findFirstVisibleItemPosition();
+                        if (!mIsLoading && !mIsLastPage) {
+                            if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                                    && firstVisibleItemPosition >= 0
+                                    && totalItemCount >= Utils.PAGE_SIZE) {
+                                if (mProduct.size() < num_of_item) {
+                                    if (TextUtils.isEmpty(searchItem)) {
+                                        loadMoreProduct();
+                                    } else {
+                                        searchMoreProduct();
+                                    }
+                                }
                             }
                         }
+                    } catch (NullPointerException ignored) {
                     }
                 }
-            } catch (NullPointerException ignored) {
-            }
+            });
         }
     }
 
     @Override
-    public void onUpOrCancelMotionEvent(ScrollState scrollState) {}
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -435,9 +441,11 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                         bindDataWithUI(mProduct);
                         mIsLastPage = false;
                         mIsLoading = false;
+                        hideVProgressBar();
                     }
+                } else {
+                    hideVProgressBar();
                 }
-                hideVProgressBar();
             }
         }.execute();
     }
@@ -490,8 +498,9 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                     if (moreProductList.size() < Utils.PAGE_SIZE) {
                         mIsLastPage = true;
                     }
+                    int actualSize = mProduct.size();
                     mProduct.addAll(moreProductList);
-                    mProductAdapter.notifyDataSetChanged();
+                    mProductAdapter.notifyItemRangeChanged(actualSize + 1, mProduct.size());
                 }
                 hideProgressBar();
             }
@@ -559,7 +568,6 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     private void showVProgressBar() {
         mRelViewProgressBar.setVisibility(View.VISIBLE);
         mProductScroll.setVisibility(View.GONE);
-        mRelViewProgressBar.bringToFront();
         mProgressVBar.getIndeterminateDrawable().setColorFilter(null);
         mProgressVBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
     }
@@ -641,8 +649,9 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                     if (moreProductList.size() < Utils.PAGE_SIZE) {
                         mIsLastPage = true;
                     }
+                    int actualSize = mProduct.size();
                     mProduct.addAll(moreProductList);
-                    mProductAdapter.notifyDataSetChanged();
+                    mProductAdapter.notifyItemRangeChanged(actualSize + 1, mProduct.size());
                 }
                 hideProgressBar();
             }
