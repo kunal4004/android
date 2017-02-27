@@ -35,7 +35,7 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchSubCategoryActivity;
-import za.co.woolworths.financial.services.android.ui.activities.ProductViewActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ProductViewGridActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductCategoryAdapter;
 import za.co.woolworths.financial.services.android.ui.views.LDObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -64,7 +64,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
             startActivity(openSubCategory);
             getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
         } else {
-            Intent openProductListIntent = new Intent(getActivity(), ProductViewActivity.class);
+            Intent openProductListIntent = new Intent(getActivity(), ProductViewGridActivity.class);
             openProductListIntent.putExtra("sub_category_name", rootCategory.categoryName);
             openProductListIntent.putExtra("sub_category_id", rootCategory.categoryId);
             startActivity(openProductListIntent);
@@ -74,6 +74,11 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
 
     @Override
     public void onLongPressState(View v, int position) {
+
+    }
+
+    @Override
+    public void onSelectedColor(View v, int position) {
 
     }
 

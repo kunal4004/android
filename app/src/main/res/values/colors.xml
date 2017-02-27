@@ -53,7 +53,6 @@
     <color name="reward_status_bar_color">#cc000000</color>
     <color name="default_background">#ececec</color>
     <color name="semi_white">#15ffffff</color>
-
     <color name="product_search_hint">#20000000</color>
     <color name="primary">#3F51B5</color>
     <color name="primary_dark">#303F9F</color>
@@ -71,5 +70,6 @@
     <color name="product_divider">#22000000</color>
     <color name="viewpager_bg">#10000000</color>
     <color name="red">#ff0000</color>
+    <color name="spinner_overlay_bg">#99EFEFEF</color>
 
 </resources>

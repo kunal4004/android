@@ -63,13 +63,15 @@ public class ProgressDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle arguments = getArguments();
-        String message = arguments.getString(ARG_MESSAGE, null);
-        if (message == null) {
-            message = getString(arguments.getInt(ARG_MESSAGE));
+        try {
+            String message = arguments.getString(ARG_MESSAGE, null);
             if (message == null) {
-                message = getString(R.string.loading);
+                message = getString(arguments.getInt(ARG_MESSAGE));
+                if (message == null) {
+                    message = getString(R.string.loading);
+                }
             }
-        }
+        }catch (ClassCastException ex){}
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         setCancelable(false);
         return dialog;
