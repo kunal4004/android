@@ -13,8 +13,12 @@ import android.widget.ImageView;
 import com.awfs.coordination.R;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -71,7 +75,22 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             PromotionImages promo = productItem.promotionImages;
             holder.productName.setText(productName);
 
-            productType(holder, productType);
+            ArrayList<Double> priceList = new ArrayList<>();
+            for (OtherSkus os : productItem.otherSkus) {
+                if (!TextUtils.isEmpty(os.wasPrice)) {
+                    priceList.add(Double.valueOf(os.wasPrice));
+                }
+            }
+
+            String wasPrice = "";
+            if (priceList != null && priceList.size() > 0) {
+                wasPrice = String.valueOf(Collections.max(priceList));
+            }
+
+            String fromPrice = String.valueOf(productItem.fromPrice);
+            productPriceList(holder.mTextAmount, holder.mTextWasPrice,
+                    fromPrice, wasPrice, productType);
+
             productImage(holder, imgUrl);
             promoImages(holder, promo);
         }
@@ -109,34 +128,39 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         return R.id.swipe;
     }
 
-
-    private void productType(SimpleViewHolder holder, String productType) {
-        String price;
-        if ("clothingProducts".equalsIgnoreCase(productType)) {
-            price = String.valueOf(productItem.fromPrice);
-        } else {
-            price = productItem.otherSkus.get(0).price;
-        }
-
+    public void productPriceList(WTextView wPrice, WTextView WwasPrice,
+                                 String price, String wasPrice, String productType) {
         switch (productType) {
             case "clothingProducts":
-                holder.mTextAmount.setText(WFormatter.formatAmount(price));
-                if (!TextUtils.isEmpty(productItem.otherSkus.get(0).wasPrice)) {
-                    holder.mTextAmount.setText("From: " + WFormatter.formatAmount(productItem.otherSkus.get(0).wasPrice));
-                    holder.mTextWasPrice.setText(WFormatter.formatAmount(price));
-                    holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                if (TextUtils.isEmpty(wasPrice)) {
+                    wPrice.setText("From: " + WFormatter.formatAmount(price));
+                    WwasPrice.setText("");
                 } else {
-                    holder.mTextAmount.setText("From: " + WFormatter.formatAmount(price));
+                    if (wasPrice.equalsIgnoreCase(price)) {
+                        //wasPrice equals currentPrice
+                        wPrice.setText("From: " + WFormatter.formatAmount(price));
+                        WwasPrice.setText("");
+                        return;
+                    }
+                    wPrice.setText("From: " + WFormatter.formatAmount(wasPrice));
+                    wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    WwasPrice.setText(WFormatter.formatAmount(price));
                 }
                 break;
-            default:
-                holder.mTextAmount.setText(
-                        WFormatter.formatAmount(productItem.otherSkus.get(0).price));
 
-                if (!TextUtils.isEmpty(productItem.otherSkus.get(0).wasPrice)) {
-                    holder.mTextAmount.setText(WFormatter.formatAmount(productItem.otherSkus.get(0).wasPrice));
-                    holder.mTextWasPrice.setText(WFormatter.formatAmount(price));
-                    holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            default:
+                if (TextUtils.isEmpty(wasPrice)) {
+                    wPrice.setText(WFormatter.formatAmount(price));
+                    WwasPrice.setText("");
+                } else {
+                    if (wasPrice.equalsIgnoreCase(price)) { //wasPrice equals currentPrice
+                        wPrice.setText(WFormatter.formatAmount(price));
+                        WwasPrice.setText("");
+                    } else {
+                        wPrice.setText(WFormatter.formatAmount(wasPrice));
+                        wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        WwasPrice.setText(WFormatter.formatAmount(price));
+                    }
                 }
                 break;
         }

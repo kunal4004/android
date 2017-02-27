@@ -35,6 +35,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
@@ -95,6 +96,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     public NestedScrollView mScrollProductDetail;
     private int mPreviousState;
     private ViewPager mTouchTarget;
+    private WProductDetail productDetail;
 
     protected void initProductDetailUI() {
         mScrollProductDetail = (NestedScrollView) findViewById(R.id.scrollProductDetail);
@@ -174,7 +176,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     }
 
     protected void populateView() {
-        WProductDetail productDetail = mproductDetail.get(0);
+        productDetail = mproductDetail.get(0);
 
         String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
                 "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
@@ -187,31 +189,79 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mWebDescription.loadData(headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag, "text/html; charset=UTF-8", null);
         mTextTitle.setText(isEmpty(productDetail.productName));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
-        String mWasPrice = productDetail.otherSkus.get(0).wasPrice;
-        if (productDetail.productType.equalsIgnoreCase("clothingProducts")) {
-            mRelContainer.setVisibility(View.VISIBLE);
-            mColorView.setVisibility(View.VISIBLE);
-            if (!TextUtils.isEmpty(mWasPrice)) {
-                mTextActualPrice.setText(WFormatter.formatAmount(productDetail.fromPrice));
-                mTextPrice.setText("From: " + WFormatter.formatAmount(mWasPrice));
-                mTextPrice.setPaintFlags(mTextPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            } else {
-                mTextActualPrice.setText("");
-                mTextPrice.setText("From: " + WFormatter.formatAmount(productDetail.fromPrice));
-            }
-        } else {
-            mColorView.setVisibility(View.GONE);
-            mRelContainer.setVisibility(View.GONE);
-            mTextPrice.setText(WFormatter.formatAmount(productDetail.otherSkus.get(0).price));
-            if (!TextUtils.isEmpty(mWasPrice)) {
-                mTextActualPrice.setText(WFormatter.formatAmount(productDetail.otherSkus.get(0).price));
-                mTextPrice.setText(WFormatter.formatAmount(mWasPrice));
-                mTextPrice.setPaintFlags(mTextPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            } else {
-                mTextActualPrice.setText("");
+
+        String fromPrice = String.valueOf(productDetail.fromPrice);
+        String wasPrice = "";
+        ArrayList<Double> priceList = new ArrayList<>();
+        for (OtherSku os : productDetail.otherSkus) {
+            if (!TextUtils.isEmpty(os.wasPrice)) {
+                priceList.add(Double.valueOf(os.wasPrice));
             }
         }
+
+        if (priceList != null && priceList.size() > 0) {
+            wasPrice = String.valueOf(Collections.max(priceList));
+        }
+
+        productPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice, productDetail.productType);
         mCategoryName.setText(productDetail.categoryName);
+    }
+
+    public void productPriceList(WTextView wPrice, WTextView WwasPrice,
+                                 String price, String wasPrice, String productType) {
+        switch (productType) {
+            case "clothingProducts":
+                mColorView.setVisibility(View.VISIBLE);
+                mRelContainer.setVisibility(View.VISIBLE);
+                if (TextUtils.isEmpty(wasPrice)) {
+                    wPrice.setText("From: " + WFormatter.formatAmount(price));
+                    WwasPrice.setText("");
+                } else {
+                    if (wasPrice.equalsIgnoreCase(price)) {
+                        //wasPrice equals currentPrice
+                        wPrice.setText("From: " + WFormatter.formatAmount(price));
+                        WwasPrice.setText("");
+                    } else {
+                        wPrice.setText("From: " + WFormatter.formatAmount(wasPrice));
+                        wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        WwasPrice.setText(WFormatter.formatAmount(price));
+                    }
+                }
+                break;
+
+            default:
+                mColorView.setVisibility(View.GONE);
+                mRelContainer.setVisibility(View.GONE);
+                if (TextUtils.isEmpty(wasPrice)) {
+                    wPrice.setText(WFormatter.formatAmount(price));
+                    WwasPrice.setText("");
+                } else {
+
+                    if (Utils.isLocationEnabled(WProductDetailActivity.this)) {
+                        ArrayList<Double> priceList = new ArrayList<>();
+                        for (OtherSku os : productDetail.otherSkus) {
+                            if (!TextUtils.isEmpty(os.price)) {
+                                priceList.add(Double.valueOf(os.price));
+                            }
+                        }
+
+                        if (priceList != null && priceList.size() > 0) {
+                            price = String.valueOf(Collections.max(priceList));
+                        }
+                    }
+
+                    if (wasPrice.equalsIgnoreCase(price)) { //wasPrice equals currentPrice
+                        wPrice.setText(WFormatter.formatAmount(price));
+                        WwasPrice.setText("");
+                        return;
+                    } else {
+                        wPrice.setText(WFormatter.formatAmount(wasPrice));
+                        wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        WwasPrice.setText(WFormatter.formatAmount(price));
+                    }
+                }
+                break;
+        }
     }
 
     protected String isEmpty(String value) {
