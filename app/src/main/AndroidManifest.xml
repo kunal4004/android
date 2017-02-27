@@ -261,10 +261,6 @@
             android:uiOptions="splitActionBarWhenNarrow"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductViewActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
-        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ProductViewGridActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
