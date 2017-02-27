@@ -394,7 +394,6 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     }
 
     public void searchProduct() {
-
         new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected void onPreExecute() {

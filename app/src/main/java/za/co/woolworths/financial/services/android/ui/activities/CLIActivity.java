@@ -98,7 +98,19 @@ public class CLIActivity extends BaseActivity implements View.OnClickListener {
 
     private void setPagerCard(int id) {
         int[] cards = {R.drawable.w_store_card, R.drawable.w_credi_card, R.drawable.w_personal_loan_card};
-        mImageAccount.setImageResource(cards[id]);
+        if(id==1)
+        {
+            if (WoolworthsApplication.getCreditCardType().equalsIgnoreCase(Utils.SILVER_CARD)) {
+                mImageAccount.setImageResource(R.drawable.w_silver_credit_card);
+            } else if (WoolworthsApplication.getCreditCardType().equalsIgnoreCase(Utils.GOLD_CARD)) {
+                mImageAccount.setImageResource(R.drawable.w_gold_credit_card);
+            } else if (WoolworthsApplication.getCreditCardType().equalsIgnoreCase(Utils.BLACK_CARD)) {
+                mImageAccount.setImageResource(R.drawable.w_credi_card);
+            }
+        }
+        else {
+            mImageAccount.setImageResource(cards[id]);
+        }
         setCLIContent(id);
 
     }
