@@ -642,6 +642,19 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         return false;
     }
 
+    public void dismissPopWindow() {
+        if (mPColourWindow != null) {
+            if (mPColourWindow.isShowing()) {
+                mPColourWindow.dismiss();
+            }
+        }
+        if (mPSizeWindow != null) {
+            if (mPSizeWindow.isShowing()) {
+                mPSizeWindow.dismiss();
+            }
+        }
+    }
+
     @Override
     public void onSelectedProduct(View v, int position) {
 

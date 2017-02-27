@@ -154,6 +154,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                 switch (newState) {
                     case COLLAPSED:
                         panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
+                        dismissPopWindow();
                         if (productCanClose) { //close ProductView activity when maximum row 1
                             closeGridView();
                             finish();
@@ -163,6 +164,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
 
                     case DRAGGING:
                         if (productCanClose) { //close ProductView activity when maximum row 1
+                            dismissPopWindow();
                             mLinProductList.removeAllViews();
                         }
                         break;
