@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Protocol;
@@ -12,6 +13,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
+import com.squareup.okhttp.internal.http.RealResponseBody;
 
 import java.io.IOException;
 
@@ -19,6 +21,7 @@ import okio.Buffer;
 import okio.BufferedSink;
 import okio.ByteString;
 import okio.GzipSink;
+import okio.GzipSource;
 import okio.Okio;
 import za.co.woolworths.financial.services.android.models.dao.ApiRequestDao;
 import za.co.woolworths.financial.services.android.models.dao.ApiResponseDao;
@@ -50,8 +53,11 @@ public class WfsApiInterceptor implements Interceptor {
         String cacheTimeHeaderValue = request.header("cacheTime");
         final long cacheTime = Integer.parseInt(cacheTimeHeaderValue == null ? "0" : cacheTimeHeaderValue);//cache time in seconds
 
-        if (cacheTime == 0 || request.header("Accept-Encoding") != null || request.body() == null) {
-            return chain.proceed(request);
+        if (cacheTime == 0) {
+            Response originalResponse = chain.proceed(request);
+            return originalResponse.newBuilder()
+                    .header("Accept-Encoding", "gzip")
+                    .build();
         }
 
         final String endpoint = request.url().toString();
@@ -63,7 +69,6 @@ public class WfsApiInterceptor implements Interceptor {
 
         if (apiResponseDao.id != null) {  //cache exists. return cached response
             return new Response.Builder()
-                    .header("Cache-Control", "max-age=60")
                     .code(apiResponseDao.code)
                     .message(apiResponseDao.message)
                     .request(chain.request())
@@ -73,7 +78,7 @@ public class WfsApiInterceptor implements Interceptor {
         }
 
         //cache does not exist. Proceed with service call.
-        com.squareup.okhttp.Response response = chain.proceed(request);
+        Response response = chain.proceed(request);
 
         //save the newly created apiRequestDao
         apiRequestDao.save();
@@ -91,11 +96,15 @@ public class WfsApiInterceptor implements Interceptor {
 
         String responseLog = String.format("Received response for %s in %.1fms%n%s", apiResponseDao.body + response.request().url(), (t2 - t1) / 1e6d, apiResponseDao.headers);
 
-        Request compressedRequest = request.newBuilder()
+//        Request compressedRequest = request.newBuilder()
+//                .header("Accept-Encoding", "gzip")
+//                .method(request.method(), requestBodyWithContentLength(gzip(RequestBody.create(MediaType.parse(apiResponseDao.contentType), apiResponseDao.body))))
+//                .build();
+
+        return response.newBuilder()
                 .header("Accept-Encoding", "gzip")
-                .method(request.method(), requestBodyWithContentLength(gzip(RequestBody.create(MediaType.parse(apiResponseDao.contentType), apiResponseDao.body))))
+                .body(ResponseBody.create(MediaType.parse(apiResponseDao.contentType), apiResponseDao.body))
                 .build();
-        return chain.proceed(compressedRequest);
     }
 
     public String bodyToString(final Request request) {
@@ -153,4 +162,23 @@ public class WfsApiInterceptor implements Interceptor {
             }
         };
     }
+
+    // copied from okhttp3.internal.http.HttpEngine (because is private)
+    private Response unzip(final Response response) throws IOException {
+
+        if (response.body() == null) {
+            return response;
+        }
+
+        GzipSource responseBody = new GzipSource(response.body().source());
+        Headers strippedHeaders = response.headers().newBuilder()
+                  .removeAll("Accept-Encoding")
+                .removeAll("Content-Length")
+                .build();
+        return response.newBuilder()
+                .headers(strippedHeaders)
+                .body(new RealResponseBody(strippedHeaders, Okio.buffer(responseBody)))
+                .build();
+    }
+
 }
