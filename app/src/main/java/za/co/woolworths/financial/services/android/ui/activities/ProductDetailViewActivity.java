@@ -457,6 +457,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                     if (wasPrice.equalsIgnoreCase(price)) {
                         //wasPrice equals currentPrice
                         wPrice.setText("From: " + WFormatter.formatAmount(price));
+                        wPrice.setPaintFlags(0);
                         WwasPrice.setText("");
                     } else {
                         wPrice.setText("From: " + WFormatter.formatAmount(wasPrice));

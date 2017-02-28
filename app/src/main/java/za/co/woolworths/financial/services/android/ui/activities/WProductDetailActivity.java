@@ -214,6 +214,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 mRelContainer.setVisibility(View.VISIBLE);
                 if (TextUtils.isEmpty(wasPrice)) {
                     wPrice.setText("From: " + WFormatter.formatAmount(price));
+                    wPrice.setPaintFlags(0);
                     WwasPrice.setText("");
                 } else {
                     if (wasPrice.equalsIgnoreCase(price)) {
