@@ -102,6 +102,14 @@ public class WTransactionsAdapter extends BaseExpandableListAdapter {
             return formatedAmount;
     }
 
+    public String addNegativeSymbolInFront(SpannableString amount) {
+        String currentAmount = amount.toString();
+        if (currentAmount.contains("R-")) {
+            currentAmount = currentAmount.replace("R-", "- R");
+        }
+        return currentAmount;
+    }
+
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         Transaction transaction=transactionParentObjList.get(groupPosition).getTransactionList().get(childPosition);
@@ -132,7 +140,7 @@ public class WTransactionsAdapter extends BaseExpandableListAdapter {
         transactionDate.setText(formatedDate);
 
 
-        transactionAmount.setText(formatTransactionAmount(transaction.amount));
+        transactionAmount.setText(addNegativeSymbolInFront(FontHyperTextParser.getSpannable(formatTransactionAmount(transaction.amount), 1, mContext)));
         transactionDescription.setText(transaction.description);
 
         return convertView;
