@@ -110,7 +110,7 @@
     <string name="month_description">YOUR TIER STATUS FOR THE MONTH</string>
     <string name="information">INFORMATION</string>
     <string name="voucher_terms_button_text">VIEW GENERAL TERMS &amp; CONDITIONS</string>
-    <string name="reward_status_info_1">Swipe your WRewards or MySchool card and get an extra 10\%% off selected items.  Pay with your Woolies card and get a further 5\%%.</string>
+    <string name="reward_status_info_1">Swipe your Woolies or MySchool card and get an extra 10\%% off selected items.  Pay with your Woolies card and get a further 5\%%.</string>
     <string name="reward_status_info_2">Invitations to preview sales</string>
     <string name="reward_status_info_3">WRewards Green</string>
     <string name="reward_status_info_4">Free WMagazine</string>
@@ -539,4 +539,5 @@
     <string name="savings_info_message">The WRewards year is calculated from the first Monday of each financial year of Woolworths which commences at the end of June or at the beginning of July and comes to an end on the last Sunday of the Woolworths financial year 12 (twelve) months later.</string>
     <string name="wrewards_logout_tag_line">WRewards is our way of rewarding customers INSTANTLY. WRewards members save millions every week.</string>
 
+    <string name="contact_us_no_email_error">In order for us to process your query, please send an email to [email_address] with \"[subjectline]\" entered in the subject line. Remember to include your ID number in the body of the email.</string>
 </resources>

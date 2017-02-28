@@ -26,7 +26,7 @@ public class WFormatter {
             stringBuilder.append(split[i]);
             counter++;
         }
-        return String.format("R%s.%02d", stringBuilder.reverse().toString(), amount % 100);
+        return String.format("R %s.%02d", stringBuilder.reverse().toString(), amount % 100);
     }
 
 
