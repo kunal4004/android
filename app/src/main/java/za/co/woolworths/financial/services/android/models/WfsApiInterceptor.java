@@ -50,7 +50,7 @@ public class WfsApiInterceptor implements Interceptor {
         String cacheTimeHeaderValue = request.header("cacheTime");
         final long cacheTime = Integer.parseInt(cacheTimeHeaderValue == null ? "0" : cacheTimeHeaderValue);//cache time in seconds
 
-        if (cacheTime == 0 || request.header("Content-Encoding") != null || request.body() == null) {
+        if (cacheTime == 0 || request.header("Accept-Encoding") != null || request.body() == null) {
             return chain.proceed(request);
         }
 
@@ -92,7 +92,7 @@ public class WfsApiInterceptor implements Interceptor {
         String responseLog = String.format("Received response for %s in %.1fms%n%s", apiResponseDao.body + response.request().url(), (t2 - t1) / 1e6d, apiResponseDao.headers);
 
         Request compressedRequest = request.newBuilder()
-                .header("Content-Encoding", "gzip")
+                .header("Accept-Encoding", "gzip")
                 .method(request.method(), requestBodyWithContentLength(gzip(RequestBody.create(MediaType.parse(apiResponseDao.contentType), apiResponseDao.body))))
                 .build();
         return chain.proceed(compressedRequest);
