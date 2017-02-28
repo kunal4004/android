@@ -214,12 +214,14 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 mRelContainer.setVisibility(View.VISIBLE);
                 if (TextUtils.isEmpty(wasPrice)) {
                     wPrice.setText("From: " + WFormatter.formatAmount(price));
+                    wPrice.setPaintFlags(0);
                     WwasPrice.setText("");
                 } else {
                     if (wasPrice.equalsIgnoreCase(price)) {
                         //wasPrice equals currentPrice
                         wPrice.setText("From: " + WFormatter.formatAmount(price));
                         WwasPrice.setText("");
+                        wPrice.setPaintFlags(0);
                     } else {
                         wPrice.setText("From: " + WFormatter.formatAmount(wasPrice));
                         wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -232,10 +234,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 mColorView.setVisibility(View.GONE);
                 mRelContainer.setVisibility(View.GONE);
                 if (TextUtils.isEmpty(wasPrice)) {
-                    wPrice.setText(WFormatter.formatAmount(price));
-                    WwasPrice.setText("");
-                } else {
-
                     if (Utils.isLocationEnabled(WProductDetailActivity.this)) {
                         ArrayList<Double> priceList = new ArrayList<>();
                         for (OtherSku os : productDetail.otherSkus) {
@@ -243,7 +241,21 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                                 priceList.add(Double.valueOf(os.price));
                             }
                         }
-
+                        if (priceList != null && priceList.size() > 0) {
+                            price = String.valueOf(Collections.max(priceList));
+                        }
+                    }
+                    wPrice.setText(WFormatter.formatAmount(price));
+                    wPrice.setPaintFlags(0);
+                    WwasPrice.setText("");
+                } else {
+                    if (Utils.isLocationEnabled(WProductDetailActivity.this)) {
+                        ArrayList<Double> priceList = new ArrayList<>();
+                        for (OtherSku os : productDetail.otherSkus) {
+                            if (!TextUtils.isEmpty(os.price)) {
+                                priceList.add(Double.valueOf(os.price));
+                            }
+                        }
                         if (priceList != null && priceList.size() > 0) {
                             price = String.valueOf(Collections.max(priceList));
                         }
@@ -252,7 +264,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                     if (wasPrice.equalsIgnoreCase(price)) { //wasPrice equals currentPrice
                         wPrice.setText(WFormatter.formatAmount(price));
                         WwasPrice.setText("");
-                        return;
                     } else {
                         wPrice.setText(WFormatter.formatAmount(wasPrice));
                         wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
