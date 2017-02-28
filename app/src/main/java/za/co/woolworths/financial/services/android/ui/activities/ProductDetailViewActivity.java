@@ -451,6 +451,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 mRelContainer.setVisibility(View.VISIBLE);
                 if (TextUtils.isEmpty(wasPrice)) {
                     wPrice.setText("From: " + WFormatter.formatAmount(price));
+                    wPrice.setPaintFlags(0);
                     WwasPrice.setText("");
                 } else {
                     if (wasPrice.equalsIgnoreCase(price)) {

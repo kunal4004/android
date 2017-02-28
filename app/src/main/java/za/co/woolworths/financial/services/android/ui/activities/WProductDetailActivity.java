@@ -220,6 +220,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                         //wasPrice equals currentPrice
                         wPrice.setText("From: " + WFormatter.formatAmount(price));
                         WwasPrice.setText("");
+                        wPrice.setPaintFlags(0);
                     } else {
                         wPrice.setText("From: " + WFormatter.formatAmount(wasPrice));
                         wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
