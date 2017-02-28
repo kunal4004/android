@@ -332,7 +332,9 @@ public class Utils {
     }
 
     public static void removeBadgeCounter(Context context) {
-        ShortcutBadger.applyCount(context, 0);
+        try {
+            ShortcutBadger.applyCount(context, 0);
+        }catch (NullPointerException ex){}
     }
 
     public static boolean isLocationEnabled(Context context) {
