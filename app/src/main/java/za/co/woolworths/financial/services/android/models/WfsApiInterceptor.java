@@ -92,7 +92,7 @@ public class WfsApiInterceptor implements Interceptor {
         String responseLog = String.format("Received response for %s in %.1fms%n%s", apiResponseDao.body + response.request().url(), (t2 - t1) / 1e6d, apiResponseDao.headers);
 
         Request compressedRequest = request.newBuilder()
-                .header("Accept-Encoding", "gzip")
+                .header("Content-Encoding", "gzip")
                 .method(request.method(), requestBodyWithContentLength(gzip(RequestBody.create(MediaType.parse(apiResponseDao.contentType), apiResponseDao.body))))
                 .build();
         return chain.proceed(compressedRequest);
