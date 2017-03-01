@@ -124,7 +124,9 @@ public class ContactUsGeneralEnquiriesFragment extends Fragment implements View.
         } else {
             Utils.displayValidationMessage(getActivity(),
                     TransientActivity.VALIDATION_MESSAGE_LIST.INFO,
-                    getActivity().getResources().getString(R.string.contact_us_no_email_error).replace("email_address", emailId));
+                    getActivity().getResources().getString(R.string.contact_us_no_email_error)
+                            .replace("email_address", emailId).replace("subject_line",subject));
+
         }
     }
 }
