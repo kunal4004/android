@@ -73,19 +73,19 @@ public class ContactUsWRewardsFragment extends Fragment implements View.OnClickL
                 makeCall(getActivity().getResources().getString(R.string.wrewards_inter_national_caller_number));
                 break;
             case R.id.complaints:
-                sendEmail(getActivity().getResources().getString(R.string.email_rewards));
+                sendEmail(getActivity().getResources().getString(R.string.email_rewards), getActivity().getResources().getString(R.string.txt_complaint));
                 break;
             case R.id.wrewardCard:
-                sendEmail(getActivity().getResources().getString(R.string.email_rewards));
+                sendEmail(getActivity().getResources().getString(R.string.email_rewards), getActivity().getResources().getString(R.string.txt_wrewards_card));
                 break;
             case R.id.wRewardsLoyalVoucher:
-                sendEmail(getActivity().getResources().getString(R.string.email_rewards));
+                sendEmail(getActivity().getResources().getString(R.string.email_rewards), getActivity().getResources().getString(R.string.txt_wrewards_loyalty_vouchers));
                 break;
             case R.id.littleWorld:
-                sendEmail(getActivity().getResources().getString(R.string.email_rewards));
+                sendEmail(getActivity().getResources().getString(R.string.email_rewards), getActivity().getResources().getString(R.string.txt_littleworld));
                 break;
             case R.id.general:
-                sendEmail(getActivity().getResources().getString(R.string.email_rewards));
+                sendEmail(getActivity().getResources().getString(R.string.email_rewards), getActivity().getResources().getString(R.string.txt_general));
                 break;
         }
     }
@@ -114,9 +114,11 @@ public class ContactUsWRewardsFragment extends Fragment implements View.OnClickL
         }
     }
 
-    public void sendEmail(String emailId) {
+    public void sendEmail(String emailId, String subject) {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-        emailIntent.setData(Uri.parse("mailto:" + emailId));
+        emailIntent.setData(Uri.parse("mailto:" + emailId +
+                "?subject=" + Uri.encode(subject) +
+                "&body=" + Uri.encode("")));
 
         PackageManager pm = getActivity().getPackageManager();
         List<ResolveInfo> listOfEmail = pm.queryIntentActivities(emailIntent, 0);

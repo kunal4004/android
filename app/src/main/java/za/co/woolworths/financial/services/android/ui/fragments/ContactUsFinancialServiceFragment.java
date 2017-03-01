@@ -23,6 +23,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.ContactUsFragmentChange;
 
@@ -50,7 +51,6 @@ public class ContactUsFinancialServiceFragment extends Fragment implements View.
         view.findViewById(R.id.storeCardPesonalLoanQuery).setOnClickListener(this);
         view.findViewById(R.id.proofOfIncome).setOnClickListener(this);
         view.findViewById(R.id.technical).setOnClickListener(this);
-
 
         return view;
     }
@@ -81,34 +81,35 @@ public class ContactUsFinancialServiceFragment extends Fragment implements View.
                 makeCall(getActivity().getResources().getString(R.string.fs_inter_national_caller_number));
                 break;
             case R.id.blackCrediCardQuery:
-                sendEmail(getActivity().getResources().getString(R.string.email_black_credit_card_query));
+                sendEmail(getActivity().getResources().getString(R.string.email_black_credit_card_query), getActivity().getResources().getString(R.string.txt_black_credit_card_query));
                 break;
             case R.id.complains:
-                sendEmail(getActivity().getResources().getString(R.string.email_complaints));
+                sendEmail(getActivity().getResources().getString(R.string.email_complaints), getActivity().getResources().getString(R.string.txt_complaint));
                 break;
             case R.id.creditCardQuery:
-                sendEmail(getActivity().getResources().getString(R.string.email_credicard_query));
+                sendEmail(getActivity().getResources().getString(R.string.email_credicard_query), getActivity().getResources().getString(R.string.txt_cc_query));
                 break;
             case R.id.wRewardsQuery:
-                sendEmail(getActivity().getResources().getString(R.string.email_wrewards_query));
+                sendEmail(getActivity().getResources().getString(R.string.email_wrewards_query), getActivity().getResources().getString(R.string.txt_wrewards_query));
                 break;
             case R.id.insuranceClaim:
-                sendEmail(getActivity().getResources().getString(R.string.email_insurance_claim));
+                sendEmail(getActivity().getResources().getString(R.string.email_insurance_claim), getActivity().getResources().getString(R.string.txt_insurance_claim));
                 break;
             case R.id.paymentQuery:
-                sendEmail(getActivity().getResources().getString(R.string.email_payment_query));
+                sendEmail(getActivity().getResources().getString(R.string.email_payment_query), getActivity().getResources().getString(R.string.txt_payment_query));
                 break;
             case R.id.storeCardPesonalLoanQuery:
-                sendEmail(getActivity().getResources().getString(R.string.email_sc_and_pl_query));
+                sendEmail(getActivity().getResources().getString(R.string.email_sc_and_pl_query), getActivity().getResources().getString(R.string.txt_sc_and_pl_query));
                 break;
             case R.id.proofOfIncome:
-                sendEmail(getActivity().getResources().getString(R.string.email_proof_of_income));
+                sendEmail(getActivity().getResources().getString(R.string.email_proof_of_income), getActivity().getResources().getString(R.string.txt_proof_of_income));
                 break;
             case R.id.technical:
-                sendEmail(getActivity().getResources().getString(R.string.email_technical));
+                sendEmail(getActivity().getResources().getString(R.string.email_technical), getActivity().getResources().getString(R.string.txt_technical_problem));
                 break;
         }
     }
+
 
     public void makeCall(String number) {
         callIntent = new Intent(Intent.ACTION_CALL);
@@ -134,9 +135,11 @@ public class ContactUsFinancialServiceFragment extends Fragment implements View.
         }
     }
 
-    public void sendEmail(String emailId) {
+    public void sendEmail(String emailId, String subject) {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-        emailIntent.setData(Uri.parse("mailto:" + emailId));
+        emailIntent.setData(Uri.parse("mailto:" + emailId +
+                "?subject=" + Uri.encode(subject) +
+                "&body=" + Uri.encode("")));
 
         PackageManager pm = getActivity().getPackageManager();
         List<ResolveInfo> listOfEmail = pm.queryIntentActivities(emailIntent, 0);

@@ -73,16 +73,16 @@ public class ContactUsOnlineFragment extends Fragment implements View.OnClickLis
                 makeCall(getActivity().getResources().getString(R.string.online_inter_national_caller_number));
                 break;
             case R.id.onlineShop:
-                sendEmail(getActivity().getResources().getString(R.string.email_online_shop));
+                sendEmail(getActivity().getResources().getString(R.string.email_online_shop),getActivity().getResources().getString(R.string.online_shop_reg_login));
                 break;
             case R.id.deliveryQueries:
-                sendEmail(getActivity().getResources().getString(R.string.email_online_shop));
+                sendEmail(getActivity().getResources().getString(R.string.email_online_shop),getActivity().getResources().getString(R.string.txt_delivery_queries));
                 break;
             case R.id.technicalProblem:
-                sendEmail(getActivity().getResources().getString(R.string.email_online_shop));
+                sendEmail(getActivity().getResources().getString(R.string.email_online_shop),getActivity().getResources().getString(R.string.txt_general_technical_problem));
                 break;
             case R.id.orderQueries:
-                sendEmail(getActivity().getResources().getString(R.string.email_online_shop));
+                sendEmail(getActivity().getResources().getString(R.string.email_online_shop),getActivity().getResources().getString(R.string.txt_order_queries));
                 break;
         }
     }
@@ -111,9 +111,11 @@ public class ContactUsOnlineFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    public void sendEmail(String emailId) {
+    public void sendEmail(String emailId, String subject) {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-        emailIntent.setData(Uri.parse("mailto:" + emailId));
+        emailIntent.setData(Uri.parse("mailto:" + emailId +
+                "?subject=" + Uri.encode(subject) +
+                "&body=" + Uri.encode("")));
 
         PackageManager pm = getActivity().getPackageManager();
         List<ResolveInfo> listOfEmail = pm.queryIntentActivities(emailIntent, 0);

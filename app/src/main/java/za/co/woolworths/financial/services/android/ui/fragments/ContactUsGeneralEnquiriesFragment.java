@@ -73,16 +73,16 @@ public class ContactUsGeneralEnquiriesFragment extends Fragment implements View.
                 makeCall(getActivity().getResources().getString(R.string.customer_service_inter_national_caller_number));
                 break;
             case R.id.productQuery:
-                sendEmail(getActivity().getResources().getString(R.string.email_custserv));
+                sendEmail(getActivity().getResources().getString(R.string.email_custserv),getActivity().getResources().getString(R.string.txt_product_query));
                 break;
             case R.id.storeQuery:
-                sendEmail(getActivity().getResources().getString(R.string.email_custserv));
+                sendEmail(getActivity().getResources().getString(R.string.email_custserv),getActivity().getResources().getString(R.string.txt_store_query));
                 break;
             case R.id.complaints:
-                sendEmail(getActivity().getResources().getString(R.string.email_custserv));
+                sendEmail(getActivity().getResources().getString(R.string.email_custserv),getActivity().getResources().getString(R.string.txt_complaint));
                 break;
             case R.id.technicalProblem:
-                sendEmail(getActivity().getResources().getString(R.string.email_custserv));
+                sendEmail(getActivity().getResources().getString(R.string.email_custserv),getActivity().getResources().getString(R.string.txt_general_technical_problem));
                 break;
         }
     }
@@ -111,9 +111,11 @@ public class ContactUsGeneralEnquiriesFragment extends Fragment implements View.
         }
     }
 
-    public void sendEmail(String emailId) {
+    public void sendEmail(String emailId, String subject) {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-        emailIntent.setData(Uri.parse("mailto:" + emailId));
+        emailIntent.setData(Uri.parse("mailto:" + emailId +
+                "?subject=" + Uri.encode(subject) +
+                "&body=" + Uri.encode("")));
 
         PackageManager pm = getActivity().getPackageManager();
         List<ResolveInfo> listOfEmail = pm.queryIntentActivities(emailIntent, 0);
