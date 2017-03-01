@@ -68,13 +68,13 @@ public class ContactUsMySchoolFragment extends Fragment implements View.OnClickL
                 makeCall(getActivity().getResources().getString(R.string.my_school_local_caller_number));
                 break;
             case R.id.mySchoolCard:
-                sendEmail(getActivity().getResources().getString(R.string.email_myschool));
+                sendEmail(getActivity().getResources().getString(R.string.email_myschool),getActivity().getResources().getString(R.string.txt_myschool_card));
                 break;
             case R.id.generalEnq:
-                sendEmail(getActivity().getResources().getString(R.string.email_myschool));
+                sendEmail(getActivity().getResources().getString(R.string.email_myschool),getActivity().getResources().getString(R.string.txt_general_enquiry));
                 break;
             case R.id.complaints:
-                sendEmail(getActivity().getResources().getString(R.string.email_myschool));
+                sendEmail(getActivity().getResources().getString(R.string.email_myschool),getActivity().getResources().getString(R.string.txt_complaint));
                 break;
         }
     }
@@ -103,9 +103,11 @@ public class ContactUsMySchoolFragment extends Fragment implements View.OnClickL
         }
     }
 
-    public void sendEmail(String emailId) {
+    public void sendEmail(String emailId, String subject) {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-        emailIntent.setData(Uri.parse("mailto:" + emailId));
+        emailIntent.setData(Uri.parse("mailto:" + emailId +
+                "?subject=" + Uri.encode(subject) +
+                "&body=" + Uri.encode("")));
 
         PackageManager pm = getActivity().getPackageManager();
         List<ResolveInfo> listOfEmail = pm.queryIntentActivities(emailIntent, 0);
