@@ -5,9 +5,11 @@ import android.app.Activity;
 import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
@@ -166,9 +168,19 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         }
     }
 
-    private void productImage(SimpleViewHolder holder, String imgUrl) {
+    private void productImage(final SimpleViewHolder holder, String imgUrl) {
         if (imgUrl != null) {
             try {
+                final int[] finalWidth = {0};
+                holder.mSimpleDraweeView.getViewTreeObserver().addOnPreDrawListener(
+                        new ViewTreeObserver.OnPreDrawListener() {
+                            public boolean onPreDraw() {
+                                finalWidth[0] = holder.mSimpleDraweeView.getMeasuredWidth();
+                                return true;
+                            }
+                        });
+
+                imgUrl = imgUrl + "?w=" + finalWidth[0];
                 drawImage.displayImage(holder.mSimpleDraweeView, imgUrl);
             } catch (IllegalArgumentException ignored) {
             }

@@ -1,10 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.support.v4.view.PagerAdapter;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
@@ -30,6 +34,13 @@ public class ProductViewPagerAdapter extends PagerAdapter {
         String image = mViewPager.get(position);
         ImageView mProductImage = (ImageView) v.findViewById(R.id.imProductView);
         DrawImage drawImage = new DrawImage(mContext);
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        WindowManager windowManager = (WindowManager) mContext
+                .getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getMetrics(displaymetrics);
+        int width = displaymetrics.widthPixels;
+
+        image = image + "?w=" + width;
         drawImage.displayImage(mProductImage, image);
         collection.addView(v, 0);
         return v;

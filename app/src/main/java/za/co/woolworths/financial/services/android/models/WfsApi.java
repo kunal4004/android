@@ -6,15 +6,14 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.squareup.okhttp.OkHttpClient;
 
+import com.jakewharton.retrofit.Ok3Client;
 
+import okhttp3.OkHttpClient;
 import retrofit.RestAdapter;
 
 import java.util.concurrent.TimeUnit;
 
-import retrofit.client.OkClient;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
@@ -59,15 +58,15 @@ public class WfsApi {
     private Location loc;
 
     public WfsApi(Context mContext) {
-
         this.mContext = mContext;
-        OkHttpClient client = new OkHttpClient();
-        client.setReadTimeout(60, TimeUnit.SECONDS);
-        client.setConnectTimeout(60, TimeUnit.SECONDS);
-        client.interceptors().add(new WfsApiInterceptor(mContext));
+        OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder();
+        httpBuilder.addInterceptor(new WfsApiInterceptor(mContext));
+        //httpBuilder.addNetworkInterceptor(new GzipRequestInterceptor());
+        httpBuilder.readTimeout(60, TimeUnit.SECONDS);
+        httpBuilder.connectTimeout(60, TimeUnit.SECONDS);
 
         mApiInterface = new RestAdapter.Builder()
-                .setClient(new OkClient(client))
+                .setClient((new Ok3Client(httpBuilder.build())))
                 .setEndpoint(WoolworthsApplication.getBaseURL())
                 .setLogLevel(Util.isDebug(mContext) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
                 .build()
