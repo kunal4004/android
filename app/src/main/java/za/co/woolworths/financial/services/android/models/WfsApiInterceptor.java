@@ -5,26 +5,20 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.Protocol;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
-import com.squareup.okhttp.internal.http.RealResponseBody;
+
 
 import java.io.IOException;
 
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.Protocol;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okio.Buffer;
-import okio.BufferedSink;
-import okio.ByteString;
-import okio.GzipSink;
-import okio.GzipSource;
-import okio.Okio;
 import za.co.woolworths.financial.services.android.models.dao.ApiRequestDao;
 import za.co.woolworths.financial.services.android.models.dao.ApiResponseDao;
+import za.co.woolworths.financial.services.android.util.GZIPCompression;
 
 /**
  * Created by eesajacobs on 2016/12/29.
@@ -87,7 +81,8 @@ public class WfsApiInterceptor implements Interceptor {
         apiResponseDao.message = response.message();
         apiResponseDao.code = response.code();
         apiResponseDao.headers = response.headers().toString();
-        apiResponseDao.body = response.body().string();
+        apiResponseDao.body = GZIPCompression.decompress(response.body().bytes());
+
         apiResponseDao.contentType = response.body().contentType().toString();
 
         //save the newly created apiResponseDao
@@ -96,13 +91,8 @@ public class WfsApiInterceptor implements Interceptor {
 
         String responseLog = String.format("Received response for %s in %.1fms%n%s", apiResponseDao.body + response.request().url(), (t2 - t1) / 1e6d, apiResponseDao.headers);
 
-//        Request compressedRequest = request.newBuilder()
-//                .header("Accept-Encoding", "gzip")
-//                .method(request.method(), requestBodyWithContentLength(gzip(RequestBody.create(MediaType.parse(apiResponseDao.contentType), apiResponseDao.body))))
-//                .build();
-
         return response.newBuilder()
-                .header("Accept-Encoding", "gzip")
+                .header("Cache-Control", "max-age=60")
                 .body(ResponseBody.create(MediaType.parse(apiResponseDao.contentType), apiResponseDao.body))
                 .build();
     }
@@ -118,67 +108,5 @@ public class WfsApiInterceptor implements Interceptor {
         }
     }
 
-    private RequestBody gzip(final RequestBody body) {
-        return new RequestBody() {
-            @Override
-            public MediaType contentType() {
-                return body.contentType();
-            }
-
-            @Override
-            public long contentLength() {
-                return -1; // We don't know the compressed length in advance!
-            }
-
-            @Override
-            public void writeTo(BufferedSink sink) throws IOException {
-                BufferedSink gzipSink = Okio.buffer(new GzipSink(sink));
-                body.writeTo(gzipSink);
-                gzipSink.close();
-            }
-        };
-    }
-
-    private RequestBody requestBodyWithContentLength(final RequestBody body) throws IOException {
-
-        final Buffer buffer = new Buffer();
-        body.writeTo(buffer);
-
-        return new RequestBody() {
-            @Override
-            public MediaType contentType() {
-                return body.contentType();
-            }
-
-            @Override
-            public long contentLength() {
-                return buffer.size();
-            }
-
-            @Override
-            public void writeTo(BufferedSink sink) throws IOException {
-                ByteString snapshot = buffer.snapshot();
-                sink.write(snapshot);
-            }
-        };
-    }
-
-    // copied from okhttp3.internal.http.HttpEngine (because is private)
-    private Response unzip(final Response response) throws IOException {
-
-        if (response.body() == null) {
-            return response;
-        }
-
-        GzipSource responseBody = new GzipSource(response.body().source());
-        Headers strippedHeaders = response.headers().newBuilder()
-                  .removeAll("Accept-Encoding")
-                .removeAll("Content-Length")
-                .build();
-        return response.newBuilder()
-                .headers(strippedHeaders)
-                .body(new RealResponseBody(strippedHeaders, Okio.buffer(responseBody)))
-                .build();
-    }
 
 }

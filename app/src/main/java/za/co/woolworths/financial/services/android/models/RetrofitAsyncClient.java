@@ -4,14 +4,16 @@ import android.content.Context;
 import android.location.Location;
 import android.text.TextUtils;
 
-import com.squareup.okhttp.OkHttpClient;
+
+import com.jakewharton.retrofit.Ok3Client;
 
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.OkHttpClient;
 import retrofit.Callback;
 import retrofit.RestAdapter;
-import retrofit.client.OkClient;
 
+import retrofit.client.OkClient;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.util.StringConverter;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -25,13 +27,13 @@ public class RetrofitAsyncClient {
     public RetrofitAsyncClient(Context mContext) {
         this.mContext = mContext;
 
-        OkHttpClient client = new OkHttpClient();
-        client.setReadTimeout(60, TimeUnit.SECONDS);
-        client.setConnectTimeout(60, TimeUnit.SECONDS);
-        client.interceptors().add(new WfsApiInterceptor(mContext));
+        OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder();
+        httpBuilder.addInterceptor(new WfsApiInterceptor(mContext));
+        httpBuilder.readTimeout(60, TimeUnit.SECONDS);
+        httpBuilder.connectTimeout(60, TimeUnit.SECONDS);
 
         mApiInterface = new RestAdapter.Builder()
-                .setClient(new OkClient(client))
+                .setClient(new Ok3Client(httpBuilder.build()))
                 .setEndpoint(WoolworthsApplication.getBaseURL())
                 .setLogLevel(Util.isDebug(mContext) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
                 .setConverter(new StringConverter())

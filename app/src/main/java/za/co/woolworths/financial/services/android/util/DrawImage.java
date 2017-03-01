@@ -20,27 +20,6 @@ public class DrawImage {
     }
 
     public void displayImage(final ImageView imageView, String url) {
-//    Log.e("displayImage",url);
-//        String imageRep = url.replace(" ","%20");
-//        Glide.with(mContext)
-//                .load(imageRep)
-//                .dontAnimate()
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .listener(new RequestListener<String, GlideDrawable>() {
-//                    @Override
-//                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-//                        Log.e("IMAGE_EXCEPTION", "Exception " + e.toString());
-//                        return false;
-//                    }
-//
-//                    @Override
-//                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-//                        return false;
-//                    }
-//                })
-//                .into(imageView);
-
-
         Glide.with(mContext)
                 .load(url)
                 .asBitmap()
