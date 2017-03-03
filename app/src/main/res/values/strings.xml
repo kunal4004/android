@@ -214,6 +214,7 @@
     <string name="txt_order_queries">Order queries</string>
     <string name="customer_service_local_caller_number">0860 022 002</string>
     <string name="customer_service_inter_national_caller_number">(021) 407 3995</string>
+    <string name="customer_service_international_call">+27 21 407 7002</string>
     <string name="txt_product_query">Product query</string>
     <string name="txt_store_query">Store query</string>
     <string name="wrewards_local_caller_number">0861 502 050</string>
