@@ -70,7 +70,7 @@ public class ContactUsGeneralEnquiriesFragment extends Fragment implements View.
                 makeCall(getActivity().getResources().getString(R.string.customer_service_local_caller_number));
                 break;
             case R.id.internationalCaller:
-                makeCall(getActivity().getResources().getString(R.string.customer_service_inter_national_caller_number));
+                makeCall(getActivity().getResources().getString(R.string.customer_service_international_call));
                 break;
             case R.id.productQuery:
                 sendEmail(getActivity().getResources().getString(R.string.email_custserv),getActivity().getResources().getString(R.string.txt_product_query));
