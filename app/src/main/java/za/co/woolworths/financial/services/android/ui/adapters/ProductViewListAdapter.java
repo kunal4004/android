@@ -13,8 +13,11 @@ import android.widget.ImageView;
 import com.awfs.coordination.R;
 import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -27,6 +30,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
     public Activity mContext;
     private List<ProductList> mProductList;
     private SelectedProductView mSelectedProductView;
+    private SimpleViewHolder holder;
     private ProductList productItem;
 
     public ProductViewListAdapter(Activity mContext, List<ProductList> mProductList,
@@ -63,15 +67,31 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
 
     @Override
     public void onBindViewHolder(final SimpleViewHolder holder, final int position) {
-        productItem = mProductList.get(position);
+        this.holder = holder;
+        this.productItem = mProductList.get(position);
         if (productItem != null) {
             String productName = productItem.productName;
-            String imgUrl = productItem.imagePath;
+            String imgUrl = productItem.externalImageRef;
             String productType = productItem.productType;
             PromotionImages promo = productItem.promotionImages;
             holder.productName.setText(productName);
 
-            productType(holder, productType);
+            ArrayList<Double> priceList = new ArrayList<>();
+            for (OtherSkus os : productItem.otherSkus) {
+                if (!TextUtils.isEmpty(os.wasPrice)) {
+                    priceList.add(Double.valueOf(os.wasPrice));
+                }
+            }
+
+            String wasPrice = "";
+            if (priceList.size() > 0) {
+                wasPrice = String.valueOf(Collections.max(priceList));
+            }
+
+            String fromPrice = String.valueOf(productItem.fromPrice);
+            productPriceList(holder.mTextAmount, holder.mTextWasPrice,
+                    fromPrice, wasPrice, productType);
+
             productImage(holder, imgUrl);
             promoImages(holder, promo);
         }
@@ -110,14 +130,8 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
     }
 
 
-    private void productType(SimpleViewHolder holder, String productType) {
-        String price;
-        if ("clothingProducts".equalsIgnoreCase(productType)) {
-            price = String.valueOf(productItem.fromPrice);
-        } else {
-            price = productItem.otherSkus.get(0).price;
-        }
-
+    private void productPriceList(WTextView wPrice, WTextView WwasPrice,
+                                  String price, String wasPrice, String productType) {
         switch (productType) {
             case "clothingProducts":
                 holder.mTextAmount.setText(WFormatter.formatAmount(price));
@@ -145,7 +159,8 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
     private void productImage(SimpleViewHolder holder, String imgUrl) {
         if (imgUrl != null) {
             try {
-                drawImage.displayImage(holder.mSimpleDraweeView, imgUrl);
+                imgUrl = imgUrl + "?w=" + 300;
+                drawImage.displayThumbnailImage(holder.mSimpleDraweeView, imgUrl);
             } catch (IllegalArgumentException ignored) {
             }
         }
@@ -190,6 +205,4 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             }
         }
     }
-
-
 }

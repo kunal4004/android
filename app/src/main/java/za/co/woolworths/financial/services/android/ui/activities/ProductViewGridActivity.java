@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -42,7 +43,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
-import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
+import za.co.woolworths.financial.services.android.ui.views.ProductProgressDialogFrag;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -78,7 +79,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     private String searchItem = "";
     private int num_of_item;
     private int pageOffset;
-    private ProgressDialogFragment mProgressDialogFragment;
+    private ProductProgressDialogFrag mProgressDialogFragment;
     private PauseHandlerFragment mPauseHandlerFragment;
     private SlidingUpPanelLayout mSlideUpPanelLayout;
     public String mProductJSON;
@@ -243,6 +244,14 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
         this.mScrollY = scrollY;
+
+        if (dragging == true) {
+            Glide.with(this).resumeRequests();
+
+        } else {
+            Glide.with(this).pauseRequests();
+
+        }
     }
 
     @Override
@@ -280,6 +289,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+
     }
 
     @Override
@@ -454,6 +464,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         mProductAdapter = new ProductViewListAdapter(mContext, prod, mContext);
         recyclerViewLayoutManager = new GridLayoutManager(mContext, 2);
         mProductList.setLayoutManager(recyclerViewLayoutManager);
+        mProductList.setNestedScrollingEnabled(false);
         mProductList.setAdapter(mProductAdapter);
     }
 
@@ -530,15 +541,15 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                             mSlideUpPanelLayout.setAnchorPoint(1.0f);
                             mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
                             mSlideUpPanelLayout.setScrollableViewHelper(new NestedScrollableViewHelper(mScrollProductDetail));
+                            dismissFragmentDialog();
                             break;
 
                         default:
+                            Utils.updateStatusBarBackground(ProductViewGridActivity.this);
                             dismissFragmentDialog();
                             break;
                     }
                 }
-
-                dismissFragmentDialog();
             }
 
             @Override
@@ -674,9 +685,9 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
             public void run(AppCompatActivity context) {
                 //this block of code should be protected from IllegalStateException
                 FragmentManager fm = context.getSupportFragmentManager();
-                mProgressDialogFragment = ProgressDialogFragment.newInstance();
+                mProgressDialogFragment = ProductProgressDialogFrag.newInstance();
                 if (!mProgressDialogFragment.isAdded()) {
-                    mProgressDialogFragment = ProgressDialogFragment.newInstance();
+                    mProgressDialogFragment = ProductProgressDialogFrag.newInstance();
                     mProgressDialogFragment.show(fm, "v");
                 } else {
                     mProgressDialogFragment.show(fm, "v");

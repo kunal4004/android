@@ -70,7 +70,6 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
 
         WButton wAddToShoppingCart = (WButton) view.findViewById(R.id.btnAddShoppingList);
         wAddToShoppingCart.setOnClickListener(this);
-
     }
 
     @Override

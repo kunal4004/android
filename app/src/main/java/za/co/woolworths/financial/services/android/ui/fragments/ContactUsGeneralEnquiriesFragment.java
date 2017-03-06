@@ -38,8 +38,9 @@ public class ContactUsGeneralEnquiriesFragment extends Fragment implements View.
         view.findViewById(R.id.storeQuery).setOnClickListener(this);
         view.findViewById(R.id.complaints).setOnClickListener(this);
         view.findViewById(R.id.technicalProblem).setOnClickListener(this);
+        return view;
+    }
 
-        return view;    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
