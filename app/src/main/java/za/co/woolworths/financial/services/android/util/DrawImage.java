@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util;
 import android.content.Context;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
@@ -20,6 +21,7 @@ public class DrawImage {
     }
 
     public void displayImage(final ImageView imageView, String url) {
+        Log.e("displayEmail-->",url);
         Glide.with(mContext)
                 .load(url)
                 .asBitmap()

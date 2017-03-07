@@ -160,10 +160,12 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                         Point size = new Point();
                         display.getSize(size);
                         int width = size.x;
-                        mAuxiliaryImages.add(jsonObject.getString("externalImageRef")+"?w="+width);
-                    }else {
+                        String externalRef = jsonObject.getString("externalImageRef") + "?w=" + width / 2;
+                        mAuxiliaryImages.add(externalRef);
+                    } else {
                         mAuxiliaryImages.add(jsonObject.getString("imagePath"));
-                    }                }
+                    }
+                }
             }
             ProductViewPagerAdapter mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
             mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
@@ -431,7 +433,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private void populateView() {
         WProductDetail productDetail = mproductDetail.get(0);
 
-        String head = "<head><style>@font-face {font-family: 'myriadpro-regular';src: url('file://"+ this.getFilesDir().getAbsolutePath()+ "/fonts/MyriadPro-Regular.otf');}body {font-family: 'myriadpro-regular';}</style></head>";
+        String head = "<head><style>@font-face {font-family: 'myriadpro-regular';src: url('file://" + this.getFilesDir().getAbsolutePath() + "/fonts/MyriadPro-Regular.otf');}body {font-family: 'myriadpro-regular';}</style></head>";
 
         String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
                 "<style type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +

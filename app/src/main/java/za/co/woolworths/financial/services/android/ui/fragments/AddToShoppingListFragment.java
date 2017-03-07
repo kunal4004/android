@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,9 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
@@ -74,7 +78,16 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
         display.getSize(size);
         int width = size.x;
         DrawImage drawImage = new DrawImage(getActivity());
-        drawImage.displayImage(imgShoppingList, externalImageRef+"?w="+width);
+        externalImageRef = externalImageRef+"?w="+width/2;
+        URL url = null;
+        try {
+             url = new URL(externalImageRef);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Log.e("externalImageRef",externalImageRef);
+        drawImage.displayImage(imgShoppingList,String.valueOf(url));
 
         WButton wAddToShoppingCart = (WButton) view.findViewById(R.id.btnAddShoppingList);
         wAddToShoppingCart.setOnClickListener(this);
