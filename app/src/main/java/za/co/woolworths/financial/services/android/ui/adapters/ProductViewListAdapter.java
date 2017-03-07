@@ -129,7 +129,6 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         return R.id.swipe;
     }
 
-
     private void productPriceList(WTextView wPrice, WTextView WwasPrice,
                                   String price, String wasPrice, String productType) {
         switch (productType) {
