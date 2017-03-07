@@ -13,7 +13,7 @@
         android:layout_height="400dp"
         android:layout_alignParentStart="true"
         android:layout_margin="@dimen/bank_spacing_width"
-        android:background="@drawable/rounded_corner">
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/imgShoppingList"
@@ -30,6 +30,7 @@
         android:layout_marginBottom="@dimen/bank_spacing_width"
         android:layout_marginLeft="@dimen/bank_spacing_width"
         android:layout_marginRight="@dimen/bank_spacing_width"
+        android:letterSpacing="0.2"
         android:text="@string/add_to_shopping_list"
         app:WButton_font="medium_bold" />
 
