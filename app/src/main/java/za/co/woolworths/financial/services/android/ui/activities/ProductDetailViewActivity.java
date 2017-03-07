@@ -161,7 +161,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                         Point size = new Point();
                         display.getSize(size);
                         int width = size.x;
-                        String externalRef = jsonObject.getString("externalImageRef") + "?w=" + width / 2;
+                        String externalRef = jsonObject.getString("externalImageRef") + "?w=" + width / 2 + "&q=" + 100;
                         mAuxiliaryImages.add(externalRef);
                     } else {
                         mAuxiliaryImages.add(jsonObject.getString("imagePath"));

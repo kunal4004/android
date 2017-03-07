@@ -391,8 +391,8 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                         Point size = new Point();
                         display.getSize(size);
                         int width = size.x;
-                        mAuxiliaryImages.add(jsonObject.getString("externalImageRef")+"?w="+width);
-                    }else {
+                        mAuxiliaryImages.add(jsonObject.getString("externalImageRef") + "?w=" + width + "&q=" + 100);
+                    } else {
                         mAuxiliaryImages.add(jsonObject.getString("imagePath"));
                     }
                 }

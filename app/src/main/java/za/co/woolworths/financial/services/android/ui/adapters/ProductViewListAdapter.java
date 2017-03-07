@@ -169,7 +169,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
     private void productImage(final SimpleViewHolder holder, String imgUrl) {
         if (imgUrl != null) {
             try {
-                imgUrl = imgUrl + "?w=" + 300;
+                imgUrl = imgUrl + "?w=" + 300 + "&q=" + 100;
                 drawImage.displayThumbnailImage(holder.mSimpleDraweeView, imgUrl);
             } catch (IllegalArgumentException ignored) {
             }

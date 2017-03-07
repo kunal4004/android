@@ -77,7 +77,7 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
         display.getSize(size);
         int width = size.x;
         DrawImage drawImage = new DrawImage(getActivity());
-        externalImageRef = externalImageRef+"?w="+width/2;
+        externalImageRef = externalImageRef+"?w="+width/2+ "&q=" + 100;
         URL url = null;
         try {
              url = new URL(externalImageRef);
