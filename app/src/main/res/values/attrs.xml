@@ -123,6 +123,7 @@
         <attr name="boxViewCornerSize" format="dimension"></attr>
         <attr name="boxViewCornerLength" format="dimension"></attr>
         <attr name="boxViewCornerOffset" format="dimension"></attr>
+        <attr name="cornerOffsetBottom" format="dimension"></attr>
     </declare-styleable>
 
 </resources>

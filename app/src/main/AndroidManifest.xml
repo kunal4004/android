@@ -312,7 +312,7 @@
             android:excludeFromRecents="true"
             android:screenOrientation="portrait"
             android:taskAffinity=""
-            android:theme="@style/Theme.Sliding.Light" />
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
 
         <meta-data
             android:name="za.co.woolworths.financial.services.android.util.GlideConfiguration"

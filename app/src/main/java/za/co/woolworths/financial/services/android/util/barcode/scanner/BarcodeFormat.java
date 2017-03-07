@@ -27,7 +27,6 @@ public class BarcodeFormat {
         ALL_FORMATS.add(BarcodeFormat.CODE128);
     }
 
-
     private BarcodeFormat(int id, String name) {
         mId = id;
         mName = name;

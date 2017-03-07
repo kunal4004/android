@@ -43,5 +43,7 @@ public class MessageDialogFragment extends DialogFragment {
         });
 
         return builder.create();
+
+
     }
 }

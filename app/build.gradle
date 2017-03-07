@@ -121,7 +121,7 @@ dependencies {
     compile 'me.leolin:ShortcutBadger:1.1.4@aar'
     compile 'io.reactivex:rxjava:1.1.5'
     compile 'io.reactivex:rxandroid:1.2.0'
-    compile 'com.google.zxing:core:3.2.1'
+    compile 'com.google.zxing:core:3.3.0'
     compile 'com.github.thepacific:mvc:0.0.2'
 
     compile files('libs/zbar.jar')

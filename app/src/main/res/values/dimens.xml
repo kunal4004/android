@@ -57,15 +57,18 @@
     <dimen name="voucher_card_margin">8dp</dimen>
     <dimen name="voucher_card_layout_padding">8dp</dimen>
     <dimen name="ten_dp">10dp</dimen>
-    <dimen name="size_qr_box_view_corner">4dp</dimen>
-    <dimen name="size_qr_box_view_corner_offset">4dp</dimen>
+    <dimen name="size_qr_box_view_corner">2dp</dimen>
+    <dimen name="size_qr_box_view_corner_offset">-12dp</dimen>
     <dimen name="length_qr_box_view_corner">30dp</dimen>
     <dimen name="f_qr_box_view_desc">16sp</dimen>
     <dimen name="f_qr_box_action_desc">12sp</dimen>
+    <dimen name="barcode_dimens">15dp</dimen>
 
     <dimen name="ml_qr_box_action">10dp</dimen>
-    <dimen name="width_qr_box_view">300dp</dimen>
+    <dimen name="width_qr_box_view">240dp</dimen>
     <dimen name="height_qr_box_view">240dp</dimen>
     <dimen name="height_qr_box_view_desc">35dp</dimen>
+    <dimen name="cornerOffsetBottom">-12dp</dimen>
+
 </resources>
 

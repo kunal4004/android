@@ -33,6 +33,16 @@ public class CameraManager extends BaseCameraManager implements Camera.AutoFocus
         camera.setOneShotPreviewCallback(this);
     }
 
+    public void stopCamera() {
+        camera.takePicture(null, null, new Camera.PictureCallback() {
+            @Override
+            public void onPictureTaken(byte[] data, Camera camera) {
+
+            }
+        });
+
+    }
+
     @Override
     public void connectCamera(SurfaceHolder surfaceHolder) {
         if (!isRelease) return;

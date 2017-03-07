@@ -5,34 +5,61 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.SurfaceHolder;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.zxing.MultiFormatReader;
 import com.pacific.mvc.Activity;
 import com.trello.rxlifecycle.ActivityEvent;
 
+import java.util.ArrayList;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ProductView;
+import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
+import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ProductDetailViewActivity;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class QRActivity extends Activity<QRModel> {
+public class QRActivity extends Activity<QRModel> implements View.OnClickListener {
     public static final int CODE_PICK_IMAGE = 0x100;
     private BaseCameraManager cameraManager;
     private final int ZBAR_PERMS_REQUEST_CODE = 12345678;
+    private WButton mBtnManual;
+    private TextView mTextInfo;
+    private ImageView snapImage;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,25 +67,48 @@ public class QRActivity extends Activity<QRModel> {
         Utils.updateStatusBarBackground(this, R.color.black);
         setContentView(R.layout.activity_qr);
         setupToolbar();
-
-        if (hasPermissions()) {
-            if (Build.VERSION_CODES.LOLLIPOP >= Build.VERSION.SDK_INT) {
-                cameraManager = new CameraManager(getApplication());
-            } else {
-                cameraManager = new CameraManager(getApplication());
-            }
-            model = new QRModel(new QRView(this));
-            model.onCreate();
-
-            cameraManager.setOnResultListener(new BaseCameraManager.OnResultListener() {
-                @Override
-                public void onResult(QRResult qrResult) {
-                    model.resultDialog(qrResult);
-                }
-            });
+        if (Build.VERSION_CODES.LOLLIPOP >= Build.VERSION.SDK_INT) {
+            cameraManager = new CameraManager(getApplication());
         } else {
-            requestPerms();
+            cameraManager = new CameraManager(getApplication());
         }
+        model = new QRModel(new QRView(this));
+        model.onCreate();
+
+
+        cameraManager.setOnResultListener(new BaseCameraManager.OnResultListener() {
+            @Override
+            public void onResult(final QRResult qrResult) {
+                final String barcodeNumber = qrResult.getResult().getText();
+                String barcodeFormat = qrResult.getResult().getBarcodeFormat().name();
+                Log.e("barcodeNumber", barcodeNumber + " format " + barcodeFormat);
+                for (String bf : barcodeFormat()) {
+                    if (bf.equalsIgnoreCase(barcodeFormat)) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.e("qrresult", qrResult.getBitmap().toString());
+                                cameraManager.stopCamera();
+                                //snapImage.setImageBitmap(qrResult.getBitmap());
+                                model.resultDialog(qrResult);
+                                getProductRequest(barcodeNumber);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+        initUI();
+    }
+
+    private void initUI() {
+        mTextInfo = (TextView) findViewById(R.id.textInfo);
+        mProgressBar = (ProgressBar) findViewById(R.id.ppBar);
+        snapImage = (ImageView) findViewById(R.id.snapImage);
+        mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+        mBtnManual = (WButton) findViewById(R.id.btnManual);
+        mBtnManual.setOnClickListener(this);
     }
 
     @Override
@@ -78,28 +128,6 @@ public class QRActivity extends Activity<QRModel> {
         super.onDestroy();
         cameraManager.releaseCamera();
         cameraManager.shutdownExecutor();
-    }
-
-
-    public boolean hasPermissions() {
-        int res;
-        //string array of permissions,
-        String[] permissions = new String[]{Manifest.permission.CAMERA};
-
-        for (String perms : permissions) {
-            res = checkCallingOrSelfPermission(perms);
-            if (!(res == PackageManager.PERMISSION_GRANTED)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void requestPerms() {
-        String[] permissions = new String[]{Manifest.permission.CAMERA};
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(permissions, ZBAR_PERMS_REQUEST_CODE);
-        }
     }
 
     @Override
@@ -209,7 +237,6 @@ public class QRActivity extends Activity<QRModel> {
         }
     }
 
-
     public void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         WTextView mTextToolbar = (WTextView) findViewById(R.id.toolbarText);
@@ -239,4 +266,132 @@ public class QRActivity extends Activity<QRModel> {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnManual:
+                Intent openManual = new Intent(QRActivity.this, EnterBarcodeActivity.class);
+                startActivity(openManual);
+                break;
+        }
+    }
+
+    private void getProductDetail(final String productId, final String skuId) {
+        ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
+            @Override
+            public void success(String strProduct, retrofit.client.Response response) {
+                hideProgressBar();
+                WProduct wProduct = Utils.stringToJson(QRActivity.this, strProduct);
+                if (wProduct != null) {
+                    switch (wProduct.httpCode) {
+                        case 200:
+                            ArrayList<WProductDetail> mProductList;
+                            WProductDetail productList = wProduct.product;
+                            mProductList = new ArrayList<>();
+                            if (productList != null) {
+                                mProductList.add(productList);
+                            }
+                            GsonBuilder builder = new GsonBuilder();
+                            Gson gson = builder.create();
+                            Intent openDetailView = new Intent(QRActivity.this, ProductDetailViewActivity.class);
+                            openDetailView.putExtra("product_name", mProductList.get(0).productName);
+                            openDetailView.putExtra("product_detail", gson.toJson(mProductList));
+                            startActivity(openDetailView);
+                            overridePendingTransition(0, R.anim.anim_slide_up);
+                            break;
+                        default:
+                            hideProgressBar();
+                            break;
+                    }
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressBar();
+            }
+        });
+    }
+
+    private void showProgressBar() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        mTextInfo.setVisibility(View.GONE);
+        mBtnManual.setEnabled(false);
+    }
+
+    private void hideProgressBar() {
+        mProgressBar.setVisibility(View.GONE);
+        mTextInfo.setVisibility(View.VISIBLE);
+        mBtnManual.setEnabled(true);
+    }
+
+    private ArrayList<String> barcodeFormat() {
+        ArrayList<String> barcodeFormat = new ArrayList<>();
+        barcodeFormat.add("EAN_8");
+        barcodeFormat.add("UPC_E");
+        barcodeFormat.add("UPC_A");
+        barcodeFormat.add("EAN_13");
+        barcodeFormat.add("ISBN_13");
+        barcodeFormat.add("CODE_128");
+        return barcodeFormat;
+    }
+
+    public void getProductRequest(final String query) {
+        new HttpAsyncTask<String, String, ProductView>() {
+            @Override
+            protected ProductView httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getApplication()).getApi()
+                        .getProductSearchList(query, true, 0, Utils.PAGE_SIZE);
+            }
+
+            @Override
+            protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                hideProgressBar();
+                errorScanCode();
+                return new ProductView();
+            }
+
+            @Override
+            protected void onPostExecute(ProductView product) {
+                super.onPostExecute(product);
+                ArrayList<ProductList> mProduct = product.products;
+
+                if (mProduct != null) {
+                    if (mProduct.size() > 0) {
+                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
+                    } else {
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                hideProgressBar();
+                                //resetCamera();
+                            }
+                        }, 100);
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorScanCode();
+                            }
+                        }, 200);
+                    }
+                }
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                showProgressBar();
+            }
+
+            @Override
+            protected Class<ProductView> httpDoInBackgroundReturnType() {
+                return ProductView.class;
+            }
+        }.execute();
+    }
+
+    private void errorScanCode() {
+        Utils.displayValidationMessage(this, TransientActivity.VALIDATION_MESSAGE_LIST.BARCODE_ERROR, "");
+    }
 }

@@ -43,9 +43,6 @@ public abstract class BaseCameraManager {
         qrBoxSize.y = (int) context.getResources().getDimension(R.dimen.height_qr_box_view);
     }
 
-
-
-
     protected QRResult getCodeValue(byte[] data, Point previewSize) {
         Bitmap bitmap = null;
         ByteArrayOutputStream stream = new ByteArrayOutputStream(data.length);
@@ -111,6 +108,8 @@ public abstract class BaseCameraManager {
     public abstract void setCameraParameter();
 
     public abstract void startCapture();
+
+    public abstract void stopCamera();
 
     public abstract void releaseCamera();
 

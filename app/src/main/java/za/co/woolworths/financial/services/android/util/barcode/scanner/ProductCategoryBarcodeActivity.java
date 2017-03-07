@@ -202,7 +202,6 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         outState.putInt(CAMERA_ID, mCameraId);
     }
 
-
     public void getProductRequest(final String query) {
         new HttpAsyncTask<String, String, ProductView>() {
             @Override

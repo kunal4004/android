@@ -25,22 +25,41 @@
             app:WTextView_font="medium_bold" />
     </android.support.v7.widget.Toolbar>
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/textInfo"
+    <RelativeLayout
+        android:id="@+id/relProgressContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="120dp"
-        android:gravity="center"
-        android:letterSpacing="0.15"
-        android:lineSpacingExtra="1.6dp"
-        android:paddingLeft="@dimen/bank_spacing_width"
-        android:paddingRight="@dimen/bank_spacing_width"
-        android:text="@string/set_info_detail"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="12sp"
-        android:visibility="visible"
-        app:WTextView_font="medium" />
+        android:layout_above="@+id/fl_box_view"
+        android:layout_marginBottom="37dp"
+        android:gravity="bottom|center"
+        android:visibility="visible">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/textInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="120dp"
+            android:gravity="center"
+            android:letterSpacing="0.15"
+            android:lineSpacingExtra="1.6dp"
+            android:paddingLeft="@dimen/bank_spacing_width"
+            android:paddingRight="@dimen/bank_spacing_width"
+            android:text="@string/set_info_detail"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:visibility="visible"
+            app:WTextView_font="medium" />
+
+        <ProgressBar
+            android:id="@+id/ppBar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="120dp"
+            android:gravity="center"
+            android:visibility="gone" />
+    </RelativeLayout>
+
 
     <!--we need to keep scanner view locates in center-->
     <FrameLayout

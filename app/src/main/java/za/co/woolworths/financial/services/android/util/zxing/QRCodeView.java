@@ -33,6 +33,7 @@ public class QRCodeView extends RelativeLayout {
     private int cornerSize;
     private int cornerLength;
     private int cornerOffset;
+    private int cornerOffsetBottom;
 
     private FrameLayout boxView;
     private OnClickListener lightOnClickListener;
@@ -79,6 +80,7 @@ public class QRCodeView extends RelativeLayout {
         int width = size.x;
 
         cornerOffset = typedArray.getInt(R.styleable.QRCodeView_boxViewCornerOffset, (int) resources.getDimension(R.dimen.size_qr_box_view_corner_offset));
+        cornerOffsetBottom = typedArray.getInt(R.styleable.QRCodeView_cornerOffsetBottom, (int) resources.getDimension(R.dimen.cornerOffsetBottom));
         cornerLength = typedArray.getInt(R.styleable.QRCodeView_boxViewCornerLength, (int) resources.getDimension(R.dimen.length_qr_box_view_corner));
         cornerSize = typedArray.getInt(R.styleable.QRCodeView_boxViewCornerSize, (int) resources.getDimension(R.dimen.size_qr_box_view_corner));
         boxViewWidth = typedArray.getInt(R.styleable.QRCodeView_boxViewWidth, width * 7 / 10);
@@ -123,10 +125,6 @@ public class QRCodeView extends RelativeLayout {
         float boxViewX = boxView.getX();
         float boxViewY = boxView.getY();
 
-        int padding = 20;
-        int paddingTop = 30;
-        int paddingBottom = 30;
-
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(maskColor);
         canvas.drawRect(0, boxViewY, boxViewX, boxViewY + boxViewHeight, paint);// left rect
@@ -147,16 +145,16 @@ public class QRCodeView extends RelativeLayout {
         paint.setColor(cornerColor);
 
         /** top the corners*/
-        canvas.drawRect(rect.left - cornerSize + cornerOffset+padding, rect.top - cornerSize + cornerOffset+padding, rect.left + cornerLength - cornerSize + cornerOffset+padding, rect.top + cornerOffset+padding, paint);
-        canvas.drawRect(rect.left - cornerSize + cornerOffset+padding, rect.top - cornerSize + cornerOffset+padding, rect.left + cornerOffset+padding, rect.top + cornerLength - cornerSize + cornerOffset+padding, paint);
-        canvas.drawRect(rect.right - cornerLength + cornerSize - cornerOffset+padding, rect.top - cornerSize + cornerOffset+padding, rect.right + cornerSize - cornerOffset+padding, rect.top + cornerOffset+padding, paint);
-        canvas.drawRect(rect.right - cornerOffset+padding, rect.top - cornerSize + cornerOffset+padding, rect.right + cornerSize - cornerOffset+padding, rect.top + cornerLength - cornerSize + cornerOffset+padding, paint);
+        canvas.drawRect(rect.left - cornerSize + cornerOffset, rect.top - cornerSize + cornerOffset, rect.left + cornerLength - cornerSize + cornerOffset, rect.top + cornerOffset, paint);
+        canvas.drawRect(rect.left - cornerSize + cornerOffset, rect.top - cornerSize + cornerOffset, rect.left + cornerOffset, rect.top + cornerLength - cornerSize + cornerOffset, paint);
+        canvas.drawRect(rect.right - cornerLength + cornerSize - cornerOffset, rect.top - cornerSize + cornerOffset, rect.right + cornerSize - cornerOffset, rect.top + cornerOffset, paint);
+        canvas.drawRect(rect.right - cornerOffset, rect.top - cornerSize + cornerOffset, rect.right + cornerSize - cornerOffset, rect.top + cornerLength - cornerSize + cornerOffset, paint);
 
         /** bottom the corners*/
-        canvas.drawRect(rect.left - cornerSize + cornerOffset+padding, rect.bottom - cornerOffset+padding, rect.left + cornerLength - cornerSize + cornerOffset+padding, rect.bottom + cornerSize - cornerOffset+padding, paint);
-        canvas.drawRect(rect.left - cornerSize + cornerOffset+padding, rect.bottom - cornerLength + cornerSize - cornerOffset+padding, rect.left + cornerOffset+padding, rect.bottom + cornerSize - cornerOffset+padding, paint);
-        canvas.drawRect(rect.right - cornerLength + cornerSize - cornerOffset+padding, rect.bottom - cornerOffset+padding, rect.right + cornerSize - cornerOffset+padding, rect.bottom + cornerSize - cornerOffset+padding, paint);
-        canvas.drawRect(rect.right - cornerOffset+padding, rect.bottom - cornerLength + cornerSize - cornerOffset+padding, rect.right + cornerSize - cornerOffset+padding, rect.bottom + cornerSize - cornerOffset+padding, paint);
+        canvas.drawRect(rect.left - cornerSize + cornerOffsetBottom, rect.bottom - cornerOffsetBottom, rect.left + cornerLength - cornerSize + cornerOffsetBottom, rect.bottom + cornerSize - cornerOffsetBottom, paint);
+        canvas.drawRect(rect.left - cornerSize + cornerOffsetBottom, rect.bottom - cornerLength + cornerSize - cornerOffsetBottom, rect.left + cornerOffsetBottom, rect.bottom + cornerSize - cornerOffsetBottom, paint);
+        canvas.drawRect(rect.right - cornerLength + cornerSize - cornerOffset, rect.bottom - cornerOffset, rect.right + cornerSize - cornerOffset, rect.bottom + cornerSize - cornerOffset, paint);
+        canvas.drawRect(rect.right - cornerOffset, rect.bottom - cornerLength + cornerSize - cornerOffset, rect.right + cornerSize - cornerOffset, rect.bottom + cornerSize - cornerOffset, paint);
     }
 
 
