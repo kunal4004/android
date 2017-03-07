@@ -2,8 +2,11 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.app.DialogFragment;
 
+import android.content.Context;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,8 +68,13 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
         }
 
         ImageView imgShoppingList = (ImageView) view.findViewById(R.id.imgShoppingList);
+        WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
         DrawImage drawImage = new DrawImage(getActivity());
-        drawImage.displayImage(imgShoppingList, externalImageRef);
+        drawImage.displayImage(imgShoppingList, externalImageRef+"?w="+width);
 
         WButton wAddToShoppingCart = (WButton) view.findViewById(R.id.btnAddShoppingList);
         wAddToShoppingCart.setOnClickListener(this);

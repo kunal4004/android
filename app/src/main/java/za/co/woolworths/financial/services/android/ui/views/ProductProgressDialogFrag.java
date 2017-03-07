@@ -5,13 +5,17 @@ package za.co.woolworths.financial.services.android.ui.views;
  */
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,6 +90,7 @@ public class ProductProgressDialogFrag extends DialogFragment {
         getDialog().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getDialog().getWindow().setBackgroundDrawableResource(
                 android.R.color.transparent);
+        setStatusBarColorIfPossible(R.color.white);
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             // Marshmallow+
@@ -104,6 +109,13 @@ public class ProductProgressDialogFrag extends DialogFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //If showing as a dialog, add some padding at the top to ensure it doesn't overlap status bar
+        if (getDialog() != null) {
+            getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            view.setPadding(0, (int) convertDpToPixel(25f, getContext()), 0, 0);
+            view.requestLayout();
+        }
+
         ProgressBar mProgressBar = (ProgressBar) view.findViewById(R.id.mWoolworthsProgressBar);
         mProgressBar.getIndeterminateDrawable().setColorFilter(null);
         mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
@@ -112,6 +124,7 @@ public class ProductProgressDialogFrag extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
+        Utils.updateStatusBarBackground(getActivity());
         Dialog dialog = getDialog();
         if (dialog != null) {
             int width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -124,5 +137,29 @@ public class ProductProgressDialogFrag extends DialogFragment {
     public void onDestroy() {
         super.onDestroy();
         Utils.updateStatusBarBackground(getActivity());
+    }
+
+    /**
+     * This method converts dp unit to equivalent pixels, depending on device density.
+     *
+     * @param dp      A value in dp (density independent pixels) unit. Which we need to convert into pixels
+     * @param context Context to get resources and device specific display metrics
+     * @return A float value to represent px equivalent to dp depending on device density
+     */
+    public static float convertDpToPixel(float dp, Context context) {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return px;
+    }
+
+    public void setStatusBarColorIfPossible(int color) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            try {
+                getDialog().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                getDialog().getWindow().setStatusBarColor(color);
+            } catch (Exception ex) {
+            }
+        }
     }
 }

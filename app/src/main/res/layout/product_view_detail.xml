@@ -6,11 +6,11 @@
     android:layout_height="match_parent">
 
     <android.support.v4.widget.NestedScrollView
-        android:layout_width="match_parent"
         android:id="@+id/scrollProductDetail"
-        android:descendantFocusability="blocksDescendants"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
+        android:descendantFocusability="blocksDescendants"
         android:visibility="visible">
 
         <LinearLayout
@@ -242,7 +242,9 @@
                 android:textSize="15sp"
                 app:WTextView_font="myriadpro_regular" />
 
-            <include layout="@layout/line" android:id="@+id/ingredientLine"/>
+            <include
+                android:id="@+id/ingredientLine"
+                layout="@layout/line" />
 
             <LinearLayout
                 android:id="@+id/linIngredient"
@@ -273,8 +275,8 @@
                     android:layout_marginEnd="@dimen/default_margin"
                     android:layout_marginStart="@dimen/default_margin"
                     android:layout_marginTop="4dp"
-                    android:lineSpacingExtra="2dp"
                     android:gravity="start|top"
+                    android:lineSpacingExtra="2dp"
                     android:textColor="@color/black_desc_opacity"
                     android:textSize="15sp"
                     app:WTextView_font="myriadpro_regular" />
@@ -286,8 +288,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
 
         <ImageView
             android:id="@+id/imCloseProduct"

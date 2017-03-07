@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -10,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -153,8 +155,15 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 if (keyStr.toLowerCase().contains(colour.toLowerCase())) {
                     String valueStr = jsAuxiliaryImages.getString(keyStr);
                     JSONObject jsonObject = new JSONObject(valueStr);
-                    mAuxiliaryImages.add(jsonObject.getString("imagePath"));
-                }
+                    if (jsonObject.has("externalImageRef")) {
+                        Display display = getWindowManager().getDefaultDisplay();
+                        Point size = new Point();
+                        display.getSize(size);
+                        int width = size.x;
+                        mAuxiliaryImages.add(jsonObject.getString("externalImageRef")+"?w="+width);
+                    }else {
+                        mAuxiliaryImages.add(jsonObject.getString("imagePath"));
+                    }                }
             }
             ProductViewPagerAdapter mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
             mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
