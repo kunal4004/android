@@ -308,7 +308,6 @@ public interface ApiInterface {
             @Query("pageNumber") int pageNumber
     );
 
-
     @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
     @POST("/user/cli/offer")
     CreateOfferResponse createOfferRequest(
@@ -339,7 +338,7 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Query("productOfferingId") String productOfferingId);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @Headers({"Content-Type: application/json", "Accept: application/json","Media-Type: application/json"})
     @POST("/user/cli/offer/email")
     CLIEmailResponse cliSendEmailRquest(
             @Header("apiId") String apiId,
@@ -380,7 +379,8 @@ public interface ApiInterface {
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:1000"})
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
     @GET("/categories")
     RootCategories getRootCategories(
             @Header("osVersion") String osVersion,
@@ -392,7 +392,8 @@ public interface ApiInterface {
             @Header("deviceVersion") String deviceVersion,
             @Header("apiKey") String userAgent);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
     @GET("/categories/{cat}/products")
     ProductView getProduct(
             @Header("osVersion") String osVersion,
@@ -412,7 +413,7 @@ public interface ApiInterface {
             @Path("cat") String category);
 
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
     @GET("/categories/{cat}/products")
     ProductView getProduct(
             @Header("osVersion") String osVersion,
@@ -428,7 +429,8 @@ public interface ApiInterface {
             @Query("pageOffset") int pageOffset,
             @Query("pageSize") int pageSize,
             @Path("cat") String category);
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
     @GET("/categories/{cat}")
     SubCategories getSubCategory(
             @Header("osVersion") String osVersion,
@@ -441,7 +443,8 @@ public interface ApiInterface {
             @Header("apiKey") String apiKey,
             @Path("cat") String category);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
     @GET("/search")
     ProductView getProductSearch(
             @Header("osVersion") String osVersion,
@@ -460,7 +463,7 @@ public interface ApiInterface {
             @Query("pageOffset") int pageOffset,
             @Query("pageSize") int pageSize);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
     @GET("/search")
     ProductView getProductSearch(
             @Header("osVersion") String osVersion,
@@ -478,8 +481,7 @@ public interface ApiInterface {
             @Query("pageSize") int pageSize);
 
 
-
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:30"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:30", "Accept-Encoding: gzip"})
     @GET("/content/faq")
     FAQ getFAQ(
             @Header("apiId") String apiId,
@@ -492,7 +494,8 @@ public interface ApiInterface {
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
     @GET("/products/{productId}")
     WProduct getProductDetail(
             @Header("osVersion") String osVersion,
@@ -507,8 +510,7 @@ public interface ApiInterface {
             @Path("productId") String productId,
             @Query("sku") String sku);
 
-
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
     @GET("/products/{productId}")
     void getProductDetail(
             @Header("osVersion") String osVersion,
@@ -524,7 +526,7 @@ public interface ApiInterface {
             @Query("sku") String sku,
             Callback<String> callback);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:3600", "Accept-Encoding: gzip"})
     @GET("/products/{productId}")
     void getProductDetail(
             @Header("osVersion") String osVersion,

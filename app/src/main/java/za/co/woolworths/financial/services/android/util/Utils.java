@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
+import android.graphics.Paint;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -44,6 +46,7 @@ import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 import static android.Manifest.permission_group.STORAGE;
 
@@ -329,7 +332,9 @@ public class Utils {
     }
 
     public static void removeBadgeCounter(Context context) {
-        ShortcutBadger.applyCount(context, 0);
+        try {
+            ShortcutBadger.applyCount(context, 0);
+        }catch (NullPointerException ex){}
     }
 
     public static boolean isLocationEnabled(Context context) {
@@ -405,7 +410,7 @@ public class Utils {
         return historyList;
     }
 
-    public static void displayValidationMessage(Context context,TransientActivity.VALIDATION_MESSAGE_LIST key, String description) {
+    public static void displayValidationMessage(Context context, TransientActivity.VALIDATION_MESSAGE_LIST key, String description) {
         Intent openMsg = new Intent(context, TransientActivity.class);
         Bundle args = new Bundle();
         args.putSerializable("key", key);

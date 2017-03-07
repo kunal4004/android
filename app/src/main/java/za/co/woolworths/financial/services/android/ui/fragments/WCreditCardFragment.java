@@ -104,6 +104,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                     creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.creditLimit), 1, getActivity())));
                     minAmountDue.setText(removeNegativeSymbol(WFormatter.formatAmount(p.minimumAmountDue)));
                     currentBalance.setText(removeNegativeSymbol(WFormatter.formatAmount(p.currentBalance)));
+                    WoolworthsApplication.setCreditCardType(p.accountNumberBin);
                     try {
                         dueDate.setText(WFormatter.formatDate(p.paymentDueDate));
                     } catch (ParseException e) {

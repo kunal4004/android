@@ -21,7 +21,6 @@ public class DrawImage {
     }
 
     public void displayImage(final ImageView imageView, String url) {
-        Log.e("displayEmail-->",url);
         Glide.with(mContext)
                 .load(url)
                 .asBitmap()
@@ -65,6 +64,4 @@ public class DrawImage {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageView);
     }
-
-
 }

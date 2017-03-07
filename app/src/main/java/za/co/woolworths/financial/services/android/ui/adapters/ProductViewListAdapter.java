@@ -30,7 +30,6 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
     public Activity mContext;
     private List<ProductList> mProductList;
     private SelectedProductView mSelectedProductView;
-    private SimpleViewHolder holder;
     private ProductList productItem;
 
     public ProductViewListAdapter(Activity mContext, List<ProductList> mProductList,
@@ -67,7 +66,6 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
 
     @Override
     public void onBindViewHolder(final SimpleViewHolder holder, final int position) {
-        this.holder = holder;
         this.productItem = mProductList.get(position);
         if (productItem != null) {
             String productName = productItem.productName;
@@ -131,31 +129,44 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
 
     private void productPriceList(WTextView wPrice, WTextView WwasPrice,
                                   String price, String wasPrice, String productType) {
+
         switch (productType) {
             case "clothingProducts":
-                holder.mTextAmount.setText(WFormatter.formatAmount(price));
-                if (!TextUtils.isEmpty(productItem.otherSkus.get(0).wasPrice)) {
-                    holder.mTextAmount.setText("From: " + WFormatter.formatAmount(productItem.otherSkus.get(0).wasPrice));
-                    holder.mTextWasPrice.setText(WFormatter.formatAmount(price));
-                    holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                if (TextUtils.isEmpty(wasPrice)) {
+                    wPrice.setText("From: " + WFormatter.formatAmount(price));
+                    WwasPrice.setText("");
                 } else {
-                    holder.mTextAmount.setText("From: " + WFormatter.formatAmount(price));
+                    if (wasPrice.equalsIgnoreCase(price)) {
+                        //wasPrice equals currentPrice
+                        wPrice.setText("From: " + WFormatter.formatAmount(price));
+                        WwasPrice.setText("");
+                        return;
+                    }
+                    wPrice.setText("From: " + WFormatter.formatAmount(wasPrice));
+                    wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    WwasPrice.setText(WFormatter.formatAmount(price));
                 }
                 break;
-            default:
-                holder.mTextAmount.setText(
-                        WFormatter.formatAmount(productItem.otherSkus.get(0).price));
 
-                if (!TextUtils.isEmpty(productItem.otherSkus.get(0).wasPrice)) {
-                    holder.mTextAmount.setText(WFormatter.formatAmount(productItem.otherSkus.get(0).wasPrice));
-                    holder.mTextWasPrice.setText(WFormatter.formatAmount(price));
-                    holder.mTextAmount.setPaintFlags(holder.mTextAmount.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            default:
+                if (TextUtils.isEmpty(wasPrice)) {
+                    wPrice.setText(WFormatter.formatAmount(price));
+                    WwasPrice.setText("");
+                } else {
+                    if (wasPrice.equalsIgnoreCase(price)) { //wasPrice equals currentPrice
+                        wPrice.setText(WFormatter.formatAmount(price));
+                        WwasPrice.setText("");
+                    } else {
+                        wPrice.setText(WFormatter.formatAmount(wasPrice));
+                        wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        WwasPrice.setText(WFormatter.formatAmount(price));
+                    }
                 }
                 break;
         }
     }
 
-    private void productImage(SimpleViewHolder holder, String imgUrl) {
+    private void productImage(final SimpleViewHolder holder, String imgUrl) {
         if (imgUrl != null) {
             try {
                 imgUrl = imgUrl + "?w=" + 300;

@@ -104,8 +104,8 @@ dependencies {
     compile 'za.co.wigroup.android:utils:1.1.8'
     compile 'uk.co.chrisjenx:calligraphy:1.2.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
-    compile 'com.squareup.okhttp:okhttp:2.7.2'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.3.0'
+    compile 'com.jakewharton.retrofit:retrofit1-okhttp3-client:1.1.0'
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'za.co.wigroup.android:Logger:1'
     compile 'com.google.android.gms:play-services:10.0.1'
     compile 'com.crittercism:crittercism-android-agent:+'
@@ -121,5 +121,6 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'me.leolin:ShortcutBadger:1.1.4@aar'
     compile 'com.google.android:flexbox:0.2.5'
+
 }
 apply plugin: 'com.google.gms.google-services'

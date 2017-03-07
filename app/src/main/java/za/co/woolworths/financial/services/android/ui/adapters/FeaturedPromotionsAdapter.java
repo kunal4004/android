@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -14,11 +13,8 @@ import com.awfs.coordination.R;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Promotion;
-import za.co.woolworths.financial.services.android.ui.activities.ProductViewActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ProductViewGridActivity;
 import za.co.woolworths.financial.services.android.util.DrawImage;
-
-import static android.R.attr.id;
-import static com.awfs.coordination.R.id.productName;
 
 public class FeaturedPromotionsAdapter extends PagerAdapter {
     public Activity mContext;
@@ -49,7 +45,7 @@ public class FeaturedPromotionsAdapter extends PagerAdapter {
         cView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent openProductName = new Intent(mContext, ProductViewActivity.class);
+                Intent openProductName = new Intent(mContext, ProductViewGridActivity.class);
                 openProductName.putExtra("searchProduct", "");
                 openProductName.putExtra("title", promotions.get(position).path);
                 openProductName.putExtra("titleNav",mContext.getResources().getString(R.string.featured_promotions) );

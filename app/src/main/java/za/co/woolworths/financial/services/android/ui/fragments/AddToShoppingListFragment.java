@@ -23,7 +23,6 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.DrawImage;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.animation.BlurDialogFragment;
 
@@ -88,6 +87,7 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
 
         Log.e("externalImageRef",externalImageRef);
         drawImage.displayImage(imgShoppingList,String.valueOf(url));
+
 
         WButton wAddToShoppingCart = (WButton) view.findViewById(R.id.btnAddShoppingList);
         wAddToShoppingCart.setOnClickListener(this);

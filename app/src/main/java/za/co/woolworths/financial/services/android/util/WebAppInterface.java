@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 
 import za.co.woolworths.financial.services.android.models.dto.Ingredient;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
-import za.co.woolworths.financial.services.android.ui.activities.ProductViewActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ProductViewGridActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 
 public class WebAppInterface {
@@ -29,7 +29,7 @@ public class WebAppInterface {
     @JavascriptInterface
     public void showProducts(String id, String productName) {
 
-        Intent openProductName = new Intent(mContext, ProductViewActivity.class);
+        Intent openProductName = new Intent(mContext, ProductViewGridActivity.class);
         openProductName.putExtra("searchProduct", "");
         openProductName.putExtra("title", id);
         openProductName.putExtra("titleNav", productName);

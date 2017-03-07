@@ -213,9 +213,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                             mWoolworthsApplication.setOther(false);
                             stepNavigatorCallback.openNextFragment(1);
                         }
-                        Utils.displayValidationMessage(getActivity(),
-                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                                getString(R.string.cli_select_bank_error));
                     }
                 } else {
                     if (mConnectionDetector.isOnline(getActivity())) {

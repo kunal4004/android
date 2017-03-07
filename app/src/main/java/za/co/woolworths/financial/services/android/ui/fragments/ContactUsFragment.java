@@ -20,18 +20,18 @@ public class ContactUsFragment extends Fragment implements View.OnClickListener 
     public RelativeLayout fsLayout;
     public RelativeLayout csLayout;
     public ContactUsFragmentChange contactUsFragmentChange;
+
     public ContactUsFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_contact_us, container, false);
-        fsLayout=(RelativeLayout)view.findViewById(R.id.financialService);
-        csLayout=(RelativeLayout)view.findViewById(R.id.customerService);
+        View view = inflater.inflate(R.layout.fragment_contact_us, container, false);
+        fsLayout = (RelativeLayout) view.findViewById(R.id.financialService);
+        csLayout = (RelativeLayout) view.findViewById(R.id.customerService);
         fsLayout.setOnClickListener(this);
         csLayout.setOnClickListener(this);
         return view;
@@ -39,25 +39,24 @@ public class ContactUsFragment extends Fragment implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId())
-        {
+        switch (v.getId()) {
             case R.id.financialService:
                 openFragment(new ContactUsFinancialServiceFragment());
                 break;
             case R.id.customerService:
-                 openFragment(new ContactUsCustomerServiceFragment());
+                openFragment(new ContactUsCustomerServiceFragment());
                 break;
         }
     }
 
-    public void openFragment(Fragment fragment)
-    {
+    public void openFragment(Fragment fragment) {
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 
         fragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left,R.anim.slide_from_left,R.anim.slide_to_right)
+                .setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
                 .replace(R.id.content_frame, fragment).addToBackStack(null).commit();
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
