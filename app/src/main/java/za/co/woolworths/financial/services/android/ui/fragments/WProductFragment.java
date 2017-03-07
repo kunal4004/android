@@ -45,8 +45,10 @@ import za.co.woolworths.financial.services.android.util.PopWindowValidationMessa
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.barcode.scanner.ProductCategoryBarcodeActivity;
 import za.co.woolworths.financial.services.android.util.binder.view.RootCategoryBinder;
+import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
+import za.co.woolworths.financial.services.android.util.zxing.QRCodeView;
 
-public class WProductFragments extends Fragment implements RootCategoryBinder.OnClickListener, View.OnClickListener,
+public class WProductFragment extends Fragment implements RootCategoryBinder.OnClickListener, View.OnClickListener,
         AppBarLayout.OnOffsetChangedListener, LDObservableScrollView.LDObservableScrollViewListener, SelectedProductView {
 
     private FragmentManager fm;
@@ -97,7 +99,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
     private ConnectionDetector mConnectionDetector;
     public WTextView mTextProductSearch;
     private RecyclerView mRecycleProductSearch;
-    private WProductFragments mContext;
+    private WProductFragment mContext;
     private List<RootCategory> mRootCategories;
     private WTextView mTextTBProductSearch;
     private RelativeLayout mRelSearchRowLayout;
@@ -235,7 +237,7 @@ public class WProductFragments extends Fragment implements RootCategoryBinder.On
                 break;
             case R.id.imTBBarcodeScanner:
             case R.id.imBarcodeScanner:
-                onpenBarcodeScanner(ProductCategoryBarcodeActivity.class);
+                onpenBarcodeScanner(QRActivity.class);
                 break;
             case R.id.imBurgerButtonPressed:
                 hideActionBarComponent.onBurgerButtonPressed();

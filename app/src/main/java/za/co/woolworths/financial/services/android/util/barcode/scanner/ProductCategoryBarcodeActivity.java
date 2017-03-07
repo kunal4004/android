@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -49,14 +50,15 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     private static final String SELECTED_FORMATS = "SELECTED_FORMATS";
     private static final String CAMERA_ID = "CAMERA_ID";
     private ZBarScannerView mScannerView;
-    private boolean mFlash;
-    private boolean mAutoFocus;
-    private ArrayList<Integer> mSelectedIndices;
-    private int mCameraId = -1;
     private TextView mTextInfo;
     private RelativeLayout mRelProgressBar;
     private ProductCategoryBarcodeActivity mContext;
     private WButton mBtnManual;
+    private boolean mFlash;
+    private boolean mAutoFocus;
+    private ArrayList<Integer> mSelectedIndices;
+    private int mCameraId = -1;
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -64,7 +66,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         super.onCreate(state);
         updateStatusBarBackground(this);
         mContext = this;
-        if (state != null) {
+        if(state != null) {
             mFlash = state.getBoolean(FLASH_STATE, false);
             mAutoFocus = state.getBoolean(AUTO_FOCUS_STATE, true);
             mSelectedIndices = state.getIntegerArrayList(SELECTED_FORMATS);
@@ -119,9 +121,11 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
                 @Override
                 public void run() {
                     mScannerView.resumeCameraPreview(ProductCategoryBarcodeActivity.this);
+                    Log.e("resetCamera", "M");
                 }
             }, 500);
         } else {
+            Log.e("resetCamera", "NM");
             mScannerView.setResultHandler(this);
             mScannerView.startCamera(mCameraId);
             mScannerView.setFlash(mFlash);
@@ -135,6 +139,7 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    Log.e("mResetCamera", rawResult.getContents() + " " + rawResult.getBarcodeFormat().getName());
                     getProductRequest(rawResult.getContents());
                 }
             });
@@ -164,7 +169,6 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         formats.add(BarcodeFormat.UPCA);
         formats.add(BarcodeFormat.UPCE);
         formats.add(BarcodeFormat.ISBN13);
-        formats.add(BarcodeFormat.EAN13);
         formats.add(BarcodeFormat.CODE128);
 
         if (mScannerView != null) {
@@ -189,6 +193,16 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
         overridePendingTransition(0, 0);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(FLASH_STATE, mFlash);
+        outState.putBoolean(AUTO_FOCUS_STATE, mAutoFocus);
+        outState.putIntegerArrayList(SELECTED_FORMATS, mSelectedIndices);
+        outState.putInt(CAMERA_ID, mCameraId);
+    }
+
+
     public void getProductRequest(final String query) {
         new HttpAsyncTask<String, String, ProductView>() {
             @Override
@@ -200,7 +214,8 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
             @Override
             protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 hideProgressBar();
-                resetCamera();
+                mScannerView.resumeCameraPreview(ProductCategoryBarcodeActivity.this);
+                // resetCamera();
                 errorScanCode();
                 return new ProductView();
             }
@@ -219,7 +234,8 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
                             @Override
                             public void run() {
                                 hideProgressBar();
-                                resetCamera();
+                                mScannerView.resumeCameraPreview(ProductCategoryBarcodeActivity.this);
+                                //resetCamera();
                             }
                         }, 100);
                         handler.postDelayed(new Runnable() {
@@ -262,7 +278,6 @@ public class ProductCategoryBarcodeActivity extends BaseScannerActivity implemen
     @Override
     protected void onPause() {
         super.onPause();
-        // stop location updates
         mScannerView.stopCamera();
     }
 

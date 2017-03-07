@@ -72,7 +72,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         productItem = mProductList.get(position);
         if (productItem != null) {
             String productName = productItem.productName;
-            String imgUrl = productItem.imagePath;
+            String imgUrl = productItem.externalImageRef;
             String productType = productItem.productType;
             PromotionImages promo = productItem.promotionImages;
             holder.productName.setText(productName);
@@ -171,16 +171,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
     private void productImage(final SimpleViewHolder holder, String imgUrl) {
         if (imgUrl != null) {
             try {
-                final int[] finalWidth = {0};
-                holder.mSimpleDraweeView.getViewTreeObserver().addOnPreDrawListener(
-                        new ViewTreeObserver.OnPreDrawListener() {
-                            public boolean onPreDraw() {
-                                finalWidth[0] = holder.mSimpleDraweeView.getMeasuredWidth();
-                                return true;
-                            }
-                        });
-
-                imgUrl = imgUrl + "?w=" + finalWidth[0];
+                imgUrl = imgUrl + "?w=" + 300;
                 drawImage.displayImage(holder.mSimpleDraweeView, imgUrl);
             } catch (IllegalArgumentException ignored) {
             }
@@ -226,6 +217,4 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             }
         }
     }
-
-
 }
