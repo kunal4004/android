@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -60,6 +61,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     private TextView mTextInfo;
     private ImageView snapImage;
     private ProgressBar mProgressBar;
+    private QRCodeView qRview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +91,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                             public void run() {
                                 Log.e("qrresult", qrResult.getBitmap().toString());
                                 cameraManager.stopCamera();
-                                //snapImage.setImageBitmap(qrResult.getBitmap());
-                                model.resultDialog(qrResult);
+                                qRview.setBackground(new BitmapDrawable(getResources(), qrResult.getBitmap()));
+                                //model.resultDialog(qrResult);
                                 getProductRequest(barcodeNumber);
                             }
                         });
@@ -103,6 +105,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     }
 
     private void initUI() {
+        qRview=(QRCodeView)findViewById(R.id.qr_view);
         mTextInfo = (TextView) findViewById(R.id.textInfo);
         mProgressBar = (ProgressBar) findViewById(R.id.ppBar);
         snapImage = (ImageView) findViewById(R.id.snapImage);
@@ -115,6 +118,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     protected void onResume() {
         super.onResume();
         model.onResume();
+        if(qRview!=null)
+            qRview.setBackgroundColor(Color.TRANSPARENT);
     }
 
     @Override

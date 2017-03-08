@@ -30,6 +30,10 @@ public class CameraManager2 extends BaseCameraManager {
     }
 
     @Override
+    public void stopCamera() {
+    }
+
+    @Override
     public void releaseCamera() {
 
     }
