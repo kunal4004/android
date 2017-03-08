@@ -8,7 +8,7 @@ android {
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
-        job = "4";
+        job = "1";
     }
 
     def buildNumber = major + "." + minor + "." + fix
@@ -25,6 +25,12 @@ android {
             keyPassword 'woneapp_qa'
             storeFile file('key/woneapp_qa-release-key.keystore')
             storePassword 'woneapp_qa'
+        }
+        woneappStaging {
+            keyAlias 'woneapp_staging'
+            keyPassword 'woneapp_staging'
+            storeFile file('key/woneapp_staging-release-key.keystore')
+            storePassword 'woneapp_staging'
         }
         woolworths {
             keyAlias 'woolworths'
@@ -64,6 +70,11 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
+        }
+
+        staging {
+            applicationId "com.awfs.coordination.staging"
+            signingConfig signingConfigs.woneappStaging
         }
 
         production {
