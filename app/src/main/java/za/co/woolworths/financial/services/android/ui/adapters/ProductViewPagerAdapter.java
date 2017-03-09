@@ -34,13 +34,6 @@ public class ProductViewPagerAdapter extends PagerAdapter {
         String image = mViewPager.get(position);
         ImageView mProductImage = (ImageView) v.findViewById(R.id.imProductView);
         DrawImage drawImage = new DrawImage(mContext);
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        WindowManager windowManager = (WindowManager) mContext
-                .getSystemService(Context.WINDOW_SERVICE);
-        windowManager.getDefaultDisplay().getMetrics(displaymetrics);
-        int width = displaymetrics.widthPixels;
-
-        image = image + "?w=" + width;
         drawImage.displayImage(mProductImage, image);
         collection.addView(v, 0);
         return v;

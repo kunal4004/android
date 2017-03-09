@@ -14,6 +14,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +39,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -53,6 +56,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 
     private final int DELAY_SOFT_KEYBOARD = 100;
     private final int DELAY_POPUP = 200;
+    private WButton mBtnBarcodeConfirm;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -64,22 +68,57 @@ public class EnterBarcodeActivity extends AppCompatActivity {
         initUI();
         setActionBar();
 
+        mBtnBarcodeConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mEditBarcodeNumber.getText().length() > 0) {
+                    getProductDetail();
+                }
+            }
+        });
+
         mEditBarcodeNumber.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    getProductRequest(mEditBarcodeNumber.getText().toString());
+                    getProductDetail();
                     handled = true;
                 }
                 return handled;
             }
         });
+
+
+        mEditBarcodeNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                if (s.length() > 0) {
+                    mBtnBarcodeConfirm.setVisibility(View.VISIBLE);
+                } else {
+                    mBtnBarcodeConfirm.setVisibility(View.GONE);
+                }
+            }
+        });
+
+
     }
 
     private void initUI() {
         mToolbar = (Toolbar) findViewById(R.id.mToolbar);
         mEditBarcodeNumber = (WLoanEditTextView) findViewById(R.id.editBarcodeNumber);
+        mBtnBarcodeConfirm = (WButton) findViewById(R.id.btnBarcodeConfirm);
         mProgressBar = (ProgressBar) findViewById(R.id.mProgressBar);
         mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         mTextInfo = (WTextView) findViewById(R.id.textInfo);
@@ -135,7 +174,6 @@ public class EnterBarcodeActivity extends AppCompatActivity {
                 return ((WoolworthsApplication) getApplication()).getApi()
                         .getProductSearchList(query,
                                 true, 0, Utils.PAGE_SIZE);
-
             }
 
             @Override
@@ -283,4 +321,9 @@ public class EnterBarcodeActivity extends AppCompatActivity {
         }, DELAY_POPUP);
     }
 
+    private void getProductDetail() {
+        if (mEditBarcodeNumber.getText().length() > 0) {
+            getProductRequest(mEditBarcodeNumber.getText().toString());
+        }
+    }
 }

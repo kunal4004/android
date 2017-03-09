@@ -5,11 +5,9 @@ import android.app.Activity;
 import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
@@ -19,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
@@ -69,10 +66,10 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
 
     @Override
     public void onBindViewHolder(final SimpleViewHolder holder, final int position) {
-        productItem = mProductList.get(position);
+        this.productItem = mProductList.get(position);
         if (productItem != null) {
             String productName = productItem.productName;
-            String imgUrl = productItem.imagePath;
+            String imgUrl = productItem.externalImageRef;
             String productType = productItem.productType;
             PromotionImages promo = productItem.promotionImages;
             holder.productName.setText(productName);
@@ -85,7 +82,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             }
 
             String wasPrice = "";
-            if (priceList != null && priceList.size() > 0) {
+            if (priceList.size() > 0) {
                 wasPrice = String.valueOf(Collections.max(priceList));
             }
 
@@ -130,8 +127,9 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         return R.id.swipe;
     }
 
-    public void productPriceList(WTextView wPrice, WTextView WwasPrice,
-                                 String price, String wasPrice, String productType) {
+    private void productPriceList(WTextView wPrice, WTextView WwasPrice,
+                                  String price, String wasPrice, String productType) {
+
         switch (productType) {
             case "clothingProducts":
                 if (TextUtils.isEmpty(wasPrice)) {
@@ -171,17 +169,8 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
     private void productImage(final SimpleViewHolder holder, String imgUrl) {
         if (imgUrl != null) {
             try {
-                final int[] finalWidth = {0};
-                holder.mSimpleDraweeView.getViewTreeObserver().addOnPreDrawListener(
-                        new ViewTreeObserver.OnPreDrawListener() {
-                            public boolean onPreDraw() {
-                                finalWidth[0] = holder.mSimpleDraweeView.getMeasuredWidth();
-                                return true;
-                            }
-                        });
-
-                imgUrl = imgUrl + "?w=" + finalWidth[0];
-                drawImage.displayImage(holder.mSimpleDraweeView, imgUrl);
+                imgUrl = imgUrl + "?w=" + 300 + "&q=" + 100;
+                drawImage.displayThumbnailImage(holder.mSimpleDraweeView, imgUrl);
             } catch (IllegalArgumentException ignored) {
             }
         }
@@ -226,6 +215,4 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             }
         }
     }
-
-
 }

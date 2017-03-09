@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -10,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,7 +98,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private View ingredientLine;
     private WProductDetail productDetail;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,7 +107,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         setContentView(R.layout.product_view_detail);
         mContext = this;
         SessionDao sessionDao;
-
         try {
             sessionDao = new SessionDao(ProductDetailViewActivity.this,
                     SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
@@ -156,7 +156,16 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 if (keyStr.toLowerCase().contains(colour.toLowerCase())) {
                     String valueStr = jsAuxiliaryImages.getString(keyStr);
                     JSONObject jsonObject = new JSONObject(valueStr);
-                    mAuxiliaryImages.add(jsonObject.getString("imagePath"));
+                    if (jsonObject.has("externalImageRef")) {
+                        Display display = getWindowManager().getDefaultDisplay();
+                        Point size = new Point();
+                        display.getSize(size);
+                        int width = size.x;
+                        String externalRef = jsonObject.getString("externalImageRef") + "?w=" + width / 2 + "&q=" + 100;
+                        mAuxiliaryImages.add(externalRef);
+                    } else {
+                        mAuxiliaryImages.add(jsonObject.getString("imagePath"));
+                    }
                 }
             }
             ProductViewPagerAdapter mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
@@ -425,8 +434,10 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private void populateView() {
         productDetail = mproductDetail.get(0);
 
+        String head = "<head><style>@font-face {font-family: 'myriadpro-regular';src: url('file://" + this.getFilesDir().getAbsolutePath() + "/fonts/MyriadPro-Regular.otf');}body {font-family: 'myriadpro-regular';}</style></head>";
+
         String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
-                "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
+                "<style type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
                 "</style></head><body>";
         String footerTag = "</body></html>";
         String descriptionWithoutExtraTag = "";
@@ -689,7 +700,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             for (int i = 0; i < ivArrayDotsPager.length; i++) {
                 ivArrayDotsPager[i] = new ImageView(this);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.setMargins(10, 0, 10, 0);
+                params.setMargins(16, 0, 16, 0);
                 ivArrayDotsPager[i].setLayoutParams(params);
                 ivArrayDotsPager[i].setImageResource(R.drawable.unselected_drawable);
                 //ivArrayDotsPager[i].setAlpha(0.4f);
