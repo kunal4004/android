@@ -123,7 +123,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         mProductToolbar = (Toolbar) view.findViewById(R.id.productToolbar);
         mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         fm = getFragmentManager();
-
         initUI(view);
         setUIListener();
         showAccountToolbar();
@@ -326,7 +325,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         }
         if (allowed) {
             //user granted all permissions we can perform our task.
-            onpenBarcodeScanner(ProductCategoryBarcodeActivity.class);
+            onpenBarcodeScanner(QRActivity.class);
         } else {
             // we will give warning to user that they haven't granted permissions.
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -420,7 +419,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 
     private void bindViewWithUI(List<RootCategory> rootCategories) {
         mRootCategories = rootCategories;
-
         ProductCategoryAdapter myAdapter = new ProductCategoryAdapter(rootCategories, mContext);
         // MyAlphaInAnimationAdapter alphaInAnimationAdapter = new MyAlphaInAnimationAdapter(myAdapter);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
