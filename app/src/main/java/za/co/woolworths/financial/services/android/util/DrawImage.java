@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.util;
 import android.content.Context;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
@@ -27,12 +28,30 @@ public class DrawImage {
                 .placeholder(R.drawable.rectangle)
                 .override(500, 500)
                 .dontAnimate()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
                         // do something with the bitmap
                         imageView.setImageBitmap(bitmap);
+                    }
+                });
+    }
+
+    public void displayThumbnailImage(final ImageView imageView, String url) {
+        Glide.with(mContext)
+                .load(url)
+                .asBitmap()
+                .atMost()
+                .thumbnail(1.0f)
+                .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                        // do something with the bitmap
+                        imageView.setImageBitmap(bitmap);
+                        imageView.setAdjustViewBounds(true);
                     }
                 });
     }

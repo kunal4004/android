@@ -84,6 +84,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         if(cursor.getCount() == 0){//consider this as a failure as no rows were updated
             throw new SQLiteException("Updated row count was 0. This is considered as a failed ' SQL UPDATE' transaction.");
         }
+        db.close();
     }
 
     public Map<String, String> executeReturnableQuery(String query, String[] arguments) throws Exception {
@@ -106,7 +107,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
 
             result.put(columnName, value);
         }
-
+        db.close();
         return result;
     }
 
@@ -120,6 +121,7 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         }
 
         long rowid = db.insert(tableName ,null, row);
+        db.close();
         return rowid;
     }
 
