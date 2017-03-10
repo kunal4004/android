@@ -1,23 +1,17 @@
 package za.co.woolworths.financial.services.android.util.zxing;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
-import android.support.v7.app.AlertDialog;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.ImageView;
+
 import com.awfs.coordination.R;
 import com.pacific.mvc.ActivityView;
 
-/**
- * Created by root on 16-5-8.
- */
 public class QRView extends ActivityView<QRActivity> implements SurfaceHolder.Callback {
     private QRCodeView qrCodeView;
     private SurfaceView surfaceView;
-    private ImageView snapImage;
 
     public QRView(QRActivity activity) {
         super(activity);
@@ -27,7 +21,6 @@ public class QRView extends ActivityView<QRActivity> implements SurfaceHolder.Ca
     protected void findView() {
         surfaceView = retrieveView(R.id.sv_preview);
         qrCodeView = retrieveView(R.id.qr_view);
-        snapImage = retrieveView(R.id.snapImage);
 
     }
 
@@ -67,43 +60,6 @@ public class QRView extends ActivityView<QRActivity> implements SurfaceHolder.Ca
     }
 
     public void resultDialog(QRResult qrResult) {
-//
-//        snapImage.getLayoutParams().width = qrCodeView.getWidth();
-//        snapImage.getLayoutParams().height = qrCodeView.getHeight();
-//        snapImage.setImageBitmap(qrResult.getBitmap());
-
-//        if (qrResult == null) {
-//            new AlertDialog.Builder(activity)
-//                    .setTitle("No Barcode Result")
-//                    .setMessage("Can't decode barcode from target picture , \nplease confirm the picture has barcode value.")
-//                    .setPositiveButton("Ok", null)
-//                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                        @Override
-//                        public void onDismiss(DialogInterface dialog) {
-//                            activity.setHook(false);
-//                            activity.restartCapture();
-//                        }
-//                    })
-//                    .create()
-//                    .show();
-//            return;
-//        }
-//        View view = activity.getLayoutInflater().inflate(R.layout.dialog_result, null);
-//
-//        if (qrResult.getBitmap() != null) {
-//            ((ImageView) view.findViewById(R.id.img_barcode)).setImageBitmap(qrResult.getBitmap());
-//        }
-//        new AlertDialog.Builder(activity)
-//                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                    @Override
-//                    public void onDismiss(DialogInterface dialog) {
-//                        activity.setHook(false);
-//                        activity.restartCapture();
-//                    }
-//                })
-//                .setView(view)
-//                .create()
-//                .show();
     }
 
     public void setEmptyViewVisible(boolean visible) {
@@ -136,4 +92,5 @@ public class QRView extends ActivityView<QRActivity> implements SurfaceHolder.Ca
         setEmptyViewVisible(true);
         activity.onSurfaceDestroyed();
     }
+
 }

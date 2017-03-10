@@ -29,9 +29,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFrag
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
 import za.co.woolworths.financial.services.android.ui.fragments.WProductFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WRewardsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.WProductFragments;
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
-import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
@@ -42,7 +40,7 @@ import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
 
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
-        , WProductFragments.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle, WRewardsFragment.HideActionBarComponent {
+        , WProductFragment.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle, WRewardsFragment.HideActionBarComponent {
 
     public static Toolbar mToolbar;
     //  public static AppBarLayout appbar;

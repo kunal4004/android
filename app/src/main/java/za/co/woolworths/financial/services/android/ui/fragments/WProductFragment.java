@@ -11,11 +11,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,22 +36,20 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchSubCategoryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductViewGridActivity;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductCategoryAdapter;
 import za.co.woolworths.financial.services.android.ui.views.LDObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
-import za.co.woolworths.financial.services.android.util.barcode.scanner.ProductCategoryBarcodeActivity;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.RootCategoryBinder;
 import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
-import za.co.woolworths.financial.services.android.util.zxing.QRCodeView;
 
 public class WProductFragment extends Fragment implements RootCategoryBinder.OnClickListener, View.OnClickListener,
         AppBarLayout.OnOffsetChangedListener, LDObservableScrollView.LDObservableScrollViewListener, SelectedProductView {
 
-    private FragmentManager fm;
     private WTextView mToolbarText;
     private boolean actionBarIsHidden = false;
 
@@ -105,7 +103,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     private RelativeLayout mRelSearchRowLayout;
     private Toolbar mProductToolbar;
     private LDObservableScrollView mNestedScrollview;
-    private PopWindowValidationMessage mPopWindowValidationMessage;
 
     @Nullable
     @Override
@@ -121,8 +118,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         mContext = this;
         mConnectionDetector = new ConnectionDetector();
         mProductToolbar = (Toolbar) view.findViewById(R.id.productToolbar);
-        mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
-        fm = getFragmentManager();
         initUI(view);
         setUIListener();
         showAccountToolbar();
@@ -205,8 +200,11 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
                                 break;
 
                             default:
-                                mPopWindowValidationMessage.displayValidationMessage(rootCategories.response.desc,
-                                        PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+                                if (!TextUtils.isEmpty(rootCategories.response.desc)) {
+                                    Utils.displayValidationMessage(getActivity(),
+                                            TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                            getString(R.string.connect_to_server));
+                                }
                                 break;
                         }
                     } catch (NullPointerException ignored) {
@@ -214,8 +212,9 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
                 }
             }.execute();
         } else {
-            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
-                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+            Utils.displayValidationMessage(getActivity(),
+                    TransientActivity.VALIDATION_MESSAGE_LIST.INFO,
+                    getString(R.string.connect_to_server));
         }
     }
 
@@ -420,13 +419,10 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     private void bindViewWithUI(List<RootCategory> rootCategories) {
         mRootCategories = rootCategories;
         ProductCategoryAdapter myAdapter = new ProductCategoryAdapter(rootCategories, mContext);
-        // MyAlphaInAnimationAdapter alphaInAnimationAdapter = new MyAlphaInAnimationAdapter(myAdapter);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecycleProductSearch.setLayoutManager(mLayoutManager);
         mRecycleProductSearch.setNestedScrollingEnabled(false);
-        //  alphaInAnimationAdapter.setRecyclerView(mRecycleProductSearch);
-        //alphaInAnimationAdapter.setDuration(3000);
         mRecycleProductSearch.setAdapter(myAdapter);
     }
 }
