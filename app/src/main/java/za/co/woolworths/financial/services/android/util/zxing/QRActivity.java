@@ -130,7 +130,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     private WTextView mTextActualPrice;
     private WTextView mTextColour;
     private WrapContentWebView mWebDescription;
-    private WButton mBtnAddShoppingList;
     private WTextView mIngredientList;
     private LinearLayout mLinIngredient;
     private View ingredientLine;
@@ -623,7 +622,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         mRelContainer = (LinearLayout) findViewById(R.id.linProductContainer);
         RelativeLayout mLinColor = (RelativeLayout) findViewById(R.id.linColour);
         mLinSize = (RelativeLayout) findViewById(R.id.linSize);
-        mBtnAddShoppingList = (WButton) findViewById(R.id.btnAddShoppingList);
         WButton mBtnShopOnlineWoolies = (WButton) findViewById(R.id.btnShopOnlineWoolies);
         ImageView mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
         mImCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
@@ -706,7 +704,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
             }
         }
 
-        if (priceList != null && priceList.size() > 0) {
+        if (priceList.size() > 0) {
             wasPrice = String.valueOf(Collections.max(priceList));
         }
 
@@ -749,7 +747,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                                 priceList.add(Double.valueOf(os.price));
                             }
                         }
-                        if (priceList != null && priceList.size() > 0) {
+                        if (priceList.size() > 0) {
                             price = String.valueOf(Collections.max(priceList));
                         }
                     }
@@ -764,7 +762,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                                 priceList.add(Double.valueOf(os.price));
                             }
                         }
-                        if (priceList != null && priceList.size() > 0) {
+                        if (priceList.size() > 0) {
                             price = String.valueOf(Collections.max(priceList));
                         }
                     }
