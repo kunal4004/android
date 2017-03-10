@@ -88,7 +88,7 @@
                 android:id="@+id/textTBProductSearch"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/bank_spacing_width"
+                android:layout_marginLeft="38dp"
                 android:background="@android:color/transparent"
                 android:gravity="start|center"
                 android:paddingStart="@dimen/recent_search_margin"

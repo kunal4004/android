@@ -22,6 +22,7 @@ import com.awfs.coordination.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;

@@ -250,6 +250,19 @@
         <item name="android:stateListAnimator">@null</item>
     </style>
 
+    <style name="blackBarcodeButtonStyle" parent="android:Theme">
+        <item name="android:layout_height">@dimen/button_style_height</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.15</item>
+        <item name="WButton_font">medium_bold</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
     <style name="sectionTitleLight" parent="android:Theme">
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">wrap_content</item>

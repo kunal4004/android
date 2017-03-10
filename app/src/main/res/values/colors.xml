@@ -36,6 +36,8 @@
     <color name="semi_per_black">#30000000</color>
     <color name="description_color">#80000000</color>
     <color name="black_desc_opacity">#75000000</color>
+    <color name="mask_opacity">#80000000</color>
+    <color name="black_desc_opacity_light">#85000000</color>
     <color name="press_bg">#05000000</color>
     <color name="charcoal_grey">#4F5051</color>
     <color name="bg_status_bar_pl">#2F2439</color>
@@ -69,6 +71,8 @@
     <color name="colorAccent">#00000000</color>
     <color name="product_divider">#22000000</color>
     <color name="viewpager_bg">#10000000</color>
+    <color name="barcode_button">#40ffffff</color>
+    <color name="barcode_button_light">#20ffffff</color>
     <color name="red">#ff0000</color>
     <color name="spinner_overlay_bg">#99EFEFEF</color>
 

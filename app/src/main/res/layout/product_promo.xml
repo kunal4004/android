@@ -1,23 +1,34 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/relPromotion"
     android:layout_width="match_parent"
     android:layout_height="204dp"
+    android:background="@color/white"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp">
 
-    <ImageView
-        android:id="@+id/imProduct"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="204dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/imProduct"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:adjustViewBounds="false"
+            android:contentDescription="@string/app_name"
+            android:maxHeight="204dp"
+            android:src="@drawable/rectangle" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="8dp">
+        android:layout_marginRight="8dp"
+        android:paddingTop="8dp">
 
         <LinearLayout
             android:id="@+id/linPromotionBadge"
@@ -31,32 +42,28 @@
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_marginLeft="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY" />
+                android:adjustViewBounds="true" />
 
             <ImageView
                 android:id="@+id/imSave"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_marginLeft="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY" />
+                android:adjustViewBounds="true" />
 
             <ImageView
                 android:id="@+id/imReward"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_marginLeft="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY" />
+                android:adjustViewBounds="true" />
 
             <ImageView
                 android:id="@+id/imVitality"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_marginLeft="8dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY" />
+                android:adjustViewBounds="true" />
         </LinearLayout>
     </RelativeLayout>
-</RelativeLayout>
+</FrameLayout>
