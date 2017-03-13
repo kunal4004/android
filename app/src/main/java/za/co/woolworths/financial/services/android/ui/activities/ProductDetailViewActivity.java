@@ -490,7 +490,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                                 priceList.add(Double.valueOf(os.price));
                             }
                         }
-                        if (priceList != null && priceList.size() > 0) {
+                        if (priceList.size() > 0) {
                             price = String.valueOf(Collections.max(priceList));
                         }
                     }
@@ -505,7 +505,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                                 priceList.add(Double.valueOf(os.price));
                             }
                         }
-                        if (priceList != null && priceList.size() > 0) {
+                        if (priceList.size() > 0) {
                             price = String.valueOf(Collections.max(priceList));
                         }
                     }
