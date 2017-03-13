@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
@@ -20,6 +21,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -663,7 +665,11 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         assert mproductDetail != null;
         otherSkusList = mproductDetail.get(0).otherSkus;
         mCheckOutLink = mproductDetail.get(0).checkOutLink;
-        mDefaultImage = mproductDetail.get(0).imagePath;
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        mDefaultImage = mproductDetail.get(0).externalImageRef+ "?w=" + width / 2 + "&q=" + 100;;
         populateView();
         promoImages(mproductDetail.get(0).promotionImages);
         displayProduct(mProductName);
@@ -792,7 +798,11 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         String colour = mproductDetail.get(position).otherSkus.get(position).colour;
         String mPSize = mproductDetail.get(position).otherSkus.get(position).size;
         String defaultUrl = mproductDetail.get(position).otherSkus.get(position).externalColourRef;
-        String imageUrl = mproductDetail.get(position).otherSkus.get(position).imagePath;
+        Display display = getWindowManager().getDefaultDisplay();
+                    Point size = new Point();
+                    display.getSize(size);
+                   int width = size.x;
+        String imageUrl = mproductDetail.get(position).otherSkus.get(position).externalImageRef+ "?w=" + width / 2 + "&q=" + 100;
         if (TextUtils.isEmpty(colour)) {
             colour = "";
         }
@@ -875,7 +885,11 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                 if (keyStr.toLowerCase().contains(colour.toLowerCase())) {
                     String valueStr = jsAuxiliaryImages.getString(keyStr);
                     JSONObject jsonObject = new JSONObject(valueStr);
-                    mAuxiliaryImages.add(jsonObject.getString("imagePath"));
+                    Display display = getWindowManager().getDefaultDisplay();
+                    Point size = new Point();
+                    display.getSize(size);
+                    int width = size.x;
+                    mAuxiliaryImages.add(jsonObject.getString("externalImageRef")+ "?w=" + width / 2 + "&q=" + 100);
                 }
             }
             ProductViewPagerAdapter mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
