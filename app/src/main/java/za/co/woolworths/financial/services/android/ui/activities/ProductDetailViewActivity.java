@@ -392,7 +392,11 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private void colorParams(int position) {
         String colour = uniqueColorList.get(position).colour;
         String defaultUrl = uniqueColorList.get(position).externalColourRef;
-        String imageUrl = uniqueColorList.get(position).externalColourRef;
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        String imageUrl = uniqueColorList.get(position).externalImageRef+ "?w=" + width + "&q=" + 100;
         if (TextUtils.isEmpty(colour)) {
             colour = "";
         }
