@@ -163,8 +163,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                         int width = size.x;
                         String externalRef = jsonObject.getString("externalImageRef") + "?w=" + width / 2 + "&q=" + 100;
                         mAuxiliaryImages.add(externalRef);
-                    } else {
-                        mAuxiliaryImages.add(jsonObject.getString("imagePath"));
                     }
                 }
             }
@@ -233,7 +231,11 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             assert mproductDetail != null;
             otherSkusList = mproductDetail.get(0).otherSkus;
             mCheckOutLink = mproductDetail.get(0).checkOutLink;
-            mDefaultImage = mproductDetail.get(0).imagePath;
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            int width = size.x;
+            mDefaultImage = mproductDetail.get(0).externalImageRef + "?w=" + width / 2 + "&q=" + 100;
             populateView();
             promoImages(mproductDetail.get(0).promotionImages);
             displayProduct(mProductName);
@@ -390,7 +392,11 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private void colorParams(int position) {
         String colour = uniqueColorList.get(position).colour;
         String defaultUrl = uniqueColorList.get(position).externalColourRef;
-        String imageUrl = uniqueColorList.get(position).imagePath;
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        String imageUrl = uniqueColorList.get(position).externalImageRef+ "?w=" + width + "&q=" + 100;
         if (TextUtils.isEmpty(colour)) {
             colour = "";
         }
@@ -411,7 +417,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         String colour = mproductDetail.get(position).otherSkus.get(position).colour;
         String mPSize = mproductDetail.get(position).otherSkus.get(position).size;
         String defaultUrl = mproductDetail.get(position).otherSkus.get(position).externalColourRef;
-        String imageUrl = mproductDetail.get(position).otherSkus.get(position).imagePath;
         if (TextUtils.isEmpty(colour)) {
             colour = "";
         }
@@ -422,11 +427,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mAuxiliaryImages = null;
         mAuxiliaryImages = new ArrayList<>();
         //show default image when imageUrl is empty
-        if (TextUtils.isEmpty(imageUrl)) {
-            mAuxiliaryImages.add(mDefaultImage);
-        } else {
-            mAuxiliaryImages.add(imageUrl);
-        }
+        mAuxiliaryImages.add(mDefaultImage);
         selectedColor(defaultUrl);
         retrieveJson(colour);
     }

@@ -159,7 +159,11 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         assert mproductDetail != null;
         otherSkusList = mproductDetail.get(0).otherSkus;
         mCheckOutLink = mproductDetail.get(0).checkOutLink;
-        mDefaultImage = mproductDetail.get(0).imagePath;
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        mDefaultImage = mproductDetail.get(0).externalImageRef + "?w=" + width + "&q=" + 100;
         populateView();
         promoImages(mproductDetail.get(0).promotionImages);
         displayProduct(mProductName);
@@ -288,7 +292,11 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         String colour = mproductDetail.get(position).otherSkus.get(position).colour;
         String mPSize = mproductDetail.get(position).otherSkus.get(position).size;
         String defaultUrl = mproductDetail.get(position).otherSkus.get(position).externalColourRef;
-        String imageUrl = mproductDetail.get(position).otherSkus.get(position).imagePath;
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        String imageUrl = mproductDetail.get(position).otherSkus.get(position).externalImageRef + "?w=" + width + "&q=" + 100;
         if (TextUtils.isEmpty(colour)) {
             colour = "";
         }
@@ -337,7 +345,11 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     protected void colorParams(int position) {
         String colour = uniqueColorList.get(position).colour;
         String defaultUrl = uniqueColorList.get(position).externalColourRef;
-        String imageUrl = uniqueColorList.get(position).imagePath;
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        String imageUrl = uniqueColorList.get(position).externalImageRef + "?w=" + width + "&q=" + 100;
         if (TextUtils.isEmpty(colour)) {
             colour = "";
         }
@@ -392,8 +404,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                         display.getSize(size);
                         int width = size.x;
                         mAuxiliaryImages.add(jsonObject.getString("externalImageRef") + "?w=" + width + "&q=" + 100);
-                    } else {
-                        mAuxiliaryImages.add(jsonObject.getString("imagePath"));
                     }
                 }
             }
