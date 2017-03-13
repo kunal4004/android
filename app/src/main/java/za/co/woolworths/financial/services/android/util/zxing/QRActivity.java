@@ -1,30 +1,50 @@
-package za.co.woolworths.financial.services.android.ui.activities;
+package za.co.woolworths.financial.services.android.util.zxing;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.google.zxing.MultiFormatReader;
+import com.pacific.mvc.Activity;
+import com.trello.rxlifecycle.ActivityEvent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,26 +55,49 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
+import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
+import za.co.woolworths.financial.services.android.ui.activities.NestedScrollableViewHelper;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
 import za.co.woolworths.financial.services.android.util.CircularImageView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.DrawImage;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class WProductDetailActivity extends AppCompatActivity implements View.OnClickListener, SelectedProductView {
-
+public class QRActivity extends Activity<QRModel> implements View.OnClickListener, SelectedProductView {
+    public static final int CODE_PICK_IMAGE = 0x100;
+    private BaseCameraManager cameraManager;
+    public final int ZBAR_PERMS_REQUEST_CODE = 12345678;
+    private WButton mBtnManual;
+    private TextView mTextInfo;
+    private ProgressBar mProgressBar;
+    private QRCodeView qRview;
+    private SlidingUpPanelLayout mSlideUpPanelLayout;
     private WTextView mTextSelectSize;
     private RecyclerView mRecyclerviewSize;
     private ArrayList<WProductDetail> mproductDetail;
@@ -89,7 +132,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     private WTextView mTextActualPrice;
     private WTextView mTextColour;
     private WrapContentWebView mWebDescription;
-    private WButton mBtnAddShoppingList;
     private WTextView mIngredientList;
     private LinearLayout mLinIngredient;
     private View ingredientLine;
@@ -98,6 +140,470 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     private int mPreviousState;
     private ViewPager mTouchTarget;
     private WProductDetail productDetail;
+    private SlidingUpPanelLayout.PanelState mPanelState = SlidingUpPanelLayout.PanelState.COLLAPSED;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Utils.updateStatusBarBackground(this, R.color.black);
+        setContentView(R.layout.barcode_scanner_layout);
+        setupToolbar();
+        if (Build.VERSION_CODES.LOLLIPOP >= Build.VERSION.SDK_INT) {
+            cameraManager = new CameraManager(getApplication());
+        } else {
+            cameraManager = new CameraManager(getApplication());
+        }
+        model = new QRModel(new QRView(this));
+        model.onCreate();
+
+        cameraManager.setOnResultListener(new BaseCameraManager.OnResultListener() {
+            @Override
+            public void onResult(final QRResult qrResult) {
+                String barcodeFormat = qrResult.getResult().getBarcodeFormat().name();
+                for (String bf : barcodeFormat()) {
+                    if (bf.equalsIgnoreCase(barcodeFormat)) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                cameraManager.stopCamera();
+                                String barcodeNumber = qrResult.getResult().getText();
+                                if (new ConnectionDetector().isOnline(QRActivity.this)) {
+                                    getProductRequest(barcodeNumber);
+                                } else {
+                                    Utils.displayValidationMessage(QRActivity.this,
+                                            TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                            getString(R.string.connect_to_server));
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+        initUI();
+        initProductDetailUI();
+        slideUpPanel();
+    }
+
+    private void slideUpPanel() {
+
+        mSlideUpPanelLayout.setFadeOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+            }
+        });
+        mSlideUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+                if (slideOffset == 0.0) {
+                    mSlideUpPanelLayout.setAnchorPoint(1.0f);
+                }
+            }
+
+            @Override
+            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState,
+                                            SlidingUpPanelLayout.PanelState newState) {
+                switch (newState) {
+                    case COLLAPSED:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mPanelState = SlidingUpPanelLayout.PanelState.COLLAPSED;
+                                QRActivity.this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                                dismissPopWindow();
+                                QRActivity.this.onResume();
+                            }
+                        });
+                        break;
+
+                    case DRAGGING:
+                        model.setEmptyViewVisible(false);
+                        break;
+
+                    case EXPANDED:
+                        mPanelState = SlidingUpPanelLayout.PanelState.EXPANDED;
+                        model.setEmptyViewVisible(false);
+                        QRActivity.this.onPause();
+                        QRActivity.this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+    }
+
+    private void initUI() {
+        qRview = (QRCodeView) findViewById(R.id.qr_view);
+        mSlideUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        mTextInfo = (TextView) findViewById(R.id.textInfo);
+        mProgressBar = (ProgressBar) findViewById(R.id.ppBar);
+        mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+        mBtnManual = (WButton) findViewById(R.id.btnManual);
+        mBtnManual.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        resumeScan();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        model.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        cameraManager.releaseCamera();
+        cameraManager.shutdownExecutor();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == CODE_PICK_IMAGE) {
+            String[] columns = {MediaStore.Images.Media.DATA};
+            Cursor cursor = getContentResolver().query(data.getData(), columns, null, null, null);
+            assert cursor != null;
+            if (cursor.moveToFirst()) {
+                Observable
+                        .just(cursor.getString(cursor.getColumnIndex(columns[0])))
+                        .observeOn(Schedulers.from(cameraManager.getExecutor()))
+                        .compose(this.<String>bindUntilEvent(ActivityEvent.PAUSE))
+                        .map(new Func1<String, QRResult>() {
+                            @Override
+                            public QRResult call(String str) {
+                                return QRUtils.decode(str, new MultiFormatReader());
+                            }
+                        })
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Action1<QRResult>() {
+                            @Override
+                            public void call(QRResult qrResult) {
+                                model.resultDialog(qrResult);
+                            }
+                        });
+            }
+            cursor.close();
+        }
+    }
+
+    public void onSurfaceCreated(SurfaceHolder surfaceHolder) {
+        if (cameraManager.getExecutor().isShutdown()) return;
+        Observable
+                .just(surfaceHolder)
+                .compose(this.<SurfaceHolder>bindUntilEvent(ActivityEvent.PAUSE))
+                .observeOn(Schedulers.from(cameraManager.getExecutor()))
+                .map(new Func1<SurfaceHolder, Object>() {
+                    @Override
+                    public Object call(SurfaceHolder holder) {
+                        cameraManager.setRotate(getWindowManager().getDefaultDisplay().getRotation());
+                        cameraManager.connectCamera(holder);
+                        return null;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object o) {
+                        model.setEmptyViewVisible(false);
+                        cameraManager.startCapture();
+                    }
+                });
+    }
+
+    public void onSurfaceDestroyed() {
+        cameraManager.releaseCamera();
+    }
+
+    public void setHook(boolean hook) {
+        cameraManager.setHook(hook);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        boolean allowed = true;
+        switch (requestCode) {
+            case ZBAR_PERMS_REQUEST_CODE:
+                for (int res : grantResults) {
+                    // if user granted all permissions.
+                    allowed = allowed && (res == PackageManager.PERMISSION_GRANTED);
+                }
+                break;
+            default:
+                // if user not granted permissions.
+                allowed = false;
+                break;
+        }
+        if (allowed) {
+            //user granted all permissions we can perform our task.
+            if (Build.VERSION_CODES.LOLLIPOP >= Build.VERSION.SDK_INT) {
+                cameraManager = new CameraManager(getApplication());
+            } else {
+                cameraManager = new CameraManager(getApplication());
+            }
+            model = new QRModel(new QRView(this));
+            model.onCreate();
+
+            cameraManager.setOnResultListener(new BaseCameraManager.OnResultListener() {
+                @Override
+                public void onResult(QRResult qrResult) {
+                    model.resultDialog(qrResult);
+                }
+            });
+
+        } else {
+            // we will give warning to user that they haven't granted permissions.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    Toast.makeText(this, "Camera Permissions denied.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    public void setupToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        WTextView mTextToolbar = (WTextView) findViewById(R.id.toolbarText);
+        mTextToolbar.setText(getString(R.string.scan_product));
+        mTextToolbar.setGravity(Gravity.LEFT);
+        mTextToolbar.setTextColor(Color.WHITE);
+        setSupportActionBar(toolbar);
+        final ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+            ab.setDisplayShowTitleEnabled(false);
+            ab.setDisplayUseLogoEnabled(false);
+            ab.setDisplayShowTitleEnabled(false);
+            ab.setDefaultDisplayHomeAsUpEnabled(false);
+            ab.setHomeAsUpIndicator(R.drawable.close_white);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.textSelectColour:
+            case R.id.imSelectedColor:
+            case R.id.imColorArrow:
+            case R.id.linColour:
+                dismissSizeDialog();
+                LayoutInflater mSlideUpPanelLayoutInflater
+                        = (LayoutInflater) getBaseContext()
+                        .getSystemService(LAYOUT_INFLATER_SERVICE);
+                View mPopWindow = mSlideUpPanelLayoutInflater.inflate(R.layout.product_size_row, null);
+                mColorRecycleSize = (RecyclerView) mPopWindow.findViewById(R.id.recyclerviewSize);
+                bindWithUI(otherSkusList, true);
+                mPColourWindow = new PopupWindow(
+                        mPopWindow,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                mPopWindow.setOnTouchListener(new View.OnTouchListener() {
+
+                    @Override
+                    public boolean onTouch(View arg0, MotionEvent arg1) {
+
+                        return true;
+                    }
+                });
+
+                mPColourWindow.setTouchable(true);
+                mPColourWindow.showAsDropDown(mTextSelectColor, -50, -180);
+                break;
+
+            case R.id.textProductSize:
+            case R.id.mColorArrow:
+            case R.id.textSelectSize:
+            case R.id.linSize:
+                dismissColourDialog();
+                LayoutInflater layoutInflater
+                        = (LayoutInflater) getBaseContext()
+                        .getSystemService(LAYOUT_INFLATER_SERVICE);
+                View popupView = layoutInflater.inflate(R.layout.product_size_row, null);
+                mRecyclerviewSize = (RecyclerView) popupView.findViewById(R.id.recyclerviewSize);
+                LinearLayout mPopLinContainer = (LinearLayout) popupView.findViewById(R.id.linPopUpContainer);
+
+                bindWithUI(otherSkusList, false);
+
+                mPSizeWindow = new PopupWindow(
+                        popupView,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                mPopLinContainer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mPSizeWindow.dismiss();
+                    }
+                });
+
+                mPSizeWindow.showAsDropDown(mTextSelectSize, -50, -180);
+
+                break;
+
+            case R.id.imCloseProduct:
+                if (mPanelState == SlidingUpPanelLayout.PanelState.EXPANDED) {
+                    mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                } else {
+                    onBackPressed();
+                }
+                break;
+
+            case R.id.btnShopOnlineWoolies:
+                if (!TextUtils.isEmpty(mCheckOutLink))
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mCheckOutLink)));
+                break;
+
+            case R.id.btnManual:
+                Intent openManual = new Intent(QRActivity.this, EnterBarcodeActivity.class);
+                startActivity(openManual);
+                break;
+        }
+    }
+
+    private void getProductDetail(final String productId, final String skuId) {
+        ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
+            @Override
+            public void success(String strProduct, retrofit.client.Response response) {
+                hideProgressBar();
+                WProduct wProduct = Utils.stringToJson(QRActivity.this, strProduct);
+                if (wProduct != null) {
+                    switch (wProduct.httpCode) {
+                        case 200:
+                            ArrayList<WProductDetail> mProductList;
+                            WProductDetail productList = wProduct.product;
+                            mProductList = new ArrayList<>();
+                            if (productList != null) {
+                                mProductList.add(productList);
+                            }
+                            displayProductDetail(mProductList.get(0).productName,
+                                    new GsonBuilder().create().toJson(mProductList));
+
+                            mSlideUpPanelLayout.setAnchorPoint(1.0f);
+                            mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
+                            mSlideUpPanelLayout.setScrollableViewHelper(new NestedScrollableViewHelper(mScrollProductDetail));
+                            break;
+                        default:
+                            hideProgressBar();
+                            break;
+                    }
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                hideProgressBar();
+            }
+        });
+
+    }
+
+    private void showProgressBar() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        mTextInfo.setVisibility(View.GONE);
+        mBtnManual.setEnabled(false);
+    }
+
+    private void hideProgressBar() {
+        mProgressBar.setVisibility(View.GONE);
+        mTextInfo.setVisibility(View.VISIBLE);
+        mBtnManual.setEnabled(true);
+    }
+
+    private ArrayList<String> barcodeFormat() {
+        ArrayList<String> barcodeFormat = new ArrayList<>();
+        barcodeFormat.add("EAN_8");
+        barcodeFormat.add("UPC_E");
+        barcodeFormat.add("UPC_A");
+        barcodeFormat.add("EAN_13");
+        barcodeFormat.add("ISBN_13");
+        barcodeFormat.add("CODE_128");
+        return barcodeFormat;
+    }
+
+    public void getProductRequest(final String query) {
+        new HttpAsyncTask<String, String, ProductView>() {
+            @Override
+            protected ProductView httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getApplication()).getApi()
+                        .getProductSearchList(query, true, 0, Utils.PAGE_SIZE);
+            }
+
+            @Override
+            protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                hideProgressBar();
+                errorScanCode();
+                return new ProductView();
+            }
+
+            @Override
+            protected void onPostExecute(ProductView product) {
+                super.onPostExecute(product);
+                ArrayList<ProductList> mProduct = product.products;
+
+                if (mProduct != null) {
+                    if (mProduct.size() > 0) {
+                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
+                    } else {
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                hideProgressBar();
+                                //resetCamera();
+                            }
+                        }, 100);
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                errorScanCode();
+                            }
+                        }, 200);
+                    }
+                }
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                showProgressBar();
+            }
+
+            @Override
+            protected Class<ProductView> httpDoInBackgroundReturnType() {
+                return ProductView.class;
+            }
+        }.execute();
+    }
+
+    private void errorScanCode() {
+        Utils.displayValidationMessage(this, TransientActivity.VALIDATION_MESSAGE_LIST.BARCODE_ERROR, "");
+    }
+
+    private void resumeScan() {
+        model.onResume();
+        if (qRview != null)
+            qRview.setBackgroundColor(Color.TRANSPARENT);
+    }
 
     protected void initProductDetailUI() {
         mScrollProductDetail = (NestedScrollView) findViewById(R.id.scrollProductDetail);
@@ -118,7 +624,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mRelContainer = (LinearLayout) findViewById(R.id.linProductContainer);
         RelativeLayout mLinColor = (RelativeLayout) findViewById(R.id.linColour);
         mLinSize = (RelativeLayout) findViewById(R.id.linSize);
-        mBtnAddShoppingList = (WButton) findViewById(R.id.btnAddShoppingList);
         WButton mBtnShopOnlineWoolies = (WButton) findViewById(R.id.btnShopOnlineWoolies);
         ImageView mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
         mImCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
@@ -135,19 +640,20 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 
         mTextSelectColor.setOnClickListener(this);
         mTextSelectSize.setOnClickListener(this);
-        mImColorArrow.setOnClickListener(this);
+        mImCloseProduct.setOnClickListener(this);
         mImSelectedColor.setOnClickListener(this);
+        mLinSize.setOnClickListener(this);
+
+        mImColorArrow.setOnClickListener(this);
         mColorArrow.setOnClickListener(this);
         mTextProductSize.setOnClickListener(this);
-        mImCloseProduct.setOnClickListener(this);
         mLinColor.setOnClickListener(this);
-        mLinSize.setOnClickListener(this);
         mBtnShopOnlineWoolies.setOnClickListener(this);
     }
 
     protected void displayProductDetail(String mProductName, String mProductList) {
         try {
-            SessionDao sessionDao = new SessionDao(WProductDetailActivity.this,
+            SessionDao sessionDao = new SessionDao(QRActivity.this,
                     SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
             mProductJSON = sessionDao.value;
         } catch (Exception e) {
@@ -163,7 +669,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
-        mDefaultImage = mproductDetail.get(0).externalImageRef + "?w=" + width + "&q=" + 100;
+        mDefaultImage = mproductDetail.get(0).externalImageRef+ "?w=" + width / 2 + "&q=" + 100;;
         populateView();
         promoImages(mproductDetail.get(0).promotionImages);
         displayProduct(mProductName);
@@ -204,7 +710,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             }
         }
 
-        if (priceList != null && priceList.size() > 0) {
+        if (priceList.size() > 0) {
             wasPrice = String.valueOf(Collections.max(priceList));
         }
 
@@ -240,14 +746,14 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 mColorView.setVisibility(View.GONE);
                 mRelContainer.setVisibility(View.GONE);
                 if (TextUtils.isEmpty(wasPrice)) {
-                    if (Utils.isLocationEnabled(WProductDetailActivity.this)) {
+                    if (Utils.isLocationEnabled(QRActivity.this)) {
                         ArrayList<Double> priceList = new ArrayList<>();
                         for (OtherSku os : productDetail.otherSkus) {
                             if (!TextUtils.isEmpty(os.price)) {
                                 priceList.add(Double.valueOf(os.price));
                             }
                         }
-                        if (priceList != null && priceList.size() > 0) {
+                        if (priceList.size() > 0) {
                             price = String.valueOf(Collections.max(priceList));
                         }
                     }
@@ -255,14 +761,14 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                     wPrice.setPaintFlags(0);
                     WwasPrice.setText("");
                 } else {
-                    if (Utils.isLocationEnabled(WProductDetailActivity.this)) {
+                    if (Utils.isLocationEnabled(QRActivity.this)) {
                         ArrayList<Double> priceList = new ArrayList<>();
                         for (OtherSku os : productDetail.otherSkus) {
                             if (!TextUtils.isEmpty(os.price)) {
                                 priceList.add(Double.valueOf(os.price));
                             }
                         }
-                        if (priceList != null && priceList.size() > 0) {
+                        if (priceList.size() > 0) {
                             price = String.valueOf(Collections.max(priceList));
                         }
                     }
@@ -293,10 +799,10 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         String mPSize = mproductDetail.get(position).otherSkus.get(position).size;
         String defaultUrl = mproductDetail.get(position).otherSkus.get(position).externalColourRef;
         Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        String imageUrl = mproductDetail.get(position).otherSkus.get(position).externalImageRef + "?w=" + width + "&q=" + 100;
+                    Point size = new Point();
+                    display.getSize(size);
+                   int width = size.x;
+        String imageUrl = mproductDetail.get(position).otherSkus.get(position).externalImageRef+ "?w=" + width / 2 + "&q=" + 100;
         if (TextUtils.isEmpty(colour)) {
             colour = "";
         }
@@ -316,21 +822,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         retrieveJson(colour);
     }
 
-    protected void addButton() {
-        mBtnAddShoppingList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utils.addToShoppingCart(WProductDetailActivity.this, new ShoppingList(
-                        mproductDetail.get(0).productId,
-                        mproductDetail.get(0).productName, false));
-
-                Utils.displayValidationMessage(WProductDetailActivity.this,
-                        TransientActivity.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
-                        "viewShoppingList");
-            }
-        });
-    }
-
     protected void setIngredients(String ingredients) {
         if (TextUtils.isEmpty(ingredients)) {
             mLinIngredient.setVisibility(View.GONE);
@@ -345,11 +836,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     protected void colorParams(int position) {
         String colour = uniqueColorList.get(position).colour;
         String defaultUrl = uniqueColorList.get(position).externalColourRef;
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        String imageUrl = uniqueColorList.get(position).externalImageRef + "?w=" + width + "&q=" + 100;
+        String imageUrl = uniqueColorList.get(position).imagePath;
         if (TextUtils.isEmpty(colour)) {
             colour = "";
         }
@@ -398,13 +885,11 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 if (keyStr.toLowerCase().contains(colour.toLowerCase())) {
                     String valueStr = jsAuxiliaryImages.getString(keyStr);
                     JSONObject jsonObject = new JSONObject(valueStr);
-                    if (jsonObject.has("externalImageRef")) {
-                        Display display = getWindowManager().getDefaultDisplay();
-                        Point size = new Point();
-                        display.getSize(size);
-                        int width = size.x;
-                        mAuxiliaryImages.add(jsonObject.getString("externalImageRef") + "?w=" + width + "&q=" + 100);
-                    }
+                    Display display = getWindowManager().getDefaultDisplay();
+                    Point size = new Point();
+                    display.getSize(size);
+                    int width = size.x;
+                    mAuxiliaryImages.add(jsonObject.getString("externalImageRef")+ "?w=" + width / 2 + "&q=" + 100);
                 }
             }
             ProductViewPagerAdapter mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
@@ -442,8 +927,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 }
             });
 
-        } catch (JSONException e) {
-            Log.e("bling bling", e.toString());
+        } catch (JSONException ignored) {
         }
     }
 
@@ -576,78 +1060,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         return super.dispatchTouchEvent(ev);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.textSelectColour:
-            case R.id.imSelectedColor:
-            case R.id.imColorArrow:
-            case R.id.linColour:
-                dismissSizeDialog();
-                LayoutInflater mSlideUpPanelLayoutInflater
-                        = (LayoutInflater) getBaseContext()
-                        .getSystemService(LAYOUT_INFLATER_SERVICE);
-                View mPopWindow = mSlideUpPanelLayoutInflater.inflate(R.layout.product_size_row, null);
-                mColorRecycleSize = (RecyclerView) mPopWindow.findViewById(R.id.recyclerviewSize);
-                bindWithUI(otherSkusList, true);
-                mPColourWindow = new PopupWindow(
-                        mPopWindow,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                mPopWindow.setOnTouchListener(new View.OnTouchListener() {
-
-                    @Override
-                    public boolean onTouch(View arg0, MotionEvent arg1) {
-
-                        return true;
-                    }
-                });
-
-                mPColourWindow.setTouchable(true);
-                mPColourWindow.showAsDropDown(mTextSelectColor, -50, -180);
-                break;
-
-            case R.id.textProductSize:
-            case R.id.mColorArrow:
-            case R.id.textSelectSize:
-            case R.id.linSize:
-                dismissColourDialog();
-                LayoutInflater layoutInflater
-                        = (LayoutInflater) getBaseContext()
-                        .getSystemService(LAYOUT_INFLATER_SERVICE);
-                View popupView = layoutInflater.inflate(R.layout.product_size_row, null);
-                mRecyclerviewSize = (RecyclerView) popupView.findViewById(R.id.recyclerviewSize);
-                LinearLayout mPopLinContainer = (LinearLayout) popupView.findViewById(R.id.linPopUpContainer);
-
-                bindWithUI(otherSkusList, false);
-
-                mPSizeWindow = new PopupWindow(
-                        popupView,
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                mPopLinContainer.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mPSizeWindow.dismiss();
-                    }
-                });
-
-                mPSizeWindow.showAsDropDown(mTextSelectSize, -50, -180);
-
-                break;
-
-            case R.id.imCloseProduct:
-                onBackPressed();
-                break;
-
-            case R.id.btnShopOnlineWoolies:
-                if (!TextUtils.isEmpty(mCheckOutLink))
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mCheckOutLink)));
-                break;
-        }
-    }
 
     protected void promoImages(PromotionImages imPromo) {
 
@@ -750,3 +1162,5 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         selectedProduct(position);
     }
 }
+
+
