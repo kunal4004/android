@@ -173,9 +173,9 @@ public class WfsApi {
     public ProductView productViewRequest(boolean isBarcode, int pageSize, int pageNumber, String product_id) {
         getMyLocation();
         if (Utils.isLocationEnabled(mContext)) {
-            return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), isBarcode, pageSize, pageNumber, product_id);
+            return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), pageSize, pageNumber, product_id);
         } else {
-            return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), isBarcode, pageSize, pageNumber, product_id);
+            return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), pageSize, pageNumber, product_id);
         }
     }
 
