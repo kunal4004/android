@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.zxing.common.StringUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -320,10 +321,12 @@ public class Utils {
         SessionDao sessionDao = null;
         try {
             sessionDao = new SessionDao(context, key).get();
+            return sessionDao.value;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return sessionDao.value;
+
     }
 
     public static void setBadgeCounter(Context context, int badgeCount) {
