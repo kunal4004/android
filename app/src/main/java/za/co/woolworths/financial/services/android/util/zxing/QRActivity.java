@@ -20,7 +20,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -39,6 +41,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.awfs.coordination.R;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -71,7 +74,7 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
-import za.co.woolworths.financial.services.android.ui.activities.NestedScrollableViewHelper;
+import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
@@ -80,7 +83,6 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
-import za.co.woolworths.financial.services.android.util.CircularImageView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -117,16 +119,16 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     public ViewPager mViewPagerProduct;
     public ImageView mImCloseProduct;
     public RelativeLayout mLinSize;
-    public ImageView mImNewImage;
-    public ImageView mImSave;
-    public ImageView mImReward;
-    public ImageView mVitalityView;
+    public SimpleDraweeView mImNewImage;
+    public SimpleDraweeView mImSave;
+    public SimpleDraweeView mImReward;
+    public SimpleDraweeView mVitalityView;
     public String mCheckOutLink;
     private ArrayList<String> mAuxiliaryImages;
     private LinearLayout mLlPagerDots;
     private ImageView[] ivArrayDotsPager;
     private String mDefaultImage;
-    private CircularImageView mImSelectedColor;
+    private SimpleDraweeView mImSelectedColor;
     private View mColorView;
     private WTextView mTextPromo;
     private WTextView mTextActualPrice;
@@ -141,6 +143,10 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     private ViewPager mTouchTarget;
     private WProductDetail productDetail;
     private SlidingUpPanelLayout.PanelState mPanelState = SlidingUpPanelLayout.PanelState.COLLAPSED;
+    private String mDefaultColor;
+    private String mDefaultColorRef;
+    private String mDefaultSize;
+    private int mPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -496,7 +502,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                                 mProductList.add(productList);
                             }
                             displayProductDetail(mProductList.get(0).productName,
-                                    new GsonBuilder().create().toJson(mProductList));
+                                    new GsonBuilder().create().toJson(mProductList), skuId);
 
                             mSlideUpPanelLayout.setAnchorPoint(1.0f);
                             mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
@@ -627,16 +633,16 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         WButton mBtnShopOnlineWoolies = (WButton) findViewById(R.id.btnShopOnlineWoolies);
         ImageView mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
         mImCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
-        mImSelectedColor = (CircularImageView) findViewById(R.id.imSelectedColor);
+        mImSelectedColor = (SimpleDraweeView) findViewById(R.id.imSelectedColor);
         mLlPagerDots = (LinearLayout) findViewById(R.id.pager_dots);
         ImageView mImColorArrow = (ImageView) findViewById(R.id.imColorArrow);
         mWebDescription = (WrapContentWebView) findViewById(R.id.webDescription);
         ingredientLine = findViewById(R.id.ingredientLine);
 
-        mImNewImage = (ImageView) findViewById(R.id.imNewImage);
-        mImSave = (ImageView) findViewById(R.id.imSave);
-        mImReward = (ImageView) findViewById(R.id.imReward);
-        mVitalityView = (ImageView) findViewById(R.id.imVitality);
+        mImNewImage = (SimpleDraweeView) findViewById(R.id.imNewImage);
+        mImSave = (SimpleDraweeView) findViewById(R.id.imSave);
+        mImReward = (SimpleDraweeView) findViewById(R.id.imReward);
+        mVitalityView = (SimpleDraweeView) findViewById(R.id.imVitality);
 
         mTextSelectColor.setOnClickListener(this);
         mTextSelectSize.setOnClickListener(this);
@@ -651,7 +657,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         mBtnShopOnlineWoolies.setOnClickListener(this);
     }
 
-    protected void displayProductDetail(String mProductName, String mProductList) {
+    protected void displayProductDetail(String mProductName, String mProductList, String skuId) {
         try {
             SessionDao sessionDao = new SessionDao(QRActivity.this,
                     SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
@@ -661,34 +667,30 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         }
         TypeToken<List<WProductDetail>> token = new TypeToken<List<WProductDetail>>() {
         };
+
         mproductDetail = new Gson().fromJson(mProductList, token.getType());
         assert mproductDetail != null;
-        otherSkusList = mproductDetail.get(0).otherSkus;
-        mCheckOutLink = mproductDetail.get(0).checkOutLink;
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        mDefaultImage = mproductDetail.get(0).externalImageRef+ "?w=" + width / 2 + "&q=" + 100;;
+        WProductDetail mProduct = mproductDetail.get(0);
+        otherSkusList = mProduct.otherSkus;
+        getDefaultColor(otherSkusList, skuId);
+        mCheckOutLink = mProduct.checkOutLink;
+        mDefaultImage = getImageByWidth(mProduct.externalImageRef);
         populateView();
-        promoImages(mproductDetail.get(0).promotionImages);
+        promoImages(mProduct.promotionImages);
         displayProduct(mProductName);
-        initColorParam(0);
+        initColorParam(mDefaultColor);
         mScrollProductDetail.scrollTo(0, 0);
-
-        String saveText = mproductDetail.get(0).saveText;
+        String saveText = mProduct.saveText;
         if (TextUtils.isEmpty(saveText)) {
-
             mTextPromo.setVisibility(View.GONE);
         } else {
             mTextPromo.setVisibility(View.VISIBLE);
-            mTextPromo.setText(mproductDetail.get(0).saveText);
+            mTextPromo.setText(mProduct.saveText);
         }
     }
 
     protected void populateView() {
         productDetail = mproductDetail.get(0);
-
         String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
                 "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
                 "</style></head><body>";
@@ -698,9 +700,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
             descriptionWithoutExtraTag = productDetail.longDescription.replaceAll("</ul>\n\n<ul>\n", " ");
         }
         mWebDescription.loadData(headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag, "text/html; charset=UTF-8", null);
-        mTextTitle.setText(isEmpty(productDetail.productName));
+        mTextTitle.setText(Html.fromHtml(isEmpty(productDetail.productName)));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
-
         String fromPrice = String.valueOf(productDetail.fromPrice);
         String wasPrice = "";
         ArrayList<Double> priceList = new ArrayList<>();
@@ -794,31 +795,18 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         }
     }
 
-    protected void initColorParam(int position) {
-        String colour = mproductDetail.get(position).otherSkus.get(position).colour;
-        String mPSize = mproductDetail.get(position).otherSkus.get(position).size;
-        String defaultUrl = mproductDetail.get(position).otherSkus.get(position).externalColourRef;
-        Display display = getWindowManager().getDefaultDisplay();
-                    Point size = new Point();
-                    display.getSize(size);
-                   int width = size.x;
-        String imageUrl = mproductDetail.get(position).otherSkus.get(position).externalImageRef+ "?w=" + width / 2 + "&q=" + 100;
+    protected void initColorParam(String colour) {
         if (TextUtils.isEmpty(colour)) {
             colour = "";
         }
-        if (!TextUtils.isEmpty(mPSize)) {
-            mTextSelectSize.setText(mPSize);
+        if (!TextUtils.isEmpty(mDefaultSize)) {
+            mTextSelectSize.setText(mDefaultSize);
         }
         mTextColour.setText(colour);
         mAuxiliaryImages = null;
         mAuxiliaryImages = new ArrayList<>();
-        //show default image when imageUrl is empty
-        if (TextUtils.isEmpty(imageUrl)) {
-            mAuxiliaryImages.add(mDefaultImage);
-        } else {
-            mAuxiliaryImages.add(imageUrl);
-        }
-        selectedColor(defaultUrl);
+        mAuxiliaryImages.add(mDefaultImage);
+        selectedColor(mDefaultColorRef);
         retrieveJson(colour);
     }
 
@@ -834,9 +822,9 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     }
 
     protected void colorParams(int position) {
+        mPosition = position;
         String colour = uniqueColorList.get(position).colour;
         String defaultUrl = uniqueColorList.get(position).externalColourRef;
-        String imageUrl = uniqueColorList.get(position).imagePath;
         if (TextUtils.isEmpty(colour)) {
             colour = "";
         }
@@ -844,11 +832,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         mAuxiliaryImages = null;
         mAuxiliaryImages = new ArrayList<>();
         //show default image when imageUrl is empty
-        if (TextUtils.isEmpty(imageUrl)) {
-            mAuxiliaryImages.add(mDefaultImage);
-        } else {
-            mAuxiliaryImages.add(imageUrl);
-        }
         selectedColor(defaultUrl);
         retrieveJson(colour);
     }
@@ -885,13 +868,27 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                 if (keyStr.toLowerCase().contains(colour.toLowerCase())) {
                     String valueStr = jsAuxiliaryImages.getString(keyStr);
                     JSONObject jsonObject = new JSONObject(valueStr);
-                    Display display = getWindowManager().getDefaultDisplay();
-                    Point size = new Point();
-                    display.getSize(size);
-                    int width = size.x;
-                    mAuxiliaryImages.add(jsonObject.getString("externalImageRef")+ "?w=" + width / 2 + "&q=" + 100);
+                    if (jsonObject.has("externalImageRef")) {
+                        mAuxiliaryImages.add(getImageByWidth(jsonObject.getString("externalImageRef")));
+                    } else {
+                        mAuxiliaryImages.add(mDefaultImage);
+                    }
                 }
             }
+
+            //force default image to display first
+            if (mPosition == 0 || mAuxiliaryImages.size() == 0) {
+                if (mAuxiliaryImages.contains(mDefaultImage)) {
+                    for (int index = 0; index < mAuxiliaryImages.size(); index++) {
+                        if (mAuxiliaryImages.get(index)
+                                .equalsIgnoreCase(mDefaultImage)) {
+                            mAuxiliaryImages.remove(index);
+                        }
+                    }
+                }
+                mAuxiliaryImages.add(0, mDefaultImage);
+            }
+
             ProductViewPagerAdapter mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
             mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
             mProductViewPagerAdapter.notifyDataSetChanged();
@@ -927,7 +924,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                 }
             });
 
-        } catch (JSONException ignored) {
+        } catch (JSONException e) {
+            Log.e("bling bling", e.toString());
         }
     }
 
@@ -1062,7 +1060,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
 
     protected void promoImages(PromotionImages imPromo) {
-
         if (imPromo != null) {
             String wSave = imPromo.save;
             String wReward = imPromo.wRewards;
@@ -1147,6 +1144,24 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         }
     }
 
+    protected String getImageByWidth(String imageUrl) {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        return imageUrl + "?w=" + width / 3 + "&q=" + 85;
+    }
+
+    protected void getDefaultColor(List<OtherSku> otherSkus, String skuId) {
+        for (OtherSku otherSku : otherSkus) {
+            if (skuId.equalsIgnoreCase(otherSku.sku)) {
+                mDefaultColor = otherSku.colour;
+                mDefaultColorRef = otherSku.externalColourRef;
+                mDefaultSize = otherSku.size;
+            }
+        }
+    }
+
     @Override
     public void onSelectedProduct(View v, int position) {
 
@@ -1161,6 +1176,5 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     public void onSelectedColor(View v, int position) {
         selectedProduct(position);
     }
+
 }
-
-

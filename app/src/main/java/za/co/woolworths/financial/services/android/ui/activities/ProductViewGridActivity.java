@@ -9,6 +9,7 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -26,7 +27,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -43,20 +43,18 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
+import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.ProductProgressDialogFrag;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
-import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MyRunnable;
-import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.PauseHandlerFragment;
-import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductViewGridActivity extends WProductDetailActivity implements SelectedProductView,
-        ObservableScrollViewCallbacks, View.OnClickListener {
+        View.OnClickListener {
     private Toolbar mToolbar;
     private WTextView mToolBarTitle;
     private String productId;
@@ -66,7 +64,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     private ProductViewGridActivity mContext;
     private List<ProductList> mProduct;
     private WTextView mNumberOfItem;
-    private WObservableScrollView mProductScroll;
+    private NestedScrollView mProductScroll;
     private ProgressBar mProgressBar;
     private RelativeLayout mRelProgressBar;
     private RelativeLayout mRelViewProgressBar;
@@ -74,7 +72,6 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     private GridLayoutManager recyclerViewLayoutManager;
     private boolean mIsLoading = false;
     private boolean mIsLastPage = false;
-    private int mScrollY = 0;
     private ProgressBar mProgressVBar;
     private String searchItem = "";
     private int num_of_item;
@@ -87,6 +84,8 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     private boolean productCanClose = false;
     private SlidingUpPanelLayout.PanelState panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
     private Menu mMenu;
+    private String mSkuId;
+    private String mProductId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,16 +211,52 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         mSlideUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         mLinProductList = (LinearLayout) findViewById(R.id.linProductList);
         mRelViewProgressBar = (RelativeLayout) findViewById(R.id.relViewProgressBar);
-        mProductScroll = (WObservableScrollView) findViewById(R.id.scrollProduct);
-        mProductScroll.setScrollViewCallbacks(this);
+        mProductScroll = (NestedScrollView) findViewById(R.id.scrollProduct);
+
+        mProductScroll.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (v.getChildAt(v.getChildCount() - 1) != null) {
+                    if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight())) &&
+                            scrollY > oldScrollY) {
+                        //code to fetch more data for endless scrolling
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    int visibleItemCount = recyclerViewLayoutManager.getChildCount();
+                                    int totalItemCount = recyclerViewLayoutManager.getItemCount();
+                                    int firstVisibleItemPosition = recyclerViewLayoutManager.findFirstVisibleItemPosition();
+                                    if (!mIsLoading && !mIsLastPage) {
+                                        if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                                                && firstVisibleItemPosition >= 0
+                                                && totalItemCount >= Utils.PAGE_SIZE) {
+                                            if (mProduct.size() < num_of_item) {
+                                                if (TextUtils.isEmpty(searchItem)) {
+                                                    loadMoreProduct();
+                                                } else {
+                                                    searchMoreProduct();
+                                                }
+                                            }
+                                        }
+                                    }
+                                } catch (NullPointerException ignored) {
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
     }
 
     @Override
     public void onSelectedProduct(View v, int position) {
-        Log.e("mSSPosition", String.valueOf(position));
+        mSkuId = mProduct.get(position).otherSkus.get(0).sku;
+        mProductId = mProduct.get(position).productId;
         try {
-            onCallback(mProduct.get(position).productId,
-                    mProduct.get(position).otherSkus.get(0).sku, false);
+            onCallback(mProductId,
+                    mSkuId, false);
         } catch (Exception ex) {
             Log.e("ExceptionProduct", ex.toString());
         }
@@ -229,9 +264,11 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
 
     @Override
     public void onLongPressState(View v, int position) {
-        String productId = mProduct.get(position).productId;
-        String productName = mProduct.get(position).productName;
-        String externalImageRef = mProduct.get(position).externalImageRef;
+
+        ProductList mShopListProduct = mProduct.get(position);
+        String productId = mShopListProduct.productId;
+        String productName = mShopListProduct.productName;
+        String externalImageRef = getImageByWidth(mShopListProduct.externalImageRef);
         android.app.FragmentManager fm = mContext.getFragmentManager();
         AddToShoppingListFragment mAddToShoppingListFragment =
                 AddToShoppingListFragment.newInstance(productId, productName, externalImageRef);
@@ -241,57 +278,6 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     @Override
     public void onSelectedColor(View v, int position) {
         selectedProduct(position);
-    }
-
-    @Override
-    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-        this.mScrollY = scrollY;
-
-        if (dragging == true) {
-            Glide.with(this).resumeRequests();
-
-        } else {
-            Glide.with(this).pauseRequests();
-
-        }
-    }
-
-    @Override
-    public void onDownMotionEvent() {
-        // calculates how much scrollview will scroll
-        int scrollingHeight = mProductScroll.getChildAt(0).getHeight() - mProductScroll.getHeight();
-        if (scrollingHeight <= mScrollY) {
-            //scroll reached bottom
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        int visibleItemCount = recyclerViewLayoutManager.getChildCount();
-                        int totalItemCount = recyclerViewLayoutManager.getItemCount();
-                        int firstVisibleItemPosition = recyclerViewLayoutManager.findFirstVisibleItemPosition();
-                        if (!mIsLoading && !mIsLastPage) {
-                            if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
-                                    && firstVisibleItemPosition >= 0
-                                    && totalItemCount >= Utils.PAGE_SIZE) {
-                                if (mProduct.size() < num_of_item) {
-                                    if (TextUtils.isEmpty(searchItem)) {
-                                        loadMoreProduct();
-                                    } else {
-                                        searchMoreProduct();
-                                    }
-                                }
-                            }
-                        }
-                    } catch (NullPointerException ignored) {
-                    }
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-
     }
 
     @Override
@@ -387,7 +373,9 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                     mProduct = pv.products;
                     if (pv.products.size() == 1) {
                         mProductScroll.setVisibility(View.GONE);
-                        onCallback(mProduct.get(0).productId, mProduct.get(0).sku, true);
+                        mSkuId = mProduct.get(0).otherSkus.get(0).sku;
+                        mProductId = mProduct.get(0).productId;
+                        onCallback(mProductId, mSkuId, true);
                     } else {
                         num_of_item = pv.pagingResponse.numItemsInTotal;
                         mNumberOfItem.setText(String.valueOf(num_of_item));
@@ -446,7 +434,9 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
 
                     if (pv.products.size() == 1) {
                         mProductScroll.setVisibility(View.GONE);
-                        onCallback(mProduct.get(0).productId, mProduct.get(0).sku, true);
+                        mSkuId = mProduct.get(0).otherSkus.get(0).sku;
+                        mProductId = mProduct.get(0).productId;
+                        onCallback(mProductId, mSkuId, true);
                     } else {
                         mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
                         bindDataWithUI(mProduct);
@@ -537,7 +527,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                             }
                             GsonBuilder builder = new GsonBuilder();
                             Gson gson = builder.create();
-                            displayProductDetail(mProductList.get(0).productName, gson.toJson(mProductList));
+                            displayProductDetail(mProductList.get(0).productName, gson.toJson(mProductList), mSkuId);
                             addButton();
                             mSlideUpPanelLayout.setAnchorPoint(1.0f);
                             mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
@@ -613,7 +603,6 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         menuItemVisible(mMenu, true);
         unregisterReceiver(broadcast_reciever);
     }
-
 
     /***
      * LOAD MORE PRODUCT FROM SEARCH

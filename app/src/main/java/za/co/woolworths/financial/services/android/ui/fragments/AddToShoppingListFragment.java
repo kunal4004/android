@@ -2,25 +2,23 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.app.DialogFragment;
 
-import android.content.Context;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
 
 import com.awfs.coordination.R;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -70,23 +68,17 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
             externalImageRef = bundle.getString("externalImageRef");
         }
 
-        ImageView imgShoppingList = (ImageView) view.findViewById(R.id.imgShoppingList);
-        WindowManager wm = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
+        SimpleDraweeView imgShoppingList = (SimpleDraweeView) view.findViewById(R.id.imgShoppingList);
         DrawImage drawImage = new DrawImage(getActivity());
-        externalImageRef = externalImageRef+"?w="+width/2+ "&q=" + 100;
         URL url = null;
         try {
-             url = new URL(externalImageRef);
+            url = new URL(externalImageRef);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
 
-        Log.e("externalImageRef",externalImageRef);
-        drawImage.displayImage(imgShoppingList,String.valueOf(url));
+        Log.e("externalImageRef", externalImageRef);
+        drawImage.displayImage(imgShoppingList, String.valueOf(url));
 
 
         WButton wAddToShoppingCart = (WButton) view.findViewById(R.id.btnAddShoppingList);
