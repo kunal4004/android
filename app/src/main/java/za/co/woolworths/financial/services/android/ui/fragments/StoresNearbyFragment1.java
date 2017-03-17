@@ -152,7 +152,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     private Status status;
     private static final int PERMS_REQUEST_CODE = 1234;
     private boolean permissionIsAllowed = false;
-    private boolean navigateMenuState=false;
+    private boolean navigateMenuState = false;
 
     private PopWindowValidationMessage mPopWindowValidationMessage;
 
@@ -175,7 +175,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         storeAddress = (WTextView) v.findViewById(R.id.storeAddress);
         storeNumber = (WTextView) v.findViewById(R.id.storeNumber);
         timeingsLayout = (LinearLayout) v.findViewById(R.id.timeingsLayout);
-        storeTimingView=(RelativeLayout)v.findViewById(R.id.storeTimingView);
+        storeTimingView = (RelativeLayout) v.findViewById(R.id.storeTimingView);
         brandsLayout = (LinearLayout) v.findViewById(R.id.brandsLayout);
         relBrandLayout = (RelativeLayout) v.findViewById(R.id.relBrandLayout);
         direction = (RelativeLayout) v.findViewById(R.id.direction);
@@ -183,7 +183,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         layoutLocationServiceOff = (LinearLayout) v.findViewById(R.id.layoutLocationServiceOff);
         layoutLocationServiceOn = (RelativeLayout) v.findViewById(R.id.layoutLocationServiceOn);
         btnOnLocationService = (WButton) v.findViewById(R.id.buttonLocationOn);
-        progressBar=(ProgressBar)v.findViewById(R.id.storesProgressBar);
+        progressBar = (ProgressBar) v.findViewById(R.id.storesProgressBar);
         progressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
         // Chcek of location Service Enable
         //  checkLocationServiceAndSetLayout(Utils.isLocationServiceEnabled(getActivity()));
@@ -193,7 +193,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         try {
             unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
             selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
-        }catch (NullPointerException ignored){}
+        } catch (NullPointerException ignored) {
+        }
         //  locationManager.requestLocationUpdates(provider, 40000, 10, this);
         pager.addOnPageChangeListener(this);
         pager.setOnItemClickListener(new WCustomViewPager.OnItemClickListener() {
@@ -260,8 +261,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         });
         if (Utils.isLocationServiceEnabled(getActivity()) && Utils.getLastSavedLocation(getActivity()) == null) {
             checkLocationServiceAndSetLayout(false);
-        }
-        else {
+        } else {
             checkLocationServiceAndSetLayout(true);
         }
         settingsRequest();
@@ -482,7 +482,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         if (storeDetail.phoneNumber != null)
             storeNumber.setText(storeDetail.phoneNumber);
         SpannableMenuOption spannableMenuOption = new SpannableMenuOption(getActivity());
-        storeDistance.setText(WFormatter.formatMeter(storeDetail.distance)+getActivity().getResources().getString(R.string.distance_in_km));
+        storeDistance.setText(WFormatter.formatMeter(storeDetail.distance) + getActivity().getResources().getString(R.string.distance_in_km));
         if (storeDetail.offerings != null) {
             storeOfferings.setText(WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department")));
             List<StoreOfferings> brandslist = getOfferingByType(storeDetail.offerings, "Brand");
@@ -505,21 +505,20 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         } else {
             relBrandLayout.setVisibility(View.GONE);
         }
-        if (storeDetail.times != null && storeDetail.times.size()!=0) {
+        if (storeDetail.times != null && storeDetail.times.size() != 0) {
             storeTimingView.setVisibility(View.VISIBLE);
-                WTextView textView;
-                for (int i = 0; i < storeDetail.times.size(); i++) {
-                    View v = getActivity().getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
-                    textView = (WTextView) v.findViewById(R.id.openingHours);
-                    textView.setText(storeDetail.times.get(i).day + " " + storeDetail.times.get(i).hours);
-                    if (i == 0)
-                        textView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Semibold.otf"));
-                    timeingsLayout.addView(textView);
-                }
+            WTextView textView;
+            for (int i = 0; i < storeDetail.times.size(); i++) {
+                View v = getActivity().getLayoutInflater().inflate(R.layout.opening_hours_textview, null);
+                textView = (WTextView) v.findViewById(R.id.openingHours);
+                textView.setText(storeDetail.times.get(i).day + " " + storeDetail.times.get(i).hours);
+                if (i == 0)
+                    textView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Semibold.otf"));
+                timeingsLayout.addView(textView);
+            }
 
 
-        }
-        else {
+        } else {
             storeTimingView.setVisibility(View.GONE);
         }
 
@@ -649,12 +648,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         if (!locationServiceStatus) {
             layoutLocationServiceOn.setVisibility(View.GONE);
             layoutLocationServiceOff.setVisibility(View.VISIBLE);
-            navigateMenuState=false;
+            navigateMenuState = false;
             getActivity().invalidateOptionsMenu();
         } else {
             layoutLocationServiceOff.setVisibility(View.GONE);
             layoutLocationServiceOn.setVisibility(View.VISIBLE);
-            navigateMenuState=true;
+            navigateMenuState = true;
             getActivity().invalidateOptionsMenu();
 
         }
@@ -756,8 +755,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         inflater.inflate(R.menu.w_store_locator_menu, menu);
         if (navigateMenuState) {
             menu.findItem(R.id.action_locate).setVisible(true);
-        }
-        else {
+        } else {
             menu.findItem(R.id.action_locate).setVisible(false);
         }
 
@@ -838,13 +836,16 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getActivity().requestPermissions(permissions, PERMS_REQUEST_CODE);
+            try {
+                getActivity().requestPermissions(permissions, PERMS_REQUEST_CODE);
+            } catch (NullPointerException ex) {
+                Log.e("Nx", ex.toString()); // fix required
+            }
         }
     }
 
-    public void hideProgressBar()
-    {
-        if(progressBar != null )
+    public void hideProgressBar() {
+        if (progressBar != null)
             progressBar.setVisibility(View.GONE);
     }
 

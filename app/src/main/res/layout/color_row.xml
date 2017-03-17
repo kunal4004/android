@@ -8,7 +8,7 @@
     android:paddingBottom="17dp"
     android:paddingTop="23dp">
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/imColor"
         android:layout_width="12dp"
         android:layout_height="12dp"
@@ -16,7 +16,8 @@
         android:layout_marginEnd="@dimen/default_margin"
         android:layout_marginLeft="@dimen/default_margin"
         android:layout_marginStart="@dimen/default_margin"
-        android:visibility="gone" />
+        android:visibility="gone"
+      />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/name"

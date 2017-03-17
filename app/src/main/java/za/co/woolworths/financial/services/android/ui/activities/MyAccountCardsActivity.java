@@ -536,7 +536,7 @@ public class MyAccountCardsActivity extends BaseActivity
             FragmentLifecycle fragmentToHide = (FragmentLifecycle) fragmentsAdapter.getItem(position);
             fragmentToHide.onPauseFragment();
         } catch (ClassCastException ignore){
-            
+
         }
 
     }

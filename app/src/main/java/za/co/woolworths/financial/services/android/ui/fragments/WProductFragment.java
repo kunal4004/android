@@ -11,12 +11,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import com.awfs.coordination.R;
 
 import java.util.List;
 
+
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
@@ -38,7 +40,6 @@ import za.co.woolworths.financial.services.android.ui.activities.ProductSearchSu
 import za.co.woolworths.financial.services.android.ui.activities.ProductViewGridActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductCategoryAdapter;
-import za.co.woolworths.financial.services.android.ui.views.LDObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -48,10 +49,11 @@ import za.co.woolworths.financial.services.android.util.binder.view.RootCategory
 import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 
 public class WProductFragment extends Fragment implements RootCategoryBinder.OnClickListener, View.OnClickListener,
-        AppBarLayout.OnOffsetChangedListener, LDObservableScrollView.LDObservableScrollViewListener, SelectedProductView {
+        AppBarLayout.OnOffsetChangedListener, SelectedProductView {
 
     private WTextView mToolbarText;
     private boolean actionBarIsHidden = false;
+    private ActionBar mAppToolbar;
 
     @Override
     public void onSelectedProduct(View v, int position) {
@@ -102,7 +104,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     private WTextView mTextTBProductSearch;
     private RelativeLayout mRelSearchRowLayout;
     private Toolbar mProductToolbar;
-    private LDObservableScrollView mNestedScrollview;
+    private NestedScrollView mNestedScrollview;
 
     @Nullable
     @Override
@@ -116,6 +118,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mContext = this;
+        mAppToolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         mConnectionDetector = new ConnectionDetector();
         mProductToolbar = (Toolbar) view.findViewById(R.id.productToolbar);
         initUI(view);
@@ -135,13 +138,12 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         super.onAttach(context);
         try {
             hideActionBarComponent = (HideActionBarComponent) getActivity();
-        } catch (ClassCastException ex) {
-            Log.e("Interface", ex.toString());
+        } catch (ClassCastException ignored) {
         }
     }
 
     private void initUI(View v) {
-        mNestedScrollview = (LDObservableScrollView) v.findViewById(R.id.mNestedScrollview);
+        mNestedScrollview = (NestedScrollView) v.findViewById(R.id.mNestedScrollview);
         mImProductSearch = (ImageView) v.findViewById(R.id.imProductSearch);
         mImBarcodeScanner = (ImageView) v.findViewById(R.id.imBarcodeScanner);
         mRecycleProductSearch = (RecyclerView) v.findViewById(R.id.recycleProductSearch);
@@ -160,7 +162,17 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         mBurgerButtonPressed.setOnClickListener(this);
         mTextTBProductSearch.setOnClickListener(this);
         mTBBarcodeScanner.setOnClickListener(this);
-        mNestedScrollview.setScrollViewListener(this);
+        mNestedScrollview.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                int searchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight()) + getToolBarHeight() / 2);
+                if (scrollY < searchRowHeight) {
+                    showViews();
+                } else {
+                    hideViews();
+                }
+            }
+        });
     }
 
     private void getRootCategoryRequest() {
@@ -247,23 +259,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
 
-
-    }
-
-    @Override
-    public void onScrollChanged(LDObservableScrollView scrollView, int x, int y, int oldx, int oldy) {
-        // TODO Auto-generated method stub
-        // int searchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight() / 2));
-        // int searchRowHeight = getToolBarHeight();
-        int searchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight()) + getToolBarHeight() / 2);
-
-        Log.e("xxScrollView", String.valueOf(y) + " h " + String.valueOf(searchRowHeight));
-
-        if (y < searchRowHeight) {
-            showViews();
-        } else {
-            hideViews();
-        }
 
     }
 
@@ -407,13 +402,15 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     @Override
     public void onStart() {
         super.onStart();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+        if (mAppToolbar != null)
+            mAppToolbar.hide();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        if (mAppToolbar != null)
+            mAppToolbar.show();
     }
 
     private void bindViewWithUI(List<RootCategory> rootCategories) {
@@ -421,6 +418,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         ProductCategoryAdapter myAdapter = new ProductCategoryAdapter(rootCategories, mContext);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecycleProductSearch.setHasFixedSize(true);
         mRecycleProductSearch.setLayoutManager(mLayoutManager);
         mRecycleProductSearch.setNestedScrollingEnabled(false);
         mRecycleProductSearch.setAdapter(myAdapter);
