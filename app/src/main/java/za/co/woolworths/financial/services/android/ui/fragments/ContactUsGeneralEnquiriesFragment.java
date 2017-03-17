@@ -46,7 +46,6 @@ public class ContactUsGeneralEnquiriesFragment extends Fragment implements View.
         return view;
     }
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -73,16 +72,16 @@ public class ContactUsGeneralEnquiriesFragment extends Fragment implements View.
                 makeCall(getActivity().getResources().getString(R.string.customer_service_international_call));
                 break;
             case R.id.productQuery:
-                sendEmail(getActivity().getResources().getString(R.string.email_custserv),getActivity().getResources().getString(R.string.txt_product_query));
+                sendEmail(getActivity().getResources().getString(R.string.email_custserv), getActivity().getResources().getString(R.string.txt_product_query));
                 break;
             case R.id.storeQuery:
-                sendEmail(getActivity().getResources().getString(R.string.email_custserv),getActivity().getResources().getString(R.string.txt_store_query));
+                sendEmail(getActivity().getResources().getString(R.string.email_custserv), getActivity().getResources().getString(R.string.txt_store_query));
                 break;
             case R.id.complaints:
-                sendEmail(getActivity().getResources().getString(R.string.email_custserv),getActivity().getResources().getString(R.string.txt_complaint));
+                sendEmail(getActivity().getResources().getString(R.string.email_custserv), getActivity().getResources().getString(R.string.txt_complaint));
                 break;
             case R.id.technicalProblem:
-                sendEmail(getActivity().getResources().getString(R.string.email_custserv),getActivity().getResources().getString(R.string.txt_general_technical_problem));
+                sendEmail(getActivity().getResources().getString(R.string.email_custserv), getActivity().getResources().getString(R.string.txt_general_technical_problem));
                 break;
         }
     }
@@ -125,7 +124,7 @@ public class ContactUsGeneralEnquiriesFragment extends Fragment implements View.
             Utils.displayValidationMessage(getActivity(),
                     TransientActivity.VALIDATION_MESSAGE_LIST.INFO,
                     getActivity().getResources().getString(R.string.contact_us_no_email_error)
-                            .replace("email_address", emailId).replace("subject_line",subject));
+                            .replace("email_address", emailId).replace("subject_line", subject));
 
         }
     }
