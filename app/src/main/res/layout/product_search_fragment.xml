@@ -13,7 +13,7 @@
         android:clipToPadding="false"
         android:orientation="vertical">
 
-        <za.co.woolworths.financial.services.android.ui.views.LDObservableScrollView
+        <android.support.v4.widget.NestedScrollView
             android:id="@+id/mNestedScrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -46,7 +46,7 @@
 
             </LinearLayout>
 
-        </za.co.woolworths.financial.services.android.ui.views.LDObservableScrollView>
+        </android.support.v4.widget.NestedScrollView>
     </LinearLayout>
 
     <android.support.v7.widget.Toolbar
