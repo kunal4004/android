@@ -316,7 +316,7 @@
     <string name="cli_overlay_monthly_home">Your Monthly Home Loan Repayment.</string>
     <string name="cli_overlay_rental_payment">Rental Payment — Cost of Renting Accommodation.</string>
     <string name="cli_overlay_monthly_obliged">Monthly obligation to pay statutory child and/or spousal support etc.</string>
-    <string name="cli_overlay_monthly_installment">Monthly Installment of creditor account i.e.: Credit Card, Personal Loan, Furniture Accounts etc.</string>
+    <string name="cli_overlay_monthly_installment">Monthly Instalment of creditor account i.e.: Credit Card, Personal Loan, Furniture Accounts etc.</string>
     <string name="cli_overlay_other_expenses">All Other Expenses, i.e.: groceries, transport, telephone/cellphone etc.</string>
     <string name="cli_overlay_all_expenses">All Other Expenses, i.e.: groceries,transport, telephone/cellphone etc.</string>
     <string name="cli_creating_offer">CREATING OFFER...</string>
