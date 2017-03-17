@@ -311,7 +311,7 @@
     <string name="cli_lorem_ipsum">Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum </string>
     <string name="cli_got_it">GOT IT</string>
     <string name="cli_overlay_monthly_income">Gross Monthly Income is your income before Tax/ Deductions.</string>
-    <string name="cli_overlay_gross_income">Net Monthly Income is your personal income after tax/deductions as reflected on your payslip.</string>
+    <string name="cli_overlay_gross_income">Your net monthly income refers to your income after tax and other deductions. You’ll find this amount on your payslip.</string>
     <string name="cli_overlay_per_income">Monthly personal income earned over and above your salary, i.e: rental, maintenance and spousal allowances etc.</string>
     <string name="cli_overlay_monthly_home">Your Monthly Home Loan Repayment.</string>
     <string name="cli_overlay_rental_payment">Rental Payment — Cost of Renting Accommodation.</string>
