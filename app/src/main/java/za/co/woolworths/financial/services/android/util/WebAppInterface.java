@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.webkit.JavascriptInterface;
 
 
@@ -23,15 +22,13 @@ import za.co.woolworths.financial.services.android.models.dto.Ingredient;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
-import za.co.woolworths.financial.services.android.ui.activities.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.activities.ProductDetailViewActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductViewGridActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.views.ProductProgressDialogFrag;
-import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 
 public class WebAppInterface {
-    Context mContext;
+    private Context mContext;
     private ProductProgressDialogFrag mProgressDialogFragment;
     private PauseHandlerFragment mPauseHandlerFragment;
 
@@ -80,12 +77,10 @@ public class WebAppInterface {
 
     @JavascriptInterface
     public void showProduct(String productId, String skuId) {
-        onPauseHandler();
-        onCallback(productId, skuId);
+        onPauseHandler(productId, skuId);
     }
 
-
-    public void onCallback(final String productId, final String skuId) {
+    private void onCallback(final String productId, final String skuId) {
         mPauseHandlerFragment.runProtected(new MyRunnable() {
             @Override
             public void run(AppCompatActivity context) {
@@ -96,7 +91,7 @@ public class WebAppInterface {
         });
     }
 
-    private void onPauseHandler() {
+    private void onPauseHandler(final String productId, final String skuId) {
         //register pause handler
         FragmentManager fm = ((AppCompatActivity) mContext).getSupportFragmentManager();
         String PAUSE_HANDLER_FRAGMENT_TAG = "pause_handler";
@@ -109,6 +104,7 @@ public class WebAppInterface {
                     .commit();
 
         }
+        onCallback(productId, skuId);
     }
 
     private void showProgressDialog() {
