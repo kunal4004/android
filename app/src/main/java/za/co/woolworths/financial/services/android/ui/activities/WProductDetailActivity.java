@@ -103,6 +103,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     private String mDefaultColorRef;
     private String mDefaultSize;
     private int mPosition;
+    private final int IMAGE_QUALITY=85;
 
     protected void initProductDetailUI() {
         mScrollProductDetail = (NestedScrollView) findViewById(R.id.scrollProductDetail);
@@ -729,9 +730,11 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
-        return imageUrl + "?w=" + width / 3 + "&q=" + 85;
+        if (width > 720) {
+            width = width / 3;
+        }
+        return imageUrl + "?w=" + width + "&q=" + IMAGE_QUALITY;
     }
-
     protected void getDefaultColor(List<OtherSku> otherSkus, String skuId) {
         for (OtherSku otherSku : otherSkus) {
             if (skuId.equalsIgnoreCase(otherSku.sku)) {

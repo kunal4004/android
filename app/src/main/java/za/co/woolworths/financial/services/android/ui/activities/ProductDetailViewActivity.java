@@ -60,6 +60,7 @@ import java.util.List;
 
 public class ProductDetailViewActivity extends BaseActivity implements SelectedProductView, View.OnClickListener {
 
+    private final int IMAGE_QUALITY = 85;
     private WTextView mTextSelectSize;
     private RecyclerView mRecyclerviewSize;
     private ProductDetailViewActivity mContext;
@@ -749,7 +750,10 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
-        return imageUrl + "?w=" + width / 3 + "&q=" + 85;
+        if (width > 720) {
+            width = width / 3;
+        }
+        return imageUrl + "?w=" + width + "&q=" + IMAGE_QUALITY;
     }
 
     protected void getDefaultColor(List<OtherSku> otherSkus, String skuId) {

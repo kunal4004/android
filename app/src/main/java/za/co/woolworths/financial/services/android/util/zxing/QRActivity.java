@@ -92,6 +92,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class QRActivity extends Activity<QRModel> implements View.OnClickListener, SelectedProductView {
+    private final int IMAGE_QUALITY = 85;
     public static final int CODE_PICK_IMAGE = 0x100;
     private BaseCameraManager cameraManager;
     public final int ZBAR_PERMS_REQUEST_CODE = 12345678;
@@ -1149,7 +1150,10 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
-        return imageUrl + "?w=" + width / 3 + "&q=" + 85;
+        if (width > 720) {
+            width = width / 3;
+        }
+        return imageUrl + "?w=" + width + "&q=" + IMAGE_QUALITY;
     }
 
     protected void getDefaultColor(List<OtherSku> otherSkus, String skuId) {
