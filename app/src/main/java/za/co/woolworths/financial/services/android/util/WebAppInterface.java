@@ -36,6 +36,7 @@ public class WebAppInterface {
      * Instantiate the interface and set the context
      * must be added for API 17 or higher
      */
+
     public WebAppInterface(Context c) {
         mContext = c;
     }
