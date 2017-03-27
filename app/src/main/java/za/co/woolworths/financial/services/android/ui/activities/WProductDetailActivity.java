@@ -189,10 +189,18 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 "</style></head><body>";
         String footerTag = "</body></html>";
         String descriptionWithoutExtraTag = "";
+
         if (!TextUtils.isEmpty(productDetail.longDescription)) {
-            descriptionWithoutExtraTag = productDetail.longDescription.replaceAll("</ul>\n\n<ul>\n", " ");
+            descriptionWithoutExtraTag = productDetail.longDescription
+                    .replaceAll("</ul>\n\n<ul>\n", " ")
+                    .replaceAll("<p>&nbsp;</p>", "")
+                    .replaceAll("<ul><p>&nbsp;</p></ul>", " ");
         }
-        mWebDescription.loadData(headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag, "text/html; charset=UTF-8", null);
+
+        mWebDescription.loadDataWithBaseURL("file:///android_res/drawable/",
+                headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag,
+                "text/html; charset=UTF-8", "UTF-8", null);
+
         mTextTitle.setText(Html.fromHtml(isEmpty(productDetail.productName)));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
         String fromPrice = String.valueOf(productDetail.fromPrice);
