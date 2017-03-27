@@ -457,7 +457,7 @@ public interface ApiInterface {
             @Header("longitude") double longitude,
             @Header("latitude") double latitude,
             @Query("isBarCode") boolean isBarcode,
-            @Query("searchTerm") String searchTerm,
+            @Query(value="searchTerm",encodeValue = false) String searchTerm,
             @Query("pageOffset") int pageOffset,
             @Query("pageSize") int pageSize);
 
@@ -474,7 +474,7 @@ public interface ApiInterface {
             @Header("userAgentVersion") String userAgentVersion,
             @Header("sha1Password") String sha1Password,
             @Query("isBarCode") boolean isBarcode,
-            @Query("searchTerm") String searchTerm,
+            @Query(value="searchTerm",encodeValue = false) String searchTerm,
             @Query("pageOffset") int pageOffset,
             @Query("pageSize") int pageSize);
 
