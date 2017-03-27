@@ -103,6 +103,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     private String mDefaultColorRef;
     private String mDefaultSize;
     private int mPosition;
+    private final int IMAGE_QUALITY = 85;
 
     protected void initProductDetailUI() {
         mScrollProductDetail = (NestedScrollView) findViewById(R.id.scrollProductDetail);
@@ -189,10 +190,18 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 "</style></head><body>";
         String footerTag = "</body></html>";
         String descriptionWithoutExtraTag = "";
+
         if (!TextUtils.isEmpty(productDetail.longDescription)) {
-            descriptionWithoutExtraTag = productDetail.longDescription.replaceAll("</ul>\n\n<ul>\n", " ");
+            descriptionWithoutExtraTag = productDetail.longDescription
+                    .replaceAll("</ul>\n\n<ul>\n", " ")
+                    .replaceAll("<p>&nbsp;</p>", "")
+                    .replaceAll("<ul><p>&nbsp;</p></ul>", " ");
         }
-        mWebDescription.loadData(headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag, "text/html; charset=UTF-8", null);
+
+        mWebDescription.loadDataWithBaseURL("file:///android_res/drawable/",
+                headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag,
+                "text/html; charset=UTF-8", "UTF-8", null);
+
         mTextTitle.setText(Html.fromHtml(isEmpty(productDetail.productName)));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
         String fromPrice = String.valueOf(productDetail.fromPrice);
@@ -729,7 +738,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
-        return imageUrl + "?w=" + width / 3 + "&q=" + 85;
+        return imageUrl + "?w=" + width + "&q=" + IMAGE_QUALITY;
     }
 
     protected void getDefaultColor(List<OtherSku> otherSkus, String skuId) {

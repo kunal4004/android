@@ -12,6 +12,8 @@ import com.jakewharton.retrofit.Ok3Client;
 import okhttp3.OkHttpClient;
 import retrofit.RestAdapter;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
 
 import za.co.wigroup.androidutils.Util;
@@ -61,7 +63,6 @@ public class WfsApi {
         this.mContext = mContext;
         OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder();
         httpBuilder.addInterceptor(new WfsApiInterceptor(mContext));
-        //httpBuilder.addNetworkInterceptor(new GzipRequestInterceptor());
         httpBuilder.readTimeout(60, TimeUnit.SECONDS);
         httpBuilder.connectTimeout(60, TimeUnit.SECONDS);
 
@@ -181,6 +182,11 @@ public class WfsApi {
 
     public ProductView getProductSearchList(String search_item, boolean isBarcode, int pageSize, int pageNumber) {
         getMyLocation();
+        try {
+            search_item = URLEncoder.encode(search_item, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         if (Utils.isLocationEnabled(mContext)) {
             return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLongitude(), loc.getLatitude(), isBarcode, search_item, pageSize, pageNumber);
         } else {

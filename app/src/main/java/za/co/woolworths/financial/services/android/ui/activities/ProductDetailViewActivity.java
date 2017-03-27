@@ -60,6 +60,7 @@ import java.util.List;
 
 public class ProductDetailViewActivity extends BaseActivity implements SelectedProductView, View.OnClickListener {
 
+    private final int IMAGE_QUALITY = 85;
     private WTextView mTextSelectSize;
     private RecyclerView mRecyclerviewSize;
     private ProductDetailViewActivity mContext;
@@ -459,9 +460,14 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         String footerTag = "</body></html>";
         String descriptionWithoutExtraTag = "";
         if (!TextUtils.isEmpty(productDetail.longDescription)) {
-            descriptionWithoutExtraTag = productDetail.longDescription.replaceAll("</ul>\n\n<ul>\n", " ");
+            descriptionWithoutExtraTag = productDetail.longDescription
+                    .replaceAll("</ul>\n\n<ul>\n", " ")
+                    .replaceAll("<p>&nbsp;</p>", "")
+                    .replaceAll("<ul><p>&nbsp;</p></ul>", " ");
         }
-        mWebDescription.loadData(headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag, "text/html; charset=UTF-8", null);
+        mWebDescription.loadDataWithBaseURL("file:///android_res/drawable/",
+                headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag,
+                "text/html; charset=UTF-8", "UTF-8", null);
         mTextTitle.setText(Html.fromHtml(isEmpty(productDetail.productName)));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
         String fromPrice = String.valueOf(productDetail.fromPrice);
@@ -749,7 +755,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
-        return imageUrl + "?w=" + width / 3 + "&q=" + 85;
+        return imageUrl + "?w=" + width + "&q=" + IMAGE_QUALITY;
     }
 
     protected void getDefaultColor(List<OtherSku> otherSkus, String skuId) {
