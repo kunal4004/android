@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
-import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewListAdapter.SimpleViewHolder> {
+public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewListAdapter.SimpleViewHolder> {
     private final DrawImage drawImage;
     public Activity mContext;
     private List<ProductList> mProductList;
@@ -120,11 +119,6 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
     @Override
     public int getItemCount() {
         return mProductList.size();
-    }
-
-    @Override
-    public int getSwipeLayoutResourceId(int position) {
-        return R.id.swipe;
     }
 
     private void productPriceList(WTextView wPrice, WTextView WwasPrice,
