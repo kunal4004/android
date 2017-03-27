@@ -1150,9 +1150,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
-        if (width > 720) {
-            width = width / 3;
-        }
         return imageUrl + "?w=" + width + "&q=" + IMAGE_QUALITY;
     }
 
