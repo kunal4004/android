@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
@@ -37,7 +38,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
@@ -58,12 +61,11 @@ import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecorat
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-
 public class WProductDetailActivity extends AppCompatActivity implements View.OnClickListener, SelectedProductView {
 
     private WTextView mTextSelectSize;
     private RecyclerView mRecyclerviewSize;
-    private ArrayList<WProductDetail> mproductDetail;
+    private ArrayList<WProductDetail> mProductDetail;
     private WTextView mTextTitle;
     private WTextView mTextPrice;
     private WTextView mCategoryName;
@@ -73,7 +75,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     private WTextView mTextSelectColor;
     private PopupWindow mPColourWindow;
     private PopupWindow mPSizeWindow;
-    private boolean productIsColored = false;
+    private boolean productIsColored = true;
     private ArrayList<OtherSku> uniqueColorList;
     public RecyclerView mColorRecycleSize;
     public ArrayList<OtherSku> uniqueSizeList;
@@ -104,16 +106,19 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     private ViewPager mTouchTarget;
     public WProductDetail productDetail;
     private String mDefaultImage;
-    private String mDefaultColor;
-    private String mDefaultColorRef;
-    private String mDefaultSize;
     public final int IMAGE_QUALITY = 85;
     public int mPosition;
     public ProductList mSelectedProduct;
     public WButton mBtnShopOnlineWoolies;
-    public ProductColorAdapter productColorAdapter;
-    private ProductSizeAdapter mSizeAdapter;
+    public ProductColorAdapter mProductColourAdapter;
+    private ProductSizeAdapter mProductSizeAdapter;
     private ProgressBar mSizeProgressBar;
+    private ProductViewPagerAdapter mProductViewPagerAdapter;
+    private String currentSKUId;
+    private OtherSku mDefaultSKUModel;
+    private ImageView mImColorArrow;
+    private ImageView mColorArrow;
+    private WTextView mTextProductSize;
 
     protected void initProductDetailUI() {
         mScrollProductDetail = (NestedScrollView) findViewById(R.id.scrollProductDetail);
@@ -121,7 +126,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mColorView = findViewById(R.id.colorView);
         mTextSelectSize = (WTextView) findViewById(R.id.textSelectSize);
         mTextColour = (WTextView) findViewById(R.id.textColour);
-        WTextView mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
+        mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
         mTextTitle = (WTextView) findViewById(R.id.textTitle);
         mTextActualPrice = (WTextView) findViewById(R.id.textActualPrice);
         mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
@@ -137,11 +142,11 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mLinSize = (RelativeLayout) findViewById(R.id.linSize);
         mBtnAddShoppingList = (WButton) findViewById(R.id.btnAddShoppingList);
         mBtnShopOnlineWoolies = (WButton) findViewById(R.id.btnShopOnlineWoolies);
-        ImageView mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
+        mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
         mImCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
         mImSelectedColor = (SimpleDraweeView) findViewById(R.id.imSelectedColor);
         mLlPagerDots = (LinearLayout) findViewById(R.id.pager_dots);
-        ImageView mImColorArrow = (ImageView) findViewById(R.id.imColorArrow);
+        mImColorArrow = (ImageView) findViewById(R.id.imColorArrow);
         mWebDescription = (WrapContentWebView) findViewById(R.id.webDescription);
         ingredientLine = findViewById(R.id.ingredientLine);
         mImNewImage = (SimpleDraweeView) findViewById(R.id.imNewImage);
@@ -158,10 +163,11 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mImCloseProduct.setOnClickListener(this);
         mLinColor.setOnClickListener(this);
         mLinSize.setOnClickListener(this);
+
     }
 
     protected void displayProductDetail(String mProductName, String mProductList, String skuId) {
-
+        this.currentSKUId = skuId;
         try {
             SessionDao sessionDao = new SessionDao(WProductDetailActivity.this,
                     SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
@@ -169,32 +175,23 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         } catch (Exception e) {
             e.printStackTrace();
         }
-        TypeToken<List<WProductDetail>> token = new TypeToken<List<WProductDetail>>() {
-        };
-
-        mproductDetail = new Gson().fromJson(mProductList, token.getType());
-        assert mproductDetail != null;
-        WProductDetail mProduct = mproductDetail.get(0);
-        otherSkusList = mProduct.otherSkus;
-        getDefaultColor(otherSkusList, skuId);
-        mCheckOutLink = mProduct.checkOutLink;
-        mDefaultImage = getImageByWidth(mProduct.externalImageRef);
-        populateView();
-        //   showPromotionalImages(mProduct.promotionImages);
-        displayProduct(mProductName);
-        initColorParam(mDefaultColor);
+        mProductDetail = new Gson().fromJson(mProductList, new TypeToken<List<WProductDetail>>() {
+        }.getType());
+        assert mProductDetail != null;
+        WProductDetail mProductDetail = this.mProductDetail.get(0);
+        otherSkusList = mProductDetail.otherSkus;
+        mCheckOutLink = mProductDetail.checkOutLink;
+        mCategoryName.setText(mProductDetail.categoryName);
+        setPromotionText(mProductDetail.saveText);
+        mProductLongDescription();
+        mDefaultSKUModel = getDefaultSKUModel();
+        updateHeroImage();
+        // initColorParam(mDefaultColor);
         mScrollProductDetail.scrollTo(0, 0);
-        String saveText = mProduct.saveText;
-        if (TextUtils.isEmpty(saveText)) {
-            mTextPromo.setVisibility(View.GONE);
-        } else {
-            mTextPromo.setVisibility(View.VISIBLE);
-            mTextPromo.setText(mProduct.saveText);
-        }
     }
 
-    protected void populateView() {
-        productDetail = mproductDetail.get(0);
+    protected void mProductLongDescription() {
+        productDetail = mProductDetail.get(0);
         String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
                 "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
                 "</style></head><body>";
@@ -291,21 +288,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         }
     }
 
-    protected void initColorParam(String colour) {
-        if (TextUtils.isEmpty(colour)) {
-            colour = getString(R.string.product_colour);
-        }
-        if (!TextUtils.isEmpty(mDefaultSize)) {
-            mTextSelectSize.setText(mDefaultSize);
-        }
-        mTextColour.setText(colour);
-        mAuxiliaryImages = null;
-        mAuxiliaryImages = new ArrayList<>();
-        mAuxiliaryImages.add(mDefaultImage);
-        selectedColor(mDefaultColorRef);
-        retrieveJson(colour);
-    }
-
     protected void addButtonEvent() {
         mBtnAddShoppingList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -366,17 +348,18 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 
     protected void retrieveJson(String colour) {
         JSONObject jsProduct;
+        if (mAuxiliaryImages != null) {
+            mAuxiliaryImages.clear();
+        }
         try {
             // Instantiate a JSON object from the request response
             jsProduct = new JSONObject(mProductJSON);
             String mProduct = jsProduct.getString("product");
             JSONObject jsProductList = new JSONObject(mProduct);
             if (jsProductList.has("ingredients")) {
-
                 setIngredients(jsProductList.getString("ingredients"));
             } else {
-                ingredientLine.setVisibility(View.GONE);
-                mLinIngredient.setVisibility(View.GONE);
+                setIngredients("");
             }
             String auxiliaryImages = jsProductList.getString("auxiliaryImages");
             JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
@@ -384,30 +367,25 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             while (keysIterator.hasNext()) {
                 String keyStr = keysIterator.next();
                 if (keyStr.toLowerCase().contains(colour.toLowerCase())) {
+                    if (keyStr.toLowerCase().contains(mDefaultSKUModel.colour.toLowerCase()))
+                        mAuxiliaryImages.add(0, mDefaultImage);
                     String valueStr = jsAuxiliaryImages.getString(keyStr);
                     JSONObject jsonObject = new JSONObject(valueStr);
                     if (jsonObject.has("externalImageRef")) {
                         mAuxiliaryImages.add(getImageByWidth(jsonObject.getString("externalImageRef")));
-                    } else {
-                        mAuxiliaryImages.add(mDefaultImage);
                     }
                 }
             }
 
-            //force default image to display first
-            if (mPosition == 0 || mAuxiliaryImages.size() == 0) {
-                if (mAuxiliaryImages.contains(mDefaultImage)) {
-                    for (int index = 0; index < mAuxiliaryImages.size(); index++) {
-                        if (mAuxiliaryImages.get(index)
-                                .equalsIgnoreCase(mDefaultImage)) {
-                            mAuxiliaryImages.remove(index);
-                        }
-                    }
-                }
+            Set<String> removeAuxiliaryImageDuplicate = new LinkedHashSet<>(mAuxiliaryImages);
+            mAuxiliaryImages.clear();
+            mAuxiliaryImages.addAll(removeAuxiliaryImageDuplicate);
+
+            //display default image when auxiliary images is empty
+            if (mAuxiliaryImages.size() == 0) {
                 mAuxiliaryImages.add(0, mDefaultImage);
             }
-
-            ProductViewPagerAdapter mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
+            mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
             mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
             mProductViewPagerAdapter.notifyDataSetChanged();
             setupPagerIndicatorDots();
@@ -443,11 +421,12 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             });
 
         } catch (JSONException e) {
-            Log.e("bling bling", e.toString());
+            Log.e("jsonException", e.toString());
         }
     }
 
     protected void selectedProduct(int position) {
+        // clearAdapter();
         if (productIsColored) {
             if (mPColourWindow != null) {
                 if (mPColourWindow.isShowing()) {
@@ -455,7 +434,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 }
             }
             colorParams(position);
-
         } else {
             if (mPSizeWindow != null) {
                 if (mPSizeWindow.isShowing()) {
@@ -475,7 +453,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         LinearLayoutManager mSlideUpPanelLayoutManager = new LinearLayoutManager(this);
         mSlideUpPanelLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         if (!productIsColored) {
-
             //sort ascending
             Collections.sort(otherSkus, new Comparator<OtherSku>() {
                 @Override
@@ -483,7 +460,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                     return lhs.size.compareToIgnoreCase(rhs.size);
                 }
             });
-
             //remove duplicates
             uniqueSizeList = new ArrayList<>();
             for (OtherSku os : otherSkus) {
@@ -491,12 +467,13 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                     uniqueSizeList.add(os);
                 }
             }
-
-            mSizeAdapter.notifyDataSetChanged();
+            mProductSizeAdapter = new ProductSizeAdapter(uniqueSizeList, this);
+            SimpleDividerItemDecoration decoration = new SimpleDividerItemDecoration(this);
             mRecyclerviewSize.addItemDecoration(new SimpleDividerItemDecoration(this));
-            mRecyclerviewSize.setLayoutManager(mSlideUpPanelLayoutManager);
+            mRecyclerviewSize.setLayoutManager(new LinearLayoutManager(this));
             mRecyclerviewSize.setNestedScrollingEnabled(false);
-            mRecyclerviewSize.setAdapter(mSizeAdapter);
+            mRecyclerviewSize.setAdapter(mProductSizeAdapter);
+            mProductSizeAdapter.notifyDataSetChanged();
         } else {
             if (otherSkus != null) {
                 //sort ascending
@@ -506,19 +483,22 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                         return lhs.colour.compareToIgnoreCase(rhs.colour);
                     }
                 });
-
                 //remove duplicates
                 uniqueColorList = new ArrayList<>();
+                if (uniqueColorList.size() > 0) {
+                    uniqueColorList.clear();
+                }
                 for (OtherSku os : otherSkus) {
                     if (!colourValueExist(uniqueColorList, os.colour)) {
                         uniqueColorList.add(os);
                     }
                 }
-                productColorAdapter = new ProductColorAdapter(uniqueColorList, this);
+                mProductColourAdapter = new ProductColorAdapter(uniqueColorList, this);
                 mColorRecycleSize.addItemDecoration(new SimpleDividerItemDecoration(this));
-                mColorRecycleSize.setLayoutManager(mSlideUpPanelLayoutManager);
+                mColorRecycleSize.setLayoutManager(new LinearLayoutManager(this));
                 mColorRecycleSize.setNestedScrollingEnabled(false);
-                mColorRecycleSize.setAdapter(productColorAdapter);
+                mColorRecycleSize.setAdapter(mProductColourAdapter);
+                mProductColourAdapter.notifyDataSetChanged();
             }
         }
     }
@@ -534,7 +514,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 params.setMargins(10, 0, 10, 0);
                 ivArrayDotsPager[i].setLayoutParams(params);
                 ivArrayDotsPager[i].setImageResource(R.drawable.unselected_drawable);
-                //ivArrayDotsPager[i].setAlpha(0.4f);
                 ivArrayDotsPager[i].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -548,18 +527,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         }
     }
 
-    protected void displayProduct(String mProductName) {
-        if (TextUtils.isEmpty(mProductName)) {
-            return;
-        }
-        int index = 0;
-        for (WProductDetail prod : mproductDetail) {
-            if (prod.productName.equals(mProductName)) {
-                selectedProduct(index);
-            }
-            index++;
-        }
-    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -582,27 +549,30 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             case R.id.imSelectedColor:
             case R.id.imColorArrow:
             case R.id.linColour:
-                if (uniqueColorList.size() > 0) {
-                    dismissSizeDialog();
-                    LayoutInflater mSlideUpPanelLayoutInflater
-                            = (LayoutInflater) getBaseContext()
-                            .getSystemService(LAYOUT_INFLATER_SERVICE);
-                    View mPopWindow = mSlideUpPanelLayoutInflater.inflate(R.layout.product_size_row, null);
-                    mColorRecycleSize = (RecyclerView) mPopWindow.findViewById(R.id.recyclerviewSize);
-                    bindWithUI(otherSkusList, true);
-                    mPColourWindow = new PopupWindow(
-                            mPopWindow,
-                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT);
-                    mPopWindow.setOnTouchListener(new View.OnTouchListener() {
 
-                        @Override
-                        public boolean onTouch(View arg0, MotionEvent arg1) {
-                            return true;
-                        }
-                    });
-                    mPColourWindow.setTouchable(true);
-                    mPColourWindow.showAsDropDown(mTextSelectColor, -50, -180);
+                if (otherSkusList != null) {
+                    if (otherSkusList.size() > 0) {
+                        dismissSizeDialog();
+                        LayoutInflater mSlideUpPanelLayoutInflater
+                                = (LayoutInflater) getBaseContext()
+                                .getSystemService(LAYOUT_INFLATER_SERVICE);
+                        View mPopWindow = mSlideUpPanelLayoutInflater.inflate(R.layout.product_size_row, null);
+                        mColorRecycleSize = (RecyclerView) mPopWindow.findViewById(R.id.recyclerviewSize);
+                        bindWithUI(otherSkusList, true);
+                        mPColourWindow = new PopupWindow(
+                                mPopWindow,
+                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT);
+                        mPopWindow.setOnTouchListener(new View.OnTouchListener() {
+
+                            @Override
+                            public boolean onTouch(View arg0, MotionEvent arg1) {
+                                return true;
+                            }
+                        });
+                        mPColourWindow.setTouchable(true);
+                        mPColourWindow.showAsDropDown(mTextSelectColor, -50, -180);
+                    }
                 }
                 break;
 
@@ -610,26 +580,28 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             case R.id.mColorArrow:
             case R.id.textSelectSize:
             case R.id.linSize:
-                if (uniqueSizeList.size() > 0) {
-                    dismissColourDialog();
-                    LayoutInflater layoutInflater
-                            = (LayoutInflater) getBaseContext()
-                            .getSystemService(LAYOUT_INFLATER_SERVICE);
-                    View popupView = layoutInflater.inflate(R.layout.product_size_row, null);
-                    mRecyclerviewSize = (RecyclerView) popupView.findViewById(R.id.recyclerviewSize);
-                    LinearLayout mPopLinContainer = (LinearLayout) popupView.findViewById(R.id.linPopUpContainer);
-                    bindWithUI(otherSkusList, false);
-                    mPSizeWindow = new PopupWindow(
-                            popupView,
-                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT);
-                    mPopLinContainer.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mPSizeWindow.dismiss();
-                        }
-                    });
-                    mPSizeWindow.showAsDropDown(mTextSelectSize, -50, -180);
+                if (otherSkusList != null) {
+                    if (otherSkusList.size() > 0) {
+                        dismissColourDialog();
+                        LayoutInflater layoutInflater
+                                = (LayoutInflater) getBaseContext()
+                                .getSystemService(LAYOUT_INFLATER_SERVICE);
+                        View popupView = layoutInflater.inflate(R.layout.product_size_row, null);
+                        mRecyclerviewSize = (RecyclerView) popupView.findViewById(R.id.recyclerviewSize);
+                        LinearLayout mPopLinContainer = (LinearLayout) popupView.findViewById(R.id.linPopUpContainer);
+                        bindWithUI(otherSkusList, false);
+                        mPSizeWindow = new PopupWindow(
+                                popupView,
+                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT);
+                        mPopLinContainer.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mPSizeWindow.dismiss();
+                            }
+                        });
+                        mPSizeWindow.showAsDropDown(mTextSelectSize, -50, -180);
+                    }
                 }
                 break;
 
@@ -733,16 +705,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         return imageUrl + "?w=" + width + "&q=" + IMAGE_QUALITY;
     }
 
-    protected void getDefaultColor(List<OtherSku> otherSkus, String skuId) {
-        for (OtherSku otherSku : otherSkus) {
-            if (skuId.equalsIgnoreCase(otherSku.sku)) {
-                mDefaultColor = otherSku.colour;
-                mDefaultColorRef = otherSku.externalColourRef;
-                mDefaultSize = otherSku.size;
-            }
-        }
-    }
-
     @Override
     public void onSelectedProduct(View v, int position) {
 
@@ -765,10 +727,11 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     }
 
     public void loadHeroImage(String heroImage) {
+        mDefaultImage = heroImage;
         mAuxiliaryImages = new ArrayList<>();
         mAuxiliaryImages.clear();
         mAuxiliaryImages.add(heroImage);
-        ProductViewPagerAdapter mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
+        mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
         mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
         mProductViewPagerAdapter.notifyDataSetChanged();
     }
@@ -793,8 +756,8 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mTextSelectSize.setText("");
         uniqueSizeList = new ArrayList<>();
         uniqueColorList = new ArrayList<>();
-        mSizeAdapter = new ProductSizeAdapter(uniqueSizeList, this);
-        mSizeAdapter.notifyDataSetChanged();
+        mProductSizeAdapter = new ProductSizeAdapter(uniqueSizeList, this);
+        mProductSizeAdapter.notifyDataSetChanged();
     }
 
     public void showSizeProgressBar() {
@@ -804,10 +767,27 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mSizeProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
         mSizeProgressBar.bringToFront();
         mSizeProgressBar.setVisibility(View.VISIBLE);
+        mSizeProgressBar.setAlpha(0.3f);
+        mTextColour.setAlpha(0.3f);
+        mImSelectedColor.setAlpha(0.3f);
+        mTextSelectSize.setAlpha(0.3f);
+        mImColorArrow.setAlpha(0.3f);
+        mColorArrow.setAlpha(0.3f);
+        mTextSelectSize.setAlpha(0.3f);
+        mTextProductSize.setAlpha(0.3f);
+        loadTextAnimation();
     }
 
     public void hideProgressDetailLoad() {
         mSizeProgressBar.setVisibility(View.GONE);
+        mSizeProgressBar.setAlpha(1f);
+        mTextColour.setAlpha(1f);
+        mImSelectedColor.setAlpha(1f);
+        mTextSelectSize.setAlpha(1f);
+        mImColorArrow.setAlpha(1f);
+        mColorArrow.setAlpha(1f);
+        mTextSelectSize.setAlpha(1f);
+        mTextProductSize.setAlpha(1f);
     }
 
     public void resetLongDescription() {
@@ -821,5 +801,154 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 
     public void hideProductCode() {
         mProductCode.setVisibility(View.GONE);
+    }
+
+    public void resetColourField() {
+        mTextColour.setText(getString(R.string.product_colour));
+    }
+
+    public void setPromotionText(String saveText) {
+        if (TextUtils.isEmpty(saveText)) {
+            mTextPromo.setVisibility(View.GONE);
+        } else {
+            mTextPromo.setVisibility(View.VISIBLE);
+            mTextPromo.setText(saveText);
+        }
+    }
+
+    public OtherSku getDefaultSKUModel() {
+        if (otherSkusList != null) {
+            if (otherSkusList.size() > 0) {
+                for (OtherSku option : otherSkusList) {
+                    if (option.sku.equalsIgnoreCase(currentSKUId)) {
+                        return option;
+                    }
+                }
+            }
+        }
+        return new OtherSku();
+    }
+
+    public void updateHeroImage() {
+        try {
+            JSONObject jsProductList = new JSONObject(new JSONObject(mProductJSON).getString("product"));
+
+            //set ingredients
+            if (jsProductList.has("ingredients")) {
+                setIngredients(jsProductList.getString("ingredients"));
+            } else {
+                setIngredients("");
+            }
+
+            //setup auxiliaryImages
+            if (jsProductList.has("auxiliaryImages")) {
+                setUpAuxiliaryImages(jsProductList.getString("auxiliaryImages"));
+            }
+
+        } catch (JSONException ex) {
+            Log.e("uploadHeroExcep", ex.toString());
+        }
+    }
+
+    public void setUpAuxiliaryImages(String auxiliaryImages) {
+        mAuxiliaryImages = new ArrayList<>();
+        if (mAuxiliaryImages != null) {
+            mAuxiliaryImages.clear();
+        }
+        try {
+            JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
+            Iterator<String> keysIterator = jsAuxiliaryImages.keys();
+            String colour = mDefaultSKUModel.colour;
+            if (colour != null) {
+                selectedColor(mDefaultSKUModel.externalColourRef);
+                mTextColour.setText(colour);
+                colour = colour.toLowerCase();
+                while (keysIterator.hasNext()) {
+                    String keyStr = keysIterator.next();
+                    if (keyStr.toLowerCase().contains(colour)) {
+                        mAuxiliaryImages.add(0, mDefaultImage);
+                        String valueStr = jsAuxiliaryImages.getString(keyStr);
+                        JSONObject jsonObject = new JSONObject(valueStr);
+                        if (jsonObject.has("externalImageRef")) {
+                            mAuxiliaryImages.add(getImageByWidth(jsonObject.getString("externalImageRef")));
+                        }
+                    }
+                }
+            } else {
+                mAuxiliaryImages.add(0, mDefaultImage);
+            }
+        } catch (JSONException ex) {
+            Log.e("AuxiliaryEx", ex.toString());
+        }
+
+        Set<String> removeDuplicateImage = new LinkedHashSet<>(mAuxiliaryImages);
+        mAuxiliaryImages.clear();
+        mAuxiliaryImages.addAll(removeDuplicateImage);
+
+        //display default image when auxiliary images is empty
+        if (mAuxiliaryImages.size() == 0) {
+            mAuxiliaryImages.add(0, mDefaultImage);
+        }
+
+        setUpBinder(mAuxiliaryImages);
+    }
+
+    public void setUpBinder(ArrayList<String> mAuxiliaryImages) {
+        mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
+        mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
+        mProductViewPagerAdapter.notifyDataSetChanged();
+        setupPagerIndicatorDots();
+        mViewPagerProduct.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                for (ImageView anIvArrayDotsPager : ivArrayDotsPager) {
+                    anIvArrayDotsPager.setImageResource(R.drawable.unselected_drawable);
+                }
+                ivArrayDotsPager[position].setImageResource(R.drawable.selected_drawable);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                // All of this is to inhibit any scrollable container from consuming our touch events as the user is changing pages
+                if (mPreviousState == ViewPager.SCROLL_STATE_IDLE) {
+                    if (state == ViewPager.SCROLL_STATE_DRAGGING) {
+                        mTouchTarget = mViewPagerProduct;
+                    }
+                } else {
+                    if (state == ViewPager.SCROLL_STATE_IDLE || state == ViewPager.SCROLL_STATE_SETTLING) {
+                        mTouchTarget = null;
+                    }
+                }
+
+                mPreviousState = state;
+            }
+        });
+    }
+
+
+    public void loadTextAnimation() {
+        Handler handler = new Handler();
+        for (int i = 100; i <= 3600; i = i + 100) {
+            final int finalI = i;
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (finalI % 1000 == 0) {
+                        mProductCode.setText(getString(R.string.loading_product_info)+" .");
+                    } else if (finalI % 500 == 0) {
+                        mProductCode.setText(getString(R.string.loading_product_info)+" ..");
+
+                        mProductCode.setText("Loading..");
+                    } else if (finalI % 200 == 0) {
+                        mProductCode.setText(getString(R.string.loading_product_info)+" ...");
+                    }
+                }
+            }, i);
+        }
     }
 }
