@@ -69,6 +69,9 @@
     <dimen name="height_qr_box_view">240dp</dimen>
     <dimen name="height_qr_box_view_desc">35dp</dimen>
     <dimen name="cornerOffsetBottom">-12dp</dimen>
+    <dimen name="LoadingDots_dots_size_default">12dp</dimen>
+    <dimen name="LoadingDots_dots_space_default">2dp</dimen>
+    <dimen name="LoadingDots_jump_height_default">12dp</dimen>
 
 </resources>
 

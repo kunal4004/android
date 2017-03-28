@@ -6,7 +6,6 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.net.Uri;
-import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
@@ -52,6 +51,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.views.LoadingDots;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
@@ -119,6 +119,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     private ImageView mImColorArrow;
     private ImageView mColorArrow;
     private WTextView mTextProductSize;
+    private LoadingDots mLoadingDaot;
 
     protected void initProductDetailUI() {
         mScrollProductDetail = (NestedScrollView) findViewById(R.id.scrollProductDetail);
@@ -153,7 +154,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mImSave = (SimpleDraweeView) findViewById(R.id.imSave);
         mImReward = (SimpleDraweeView) findViewById(R.id.imReward);
         mVitalityView = (SimpleDraweeView) findViewById(R.id.imVitality);
-
+        mLoadingDaot = (LoadingDots)findViewById(R.id.loadingDots);
         mTextSelectColor.setOnClickListener(this);
         mTextSelectSize.setOnClickListener(this);
         mImColorArrow.setOnClickListener(this);
@@ -767,6 +768,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mSizeProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
         mSizeProgressBar.bringToFront();
         mSizeProgressBar.setVisibility(View.VISIBLE);
+        mLoadingDaot.setVisibility(View.VISIBLE);
         mSizeProgressBar.setAlpha(0.3f);
         mTextColour.setAlpha(0.3f);
         mImSelectedColor.setAlpha(0.3f);
@@ -775,11 +777,11 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mColorArrow.setAlpha(0.3f);
         mTextSelectSize.setAlpha(0.3f);
         mTextProductSize.setAlpha(0.3f);
-        loadTextAnimation();
     }
 
     public void hideProgressDetailLoad() {
         mSizeProgressBar.setVisibility(View.GONE);
+        mLoadingDaot.setVisibility(View.GONE);
         mSizeProgressBar.setAlpha(1f);
         mTextColour.setAlpha(1f);
         mImSelectedColor.setAlpha(1f);
@@ -928,27 +930,5 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 mPreviousState = state;
             }
         });
-    }
-
-
-    public void loadTextAnimation() {
-        Handler handler = new Handler();
-        for (int i = 100; i <= 3600; i = i + 100) {
-            final int finalI = i;
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (finalI % 1000 == 0) {
-                        mProductCode.setText(getString(R.string.loading_product_info)+" .");
-                    } else if (finalI % 500 == 0) {
-                        mProductCode.setText(getString(R.string.loading_product_info)+" ..");
-
-                        mProductCode.setText("Loading..");
-                    } else if (finalI % 200 == 0) {
-                        mProductCode.setText(getString(R.string.loading_product_info)+" ...");
-                    }
-                }
-            }, i);
-        }
     }
 }
