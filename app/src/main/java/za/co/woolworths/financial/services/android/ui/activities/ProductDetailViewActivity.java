@@ -108,6 +108,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private int mPreviousState;
     private ViewPager mTouchTarget;
     private int mPosition;
+    private ImageView mColorArrow;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -304,7 +305,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mLinSize = (RelativeLayout) findViewById(R.id.linSize);
         mBtnAddShoppingList = (WButton) findViewById(R.id.btnAddShoppingList);
         WButton mBtnShopOnlineWoolies = (WButton) findViewById(R.id.btnShopOnlineWoolies);
-        ImageView mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
+        mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
         mImCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
         mImSelectedColor = (SimpleDraweeView) findViewById(R.id.imSelectedColor);
         mLlPagerDots = (LinearLayout) findViewById(R.id.pager_dots);

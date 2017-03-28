@@ -16,7 +16,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,13 +37,13 @@ import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
+import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
-import za.co.woolworths.financial.services.android.ui.views.ProductProgressDialogFrag;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -76,7 +75,6 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     private String searchItem = "";
     private int num_of_item;
     private int pageOffset;
-    private ProductProgressDialogFrag mProgressDialogFragment;
     private PauseHandlerFragment mPauseHandlerFragment;
     private SlidingUpPanelLayout mSlideUpPanelLayout;
     public String mProductJSON;
@@ -98,6 +96,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         initProductDetailUI();
         actionBar();
         bundle();
+
         //register pause handler
         FragmentManager fm = getSupportFragmentManager();
         String PAUSE_HANDLER_FRAGMENT_TAG = "pause_handler";
@@ -252,14 +251,10 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
 
     @Override
     public void onSelectedProduct(View v, int position) {
-        mSkuId = mProduct.get(position).otherSkus.get(0).sku;
-        mProductId = mProduct.get(position).productId;
-        try {
-            onCallback(mProductId,
-                    mSkuId, false);
-        } catch (Exception ex) {
-            Log.e("ExceptionProduct", ex.toString());
-        }
+        mSelectedProduct = mProduct.get(position);
+        mSkuId = mSelectedProduct.otherSkus.get(0).sku;
+        mProductId = mSelectedProduct.productId;
+        onCallback(mProductId, mSkuId, false);
     }
 
     @Override
@@ -519,46 +514,33 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                     switch (wProduct.httpCode) {
                         case 200:
                             mProductJSON = strProduct;
-                            ArrayList<WProductDetail> mProductList;
+                            ArrayList<WProductDetail> mProductList = new ArrayList<>();
                             WProductDetail productList = wProduct.product;
-                            mProductList = new ArrayList<>();
                             if (productList != null) {
                                 mProductList.add(productList);
                             }
                             GsonBuilder builder = new GsonBuilder();
                             Gson gson = builder.create();
                             displayProductDetail(mProductList.get(0).productName, gson.toJson(mProductList), mSkuId);
-                            addButton();
-                            mSlideUpPanelLayout.setAnchorPoint(1.0f);
-                            mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
-                            mSlideUpPanelLayout.setScrollableViewHelper(new NestedScrollableViewHelper(mScrollProductDetail));
-                            dismissFragmentDialog();
+                            hideProgressDetailLoad();
                             break;
 
                         default:
                             Utils.updateStatusBarBackground(ProductViewGridActivity.this);
-                            dismissFragmentDialog();
+                            hideProgressDetailLoad();
                             break;
                     }
+
+                    hideProgressDetailLoad();
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
-                dismissFragmentDialog();
+                hideProductCode();
+                hideProgressDetailLoad();
             }
         });
-    }
-
-    private void dismissFragmentDialog() {
-        try {
-            if (mProgressDialogFragment != null) {
-                if (mProgressDialogFragment.isVisible()) {
-                    mProgressDialogFragment.dismiss();
-                }
-            }
-        } catch (Exception ignored) {
-        }
     }
 
     private void hideVProgressBar() {
@@ -674,17 +656,30 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
             @Override
             public void run(AppCompatActivity context) {
                 //this block of code should be protected from IllegalStateException
-                FragmentManager fm = context.getSupportFragmentManager();
-                mProgressDialogFragment = ProductProgressDialogFrag.newInstance();
-                if (!mProgressDialogFragment.isAdded()) {
-                    mProgressDialogFragment = ProductProgressDialogFrag.newInstance();
-                    mProgressDialogFragment.show(fm, "v");
-                } else {
-                    mProgressDialogFragment.show(fm, "v");
-                }
+                resetProductSize();
+                loadHeroImage(getImageByWidth(mSelectedProduct.externalImageRef));
+                selectedColor("");
+                showSlideUpView();
+                setTextFromGrid();
+                showPrice();
+                setPromotionText("");
+                resetColourField();
+                showPromotionalImages(new PromotionImages());
+                showPromotionalImages(mSelectedProduct.promotionImages);
+                addButtonEvent();
+                setIngredients("");
+                resetLongDescription();
+                setupPagerIndicatorDots();
+                showSizeProgressBar();
                 getProductDetail(productId, skuId, closeActivity);
             }
         });
+    }
+
+    private void showSlideUpView() {
+        mSlideUpPanelLayout.setAnchorPoint(1.0f);
+        mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
+        mSlideUpPanelLayout.setScrollableViewHelper(new NestedScrollableViewHelper(mScrollProductDetail));
     }
 
     private void closeGridView() {

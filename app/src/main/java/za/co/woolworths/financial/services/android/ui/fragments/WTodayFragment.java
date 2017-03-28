@@ -25,7 +25,6 @@ public class WTodayFragment extends Fragment {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl(WoolworthsApplication.getWwTodayURI());
         webView.addJavascriptInterface(new WebAppInterface(getActivity()), "Android");
-        //webView.loadUrl("http://192.168.108.53:4200/");
         return view;
     }
 }
