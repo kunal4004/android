@@ -1,10 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 import com.facebook.drawee.view.SimpleDraweeView;

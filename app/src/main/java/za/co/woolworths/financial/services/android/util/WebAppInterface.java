@@ -36,6 +36,7 @@ public class WebAppInterface {
      * Instantiate the interface and set the context
      * must be added for API 17 or higher
      */
+
     public WebAppInterface(Context c) {
         mContext = c;
     }
@@ -119,46 +120,47 @@ public class WebAppInterface {
     }
 
     private void getProductDetail(final String productId, final String skuId) {
-        ((WoolworthsApplication) ((AppCompatActivity) mContext).getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
-            @Override
-            public void success(String strProduct, retrofit.client.Response response) {
-                final WProduct wProduct = Utils.stringToJson(mContext, strProduct);
-                if (wProduct != null) {
-                    switch (wProduct.httpCode) {
-                        case 200:
-                            ((AppCompatActivity) mContext).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+        ((WoolworthsApplication) ((AppCompatActivity) mContext).getApplication()).getAsyncApi()
+                .getProductDetail(productId, skuId, new Callback<String>() {
+                    @Override
+                    public void success(String strProduct, retrofit.client.Response response) {
+                        final WProduct wProduct = Utils.stringToJson(mContext, strProduct);
+                        if (wProduct != null) {
+                            switch (wProduct.httpCode) {
+                                case 200:
+                                    ((AppCompatActivity) mContext).runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            dismissFragmentDialog();
+                                            ArrayList<WProductDetail> mProductList;
+                                            WProductDetail productList = wProduct.product;
+                                            mProductList = new ArrayList<>();
+                                            if (productList != null) {
+                                                mProductList.add(productList);
+                                            }
+                                            GsonBuilder builder = new GsonBuilder();
+                                            Gson gson = builder.create();
+                                            Intent openDetailView = new Intent(mContext, ProductDetailViewActivity.class);
+                                            openDetailView.putExtra("product_name", mProductList.get(0).productName);
+                                            openDetailView.putExtra("product_detail", gson.toJson(mProductList));
+                                            mContext.startActivity(openDetailView);
+                                            ((AppCompatActivity) mContext).overridePendingTransition(0, R.anim.anim_slide_up);
+                                        }
+                                    });
+                                    break;
+
+                                default:
                                     dismissFragmentDialog();
-                                    ArrayList<WProductDetail> mProductList;
-                                    WProductDetail productList = wProduct.product;
-                                    mProductList = new ArrayList<>();
-                                    if (productList != null) {
-                                        mProductList.add(productList);
-                                    }
-                                    GsonBuilder builder = new GsonBuilder();
-                                    Gson gson = builder.create();
-                                    Intent openDetailView = new Intent(mContext, ProductDetailViewActivity.class);
-                                    openDetailView.putExtra("product_name", mProductList.get(0).productName);
-                                    openDetailView.putExtra("product_detail", gson.toJson(mProductList));
-                                    mContext.startActivity(openDetailView);
-                                    ((AppCompatActivity) mContext).overridePendingTransition(0, R.anim.anim_slide_up);
-                                }
-                            });
-                            break;
-
-                        default:
-                            dismissFragmentDialog();
-                            break;
+                                    break;
+                            }
+                        }
                     }
-                }
-            }
 
-            @Override
-            public void failure(RetrofitError error) {
-                dismissFragmentDialog();
-            }
-        });
+                    @Override
+                    public void failure(RetrofitError error) {
+                        dismissFragmentDialog();
+                    }
+                });
     }
 
     private void dismissFragmentDialog() {
