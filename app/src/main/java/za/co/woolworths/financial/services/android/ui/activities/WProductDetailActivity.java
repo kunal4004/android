@@ -167,7 +167,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 
     }
 
-    protected void displayProductDetail(String mProductName, String mProductList, String skuId) {
+    protected void displayProductDetail(String mProductName, String mProductList, String skuId,int otherSkuSize) {
         this.currentSKUId = skuId;
         try {
             SessionDao sessionDao = new SessionDao(WProductDetailActivity.this,
@@ -187,6 +187,11 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mProductLongDescription();
         mDefaultSKUModel = getDefaultSKUModel();
         updateHeroImage();
+        if(otherSkuSize>1)
+        {
+            mColorView.setVisibility(View.VISIBLE);
+            mRelContainer.setVisibility(View.VISIBLE);
+        }
         // initColorParam(mDefaultColor);
         mScrollProductDetail.scrollTo(0, 0);
     }
@@ -864,7 +869,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             if (colour != null) {
                 selectedColor(mDefaultSKUModel.externalColourRef);
                 mTextColour.setText(colour);
-                colour = colour.toLowerCase();
+                colour = colour.toLowerCase().replaceAll("\\s+","");
                 while (keysIterator.hasNext()) {
                     String keyStr = keysIterator.next();
                     if (keyStr.toLowerCase().contains(colour)) {
