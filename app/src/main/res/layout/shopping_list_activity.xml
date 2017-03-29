@@ -5,6 +5,12 @@
     android:layout_height="match_parent"
     android:background="@color/light_gray">
 
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/relContainerRootMessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/light_gray">
 
     <za.co.woolworths.financial.services.android.ui.views.WObservableScrollView
         android:id="@+id/nestedScroll"
@@ -104,4 +110,5 @@
             app:WTextView_font="medium_bold" />
     </android.support.v7.widget.Toolbar>
 
+</RelativeLayout>
 </RelativeLayout>

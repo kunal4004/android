@@ -2,7 +2,9 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 
 import android.app.Activity;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
@@ -31,13 +34,13 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<ProductCategory
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView mImageProductCategory;
+        SimpleDraweeView mImageProductCategory;
         WTextView mTextProduct;
         FrameLayout mFrameRootCategory;
 
         ViewHolder(View view) {
             super(view);
-            mImageProductCategory = (ImageView) view.findViewById(R.id.imProductCategory);
+            mImageProductCategory = (SimpleDraweeView) view.findViewById(R.id.imProductCategory);
             mTextProduct = (WTextView) view.findViewById(R.id.textProduct);
             mFrameRootCategory = (FrameLayout) view.findViewById(R.id.frameRootCategory);
         }
@@ -51,8 +54,9 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<ProductCategory
         String imageUrl = rootCategory.imgUrl;
 
         if (imageUrl != null) {
+            Log.e("categoryImageUrl",imageUrl);
             DrawImage drawImage = new DrawImage(holder.mTextProduct.getContext());
-            drawImage.widthDisplayImage(holder.mImageProductCategory, imageUrl);
+            drawImage.widthDisplayImage(holder.mImageProductCategory, Uri.parse(imageUrl));
         }
 
         holder.mFrameRootCategory.setOnClickListener(new View.OnClickListener() {

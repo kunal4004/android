@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/tools"
     android:id="@+id/relProductContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -21,12 +22,12 @@
             <RelativeLayout
                 android:id="@+id/relViewPager"
                 android:layout_width="match_parent"
-                android:layout_height="400dp">
+                android:layout_height="450dp">
 
                 <android.support.v4.view.ViewPager
                     android:id="@+id/mProductDetailPager"
                     android:layout_width="match_parent"
-                    android:layout_height="400dp" />
+                    android:layout_height="450dp" />
 
                 <LinearLayout
                     android:id="@+id/pager_dots"
@@ -107,6 +108,7 @@
                             android:layout_alignParentStart="true"
                             android:gravity="top|start"
                             android:letterSpacing="-0.01"
+                            android:paddingRight="2dp"
                             android:text="R 399.00"
                             android:textAllCaps="true"
                             android:textColor="@color/black"
@@ -156,33 +158,37 @@
                     android:gravity="right"
                     android:orientation="horizontal">
 
-                    <ImageView
+                    <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/imNewImage"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginLeft="8dp"
-                        android:contentDescription="@string/app_name" />
+                        android:contentDescription="@string/app_name"
+                        fresco:viewAspectRatio="1.0" />
 
-                    <ImageView
+                    <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/imSave"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginLeft="8dp"
-                        android:contentDescription="@string/app_name" />
+                        android:contentDescription="@string/app_name"
+                        fresco:viewAspectRatio="1.0" />
 
-                    <ImageView
+                    <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/imReward"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginLeft="8dp"
-                        android:contentDescription="@string/app_name" />
+                        android:contentDescription="@string/app_name"
+                        fresco:viewAspectRatio="1.0" />
 
-                    <ImageView
+                    <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/imVitality"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginLeft="8dp"
-                        android:contentDescription="@string/app_name" />
+                        android:contentDescription="@string/app_name"
+                        fresco:viewAspectRatio="1.0" />
 
                 </LinearLayout>
 
@@ -197,7 +203,7 @@
                 android:layout_marginLeft="@dimen/default_margin"
                 android:layout_marginRight="@dimen/default_margin" />
 
-            <include layout="@layout/test" />
+            <include layout="@layout/product_color_row" />
 
             <include layout="@layout/line" />
 
@@ -229,18 +235,38 @@
 
             </za.co.woolworths.financial.services.android.ui.views.WrapContentWebView>
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/product_code"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginBottom="30dp"
-                android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginStart="@dimen/default_margin"
-                android:layout_marginTop="10dp"
-                android:gravity="start|top"
-                android:textColor="@color/black_desc_opacity"
-                android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular" />
+                android:layout_marginTop="@dimen/default_margin"
+                android:orientation="horizontal">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/product_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="start"
+                    android:textColor="@color/black_desc_opacity"
+                    android:textSize="15sp"
+                    app:WTextView_font="myriadpro_regular" />
+
+                <za.co.woolworths.financial.services.android.ui.views.LoadingDots
+                    android:id="@+id/loadingDots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="8dp"
+                    app:LoadingDots_dots_color="@color/black_desc_opacity"
+                    app:LoadingDots_dots_count="3"
+                    app:LoadingDots_dots_size="3dp"
+                    app:LoadingDots_dots_space="2dp"
+                    android:visibility="gone"
+                    app:LoadingDots_jump_height="4dp"
+                    app:LoadingDots_loop_start_delay="50" />
+
+            </LinearLayout>
 
             <include
                 android:id="@+id/ingredientLine"

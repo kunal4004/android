@@ -4,14 +4,14 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 import android.app.Activity;
 import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.awfs.coordination.R;
-import com.daimajia.swipe.adapters.RecyclerSwipeAdapter;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,12 +25,11 @@ import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewListAdapter.SimpleViewHolder> {
+public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewListAdapter.SimpleViewHolder> {
     private final DrawImage drawImage;
     public Activity mContext;
     private List<ProductList> mProductList;
     private SelectedProductView mSelectedProductView;
-    private ProductList productItem;
 
     public ProductViewListAdapter(Activity mContext, List<ProductList> mProductList,
                                   SelectedProductView selectedProductView) {
@@ -45,34 +44,34 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         WTextView productName;
         WTextView mTextAmount;
         WTextView mTextWasPrice;
-        ImageView mSimpleDraweeView;
-        ImageView imNewImage;
-        ImageView mImSave;
-        ImageView mImReward;
-        ImageView mVitalityView;
+        SimpleDraweeView mSimpleDraweeView;
+        SimpleDraweeView imNewImage;
+        SimpleDraweeView mImSave;
+        SimpleDraweeView mImReward;
+        SimpleDraweeView mVitalityView;
 
         SimpleViewHolder(View view) {
             super(view);
             productName = (WTextView) view.findViewById(R.id.textTitle);
             mTextAmount = (WTextView) view.findViewById(R.id.textAmount);
             mTextWasPrice = (WTextView) view.findViewById(R.id.textWasPrice);
-            mSimpleDraweeView = (ImageView) view.findViewById(R.id.imProduct);
-            imNewImage = (ImageView) view.findViewById(R.id.imNewImage);
-            mImSave = (ImageView) view.findViewById(R.id.imSave);
-            mImReward = (ImageView) view.findViewById(R.id.imReward);
-            mVitalityView = (ImageView) view.findViewById(R.id.imVitality);
+            mSimpleDraweeView = (SimpleDraweeView) view.findViewById(R.id.imProduct);
+            imNewImage = (SimpleDraweeView) view.findViewById(R.id.imNewImage);
+            mImSave = (SimpleDraweeView) view.findViewById(R.id.imSave);
+            mImReward = (SimpleDraweeView) view.findViewById(R.id.imReward);
+            mVitalityView = (SimpleDraweeView) view.findViewById(R.id.imVitality);
         }
     }
 
     @Override
     public void onBindViewHolder(final SimpleViewHolder holder, final int position) {
-        this.productItem = mProductList.get(position);
+        ProductList productItem = mProductList.get(position);
         if (productItem != null) {
             String productName = productItem.productName;
             String imgUrl = productItem.externalImageRef;
             String productType = productItem.productType;
             PromotionImages promo = productItem.promotionImages;
-            holder.productName.setText(productName);
+            holder.productName.setText(Html.fromHtml(productName));
 
             ArrayList<Double> priceList = new ArrayList<>();
             for (OtherSkus os : productItem.otherSkus) {
@@ -90,7 +89,7 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
             productPriceList(holder.mTextAmount, holder.mTextWasPrice,
                     fromPrice, wasPrice, productType);
 
-            productImage(holder, imgUrl);
+            productImage(holder.mSimpleDraweeView, imgUrl);
             promoImages(holder, promo);
         }
 
@@ -120,11 +119,6 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
     @Override
     public int getItemCount() {
         return mProductList.size();
-    }
-
-    @Override
-    public int getSwipeLayoutResourceId(int position) {
-        return R.id.swipe;
     }
 
     private void productPriceList(WTextView wPrice, WTextView WwasPrice,
@@ -166,11 +160,11 @@ public class ProductViewListAdapter extends RecyclerSwipeAdapter<ProductViewList
         }
     }
 
-    private void productImage(final SimpleViewHolder holder, String imgUrl) {
+    private void productImage(final SimpleDraweeView image, String imgUrl) {
         if (imgUrl != null) {
             try {
-                imgUrl = imgUrl + "?w=" + 300 + "&q=" + 100;
-                drawImage.displayThumbnailImage(holder.mSimpleDraweeView, imgUrl);
+                imgUrl = imgUrl + "?w=" + 300 + "&q=" + 85;
+                drawImage.displayImage(image, imgUrl);
             } catch (IllegalArgumentException ignored) {
             }
         }

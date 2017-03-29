@@ -407,7 +407,6 @@ public interface ApiInterface {
             @Header("sha1Password") String sha1Password,
             @Header("longitude") double longitude,
             @Header("latitude") double latitude,
-            @Header("isBarCode") boolean isBarcode,
             @Query("pageOffset") int pageOffset,
             @Query("pageSize") int pageSize,
             @Path("cat") String category);
@@ -425,7 +424,6 @@ public interface ApiInterface {
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion,
             @Header("sha1Password") String sha1Password,
-            @Header("isBarCode") boolean isBarcode,
             @Query("pageOffset") int pageOffset,
             @Query("pageSize") int pageSize,
             @Path("cat") String category);
@@ -458,8 +456,8 @@ public interface ApiInterface {
             @Header("sha1Password") String sha1Password,
             @Header("longitude") double longitude,
             @Header("latitude") double latitude,
-            @Header("isBarCode") boolean isBarcode,
-            @Query("searchTerm") String searchTerm,
+            @Query("isBarCode") boolean isBarcode,
+            @Query(value="searchTerm",encodeValue = false) String searchTerm,
             @Query("pageOffset") int pageOffset,
             @Query("pageSize") int pageSize);
 
@@ -475,8 +473,8 @@ public interface ApiInterface {
             @Header("userAgent") String userAgent,
             @Header("userAgentVersion") String userAgentVersion,
             @Header("sha1Password") String sha1Password,
-            @Header("isBarCode") boolean isBarcode,
-            @Query("searchTerm") String searchTerm,
+            @Query("isBarCode") boolean isBarcode,
+            @Query(value="searchTerm",encodeValue = false) String searchTerm,
             @Query("pageOffset") int pageOffset,
             @Query("pageSize") int pageSize);
 

@@ -293,7 +293,7 @@
     <string name="cli_account_type">ACCOUNT TYPE</string>
     <string name="cli_complete_process">COMPLETE PROCESS</string>
     <string name="cli_credit_limit_received">Credit limit increase\nrequest received</string>
-    <string name="cli_contact_delay">We will be in contact with the outcome of our review in approximately 2-3 business days.</string>
+    <string name="cli_contact_delay">Thanks for your patience – your application is being processed and we will be in contact with you within two working days.</string>
     <string name="cli_back_to_acc">Back to my accounts</string>
     <string name="cli_income_proof">proof of income</string>
     <string name="cli_send_document_title">submit your documents via:</string>
@@ -311,12 +311,12 @@
     <string name="cli_lorem_ipsum">Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum </string>
     <string name="cli_got_it">GOT IT</string>
     <string name="cli_overlay_monthly_income">Gross Monthly Income is your income before Tax/ Deductions.</string>
-    <string name="cli_overlay_gross_income">Net Monthly Income is your personal income after tax/deductions as reflected on your payslip.</string>
+    <string name="cli_overlay_gross_income">Your net monthly income refers to your income after tax and other deductions. You’ll find this amount on your payslip.</string>
     <string name="cli_overlay_per_income">Monthly personal income earned over and above your salary, i.e: rental, maintenance and spousal allowances etc.</string>
     <string name="cli_overlay_monthly_home">Your Monthly Home Loan Repayment.</string>
     <string name="cli_overlay_rental_payment">Rental Payment — Cost of Renting Accommodation.</string>
     <string name="cli_overlay_monthly_obliged">Monthly obligation to pay statutory child and/or spousal support etc.</string>
-    <string name="cli_overlay_monthly_installment">Monthly Installment of creditor account i.e.: Credit Card, Personal Loan, Furniture Accounts etc.</string>
+    <string name="cli_overlay_monthly_installment">Monthly Instalment of creditor account i.e.: Credit Card, Personal Loan, Furniture Accounts etc.</string>
     <string name="cli_overlay_other_expenses">All Other Expenses, i.e.: groceries, transport, telephone/cellphone etc.</string>
     <string name="cli_overlay_all_expenses">All Other Expenses, i.e.: groceries,transport, telephone/cellphone etc.</string>
     <string name="cli_creating_offer">CREATING OFFER...</string>
@@ -408,7 +408,7 @@
     <string name="sc_points_to_qualify_2">Have a valid RSA ID number</string>
     <string name="sc_points_to_qualify_3">Earn a minimum of R2000 per month</string>
 
-    <string name="points_convinent_1">Use your Store Card at any Woolies &amp; Food </string>
+    <string name="points_convinent_1">Use your Store Card at any Woolies &amp; Foodstops at selected Engen garages </string>
     <string name="points_convinent_2">Foodstops at Engen</string>
     <string name="points_convinent_3">Pay utility bills</string>
     <string name="points_convinent_4">Buy airtime</string>
@@ -516,9 +516,9 @@
     <string name="shopping_list_empty">shopping list empty</string>
     <string name="contact_us_financial_services_desc">Store Card /Credit Card and Personal Loan</string>
     <string name="contact_us_customer_service_desc">General enquiries, Online, WRewards, MySchool</string>
-    <string name="general_enquiry_desc">Producs and instore</string>
+    <string name="general_enquiry_desc">Products and instore</string>
     <string name="woolworths_online">Woolworths online</string>
-    <string name="website_and_online_shoppping">Website and online shoppping</string>
+    <string name="website_and_online_shoppping">Website and online shopping</string>
     <string name="email_black_credit_card_query">woolworthsblack@wfs.co.za</string>
     <string name="email_complaints">complaints@wfs.co.za</string>
     <string name="email_credicard_query">creditcard@wfs.co.za</string>
@@ -536,9 +536,10 @@
     <string name="email_myschool">cs@myschool.co.za</string>
     <string name="my_school_local_caller_number">0860 100 445</string>
     <string name="ingredients">ingredients</string>
-    <string name="savings_since">Savings since</string>
+    <string name="savings_since">Savings Since</string>
     <string name="savings_info_message">The WRewards year is calculated from the first Monday of each financial year of Woolworths which commences at the end of June or at the beginning of July and comes to an end on the last Sunday of the Woolworths financial year 12 (twelve) months later.</string>
     <string name="wrewards_logout_tag_line">WRewards is our way of rewarding customers INSTANTLY. WRewards members save millions every week.</string>
 
     <string name="contact_us_no_email_error">In order for us to process your query, please send an email to email_address with \"subject_line\" entered in the subject line. Remember to include your ID number in the body of the email.</string>
+    <string name="loading_product_info">Loading product info</string>
 </resources>

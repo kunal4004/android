@@ -28,10 +28,9 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
+import za.co.woolworths.financial.services.android.ui.fragments.WProductFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WRewardsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.WProductFragments;
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
-import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
@@ -42,7 +41,7 @@ import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
 
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
-        , WProductFragments.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle, WRewardsFragment.HideActionBarComponent {
+        , WProductFragment.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle, WRewardsFragment.HideActionBarComponent {
 
     public static Toolbar mToolbar;
     //  public static AppBarLayout appbar;
@@ -100,7 +99,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
                 title = getString(R.string.nw_today_title);
                 break;
             case 1:
-                fragment = new WProductFragments();
+                fragment = new WProductFragment();
                 title = getString(R.string.nav_item_products);
                 break;
             case 2:

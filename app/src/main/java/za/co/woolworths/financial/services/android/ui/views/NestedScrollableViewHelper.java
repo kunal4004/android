@@ -1,9 +1,7 @@
-package za.co.woolworths.financial.services.android.ui.activities;
+package za.co.woolworths.financial.services.android.ui.views;
 
 import android.support.v4.widget.NestedScrollView;
 import android.view.View;
-
-import za.co.woolworths.financial.services.android.ui.views.ScrollableViewHelper;
 
 public class NestedScrollableViewHelper extends ScrollableViewHelper {
 
