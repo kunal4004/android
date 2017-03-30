@@ -154,7 +154,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mImSave = (SimpleDraweeView) findViewById(R.id.imSave);
         mImReward = (SimpleDraweeView) findViewById(R.id.imReward);
         mVitalityView = (SimpleDraweeView) findViewById(R.id.imVitality);
-        mLoadingDaot = (LoadingDots)findViewById(R.id.loadingDots);
+        mLoadingDaot = (LoadingDots) findViewById(R.id.loadingDots);
         mTextSelectColor.setOnClickListener(this);
         mTextSelectSize.setOnClickListener(this);
         mImColorArrow.setOnClickListener(this);
@@ -183,6 +183,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         otherSkusList = mProductDetail.otherSkus;
         mCheckOutLink = mProductDetail.checkOutLink;
         mCategoryName.setText(mProductDetail.categoryName);
+        mDefaultImage = getImageByWidth(mProductDetail.externalImageRef);
         setPromotionText(mProductDetail.saveText);
         mProductLongDescription();
         mDefaultSKUModel = getDefaultSKUModel();
