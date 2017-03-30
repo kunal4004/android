@@ -154,7 +154,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mImSave = (SimpleDraweeView) findViewById(R.id.imSave);
         mImReward = (SimpleDraweeView) findViewById(R.id.imReward);
         mVitalityView = (SimpleDraweeView) findViewById(R.id.imVitality);
-        mLoadingDaot = (LoadingDots)findViewById(R.id.loadingDots);
+        mLoadingDaot = (LoadingDots) findViewById(R.id.loadingDots);
         mTextSelectColor.setOnClickListener(this);
         mTextSelectSize.setOnClickListener(this);
         mImColorArrow.setOnClickListener(this);
@@ -167,7 +167,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 
     }
 
-    protected void displayProductDetail(String mProductName, String mProductList, String skuId) {
+    protected void displayProductDetail(String mProductList, String skuId, int otherSkuSize) {
         this.currentSKUId = skuId;
         try {
             SessionDao sessionDao = new SessionDao(WProductDetailActivity.this,
@@ -183,11 +183,21 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         otherSkusList = mProductDetail.otherSkus;
         mCheckOutLink = mProductDetail.checkOutLink;
         mCategoryName.setText(mProductDetail.categoryName);
+        //update default image
+        mDefaultImage = getImageByWidth(mProductDetail.externalImageRef);
         setPromotionText(mProductDetail.saveText);
         mProductLongDescription();
         mDefaultSKUModel = getDefaultSKUModel();
+        setSelectedTextSize(mDefaultSKUModel.size);
         updateHeroImage();
-        // initColorParam(mDefaultColor);
+        updatePrice();
+        if (otherSkuSize > 1) {
+            mColorView.setVisibility(View.VISIBLE);
+            mRelContainer.setVisibility(View.VISIBLE);
+        } else {
+            mColorView.setVisibility(View.GONE);
+            mRelContainer.setVisibility(View.GONE);
+        }
         mScrollProductDetail.scrollTo(0, 0);
     }
 
@@ -332,8 +342,10 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mTextColour.setText(colour);
         mAuxiliaryImages = null;
         mAuxiliaryImages = new ArrayList<>();
+        mDefaultImage = getSkuExternalImageRef(colour);
         //show default image when imageUrl is empty
         selectedColor(defaultUrl);
+        getSKUDefaultSize(colour);
         retrieveJson(colour);
     }
 
@@ -362,14 +374,19 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             } else {
                 setIngredients("");
             }
+
+            //display default image
+            if (mAuxiliaryImages != null) {
+                if (!TextUtils.isEmpty(mDefaultImage))
+                    mAuxiliaryImages.add(0, mDefaultImage);
+            }
+
             String auxiliaryImages = jsProductList.getString("auxiliaryImages");
             JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
             Iterator<String> keysIterator = jsAuxiliaryImages.keys();
             while (keysIterator.hasNext()) {
                 String keyStr = keysIterator.next();
                 if (keyStr.toLowerCase().contains(colour.toLowerCase())) {
-                    if (keyStr.toLowerCase().contains(mDefaultSKUModel.colour.toLowerCase()))
-                        mAuxiliaryImages.add(0, mDefaultImage);
                     String valueStr = jsAuxiliaryImages.getString(keyStr);
                     JSONObject jsonObject = new JSONObject(valueStr);
                     if (jsonObject.has("externalImageRef")) {
@@ -382,10 +399,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             mAuxiliaryImages.clear();
             mAuxiliaryImages.addAll(removeAuxiliaryImageDuplicate);
 
-            //display default image when auxiliary images is empty
-            if (mAuxiliaryImages.size() == 0) {
-                mAuxiliaryImages.add(0, mDefaultImage);
-            }
             mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
             mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
             mProductViewPagerAdapter.notifyDataSetChanged();
@@ -469,7 +482,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 }
             }
             mProductSizeAdapter = new ProductSizeAdapter(uniqueSizeList, this);
-            SimpleDividerItemDecoration decoration = new SimpleDividerItemDecoration(this);
             mRecyclerviewSize.addItemDecoration(new SimpleDividerItemDecoration(this));
             mRecyclerviewSize.setLayoutManager(new LinearLayoutManager(this));
             mRecyclerviewSize.setNestedScrollingEnabled(false);
@@ -854,9 +866,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 
     public void setUpAuxiliaryImages(String auxiliaryImages) {
         mAuxiliaryImages = new ArrayList<>();
-        if (mAuxiliaryImages != null) {
-            mAuxiliaryImages.clear();
-        }
+        mAuxiliaryImages.clear();
         try {
             JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
             Iterator<String> keysIterator = jsAuxiliaryImages.keys();
@@ -864,7 +874,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             if (colour != null) {
                 selectedColor(mDefaultSKUModel.externalColourRef);
                 mTextColour.setText(colour);
-                colour = colour.toLowerCase();
+                colour = colour.toLowerCase().replaceAll("\\s+", "");
                 while (keysIterator.hasNext()) {
                     String keyStr = keysIterator.next();
                     if (keyStr.toLowerCase().contains(colour)) {
@@ -903,7 +913,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mViewPagerProduct.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
@@ -930,5 +939,121 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 mPreviousState = state;
             }
         });
+    }
+
+    public String getSkuExternalImageRef(String colour) {
+        if (otherSkusList != null) {
+            if (otherSkusList.size() > 0) {
+                List<OtherSku> otherSku = otherSkusList;
+                for (OtherSku sku : otherSku) {
+                    if (sku.colour.equalsIgnoreCase(colour)) {
+                        return getImageByWidth(sku.externalImageRef);
+                    }
+                }
+            }
+        }
+        return "";
+    }
+
+    public void getSKUDefaultSize(String colour) {
+        if (otherSkusList != null) {
+            if (otherSkusList.size() > 0) {
+                List<OtherSku> otherSku = otherSkusList;
+                for (OtherSku sku : otherSku) {
+                    if (sku.colour.equalsIgnoreCase(colour)) {
+                        if (!TextUtils.isEmpty(sku.size))
+                            setSelectedTextSize(sku.size);
+                        else
+                            setSelectedTextSize("");
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public void setSelectedTextSize(String size) {
+        mTextSelectSize.setText(size);
+        mTextSelectSize.setTextColor(Color.BLACK);
+    }
+
+    public void updatePrice() {
+        String fromPrice = String.valueOf(productDetail.fromPrice);
+        String wasPrice = "";
+        ArrayList<Double> priceList = new ArrayList<>();
+        for (OtherSku os : productDetail.otherSkus) {
+            if (!TextUtils.isEmpty(os.wasPrice)) {
+                priceList.add(Double.valueOf(os.wasPrice));
+            }
+        }
+
+        if (priceList.size() > 0) {
+            wasPrice = String.valueOf(Collections.max(priceList));
+        }
+        productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice, productDetail.productType);
+    }
+
+    public void productDetailPriceList(WTextView wPrice, WTextView WwasPrice,
+                                       String price, String wasPrice, String productType) {
+        switch (productType) {
+            case "clothingProducts":
+                if (TextUtils.isEmpty(wasPrice)) {
+                    wPrice.setText("From: " + WFormatter.formatAmount(price));
+                    wPrice.setPaintFlags(0);
+                    WwasPrice.setText("");
+                } else {
+                    if (wasPrice.equalsIgnoreCase(price)) {
+                        //wasPrice equals currentPrice
+                        wPrice.setText("From: " + WFormatter.formatAmount(price));
+                        WwasPrice.setText("");
+                        wPrice.setPaintFlags(0);
+                    } else {
+                        wPrice.setText("From: " + WFormatter.formatAmount(wasPrice));
+                        wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        WwasPrice.setText(WFormatter.formatAmount(price));
+                    }
+                }
+                break;
+
+            default:
+                if (TextUtils.isEmpty(wasPrice)) {
+                    if (Utils.isLocationEnabled(WProductDetailActivity.this)) {
+                        ArrayList<Double> priceList = new ArrayList<>();
+                        for (OtherSku os : productDetail.otherSkus) {
+                            if (!TextUtils.isEmpty(os.price)) {
+                                priceList.add(Double.valueOf(os.price));
+                            }
+                        }
+                        if (priceList.size() > 0) {
+                            price = String.valueOf(Collections.max(priceList));
+                        }
+                    }
+                    wPrice.setText(WFormatter.formatAmount(price));
+                    wPrice.setPaintFlags(0);
+                    WwasPrice.setText("");
+                } else {
+                    if (Utils.isLocationEnabled(WProductDetailActivity.this)) {
+                        ArrayList<Double> priceList = new ArrayList<>();
+                        for (OtherSku os : productDetail.otherSkus) {
+                            if (!TextUtils.isEmpty(os.price)) {
+                                priceList.add(Double.valueOf(os.price));
+                            }
+                        }
+                        if (priceList.size() > 0) {
+                            price = String.valueOf(Collections.max(priceList));
+                        }
+                    }
+
+                    if (wasPrice.equalsIgnoreCase(price)) { //wasPrice equals currentPrice
+                        wPrice.setText(WFormatter.formatAmount(price));
+                        WwasPrice.setText("");
+                    } else {
+                        wPrice.setText(WFormatter.formatAmount(wasPrice));
+                        wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        WwasPrice.setText(WFormatter.formatAmount(price));
+                    }
+                }
+                break;
+        }
     }
 }
