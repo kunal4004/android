@@ -523,7 +523,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                             }
                             GsonBuilder builder = new GsonBuilder();
                             Gson gson = builder.create();
-                            displayProductDetail(gson.toJson(mProductList), mSkuId,mProductList.get(0).otherSkus.size());
+                            displayProductDetail(gson.toJson(mProductList), mSkuId, mProductList.get(0).otherSkus.size());
                             hideProgressDetailLoad();
                             break;
 
@@ -662,6 +662,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                 loadHeroImage(getImageByWidth(mSelectedProduct.externalImageRef));
                 selectedColor("");
                 showSlideUpView();
+                setSelectedTextSize("");
                 setTextFromGrid();
                 showPrice();
                 setPromotionText("");
