@@ -370,7 +370,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                         mProductScroll.setVisibility(View.GONE);
                         mSkuId = mProduct.get(0).otherSkus.get(0).sku;
                         mProductId = mProduct.get(0).productId;
-                        mSelectedProduct=mProduct.get(0);
+                        mSelectedProduct = mProduct.get(0);
                         onCallback(mProductId, mSkuId, true);
                     } else {
                         num_of_item = pv.pagingResponse.numItemsInTotal;
@@ -432,7 +432,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                         mProductScroll.setVisibility(View.GONE);
                         mSkuId = mProduct.get(0).otherSkus.get(0).sku;
                         mProductId = mProduct.get(0).productId;
-                        mSelectedProduct=mProduct.get(0);
+                        mSelectedProduct = mProduct.get(0);
                         onCallback(mProductId, mSkuId, true);
                     } else {
                         mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
@@ -523,7 +523,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                             }
                             GsonBuilder builder = new GsonBuilder();
                             Gson gson = builder.create();
-                            displayProductDetail(mProductList.get(0).productName, gson.toJson(mProductList), mSkuId,mProductList.get(0).otherSkus.size());
+                            displayProductDetail(gson.toJson(mProductList), mSkuId, mProductList.get(0).otherSkus.size());
                             hideProgressDetailLoad();
                             break;
 
@@ -662,6 +662,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                 loadHeroImage(getImageByWidth(mSelectedProduct.externalImageRef));
                 selectedColor("");
                 showSlideUpView();
+                setSelectedTextSize("");
                 setTextFromGrid();
                 showPrice();
                 setPromotionText("");

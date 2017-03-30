@@ -56,7 +56,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -92,7 +94,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class QRActivity extends Activity<QRModel> implements View.OnClickListener, SelectedProductView {
-    private final int IMAGE_QUALITY = 85;
+    public final int IMAGE_QUALITY = 85;
     public static final int CODE_PICK_IMAGE = 0x100;
     private BaseCameraManager cameraManager;
     public final int ZBAR_PERMS_REQUEST_CODE = 12345678;
@@ -146,8 +148,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     private SlidingUpPanelLayout.PanelState mPanelState = SlidingUpPanelLayout.PanelState.COLLAPSED;
     private String mDefaultColor;
     private String mDefaultColorRef;
-    private String mDefaultSize;
-    private int mPosition;
+    public String mDefaultSize;
+    public ProductViewPagerAdapter mProductViewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -688,6 +690,14 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
             mTextPromo.setVisibility(View.VISIBLE);
             mTextPromo.setText(mProduct.saveText);
         }
+
+        if (otherSkusList.size() > 1) {
+            mColorView.setVisibility(View.VISIBLE);
+            mRelContainer.setVisibility(View.VISIBLE);
+        } else {
+            mColorView.setVisibility(View.GONE);
+            mRelContainer.setVisibility(View.GONE);
+        }
     }
 
     protected void populateView() {
@@ -710,6 +720,12 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         mProductCode.setText(getString(R.string.product_code)
                 + ": "
                 + productDetail.productId);
+        updatePrice();
+        mCategoryName.setText(productDetail.categoryName);
+    }
+
+
+    public void updatePrice() {
         String fromPrice = String.valueOf(productDetail.fromPrice);
         String wasPrice = "";
         ArrayList<Double> priceList = new ArrayList<>();
@@ -722,17 +738,13 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         if (priceList.size() > 0) {
             wasPrice = String.valueOf(Collections.max(priceList));
         }
-
-        productPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice, productDetail.productType);
-        mCategoryName.setText(productDetail.categoryName);
+        productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice, productDetail.productType);
     }
 
-    public void productPriceList(WTextView wPrice, WTextView WwasPrice,
-                                 String price, String wasPrice, String productType) {
+    public void productDetailPriceList(WTextView wPrice, WTextView WwasPrice,
+                                       String price, String wasPrice, String productType) {
         switch (productType) {
             case "clothingProducts":
-                mColorView.setVisibility(View.VISIBLE);
-                mRelContainer.setVisibility(View.VISIBLE);
                 if (TextUtils.isEmpty(wasPrice)) {
                     wPrice.setText("From: " + WFormatter.formatAmount(price));
                     wPrice.setPaintFlags(0);
@@ -752,8 +764,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                 break;
 
             default:
-                mColorView.setVisibility(View.GONE);
-                mRelContainer.setVisibility(View.GONE);
                 if (TextUtils.isEmpty(wasPrice)) {
                     if (Utils.isLocationEnabled(QRActivity.this)) {
                         ArrayList<Double> priceList = new ArrayList<>();
@@ -795,6 +805,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         }
     }
 
+
     protected String isEmpty(String value) {
         if (TextUtils.isEmpty(value)) {
             return "";
@@ -830,7 +841,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     }
 
     protected void colorParams(int position) {
-        mPosition = position;
         String colour = uniqueColorList.get(position).colour;
         String defaultUrl = uniqueColorList.get(position).externalColourRef;
         if (TextUtils.isEmpty(colour)) {
@@ -839,10 +849,51 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         mTextColour.setText(colour);
         mAuxiliaryImages = null;
         mAuxiliaryImages = new ArrayList<>();
+        mDefaultImage = getSkuExternalImageRef(colour);
+
         //show default image when imageUrl is empty
         selectedColor(defaultUrl);
+        getSKUDefaultSize(colour);
         retrieveJson(colour);
     }
+
+
+    public String getSkuExternalImageRef(String colour) {
+        if (otherSkusList != null) {
+            if (otherSkusList.size() > 0) {
+                List<OtherSku> otherSku = otherSkusList;
+                for (OtherSku sku : otherSku) {
+                    if (sku.colour.equalsIgnoreCase(colour)) {
+                        return getImageByWidth(sku.externalImageRef);
+                    }
+                }
+            }
+        }
+        return "";
+    }
+
+    public void getSKUDefaultSize(String colour) {
+        if (otherSkusList != null) {
+            if (otherSkusList.size() > 0) {
+                List<OtherSku> otherSku = otherSkusList;
+                for (OtherSku sku : otherSku) {
+                    if (sku.colour.equalsIgnoreCase(colour)) {
+                        if (!TextUtils.isEmpty(sku.size))
+                            setSelectedTextSize(sku.size);
+                        else
+                            setSelectedTextSize("");
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public void setSelectedTextSize(String size) {
+        mTextSelectSize.setText(size);
+        mTextSelectSize.setTextColor(Color.BLACK);
+    }
+
 
     protected void selectedColor(String url) {
         if (TextUtils.isEmpty(url)) {
@@ -856,18 +907,26 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
     protected void retrieveJson(String colour) {
         JSONObject jsProduct;
+        if (mAuxiliaryImages != null) {
+            mAuxiliaryImages.clear();
+        }
         try {
             // Instantiate a JSON object from the request response
             jsProduct = new JSONObject(mProductJSON);
             String mProduct = jsProduct.getString("product");
             JSONObject jsProductList = new JSONObject(mProduct);
             if (jsProductList.has("ingredients")) {
-
                 setIngredients(jsProductList.getString("ingredients"));
             } else {
-                ingredientLine.setVisibility(View.GONE);
-                mLinIngredient.setVisibility(View.GONE);
+                setIngredients("");
             }
+
+            //display default image
+            if (mAuxiliaryImages != null) {
+                if (!TextUtils.isEmpty(mDefaultImage))
+                    mAuxiliaryImages.add(0, mDefaultImage);
+            }
+
             String auxiliaryImages = jsProductList.getString("auxiliaryImages");
             JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
             Iterator<String> keysIterator = jsAuxiliaryImages.keys();
@@ -878,26 +937,15 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                     JSONObject jsonObject = new JSONObject(valueStr);
                     if (jsonObject.has("externalImageRef")) {
                         mAuxiliaryImages.add(getImageByWidth(jsonObject.getString("externalImageRef")));
-                    } else {
-                        mAuxiliaryImages.add(mDefaultImage);
                     }
                 }
             }
 
-            //force default image to display first
-            if (mPosition == 0 || mAuxiliaryImages.size() == 0) {
-                if (mAuxiliaryImages.contains(mDefaultImage)) {
-                    for (int index = 0; index < mAuxiliaryImages.size(); index++) {
-                        if (mAuxiliaryImages.get(index)
-                                .equalsIgnoreCase(mDefaultImage)) {
-                            mAuxiliaryImages.remove(index);
-                        }
-                    }
-                }
-                mAuxiliaryImages.add(0, mDefaultImage);
-            }
+            Set<String> removeAuxiliaryImageDuplicate = new LinkedHashSet<>(mAuxiliaryImages);
+            mAuxiliaryImages.clear();
+            mAuxiliaryImages.addAll(removeAuxiliaryImageDuplicate);
 
-            ProductViewPagerAdapter mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
+            mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
             mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
             mProductViewPagerAdapter.notifyDataSetChanged();
             setupPagerIndicatorDots();
@@ -933,7 +981,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
             });
 
         } catch (JSONException e) {
-            Log.e("bling bling", e.toString());
+            Log.e("jsonException", e.toString());
         }
     }
 
