@@ -523,7 +523,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                             }
                             GsonBuilder builder = new GsonBuilder();
                             Gson gson = builder.create();
-                            displayProductDetail(mProductList.get(0).productName, gson.toJson(mProductList), mSkuId);
+                            displayProductDetail(mProductList.get(0).productName, gson.toJson(mProductList), mSkuId,mProductList.get(0).otherSkus.size());
                             hideProgressDetailLoad();
                             break;
 
