@@ -2,50 +2,37 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.style.URLSpan;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.WindowManager;
-import android.webkit.URLUtil;
+import android.webkit.WebView;
 
 import com.awfs.coordination.R;
 
-
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class FAQDetailActivity extends BaseActivity {
+import static za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity.mToolbar;
 
-    private String mQuestion;
-    private String mAnswer;
-    private WTextView mTitle;
-    private WTextView mDescription;
+public class FAQDetailsWebActivity extends BaseActivity {
     private Toolbar mToolbar;
-
+    private WebView webView;
+    private String url;
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
                 WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         Utils.updateStatusBarBackground(this);
-        setContentView(R.layout.faq_detail);
+        setContentView(R.layout.activity_faqdetails_web);
         init();
         setActionBar();
         getBundle();
-        populateTextView();
+        bindDateWithUI();
     }
-
-    private void init() {
-        mTitle = (WTextView) findViewById(R.id.title);
-        mDescription = (WTextView) findViewById(R.id.description);
-        mToolbar = (Toolbar) findViewById(R.id.mToolbar);
-    }
-
     private void setActionBar() {
         setSupportActionBar(mToolbar);
         ActionBar mActionBar = getSupportActionBar();
@@ -57,36 +44,22 @@ public class FAQDetailActivity extends BaseActivity {
             mActionBar.setHomeAsUpIndicator(R.drawable.back24);
         }
     }
-
+    private void init() {
+        webView = (WebView) findViewById(R.id.faqWeb);
+        mToolbar = (Toolbar) findViewById(R.id.mToolbar);
+    }
     public void getBundle() {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         if (bundle != null) {
-            mQuestion = bundle.getString("Question");
-            mAnswer = bundle.getString("Answer");
+            url = bundle.getString("url");
         }
     }
-
-    private void populateTextView() {
-        mTitle.setText(mQuestion);
-        mDescription.setText(Html.fromHtml(mAnswer));
-        mDescription.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                URLSpan spans[] = mDescription.getUrls();
-                if(spans.length!=0)
-                {
-                    String url=spans[0].getURL();
-                    if(URLUtil.isValidUrl(url))
-                    {
-                     startActivity(new Intent(FAQDetailActivity.this,FAQDetailsWebActivity.class).putExtra("url",url));
-                    }
-                }
-            }
-        });
-
+    public void bindDateWithUI()
+    {
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.loadUrl(url);
     }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -101,5 +74,4 @@ public class FAQDetailActivity extends BaseActivity {
         }
         return false;
     }
-
 }
