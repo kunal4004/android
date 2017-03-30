@@ -183,6 +183,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         otherSkusList = mProductDetail.otherSkus;
         mCheckOutLink = mProductDetail.checkOutLink;
         mCategoryName.setText(mProductDetail.categoryName);
+        //update default image
         mDefaultImage = getImageByWidth(mProductDetail.externalImageRef);
         setPromotionText(mProductDetail.saveText);
         mProductLongDescription();
