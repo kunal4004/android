@@ -194,6 +194,9 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         if (otherSkuSize > 1) {
             mColorView.setVisibility(View.VISIBLE);
             mRelContainer.setVisibility(View.VISIBLE);
+        } else {
+            mColorView.setVisibility(View.GONE);
+            mRelContainer.setVisibility(View.GONE);
         }
         mScrollProductDetail.scrollTo(0, 0);
     }
@@ -984,10 +987,10 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             }
         }
 
-        if (priceList != null && priceList.size() > 0) {
+        if (priceList.size() > 0) {
             wasPrice = String.valueOf(Collections.max(priceList));
         }
-        productPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice, productDetail.productType);
+        productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice, productDetail.productType);
     }
 
     public void productDetailPriceList(WTextView wPrice, WTextView WwasPrice,
