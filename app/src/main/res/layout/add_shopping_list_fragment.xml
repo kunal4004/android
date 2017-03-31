@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginEnd="@dimen/bank_spacing_width"
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/linImageView"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_alignParentStart="true"
+        android:layout_margin="@dimen/bank_spacing_width"
+        android:background="@color/white">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/imgShoppingList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            fresco:placeholderImage="@drawable/rectangle"
+            fresco:viewAspectRatio="1.0" />
+    </LinearLayout>
+
+    <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/btnAddShoppingList"
+        style="@style/whiteButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/bank_spacing_width"
+        android:layout_marginLeft="@dimen/bank_spacing_width"
+        android:layout_marginRight="@dimen/bank_spacing_width"
+        android:letterSpacing="0.2"
+        android:text="@string/add_to_shopping_list"
+        app:WButton_font="medium_bold" />
+
+</RelativeLayout>

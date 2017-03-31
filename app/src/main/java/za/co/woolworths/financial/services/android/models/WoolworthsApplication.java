@@ -1,18 +1,26 @@
 package za.co.woolworths.financial.services.android.models;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.os.Bundle;
+import android.support.multidex.MultiDex;
 
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
+
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONObject;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 
 
 public class WoolworthsApplication extends Application {
@@ -22,10 +30,12 @@ public class WoolworthsApplication extends Application {
     public static String LANDING_LOAN_CARD = "LANDING_LOAN_CARD";
     public static String LANDING_REWARDS_CARD = "LANDING_REWARDS_CARD";
     private static Context context;
+    private static Context mContextApplication;
     private UserManager mUserManager;
     private WfsApi mWfsApi;
+    private RetrofitAsyncClient mRetrofitClient;
     private Tracker mTracker;
-
+    private boolean swapSecondFragment = false;
     private static String applyNowLink;
     private static String registrationTCLink;
     private static String faqLink;
@@ -34,11 +44,23 @@ public class WoolworthsApplication extends Application {
     private static String howToSaveLink;
     private static String wrewardsTCLink;
 
+    private int cliCardPosition;
     private static String baseURL;
     private static String apiKey;
     private static String sha1Password;
+    private static String ssoRedirectURI;
+    private static String stsURI;
+    private static String ssoRedirectURILogout;
+    private static String wwTodayURI;
+    private static String creditCardType;
+    private boolean isDEABank = false;
+    private boolean isOther = false;
+    private int productOfferingId;
+    private LatLng lastKnowLatLng;
 
-    private static int NumVouchers =0;
+    private static int NumVouchers = 0;
+
+    public UpdateBankDetail updateBankDetail;
 
     public static void setSha1Password(String sha1Password) {
         WoolworthsApplication.sha1Password = sha1Password;
@@ -128,27 +150,117 @@ public class WoolworthsApplication extends Application {
         WoolworthsApplication.applyNowLink = applyNowLink;
     }
 
+    public static String getSsoRedirectURI() {
+        return ssoRedirectURI;
+    }
+
+    public static void setSsoRedirectURI(String ssoRedirectURI) {
+        WoolworthsApplication.ssoRedirectURI = ssoRedirectURI;
+    }
+
+    public static String getSsoRedirectURILogout() {
+        return ssoRedirectURILogout;
+    }
+
+    public static void setSsoRedirectURILogout(String ssoRedirectURILogout) {
+        WoolworthsApplication.ssoRedirectURILogout = ssoRedirectURILogout;
+    }
+
+    public static String getWwTodayURI() {
+        return wwTodayURI;
+    }
+
+    public static void setWwTodayURI(String wwTodayURI) {
+        WoolworthsApplication.wwTodayURI = wwTodayURI;
+    }
+
+    public static String getCreditCardType() {
+        return creditCardType;
+    }
+
+    public static void setCreditCardType(String creditCardType) {
+        WoolworthsApplication.creditCardType = creditCardType;
+    }
+
+    public static String getStsURI() {
+        return stsURI;
+    }
+
+    public static void setStsURI(String stsURI) {
+        WoolworthsApplication.stsURI = stsURI;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        Fresco.initialize(this);
+
+        updateBankDetail = new UpdateBankDetail();
         WoolworthsApplication.context = this.getApplicationContext();
+        // set app context
+        mContextApplication = getApplicationContext();
         Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
         CalligraphyConfig.initDefault("fonts/WFutura-medium.ttf", R.attr.fontPath);
         getTracker();
+        registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+
+            @Override
+            public void onActivityCreated(Activity activity,
+                                          Bundle savedInstanceState) {
+
+                // new activity created; force its orientation to portrait
+                activity.setRequestedOrientation(
+                        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+            }
+
+            @Override
+            public void onActivityStarted(Activity activity) {
+            }
+
+            @Override
+            public void onActivityResumed(Activity activity) {
+            }
+
+            @Override
+            public void onActivityPaused(Activity activity) {
+            }
+
+            @Override
+            public void onActivityStopped(Activity activity) {
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+            }
+
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+            }
+
+
+        });
     }
 
     public UserManager getUserManager() {
-        if (mUserManager == null){
+        if (mUserManager == null) {
             mUserManager = new UserManager(this);
         }
         return mUserManager;
     }
 
     public WfsApi getApi() {
-        if (mWfsApi == null){
+        if (mWfsApi == null) {
             mWfsApi = new WfsApi(this);
         }
         return mWfsApi;
+    }
+
+    public RetrofitAsyncClient getAsyncApi() {
+        if (mRetrofitClient == null) {
+            mRetrofitClient = new RetrofitAsyncClient(this);
+        }
+        return mRetrofitClient;
     }
 
     @Override
@@ -156,6 +268,7 @@ public class WoolworthsApplication extends Application {
         super.onLowMemory();
         mUserManager = null;
         mWfsApi = null;
+        mRetrofitClient = null;
     }
 
     public Tracker getTracker() {
@@ -164,12 +277,13 @@ public class WoolworthsApplication extends Application {
             // When dry run is set, hits will not be dispatched, but will still be logged as
             // though they were dispatched.
             instance.setDryRun((Util.isDebug(this) ? false : false));
-            instance.getLogger().setLogLevel(Util.isDebug(this) ? com.google.android.gms.analytics.Logger.LogLevel.VERBOSE :com.google.android.gms.analytics.Logger.LogLevel.ERROR);
+            instance.getLogger().setLogLevel(Util.isDebug(this) ? com.google.android.gms.analytics.Logger.LogLevel.VERBOSE : com.google.android.gms.analytics.Logger.LogLevel.ERROR);
             instance.setLocalDispatchPeriod(15);
             mTracker = instance.newTracker(R.xml.global_tracker);
         }
         return mTracker;
     }
+
     public static void setConfig(JSONObject config) {
 
         SharedPreferences settings = context.getSharedPreferences("config_file", 0);
@@ -182,19 +296,20 @@ public class WoolworthsApplication extends Application {
     public static JSONObject config() {
 
         SharedPreferences settings = context.getSharedPreferences("config_file", 0);
-        try{
+        try {
             return new JSONObject(settings.getString("jsondata", ""));
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
 
     }
+
     public static long getConfig_expireLastNotify() {
 
         SharedPreferences settings = context.getSharedPreferences("config", 0);
-        try{
+        try {
             return Long.parseLong(settings.getString("Config_expireLastNotify", "").toString());
-        }catch (Exception e){
+        } catch (Exception e) {
             return Long.parseLong("0");
         }
 
@@ -209,5 +324,59 @@ public class WoolworthsApplication extends Application {
         editor.commit();
     }
 
+    public boolean isDEABank() {
+        return isDEABank;
+    }
+
+    public void setDEABank(boolean DEABank) {
+        this.isDEABank = DEABank;
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
+
+    public int getCliCardPosition() {
+        return cliCardPosition;
+    }
+
+    public void setCliCardPosition(int cliCardPosition) {
+        this.cliCardPosition = cliCardPosition;
+    }
+
+    public boolean isOther() {
+        return isOther;
+    }
+
+    public void setOther(boolean other) {
+        isOther = other;
+    }
+
+    public int getProductOfferingId() {
+        return productOfferingId;
+    }
+
+    public void setProductOfferingId(int productOfferingId) {
+        this.productOfferingId = productOfferingId;
+    }
+
+    public LatLng getLastKnowLatLng() {
+        return lastKnowLatLng;
+    }
+
+    public void setLastKnowLatLng(LatLng lastKnowLatLng) {
+        this.lastKnowLatLng = lastKnowLatLng;
+    }
+
+    /**
+     * retrieve application context
+     *
+     * @return Context
+     */
+    public static Context getAppContext() {
+        return mContextApplication;
+    }
 
 }

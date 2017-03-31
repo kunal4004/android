@@ -1,34 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/search_store_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#d8d8d8"
+    android:background="@color/recent_search_bg"
     android:orientation="vertical">
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/actionbar_background"
-        app:popupTheme="@style/StoreSearch"
-        app:theme="@style/StoreSearch"
-        android:layout_marginTop="0dp"
-        android:minHeight="?attr/actionBarSize"
-        />
-    <include
-        layout="@layout/recent_serachs_layout"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="@drawable/appbar_background"
+        app:elevation="0dp">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:background="@color/white"
+            android:minHeight="?attr/actionBarSize"
+            app:popupTheme="@style/StoreSearch"
+            app:theme="@style/StoreSearch" />
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/recent_serachs_layout"
         android:id="@+id/recentSearchLayout"
         android:visibility="gone"
         />
-    <android.support.v7.widget.RecyclerView
+    <RelativeLayout
+        android:id="@+id/search_Error"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/storeList"
-        android:scrollbars="none"
+        android:gravity="center"
+        android:padding="32dp"
         >
 
-    </android.support.v7.widget.RecyclerView>
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:text="@string/no_results_to_show"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            app:WTextView_font="medium_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/textView2" />
 
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:text="@string/search_error_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView2"
+            android:layout_centerHorizontal="true"
+            app:WTextView_font="myriadpro_regular"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:id="@+id/textView3" />
+    </RelativeLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/storeList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:paddingTop="12dp"
+        android:clipToPadding="false"
+        />
 </LinearLayout>

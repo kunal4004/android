@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.SpannableString;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -185,6 +186,7 @@ public class TransactionHistoryActivity extends Activity {
         }.execute();
     }
 
+
     private class TransactionAdapter extends BaseAdapter {
 
         @Override
@@ -208,7 +210,7 @@ public class TransactionHistoryActivity extends Activity {
                 convertView = getLayoutInflater().inflate(R.layout.transaction_view, null);
             }
             Transaction item = getItem(position);
-            ((TextView) convertView.findViewById(R.id.transaction_view_amount)).setText(WFormatter.formatAmount((int) item.amount));
+            ((TextView) convertView.findViewById(R.id.transaction_view_amount)).setText(WFormatter.formatAmount((int)item.amount));
             DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 Date date = m_ISO8601Local.parse(item.date);

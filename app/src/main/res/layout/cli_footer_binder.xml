@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relButtonCLIDeaBank"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/bank_spacing_width"
+    android:layout_marginLeft="@dimen/bank_spacing_width"
+    android:layout_marginRight="@dimen/bank_spacing_width"
+    android:layout_marginTop="@dimen/bank_spacing_width">
+    <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/btnContinue"
+        style="@style/blackButtonStyle"
+        android:layout_alignParentBottom="true"
+        android:text="@string/cli_continue"
+        app:WButton_font="medium_bold" />
+</RelativeLayout>

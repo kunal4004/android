@@ -1,134 +1,304 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.Activity;
-import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
-import android.util.Log;
-import android.view.MotionEvent;
+import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
+import com.daimajia.swipe.SwipeLayout;
+import com.daimajia.swipe.util.Attributes;
+import com.google.gson.Gson;
 
-public class ShoppingListActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-    RelativeLayout relView;
-    View darkView;
-    CardView newView;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListCheckedAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.ShoppingUnCheckedListAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
+import za.co.woolworths.financial.services.android.util.ScrollState;
+import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.WOnItemClickListener;
+
+public class ShoppingListActivity extends AppCompatActivity implements WOnItemClickListener, ObservableScrollViewCallbacks {
+
+    private static final int ANIM_DOWN_DURATION = 2000 ;
+    private RecyclerView mUncheckedItem;
+    private RecyclerView mCheckItem;
+    private Toolbar mToolbar;
+    private ShoppingListCheckedAdapter checkedShoppingListAdapter;
+    private ShoppingUnCheckedListAdapter unCheckedShoppingListAdapter;
+    private ArrayList<ShoppingList> uncheckedItemList;
+    private ArrayList<ShoppingList> checkedItemList;
+    public WTextView mCheckListTitle;
+    private List<ShoppingList> mGetShoppingList;
+    private RelativeLayout mNoItemInList;
+    private WObservableScrollView mNestedScroll;
+    private RelativeLayout mRelRootContainer;
+    private boolean viewWasClicked=false;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shopping_list);
-        relView=(RelativeLayout)findViewById(R.id.relview);
-        darkView=(View) findViewById(R.id.darkView);
-        newView=(CardView) findViewById(R.id.newview);
-        relView.setOnTouchListener(new RelativeLayoutTouchListener(this){
-            @Override
-            public void onTopToBottomSwipe() {
-                super.onTopToBottomSwipe();
-                 darkView.setVisibility(View.VISIBLE);
-                SlideDown(newView,ShoppingListActivity.this);
-               // newView.setVisibility(View.VISIBLE);
-            }
-        });
-
-
+        Utils.updateStatusBarBackground(this);
+        setContentView(R.layout.shopping_list_activity);
+        initUI();
+        actionBar();
+        bindDataWithView(this);
+        confidentialAnimation();
     }
-    public void SlideDown(View view,Context context)
-    {
-        view.startAnimation(AnimationUtils.loadAnimation(context,
-                R.anim.slid_down));
-        view.setVisibility(View.VISIBLE);
+
+    private void initUI() {
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mUncheckedItem = (RecyclerView) findViewById(R.id.uncheckedItem);
+        mCheckItem = (RecyclerView) findViewById(R.id.checkedItem);
+        mCheckListTitle = (WTextView) findViewById(R.id.checkListTitle);
+        mNoItemInList = (RelativeLayout) findViewById(R.id.noItemInList);
+        mNestedScroll = (WObservableScrollView) findViewById(R.id.nestedScroll);
+        mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+
+        mNestedScroll.setScrollViewCallbacks(this);
     }
-    public class RelativeLayoutTouchListener implements View.OnTouchListener {
 
-        static final String logTag = "ActivitySwipeDetector";
-        private Activity activity;
-        static final int MIN_DISTANCE = 100;// TODO change this runtime based on screen resolution. for 1920x1080 is to small the 100 distance
-        private float downX, downY, upX, upY;
-
-        // private MainActivity mMainActivity;
-
-        public RelativeLayoutTouchListener(ShoppingListActivity mainActivity) {
-            activity = mainActivity;
+    private void actionBar() {
+        setSupportActionBar(mToolbar);
+        ActionBar mActionBar = getSupportActionBar();
+        if (mActionBar != null) {
+            mActionBar.setDisplayHomeAsUpEnabled(true);
+            mActionBar.setDisplayShowTitleEnabled(false);
+            mActionBar.setHomeAsUpIndicator(R.drawable.close_24);
         }
+    }
 
-        public void onRightToLeftSwipe() {
-            Log.i(logTag, "RightToLeftSwipe!");
-            // activity.doSomething();
-        }
+    private void confidentialAnimation() {
+            TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+            animation.setFillAfter(true);
+            animation.setDuration(ANIM_DOWN_DURATION);
+            animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
 
-        public void onLeftToRightSwipe() {
-            Log.i(logTag, "LeftToRightSwipe!");
-            // activity.doSomething();
-        }
-
-        public void onTopToBottomSwipe() {
-            Log.i(logTag, "onTopToBottomSwipe!");
-            // activity.doSomething();
-        }
-
-        public void onBottomToTopSwipe() {
-            Log.i(logTag, "onBottomToTopSwipe!");
-            // activity.doSomething();
-        }
-
-        public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN: {
-                    downX = event.getX();
-                    downY = event.getY();
-                    return true;
+                @Override
+                public void onAnimationStart(Animation animation) {
                 }
-                case MotionEvent.ACTION_UP: {
-                    upX = event.getX();
-                    upY = event.getY();
 
-                    float deltaX = downX - upX;
-                    float deltaY = downY - upY;
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
 
-                    // swipe horizontal?
-                    if (Math.abs(deltaX) > MIN_DISTANCE) {
-                        // left or right
-                        if (deltaX < 0) {
-                            this.onLeftToRightSwipe();
-                            return true;
-                        }
-                        if (deltaX > 0) {
-                            this.onRightToLeftSwipe();
-                            return true;
-                        }
-                    } else {
-                        Log.i(logTag, "Swipe was only " + Math.abs(deltaX) + " long horizontally, need at least " + MIN_DISTANCE);
-                        // return false; // We don't consume the event
-                    }
+                @Override
+                public void onAnimationEnd(Animation animation) {
 
-                    // swipe vertical?
-                    if (Math.abs(deltaY) > MIN_DISTANCE) {
-                        // top or down
-                        if (deltaY < 0) {
-                            this.onTopToBottomSwipe();
-                            return true;
-                        }
-                        if (deltaY > 0) {
-                            this.onBottomToTopSwipe();
-                            return true;
-                        }
-                    } else {
-                        Log.i(logTag, "Swipe was only " + Math.abs(deltaX) + " long vertically, need at least " + MIN_DISTANCE);
-                        // return false; // We don't consume the event
-                    }
+                }
+            });
+            mRelRootContainer.startAnimation(animation);
+    }
 
-                    return false; // no swipe horizontally and no swipe vertically
-                }// case MotionEvent.ACTION_UP:
-            }
-            return false;
+    private void bindDataWithView(WOnItemClickListener context) {
+        LinearLayoutManager checkedLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager unCheckedLayoutManager = new LinearLayoutManager(this);
+
+        checkedLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        unCheckedLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        mUncheckedItem.setHasFixedSize(false);
+        mUncheckedItem.setLayoutManager(unCheckedLayoutManager);
+        mCheckItem.setHasFixedSize(false);
+        mCheckItem.setLayoutManager(checkedLayoutManager);
+
+        adapterList();
+
+
+        checkedShoppingListAdapter = new ShoppingListCheckedAdapter(checkedItemList, context);
+        unCheckedShoppingListAdapter = new ShoppingUnCheckedListAdapter(uncheckedItemList, context);
+        checkedShoppingListAdapter.setMode(Attributes.Mode.Single);
+        unCheckedShoppingListAdapter.setMode(Attributes.Mode.Single);
+
+        mCheckItem.setAdapter(checkedShoppingListAdapter);
+        mUncheckedItem.setAdapter(unCheckedShoppingListAdapter);
+    }
+
+    private void adapterList() {
+        if (mGetShoppingList != null)
+            mGetShoppingList.clear();
+
+        mGetShoppingList = Utils.getShoppingList(this);
+
+        if (mGetShoppingList == null) {
+            mGetShoppingList = new ArrayList<>();
+        }
+        uncheckedItemList = new ArrayList<>();
+        checkedItemList = new ArrayList<>();
+
+        if (uncheckedItemList != null) {
+            uncheckedItemList.clear();
         }
 
+        if (checkedItemList != null) {
+            checkedItemList.clear();
+        }
+
+        if (mGetShoppingList != null && mGetShoppingList.size() > 0) {
+            for (ShoppingList s : mGetShoppingList) {
+                if (s.isProductIsChecked()) {
+                    checkedItemList.add(s);
+                } else {
+                    uncheckedItemList.add(s);
+                }
+            }
+        }
+
+        shoppingListEmptyView();
     }
+
+    @Override
+    public void onItemClick(String productId, int section) {
+        switch (section) {
+            case 0:
+                for (int x = 0; x < mGetShoppingList.size(); x++) {
+                    if (productId.equalsIgnoreCase(mGetShoppingList.get(x).getProduct_id())) {
+                        ShoppingList shoppingList = mGetShoppingList.get(x);
+                        ShoppingList updatedShopList = new ShoppingList(shoppingList.getProduct_id(),
+                                shoppingList.getProduct_name(), true);
+                        mGetShoppingList.set(x, updatedShopList);
+                        Collections.swap(mGetShoppingList, 0, x);
+                        checkedItemList.add(0, updatedShopList);
+                    }
+                }
+
+                checkedShoppingListAdapter.notifyItemInserted(0);
+                checkedShoppingListAdapter.notifyItemRangeChanged(0, checkedItemList.size());
+                checkedShoppingListAdapter.notifyDataSetChanged();
+                checkedShoppingListAdapter.mItemManger.closeAllItems();
+
+
+                Utils.sessionDaoSave(this, SessionDao.KEY.STORE_SHOPPING_LIST,
+                        new Gson().toJson(mGetShoppingList));
+                break;
+
+            case 1:
+                for (int x = 0; x < mGetShoppingList.size(); x++) {
+                    if (productId.equalsIgnoreCase(mGetShoppingList.get(x).getProduct_id())) {
+                        ShoppingList shoppingList = mGetShoppingList.get(x);
+                        ShoppingList updatedShopList = new ShoppingList(shoppingList.getProduct_id(),
+                                shoppingList.getProduct_name(), false);
+                        mGetShoppingList.set(x, updatedShopList);
+                        Collections.swap(mGetShoppingList, 0, x);
+                        uncheckedItemList.add(uncheckedItemList.size(), updatedShopList);
+                    }
+                }
+
+                unCheckedShoppingListAdapter.notifyItemInserted(uncheckedItemList.size());
+                unCheckedShoppingListAdapter.notifyItemRangeChanged(0, uncheckedItemList.size());
+                unCheckedShoppingListAdapter.notifyDataSetChanged();
+                unCheckedShoppingListAdapter.mItemManger.closeAllItems();
+
+                Utils.sessionDaoSave(this, SessionDao.KEY.STORE_SHOPPING_LIST,
+                        new Gson().toJson(mGetShoppingList));
+                break;
+        }
+    }
+
+    @Override
+    public void onSwipeListener(int index, SwipeLayout layout) {
+        switch (index) {
+            case 0:
+                checkedShoppingListAdapter.closeAllItems();
+                checkedShoppingListAdapter.notifyDataSetChanged();
+
+                break;
+
+            case 1:
+                unCheckedShoppingListAdapter.closeAllItems();
+                unCheckedShoppingListAdapter.notifyDataSetChanged();
+                break;
+        }
+    }
+
+    @Override
+    public void onDelete(String productId) {
+        ArrayList toRemove = new ArrayList();
+        for (ShoppingList str : mGetShoppingList) {
+            if (productId.equalsIgnoreCase(str.getProduct_id())) {
+                toRemove.add(str);
+            }
+        }
+        mGetShoppingList.removeAll(toRemove);
+        Utils.sessionDaoSave(this, SessionDao.KEY.STORE_SHOPPING_LIST,
+                new Gson().toJson(mGetShoppingList));
+
+        shoppingListEmptyView();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return false;
+    }
+
+    private void shoppingListEmptyView() {
+        if (mGetShoppingList.size() == 0) {
+            mNoItemInList.setVisibility(View.VISIBLE);
+            mNestedScroll.setVisibility(View.GONE);
+        } else {
+            mNoItemInList.setVisibility(View.GONE);
+            mNestedScroll.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+
+    }
+
+    @Override
+    public void onDownMotionEvent() {
+
+    }
+
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+        try {
+            switch (scrollState) {
+                case UP:
+                    hideViews();
+                    break;
+                case DOWN:
+                    showViews();
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+
+    private void hideViews() {
+        mToolbar.animate().translationY(-mToolbar.getBottom())
+                .setInterpolator(new AccelerateInterpolator()).start();
+    }
+
+    private void showViews() {
+        mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
+    }
+
 }

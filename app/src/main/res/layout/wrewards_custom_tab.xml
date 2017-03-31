@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@drawable/wrewards_tab_text_color"
+            android:textSize="12sp"
+            android:letterSpacing="0.1"
+            app:WTextView_font="medium"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tv_count"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="6dp"
+            android:background="@drawable/vouchers_badge"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            app:WTextView_font="medium_bold"
+            />
+
+    </LinearLayout>
+
+</RelativeLayout>

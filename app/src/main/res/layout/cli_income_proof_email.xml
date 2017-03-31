@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_marginLeft="@dimen/bank_spacing_width"
+    android:layout_marginRight="@dimen/bank_spacing_width"
+    android:layout_marginTop="@dimen/bank_spacing_width"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/icon_paperclip"
+        android:id="@+id/imgIcon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/textOptionTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cli_option_one"
+        android:letterSpacing="0.04"
+        android:gravity="center|start"
+        android:textColor="@color/black"
+        android:lineSpacingExtra="5dp"
+        android:textSize="12sp"
+        android:textAllCaps="true"
+        app:WTextView_font="medium_bold"
+        android:layout_marginStart="18dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/imgIcon" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/textOptionDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cli_take_a_photo_desc"
+        android:gravity="center|start"
+        android:textColor="@color/black_desc_opacity"
+        android:lineSpacingExtra="5dp"
+        android:visibility="visible"
+        android:textSize="15sp"
+        app:WTextView_font="myriadpro_regular"
+        android:layout_below="@+id/imgIcon"
+        android:layout_alignStart="@+id/titleTakeAPhoto" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/titleTakeAPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cli_take_a_photo"
+        android:letterSpacing="0.04"
+        android:gravity="center|start"
+        android:textColor="@color/black"
+        android:lineSpacingExtra="5dp"
+        android:textSize="15sp"
+        app:WTextView_font="myriadpro_semibold"
+        android:layout_below="@+id/textOptionTitle"
+        android:layout_alignStart="@+id/textOptionTitle"
+        android:layout_marginTop="11dp" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/textAttachmentTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cli_attach"
+        android:letterSpacing="0.04"
+        android:gravity="center|start"
+        android:textColor="@color/black"
+        android:lineSpacingExtra="5dp"
+        android:textSize="15sp"
+        app:WTextView_font="myriadpro_semibold"
+        android:layout_below="@+id/textOptionDesc"
+        android:layout_alignStart="@+id/textOptionTitle"
+        android:layout_marginTop="15dp" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/textAttachmentTitleDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cli_attach_drive_desc"
+        android:gravity="center|start"
+        android:textColor="@color/black_desc_opacity"
+        android:lineSpacingExtra="5dp"
+        android:textSize="15sp"
+        app:WTextView_font="myriadpro_regular"
+        android:layout_below="@+id/textAttachmentTitle"
+        android:layout_alignStart="@+id/textOptionTitle"
+        android:layout_marginTop="11dp" />
+
+
+</RelativeLayout>

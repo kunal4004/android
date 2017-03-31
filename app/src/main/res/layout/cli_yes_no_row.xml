@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_marginRight="@dimen/bank_spacing_width"
+    android:layout_marginLeft="@dimen/bank_spacing_width"
+    android:layout_marginTop="@dimen/bank_spacing_width"
+    android:layout_height="wrap_content">
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/textApplySolvency"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cli_solvency_agreement"
+        android:letterSpacing="0.06"
+        android:gravity="center|start"
+        android:textColor="@color/black_desc_opacity"
+        android:textSize="14sp"
+        android:lineSpacingExtra="4dp"
+        app:WTextView_font="myriadpro_regular"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/imgInfo"
+        android:layout_alignBottom="@+id/imgInfo"
+        android:layout_alignTop="@+id/imgInfo" />
+
+    <RadioGroup
+        android:id="@+id/radApplySolvency"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="start"
+        android:layout_marginTop="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:layout_height="wrap_content" >
+        <za.co.woolworths.financial.services.android.ui.views.WRadioButton
+            android:id="@+id/radioYesSolvency"
+            android:layout_width="wrap_content"
+            android:button="@null"
+            android:layout_height="wrap_content"
+            android:text="@string/cli_yes"
+            android:gravity="right|center"
+            android:textSize="12sp"
+            android:checked="false"
+            android:letterSpacing="0.2"
+            android:background="@android:color/transparent"
+            android:textAllCaps="true"
+            android:drawableLeft="@drawable/cli_radio_selector"
+            android:drawablePadding="10dp"
+
+            />
+        <za.co.woolworths.financial.services.android.ui.views.WRadioButton
+            android:id="@+id/radioNoSolvency"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="36dp"
+            android:button="@null"
+            android:drawablePadding="10dp"
+            android:drawableLeft="@drawable/cli_radio_selector"
+            android:background="@android:color/transparent"
+            android:gravity="right|center"
+            android:textSize="12sp"
+            android:letterSpacing="0.2"
+            app:WTextView_font="medium_bold"
+            android:textAllCaps="true"
+            android:layout_height="wrap_content"
+            android:text="@string/cli_no"
+            />
+    </RadioGroup>
+
+    <include layout="@layout/horizontal_divider"/>
+</LinearLayout>

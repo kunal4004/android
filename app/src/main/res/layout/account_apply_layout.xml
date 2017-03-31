@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/applyNowLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_top_and_bottom"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:orientation="vertical"
+        android:paddingTop="8dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:minHeight="48dp"
+            >
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/sectionTitleLight"
+                android:layout_centerVertical="true"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:text="@string/woolworths_financial_services"
+                android:textAllCaps="true"
+                app:WTextView_font="medium"
+                android:paddingRight="16dp"
+                android:paddingLeft="16dp"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:textColor="#80000000"
+                android:textSize="12sp"
+                app:WTextView_font="medium" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/applyStoreCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/card_shadow"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:orientation="vertical"
+            android:visibility="gone"
+
+            >
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:minHeight="100dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:paddingLeft="@dimen/card_padding_margin"
+                    android:paddingRight="@dimen/card_padding_margin">
+
+                    <ImageView
+                        android:id="@+id/imgStoreCard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:background="@drawable/small_2"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        style="@style/sectionCardLight"
+                        android:layout_toRightOf="@+id/imgStoreCard"
+                        android:focusable="false"
+                        android:textSize="@dimen/acc_thirteen_sp"
+                        android:focusableInTouchMode="false"
+                        android:text="@string/store_card"
+                        app:WTextView_font="medium" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/applyNowStoreCardTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:drawableRight="@drawable/ic_caret_black"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center_vertical"
+                        android:text="@string/apply_now"
+                        android:textColor="@color/black_off"
+                        android:textSize="@dimen/acc_thirteen_sp"
+                        app:WTextView_font="medium_bold" />
+                </RelativeLayout>
+
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/applyCrediCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/card_shadow"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:minHeight="100dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:paddingLeft="@dimen/card_padding_margin"
+                    android:paddingRight="@dimen/card_padding_margin">
+
+                    <ImageView
+                        android:id="@+id/imgCreditCard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:background="@drawable/small_3"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        style="@style/sectionCardLight"
+                        android:layout_toRightOf="@+id/imgCreditCard"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:textSize="@dimen/acc_thirteen_sp"
+                        android:text="@string/credit_card"
+                        app:WTextView_font="medium" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/applyNowCreditCard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:drawableRight="@drawable/ic_caret_black"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center_vertical"
+                        android:text="@string/apply_now"
+                        android:textColor="@color/black_off"
+                        android:textSize="@dimen/acc_thirteen_sp"
+                        app:WTextView_font="medium_bold" />
+                </RelativeLayout>
+
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/applyPersonalLoan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/card_shadow"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:minHeight="100dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:paddingLeft="@dimen/card_padding_margin"
+                    android:paddingRight="@dimen/card_padding_margin">
+
+                    <ImageView
+                        android:id="@+id/imgPersonalLoan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:background="@drawable/small"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false" />
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            style="@style/sectionCardLight"
+                            android:layout_toRightOf="@+id/imgPersonalLoan"
+                            android:focusable="false"
+                            android:layout_weight="6"
+                            android:focusableInTouchMode="false"
+                            android:textSize="@dimen/acc_thirteen_sp"
+                            android:text="@string/personal_loan"
+                            app:WTextView_font="medium"
+                            android:layout_marginBottom="16dp"/>
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/applyNowPersonalLoan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_weight="4"
+                            android:drawableRight="@drawable/ic_caret_black"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
+                            android:gravity="center_vertical"
+                            android:text="@string/apply_now"
+                            android:textColor="@color/black_off"
+                            android:textSize="@dimen/acc_thirteen_sp"
+                            app:WTextView_font="medium_bold" />
+                </RelativeLayout>
+            </FrameLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/transparent"
+            android:focusable="false"
+            android:focusableInTouchMode="false" />
+    </LinearLayout>
+
+</LinearLayout>

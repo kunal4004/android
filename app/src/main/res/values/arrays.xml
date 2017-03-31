@@ -29,6 +29,25 @@
          <item>@string/nav_item_accounts</item>
     </string-array>
 
+    <string-array name="accounts_walkthrough_descriptions">
+        <item>@string/accounts_walkthrough_desc_1</item>
+        <item>@string/accounts_walkthrough_desc_2</item>
+        <item>@string/accounts_walkthrough_desc_3</item>
+        <item>@string/accounts_walkthrough_desc_4</item>
+    </string-array>
+    <string-array name="accounts_walkthrough_titles">
+        <item>@string/accounts_walkthrough_title_1</item>
+        <item>@string/accounts_walkthrough_title_2</item>
+        <item>@string/accounts_walkthrough_title_3</item>
+        <item>@string/accounts_walkthrough_title_4</item>
+    </string-array>
+    <integer-array name="accounts_walkthrough_images">
+        <item>@drawable/accounts_walkthrough_1</item>
+        <item>@drawable/accounts_walkthrough_2</item>
+        <item>@drawable/accounts_walkthrough_3</item>
+        <item>@drawable/accounts_walkthrough_4</item>
+    </integer-array>
+
     <integer-array name="nav_drawer_images">
         <item>@drawable/ic_drw_tww</item>
         <item>@drawable/ic_drw_products</item>
@@ -36,4 +55,46 @@
         <item>@drawable/ic_drw_wrewards</item>
         <item>@drawable/ic_drw_accounts</item>
     </integer-array>
+    <string-array name="cl_amount">
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+        <item></item>
+    </string-array>
+    <string-array name="cl_label">
+        <item>@string/cli_monthly_income</item>
+        <item>@string/cli_net_monthly_income</item>
+        <item>@string/cli_additional_monthly_income</item>
+        <item>@string/cli_mortgage_payments</item>
+        <item>@string/cli_rental_payments</item>
+        <item>@string/cli_maintenance_expenses</item>
+        <item>@string/cli_monthly_credit_payment</item>
+        <item>@string/cli_other_expenses</item>
+    </string-array>
+    <string-array name="cl_overlay_label">
+        <item>@string/cli_overlay_monthly_income</item>
+        <item>@string/cli_overlay_gross_income</item>
+        <item>@string/cli_overlay_per_income</item>
+        <item>@string/cli_overlay_monthly_home</item>
+        <item>@string/cli_overlay_rental_payment</item>
+        <item>@string/cli_overlay_monthly_obliged</item>
+        <item>@string/cli_overlay_monthly_installment</item>
+        <item>@string/cli_overlay_other_expenses</item>
+    </string-array>
+    <string-array name="cli_option">
+        <item>@string/cli_option_one</item>
+        <item>@string/cli_option_two</item>
+    </string-array>
+    <string-array name="cli_option_desc">
+        <item>@string/cli_option_one_desc</item>
+        <item>@string/cli_option_two_desc</item>
+    </string-array>
+    <array name="cli_drawable">
+        <item>@drawable/icon_paperclip</item>
+        <item>@drawable/icon_fax</item>
+    </array>
 </resources>

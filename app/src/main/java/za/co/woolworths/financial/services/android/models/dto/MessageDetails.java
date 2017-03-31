@@ -14,5 +14,4 @@ public class MessageDetails {
     public String content;
     public Date createDate;
     public boolean isRead;
-
 }

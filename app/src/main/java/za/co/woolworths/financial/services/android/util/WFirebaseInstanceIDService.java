@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.google.android.gms.iid.InstanceID;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
@@ -27,7 +28,8 @@ public class WFirebaseInstanceIDService extends FirebaseInstanceIdService {
     public void onTokenRefresh() {
         super.onTokenRefresh();
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-
+        String iid = InstanceID.getInstance(getApplicationContext()).getId();
+        Log.e(TAG, "iid: " + iid);
         // Saving reg id to shared preferences
         storeRegIdInPref(refreshedToken);
 
@@ -40,7 +42,7 @@ public class WFirebaseInstanceIDService extends FirebaseInstanceIdService {
         // sending gcm token to server
         Log.e(TAG, "sendRegistrationToServer: " + token);
         final CreateUpdateDevice device=new CreateUpdateDevice();
-        device.appInstanceId= UUID.randomUUID().toString();
+        device.appInstanceId= InstanceID.getInstance(getApplicationContext()).getId();
         device.pushNotificationToken=token;
 
         //Sending Token and app instance Id to App server
@@ -87,5 +89,10 @@ public class WFirebaseInstanceIDService extends FirebaseInstanceIdService {
         editor.commit();
     }
 
+/*@Override
+    public void onCreate() {
+        super.onCreate();
+        android.os.Debug.waitForDebugger();
+    }*/
 }
 

@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#efefef"
-    >
+    android:background="#efefef">
 
     <com.daimajia.swipe.SwipeLayout
+        android:id="@+id/swipe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/swipe"
-        android:layout_marginTop="16dp"
-        >
+        android:layout_marginTop="1dp">
 
 
         <RelativeLayout
@@ -26,91 +23,102 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:src="@drawable/delete_24"
                 android:padding="15dp"
-                />
+                android:src="@drawable/delete_24" />
         </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#efefef"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            >
+            android:orientation="vertical"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp">
 
-            <android.support.v7.widget.CardView
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:elevation="10dp"
-                app:cardCornerRadius="0dp"
+                android:layout_height="wrap_content">
 
-                >
-
-                <RelativeLayout
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/cardLayout"
-                    android:minHeight="80dp"
-                    android:padding="16dp"
-                    >
+                    android:layout_height="wrap_content">
 
-                    <ImageView
-                        android:id="@+id/messagingwlogo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:src="@drawable/messagingwlogo"
-                        />
-
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    <LinearLayout
+                        android:id="@+id/cardLayout"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/msgTitle"
-                        android:maxLines="1"
-                        android:layout_alignBottom="@+id/messagingwlogo"
-                        android:layout_alignTop="@+id/messagingwlogo"
-                        android:layout_marginLeft="18dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_toLeftOf="@+id/date"
-                        android:layout_toRightOf="@+id/messagingwlogo"
-                        android:gravity="center_vertical"
-                        android:text="WRewards Savings"
-                        android:textColor="@color/black"
-                        android:textSize="14sp"
-                        app:WTextView_font="medium_bold"
-                        />
+                        android:layout_height="wrap_content">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/messagingwlogo"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignTop="@+id/messagingwlogo"
-                        android:layout_marginLeft="18dp"
-                        android:gravity="center_vertical"
-                        android:text="Today"
-                        android:textColor="#999999"
-                        android:textSize="12sp"
-                        app:WTextView_font="myriadpro_regular"
-                        />
+                        <RelativeLayout
+                            android:id="@+id/relContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="80dp"
+                            android:padding="16dp">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/bodyMessage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/messagingwlogo"
-                        android:layout_marginLeft="18dp"
-                        android:layout_marginTop="9dp"
-                        android:layout_toRightOf="@+id/messagingwlogo"
-                        android:text="With Wrewards you can save up to 20% instantly on thousands of items through out the store, from food to clothing to homeware to beauty and more. "
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        app:WTextView_font="myriadpro_regular"
-                        />
-                </RelativeLayout>
-            </android.support.v7.widget.CardView>
+                            <ImageView
+                                android:id="@+id/messagingwlogo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:src="@drawable/messagingwlogo" />
+
+                            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                android:id="@+id/msgTitle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignTop="@+id/messagingwlogo"
+                                android:layout_marginLeft="18dp"
+                                android:lineSpacingExtra="4dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_toLeftOf="@+id/date"
+                                android:layout_toRightOf="@+id/messagingwlogo"
+                                android:gravity="center_vertical"
+                                android:text="WRewards Savings"
+                                android:textAllCaps="true"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                app:WTextView_font="medium_bold" />
+
+                            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                android:id="@+id/date"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignBottom="@+id/messagingwlogo"
+                                android:layout_alignParentRight="true"
+                                android:layout_alignTop="@+id/messagingwlogo"
+                                android:layout_marginLeft="18dp"
+                                android:gravity="center_vertical"
+                                android:text="Today"
+                                android:textColor="#999999"
+                                android:textSize="12sp"
+                                app:WTextView_font="myriadpro_regular" />
+
+                            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                android:id="@+id/bodyMessage"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/msgTitle"
+                                android:layout_marginLeft="17dp"
+                                android:layout_marginTop="8dp"
+                                android:lineSpacingExtra="4dp"
+                                android:layout_toEndOf="@+id/messagingwlogo"
+                                android:text="With Wrewards you can save up to 20% instantly on thousands of items through out the store, from food to clothing to homeware to beauty and more. "
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                app:WTextView_font="myriadpro_regular" />
+                        </RelativeLayout>
+
+
+                    </LinearLayout>
+                </FrameLayout>
+
+                <View
+                    android:id="@+id/transparentview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/recent_search_bg"
+                    android:visibility="gone" />
+            </FrameLayout>
         </LinearLayout>
 
 

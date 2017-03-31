@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#cc000000"
+              android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:background="@android:color/transparent"
+        android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/WRewardsVoucherDetails"
+        app:theme="@style/WRewardsVoucherDetails"
+        app:title="">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/termsCondition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/terms_and_conditions_margin"
+            android:gravity="center"
+            android:layout_gravity="right"
+            android:text="@string/view_terms_conditions"
+            android:textAllCaps="true"
+            android:textColor="#b3ffffff"
+            android:textSize="12sp"
+            android:letterSpacing="0.1"
+            app:WTextView_font="medium"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"/>
+
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <za.co.woolworths.financial.services.android.ui.views.SwipeStack
+            android:id="@+id/swipeStack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="@android:color/transparent"
+            android:paddingTop="16dp"
+            android:paddingLeft="@dimen/voucher_card_layout_padding"
+            android:paddingRight="@dimen/voucher_card_layout_padding"
+            app:stack_rotation="0"
+            app:stack_size="3"
+            app:stack_spacing="-10dp"
+            />
+    </RelativeLayout>
+
+</LinearLayout>

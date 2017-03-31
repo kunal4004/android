@@ -11,6 +11,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyTypefaceSpan;
 public class FontHyperTextParser {
 
     public static SpannableString getSpannable(String mSpannableText, int defaultFont, Context c) {
+
         String[] split = mSpannableText.split("\\|");
         SpannableString spannableString = new SpannableString(mSpannableText.replaceAll("\\|![lmsb\\?]\\|", ""));
         int start = 0;

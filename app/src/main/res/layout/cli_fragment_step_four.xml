@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/horizontal_divider_light"/>
+
+    <ImageView
+        android:id="@+id/imgSuccessTick"
+        android:layout_width="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/cli_top_margin"
+        android:layout_height="wrap_content"
+        android:src="@drawable/tick_loader"/>
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/textCreditLimitReceived"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAllCaps="true"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_below="@+id/imgSuccessTick"
+        android:layout_marginTop="@dimen/bank_spacing_width"
+        app:WTextView_font="medium_bold"
+        android:lineSpacingExtra="1dp"
+        android:textColor="@color/black"
+        android:text="@string/cli_credit_limit_received"
+        />
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/textOrderDelay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:layout_marginLeft="@dimen/bank_spacing_width"
+        android:layout_marginRight="@dimen/bank_spacing_width"
+        android:gravity="center|top"
+        android:layout_below="@+id/textCreditLimitReceived"
+        android:layout_marginTop="@dimen/bank_spacing_width"
+        app:WTextView_font="myriadpro_regular"
+        android:lineSpacingExtra="4dp"
+        android:textColor="@color/black_desc_opacity"
+        android:text="@string/cli_contact_delay"
+        />
+
+    <include layout="@layout/cli_footer_binder"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/textOrderDelay" />
+</RelativeLayout>

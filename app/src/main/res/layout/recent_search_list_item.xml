@@ -11,5 +11,5 @@
     android:drawableLeft="@drawable/ic_search_dark"
     android:drawablePadding="36dp"
     app:WTextView_font="myriadpro_regular"
-    android:textSize="16sp"
+    android:textSize="17sp"
     android:textColor="#4d000000" />

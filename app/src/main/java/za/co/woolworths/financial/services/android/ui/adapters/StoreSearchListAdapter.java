@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -33,18 +34,18 @@ public class StoreSearchListAdapter extends RecyclerView.Adapter<StoreSearchList
 
         public SearchViewHolder(View cView) {
             super(cView);
-             storeName=(WTextView)cView.findViewById(R.id.storeName);
-             storeOfferings=(WTextView)cView.findViewById(R.id.offerings);
-             storeDistance=(WTextView)cView.findViewById(R.id.distance);
-             storeAddress=(WTextView)cView.findViewById(R.id.storeAddress);
-             storeTimeing=(WTextView)cView.findViewById(R.id.timeing);
+            storeName = (WTextView) cView.findViewById(R.id.storeName);
+            storeOfferings = (WTextView) cView.findViewById(R.id.offerings);
+            storeDistance = (WTextView) cView.findViewById(R.id.distance);
+            storeAddress = (WTextView) cView.findViewById(R.id.storeAddress);
+            storeTimeing = (WTextView) cView.findViewById(R.id.timeing);
 
         }
     }
-    public StoreSearchListAdapter(Activity context, List<StoreDetails> storeDetailsList)
-    {
-          this.mContext=context;
-          this.storeDetailsList=storeDetailsList;
+
+    public StoreSearchListAdapter(Activity context, List<StoreDetails> storeDetailsList) {
+        this.mContext = context;
+        this.storeDetailsList = storeDetailsList;
     }
 
     @Override
@@ -52,15 +53,16 @@ public class StoreSearchListAdapter extends RecyclerView.Adapter<StoreSearchList
         holder.storeName.setText(storeDetailsList.get(position).name);
         holder.storeAddress.setText(storeDetailsList.get(position).address);
         holder.storeDistance.setText(WFormatter.formatMeter(storeDetailsList.get(position).distance));
-        if(storeDetailsList.get(position).offerings!=null)
-             holder.storeOfferings.setText(WFormatter.formatOfferingString(storeDetailsList.get(position).offerings));
-        if(storeDetailsList.get(position).times!=null  )
-            holder.storeTimeing.setText("Open until "+WFormatter.formatOpenUntilTime(storeDetailsList.get(position).times.get(0).hours));
-
-
+        if (storeDetailsList.get(position).offerings != null)
+            holder.storeOfferings.setText(WFormatter.formatOfferingString(storeDetailsList.get(position).offerings));
+        if (storeDetailsList.get(position).times != null) {
+            try {
+                String mHour = WFormatter.formatOpenUntilTime(storeDetailsList.get(position).times.get(0).hours);
+                holder.storeTimeing.setText("Open until " + mHour);
+            } catch (ArrayIndexOutOfBoundsException ignored) {
+            }
+        }
     }
-
-
 
     @Override
     public int getItemCount() {
@@ -69,9 +71,8 @@ public class StoreSearchListAdapter extends RecyclerView.Adapter<StoreSearchList
 
     @Override
     public SearchViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v= mContext.getLayoutInflater()
+        View v = mContext.getLayoutInflater()
                 .inflate(R.layout.search_store_nearby_item, parent, false);
         return new SearchViewHolder(v);
     }
-
 }

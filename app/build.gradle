@@ -8,19 +8,19 @@ android {
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
-        job = "3";
+        job = "4";
     }
 
     def buildNumber = major + "." + minor + "." + fix
 
     signingConfigs {
-        woneappDev{
+        woneappDev {
             keyAlias 'woneapp_dev'
             keyPassword 'woneapp_dev'
             storeFile file('key/woneapp_dev-release-key.keystore')
             storePassword 'woneapp_dev'
         }
-        woneappQa{
+        woneappQa {
             keyAlias 'woneapp_qa'
             keyPassword 'woneapp_qa'
             storeFile file('key/woneapp_qa-release-key.keystore')
@@ -35,8 +35,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 22
+        minSdkVersion 19 //kitkat 4.4
+        targetSdkVersion 24
         multiDexEnabled true
         versionCode(job.toInteger() + 1)
         versionName buildNumber
@@ -47,7 +47,8 @@ android {
     buildTypes {
         debug {
             debuggable true
-            signingConfig null // Set to null to override default debug keystore and defer to the product flavor.
+            signingConfig null
+            // Set to null to override default debug keystore and defer to the product flavor.
         }
         release {
             minifyEnabled false
@@ -73,25 +74,55 @@ android {
             javaMaxHeapSize "2560M"
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+    }
 }
 
+
+repositories {
+    mavenCentral()
+}
+
+
 dependencies {
+
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
+    compile 'io.jsonwebtoken:jjwt:0.7.0'
     compile 'za.co.wigroup.android:MenuDrawer:1.0.8'
     compile 'com.android.support:support-v4:23.4.0'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'za.co.wigroup.android:utils:1.1.8'
     compile 'uk.co.chrisjenx:calligraphy:1.2.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.jakewharton.retrofit:retrofit1-okhttp3-client:1.1.0'
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'za.co.wigroup.android:Logger:1'
-    compile 'com.google.android.gms:play-services:9.8.0'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
-    compile 'me.dm7.barcodescanner:zxing:1.7.2'
+    compile 'com.google.android.gms:play-services:10.0.1'
     compile 'com.crittercism:crittercism-android-agent:+'
     compile 'com.android.support:design:23.4.0'
     compile 'com.android.support:cardview-v7:23.4.0'
     compile 'com.android.support:support-annotations:23.4.0'
     compile 'com.android.support:recyclerview-v7:23.4.0'
     compile 'com.daimajia.swipelayout:library:1.2.0'
-    compile 'com.google.firebase:firebase-messaging:9.8.0'
+    compile 'com.google.firebase:firebase-messaging:10.0.1'
+    compile 'jp.wasabeef:recyclerview-animators:2.2.5'
+    compile 'com.klinkerapps:sliding-activity:1.4.4'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'me.leolin:ShortcutBadger:1.1.4@aar'
+    compile 'io.reactivex:rxjava:1.1.5'
+    compile 'io.reactivex:rxandroid:1.2.0'
+    compile 'com.google.zxing:core:3.3.0'
+    compile 'com.github.thepacific:mvc:0.0.2'
+    compile 'com.google.android:flexbox:0.2.5'
+    compile 'com.facebook.fresco:fresco:1.1.0'
 }
 apply plugin: 'com.google.gms.google-services'

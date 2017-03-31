@@ -59,14 +59,16 @@ public class NavigationDrawerAdapter extends BaseAdapter {
         }else{
             listViewHolder = (ViewHolder)convertView.getTag();
         }
-        listViewHolder.textInListView.setText(navListItems.get(position).getName());
-        listViewHolder.imageInListView.setImageResource(navListItems.get(position).getImage());
+        try {
+            listViewHolder.textInListView.setText(navListItems.get(position).getName());
+            listViewHolder.imageInListView.setImageResource(navListItems.get(position).getImage());
+        }catch (Exception ex){}
 
-        if (position == selectedPosition)
-            convertView.setBackgroundResource(R.drawable.selected_list_bg);
-        else
+        if (position == selectedPosition) {
+            convertView.setBackgroundResource(R.drawable.vertical_line);
+        }else {
             convertView.setBackgroundColor(Color.parseColor("#ffffff"));
-
+        }
         return convertView;
     }
 

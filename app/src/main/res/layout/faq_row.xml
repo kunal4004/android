@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relFAQRow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/top_border"
+    android:gravity="start|center"
+    android:paddingTop="14dp"
+    android:paddingBottom="17dp"
+>
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_toStartOf="@+id/imgNextRow"
+        android:gravity="start|center"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        app:WTextView_font="myriadpro_regular" />
+
+    <ImageView
+        android:id="@+id/imgNextRow"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="10dp"
+        android:layout_alignTop="@+id/name"
+        android:src="@drawable/ic_caret_black" />
+</RelativeLayout>

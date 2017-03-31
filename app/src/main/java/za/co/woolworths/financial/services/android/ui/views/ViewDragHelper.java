@@ -536,7 +536,7 @@ public class ViewDragHelper {
     }
 
     /**
-     * {@link #cancel()}, but also abort all motion in progress and snap to the end of any
+     * {@link #cancel()}, but also abort all motion in spinner_progress_black and snap to the end of any
      * animation.
      */
     public void abort() {
@@ -559,7 +559,7 @@ public class ViewDragHelper {
      * returns false there is no further work to do to complete the movement.
      *
      * <p>This operation does not count as a capture event, though {@link #getCapturedView()}
-     * will still report the sliding view while the slide is in progress.</p>
+     * will still report the sliding view while the slide is in spinner_progress_black.</p>
      *
      * @param child Child view to capture and animate
      * @param finalLeft Final left position of child
@@ -740,7 +740,7 @@ public class ViewDragHelper {
      *                       Set this to true if you are calling this method from
      *                       {@link View#computeScroll()} or similar methods
      *                       invoked as part of layout or drawing.
-     * @return true if settle is still in progress
+     * @return true if settle is still in spinner_progress_black
      */
     public boolean continueSettling(boolean deferCallbacks) {
         // Make sure, there is a captured view
@@ -940,7 +940,7 @@ public class ViewDragHelper {
     /**
      * Tests scrollability within child views of v given a delta of dx.
      *
-     * @param v View to test for horizontal scrollability
+     * @param v View to search_layout_row for horizontal scrollability
      * @param checkV Whether the view v passed should itself be checked for scrollability (true),
      *               or just its children (false).
      * @param dx Delta scrolled in pixels along the X axis
@@ -1442,8 +1442,8 @@ public class ViewDragHelper {
      * parent view's coordinate system. If there is no captured view this method
      * will return false.
      *
-     * @param x X position to test in the parent's coordinate system
-     * @param y Y position to test in the parent's coordinate system
+     * @param x X position to search_layout_row in the parent's coordinate system
+     * @param y Y position to search_layout_row in the parent's coordinate system
      * @return true if the captured view is under the given point, false otherwise
      */
     public boolean isCapturedViewUnder(int x, int y) {
@@ -1454,9 +1454,9 @@ public class ViewDragHelper {
      * Determine if the supplied view is under the given point in the
      * parent view's coordinate system.
      *
-     * @param view Child view of the parent to hit test
-     * @param x X position to test in the parent's coordinate system
-     * @param y Y position to test in the parent's coordinate system
+     * @param view Child view of the parent to hit search_layout_row
+     * @param x X position to search_layout_row in the parent's coordinate system
+     * @param y Y position to search_layout_row in the parent's coordinate system
      * @return true if the supplied view is under the given point, false otherwise
      */
     public boolean isViewUnder(View view, int x, int y) {
@@ -1473,8 +1473,8 @@ public class ViewDragHelper {
      * Find the topmost child under the given point within the parent view's coordinate system.
      * The child order is determined using {@link Callback#getOrderedChildIndex(int)}.
      *
-     * @param x X position to test in the parent's coordinate system
-     * @param y Y position to test in the parent's coordinate system
+     * @param x X position to search_layout_row in the parent's coordinate system
+     * @param y Y position to search_layout_row in the parent's coordinate system
      * @return The topmost child view under (x, y) or null if none found.
      */
     public View findTopChildUnder(int x, int y) {

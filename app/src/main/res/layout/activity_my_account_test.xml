@@ -18,12 +18,11 @@
         app:popupTheme="@style/ShoppingList"
         app:theme="@style/ShoppingList"
         app:title="My Accounts" />
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/frame"
-        >
-
-    </FrameLayout>
+   <za.co.woolworths.financial.services.android.util.WCustomViewPager
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:id="@+id/pager"
+       android:layout_marginTop="30dp"
+       />
 
 </LinearLayout>

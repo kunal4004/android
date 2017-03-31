@@ -1,46 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/messages_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="za.co.woolworths.financial.services.android.ui.activities.MessagesActivity">
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:background="@color/white"
-        android:minHeight="?attr/actionBarSize"
-        app:popupTheme="@style/Messages"
-        app:theme="@style/Messages"
-        app:title="Messages" />
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/swipeToRefresh"
-        >
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/messsageListView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-    </android.support.v4.widget.SwipeRefreshLayout>
 
-    <ProgressBar
-        style="?android:attr/progressBarStyle"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_gravity="bottom"
-        android:id="@+id/loadingBar"/>
-</FrameLayout>
+        android:elevation="0dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:elevation="0dp">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:background="@color/white"
+            android:minHeight="?attr/actionBarSize"
+            app:popupTheme="@style/Messages"
+            app:theme="@style/Messages"
+            app:title="">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/toolbarText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:letterSpacing="0.2"
+                android:text="MESSAGES"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:WTextView_font="medium_bold" />
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+    <View
+    android:layout_width="match_parent"
+    android:layout_height="0.1dp"
+    android:background="@color/black_desc_opacity"
+    android:id="@+id/view_toolbar" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#efefef">
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeToRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/messsageListView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:paddingTop="12dp" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <ProgressBar
+            android:id="@+id/loadingBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:visibility="gone" />
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/noMessagesText"
+            android:text="@string/no_messages_to_display"
+            app:WTextView_font="myriadpro_regular"
+            android:textSize="15sp"
+            android:textColor="#80000000"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            />
+    </FrameLayout>
 
 
 </LinearLayout>

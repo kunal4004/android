@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -21,12 +20,9 @@ import android.widget.TextView;
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.RetrofitError;
 import uk.co.chrisjenx.calligraphy.CalligraphyTypefaceSpan;
 import za.co.wigroup.logger.lib.WiGroupLogger;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -47,7 +43,6 @@ import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
 
 public class AccountsActivity extends BaseDrawerActivity {
-    private static final String TAG = "AccountsActivity";
     public static final String LANDING_SCREEN = "LANDING_SCREEN";
     private ArrayList<BaseAccountFragment> mAccountFragments = new ArrayList<>();
     private ProgressDialog mGetAccountsProgressDialog;

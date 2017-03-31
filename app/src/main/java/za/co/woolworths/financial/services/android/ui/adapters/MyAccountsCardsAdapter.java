@@ -2,11 +2,16 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.os.Parcelable;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+
+import java.util.ArrayList;
 
 /**
  * Created by W7099877 on 21/11/2016.
@@ -14,30 +19,30 @@ import com.awfs.coordination.R;
 
 public class MyAccountsCardsAdapter extends PagerAdapter {
     public Activity mContext;
-    public MyAccountsCardsAdapter(Activity context)
-    {
-        this.mContext=context;
-    }
+    ArrayList<Integer> cards;
 
+    public MyAccountsCardsAdapter(Activity context, ArrayList<Integer> cards) {
+        this.mContext = context;
+        this.cards = cards;
+    }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-
         container.removeView((View) object);
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-
-        View cView=mContext.getLayoutInflater().inflate(R.layout.my_accounts_cards_pager_item,container,false);
-
+        View cView = mContext.getLayoutInflater().inflate(R.layout.my_accounts_cards_pager_item, container, false);
+        ImageView myaccountsCard = (ImageView) cView.findViewById(R.id.myaccountsCard);
+        myaccountsCard.setImageResource(cards.get(position));
         container.addView(cView);
         return cView;
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return cards.size();
     }
 
     @Override
@@ -59,4 +64,6 @@ public class MyAccountsCardsAdapter extends PagerAdapter {
     public Parcelable saveState() {
         return null;
     }
+
+
 }

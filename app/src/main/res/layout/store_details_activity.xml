@@ -1,42 +1,72 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+
+<za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:gravity="bottom"
+    sothree:umanoDragView="@+id/detailsView"
+    sothree:umanoOverlay="true"
+    app:umanoPanelHeight="0dp"
+    sothree:umanoParallaxOffset="100dp"
+    sothree:umanoScrollableView="@+id/list"
+    sothree:umanoShadowHeight="0dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <LinearLayout android:id="@+id/mapLayout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            xmlns:android="http://schemas.android.com/apk/res/android">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+                            <fragment
+                                android:id="@+id/map"
+                                android:name="com.google.android.gms.maps.SupportMapFragment"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                />
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/closePage"
+                                android:background="@drawable/ic_closecircle"
+                                android:layout_margin="12dp"
+                                />
+
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+                <!--<LinearLayout
+                    android:id="@+id/detailsView"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="7"
+                    android:background="@color/white"
+                    android:orientation="vertical">
+
+                    <include layout="@layout/store_details_layout_common" />
+                </LinearLayout>-->
+
+        </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/detailsView"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="7"
+            android:layout_height="match_parent"
             android:background="@color/white"
             android:orientation="vertical">
 
             <include layout="@layout/store_details_layout_common" />
         </LinearLayout>
-    </LinearLayout>
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:background="@android:color/transparent"
-        android:minHeight="?attr/actionBarSize"
-        app:popupTheme="@style/StoreDetails"
-        app:theme="@style/StoreDetails"
-        app:title="" />
-</FrameLayout>
+</za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
+

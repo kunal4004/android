@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sliding_layout"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:visibility="visible"
+    android:layout_height="match_parent"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:visibility="visible"
+        android:id="@+id/linBankLayout"
+        android:layout_height="match_parent">
+        <include layout="@layout/horizontal_divider_light"/>
+
+
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/mNestedScrollview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <LinearLayout
+                android:id="@+id/llNestedDeoBank"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_width="wrap_content">
+
+                <include layout="@layout/cli_info_contents"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycleList"
+                    android:layout_width="match_parent"
+                    android:clipToPadding="false"
+                    android:layout_height="wrap_content"/>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_marginLeft="@dimen/bank_spacing_width"
+                    android:layout_marginRight="@dimen/bank_spacing_width"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/acc_number"
+                        android:letterSpacing="0.1"
+                        android:gravity="center|start"
+                        android:textColor="@color/black_desc_opacity"
+                        android:textSize="12sp"
+                        android:layout_marginTop="@dimen/default_margin"
+                        android:textAllCaps="true"
+                        app:WTextView_font="medium"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@+id/imgInfo"
+                        android:layout_alignBottom="@+id/imgInfo"
+                        android:layout_alignTop="@+id/imgInfo" />
+
+
+                    <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/wEditAccountNumber"
+                        app:WTextView_font="medium"
+                        android:digits="0123456789 "
+                        android:maxLength="30"
+                        android:paddingTop="@dimen/edittext_top_padding"
+                        android:paddingBottom="@dimen/edittext_top_padding"
+                        android:background="@drawable/edittext_background"
+                        android:inputType="number"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"/>
+                </LinearLayout>
+
+                <include layout="@layout/cli_button_progress"/>
+
+            </LinearLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+
+    </LinearLayout>
+
+    <include layout="@layout/cli_fragment_income_proof" />
+</LinearLayout>

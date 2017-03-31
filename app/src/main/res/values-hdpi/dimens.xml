@@ -1,0 +1,37 @@
+<resources>
+<dimen name="barcode_margin">16.0dp</dimen>
+<dimen name="acc_thirteen_sp">12.0sp</dimen>
+    <dimen name="account_margin">5.0dp</dimen>
+    <dimen name="card_padding_margin">16dp</dimen>
+    <dimen name="acc_fourteen_sp">12sp</dimen>
+    <dimen name="acc_fifteen_dp">10sp</dimen>
+    <dimen name="card_margin">50.0dp</dimen>
+    <dimen name="accounts_divider_width">1dp</dimen>
+    <dimen name="text_micro">9sp</dimen>
+    <dimen name="text_small">14sp</dimen>
+    <dimen name="text_medium">16sp</dimen>
+    <dimen name="text_large">22sp</dimen>
+    <dimen name="grey_block_margin">16dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="distance_km">13sp</dimen>
+    <dimen name="search_store">17sp</dimen>
+    <dimen name="default_margin">16dp</dimen>
+    <dimen name="default_width">30dp</dimen>
+    <dimen name="recent_search_margin">18dp</dimen>
+    <dimen name="bank_spacing_width">32dp</dimen>
+    <dimen name="cli_bottom_margin">80dp</dimen>bank_spacing_width
+    <dimen name="cli_top_margin">48dp</dimen>
+    <dimen name="cli_bottom_dp">10dp</dimen>
+    <dimen name="cli_eleven_dp">11dp</dimen>
+    <dimen name="cli_button_height">40dp</dimen>
+    <dimen name="cli_eight_dp">8dp</dimen>
+
+    <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:
+         https://developer.android.com/design/patterns/navigation-drawer.html -->
+    <dimen name="navigation_drawer_width">240dp</dimen>
+    <dimen name="cli_head_top_margin">22dp</dimen>
+    <dimen name="bold_title">18sp</dimen>
+    <dimen name="text_desc_15sp">14sp</dimen>
+</resources>

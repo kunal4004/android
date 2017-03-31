@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -18,12 +19,15 @@ import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WOnboardingOnFragmentInteractionListener;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.fragments.WOnboardingFourFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WOnboardingOneFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WOnboardingThreeFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WOnboardingTwoFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 
 public class WOnboardingActivity extends FragmentActivity implements WOnboardingOnFragmentInteractionListener {
@@ -57,7 +61,6 @@ public class WOnboardingActivity extends FragmentActivity implements WOnboarding
         this.txtSkip.setOnClickListener(this.txtSkip_onClick);
         this.btnLogin.setOnClickListener(this.btnSignin_onClick);
         this.btnRegister.setOnClickListener(this.btnRegister_onClick);
-
 
         Typeface buttonTypeface = Typeface.createFromAsset(getAssets(), "fonts/WFutura-SemiBold.ttf");
         this.btnLogin.setTypeface(buttonTypeface, 12);
@@ -103,7 +106,8 @@ public class WOnboardingActivity extends FragmentActivity implements WOnboarding
                 case 3:
                     fragment = new WOnboardingFourFragment();
                     break;
-                default:break;
+                default:
+                    break;
             }
 
             return fragment;
@@ -120,35 +124,36 @@ public class WOnboardingActivity extends FragmentActivity implements WOnboarding
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-            final Drawable pageControlActive = getResources().getDrawable(R.drawable.page_control_active);
-            final Drawable pageControlInactive = getResources().getDrawable(R.drawable.page_control_inactive);
+            final Drawable pageControlActive = getResources().getDrawable(R.drawable.page_indicator_selected);
+            final Drawable pageControlInactive = getResources().getDrawable(R.drawable.page_indicator_default);
 
             switch (position) {
                 case 0:
-                    ((ImageView)findViewById(R.id.dotimg0)).setImageDrawable(pageControlActive);
-                    ((ImageView)findViewById(R.id.dotimg1)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg2)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg3)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg0)).setImageDrawable(pageControlActive);
+                    ((ImageView) findViewById(R.id.dotimg1)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg2)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg3)).setImageDrawable(pageControlInactive);
                     break;
                 case 1:
-                    ((ImageView)findViewById(R.id.dotimg0)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg1)).setImageDrawable(pageControlActive);
-                    ((ImageView)findViewById(R.id.dotimg2)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg3)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg0)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg1)).setImageDrawable(pageControlActive);
+                    ((ImageView) findViewById(R.id.dotimg2)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg3)).setImageDrawable(pageControlInactive);
                     break;
                 case 2:
-                    ((ImageView)findViewById(R.id.dotimg0)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg1)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg2)).setImageDrawable(pageControlActive);
-                    ((ImageView)findViewById(R.id.dotimg3)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg0)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg1)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg2)).setImageDrawable(pageControlActive);
+                    ((ImageView) findViewById(R.id.dotimg3)).setImageDrawable(pageControlInactive);
                     break;
                 case 3:
-                    ((ImageView)findViewById(R.id.dotimg0)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg1)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg2)).setImageDrawable(pageControlInactive);
-                    ((ImageView)findViewById(R.id.dotimg3)).setImageDrawable(pageControlActive);
+                    ((ImageView) findViewById(R.id.dotimg0)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg1)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg2)).setImageDrawable(pageControlInactive);
+                    ((ImageView) findViewById(R.id.dotimg3)).setImageDrawable(pageControlActive);
                     break;
-                default:break;
+                default:
+                    break;
             }
         }
 
@@ -167,12 +172,12 @@ public class WOnboardingActivity extends FragmentActivity implements WOnboarding
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()){
+        if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             this.navigateToMain();
         }
     }
 
-    private void navigateToMain(){
+    private void navigateToMain() {
         startActivity(new Intent(WOnboardingActivity.this, WOneAppBaseActivity.class));
         finish();
     }

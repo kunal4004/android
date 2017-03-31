@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relButtonCLIDeaBank"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/bank_spacing_width"
+    android:layout_marginRight="@dimen/bank_spacing_width"
+    android:layout_marginTop="@dimen/bank_spacing_width">
+
+    <ProgressBar
+        android:id="@+id/mWoolworthsProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="35dp"
+        android:layout_alignParentEnd="true"
+        android:elevation="10dp"
+        android:paddingTop="10dp"
+        android:layout_height="35dp"
+        android:visibility="gone" />
+
+    <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/btnContinue"
+        style="@style/blackButtonStyle"
+        android:layout_marginBottom="@dimen/cli_bottom_margin"
+        android:background="@color/black"
+        android:text="@string/cli_continue"
+        app:WButton_font="medium_bold" />
+</RelativeLayout>

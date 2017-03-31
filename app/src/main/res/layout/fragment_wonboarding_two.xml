@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/drawer_color"
     tools:context="za.co.woolworths.financial.services.android.ui.fragments.WOnboardingOneFragment">
 
@@ -14,9 +15,11 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:src="@drawable/walkthrough2"
+            android:src="@drawable/walkthrough_2"
             android:layout_above="@+id/fragment_wonboarding_two_description_layer"
-            android:background="@android:color/transparent">
+            android:background="@android:color/transparent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true">
         </ImageView>
 
         <LinearLayout
@@ -27,26 +30,29 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true">
 
-            <TextView
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/fragment_wonboarding_two_description_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="WREWARDS AT A GLANCE"
+                android:letterSpacing="0.04"
                 android:gravity="center_horizontal"
+                app:WTextView_font="medium_bold"
                 style="@style/TitleWSemiBoldWhite"
-                android:paddingTop="32dp"
                 />
 
-            <TextView
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/fragment_wonboarding_two_description_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="See how much you’ve saved, track your tier status and access your exclusive vouchers."
+                android:text="@string/onboarding_desc_screen_2"
                 android:gravity="center_horizontal"
                 style="@style/CaptionLightGrey"
                 android:paddingTop="16dp"
+                app:WTextView_font="myriadpro_regular"
                 android:paddingLeft="32dp"
                 android:paddingRight="32dp"
+                android:lineSpacingExtra="4dp"
                 />
         </LinearLayout>
     </RelativeLayout>
