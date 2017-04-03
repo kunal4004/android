@@ -81,7 +81,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 
         registerReceiver(logOutReceiver, new IntentFilter("logOutReceiver"));
-
     }
 
     @Override
