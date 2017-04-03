@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -44,6 +45,7 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
     public LinearLayout savingSinceLayout;
     public WTextView savingSince;
     public ImageView savingSinceInfo;
+    public ImageView yearToDateSpendInfo;
 
     @Nullable
     @Override
@@ -56,8 +58,9 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
         quarterlyVoucherEarned = (WTextView) view.findViewById(R.id.quarterlyVouchersEarned);
         yearToDateSpend = (WTextView) view.findViewById(R.id.yearToDateSpend);
         yearToDateSpendText = (WTextView) view.findViewById(R.id.yearToDateSpendText);
+        yearToDateSpendInfo = (ImageView) view.findViewById(R.id.yearToDateSpendInfo);
         noSavingsView = (RelativeLayout) view.findViewById(R.id.noSavingsView);
-        savingSinceLayout=(LinearLayout)view.findViewById(R.id.savingSinceLayout);
+        savingSinceLayout = (LinearLayout) view.findViewById(R.id.savingSinceLayout);
         savingSince = (WTextView) view.findViewById(R.id.savingSince);
         savingSinceInfo = (ImageView) view.findViewById(R.id.savingSinceInfo);
         mLayoutManager = new LinearLayoutManager(
@@ -66,6 +69,7 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
                 false
         );
         savingSinceInfo.setOnClickListener(this);
+        yearToDateSpendInfo.setOnClickListener(this);
         recyclerView.setLayoutManager(mLayoutManager);
         Bundle bundle = getArguments();
         voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
@@ -82,6 +86,7 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
                     setUpYearToDateValue();
                 } else {
                     savingSinceLayout.setVisibility(View.GONE);
+                    yearToDateSpendInfo.setVisibility(View.GONE);
                     yearToDateSpendText.setText(getString(R.string.wrewards_monthly_spend));
                     //Get data on Position-1 from Array List. And bind to UI
                     tireStatus.setText(voucherResponse.tierHistoryList.get(position - 1).tier);
@@ -105,6 +110,7 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 
     public void setUpYearToDateValue() {
         savingSinceLayout.setVisibility(View.VISIBLE);
+        yearToDateSpendInfo.setVisibility(View.VISIBLE);
         yearToDateSpendText.setText(getString(R.string.year_to_date_spend));
         tireStatus.setText(voucherResponse.tierInfo.currentTier);
         try {
@@ -117,8 +123,6 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
         wRewardsGreenEarned.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateGreenValue));
         quarterlyVoucherEarned.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateWVouchers));
         yearToDateSpend.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateSpend));
-
-
     }
 
     public void displayNoSavingsView() {
@@ -151,10 +155,13 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        switch (v.getId())
-        {
+        switch (v.getId()) {
             case R.id.savingSinceInfo:
-                Utils.displayValidationMessage(getActivity(), TransientActivity.VALIDATION_MESSAGE_LIST.INFO,getString(R.string.savings_info_message));
+                Utils.displayValidationMessage(getActivity(), TransientActivity.VALIDATION_MESSAGE_LIST.INFO, getString(R.string.savings_info_message));
+                break;
+
+            case R.id.yearToDateSpendInfo:
+                Utils.displayValidationMessage(getActivity(), TransientActivity.VALIDATION_MESSAGE_LIST.INFO, getString(R.string.savings_info_message));
                 break;
         }
     }
