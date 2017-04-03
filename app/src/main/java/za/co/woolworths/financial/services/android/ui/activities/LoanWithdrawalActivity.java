@@ -299,30 +299,30 @@ public class LoanWithdrawalActivity extends BaseActivity {
                 protected void onPostExecute(IssueLoanResponse issueLoanResponse) {
                     super.onPostExecute(issueLoanResponse);
                     hideProgressBar();
-//                    if (issueLoanResponse.httpCode == 200) {
-                    mSharePreferenceHelper.save(String.valueOf(issueLoanResponse.installmentAmount), "lw_installment_amount");
-                    Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this, LoanWithdrawalConfirmActivity.class);
-                    openConfirmWithdrawal.putExtra("drawnDownAmount", mDrawnDownAmount);
-                    openConfirmWithdrawal.putExtra("availableFunds", mAvailableFunds);
-                    openConfirmWithdrawal.putExtra("creditLimit", mCreditLimit);
-                    openConfirmWithdrawal.putExtra("minDrawnDownAmount", wminDrawnDownAmount);
-                    openConfirmWithdrawal.putExtra("repaymentPeriod", repaymentPeriod(getCreditAmount()));
-                    startActivity(openConfirmWithdrawal);
-                    finish();
-//                    } else {
-//                        try {
-//                            hideKeyboard();
-//                            String responseDesc = issueLoanResponse.response.desc;
-//                            if (responseDesc != null) {
-//                                if (!TextUtils.isEmpty(responseDesc)) {
-//                                    Utils.displayValidationMessage(LoanWithdrawalActivity.this,
-//                                            TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-//                                            responseDesc);
-//                                }
-//                            }
-//                        } catch (NullPointerException ignored) {
-//                        }
-//                    }
+                    if (issueLoanResponse.httpCode == 200) {
+                        mSharePreferenceHelper.save(String.valueOf(issueLoanResponse.installmentAmount), "lw_installment_amount");
+                        Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this, LoanWithdrawalConfirmActivity.class);
+                        openConfirmWithdrawal.putExtra("drawnDownAmount", mDrawnDownAmount);
+                        openConfirmWithdrawal.putExtra("availableFunds", mAvailableFunds);
+                        openConfirmWithdrawal.putExtra("creditLimit", mCreditLimit);
+                        openConfirmWithdrawal.putExtra("minDrawnDownAmount", wminDrawnDownAmount);
+                        openConfirmWithdrawal.putExtra("repaymentPeriod", repaymentPeriod(getCreditAmount()));
+                        startActivity(openConfirmWithdrawal);
+                        finish();
+                    } else {
+                        try {
+                            hideKeyboard();
+                            String responseDesc = issueLoanResponse.response.desc;
+                            if (responseDesc != null) {
+                                if (!TextUtils.isEmpty(responseDesc)) {
+                                    Utils.displayValidationMessage(LoanWithdrawalActivity.this,
+                                            TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                            responseDesc);
+                                }
+                            }
+                        } catch (NullPointerException ignored) {
+                        }
+                    }
                 }
 
                 @Override
