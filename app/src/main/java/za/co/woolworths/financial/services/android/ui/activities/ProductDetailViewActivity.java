@@ -3,14 +3,18 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -19,13 +23,13 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.awfs.coordination.R;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
-import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
@@ -34,9 +38,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
-import za.co.woolworths.financial.services.android.util.CircularImageView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -45,23 +47,26 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ProductDetailViewActivity extends BaseActivity implements SelectedProductView, View.OnClickListener {
 
+    public final int IMAGE_QUALITY = 85;
     private WTextView mTextSelectSize;
     private RecyclerView mRecyclerviewSize;
     private ProductDetailViewActivity mContext;
     private ArrayList<WProductDetail> mproductDetail;
     private WTextView mTextTitle;
     private WTextView mTextPrice;
-    private WTextView mCategoryName;
     private LinearLayout mRelContainer;
     private WTextView mProductCode;
     private List<OtherSku> otherSkusList;
@@ -75,28 +80,33 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     public ViewPager mViewPagerProduct;
     public ImageView mImCloseProduct;
     public RelativeLayout mLinSize;
-    public ImageView mImNewImage;
-    public ImageView mImSave;
-    public ImageView mImReward;
-    public ImageView mVitalityView;
+    public SimpleDraweeView mImNewImage;
+    public SimpleDraweeView mImSave;
+    public SimpleDraweeView mImReward;
+    public SimpleDraweeView mVitalityView;
     public String mCheckOutLink;
     private ArrayList<String> mAuxiliaryImages;
     private String mProductJSON;
     private LinearLayout mLlPagerDots;
     private ImageView[] ivArrayDotsPager;
     private String mDefaultImage;
-    private CircularImageView mImSelectedColor;
+    private SimpleDraweeView mImSelectedColor;
     private View mColorView;
     private WTextView mTextPromo;
     private WTextView mTextActualPrice;
     private WTextView mTextColour;
     private WrapContentWebView mWebDescription;
-    private WButton mBtnAddShoppingList;
-    private PopWindowValidationMessage mPopWindowValidationMessage;
     private WTextView mIngredientList;
     private LinearLayout mLinIngredient;
     private View ingredientLine;
-
+    private WProductDetail productDetail;
+    private String mDefaultColor;
+    private String mDefaultColorRef;
+    private String mDefaultSize;
+    private int mPreviousState;
+    private ViewPager mTouchTarget;
+    public ImageView mColorArrow;
+    public ProductViewPagerAdapter mProductViewPagerAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -107,10 +117,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         setContentView(R.layout.product_view_detail);
         mContext = this;
         SessionDao sessionDao;
-
-        mPopWindowValidationMessage = new PopWindowValidationMessage(this);
-
-
         try {
             sessionDao = new SessionDao(ProductDetailViewActivity.this,
                     SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
@@ -120,41 +126,30 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         }
         initUI();
         bundle();
-        addButton();
     }
 
-    private void addButton() {
-        mBtnAddShoppingList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopWindowValidationMessage.displayValidationMessage("viewShoppingList",
-                        PopWindowValidationMessage.OVERLAY_TYPE.SHOPPING_LIST_INFO)
-                        .setOnDismissListener(new PopupWindow.OnDismissListener() {
-                            @Override
-                            public void onDismiss() {
-                                Utils.addToShoppingCart(ProductDetailViewActivity.this, new ShoppingList(
-                                        mproductDetail.get(0).productId,
-                                        mproductDetail.get(0).productName, false));
-                            }
-                        });
-            }
-        });
-    }
-
-    private void retrieveJson(String colour) {
+    protected void retrieveJson(String colour) {
         JSONObject jsProduct;
+        if (mAuxiliaryImages != null) {
+            mAuxiliaryImages.clear();
+        }
         try {
             // Instantiate a JSON object from the request response
             jsProduct = new JSONObject(mProductJSON);
             String mProduct = jsProduct.getString("product");
             JSONObject jsProductList = new JSONObject(mProduct);
             if (jsProductList.has("ingredients")) {
-
                 setIngredients(jsProductList.getString("ingredients"));
             } else {
-                ingredientLine.setVisibility(View.GONE);
-                mLinIngredient.setVisibility(View.GONE);
+                setIngredients("");
             }
+
+            //display default image
+            if (mAuxiliaryImages != null) {
+                if (!TextUtils.isEmpty(mDefaultImage))
+                    mAuxiliaryImages.add(0, mDefaultImage);
+            }
+
             String auxiliaryImages = jsProductList.getString("auxiliaryImages");
             JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
             Iterator<String> keysIterator = jsAuxiliaryImages.keys();
@@ -163,10 +158,17 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 if (keyStr.toLowerCase().contains(colour.toLowerCase())) {
                     String valueStr = jsAuxiliaryImages.getString(keyStr);
                     JSONObject jsonObject = new JSONObject(valueStr);
-                    mAuxiliaryImages.add(jsonObject.getString("imagePath"));
+                    if (jsonObject.has("externalImageRef")) {
+                        mAuxiliaryImages.add(getImageByWidth(jsonObject.getString("externalImageRef")));
+                    }
                 }
             }
-            ProductViewPagerAdapter mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
+
+            Set<String> removeAuxiliaryImageDuplicate = new LinkedHashSet<>(mAuxiliaryImages);
+            mAuxiliaryImages.clear();
+            mAuxiliaryImages.addAll(removeAuxiliaryImageDuplicate);
+
+            mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
             mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
             mProductViewPagerAdapter.notifyDataSetChanged();
             setupPagerIndicatorDots();
@@ -186,15 +188,26 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
                 @Override
                 public void onPageScrollStateChanged(int state) {
+                    // All of this is to inhibit any scrollable container from consuming our touch events as the user is changing pages
+                    if (mPreviousState == ViewPager.SCROLL_STATE_IDLE) {
+                        if (state == ViewPager.SCROLL_STATE_DRAGGING) {
+                            mTouchTarget = mViewPagerProduct;
+                        }
+                    } else {
+                        if (state == ViewPager.SCROLL_STATE_IDLE || state == ViewPager.SCROLL_STATE_SETTLING) {
+                            mTouchTarget = null;
+                        }
+                    }
 
+                    mPreviousState = state;
                 }
             });
 
-        } catch (Exception e) {
-            Log.e("sessionDao", e.toString());
+        } catch (JSONException e) {
+            Log.e("jsonException", e.toString());
         }
-
     }
+
 
     private void setIngredients(String ingredients) {
         if (TextUtils.isEmpty(ingredients)) {
@@ -229,21 +242,32 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             mproductDetail = new Gson().fromJson(mProductList, token.getType());
 
             assert mproductDetail != null;
-            otherSkusList = mproductDetail.get(0).otherSkus;
-            mCheckOutLink = mproductDetail.get(0).checkOutLink;
-            mDefaultImage = mproductDetail.get(0).imagePath;
+            WProductDetail mProduct = mproductDetail.get(0);
+            otherSkusList = mProduct.otherSkus;
+            mCheckOutLink = mProduct.checkOutLink;
+            mDefaultImage = mProduct.externalImageRef;
+            String skuId = mProduct.sku;
+            getDefaultColor(otherSkusList, skuId);
             populateView();
-            promoImages(mproductDetail.get(0).promotionImages);
+            promoImages(mProduct.promotionImages);
             displayProduct(mProductName);
-            initColorParam(0);
+            initColorParam(mDefaultColor);
 
-            String saveText = mproductDetail.get(0).saveText;
+            String saveText = mProduct.saveText;
             if (TextUtils.isEmpty(saveText)) {
 
                 mTextPromo.setVisibility(View.GONE);
             } else {
                 mTextPromo.setVisibility(View.VISIBLE);
-                mTextPromo.setText(mproductDetail.get(0).saveText);
+                mTextPromo.setText(mProduct.saveText);
+            }
+
+            if (otherSkusList.size() > 1) {
+                mColorView.setVisibility(View.VISIBLE);
+                mRelContainer.setVisibility(View.VISIBLE);
+            } else {
+                mColorView.setVisibility(View.GONE);
+                mRelContainer.setVisibility(View.GONE);
             }
         }
     }
@@ -258,7 +282,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
         mTextPrice = (WTextView) findViewById(R.id.textPrice);
         mLinIngredient = (LinearLayout) findViewById(R.id.linIngredient);
-        mCategoryName = (WTextView) findViewById(R.id.textType);
         mIngredientList = (WTextView) findViewById(R.id.ingredientList);
         mTextPromo = (WTextView) findViewById(R.id.textPromo);
         mTextSelectColor = (WTextView) findViewById(R.id.textSelectColour);
@@ -266,20 +289,19 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mRelContainer = (LinearLayout) findViewById(R.id.linProductContainer);
         RelativeLayout mLinColor = (RelativeLayout) findViewById(R.id.linColour);
         mLinSize = (RelativeLayout) findViewById(R.id.linSize);
-        mBtnAddShoppingList = (WButton) findViewById(R.id.btnAddShoppingList);
         WButton mBtnShopOnlineWoolies = (WButton) findViewById(R.id.btnShopOnlineWoolies);
-        ImageView mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
+        mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
         mImCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
-        mImSelectedColor = (CircularImageView) findViewById(R.id.imSelectedColor);
+        mImSelectedColor = (SimpleDraweeView) findViewById(R.id.imSelectedColor);
         mLlPagerDots = (LinearLayout) findViewById(R.id.pager_dots);
         ImageView mImColorArrow = (ImageView) findViewById(R.id.imColorArrow);
         mWebDescription = (WrapContentWebView) findViewById(R.id.webDescription);
         ingredientLine = findViewById(R.id.ingredientLine);
 
-        mImNewImage = (ImageView) findViewById(R.id.imNewImage);
-        mImSave = (ImageView) findViewById(R.id.imSave);
-        mImReward = (ImageView) findViewById(R.id.imReward);
-        mVitalityView = (ImageView) findViewById(R.id.imVitality);
+        mImNewImage = (SimpleDraweeView) findViewById(R.id.imNewImage);
+        mImSave = (SimpleDraweeView) findViewById(R.id.imSave);
+        mImReward = (SimpleDraweeView) findViewById(R.id.imReward);
+        mVitalityView = (SimpleDraweeView) findViewById(R.id.imVitality);
 
         mTextSelectColor.setOnClickListener(this);
         mTextSelectSize.setOnClickListener(this);
@@ -357,6 +379,11 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
     }
 
+    @Override
+    public void onSelectedColor(View v, int position) {
+        selectedProduct(position);
+    }
+
     private void selectedProduct(int position) {
         if (productIsColored) {
             if (mPColourWindow != null) {
@@ -374,92 +401,100 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             }
             if (uniqueSizeList != null) {
                 String selectedSize = uniqueSizeList.get(position).size;
-                mTextSelectSize.setText(selectedSize);
-                mTextSelectSize.setTextColor(Color.BLACK);
+                setSelectedTextSize(selectedSize);
             }
         }
     }
 
-    private void colorParams(int position) {
+
+    protected void colorParams(int position) {
         String colour = uniqueColorList.get(position).colour;
         String defaultUrl = uniqueColorList.get(position).externalColourRef;
-        String imageUrl = uniqueColorList.get(position).imagePath;
         if (TextUtils.isEmpty(colour)) {
             colour = "";
         }
         mTextColour.setText(colour);
         mAuxiliaryImages = null;
         mAuxiliaryImages = new ArrayList<>();
+        mDefaultImage = getSkuExternalImageRef(colour);
+
         //show default image when imageUrl is empty
-        if (TextUtils.isEmpty(imageUrl)) {
-            mAuxiliaryImages.add(mDefaultImage);
-        } else {
-            mAuxiliaryImages.add(imageUrl);
-        }
         selectedColor(defaultUrl);
+        getSKUDefaultSize(colour);
         retrieveJson(colour);
     }
 
-    private void initColorParam(int position) {
-        String colour = mproductDetail.get(position).otherSkus.get(position).colour;
-        String mPSize = mproductDetail.get(position).otherSkus.get(position).size;
-        String defaultUrl = mproductDetail.get(position).otherSkus.get(position).externalColourRef;
-        String imageUrl = mproductDetail.get(position).otherSkus.get(position).imagePath;
+    public String getSkuExternalImageRef(String colour) {
+        if (otherSkusList != null) {
+            if (otherSkusList.size() > 0) {
+                List<OtherSku> otherSku = otherSkusList;
+                for (OtherSku sku : otherSku) {
+                    if (sku.colour.equalsIgnoreCase(colour)) {
+                        return getImageByWidth(sku.externalImageRef);
+                    }
+                }
+            }
+        }
+        return "";
+    }
+
+    public void getSKUDefaultSize(String colour) {
+        if (otherSkusList != null) {
+            if (otherSkusList.size() > 0) {
+                List<OtherSku> otherSku = otherSkusList;
+                for (OtherSku sku : otherSku) {
+                    if (sku.colour.equalsIgnoreCase(colour)) {
+                        if (!TextUtils.isEmpty(sku.size))
+                            setSelectedTextSize(sku.size);
+                        else
+                            setSelectedTextSize("");
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public void setSelectedTextSize(String size) {
+        mTextSelectSize.setText(size);
+        mTextSelectSize.setTextColor(Color.BLACK);
+    }
+
+
+    protected void initColorParam(String colour) {
         if (TextUtils.isEmpty(colour)) {
             colour = "";
         }
-        if (!TextUtils.isEmpty(mPSize)) {
-            mTextSelectSize.setText(mPSize);
+        if (!TextUtils.isEmpty(mDefaultSize)) {
+            setSelectedTextSize(mDefaultSize);
         }
         mTextColour.setText(colour);
         mAuxiliaryImages = null;
         mAuxiliaryImages = new ArrayList<>();
-        //show default image when imageUrl is empty
-        if (TextUtils.isEmpty(imageUrl)) {
-            mAuxiliaryImages.add(mDefaultImage);
-        } else {
-            mAuxiliaryImages.add(imageUrl);
-        }
-        selectedColor(defaultUrl);
+        mAuxiliaryImages.add(mDefaultImage);
+        selectedColor(mDefaultColorRef);
         retrieveJson(colour);
     }
 
-    private void populateView() {
-        WProductDetail productDetail = mproductDetail.get(0);
-
+    protected void populateView() {
+        productDetail = mproductDetail.get(0);
         String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
                 "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
                 "</style></head><body>";
         String footerTag = "</body></html>";
-        String descriptionWithoutExtraTag = productDetail.longDescription.replaceAll("</ul>\n\n<ul>\n", " ");
-        mWebDescription.loadData(headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag, "text/html; charset=UTF-8", null);
-        mTextTitle.setText(isEmpty(productDetail.productName));
-        mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
-        String mWasPrice = productDetail.otherSkus.get(0).wasPrice;
-        if (productDetail.productType.equalsIgnoreCase("clothingProducts")) {
-            mRelContainer.setVisibility(View.VISIBLE);
-            mColorView.setVisibility(View.VISIBLE);
-            if (!TextUtils.isEmpty(mWasPrice)) {
-                mTextActualPrice.setText(WFormatter.formatAmount(productDetail.fromPrice));
-                mTextPrice.setText("From: " + WFormatter.formatAmount(mWasPrice));
-                mTextPrice.setPaintFlags(mTextPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            } else {
-                mTextActualPrice.setText("");
-                mTextPrice.setText("From: " + WFormatter.formatAmount(productDetail.fromPrice));
-            }
-        } else {
-            mColorView.setVisibility(View.GONE);
-            mRelContainer.setVisibility(View.GONE);
-            mTextPrice.setText(WFormatter.formatAmount(productDetail.otherSkus.get(0).price));
-            if (!TextUtils.isEmpty(mWasPrice)) {
-                mTextActualPrice.setText(WFormatter.formatAmount(productDetail.otherSkus.get(0).price));
-                mTextPrice.setText(WFormatter.formatAmount(mWasPrice));
-                mTextPrice.setPaintFlags(mTextPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            } else {
-                mTextActualPrice.setText("");
-            }
+        String descriptionWithoutExtraTag = "";
+        if (!TextUtils.isEmpty(productDetail.longDescription)) {
+            descriptionWithoutExtraTag = productDetail.longDescription
+                    .replaceAll("</ul>\n\n<ul>\n", " ")
+                    .replaceAll("<p>&nbsp;</p>", "")
+                    .replaceAll("<ul><p>&nbsp;</p></ul>", " ");
         }
-        mCategoryName.setText(productDetail.categoryName);
+        mWebDescription.loadDataWithBaseURL("file:///android_res/drawable/",
+                headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag,
+                "text/html; charset=UTF-8", "UTF-8", null);
+        mTextTitle.setText(Html.fromHtml(isEmpty(productDetail.productName)));
+        mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
+        updatePrice();
     }
 
     private String isEmpty(String value) {
@@ -581,6 +616,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     }
 
     private void promoImages(PromotionImages imPromo) {
+
         if (imPromo != null) {
             String wSave = imPromo.save;
             String wReward = imPromo.wRewards;
@@ -639,7 +675,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             for (int i = 0; i < ivArrayDotsPager.length; i++) {
                 ivArrayDotsPager[i] = new ImageView(this);
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.setMargins(10, 0, 10, 0);
+                params.setMargins(16, 0, 16, 0);
                 ivArrayDotsPager[i].setLayoutParams(params);
                 ivArrayDotsPager[i].setImageResource(R.drawable.unselected_drawable);
                 //ivArrayDotsPager[i].setAlpha(0.4f);
@@ -653,6 +689,118 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 mLlPagerDots.bringToFront();
             }
             ivArrayDotsPager[0].setImageResource(R.drawable.selected_drawable);
+        }
+    }
+
+    protected String getImageByWidth(String imageUrl) {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        return imageUrl + "?w=" + width + "&q=" + IMAGE_QUALITY;
+    }
+
+    protected void getDefaultColor(List<OtherSku> otherSkus, String skuId) {
+        for (OtherSku otherSku : otherSkus) {
+            if (skuId.equalsIgnoreCase(otherSku.sku)) {
+                mDefaultColor = otherSku.colour;
+                mDefaultColorRef = otherSku.externalColourRef;
+                mDefaultSize = otherSku.size;
+            }
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (mTouchTarget != null) {
+            boolean wasProcessed = mTouchTarget.onTouchEvent(ev);
+
+            if (!wasProcessed) {
+                mTouchTarget = null;
+            }
+
+            return wasProcessed;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    public void updatePrice() {
+        String fromPrice = String.valueOf(productDetail.fromPrice);
+        String wasPrice = "";
+        ArrayList<Double> priceList = new ArrayList<>();
+        for (OtherSku os : productDetail.otherSkus) {
+            if (!TextUtils.isEmpty(os.wasPrice)) {
+                priceList.add(Double.valueOf(os.wasPrice));
+            }
+        }
+
+        if (priceList.size() > 0) {
+            wasPrice = String.valueOf(Collections.max(priceList));
+        }
+        productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice, productDetail.productType);
+    }
+
+    public void productDetailPriceList(WTextView wPrice, WTextView WwasPrice,
+                                       String price, String wasPrice, String productType) {
+        switch (productType) {
+            case "clothingProducts":
+                if (TextUtils.isEmpty(wasPrice)) {
+                    wPrice.setText("From: " + WFormatter.formatAmount(price));
+                    wPrice.setPaintFlags(0);
+                    WwasPrice.setText("");
+                } else {
+                    if (wasPrice.equalsIgnoreCase(price)) {
+                        //wasPrice equals currentPrice
+                        wPrice.setText("From: " + WFormatter.formatAmount(price));
+                        WwasPrice.setText("");
+                        wPrice.setPaintFlags(0);
+                    } else {
+                        wPrice.setText("From: " + WFormatter.formatAmount(wasPrice));
+                        wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        WwasPrice.setText(WFormatter.formatAmount(price));
+                    }
+                }
+                break;
+
+            default:
+                if (TextUtils.isEmpty(wasPrice)) {
+                    if (Utils.isLocationEnabled(ProductDetailViewActivity.this)) {
+                        ArrayList<Double> priceList = new ArrayList<>();
+                        for (OtherSku os : productDetail.otherSkus) {
+                            if (!TextUtils.isEmpty(os.price)) {
+                                priceList.add(Double.valueOf(os.price));
+                            }
+                        }
+                        if (priceList.size() > 0) {
+                            price = String.valueOf(Collections.max(priceList));
+                        }
+                    }
+                    wPrice.setText(WFormatter.formatAmount(price));
+                    wPrice.setPaintFlags(0);
+                    WwasPrice.setText("");
+                } else {
+                    if (Utils.isLocationEnabled(ProductDetailViewActivity.this)) {
+                        ArrayList<Double> priceList = new ArrayList<>();
+                        for (OtherSku os : productDetail.otherSkus) {
+                            if (!TextUtils.isEmpty(os.price)) {
+                                priceList.add(Double.valueOf(os.price));
+                            }
+                        }
+                        if (priceList.size() > 0) {
+                            price = String.valueOf(Collections.max(priceList));
+                        }
+                    }
+
+                    if (wasPrice.equalsIgnoreCase(price)) { //wasPrice equals currentPrice
+                        wPrice.setText(WFormatter.formatAmount(price));
+                        WwasPrice.setText("");
+                    } else {
+                        wPrice.setText(WFormatter.formatAmount(wasPrice));
+                        wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                        WwasPrice.setText(WFormatter.formatAmount(price));
+                    }
+                }
+                break;
         }
     }
 }

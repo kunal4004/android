@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +35,7 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIBankAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIIncomeProofAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.CLIBankAccountTypeBinder;
 
 public class CLIThirdStepFragment extends Fragment implements View.OnClickListener,
@@ -186,15 +187,20 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                             mRecycleList.setAdapter(mCLIBankAccountAdapter);
                             mCLIBankAccountAdapter.setCLIContent();
                         } else {
-                            mPopWindowValidationMessage.displayValidationMessage(bankAccountTypes.response.desc,
-                                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+                            if (bankAccountTypes.response.desc != null &&
+                                    !TextUtils.isEmpty(bankAccountTypes.response.desc)) {
+                                Utils.displayValidationMessage(getActivity(),
+                                        TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                        bankAccountTypes.response.desc);
+                            }
                         }
                     }
                 }
             }.execute();
         } else {
-            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_enter_acc_number_error),
-                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+            Utils.displayValidationMessage(getActivity(),
+                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                    getString(R.string.connect_to_server));
         }
     }
 
@@ -225,20 +231,25 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                             //If everything is ok then hide the keyboard
                             hideKeyboard(getContext());
                         } else {
-                            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_enter_acc_number_error),
-                                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+                            Utils.displayValidationMessage(getActivity(),
+                                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                    getString(R.string.cli_enter_acc_number_error));
                         }
                     } else {
-                        mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_select_acc_type),
-                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+                        Utils.displayValidationMessage(getActivity(),
+                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                getString(R.string.cli_select_acc_type));
                     }
                 } else {
                     if (mConnectionDetector.isOnline(getActivity())) {
-                        mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_select_acc_type),
-                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+                        Utils.displayValidationMessage(getActivity(),
+                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                getString(R.string.cli_select_acc_type));
+
                     } else {
-                        mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
-                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+                        Utils.displayValidationMessage(getActivity(),
+                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                getString(R.string.connect_to_server));
                     }
                 }
                 break;
@@ -351,19 +362,23 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                     int httpCode = cliEmailResponse.httpCode;
                     String desc = cliEmailResponse.response.desc;
                     if (httpCode == 200) {
-                        popEmail();
+                        Utils.displayValidationMessage(getActivity(),
+                                TransientActivity.VALIDATION_MESSAGE_LIST.EMAIL, mEmail);
                     } else {
-                        mPopWindowValidationMessage.displayValidationMessage(desc,
-                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+                        if (!TextUtils.isEmpty(desc) && desc == null) {
+                            Utils.displayValidationMessage(getActivity(),
+                                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                    getString(R.string.connect_to_server));
+                        }
                     }
-
                     stopEmailProgressDialog();
                 }
 
             }.execute();
         } else {
-            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
-                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+            Utils.displayValidationMessage(getActivity(),
+                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                    getString(R.string.connect_to_server));
         }
     }
 
@@ -400,52 +415,24 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                         if (updateBankDetailResponse.httpCode == 200) {
                             stepNavigatorCallback.openNextFragment(3);
                         } else {
-                            mPopWindowValidationMessage.displayValidationMessage(updateBankDetailResponse.response.desc,
-                                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+
+                            String desc = updateBankDetailResponse.response.desc;
+                            if (!TextUtils.isEmpty(desc) && desc != null) {
+                                Utils.displayValidationMessage(getActivity(),
+                                        TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                        desc);
+                            }
                         }
                     }
                     stopProgressDialog();
                 }
             }.execute();
         } else {
-            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_enter_acc_number_error),
-                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+            Utils.displayValidationMessage(getActivity(),
+                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                    getString(R.string.connect_to_server));
         }
     }
-
-    public PopupWindow popEmail() {
-        //darken the current screen
-        View view = getActivity().getLayoutInflater().inflate(R.layout.open_nativemaps_layout, null);
-        mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
-        mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
-        mDarkenScreen.setOutsideTouchable(false);
-        //Then popup window appears
-        final View popupView = getActivity().getLayoutInflater().inflate(R.layout.cli_email_layout, null);
-        WButton mOverlayBtn = (WButton) popupView.findViewById(R.id.btnOk);
-        WTextView textEmailContent = (WTextView) popupView.findViewById(R.id.textEmailAddress);
-        textEmailContent.setText(mEmail);
-        mPopWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mPopWindow.setAnimationStyle(R.style.Animations_popup);
-        mPopWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
-        mPopWindow.setOutsideTouchable(false);
-        //Dismiss popup when touch outside
-        mPopWindow.setTouchable(false);
-
-        mOverlayBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CLIStepIndicatorActivity cliStepIndicatorActivity = (CLIStepIndicatorActivity) getActivity();
-                if (cliStepIndicatorActivity instanceof Activity) {
-                    cliStepIndicatorActivity.moveToPage(3);
-                }
-                mPopWindow.dismiss();
-                mDarkenScreen.dismiss();
-            }
-        });
-        return mDarkenScreen;
-    }
-
 
     public void showProgressBar() {
         mEmpyViewDialogFragment = WEmpyViewDialogFragment.newInstance("blank");

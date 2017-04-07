@@ -2,14 +2,19 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.content.Context;
 
-import android.graphics.Bitmap;
-import android.widget.ImageView;
+import android.graphics.drawable.Animatable;
+import android.net.Uri;
 
-import com.awfs.coordination.R;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.controller.ControllerListener;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.image.ImageInfo;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 public class DrawImage {
 
@@ -19,51 +24,73 @@ public class DrawImage {
         mContext = context;
     }
 
-    public void displayImage(final ImageView imageView, String url) {
-//    Log.e("displayImage",url);
-//        String imageRep = url.replace(" ","%20");
-//        Glide.with(mContext)
-//                .load(imageRep)
-//                .dontAnimate()
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .listener(new RequestListener<String, GlideDrawable>() {
-//                    @Override
-//                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-//                        Log.e("IMAGE_EXCEPTION", "Exception " + e.toString());
-//                        return false;
-//                    }
-//
-//                    @Override
-//                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-//                        return false;
-//                    }
-//                })
-//                .into(imageView);
-
-
-        Glide.with(mContext)
-                .load(url)
-                .asBitmap()
-                .atMost()
-                .placeholder(R.drawable.rectangle)
-                .override(500, 500)
-                .dontAnimate()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-                        // do something with the bitmap
-                        imageView.setImageBitmap(bitmap);
-                    }
-                });
+    public void displayImage(final SimpleDraweeView image, String imgUrl) {
+        if (imgUrl != null) {
+            try {
+                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imgUrl))
+                        .build();
+                DraweeController controller = Fresco.newDraweeControllerBuilder()
+                        .setOldController(image.getController())
+                        .setImageRequest(request)
+                        .build();
+                image.setController(controller);
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
     }
 
-    public void widthDisplayImage(ImageView imageView, String url) {
-        Glide.with(mContext)
-                .load(url)
-                .dontAnimate()
-                .centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imageView);
+    public void widthDisplayImage(final SimpleDraweeView image, String imgUrl) {
+        if (imgUrl != null) {
+            try {
+
+                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imgUrl))
+                        .build();
+                DraweeController controller = Fresco.newDraweeControllerBuilder()
+                        .setOldController(image.getController())
+                        .setImageRequest(request)
+                        .build();
+
+                image.setController(controller);
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+    }
+
+    public void widthDisplayImage(final SimpleDraweeView simperDrawerView, Uri fileUri) {
+        GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(mContext.getResources());
+        GenericDraweeHierarchy hierarchy = builder
+                .build();
+
+        ImageRequest requestBuilder = ImageRequestBuilder.newBuilderWithSource(fileUri)
+                // .setResizeOptions(new ResizeOptions(600, 120))
+                .setProgressiveRenderingEnabled(true)
+                .build();
+
+        ControllerListener<ImageInfo> contollerListener = new BaseControllerListener() {
+
+            public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {
+                super.onFinalImageSet(id, imageInfo, animatable);
+                if (imageInfo != null) {
+                    updateViewSize(imageInfo, simperDrawerView);
+                }
+            }
+        };
+
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setControllerListener(contollerListener)
+                .setImageRequest(requestBuilder)
+                .build();
+
+        simperDrawerView.setHierarchy(hierarchy);
+        simperDrawerView.setController(controller);
+
+    }
+
+    private void updateViewSize(ImageInfo imageinfo, SimpleDraweeView simpleDraweeView) {
+        //this is my own implementation of changing simple-drawee-view height
+        // you canhave yours using imageinfo.getHeight() or imageinfo.getWidth();
+        simpleDraweeView.getLayoutParams().height = imageinfo.getHeight();
+        // don't forget to call this method. thanks to @plamenko for reminding me.
+        simpleDraweeView.requestLayout();
     }
 }

@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/tools"
     android:id="@+id/relProductContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scrollProductDetail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
+        android:descendantFocusability="blocksDescendants"
         android:visibility="visible">
 
         <LinearLayout
@@ -19,12 +22,12 @@
             <RelativeLayout
                 android:id="@+id/relViewPager"
                 android:layout_width="match_parent"
-                android:layout_height="400dp">
+                android:layout_height="450dp">
 
                 <android.support.v4.view.ViewPager
                     android:id="@+id/mProductDetailPager"
                     android:layout_width="match_parent"
-                    android:layout_height="400dp" />
+                    android:layout_height="450dp" />
 
                 <LinearLayout
                     android:id="@+id/pager_dots"
@@ -41,7 +44,7 @@
             <include
                 layout="@layout/line"
                 android:layout_width="match_parent"
-                android:layout_height="0.4dp"
+                android:layout_height="0.5dp"
                 android:layout_marginBottom="0dp"
                 android:layout_marginEnd="0dp"
                 android:layout_marginStart="0dp"
@@ -52,10 +55,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginStart="@dimen/default_margin"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="20dp"
                 android:ellipsize="end"
+                android:visibility="gone"
                 android:gravity="top|start"
                 android:letterSpacing="0.1"
                 android:text="new arrivals"
@@ -72,12 +75,13 @@
                 android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginStart="@dimen/default_margin"
                 android:gravity="top|start"
-                android:letterSpacing="-0.05"
+                android:letterSpacing="0"
+                android:layout_marginTop="20dp"
                 android:text="Navy Blue Polka Dot Cotton Shirt"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="24sp"
-                app:WTextView_font="medium_bold" />
+                app:WTextView_font="bold" />
 
             <include layout="@layout/line" />
 
@@ -95,6 +99,7 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/default_margin"
                         android:layout_marginStart="@dimen/default_margin"
                         android:orientation="horizontal">
 
@@ -103,10 +108,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentStart="true"
-                            android:layout_marginBottom="2dp"
-                            android:layout_marginEnd="4dp"
                             android:gravity="top|start"
                             android:letterSpacing="-0.01"
+                            android:paddingRight="2dp"
                             android:text="R 399.00"
                             android:textAllCaps="true"
                             android:textColor="@color/black"
@@ -118,8 +122,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentStart="true"
-                            android:layout_marginBottom="8dp"
-                            android:layout_marginEnd="@dimen/default_margin"
                             android:gravity="top|start"
                             android:letterSpacing="-0.01"
                             android:text="R 399.00"
@@ -158,33 +160,37 @@
                     android:gravity="right"
                     android:orientation="horizontal">
 
-                    <ImageView
+                    <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/imNewImage"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginLeft="8dp"
-                        android:contentDescription="@string/app_name" />
+                        android:contentDescription="@string/app_name"
+                        fresco:viewAspectRatio="1.0" />
 
-                    <ImageView
+                    <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/imSave"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginLeft="8dp"
-                        android:contentDescription="@string/app_name" />
+                        android:contentDescription="@string/app_name"
+                        fresco:viewAspectRatio="1.0" />
 
-                    <ImageView
+                    <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/imReward"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginLeft="8dp"
-                        android:contentDescription="@string/app_name" />
+                        android:contentDescription="@string/app_name"
+                        fresco:viewAspectRatio="1.0" />
 
-                    <ImageView
+                    <com.facebook.drawee.view.SimpleDraweeView
                         android:id="@+id/imVitality"
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_marginLeft="8dp"
-                        android:contentDescription="@string/app_name" />
+                        android:contentDescription="@string/app_name"
+                        fresco:viewAspectRatio="1.0" />
 
                 </LinearLayout>
 
@@ -199,7 +205,7 @@
                 android:layout_marginLeft="@dimen/default_margin"
                 android:layout_marginRight="@dimen/default_margin" />
 
-            <include layout="@layout/test" />
+            <include layout="@layout/product_color_row" />
 
             <include layout="@layout/line" />
 
@@ -231,20 +237,42 @@
 
             </za.co.woolworths.financial.services.android.ui.views.WrapContentWebView>
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/product_code"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginBottom="30dp"
-                android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginStart="@dimen/default_margin"
-                android:layout_marginTop="10dp"
-                android:gravity="start|top"
-                android:textColor="@color/black_desc_opacity"
-                android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular" />
+                android:layout_marginTop="@dimen/default_margin"
+                android:orientation="horizontal">
 
-            <include layout="@layout/line" android:id="@+id/ingredientLine"/>
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/product_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="start"
+                    android:textColor="@color/black_desc_opacity"
+                    android:textSize="15sp"
+                    app:WTextView_font="myriadpro_regular" />
+
+                <za.co.woolworths.financial.services.android.ui.views.LoadingDots
+                    android:id="@+id/loadingDots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginTop="8dp"
+                    app:LoadingDots_dots_color="@color/black_desc_opacity"
+                    app:LoadingDots_dots_count="3"
+                    app:LoadingDots_dots_size="3dp"
+                    app:LoadingDots_dots_space="2dp"
+                    android:visibility="gone"
+                    app:LoadingDots_jump_height="4dp"
+                    app:LoadingDots_loop_start_delay="50" />
+
+            </LinearLayout>
+
+            <include
+                android:id="@+id/ingredientLine"
+                layout="@layout/line" />
 
             <LinearLayout
                 android:id="@+id/linIngredient"
@@ -275,8 +303,8 @@
                     android:layout_marginEnd="@dimen/default_margin"
                     android:layout_marginStart="@dimen/default_margin"
                     android:layout_marginTop="4dp"
-                    android:lineSpacingExtra="2dp"
                     android:gravity="start|top"
+                    android:lineSpacingExtra="2dp"
                     android:textColor="@color/black_desc_opacity"
                     android:textSize="15sp"
                     app:WTextView_font="myriadpro_regular" />

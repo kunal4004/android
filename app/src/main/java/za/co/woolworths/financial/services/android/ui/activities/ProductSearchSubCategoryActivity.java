@@ -3,18 +3,14 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
@@ -57,10 +53,8 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
     private String mRootCategoryId;
     private String mSubCategoriesName;
     private PopWindowValidationMessage mPopWindowValidationMessage;
-    private ImageView mImBurgerButtonPressed;
     private ProgressBar mProgressBar;
     private RelativeLayout mSearchStore;
-    private ImageView mImSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +62,6 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
         Utils.updateStatusBarBackground(this);
         setContentView(R.layout.product_search_sub_category);
         mContext = this;
-
         Bundle bundleSubCategory = getIntent().getExtras();
         if (bundleSubCategory != null) {
             mRootCategoryId = bundleSubCategory.getString("root_category_id");
@@ -87,10 +80,10 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
         WTextView mToolBarTitle = (WTextView) findViewById(R.id.toolbarText);
         recyclerView = (WObservableRecyclerView) findViewById(R.id.productSearchList);
         mTextNoProductFound = (WTextView) findViewById(R.id.textNoProductFound);
-        mImBurgerButtonPressed = (ImageView) findViewById(R.id.imBurgerButtonPressed);
+        ImageView mImBurgerButtonPressed = (ImageView) findViewById(R.id.imBurgerButtonPressed);
         mSearchStore = (RelativeLayout) findViewById(R.id.search_store_activity);
         mProgressBar = (ProgressBar) findViewById(R.id.mProgressBar);
-        mImSearch = (ImageView) findViewById(R.id.imSearch);
+        ImageView mImSearch = (ImageView) findViewById(R.id.imSearch);
 
         mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -231,7 +224,7 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
                     openProductCategory.putExtra("catStep", 1);
                     startActivity(openProductCategory);
                 } else {
-                    Intent openProductListIntent = new Intent(ProductSearchSubCategoryActivity.this, ProductViewActivity.class);
+                    Intent openProductListIntent = new Intent(ProductSearchSubCategoryActivity.this, ProductViewGridActivity.class);
                     openProductListIntent.putExtra("sub_category_name", subCategory.categoryName);
                     openProductListIntent.putExtra("sub_category_id", subCategory.categoryId);
                     startActivity(openProductListIntent);

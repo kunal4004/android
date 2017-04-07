@@ -1,9 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.support.design.widget.AppBarLayout;
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,33 +16,32 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.os.Bundle;
-import android.view.animation.AccelerateInterpolator;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
+import za.co.woolworths.financial.services.android.ui.fragments.WProductFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WRewardsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.WProductFragments;
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
-import me.leolin.shortcutbadger.ShortcutBadger;
 
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
-        , WProductFragments.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle, WRewardsFragment.HideActionBarComponent {
+        , WProductFragment.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle, WRewardsFragment.HideActionBarComponent {
 
     public static Toolbar mToolbar;
     //  public static AppBarLayout appbar;
@@ -81,6 +80,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         drawerFragment.setDrawerListener(this);
         displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 
+        registerReceiver(logOutReceiver, new IntentFilter("logOutReceiver"));
+
     }
 
     @Override
@@ -90,7 +91,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 
     private void displayView(int position) {
         boolean isRewardFragment = false;
-        // WOneAppBaseActivity.appbar.animate().translationY(WOneAppBaseActivity.appbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
         Fragment fragment = null;
         String title = getString(R.string.app_name);
         switch (position) {
@@ -99,7 +99,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
                 title = getString(R.string.nw_today_title);
                 break;
             case 1:
-                fragment = new WProductFragments();
+                fragment = new WProductFragment();
                 title = getString(R.string.nav_item_products);
                 break;
             case 2:
@@ -189,6 +189,20 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             super.onBackPressed();
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(logOutReceiver);
+    }
+
+    BroadcastReceiver logOutReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ScreenManager.presentSSOLogout(WOneAppBaseActivity.this);
+        }
+    };
 }
 
 

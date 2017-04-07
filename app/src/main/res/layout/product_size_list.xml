@@ -13,7 +13,7 @@
         android:layout_marginEnd="@dimen/default_margin"
         android:layout_marginStart="@dimen/default_margin"
         android:gravity="start|center_vertical"
-        android:letterSpacing="0.09"
+        android:letterSpacing="0.2"
         android:paddingBottom="14dp"
         android:paddingTop="14dp"
         android:textColor="@color/black"

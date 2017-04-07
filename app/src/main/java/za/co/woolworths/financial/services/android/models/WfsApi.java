@@ -6,15 +6,16 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.squareup.okhttp.OkHttpClient;
 
+import com.jakewharton.retrofit.Ok3Client;
 
+import okhttp3.OkHttpClient;
 import retrofit.RestAdapter;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
 
-import retrofit.client.OkClient;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
@@ -59,15 +60,14 @@ public class WfsApi {
     private Location loc;
 
     public WfsApi(Context mContext) {
-
         this.mContext = mContext;
-        OkHttpClient client = new OkHttpClient();
-        client.setReadTimeout(60, TimeUnit.SECONDS);
-        client.setConnectTimeout(60, TimeUnit.SECONDS);
-        client.interceptors().add(new WfsApiInterceptor(mContext));
+        OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder();
+        httpBuilder.addInterceptor(new WfsApiInterceptor(mContext));
+        httpBuilder.readTimeout(60, TimeUnit.SECONDS);
+        httpBuilder.connectTimeout(60, TimeUnit.SECONDS);
 
         mApiInterface = new RestAdapter.Builder()
-                .setClient(new OkClient(client))
+                .setClient((new Ok3Client(httpBuilder.build())))
                 .setEndpoint(WoolworthsApplication.getBaseURL())
                 .setLogLevel(Util.isDebug(mContext) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
                 .build()
@@ -174,14 +174,19 @@ public class WfsApi {
     public ProductView productViewRequest(boolean isBarcode, int pageSize, int pageNumber, String product_id) {
         getMyLocation();
         if (Utils.isLocationEnabled(mContext)) {
-            return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), isBarcode, pageSize, pageNumber, product_id);
+            return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), pageSize, pageNumber, product_id);
         } else {
-            return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), isBarcode, pageSize, pageNumber, product_id);
+            return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), pageSize, pageNumber, product_id);
         }
     }
 
     public ProductView getProductSearchList(String search_item, boolean isBarcode, int pageSize, int pageNumber) {
         getMyLocation();
+        try {
+            search_item = URLEncoder.encode(search_item, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         if (Utils.isLocationEnabled(mContext)) {
             return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLongitude(), loc.getLatitude(), isBarcode, search_item, pageSize, pageNumber);
         } else {
