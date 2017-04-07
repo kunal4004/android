@@ -542,4 +542,6 @@
 
     <string name="contact_us_no_email_error">In order for us to process your query, please send an email to email_address with \"subject_line\" entered in the subject line. Remember to include your ID number in the body of the email.</string>
     <string name="loading_product_info">Loading product info</string>
+    <string name="services_unavailable">Services Unavailable</string>
+    <string name="please_check_back_later">Please check back later.</string>
 </resources>
