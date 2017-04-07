@@ -108,7 +108,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     private ArrayList<WProductDetail> mproductDetail;
     private WTextView mTextTitle;
     private WTextView mTextPrice;
-    private WTextView mCategoryName;
     private LinearLayout mRelContainer;
     private WTextView mProductCode;
     private List<OtherSku> otherSkusList;
@@ -625,7 +624,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
         mTextPrice = (WTextView) findViewById(R.id.textPrice);
         mLinIngredient = (LinearLayout) findViewById(R.id.linIngredient);
-        mCategoryName = (WTextView) findViewById(R.id.textType);
         mIngredientList = (WTextView) findViewById(R.id.ingredientList);
         mTextPromo = (WTextView) findViewById(R.id.textPromo);
         mTextSelectColor = (WTextView) findViewById(R.id.textSelectColour);
@@ -721,7 +719,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                 + ": "
                 + productDetail.productId);
         updatePrice();
-        mCategoryName.setText(productDetail.categoryName);
     }
 
 
