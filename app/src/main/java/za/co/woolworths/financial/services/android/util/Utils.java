@@ -2,18 +2,23 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
+import android.graphics.Paint;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.zxing.common.StringUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,6 +46,8 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 import static android.Manifest.permission_group.STORAGE;
 
@@ -313,10 +321,12 @@ public class Utils {
         SessionDao sessionDao = null;
         try {
             sessionDao = new SessionDao(context, key).get();
+            return sessionDao.value;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return sessionDao.value;
+
     }
 
     public static void setBadgeCounter(Context context, int badgeCount) {
@@ -325,7 +335,9 @@ public class Utils {
     }
 
     public static void removeBadgeCounter(Context context) {
-        ShortcutBadger.applyCount(context, 0);
+        try {
+            ShortcutBadger.applyCount(context, 0);
+        }catch (NullPointerException ex){}
     }
 
     public static boolean isLocationEnabled(Context context) {
@@ -399,5 +411,15 @@ public class Utils {
             Log.e("TAG", e.getMessage());
         }
         return historyList;
+    }
+
+    public static void displayValidationMessage(Context context, TransientActivity.VALIDATION_MESSAGE_LIST key, String description) {
+        Intent openMsg = new Intent(context, TransientActivity.class);
+        Bundle args = new Bundle();
+        args.putSerializable("key", key);
+        args.putString("description", description);
+        openMsg.putExtras(args);
+        context.startActivity(openMsg);
+        ((AppCompatActivity) context).overridePendingTransition(0, 0);
     }
 }

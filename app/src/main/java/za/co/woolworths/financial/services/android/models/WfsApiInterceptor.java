@@ -5,18 +5,20 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.Protocol;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
+
 
 import java.io.IOException;
 
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.Protocol;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okio.Buffer;
 import za.co.woolworths.financial.services.android.models.dao.ApiRequestDao;
 import za.co.woolworths.financial.services.android.models.dao.ApiResponseDao;
+import za.co.woolworths.financial.services.android.util.GZIPCompression;
 
 /**
  * Created by eesajacobs on 2016/12/29.
@@ -46,7 +48,10 @@ public class WfsApiInterceptor implements Interceptor {
         final long cacheTime = Integer.parseInt(cacheTimeHeaderValue == null ? "0" : cacheTimeHeaderValue);//cache time in seconds
 
         if (cacheTime == 0) {
-            return chain.proceed(request);
+            Response originalResponse = chain.proceed(request);
+            return originalResponse.newBuilder()
+                    .header("Accept-Encoding", "gzip")
+                    .build();
         }
 
         final String endpoint = request.url().toString();
@@ -55,8 +60,8 @@ public class WfsApiInterceptor implements Interceptor {
 
         ApiRequestDao apiRequestDao = new ApiRequestDao(mContext, cacheTime).get(request.method(), endpoint, headers, parametersJson);
         ApiResponseDao apiResponseDao = new ApiResponseDao(this.mContext).getByApiRequestId(apiRequestDao.id);
-        if (apiResponseDao.id != null) {  //cache exists. return cached response
 
+        if (apiResponseDao.id != null) {  //cache exists. return cached response
             return new Response.Builder()
                     .code(apiResponseDao.code)
                     .message(apiResponseDao.message)
@@ -67,7 +72,7 @@ public class WfsApiInterceptor implements Interceptor {
         }
 
         //cache does not exist. Proceed with service call.
-        com.squareup.okhttp.Response response = chain.proceed(request);
+        Response response = chain.proceed(request);
 
         //save the newly created apiRequestDao
         apiRequestDao.save();
@@ -76,7 +81,8 @@ public class WfsApiInterceptor implements Interceptor {
         apiResponseDao.message = response.message();
         apiResponseDao.code = response.code();
         apiResponseDao.headers = response.headers().toString();
-        apiResponseDao.body = response.body().string();
+        apiResponseDao.body = GZIPCompression.decompress(response.body().bytes());
+
         apiResponseDao.contentType = response.body().contentType().toString();
 
         //save the newly created apiResponseDao
@@ -86,11 +92,12 @@ public class WfsApiInterceptor implements Interceptor {
         String responseLog = String.format("Received response for %s in %.1fms%n%s", apiResponseDao.body + response.request().url(), (t2 - t1) / 1e6d, apiResponseDao.headers);
 
         return response.newBuilder()
+                .header("Cache-Control", "max-age=60")
                 .body(ResponseBody.create(MediaType.parse(apiResponseDao.contentType), apiResponseDao.body))
                 .build();
     }
 
-    public static String bodyToString(final Request request) {
+    public String bodyToString(final Request request) {
         try {
             final Request copy = request.newBuilder().build();
             final Buffer buffer = new Buffer();
@@ -100,4 +107,6 @@ public class WfsApiInterceptor implements Interceptor {
             return "did not work";
         }
     }
+
+
 }

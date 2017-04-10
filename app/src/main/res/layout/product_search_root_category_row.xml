@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/default_margin">
 
 
-    <ImageView
+    <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/imProductCategory"
         android:layout_width="match_parent"
         android:layout_height="120dp"

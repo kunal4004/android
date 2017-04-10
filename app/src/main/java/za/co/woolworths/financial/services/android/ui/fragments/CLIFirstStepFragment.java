@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,27 +25,30 @@ import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanksResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CLISupplyInfoActivity;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIDeaBankMapAdapter;
+import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
-import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICbxContentBinder;
 
 
 public class CLIFirstStepFragment extends Fragment implements View.OnClickListener, CLICbxContentBinder.OnCheckboxClickListener {
 
     private StepNavigatorCallback stepNavigatorCallback;
-    private int mSelectedPosition=-1;
+    private int mSelectedPosition = -1;
     private CLIStepIndicatorActivity mStepIndicatorActivity;
     private CLIStepIndicatorActivity.OnFragmentRefresh onFragmentRefresh;
     private PopWindowValidationMessage mPopWindowValidationMessage;
     private FragmentManager fm;
-    private WProgressDialogFragment mGetAccountsProgressDialog;
+    private ProgressDialogFragment mGetAccountsProgressDialog;
 
-    public interface StepNavigatorCallback{
+    public interface StepNavigatorCallback {
         void openNextFragment(int index);
     }
 
@@ -61,14 +65,16 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     private UpdateBankDetail mUpdateBankDetail;
     private ConnectionDetector mConnectionDetector;
 
-    public CLIFirstStepFragment() {}
+    public CLIFirstStepFragment() {
+    }
 
     View view;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-         view = inflater.inflate(R.layout.cli_fragment_step_one, container, false);
+        view = inflater.inflate(R.layout.cli_fragment_step_one, container, false);
         mContext = this;
-        mWoolworthsApplication = (WoolworthsApplication)getActivity().getApplication();
+        mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
         mConnectionDetector = new ConnectionDetector();
         mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         setRetainInstance(true);
@@ -81,20 +87,20 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 
     private void initUI() {
         mRecycleList = (RecyclerView) view.findViewById(R.id.recycleList);
-        mTextCreditLimit = (WTextView)view.findViewById(R.id.textACreditLimit);
-        relButtonCLIDeaBank = (RelativeLayout)view.findViewById(R.id.relButtonCLIDeaBank);
-        mBtnContinue=(WButton)view.findViewById(R.id.btnContinue);
-        mImgInfo = (ImageView)view.findViewById(R.id.imgInfo);
+        mTextCreditLimit = (WTextView) view.findViewById(R.id.textACreditLimit);
+        relButtonCLIDeaBank = (RelativeLayout) view.findViewById(R.id.relButtonCLIDeaBank);
+        mBtnContinue = (WButton) view.findViewById(R.id.btnContinue);
+        mImgInfo = (ImageView) view.findViewById(R.id.imgInfo);
 
     }
 
-    private void setListener(){
+    private void setListener() {
         relButtonCLIDeaBank.setOnClickListener(this);
         mBtnContinue.setOnClickListener(this);
         mImgInfo.setOnClickListener(this);
     }
 
-    private void setText(){
+    private void setText() {
         mImgInfo.setVisibility(View.GONE);
         mTextCreditLimit.setText(getActivity().getResources().getString(R.string.cli_select_your_bank));
     }
@@ -102,20 +108,30 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        stepNavigatorCallback = (StepNavigatorCallback)getActivity();
+        stepNavigatorCallback = (StepNavigatorCallback) getActivity();
         mStepIndicatorActivity = (CLIStepIndicatorActivity) context;
     }
 
     public void setDeaBanks() {
         fm = getActivity().getSupportFragmentManager();
-        mGetAccountsProgressDialog = WProgressDialogFragment.newInstance("gettingAccount");
-        if(mConnectionDetector.isOnline(getActivity())) {
+        mGetAccountsProgressDialog = ProgressDialogFragment.newInstance();
+        try {
+            if (!mGetAccountsProgressDialog.isAdded()) {
+                mGetAccountsProgressDialog.show(fm, "v");
+            } else {
+                mGetAccountsProgressDialog.dismiss();
+                mGetAccountsProgressDialog = ProgressDialogFragment.newInstance();
+                mGetAccountsProgressDialog.show(fm, "v");
+            }
+
+        } catch (NullPointerException ignored) {
+        }
+        if (mConnectionDetector.isOnline(getActivity())) {
 
             new HttpAsyncTask<String, String, DeaBanks>() {
 
                 @Override
                 protected void onPreExecute() {
-                    mGetAccountsProgressDialog.show(fm,"gettingAccount");
                     super.onPreExecute();
                 }
 
@@ -141,7 +157,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                 protected void onPostExecute(DeaBanks deaBanks) {
                     super.onPostExecute(deaBanks);
 
-                    if (deaBanks.banks!=null) {
+                    if (deaBanks.banks != null) {
                         if (deaBanks.httpCode == 200) {
 
                             mBanks = deaBanks.banks;
@@ -157,21 +173,26 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                         } else {
                             relButtonCLIDeaBank.setVisibility(View.GONE);
                         }
-                    }else {
-                        mPopWindowValidationMessage.displayValidationMessage(deaBanks.response.desc,
-                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+                    } else {
+
+                        if (!TextUtils.isEmpty(deaBanks.response.desc)) {
+                            Utils.displayValidationMessage(getActivity(),
+                                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                    deaBanks.response.desc);
+                        }
                     }
                     stopProgressDialog();
                 }
             }.execute();
-        }else{
-            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
-                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+        } else {
+            Utils.displayValidationMessage(getActivity(),
+                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                    getString(R.string.connect_to_server));
         }
     }
 
-    public void otherChecked(List<Bank> bank){
-        if(bank==null){
+    public void otherChecked(List<Bank> bank) {
+        if (bank == null) {
             bank = new ArrayList<>();
         }
         bank.add(new Bank(getActivity().getResources().getString(R.string.cli_others)));
@@ -179,31 +200,30 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-        switch(view.getId()){
+        switch (view.getId()) {
             case R.id.btnContinue:
-                if(mUpdateBankDetail!=null){
-                    if(mUpdateBankDetail.getBankName()!=null){
-                        if (mSelectedPosition==lastPosition()){ //others position clicked
+                if (mUpdateBankDetail != null) {
+                    if (mUpdateBankDetail.getBankName() != null) {
+                        if (mSelectedPosition == lastPosition()) { //others position clicked
                             mWoolworthsApplication.setDEABank(false);
                             mWoolworthsApplication.setOther(true);
                             stepNavigatorCallback.openNextFragment(2);
-                        }else {
+                        } else {
                             mWoolworthsApplication.setDEABank(true);
                             mWoolworthsApplication.setOther(false);
                             stepNavigatorCallback.openNextFragment(1);
                         }
-                        }else {
-                        mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_select_bank_error),
-                                PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     }
-                }else{
-                     if(mConnectionDetector.isOnline(getActivity())){
-                         mPopWindowValidationMessage.displayValidationMessage(getString(R.string.cli_select_bank_error),
-                                 PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
-                     }else{
-                         mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
-                                 PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
-                     }
+                } else {
+                    if (mConnectionDetector.isOnline(getActivity())) {
+                        Utils.displayValidationMessage(getActivity(),
+                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                getString(R.string.cli_select_bank_error));
+                    } else {
+                        Utils.displayValidationMessage(getActivity(),
+                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                getString(R.string.connect_to_server));
+                    }
                 }
                 break;
 
@@ -225,30 +245,28 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     @Override
     public void onCheckboxViewClick(View v, int position) {
         mSelectedPosition = position;
-        if (mBanks!=null){
-            mUpdateBankDetail=mWoolworthsApplication.updateBankDetail;
-            if(mUpdateBankDetail!=null) {
+        if (mBanks != null) {
+            mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
+            if (mUpdateBankDetail != null) {
                 mUpdateBankDetail.setBankName(mBanks.get(position).bankName);
             }
         }
     }
-
-
 
     @SuppressLint("ValidFragment")
     public CLIFirstStepFragment(StepNavigatorCallback stepNavigatorCallback) {
         this.stepNavigatorCallback = stepNavigatorCallback;
     }
 
-    public int lastPosition(){
-        if (mBanks!=null)
-            return mBanks.size()-1;
+    public int lastPosition() {
+        if (mBanks != null)
+            return mBanks.size() - 1;
         else
             return 0;
     }
 
-    public void stopProgressDialog(){
-        if (mGetAccountsProgressDialog!=null&&mGetAccountsProgressDialog.isVisible()){
+    public void stopProgressDialog() {
+        if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
             mGetAccountsProgressDialog.dismiss();
         }
     }

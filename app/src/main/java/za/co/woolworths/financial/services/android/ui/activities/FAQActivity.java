@@ -20,7 +20,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.FAQ;
 import za.co.woolworths.financial.services.android.models.dto.FAQDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.FAQAdapter;
-import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
+import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
@@ -33,7 +33,7 @@ import za.co.woolworths.financial.services.android.util.binder.view.FAQTypeBinde
 public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQuestion {
 
     private FragmentManager fm;
-    private WProgressDialogFragment mGetProgressDialog;
+    private ProgressDialogFragment mGetProgressDialog;
     private RecyclerView mRecycleView;
     private FAQActivity mContext;
     private Toolbar mToolbar;
@@ -84,7 +84,7 @@ public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQ
 
     private void getFAQRequest() {
         fm = getSupportFragmentManager();
-        mGetProgressDialog = WProgressDialogFragment.newInstance("faq");
+        mGetProgressDialog = ProgressDialogFragment.newInstance();
         mGetProgressDialog.setCancelable(false);
         if (mConnectionDetector.isOnline(this)) {
             new HttpAsyncTask<String, String, FAQ>() {
@@ -106,7 +106,17 @@ public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQ
 
                 @Override
                 protected void onPreExecute() {
-                    mGetProgressDialog.show(fm, "faq");
+                    try {
+                        if (!mGetProgressDialog.isAdded()) {
+                            mGetProgressDialog.show(fm, "v");
+                        } else {
+                            mGetProgressDialog.dismiss();
+                            mGetProgressDialog = ProgressDialogFragment.newInstance();
+                            mGetProgressDialog.show(fm, "v");
+                        }
+
+                    } catch (NullPointerException ignored) {
+                    }
                     super.onPreExecute();
                 }
 

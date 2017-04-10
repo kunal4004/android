@@ -11,6 +11,7 @@ import android.support.multidex.MultiDex;
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.model.LatLng;
@@ -51,6 +52,7 @@ public class WoolworthsApplication extends Application {
     private static String stsURI;
     private static String ssoRedirectURILogout;
     private static String wwTodayURI;
+    private static String creditCardType;
     private boolean isDEABank = false;
     private boolean isOther = false;
     private int productOfferingId;
@@ -172,6 +174,14 @@ public class WoolworthsApplication extends Application {
         WoolworthsApplication.wwTodayURI = wwTodayURI;
     }
 
+    public static String getCreditCardType() {
+        return creditCardType;
+    }
+
+    public static void setCreditCardType(String creditCardType) {
+        WoolworthsApplication.creditCardType = creditCardType;
+    }
+
     public static String getStsURI() {
         return stsURI;
     }
@@ -183,6 +193,7 @@ public class WoolworthsApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fresco.initialize(this);
 
         updateBankDetail = new UpdateBankDetail();
         WoolworthsApplication.context = this.getApplicationContext();

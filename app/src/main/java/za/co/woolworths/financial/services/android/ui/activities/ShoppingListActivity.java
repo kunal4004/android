@@ -1,8 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +11,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
@@ -29,14 +31,14 @@ import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListCheck
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingUnCheckedListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WOnItemClickListener;
 
-public class ShoppingListActivity extends BaseActivity implements WOnItemClickListener, ObservableScrollViewCallbacks {
+public class ShoppingListActivity extends AppCompatActivity implements WOnItemClickListener, ObservableScrollViewCallbacks {
 
+    private static final int ANIM_DOWN_DURATION = 2000 ;
     private RecyclerView mUncheckedItem;
     private RecyclerView mCheckItem;
     private Toolbar mToolbar;
@@ -48,6 +50,8 @@ public class ShoppingListActivity extends BaseActivity implements WOnItemClickLi
     private List<ShoppingList> mGetShoppingList;
     private RelativeLayout mNoItemInList;
     private WObservableScrollView mNestedScroll;
+    private RelativeLayout mRelRootContainer;
+    private boolean viewWasClicked=false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,6 +61,7 @@ public class ShoppingListActivity extends BaseActivity implements WOnItemClickLi
         initUI();
         actionBar();
         bindDataWithView(this);
+        confidentialAnimation();
     }
 
     private void initUI() {
@@ -66,6 +71,8 @@ public class ShoppingListActivity extends BaseActivity implements WOnItemClickLi
         mCheckListTitle = (WTextView) findViewById(R.id.checkListTitle);
         mNoItemInList = (RelativeLayout) findViewById(R.id.noItemInList);
         mNestedScroll = (WObservableScrollView) findViewById(R.id.nestedScroll);
+        mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+
         mNestedScroll.setScrollViewCallbacks(this);
     }
 
@@ -77,6 +84,28 @@ public class ShoppingListActivity extends BaseActivity implements WOnItemClickLi
             mActionBar.setDisplayShowTitleEnabled(false);
             mActionBar.setHomeAsUpIndicator(R.drawable.close_24);
         }
+    }
+
+    private void confidentialAnimation() {
+            TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+            animation.setFillAfter(true);
+            animation.setDuration(ANIM_DOWN_DURATION);
+            animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+
+                }
+            });
+            mRelRootContainer.startAnimation(animation);
     }
 
     private void bindDataWithView(WOnItemClickListener context) {

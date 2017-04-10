@@ -1,16 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.style.URLSpan;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.webkit.URLUtil;
 
 import com.awfs.coordination.R;
 
@@ -44,7 +44,6 @@ public class FAQDetailActivity extends BaseActivity {
         mTitle = (WTextView) findViewById(R.id.title);
         mDescription = (WTextView) findViewById(R.id.description);
         mToolbar = (Toolbar) findViewById(R.id.mToolbar);
-
     }
 
     private void setActionBar() {
@@ -71,6 +70,21 @@ public class FAQDetailActivity extends BaseActivity {
     private void populateTextView() {
         mTitle.setText(mQuestion);
         mDescription.setText(Html.fromHtml(mAnswer));
+        mDescription.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                URLSpan spans[] = mDescription.getUrls();
+                if(spans.length!=0)
+                {
+                    String url=spans[0].getURL();
+                    if(URLUtil.isValidUrl(url))
+                    {
+                     startActivity(new Intent(FAQDetailActivity.this,FAQDetailsWebActivity.class).putExtra("url",url));
+                    }
+                }
+            }
+        });
+
     }
 
     @Override

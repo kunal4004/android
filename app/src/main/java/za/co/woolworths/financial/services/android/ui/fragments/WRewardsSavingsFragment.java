@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,22 +9,28 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
+import java.text.ParseException;
+
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsSavingsHorizontalScrollAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 /**
  * Created by W7099877 on 05/01/2017.
  */
 
-public class WRewardsSavingsFragment extends Fragment {
+public class WRewardsSavingsFragment extends Fragment implements View.OnClickListener {
     private RecyclerView.LayoutManager mLayoutManager;
     private WRewardsSavingsHorizontalScrollAdapter mAdapter;
     private RecyclerView recyclerView;
@@ -35,6 +42,10 @@ public class WRewardsSavingsFragment extends Fragment {
     public WTextView yearToDateSpend;
     public WTextView yearToDateSpendText;
     public RelativeLayout noSavingsView;
+    public LinearLayout savingSinceLayout;
+    public WTextView savingSince;
+    public ImageView savingSinceInfo;
+    public ImageView yearToDateSpendInfo;
 
     @Nullable
     @Override
@@ -47,12 +58,18 @@ public class WRewardsSavingsFragment extends Fragment {
         quarterlyVoucherEarned = (WTextView) view.findViewById(R.id.quarterlyVouchersEarned);
         yearToDateSpend = (WTextView) view.findViewById(R.id.yearToDateSpend);
         yearToDateSpendText = (WTextView) view.findViewById(R.id.yearToDateSpendText);
+        yearToDateSpendInfo = (ImageView) view.findViewById(R.id.yearToDateSpendInfo);
         noSavingsView = (RelativeLayout) view.findViewById(R.id.noSavingsView);
+        savingSinceLayout = (LinearLayout) view.findViewById(R.id.savingSinceLayout);
+        savingSince = (WTextView) view.findViewById(R.id.savingSince);
+        savingSinceInfo = (ImageView) view.findViewById(R.id.savingSinceInfo);
         mLayoutManager = new LinearLayoutManager(
                 getActivity(),
                 LinearLayoutManager.HORIZONTAL,
                 false
         );
+        savingSinceInfo.setOnClickListener(this);
+        yearToDateSpendInfo.setOnClickListener(this);
         recyclerView.setLayoutManager(mLayoutManager);
         Bundle bundle = getArguments();
         voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
@@ -68,6 +85,8 @@ public class WRewardsSavingsFragment extends Fragment {
                 if (position == 0) {
                     setUpYearToDateValue();
                 } else {
+                    savingSinceLayout.setVisibility(View.GONE);
+                    yearToDateSpendInfo.setVisibility(View.GONE);
                     yearToDateSpendText.setText(getString(R.string.wrewards_monthly_spend));
                     //Get data on Position-1 from Array List. And bind to UI
                     tireStatus.setText(voucherResponse.tierHistoryList.get(position - 1).tier);
@@ -90,24 +109,33 @@ public class WRewardsSavingsFragment extends Fragment {
     }
 
     public void setUpYearToDateValue() {
+        savingSinceLayout.setVisibility(View.VISIBLE);
+        yearToDateSpendInfo.setVisibility(View.VISIBLE);
         yearToDateSpendText.setText(getString(R.string.year_to_date_spend));
         tireStatus.setText(voucherResponse.tierInfo.currentTier);
+        try {
+            savingSince.setText(WFormatter.formatDate(voucherResponse.tierInfo.earnedSince));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            savingSince.setText(voucherResponse.tierInfo.earnedSince);
+        }
         wRewardsInstantSaving.setText(WFormatter.formatAmount(voucherResponse.tierInfo.earned));
         wRewardsGreenEarned.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateGreenValue));
         quarterlyVoucherEarned.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateWVouchers));
         yearToDateSpend.setText(WFormatter.formatAmount(voucherResponse.tierInfo.yearToDateSpend));
-
     }
 
     public void displayNoSavingsView() {
         recyclerView.setVisibility(View.GONE);
         noSavingsView.setVisibility(View.VISIBLE);
+        savingSinceLayout.setVisibility(View.GONE);
         yearToDateSpendText.setText(getString(R.string.year_to_date_spend));
         //tireStatus.setText(voucherResponse.tierInfo.currentTier);
         wRewardsInstantSaving.setText(WFormatter.formatAmount(0));
         wRewardsGreenEarned.setText(WFormatter.formatAmount(0));
         quarterlyVoucherEarned.setText(WFormatter.formatAmount(0));
         yearToDateSpend.setText(WFormatter.formatAmount(0));
+
     }
 
     public void displaySavingsView() {
@@ -122,6 +150,19 @@ public class WRewardsSavingsFragment extends Fragment {
             mAdapter = new WRewardsSavingsHorizontalScrollAdapter(getActivity(), voucherResponse.tierHistoryList);
             recyclerView.setAdapter(mAdapter);
             setUpYearToDateValue();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.savingSinceInfo:
+                Utils.displayValidationMessage(getActivity(), TransientActivity.VALIDATION_MESSAGE_LIST.INFO, getString(R.string.savings_info_message));
+                break;
+
+            case R.id.yearToDateSpendInfo:
+                Utils.displayValidationMessage(getActivity(), TransientActivity.VALIDATION_MESSAGE_LIST.INFO, getString(R.string.savings_info_message));
+                break;
         }
     }
 }

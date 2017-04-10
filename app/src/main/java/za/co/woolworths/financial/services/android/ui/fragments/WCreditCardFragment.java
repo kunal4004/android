@@ -56,6 +56,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private ImageView mImageArrow;
     private PopWindowValidationMessage mPopWindowValidationMessage;
     private AsyncTask<String, String, OfferActive> asyncRequestCredit;
+    private boolean cardHasId = false;
 
     @Nullable
     @Override
@@ -103,6 +104,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                     creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.creditLimit), 1, getActivity())));
                     minAmountDue.setText(removeNegativeSymbol(WFormatter.formatAmount(p.minimumAmountDue)));
                     currentBalance.setText(removeNegativeSymbol(WFormatter.formatAmount(p.currentBalance)));
+                    WoolworthsApplication.setCreditCardType(p.accountNumberBin);
                     try {
                         dueDate.setText(WFormatter.formatDate(p.paymentDueDate));
                     } catch (ParseException e) {
@@ -125,7 +127,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                 break;
 
             case R.id.txtIncreseLimit:
-                Log.e("productOfferIdStore",String.valueOf(productOfferingId));
+                Log.e("productOfferIdStore", String.valueOf(productOfferingId));
                 if (!isOfferActive) {
                     ((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
@@ -170,7 +172,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                     String httpDesc = offerActive.response.desc;
                     if (httpCode == 200) {
                         isOfferActive = offerActive.offerActive;
-                        Log.e("isOffer", String.valueOf(isOfferActive));
+                        cardHasId = true;
                         if (isOfferActive) {
                             disableIncreaseLimit();
                         } else {
@@ -254,7 +256,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                getActiveOffer();
+                if (!cardHasId) {
+                    getActiveOffer();
+                }
             }
         }, 100);
     }

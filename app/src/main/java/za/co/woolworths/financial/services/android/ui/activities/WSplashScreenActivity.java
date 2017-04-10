@@ -220,7 +220,6 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
     private String getRandomVideos() {
         ArrayList<String> listOfVideo = new ArrayList<>();
         String rawFolderPath = "android.resource://" + getPackageName() + "/";
-        listOfVideo.add(rawFolderPath + R.raw.wsplash_screen_video);
         listOfVideo.add(rawFolderPath + R.raw.fashion_studiow_men);
         listOfVideo.add(rawFolderPath+ R.raw.fashion_summertime);
         listOfVideo.add(rawFolderPath+ R.raw.food_broccoli);

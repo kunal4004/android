@@ -4,18 +4,23 @@ import android.app.DialogFragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
 
 import com.awfs.coordination.R;
+import com.facebook.drawee.view.SimpleDraweeView;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.DrawImage;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.animation.BlurDialogFragment;
 
@@ -48,7 +53,7 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         getDialog().getWindow().setBackgroundDrawableResource(
-                android.R.color.transparent);
+                R.color.semi_per_black);
         return inflater.inflate(R.layout.add_shopping_list_fragment, container);
     }
 
@@ -63,13 +68,21 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
             externalImageRef = bundle.getString("externalImageRef");
         }
 
-        ImageView imgShoppingList = (ImageView) view.findViewById(R.id.imgShoppingList);
+        SimpleDraweeView imgShoppingList = (SimpleDraweeView) view.findViewById(R.id.imgShoppingList);
         DrawImage drawImage = new DrawImage(getActivity());
-        drawImage.displayImage(imgShoppingList, externalImageRef);
+        URL url = null;
+        try {
+            url = new URL(externalImageRef);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Log.e("externalImageRef", externalImageRef);
+        drawImage.displayImage(imgShoppingList, String.valueOf(url));
+
 
         WButton wAddToShoppingCart = (WButton) view.findViewById(R.id.btnAddShoppingList);
         wAddToShoppingCart.setOnClickListener(this);
-
     }
 
     @Override
@@ -80,11 +93,9 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
                         productId,
                         productName, false));
 
-                new PopWindowValidationMessage(getActivity()).displayValidationMessage("",
-                        PopWindowValidationMessage.OVERLAY_TYPE.SHOPPING_LIST_INFO);
-
-                dismiss();
-
+                Utils.displayValidationMessage(getActivity(),
+                        TransientActivity.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
+                        "viewShoppingList");
                 break;
         }
     }

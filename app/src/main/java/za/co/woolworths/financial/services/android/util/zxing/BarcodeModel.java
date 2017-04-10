@@ -1,0 +1,27 @@
+package za.co.woolworths.financial.services.android.util.zxing;
+
+
+import com.pacific.mvc.ActivityModel;
+
+public class BarcodeModel extends ActivityModel<QRView> {
+
+    public BarcodeModel(QRView view) {
+        super(view);
+    }
+
+    public void resultDialog(QRResult qrResult){
+        view.resultDialog(qrResult);
+    }
+
+    public void onResume() {
+        view.setSurfaceViewVisible(true);
+    }
+
+    public void onPause() {
+        view.setSurfaceViewVisible(false);
+    }
+
+    public void setEmptyViewVisible(boolean visible){
+        view.setEmptyViewVisible(visible);
+    }
+}

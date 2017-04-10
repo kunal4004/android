@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,13 +85,13 @@ public class RootCategoryBinder extends DataBinder<RootCategoryBinder.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView mImageProductCategory;
+        SimpleDraweeView mImageProductCategory;
         WTextView mTextProduct;
         FrameLayout mFrameRootCategory;
 
         public ViewHolder(View view) {
             super(view);
-            mImageProductCategory = (ImageView) view.findViewById(R.id.imProductCategory);
+            mImageProductCategory = (SimpleDraweeView) view.findViewById(R.id.imProductCategory);
             mTextProduct = (WTextView) view.findViewById(R.id.textProduct);
             mFrameRootCategory = (FrameLayout) view.findViewById(R.id.frameRootCategory);
         }

@@ -30,7 +30,6 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
-import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;

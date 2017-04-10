@@ -110,7 +110,7 @@
     <string name="month_description">YOUR TIER STATUS FOR THE MONTH</string>
     <string name="information">INFORMATION</string>
     <string name="voucher_terms_button_text">VIEW GENERAL TERMS &amp; CONDITIONS</string>
-    <string name="reward_status_info_1">Swipe your WRewards or MySchool card and get an extra 10\%% off selected items.  Pay with your Woolies card and get a further 5\%%.</string>
+    <string name="reward_status_info_1">Swipe your Woolies or MySchool card and get an extra 10\%% off selected items.  Pay with your Woolies card and get a further 5\%%.</string>
     <string name="reward_status_info_2">Invitations to preview sales</string>
     <string name="reward_status_info_3">WRewards Green</string>
     <string name="reward_status_info_4">Free WMagazine</string>
@@ -213,7 +213,8 @@
     <string name="txt_delivery_queries">Delivery queries</string>
     <string name="txt_order_queries">Order queries</string>
     <string name="customer_service_local_caller_number">0860 022 002</string>
-    <string name="customer_service_inter_national_caller_number">+27 21 407 7002</string>
+    <string name="customer_service_inter_national_caller_number">(021) 407 3995</string>
+    <string name="customer_service_international_call">+27 21 407 7002</string>
     <string name="txt_product_query">Product query</string>
     <string name="txt_store_query">Store query</string>
     <string name="wrewards_local_caller_number">0861 502 050</string>
@@ -292,7 +293,7 @@
     <string name="cli_account_type">ACCOUNT TYPE</string>
     <string name="cli_complete_process">COMPLETE PROCESS</string>
     <string name="cli_credit_limit_received">Credit limit increase\nrequest received</string>
-    <string name="cli_contact_delay">We will be in contact with the outcome of our review in approximately 2-3 business days.</string>
+    <string name="cli_contact_delay">Thanks for your patience – your application is being processed and we will be in contact with you within two working days.</string>
     <string name="cli_back_to_acc">Back to my accounts</string>
     <string name="cli_income_proof">proof of income</string>
     <string name="cli_send_document_title">submit your documents via:</string>
@@ -310,12 +311,12 @@
     <string name="cli_lorem_ipsum">Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum </string>
     <string name="cli_got_it">GOT IT</string>
     <string name="cli_overlay_monthly_income">Gross Monthly Income is your income before Tax/ Deductions.</string>
-    <string name="cli_overlay_gross_income">Net Monthly Income is your personal income after tax/deductions as reflected on your payslip.</string>
+    <string name="cli_overlay_gross_income">Your net monthly income refers to your income after tax and other deductions. You’ll find this amount on your payslip.</string>
     <string name="cli_overlay_per_income">Monthly personal income earned over and above your salary, i.e: rental, maintenance and spousal allowances etc.</string>
     <string name="cli_overlay_monthly_home">Your Monthly Home Loan Repayment.</string>
     <string name="cli_overlay_rental_payment">Rental Payment — Cost of Renting Accommodation.</string>
     <string name="cli_overlay_monthly_obliged">Monthly obligation to pay statutory child and/or spousal support etc.</string>
-    <string name="cli_overlay_monthly_installment">Monthly Installment of creditor account i.e.: Credit Card, Personal Loan, Furniture Accounts etc.</string>
+    <string name="cli_overlay_monthly_installment">Monthly Instalment of creditor account i.e.: Credit Card, Personal Loan, Furniture Accounts etc.</string>
     <string name="cli_overlay_other_expenses">All Other Expenses, i.e.: groceries, transport, telephone/cellphone etc.</string>
     <string name="cli_overlay_all_expenses">All Other Expenses, i.e.: groceries,transport, telephone/cellphone etc.</string>
     <string name="cli_creating_offer">CREATING OFFER...</string>
@@ -349,8 +350,8 @@
 
     <string name="onboarding_desc_screen_1">The new Woolies app gives you easy access to fashion trends, recipes, stores, account information and so much more.</string>
     <string name="onboarding_desc_screen_2">See how much you’ve saved, track your tier status and access all your vouchers.</string>
-    <string name="onboarding_desc_screen_3">Create a profile or use your existing Woolies online sign in to get started. Your sign in details will be the same on the app, mobi site and website.</string>
-    <string name="onboarding_desc_screen_4">Conveniently view your available funds, next payment due, recent transactions and so much more.</string>
+    <string name="onboarding_desc_screen_3">Conveniently view your available funds, next payment due, recent transactions and so much more.</string>
+    <string name="onboarding_desc_screen_4">Create a profile or use your existing Woolies online sign in to get started. Your sign in details will be the same on the app, mobi site and website.</string>
     <string name="welcome_back">Welcome back</string>
     <string name="cli_activity_desc">To help us calculate how much additional credit you can qualify for, please answer a few quick and easy questions.  Once you have completed this, you will need to submit proof of income in order for us to proceed with your application.</string>
     <string name="cli_attach_drive_desc">Select your existing saved documents from your device and email it to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.</string>
@@ -407,7 +408,7 @@
     <string name="sc_points_to_qualify_2">Have a valid RSA ID number</string>
     <string name="sc_points_to_qualify_3">Earn a minimum of R2000 per month</string>
 
-    <string name="points_convinent_1">Use your Store Card at any Woolies &amp; Food </string>
+    <string name="points_convinent_1">Use your Store Card at any Woolies &amp; Foodstops at selected Engen garages </string>
     <string name="points_convinent_2">Foodstops at Engen</string>
     <string name="points_convinent_3">Pay utility bills</string>
     <string name="points_convinent_4">Buy airtime</string>
@@ -515,9 +516,9 @@
     <string name="shopping_list_empty">shopping list empty</string>
     <string name="contact_us_financial_services_desc">Store Card /Credit Card and Personal Loan</string>
     <string name="contact_us_customer_service_desc">General enquiries, Online, WRewards, MySchool</string>
-    <string name="general_enquiry_desc">Producs and instore</string>
+    <string name="general_enquiry_desc">Products and instore</string>
     <string name="woolworths_online">Woolworths online</string>
-    <string name="website_and_online_shoppping">Website and online shoppping</string>
+    <string name="website_and_online_shoppping">Website and online shopping</string>
     <string name="email_black_credit_card_query">woolworthsblack@wfs.co.za</string>
     <string name="email_complaints">complaints@wfs.co.za</string>
     <string name="email_credicard_query">creditcard@wfs.co.za</string>
@@ -535,4 +536,10 @@
     <string name="email_myschool">cs@myschool.co.za</string>
     <string name="my_school_local_caller_number">0860 100 445</string>
     <string name="ingredients">ingredients</string>
+    <string name="savings_since">Savings Since</string>
+    <string name="savings_info_message">The WRewards year is calculated from the first Monday of each financial year of Woolworths which commences at the end of June or at the beginning of July and comes to an end on the last Sunday of the Woolworths financial year 12 (twelve) months later.</string>
+    <string name="wrewards_logout_tag_line">WRewards is our way of rewarding customers INSTANTLY. WRewards members save millions every week.</string>
+
+    <string name="contact_us_no_email_error">In order for us to process your query, please send an email to email_address with \"subject_line\" entered in the subject line. Remember to include your ID number in the body of the email.</string>
+    <string name="loading_product_info">Loading product info</string>
 </resources>

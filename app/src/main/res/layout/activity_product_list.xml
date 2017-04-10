@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_product_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/default_background"
-    android:orientation="vertical"
-    tools:context="za.co.woolworths.financial.services.android.ui.activities.ProductViewActivity">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/relViewProgressBar"
@@ -23,7 +21,7 @@
 
     </RelativeLayout>
 
-    <za.co.woolworths.financial.services.android.ui.views.WObservableScrollView
+    <android.support.v4.widget.NestedScrollView
         android:id="@+id/scrollProduct"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -43,8 +41,8 @@
                 android:id="@+id/llScrollLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:layout_marginTop="37dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="@dimen/bank_spacing_width"
                 android:orientation="horizontal"
                 android:paddingLeft="@dimen/default_margin"
                 android:paddingRight="@dimen/default_margin">
@@ -78,10 +76,9 @@
                 android:id="@+id/productList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="17dp"
                 android:nestedScrollingEnabled="false"
-                android:paddingLeft="2dp"
-                android:paddingRight="2dp" />
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp" />
 
             <RelativeLayout
                 android:id="@+id/relProgressBar"
@@ -98,7 +95,7 @@
 
             </RelativeLayout>
         </LinearLayout>
-    </za.co.woolworths.financial.services.android.ui.views.WObservableScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -112,6 +109,9 @@
             android:layout_marginRight="@dimen/default_margin"
             android:gravity="center"
             android:letterSpacing="0.2"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="12sp"
