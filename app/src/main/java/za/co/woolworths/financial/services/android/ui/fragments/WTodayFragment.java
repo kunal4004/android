@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -23,8 +22,10 @@ public class WTodayFragment extends Fragment {
         View view = inflater.inflate(R.layout.wtoday_fragment, container, false);
         webView = (WebView) view.findViewById(R.id.wtoday_fragment_webview);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl(WoolworthsApplication.getWwTodayURI());
+        webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
         webView.addJavascriptInterface(new WebAppInterface(getActivity()), "Android");
+        webView.loadUrl(WoolworthsApplication.getWwTodayURI());
         return view;
     }
+
 }

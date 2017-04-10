@@ -67,7 +67,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private ArrayList<WProductDetail> mproductDetail;
     private WTextView mTextTitle;
     private WTextView mTextPrice;
-    private WTextView mCategoryName;
     private LinearLayout mRelContainer;
     private WTextView mProductCode;
     private List<OtherSku> otherSkusList;
@@ -283,7 +282,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
         mTextPrice = (WTextView) findViewById(R.id.textPrice);
         mLinIngredient = (LinearLayout) findViewById(R.id.linIngredient);
-        mCategoryName = (WTextView) findViewById(R.id.textType);
         mIngredientList = (WTextView) findViewById(R.id.ingredientList);
         mTextPromo = (WTextView) findViewById(R.id.textPromo);
         mTextSelectColor = (WTextView) findViewById(R.id.textSelectColour);
@@ -497,7 +495,6 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         mTextTitle.setText(Html.fromHtml(isEmpty(productDetail.productName)));
         mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
         updatePrice();
-        mCategoryName.setText(productDetail.categoryName);
     }
 
     private String isEmpty(String value) {
