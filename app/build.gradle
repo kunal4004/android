@@ -8,7 +8,19 @@ android {
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
+        /* @var job:
+        * The APK version code or build number. The output
+        * job number will be the value specified + 1... i.e
+        * specifying job = 1 will result in the APK version code
+        * being '2'*/
+
+        /*The job number shown here is the the
+        'APK version code' shown in the Google Play Console.
+        When building for PROD/CUG release, ensure that
+        this number equates to the last available APK version code
+        currently in PROD or the last BETA if a BETA release is available.*/
         job = "3";
+
     }
 
     def buildNumber = major + "." + minor + "." + fix
