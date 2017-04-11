@@ -542,4 +542,6 @@
 
     <string name="contact_us_no_email_error">In order for us to process your query, please send an email to email_address with \"subject_line\" entered in the subject line. Remember to include your ID number in the body of the email.</string>
     <string name="loading_product_info">Loading product info</string>
+    <string name="session_out_message">In order to protect your personal information, we have signed you out of the Woolies App.</string>
+    <string name="title_authentication_error">Please Sign In.</string>
 </resources>
