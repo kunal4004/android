@@ -68,7 +68,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     private ArrayList<WProductDetail> mProductDetail;
     private WTextView mTextTitle;
     private WTextView mTextPrice;
-    private WTextView mCategoryName;
     private LinearLayout mRelContainer;
     private WTextView mProductCode;
     private List<OtherSku> otherSkusList;
@@ -133,7 +132,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
         mTextPrice = (WTextView) findViewById(R.id.textPrice);
         mLinIngredient = (LinearLayout) findViewById(R.id.linIngredient);
-        mCategoryName = (WTextView) findViewById(R.id.textType);
         mIngredientList = (WTextView) findViewById(R.id.ingredientList);
         mTextPromo = (WTextView) findViewById(R.id.textPromo);
         mTextSelectColor = (WTextView) findViewById(R.id.textSelectColour);
@@ -182,7 +180,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         WProductDetail mProductDetail = this.mProductDetail.get(0);
         otherSkusList = mProductDetail.otherSkus;
         mCheckOutLink = mProductDetail.checkOutLink;
-        mCategoryName.setText(mProductDetail.categoryName);
         //update default image
         mDefaultImage = getImageByWidth(mProductDetail.externalImageRef);
         setPromotionText(mProductDetail.saveText);
@@ -735,7 +732,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 
 
     public void setTextFromGrid() {
-        mCategoryName.setText("");
         mTextTitle.setText(Html.fromHtml(isEmpty(mSelectedProduct.productName)));
     }
 
