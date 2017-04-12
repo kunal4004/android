@@ -986,7 +986,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         if (priceList.size() > 0) {
             wasPrice = String.valueOf(Collections.max(priceList));
         }
-        productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice, productDetail.productType);
+        productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice, mSelectedProduct.productType);
     }
 
     public void productDetailPriceList(WTextView wPrice, WTextView WwasPrice,
