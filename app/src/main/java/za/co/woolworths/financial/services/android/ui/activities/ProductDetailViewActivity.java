@@ -402,6 +402,14 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             if (uniqueSizeList != null) {
                 String selectedSize = uniqueSizeList.get(position).size;
                 setSelectedTextSize(selectedSize);
+                String colour = mTextColour.getText().toString();
+                String price = updatePrice(colour, selectedSize);
+                String wasPrice = updateWasPrice(colour, selectedSize);
+                retrieveJson(colour);
+                if (!TextUtils.isEmpty(price)) {
+                    productDetailPriceList(mTextPrice, mTextActualPrice,
+                            price, wasPrice, productDetail.productType);
+                }
             }
         }
     }
@@ -422,6 +430,14 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         selectedColor(defaultUrl);
         getSKUDefaultSize(colour);
         retrieveJson(colour);
+        String size = mTextSelectSize.getText().toString();
+        String price = updatePrice(colour, size);
+        String wasPrice = updateWasPrice(colour, size);
+        retrieveJson(colour);
+        if (!TextUtils.isEmpty(price)) {
+            productDetailPriceList(mTextPrice, mTextActualPrice,
+                    price, wasPrice, productDetail.productType);
+        }
     }
 
     public String getSkuExternalImageRef(String colour) {
@@ -737,7 +753,9 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         if (priceList.size() > 0) {
             wasPrice = String.valueOf(Collections.max(priceList));
         }
-        productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice, productDetail.productType);
+
+        productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice,
+                wasPrice, productDetail.productType);
     }
 
     public void productDetailPriceList(WTextView wPrice, WTextView WwasPrice,
@@ -803,6 +821,38 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 break;
         }
     }
+
+
+    private String updatePrice(String colour, String size) {
+        String price = "";
+        if (otherSkusList != null) {
+            if (otherSkusList.size() > 0) {
+                for (OtherSku option : otherSkusList) {
+                    if (colour.equalsIgnoreCase(option.colour) &&
+                            size.equalsIgnoreCase(option.size)) {
+                        return option.price;
+                    }
+                }
+            }
+        }
+        return price;
+    }
+
+    private String updateWasPrice(String colour, String size) {
+        String wasPrice = "";
+        if (otherSkusList != null) {
+            if (otherSkusList.size() > 0) {
+                for (OtherSku option : otherSkusList) {
+                    if (colour.equalsIgnoreCase(option.colour) &&
+                            size.equalsIgnoreCase(option.size)) {
+                        return option.wasPrice;
+                    }
+                }
+            }
+        }
+        return wasPrice;
+    }
+
 }
 
 
