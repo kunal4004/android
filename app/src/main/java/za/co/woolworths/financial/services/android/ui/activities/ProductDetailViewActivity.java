@@ -745,17 +745,17 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         switch (productType) {
             case "clothingProducts":
                 if (TextUtils.isEmpty(wasPrice)) {
-                    wPrice.setText("From: " + WFormatter.formatAmount(price));
+                    wPrice.setText(WFormatter.formatAmount(price));
                     wPrice.setPaintFlags(0);
                     WwasPrice.setText("");
                 } else {
                     if (wasPrice.equalsIgnoreCase(price)) {
                         //wasPrice equals currentPrice
-                        wPrice.setText("From: " + WFormatter.formatAmount(price));
+                        wPrice.setText( WFormatter.formatAmount(price));
                         WwasPrice.setText("");
                         wPrice.setPaintFlags(0);
                     } else {
-                        wPrice.setText("From: " + WFormatter.formatAmount(wasPrice));
+                        wPrice.setText(WFormatter.formatAmount(wasPrice));
                         wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                         WwasPrice.setText(WFormatter.formatAmount(price));
                     }

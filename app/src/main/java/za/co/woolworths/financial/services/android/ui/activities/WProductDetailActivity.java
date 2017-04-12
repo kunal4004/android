@@ -227,17 +227,17 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 mColorView.setVisibility(View.VISIBLE);
                 mRelContainer.setVisibility(View.VISIBLE);
                 if (TextUtils.isEmpty(wasPrice)) {
-                    wPrice.setText("From: " + WFormatter.formatAmount(price));
+                    wPrice.setText(WFormatter.formatAmount(price));
                     wPrice.setPaintFlags(0);
                     WwasPrice.setText("");
                 } else {
                     if (wasPrice.equalsIgnoreCase(price)) {
                         //wasPrice equals currentPrice
-                        wPrice.setText("From: " + WFormatter.formatAmount(price));
+                        wPrice.setText(WFormatter.formatAmount(price));
                         WwasPrice.setText("");
                         wPrice.setPaintFlags(0);
                     } else {
-                        wPrice.setText("From: " + WFormatter.formatAmount(wasPrice));
+                        wPrice.setText(WFormatter.formatAmount(wasPrice));
                         wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                         WwasPrice.setText(WFormatter.formatAmount(price));
                     }
@@ -986,7 +986,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         if (priceList.size() > 0) {
             wasPrice = String.valueOf(Collections.max(priceList));
         }
-        productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice, mSelectedProduct.productType);
+        productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice, productDetail.productType);
     }
 
     public void productDetailPriceList(WTextView wPrice, WTextView WwasPrice,
@@ -1000,11 +1000,11 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 } else {
                     if (wasPrice.equalsIgnoreCase(price)) {
                         //wasPrice equals currentPrice
-                        wPrice.setText("From: " + WFormatter.formatAmount(price));
+                        wPrice.setText(WFormatter.formatAmount(price));
                         WwasPrice.setText("");
                         wPrice.setPaintFlags(0);
                     } else {
-                        wPrice.setText("From: " + WFormatter.formatAmount(wasPrice));
+                        wPrice.setText(WFormatter.formatAmount(wasPrice));
                         wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                         WwasPrice.setText(WFormatter.formatAmount(price));
                     }
