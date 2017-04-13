@@ -362,29 +362,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
             @Override
             protected void onPostExecute(ProductView pv) {
                 super.onPostExecute(pv);
-                mProduct = null;
-                mProduct = new ArrayList<>();
-                if (pv.products != null && pv.products.size() != 0) {
-                    mProduct = pv.products;
-                    if (pv.products.size() == 1) {
-                        mProductScroll.setVisibility(View.GONE);
-                        mSkuId = mProduct.get(0).otherSkus.get(0).sku;
-                        mProductId = mProduct.get(0).productId;
-                        mSelectedProduct = mProduct.get(0);
-                        onCallback(mProductId, mSkuId, true);
-                    } else {
-                        num_of_item = pv.pagingResponse.numItemsInTotal;
-                        mNumberOfItem.setText(String.valueOf(num_of_item));
-                        bindDataWithUI(mProduct);
-                        mIsLastPage = false;
-                        pageNumber = 0;
-                        mIsLoading = false;
-                        hideVProgressBar();
-                    }
-                } else {
-                    mNumberOfItem.setText(String.valueOf(0));
-                    hideVProgressBar();
-                }
+                 handleLoadProductsResponse(pv);
             }
         }.execute();
     }
@@ -422,28 +400,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
             @Override
             protected void onPostExecute(ProductView pv) {
                 super.onPostExecute(pv);
-                mProduct = null;
-                mProduct = new ArrayList<>();
-                if (pv.products != null && pv.products.size() != 0) {
-                    mProduct = pv.products;
-                    num_of_item = pv.pagingResponse.numItemsInTotal;
-
-                    if (pv.products.size() == 1) {
-                        mProductScroll.setVisibility(View.GONE);
-                        mSkuId = mProduct.get(0).otherSkus.get(0).sku;
-                        mProductId = mProduct.get(0).productId;
-                        mSelectedProduct = mProduct.get(0);
-                        onCallback(mProductId, mSkuId, true);
-                    } else {
-                        mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
-                        bindDataWithUI(mProduct);
-                        mIsLastPage = false;
-                        mIsLoading = false;
-                        hideVProgressBar();
-                    }
-                } else {
-                    hideVProgressBar();
-                }
+               handleSearchProductsResponse(pv);
             }
         }.execute();
     }
@@ -689,6 +646,77 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         if (productCanClose) {
             mContext.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             mLinProductList.removeAllViews();
+        }
+    }
+
+    public void handleLoadProductsResponse(ProductView pv)
+    {
+        switch (pv.httpCode)
+        {
+            case 200:
+                mProduct = null;
+                mProduct = new ArrayList<>();
+                if (pv.products != null && pv.products.size() != 0) {
+                    mProduct = pv.products;
+                    if (pv.products.size() == 1) {
+                        mProductScroll.setVisibility(View.GONE);
+                        mSkuId = mProduct.get(0).otherSkus.get(0).sku;
+                        mProductId = mProduct.get(0).productId;
+                        mSelectedProduct = mProduct.get(0);
+                        onCallback(mProductId, mSkuId, true);
+                    } else {
+                        num_of_item = pv.pagingResponse.numItemsInTotal;
+                        mNumberOfItem.setText(String.valueOf(num_of_item));
+                        bindDataWithUI(mProduct);
+                        mIsLastPage = false;
+                        pageNumber = 0;
+                        mIsLoading = false;
+                        hideVProgressBar();
+                    }
+                } else {
+                    mNumberOfItem.setText(String.valueOf(0));
+                    hideVProgressBar();
+                }
+                break;
+            default:
+                mNumberOfItem.setText(String.valueOf(0));
+                hideVProgressBar();
+                Utils.alertErrorMessage(ProductViewGridActivity.this,"We are unable to process your request at the moment. Please Try Again later");
+                break;
+        }
+    }
+    public void handleSearchProductsResponse(ProductView pv){
+        switch (pv.httpCode)
+        {
+            case 200:
+                mProduct = null;
+                mProduct = new ArrayList<>();
+                if (pv.products != null && pv.products.size() != 0) {
+                    mProduct = pv.products;
+                    num_of_item = pv.pagingResponse.numItemsInTotal;
+
+                    if (pv.products.size() == 1) {
+                        mProductScroll.setVisibility(View.GONE);
+                        mSkuId = mProduct.get(0).otherSkus.get(0).sku;
+                        mProductId = mProduct.get(0).productId;
+                        mSelectedProduct = mProduct.get(0);
+                        onCallback(mProductId, mSkuId, true);
+                    } else {
+                        mNumberOfItem.setText(String.valueOf(pv.pagingResponse.numItemsInTotal));
+                        bindDataWithUI(mProduct);
+                        mIsLastPage = false;
+                        mIsLoading = false;
+                        hideVProgressBar();
+                    }
+                } else {
+                    hideVProgressBar();
+                }
+                break;
+            default:
+                mNumberOfItem.setText(String.valueOf(0));
+                hideVProgressBar();
+                Utils.alertErrorMessage(ProductViewGridActivity.this,"We are unable to process your request at the moment. Please Try Again later");
+                break;
         }
     }
 }

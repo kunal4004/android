@@ -454,7 +454,7 @@
     <string name="collect_credit_card_desc_2">Your latest three payslips or your last three months’ bank statements</string>
     <string name="collect_credit_card_desc_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
 
-    <string name="product_search_hint">Search products, brands</string>
+    <string name="product_search_hint">Search products</string>
     <string name="no_product_found">0 ITEMS FOUND</string>
     <string name="simple_scanner_activity">ZBar Scanner - Simple Activity</string>
     <string name="simple_scanner_fragment_activity">ZBar Scanner - Simple Fragment Activity</string>
@@ -542,6 +542,6 @@
 
     <string name="contact_us_no_email_error">In order for us to process your query, please send an email to email_address with \"subject_line\" entered in the subject line. Remember to include your ID number in the body of the email.</string>
     <string name="loading_product_info">Loading product info</string>
-    <string name="services_unavailable">Services Unavailable</string>
-    <string name="please_check_back_later">Please check back later.</string>
+    <string name="session_out_message">In order to protect your personal information, we have signed you out of the Woolies App.</string>
+    <string name="title_authentication_error">Please Sign In.</string>
 </resources>
