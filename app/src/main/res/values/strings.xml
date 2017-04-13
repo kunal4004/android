@@ -489,7 +489,6 @@
     <string name="no_tier_history_to_display">NO TIER HISTORY TO DISPLAY</string>
     <string name="no_vouchers">NO VOUCHERS</string>
     <string name="ssl_error">SSL certificate invalid</string>
-    <string name="product_from">From:</string>
     <string name="product_item_found">items found</string>
     <string name="product_size">Size</string>
     <string name="shop_online_woolies">Shop Woolworths online</string>
@@ -544,4 +543,7 @@
     <string name="loading_product_info">Loading product info</string>
     <string name="session_out_message">In order to protect your personal information, we have signed you out of the Woolies App.</string>
     <string name="title_authentication_error">Please Sign In.</string>
+
+    <string name="services_unavailable">Services Unavailable</string>
+    <string name="please_check_back_later">Please check back later.</string>
 </resources>

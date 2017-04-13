@@ -160,30 +160,7 @@ public class MessagesActivity extends BaseActivity {
             @Override
             protected void onPostExecute(MessageResponse messageResponse) {
                 super.onPostExecute(messageResponse);
-                messageList = null;
-                messageList = new ArrayList<>();
-                if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
-                    messageList = messageResponse.messagesList;
-                    bindDataWithUI(messageList);
-
-                    String unreadCountValue = Utils.getSessionDaoValue(MessagesActivity.this,
-                            SessionDao.KEY.UNREAD_MESSAGE_COUNT);
-                    if (TextUtils.isEmpty(unreadCountValue)) {
-                        Utils.setBadgeCounter(MessagesActivity.this, 0);
-                    } else {
-                        int unreadCount = Integer.valueOf(unreadCountValue)-messageList.size();
-                        Utils.setBadgeCounter(MessagesActivity.this, unreadCount);
-                    }
-
-                    setMeassagesAsRead(messageList);
-                    mIsLastPage = false;
-                    mCurrentPage = 1;
-                    mIsLoading = false;
-                } else if (messageResponse.messagesList.size() == 0) {
-                    messsageListview.setVisibility(View.GONE);
-                    noMessagesText.setVisibility(View.VISIBLE);
-                }
-                hideRefreshView();
+                handleLoadMessagesResponse(messageResponse);
             }
         }.execute();
     }
@@ -355,6 +332,39 @@ public class MessagesActivity extends BaseActivity {
                 return true;
         }
         return false;
+    }
+
+    public void handleLoadMessagesResponse(MessageResponse messageResponse) {
+        switch (messageResponse.httpCode) {
+            case 200:
+                messageList = null;
+                messageList = new ArrayList<>();
+                if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
+                    messageList = messageResponse.messagesList;
+                    bindDataWithUI(messageList);
+                    String unreadCountValue = Utils.getSessionDaoValue(MessagesActivity.this,
+                            SessionDao.KEY.UNREAD_MESSAGE_COUNT);
+                    if (TextUtils.isEmpty(unreadCountValue)) {
+                        Utils.setBadgeCounter(MessagesActivity.this, 0);
+                    } else {
+                        int unreadCount = Integer.valueOf(unreadCountValue) - messageList.size();
+                        Utils.setBadgeCounter(MessagesActivity.this, unreadCount);
+                    }
+                    setMeassagesAsRead(messageList);
+                    mIsLastPage = false;
+                    mCurrentPage = 1;
+                    mIsLoading = false;
+                } else if (messageResponse.messagesList.size() == 0) {
+                    messsageListview.setVisibility(View.GONE);
+                    noMessagesText.setVisibility(View.VISIBLE);
+                }
+                hideRefreshView();
+                break;
+            default:
+                hideRefreshView();
+                Utils.alertErrorMessage(MessagesActivity.this,messageResponse.response.desc);
+                break;
+        }
     }
 
 }
