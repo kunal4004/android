@@ -59,7 +59,6 @@ import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
-import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 
 public class WProductDetailActivity extends AppCompatActivity implements View.OnClickListener, SelectedProductView {
 
@@ -246,30 +245,30 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 mRelContainer.setVisibility(View.GONE);
                 if (TextUtils.isEmpty(wasPrice)) {
                     if (Utils.isLocationEnabled(WProductDetailActivity.this)) {
-                        ArrayList<Double> priceList = new ArrayList<>();
-                        for (OtherSkus os : mSelectedProduct.otherSkus) {
-                            if (!TextUtils.isEmpty(os.price)) {
-                                priceList.add(Double.valueOf(os.price));
-                            }
-                        }
-                        if (priceList.size() > 0) {
-                            price = String.valueOf(Collections.max(priceList));
-                        }
+//                        ArrayList<Double> priceList = new ArrayList<>();
+//                        for (OtherSkus os : mSelectedProduct.otherSkus) {
+//                            if (!TextUtils.isEmpty(os.price)) {
+//                                priceList.add(Double.valueOf(os.price));
+//                            }
+//                        }
+//                        if (priceList.size() > 0) {
+//                            price = String.valueOf(Collections.max(priceList));
+//                        }
                     }
                     wPrice.setText(WFormatter.formatAmount(price));
                     wPrice.setPaintFlags(0);
                     WwasPrice.setText("");
                 } else {
                     if (Utils.isLocationEnabled(WProductDetailActivity.this)) {
-                        ArrayList<Double> priceList = new ArrayList<>();
-                        for (OtherSkus os : mSelectedProduct.otherSkus) {
-                            if (!TextUtils.isEmpty(os.price)) {
-                                priceList.add(Double.valueOf(os.price));
-                            }
-                        }
-                        if (priceList.size() > 0) {
-                            price = String.valueOf(Collections.max(priceList));
-                        }
+//                        ArrayList<Double> priceList = new ArrayList<>();
+//                        for (OtherSkus os : mSelectedProduct.otherSkus) {
+//                            if (!TextUtils.isEmpty(os.price)) {
+//                                priceList.add(Double.valueOf(os.price));
+//                            }
+//                        }
+//                        if (priceList.size() > 0) {
+//                            price = String.valueOf(Collections.max(priceList));
+//                        }
                     }
 
                     if (wasPrice.equalsIgnoreCase(price)) { //wasPrice equals currentPrice
@@ -385,6 +384,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             String auxiliaryImages = jsProductList.getString("auxiliaryImages");
             JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
             Iterator<String> keysIterator = jsAuxiliaryImages.keys();
+            colour = colour.replace(" ","");
             while (keysIterator.hasNext()) {
                 String keyStr = keysIterator.next();
                 if (keyStr.toLowerCase().contains(colour.toLowerCase())) {
@@ -984,14 +984,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     }
 
     public void updatePrice() {
-        String fromPrice = String.valueOf(mObjProductDetail.fromPrice);
-        String wasPrice = highestSKUWasPrice();
-        //set size based on highest normal price
-        if (TextUtils.isEmpty(wasPrice)) {
-            highestSKUPrice();
-        }
-        productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice,
-                mObjProductDetail.productType);
+        highestSKUPrice(String.valueOf(mSelectedProduct.fromPrice));
     }
 
     public void productDetailPriceList(WTextView wPrice, WTextView WwasPrice,
@@ -999,7 +992,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         switch (productType) {
             case "clothingProducts":
                 if (TextUtils.isEmpty(wasPrice)) {
-                    wPrice.setText("From: " + WFormatter.formatAmount(price));
+                    wPrice.setText(WFormatter.formatAmount(price));
                     wPrice.setPaintFlags(0);
                     WwasPrice.setText("");
                 } else {
@@ -1088,44 +1081,22 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         return wasPrice;
     }
 
-    public String highestSKUWasPrice() {
-        String wasPrice = "";
-        ArrayList<Double> priceList = new ArrayList<>();
-        for (OtherSku os : mObjProductDetail.otherSkus) {
-            if (!TextUtils.isEmpty(os.wasPrice)) {
-                priceList.add(Double.valueOf(os.wasPrice));
-            }
-        }
-        if (priceList.size() > 0) {
-            wasPrice = String.valueOf(Collections.max(priceList));
+    public void highestSKUPrice(String fromPrice) {
+        List<OtherSku> objPrice = mObjProductDetail.otherSkus;
+        if (objPrice.size() > 0) {
             for (OtherSku os : mObjProductDetail.otherSkus) {
-                if (wasPrice.equalsIgnoreCase(os.wasPrice)) {
+                if (fromPrice.equalsIgnoreCase(os.price)) {
                     setSelectedTextSize(os.size);
+                    String wasPrice = os.wasPrice;
+                    if (TextUtils.isEmpty(wasPrice)) {
+                        wasPrice = "";
+                    }
+                    productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice,
+                            mObjProductDetail.productType);
+                    return;
                 }
             }
-            return wasPrice;
         }
-        return wasPrice;
-    }
-
-    public String highestSKUPrice() {
-        String price = "";
-        ArrayList<Double> priceList = new ArrayList<>();
-        for (OtherSku os : mObjProductDetail.otherSkus) {
-            if (!TextUtils.isEmpty(os.price)) {
-                priceList.add(Double.valueOf(os.price));
-            }
-        }
-        if (priceList.size() > 0) {
-            price = String.valueOf(Collections.max(priceList));
-            for (OtherSku os : mObjProductDetail.otherSkus) {
-                if (price.equalsIgnoreCase(os.price)) {
-                    setSelectedTextSize(os.size);
-                }
-            }
-            return price;
-        }
-        return price;
     }
 }
 
