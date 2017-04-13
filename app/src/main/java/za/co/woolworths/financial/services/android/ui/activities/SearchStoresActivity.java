@@ -165,6 +165,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
                 recentSearchLayout.setVisibility(View.VISIBLE);
                 if (storeDetailsList != null) {
                     storeDetailsList.clear();
+                    searchAdapter.notifyDataSetChanged();
                 }
                 mCloseButton.setVisibility(View.GONE);
             }
