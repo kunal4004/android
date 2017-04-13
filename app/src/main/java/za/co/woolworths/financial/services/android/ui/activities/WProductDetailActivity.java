@@ -13,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -60,6 +59,7 @@ import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 
 public class WProductDetailActivity extends AppCompatActivity implements View.OnClickListener, SelectedProductView {
 
@@ -103,7 +103,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     public NestedScrollView mScrollProductDetail;
     private int mPreviousState;
     private ViewPager mTouchTarget;
-    public WProductDetail productDetail;
+    private WProductDetail mObjProductDetail;
     private String mDefaultImage;
     public final int IMAGE_QUALITY = 85;
     public int mPosition;
@@ -162,7 +162,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mImCloseProduct.setOnClickListener(this);
         mLinColor.setOnClickListener(this);
         mLinSize.setOnClickListener(this);
-
     }
 
     protected void displayProductDetail(String mProductList, String skuId, int otherSkuSize) {
@@ -185,9 +184,8 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         setPromotionText(mProductDetail.saveText);
         mProductLongDescription();
         mDefaultSKUModel = getDefaultSKUModel();
-        setSelectedTextSize(mDefaultSKUModel.size);
         updateHeroImage();
-        updatePrice(mDefaultSKUModel);
+        updatePrice();
         if (otherSkuSize > 1) {
             mColorView.setVisibility(View.VISIBLE);
             mRelContainer.setVisibility(View.VISIBLE);
@@ -199,15 +197,15 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     }
 
     protected void mProductLongDescription() {
-        productDetail = mProductDetail.get(0);
+        mObjProductDetail = mProductDetail.get(0);
         String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
                 "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
                 "</style></head><body>";
         String footerTag = "</body></html>";
         String descriptionWithoutExtraTag = "";
 
-        if (!TextUtils.isEmpty(productDetail.longDescription)) {
-            descriptionWithoutExtraTag = productDetail.longDescription
+        if (!TextUtils.isEmpty(mObjProductDetail.longDescription)) {
+            descriptionWithoutExtraTag = mObjProductDetail.longDescription
                     .replaceAll("</ul>\n\n<ul>\n", " ")
                     .replaceAll("<p>&nbsp;</p>", "")
                     .replaceAll("<ul><p>&nbsp;</p></ul>", " ");
@@ -216,8 +214,8 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag,
                 "text/html; charset=UTF-8", "UTF-8", null);
 
-        mTextTitle.setText(Html.fromHtml(isEmpty(productDetail.productName)));
-        mProductCode.setText(getString(R.string.product_code) + ": " + productDetail.productId);
+        mTextTitle.setText(Html.fromHtml(isEmpty(mObjProductDetail.productName)));
+        mProductCode.setText(getString(R.string.product_code) + ": " + mObjProductDetail.productId);
     }
 
     public void productPriceList(WTextView wPrice, WTextView WwasPrice,
@@ -348,7 +346,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         retrieveJson(colour);
         if (!TextUtils.isEmpty(price)) {
             productDetailPriceList(mTextPrice, mTextActualPrice,
-                    price, wasPrice, productDetail.productType);
+                    price, wasPrice, mObjProductDetail.productType);
         }
     }
 
@@ -437,7 +435,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 }
             });
 
-        } catch (JSONException e) {
+        } catch (JSONException ignored) {
         }
     }
 
@@ -466,7 +464,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 retrieveJson(colour);
                 if (!TextUtils.isEmpty(price)) {
                     productDetailPriceList(mTextPrice, mTextActualPrice,
-                            price, wasPrice, productDetail.productType);
+                            price, wasPrice, mObjProductDetail.productType);
                 }
             }
         }
@@ -769,6 +767,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         if (priceList.size() > 0) {
             wasPrice = String.valueOf(Collections.max(priceList));
         }
+
         String fromPrice = String.valueOf(mSelectedProduct.fromPrice);
         productPriceList(mTextPrice, mTextActualPrice,
                 fromPrice, wasPrice, mSelectedProduct.productType);
@@ -868,7 +867,8 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 setUpAuxiliaryImages(jsProductList.getString("auxiliaryImages"));
             }
 
-        } catch (JSONException ex) {}
+        } catch (JSONException ignored) {
+        }
     }
 
     public void setUpAuxiliaryImages(String auxiliaryImages) {
@@ -896,7 +896,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             } else {
                 mAuxiliaryImages.add(0, mDefaultImage);
             }
-        } catch (JSONException ex) {
+        } catch (JSONException ignored) {
         }
 
         Set<String> removeDuplicateImage = new LinkedHashSet<>(mAuxiliaryImages);
@@ -983,21 +983,15 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mTextSelectSize.setTextColor(Color.BLACK);
     }
 
-    public void updatePrice(OtherSku mDefaultSKUModel) {
-        String fromPrice = String.valueOf(productDetail.fromPrice);
-        String wasPrice = "";
-        ArrayList<Double> priceList = new ArrayList<>();
-        for (OtherSku os : productDetail.otherSkus) {
-            if (!TextUtils.isEmpty(os.wasPrice)) {
-                priceList.add(Double.valueOf(os.wasPrice));
-            }
+    public void updatePrice() {
+        String fromPrice = String.valueOf(mObjProductDetail.fromPrice);
+        String wasPrice = highestSKUWasPrice();
+        //set size based on highest normal price
+        if (TextUtils.isEmpty(wasPrice)) {
+            highestSKUPrice();
         }
-
-        if (priceList.size() > 0) {
-            wasPrice = String.valueOf(Collections.max(priceList));
-        }
-
-        productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice, productDetail.productType);
+        productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice,
+                mObjProductDetail.productType);
     }
 
     public void productDetailPriceList(WTextView wPrice, WTextView WwasPrice,
@@ -1026,7 +1020,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 if (TextUtils.isEmpty(wasPrice)) {
                     if (Utils.isLocationEnabled(WProductDetailActivity.this)) {
                         ArrayList<Double> priceList = new ArrayList<>();
-                        for (OtherSku os : productDetail.otherSkus) {
+                        for (OtherSku os : mObjProductDetail.otherSkus) {
                             if (!TextUtils.isEmpty(os.price)) {
                                 priceList.add(Double.valueOf(os.price));
                             }
@@ -1041,7 +1035,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 } else {
                     if (Utils.isLocationEnabled(WProductDetailActivity.this)) {
                         ArrayList<Double> priceList = new ArrayList<>();
-                        for (OtherSku os : productDetail.otherSkus) {
+                        for (OtherSku os : mObjProductDetail.otherSkus) {
                             if (!TextUtils.isEmpty(os.price)) {
                                 priceList.add(Double.valueOf(os.price));
                             }
@@ -1094,5 +1088,45 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         return wasPrice;
     }
 
+    public String highestSKUWasPrice() {
+        String wasPrice = "";
+        ArrayList<Double> priceList = new ArrayList<>();
+        for (OtherSku os : mObjProductDetail.otherSkus) {
+            if (!TextUtils.isEmpty(os.wasPrice)) {
+                priceList.add(Double.valueOf(os.wasPrice));
+            }
+        }
+        if (priceList.size() > 0) {
+            wasPrice = String.valueOf(Collections.max(priceList));
+            for (OtherSku os : mObjProductDetail.otherSkus) {
+                if (wasPrice.equalsIgnoreCase(os.wasPrice)) {
+                    setSelectedTextSize(os.size);
+                }
+            }
+            return wasPrice;
+        }
+        return wasPrice;
+    }
 
+    public String highestSKUPrice() {
+        String price = "";
+        ArrayList<Double> priceList = new ArrayList<>();
+        for (OtherSku os : mObjProductDetail.otherSkus) {
+            if (!TextUtils.isEmpty(os.price)) {
+                priceList.add(Double.valueOf(os.price));
+            }
+        }
+        if (priceList.size() > 0) {
+            price = String.valueOf(Collections.max(priceList));
+            for (OtherSku os : mObjProductDetail.otherSkus) {
+                if (price.equalsIgnoreCase(os.price)) {
+                    setSelectedTextSize(os.size);
+                }
+            }
+            return price;
+        }
+        return price;
+    }
 }
+
+
