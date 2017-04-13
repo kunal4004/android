@@ -561,6 +561,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
                         break;
                     default:
+                        Utils.alertErrorMessage(getActivity(),accountsResponse.response.desc);
                         break;
                 }
                 dismissProgress();
