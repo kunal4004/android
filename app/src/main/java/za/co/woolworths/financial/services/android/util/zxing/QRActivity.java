@@ -22,7 +22,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -143,7 +142,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     public NestedScrollView mScrollProductDetail;
     private int mPreviousState;
     private ViewPager mTouchTarget;
-    private WProductDetail productDetail;
+    private WProductDetail mObjProductDetail;
     private SlidingUpPanelLayout.PanelState mPanelState = SlidingUpPanelLayout.PanelState.COLLAPSED;
     private String mDefaultColor;
     private String mDefaultColorRef;
@@ -699,14 +698,14 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     }
 
     protected void populateView() {
-        productDetail = mproductDetail.get(0);
+        mObjProductDetail = mproductDetail.get(0);
         String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
                 "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
                 "</style></head><body>";
         String footerTag = "</body></html>";
         String descriptionWithoutExtraTag = "";
-        if (!TextUtils.isEmpty(productDetail.longDescription)) {
-            descriptionWithoutExtraTag = productDetail.longDescription
+        if (!TextUtils.isEmpty(mObjProductDetail.longDescription)) {
+            descriptionWithoutExtraTag = mObjProductDetail.longDescription
                     .replaceAll("</ul>\n\n<ul>\n", " ")
                     .replaceAll("<p>&nbsp;</p>", "")
                     .replaceAll("<ul><p>&nbsp;</p></ul>", " ");
@@ -714,28 +713,22 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         mWebDescription.loadDataWithBaseURL("file:///android_res/drawable/",
                 headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag,
                 "text/html; charset=UTF-8", "UTF-8", null);
-        mTextTitle.setText(Html.fromHtml(isEmpty(productDetail.productName)));
+        mTextTitle.setText(Html.fromHtml(isEmpty(mObjProductDetail.productName)));
         mProductCode.setText(getString(R.string.product_code)
                 + ": "
-                + productDetail.productId);
+                + mObjProductDetail.productId);
         updatePrice();
     }
 
 
     public void updatePrice() {
-        String fromPrice = String.valueOf(productDetail.fromPrice);
-        String wasPrice = "";
-        ArrayList<Double> priceList = new ArrayList<>();
-        for (OtherSku os : productDetail.otherSkus) {
-            if (!TextUtils.isEmpty(os.wasPrice)) {
-                priceList.add(Double.valueOf(os.wasPrice));
-            }
+        String fromPrice = String.valueOf(mObjProductDetail.fromPrice);
+        String wasPrice = highestSKUWasPrice();
+        //set size based on highest normal price
+        if (TextUtils.isEmpty(wasPrice)) {
+            highestSKUPrice();
         }
-
-        if (priceList.size() > 0) {
-            wasPrice = String.valueOf(Collections.max(priceList));
-        }
-        productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice, productDetail.productType);
+        productDetailPriceList(mTextPrice, mTextActualPrice, fromPrice, wasPrice, mObjProductDetail.productType);
     }
 
     public void productDetailPriceList(WTextView wPrice, WTextView WwasPrice,
@@ -764,7 +757,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                 if (TextUtils.isEmpty(wasPrice)) {
                     if (Utils.isLocationEnabled(QRActivity.this)) {
                         ArrayList<Double> priceList = new ArrayList<>();
-                        for (OtherSku os : productDetail.otherSkus) {
+                        for (OtherSku os : mObjProductDetail.otherSkus) {
                             if (!TextUtils.isEmpty(os.price)) {
                                 priceList.add(Double.valueOf(os.price));
                             }
@@ -779,7 +772,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                 } else {
                     if (Utils.isLocationEnabled(QRActivity.this)) {
                         ArrayList<Double> priceList = new ArrayList<>();
-                        for (OtherSku os : productDetail.otherSkus) {
+                        for (OtherSku os : mObjProductDetail.otherSkus) {
                             if (!TextUtils.isEmpty(os.price)) {
                                 priceList.add(Double.valueOf(os.price));
                             }
@@ -815,9 +808,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         if (TextUtils.isEmpty(colour)) {
             colour = "";
         }
-        if (!TextUtils.isEmpty(mDefaultSize)) {
-            mTextSelectSize.setText(mDefaultSize);
-        }
         mTextColour.setText(colour);
         mAuxiliaryImages = null;
         mAuxiliaryImages = new ArrayList<>();
@@ -847,11 +837,18 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         mAuxiliaryImages = null;
         mAuxiliaryImages = new ArrayList<>();
         mDefaultImage = getSkuExternalImageRef(colour);
-
         //show default image when imageUrl is empty
         selectedColor(defaultUrl);
         getSKUDefaultSize(colour);
         retrieveJson(colour);
+        String size = mTextSelectSize.getText().toString();
+        String price = updatePrice(colour, size);
+        String wasPrice = updateWasPrice(colour, size);
+        retrieveJson(colour);
+        if (!TextUtils.isEmpty(price)) {
+            productDetailPriceList(mTextPrice, mTextActualPrice,
+                    price, wasPrice, mObjProductDetail.productType);
+        }
     }
 
 
@@ -978,7 +975,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
             });
 
         } catch (JSONException e) {
-            Log.e("jsonException", e.toString());
         }
     }
 
@@ -1001,6 +997,14 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                 String selectedSize = uniqueSizeList.get(position).size;
                 mTextSelectSize.setText(selectedSize);
                 mTextSelectSize.setTextColor(Color.BLACK);
+                String colour = mTextColour.getText().toString();
+                String price = updatePrice(colour, selectedSize);
+                String wasPrice = updateWasPrice(colour, selectedSize);
+                retrieveJson(colour);
+                if (!TextUtils.isEmpty(price)) {
+                    productDetailPriceList(mTextPrice, mTextActualPrice,
+                            price, wasPrice, mObjProductDetail.productType);
+                }
             }
         }
     }
@@ -1228,6 +1232,78 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     @Override
     public void onSelectedColor(View v, int position) {
         selectedProduct(position);
+    }
+
+
+    private String updatePrice(String colour, String size) {
+        String price = "";
+        if (otherSkusList != null) {
+            if (otherSkusList.size() > 0) {
+                for (OtherSku option : otherSkusList) {
+                    if (colour.equalsIgnoreCase(option.colour) &&
+                            size.equalsIgnoreCase(option.size)) {
+                        return option.price;
+                    }
+                }
+            }
+        }
+        return price;
+    }
+
+    private String updateWasPrice(String colour, String size) {
+        String wasPrice = "";
+        if (otherSkusList != null) {
+            if (otherSkusList.size() > 0) {
+                for (OtherSku option : otherSkusList) {
+                    if (colour.equalsIgnoreCase(option.colour) &&
+                            size.equalsIgnoreCase(option.size)) {
+                        return option.wasPrice;
+                    }
+                }
+            }
+        }
+        return wasPrice;
+    }
+
+
+    public String highestSKUWasPrice() {
+        String wasPrice = "";
+        ArrayList<Double> priceList = new ArrayList<>();
+        for (OtherSku os : mObjProductDetail.otherSkus) {
+            if (!TextUtils.isEmpty(os.wasPrice)) {
+                priceList.add(Double.valueOf(os.wasPrice));
+            }
+        }
+        if (priceList.size() > 0) {
+            wasPrice = String.valueOf(Collections.max(priceList));
+            for (OtherSku os : mObjProductDetail.otherSkus) {
+                if (wasPrice.equalsIgnoreCase(os.wasPrice)) {
+                    setSelectedTextSize(os.size);
+                }
+            }
+            return wasPrice;
+        }
+        return wasPrice;
+    }
+
+    public String highestSKUPrice() {
+        String price = "";
+        ArrayList<Double> priceList = new ArrayList<>();
+        for (OtherSku os : mObjProductDetail.otherSkus) {
+            if (!TextUtils.isEmpty(os.price)) {
+                priceList.add(Double.valueOf(os.price));
+            }
+        }
+        if (priceList.size() > 0) {
+            price = String.valueOf(Collections.max(priceList));
+            for (OtherSku os : mObjProductDetail.otherSkus) {
+                if (price.equalsIgnoreCase(os.price)) {
+                    setSelectedTextSize(os.size);
+                }
+            }
+            return price;
+        }
+        return price;
     }
 
 }
