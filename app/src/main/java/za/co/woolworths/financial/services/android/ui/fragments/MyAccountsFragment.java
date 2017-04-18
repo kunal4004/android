@@ -535,8 +535,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                         break;
                     case 440:
                         AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
-                        mError.setTitle("Authentication Error");
-                        mError.setMessage("Your session expired. You've been signed out.");
+                        mError.setTitle(getString(R.string.title_authentication_error));
+                        mError.setMessage(getString(R.string.session_out_message));
                         mError.show();
                         new android.os.AsyncTask<Void, Void, String>() {
 
@@ -561,6 +561,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
                         break;
                     default:
+                        Utils.alertErrorMessage(getActivity(),accountsResponse.response.desc);
                         break;
                 }
                 dismissProgress();

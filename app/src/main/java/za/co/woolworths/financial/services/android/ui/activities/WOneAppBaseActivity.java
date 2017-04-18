@@ -22,7 +22,6 @@ import com.awfs.coordination.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
@@ -81,7 +80,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 
         registerReceiver(logOutReceiver, new IntentFilter("logOutReceiver"));
-
     }
 
     @Override
@@ -197,7 +195,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
     }
 
     BroadcastReceiver logOutReceiver = new BroadcastReceiver() {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             ScreenManager.presentSSOLogout(WOneAppBaseActivity.this);
