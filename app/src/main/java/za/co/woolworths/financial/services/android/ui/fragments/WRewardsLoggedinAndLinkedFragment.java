@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
 import za.co.woolworths.financial.services.android.ui.adapters.ContactUsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -156,8 +157,8 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
                 break;
             case 440:
                 AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
-                mError.setTitle("Authentication Error");
-                mError.setMessage("Your session expired. You've been signed out.");
+                mError.setTitle(getString(R.string.title_authentication_error));
+                mError.setMessage(getString(R.string.session_out_message));
                 mError.show();
 
                 new android.os.AsyncTask<Void, Void, String>() {
@@ -182,10 +183,25 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 
                 break;
             default:
+                setupErrorViewPager(viewPager);
                 break;
 
         }
     }
 
-
+    private void setupErrorViewPager(ViewPager viewPager) {
+        Bundle bundle = new Bundle();
+        bundle.putString("WREWARDS", "");
+        adapter = new WRewardsFragmentPagerAdapter(getChildFragmentManager(), bundle);
+        adapter.addFrag(new WRewardsErrorFragment(), getString(R.string.overview));
+        adapter.addFrag(new WRewardsErrorFragment(), getString(R.string.vouchers));
+        adapter.addFrag(new WRewardsErrorFragment(), getString(R.string.savings));
+        viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
+        try {
+            setupTabIcons(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
