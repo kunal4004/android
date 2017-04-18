@@ -38,6 +38,12 @@ android {
             storeFile file('key/woneapp_qa-release-key.keystore')
             storePassword 'woneapp_qa'
         }
+        woneappStaging {
+            keyAlias 'woneapp_staging'
+            keyPassword 'woneapp_staging'
+            storeFile file('key/woneapp_staging-release-key.keystore')
+            storePassword 'woneapp_staging'
+        }
         woolworths {
             keyAlias 'woolworths'
             keyPassword 'H]|{0*[\'C[Y\\jze'
@@ -76,6 +82,11 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
+        }
+
+        staging {
+            applicationId "com.awfs.coordination.staging"
+            signingConfig signingConfigs.woneappStaging
         }
 
         production {
