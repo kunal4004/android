@@ -2,12 +2,9 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="drawer_text_color">@android:color/darker_gray</item>
         <item name="android:windowBackground">@color/white</item>
         <item name="android:actionBarStyle">@style/WActionBarStyle</item>
-        <item name="drawer_background">@color/drawer_color</item>
         <item name="android:listDivider">@drawable/list_divider</item>
-        <item name="android:seekBarStyle">@style/SeekBarPLDD</item>
         <item name="borderColor">@color/indicator_border</item>
         <item name="selectedColor">@color/indicator_selected</item>
         <item name="unselectedColor">@color/indicator_unselected</item>
@@ -23,30 +20,6 @@
 
     <style name="WActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/black</item>
-    </style>
-
-    <style name="tierinfostate" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="drawer_text_color">@android:color/darker_gray</item>
-        <item name="android:windowBackground">@color/white</item>
-        <item name="android:actionBarStyle">@style/WActionBarStyle</item>
-        <item name="drawer_background">@color/drawer_color</item>
-        <item name="android:listDivider">@drawable/list_divider</item>
-        <item name="android:seekBarStyle">@style/SeekBarPLDD</item>
-    </style>
-
-    <style name="SeekBarPLDD" parent="android:Widget.SeekBar">
-        <item name="android:progressDrawable">
-            @drawable/pldd_scrubber_progress_horizontal_holo_light
-        </item>
-        <item name="android:indeterminateDrawable">
-            @drawable/pldd_scrubber_progress_horizontal_holo_light
-        </item>
-        <item name="android:minHeight">13dip</item>
-        <item name="android:maxHeight">13dip</item>
-        <item name="android:thumb">@drawable/pldd_scrubber_control_selector_holo_light</item>
-        <item name="android:thumbOffset">16dip</item>
-        <item name="android:paddingLeft">16dip</item>
-        <item name="android:paddingRight">16dip</item>
     </style>
 
     <style name="Button">

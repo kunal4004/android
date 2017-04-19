@@ -25,7 +25,6 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsFragmentPagerAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.BaseAccountFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardEmptyFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanEmptyFragment;
@@ -161,7 +160,6 @@ public class MyAccountCardsActivityTest extends AppCompatActivity {
             case 200:
 
                 ((WoolworthsApplication) getApplication()).getUserManager().setAccounts(accountsResponse);
-                ArrayList<BaseAccountFragment> baseAccountFragments = new ArrayList<BaseAccountFragment>();
                 List<Account> accountList = accountsResponse.accountList;
                 boolean containsStoreCard = false, containsCreditCard = false, containsPersonalLoan = false;
                 if (accountList != null) {
