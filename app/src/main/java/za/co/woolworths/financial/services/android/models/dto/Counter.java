@@ -30,14 +30,16 @@ public class Counter {
                 String.valueOf(activeVoucher));
     }
 
+    //Uncomment to display my account active color in main menu
     public boolean accountIsActive() {
-        return Boolean.valueOf(Utils.getSessionDaoValue(mContext,
-                SessionDao.KEY.ACCOUNT_IS_ACTIVE));
+//        return Boolean.valueOf(Utils.getSessionDaoValue(mContext,
+//                SessionDao.KEY.ACCOUNT_IS_ACTIVE));
+        return false;
     }
 
     public void setAccountIsActive(boolean accountIsActive) {
-        Utils.sessionDaoSave(mContext,
-                SessionDao.KEY.ACCOUNT_IS_ACTIVE,
-                String.valueOf(accountIsActive));
+//        Utils.sessionDaoSave(mContext,
+//                SessionDao.KEY.ACCOUNT_IS_ACTIVE,
+//                String.valueOf(accountIsActive));
     }
 }
