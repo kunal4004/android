@@ -144,10 +144,6 @@
         <item name="android:windowExitAnimation">@anim/alpha_anim_exit</item>
     </style>
 
-    <style name="popwindow_style">
-        <item name="android:windowEnterAnimation">@anim/pop_fade_in</item>
-        <item name="android:windowExitAnimation">@anim/pop_fade_out</item>
-    </style>
 
     <style name="WRewardsInfo" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
