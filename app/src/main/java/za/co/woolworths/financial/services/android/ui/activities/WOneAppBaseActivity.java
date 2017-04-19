@@ -23,7 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.Counter;
+import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.Voucher;
+import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
+import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
@@ -32,6 +38,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.WRewardsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
@@ -78,6 +85,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         drawerFragment.setUp(R.id.fragment_navigation_drawer, mDrawerLayout, mToolbar);
         drawerFragment.setDrawerListener(this);
         displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
+
+        getWRewards();
 
         registerReceiver(logOutReceiver, new IntentFilter("logOutReceiver"));
     }
@@ -200,6 +209,10 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             ScreenManager.presentSSOLogout(WOneAppBaseActivity.this);
         }
     };
+
+    public void getWRewards() {
+
+    }
 }
 
 

@@ -125,7 +125,7 @@ public class PersonalLoanFragment extends BaseAccountFragment {
     private void handleAccountResponse(Account account) {
         mPersonalLoanId = account.productOfferingId;
         View view = getView();
-        if (view == null){
+        if (view == null) {
             return;
         }
         WBalanceView balanceView = (WBalanceView) view.findViewById(R.id.personal_loan_balance);
