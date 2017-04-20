@@ -544,4 +544,6 @@
     <string name="loading_product_info">Loading product info</string>
     <string name="session_out_message">In order to protect your personal information, we have signed you out of the Woolies App.</string>
     <string name="title_authentication_error">Please Sign In.</string>
+    <string name="change_password">Change password</string>
+    <string name="change_password_url">https://www.woolworths.co.za/store/fragments/dashboard/dashboard-index.jsp?content=myaccount/user-details</string>
 </resources>
