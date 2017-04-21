@@ -546,4 +546,6 @@
 
     <string name="services_unavailable">Services Unavailable</string>
     <string name="please_check_back_later">Please check back later.</string>
+    <string name="change_password">Change password</string>
+    <string name="change_password_url">https://www.woolworths.co.za/store/fragments/dashboard/dashboard-index.jsp?content=myaccount/user-details</string>
 </resources>

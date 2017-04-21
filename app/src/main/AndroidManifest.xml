@@ -26,19 +26,37 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.FLASHLIGHT"/>
-    <!--Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7-->
-    <uses-feature android:name="android.hardware.camera" android:required="false"/>
-    <uses-feature android:name="android.hardware.camera.front" android:required="false"/>
+    <!-- Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7 -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false"/>
 
     <!-- replace above two with next line after Android 4.2 -->
-    <uses-feature android:name="android.hardware.camera.any" android:required="false"/>
-    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
-    <uses-feature android:name="android.hardware.camera.flash" android:required="false"/>
-    <uses-feature android:name="android.hardware.screen.landscape" android:required="false"/>
-    <uses-feature android:name="android.hardware.wifi" android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera.flash"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.screen.landscape"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.wifi"
+        android:required="false"/>
     <!-- This excludes Google TV, which is unfortunately included by virtue of not requiring a camera -->
-    <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
-    <uses-feature android:name="android.hardware.camera.setParameters" android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false"/>
+    <uses-feature
+        android:name="android.hardware.camera.setParameters"
+        android:required="false"/>
 
     <!-- end barcode scanner -->
 
@@ -312,7 +330,8 @@
             android:name="za.co.woolworths.financial.services.android.util.GlideConfiguration"
             android:value="GlideModule"/>
 
-        <!--<activity
+        <!--
+        <activity
             android:name="za.co.woolworths.financial.services.android.util.barcode.scanner.ProductCategoryBarcodeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppOverlayTheme"
@@ -320,7 +339,8 @@
             <meta-data
                 android:name="android.support.UI_OPTIONS"
                 android:value="splitActionBarWhenNarrow"/>
-        </activity>-->
+        </activity>
+        -->
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.TransientActivity"
             android:screenOrientation="portrait"
@@ -329,10 +349,15 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew"
             android:screenOrientation="portrait"
             android:theme="@style/ContactUs"/>
-        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.FAQDetailsWebActivity"
-                  android:screenOrientation="portrait"
-                  android:theme="@style/FaqStyle"
-            >
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.FAQDetailsWebActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle">
+        </activity>
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.WChangePasswordActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle">
         </activity>
     </application>
 
