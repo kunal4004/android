@@ -19,7 +19,7 @@ android {
         When building for PROD/CUG release, ensure that
         this number equates to the last available APK version code
         currently in PROD or the last BETA if a BETA release is available.*/
-        job = "4";
+        job = "42";
 
     }
 
