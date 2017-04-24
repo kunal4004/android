@@ -548,5 +548,5 @@
     <string name="please_check_back_later">Please check back later.</string>
     <string name="change_password">Change password</string>
     <string name="change_password_url">https://www.woolworths.co.za/store/fragments/dashboard/dashboard-index.jsp?content=myaccount/user-details</string>
-    <string name="products_onetime_popup_text">Browse or scan products here.To shop, you’ll be Linked to our online store.</string>
+    <string name="products_onetime_popup_text">Browse or scan products here.\nTo shop, you’ll be linked to our online store.</string>
 </resources>
