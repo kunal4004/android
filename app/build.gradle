@@ -19,7 +19,7 @@ android {
         When building for PROD/CUG release, ensure that
         this number equates to the last available APK version code
         currently in PROD or the last BETA if a BETA release is available.*/
-        job = "40";
+        job = "42";
 
     }
 
@@ -37,6 +37,12 @@ android {
             keyPassword 'woneapp_qa'
             storeFile file('key/woneapp_qa-release-key.keystore')
             storePassword 'woneapp_qa'
+        }
+        woneappStaging {
+            keyAlias 'woneapp_staging'
+            keyPassword 'woneapp_staging'
+            storeFile file('key/woneapp_staging-release-key.keystore')
+            storePassword 'woneapp_staging'
         }
         woolworths {
             keyAlias 'woolworths'
@@ -76,6 +82,11 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
+        }
+
+        staging {
+            applicationId "com.awfs.coordination.staging"
+            signingConfig signingConfigs.woneappStaging
         }
 
         production {
