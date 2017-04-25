@@ -58,13 +58,13 @@
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginTop="20dp"
                 android:ellipsize="end"
-                android:visibility="gone"
                 android:gravity="top|start"
                 android:letterSpacing="0.1"
                 android:text="new arrivals"
                 android:textAllCaps="true"
                 android:textColor="@color/black_desc_opacity"
                 android:textSize="12sp"
+                android:visibility="gone"
                 app:WTextView_font="medium" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -74,9 +74,9 @@
                 android:layout_marginBottom="@dimen/default_margin"
                 android:layout_marginEnd="@dimen/default_margin"
                 android:layout_marginStart="@dimen/default_margin"
+                android:layout_marginTop="20dp"
                 android:gravity="top|start"
                 android:letterSpacing="0"
-                android:layout_marginTop="20dp"
                 android:text="Navy Blue Polka Dot Cotton Shirt"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
@@ -260,11 +260,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="2dp"
                     android:layout_marginTop="8dp"
+                    android:visibility="gone"
                     app:LoadingDots_dots_color="@color/black_desc_opacity"
                     app:LoadingDots_dots_count="3"
                     app:LoadingDots_dots_size="3dp"
                     app:LoadingDots_dots_space="2dp"
-                    android:visibility="gone"
                     app:LoadingDots_jump_height="4dp"
                     app:LoadingDots_loop_start_delay="50" />
 

@@ -1,52 +1,40 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.util.DrawImage;
+import za.co.woolworths.financial.services.android.util.animation.zoomable.ZoomableDraweeView;
 
-public class ProductViewPagerAdapter extends PagerAdapter {
-
-    public interface MultipleImageInterface {
-        void SelectedImage(int position,View view);
-    }
-    private MultipleImageInterface multipleImageInterface;
+public class MultipleImageAdapter extends PagerAdapter {
 
     private final Context mContext;
     private List<String> mViewPager;
 
-    public ProductViewPagerAdapter(Context mContext, List<String> mViewPager,
-                                   MultipleImageInterface multipleImageInterface) {
+    public MultipleImageAdapter(Context mContext, List<String> mViewPager) {
         this.mContext = mContext;
-        this.multipleImageInterface = multipleImageInterface;
         this.mViewPager = mViewPager;
     }
 
     @Override
     public Object instantiateItem(ViewGroup collection, final int position) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        ViewGroup v = (ViewGroup) inflater.inflate(R.layout.product_view,
+        ViewGroup v = (ViewGroup) inflater.inflate(R.layout.product_multiple_image_row,
                 collection, false);
         String image = mViewPager.get(position);
-        SimpleDraweeView mProductImage = (SimpleDraweeView) v.findViewById(R.id.imProductView);
+        ZoomableDraweeView mProductImage = (ZoomableDraweeView) v.findViewById(R.id.imProductView);
+        mProductImage.setExperimentalSimpleTouchHandlingEnabled(false);
         DrawImage drawImage = new DrawImage(mContext);
-        drawImage.displayImage(mProductImage, image);
+        drawImage.widthDisplayImage(mProductImage, Uri.parse(image));
         collection.addView(v, 0);
-
-        v.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                multipleImageInterface.SelectedImage(position,v);
-            }
-        });
         return v;
     }
 

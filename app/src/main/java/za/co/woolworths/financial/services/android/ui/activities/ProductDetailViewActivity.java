@@ -43,7 +43,6 @@ import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
-import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
@@ -59,7 +58,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ProductDetailViewActivity extends BaseActivity implements SelectedProductView, View.OnClickListener {
+public class ProductDetailViewActivity extends BaseActivity implements SelectedProductView, View.OnClickListener,ProductViewPagerAdapter.MultipleImageInterface {
 
     public final int IMAGE_QUALITY = 85;
     private WTextView mTextSelectSize;
@@ -169,7 +168,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             mAuxiliaryImages.clear();
             mAuxiliaryImages.addAll(removeAuxiliaryImageDuplicate);
 
-            mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
+            mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages,this);
             mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
             mProductViewPagerAdapter.notifyDataSetChanged();
             setupPagerIndicatorDots();
@@ -883,6 +882,15 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             return price;
         }
         return price;
+    }
+
+    @Override
+    public void SelectedImage(int position, View view) {
+        Intent openMultipleImage = new Intent(this, MultipleImageActivity.class);
+        openMultipleImage.putExtra("position",position);
+        openMultipleImage.putExtra("auxiliaryImages", mAuxiliaryImages);
+        startActivity(openMultipleImage);
+        overridePendingTransition(0, 0);
     }
 }
 
