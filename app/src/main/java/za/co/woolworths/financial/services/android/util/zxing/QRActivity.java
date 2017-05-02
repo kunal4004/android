@@ -257,6 +257,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     protected void onResume() {
         super.onResume();
         resumeScan();
+        updateViewPagerPosition();
+
     }
 
     @Override
@@ -1310,9 +1312,20 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     @Override
     public void SelectedImage(int position, View view) {
         Intent openMultipleImage = new Intent(this, MultipleImageActivity.class);
-        openMultipleImage.putExtra("position",position);
+        openMultipleImage.putExtra("position", position);
         openMultipleImage.putExtra("auxiliaryImages", mAuxiliaryImages);
         startActivity(openMultipleImage);
         overridePendingTransition(0, 0);
+    }
+
+    public void updateViewPagerPosition() {
+        Integer position = ((WoolworthsApplication) getApplication()).getMultiImagePosition();
+        if (mAuxiliaryImages != null) {
+            if (mAuxiliaryImages.size() > 0) {
+                if (position != null) {
+                    mViewPagerProduct.setCurrentItem(position, false);
+                }
+            }
+        }
     }
 }

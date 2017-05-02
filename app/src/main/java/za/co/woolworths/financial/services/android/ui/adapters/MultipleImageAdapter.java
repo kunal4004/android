@@ -11,8 +11,7 @@ import com.awfs.coordination.R;
 
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.util.DrawImage;
-import za.co.woolworths.financial.services.android.util.animation.zoomable.ZoomableDraweeView;
+import za.co.woolworths.financial.services.android.util.photo.PhotoDraweeView;
 
 public class MultipleImageAdapter extends PagerAdapter {
 
@@ -30,10 +29,8 @@ public class MultipleImageAdapter extends PagerAdapter {
         ViewGroup v = (ViewGroup) inflater.inflate(R.layout.product_multiple_image_row,
                 collection, false);
         String image = mViewPager.get(position);
-        ZoomableDraweeView mProductImage = (ZoomableDraweeView) v.findViewById(R.id.imProductView);
-        mProductImage.setExperimentalSimpleTouchHandlingEnabled(false);
-        DrawImage drawImage = new DrawImage(mContext);
-        drawImage.widthDisplayImage(mProductImage, Uri.parse(image));
+        PhotoDraweeView mProductImage = (PhotoDraweeView) v.findViewById(R.id.imProductView);
+        mProductImage.setPhotoUri(Uri.parse(image), mProductImage);
         collection.addView(v, 0);
         return v;
     }

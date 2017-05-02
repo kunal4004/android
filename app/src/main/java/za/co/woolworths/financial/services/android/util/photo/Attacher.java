@@ -1,4 +1,4 @@
-package me.relex.photodraweeview;
+package za.co.woolworths.financial.services.android.util.photo;
 
 import android.content.Context;
 import android.graphics.Matrix;
@@ -15,9 +15,11 @@ import android.view.View;
 import android.view.ViewParent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
+
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.DraweeView;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
@@ -29,7 +31,8 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
     private static final int EDGE_RIGHT = 1, EDGE_BOTTOM = 1;
     private static final int EDGE_BOTH = 2;
 
-    @IntDef({ HORIZONTAL, VERTICAL }) @Retention(RetentionPolicy.SOURCE)
+    @IntDef({HORIZONTAL, VERTICAL})
+    @Retention(RetentionPolicy.SOURCE)
     public @interface OrientationMode {
     }
 
@@ -67,12 +70,13 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
 
     public Attacher(DraweeView<GenericDraweeHierarchy> draweeView) {
         mDraweeView = new WeakReference<>(draweeView);
-        draweeView.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+        draweeView.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FIT_START);
         draweeView.setOnTouchListener(this);
         mScaleDragDetector = new ScaleDragDetector(draweeView.getContext(), this);
         mGestureDetector = new GestureDetectorCompat(draweeView.getContext(),
                 new GestureDetector.SimpleOnGestureListener() {
-                    @Override public void onLongPress(MotionEvent e) {
+                    @Override
+                    public void onLongPress(MotionEvent e) {
                         super.onLongPress(e);
                         if (null != mLongClickListener) {
                             mLongClickListener.onLongClick(getDraweeView());
@@ -90,55 +94,66 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
         }
     }
 
-    @Nullable public DraweeView<GenericDraweeHierarchy> getDraweeView() {
+    @Nullable
+    public DraweeView<GenericDraweeHierarchy> getDraweeView() {
         return mDraweeView.get();
     }
 
-    @Override public float getMinimumScale() {
+    @Override
+    public float getMinimumScale() {
         return mMinScale;
     }
 
-    @Override public float getMediumScale() {
+    @Override
+    public float getMediumScale() {
         return mMidScale;
     }
 
-    @Override public float getMaximumScale() {
+    @Override
+    public float getMaximumScale() {
         return mMaxScale;
     }
 
-    @Override public void setMaximumScale(float maximumScale) {
+    @Override
+    public void setMaximumScale(float maximumScale) {
         checkZoomLevels(mMinScale, mMidScale, maximumScale);
         mMaxScale = maximumScale;
     }
 
-    @Override public void setMediumScale(float mediumScale) {
+    @Override
+    public void setMediumScale(float mediumScale) {
         checkZoomLevels(mMinScale, mediumScale, mMaxScale);
         mMidScale = mediumScale;
     }
 
-    @Override public void setMinimumScale(float minimumScale) {
+    @Override
+    public void setMinimumScale(float minimumScale) {
         checkZoomLevels(minimumScale, mMidScale, mMaxScale);
         mMinScale = minimumScale;
     }
 
-    @Override public float getScale() {
+    @Override
+    public float getScale() {
         return (float) Math.sqrt(
                 (float) Math.pow(getMatrixValue(mMatrix, Matrix.MSCALE_X), 2) + (float) Math.pow(
                         getMatrixValue(mMatrix, Matrix.MSKEW_Y), 2));
     }
 
-    @Override public void setScale(float scale) {
+    @Override
+    public void setScale(float scale) {
         setScale(scale, false);
     }
 
-    @Override public void setScale(float scale, boolean animate) {
+    @Override
+    public void setScale(float scale, boolean animate) {
         DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
         if (draweeView != null) {
             setScale(scale, (draweeView.getRight()) / 2, (draweeView.getBottom()) / 2, false);
         }
     }
 
-    @Override public void setScale(float scale, float focalX, float focalY, boolean animate) {
+    @Override
+    public void setScale(float scale, float focalX, float focalY, boolean animate) {
         DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
 
         if (draweeView == null || scale < mMinScale || scale > mMaxScale) {
@@ -153,44 +168,54 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
         }
     }
 
-    @Override public void setOrientation(@OrientationMode int orientation) {
+    @Override
+    public void setOrientation(@OrientationMode int orientation) {
         mOrientation = orientation;
     }
 
-    @Override public void setZoomTransitionDuration(long duration) {
+    @Override
+    public void setZoomTransitionDuration(long duration) {
         duration = duration < 0 ? IAttacher.ZOOM_DURATION : duration;
         mZoomDuration = duration;
     }
 
-    @Override public void setAllowParentInterceptOnEdge(boolean allow) {
+    @Override
+    public void setAllowParentInterceptOnEdge(boolean allow) {
         mAllowParentInterceptOnEdge = allow;
     }
 
-    @Override public void setOnScaleChangeListener(OnScaleChangeListener listener) {
+    @Override
+    public void setOnScaleChangeListener(OnScaleChangeListener listener) {
         mScaleChangeListener = listener;
     }
 
-    @Override public void setOnLongClickListener(View.OnLongClickListener listener) {
+    @Override
+    public void setOnLongClickListener(View.OnLongClickListener listener) {
         mLongClickListener = listener;
     }
 
-    @Override public void setOnPhotoTapListener(OnPhotoTapListener listener) {
+    @Override
+    public void setOnPhotoTapListener(OnPhotoTapListener listener) {
         mPhotoTapListener = listener;
     }
 
-    @Override public void setOnViewTapListener(OnViewTapListener listener) {
+    @Override
+    public void setOnViewTapListener(OnViewTapListener listener) {
         mViewTapListener = listener;
     }
 
-    @Override public OnPhotoTapListener getOnPhotoTapListener() {
+    @Override
+    public OnPhotoTapListener getOnPhotoTapListener() {
         return mPhotoTapListener;
     }
 
-    @Override public OnViewTapListener getOnViewTapListener() {
+    @Override
+    public OnViewTapListener getOnViewTapListener() {
         return mViewTapListener;
     }
 
-    @Override public void update(int imageInfoWidth, int imageInfoHeight) {
+    @Override
+    public void update(int imageInfoWidth, int imageInfoHeight) {
         mImageInfoWidth = imageInfoWidth;
         mImageInfoHeight = imageInfoHeight;
         updateBaseMatrix();
@@ -209,7 +234,6 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
         DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
 
         if (draweeView != null) {
-
             return draweeView.getWidth()
                     - draweeView.getPaddingLeft()
                     - draweeView.getPaddingRight();
@@ -315,7 +339,7 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
         resetMatrix();
     }
 
-    private void resetMatrix() {
+    protected void resetMatrix() {
         mMatrix.reset();
         checkMatrixBounds();
         DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
@@ -329,7 +353,6 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
         if (draweeView == null) {
             return;
         }
-
         if (getScale() < mMinScale) {
             RectF rect = getDisplayRect();
             if (null != rect) {
@@ -339,26 +362,25 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
         }
     }
 
-    @Override public void onScale(float scaleFactor, float focusX, float focusY) {
+    @Override
+    public void onScale(float scaleFactor, float focusX, float focusY) {
         if (getScale() < mMaxScale || scaleFactor < 1.0F) {
-
             if (mScaleChangeListener != null) {
                 mScaleChangeListener.onScaleChange(scaleFactor, focusX, focusY);
             }
-
             mMatrix.postScale(scaleFactor, scaleFactor, focusX, focusY);
             checkMatrixAndInvalidate();
         }
     }
 
-    @Override public void onScaleEnd() {
+    @Override
+    public void onScaleEnd() {
         checkMinScale();
     }
 
-    @Override public void onDrag(float dx, float dy) {
-
+    @Override
+    public void onDrag(float dx, float dy) {
         DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
-
         if (draweeView != null && !mScaleDragDetector.isScaling()) {
             mMatrix.postTranslate(dx, dy);
             checkMatrixAndInvalidate();
@@ -383,7 +405,8 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
         }
     }
 
-    @Override public void onFling(float startX, float startY, float velocityX, float velocityY) {
+    @Override
+    public void onFling(float startX, float startY, float velocityX, float velocityY) {
         DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
         if (draweeView == null) {
             return;
@@ -395,7 +418,8 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
         draweeView.post(mCurrentFlingRunnable);
     }
 
-    @Override public boolean onTouch(View v, MotionEvent event) {
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
         int action = MotionEventCompat.getActionMasked(event);
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
@@ -438,7 +462,7 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
         private final float mZoomStart, mZoomEnd;
 
         public AnimatedZoomRunnable(final float currentZoom, final float targetZoom,
-                final float focalX, final float focalY) {
+                                    final float focalX, final float focalY) {
             mFocalX = focalX;
             mFocalY = focalY;
             mStartTime = System.currentTimeMillis();
@@ -446,7 +470,8 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
             mZoomEnd = targetZoom;
         }
 
-        @Override public void run() {
+        @Override
+        public void run() {
 
             DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
             if (draweeView == null) {
@@ -517,7 +542,8 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
             }
         }
 
-        @Override public void run() {
+        @Override
+        public void run() {
             if (mScroller.isFinished()) {
                 return;
             }

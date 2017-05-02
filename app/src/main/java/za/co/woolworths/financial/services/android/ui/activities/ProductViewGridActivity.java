@@ -487,7 +487,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                         default:
                             Utils.updateStatusBarBackground(ProductViewGridActivity.this);
                             hideProgressDetailLoad();
-                            Utils.alertErrorMessage(ProductViewGridActivity.this,wProduct.response.desc);
+                            Utils.alertErrorMessage(ProductViewGridActivity.this, wProduct.response.desc);
                             break;
                     }
 
@@ -650,10 +650,8 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         }
     }
 
-    public void handleLoadAnSearchProductsResponse(ProductView pv)
-    {
-        switch (pv.httpCode)
-        {
+    public void handleLoadAnSearchProductsResponse(ProductView pv) {
+        switch (pv.httpCode) {
             case 200:
                 mProduct = null;
                 mProduct = new ArrayList<>();
@@ -682,10 +680,10 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
             default:
                 mNumberOfItem.setText(String.valueOf(0));
                 hideVProgressBar();
-                Utils.alertErrorMessage(ProductViewGridActivity.this,pv.response.desc);
+                Utils.alertErrorMessage(ProductViewGridActivity.this, pv.response.desc);
                 break;
         }
-    }
 
+    }
 }
 

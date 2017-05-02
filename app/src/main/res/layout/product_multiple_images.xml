@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/relProductContainer"
-    android:layout_width="match_parent"
-    android:background="@color/white"
-    android:layout_height="match_parent">
+                android:id="@+id/relProductContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:descendantFocusability="blocksDescendants">
 
     <RelativeLayout
         android:id="@+id/relViewPager"
         android:layout_width="match_parent"
+        android:focusableInTouchMode="false"
         android:layout_height="match_parent">
 
-        <android.support.v4.view.ViewPager
+        <za.co.woolworths.financial.services.android.ui.views.MultiTouchViewPager
             android:id="@+id/mProductDetailPager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"/>
 
         <LinearLayout
             android:id="@+id/pager_dots"
@@ -23,13 +25,15 @@
             android:layout_marginBottom="@dimen/bank_spacing_width"
             android:background="@android:color/transparent"
             android:gravity="center_horizontal"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"/>
 
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:focusableInTouchMode="false"
+        android:focusable="false"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true">
 
@@ -40,6 +44,6 @@
             android:layout_marginLeft="@dimen/default_margin"
             android:layout_marginTop="@dimen/default_margin"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/closecircle" />
+            android:src="@drawable/closecircle"/>
     </RelativeLayout>
 </RelativeLayout>

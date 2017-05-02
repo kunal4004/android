@@ -7,23 +7,23 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.image.ImageInfo;
 
-import me.relex.photodraweeview.Attacher;
-import me.relex.photodraweeview.OnPhotoTapListener;
-
 public class PhotoDraweeView extends SimpleDraweeView implements IAttacher {
 
     private Attacher mAttacher;
-
     private boolean mEnableDraweeMatrix = true;
 
     public PhotoDraweeView(Context context, GenericDraweeHierarchy hierarchy) {
@@ -48,11 +48,11 @@ public class PhotoDraweeView extends SimpleDraweeView implements IAttacher {
 
     protected void init() {
         if (mAttacher == null || mAttacher.getDraweeView() == null) {
-            mAttacher = new me.relex.photodraweeview.Attacher(this);
+            mAttacher = new za.co.woolworths.financial.services.android.util.photo.Attacher(this);
         }
     }
 
-    public me.relex.photodraweeview.Attacher getAttacher() {
+    public za.co.woolworths.financial.services.android.util.photo.Attacher getAttacher() {
         return mAttacher;
     }
 
@@ -196,14 +196,24 @@ public class PhotoDraweeView extends SimpleDraweeView implements IAttacher {
         mEnableDraweeMatrix = enableDraweeMatrix;
     }
 
-    public void setPhotoUri(Uri uri) {
-        setPhotoUri(uri, null);
+    public void setPhotoUri(Uri uri, PhotoDraweeView mProductImage) {
+        setPhotoUri(mProductImage, uri, null);
     }
 
-    public void setPhotoUri(Uri uri, @Nullable Context context) {
+    public void setPhotoUri(final PhotoDraweeView mProductImage, final Uri uri, @Nullable final Context context) {
         mEnableDraweeMatrix = false;
+
+        GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder
+                (mProductImage.getContext().getResources());
+        final GenericDraweeHierarchy hierarchy = builder
+                .setActualImageScaleType(ScalingUtils.ScaleType.CENTER)
+                .setFadeDuration(0)
+                .build();
+
+        Fresco.getImagePipeline().evictFromMemoryCache(uri);
         DraweeController controller = Fresco.newDraweeControllerBuilder()
                 .setCallerContext(context)
+                .setAutoPlayAnimations(true)
                 .setUri(uri)
                 .setOldController(getController())
                 .setControllerListener(new BaseControllerListener<ImageInfo>() {
@@ -218,8 +228,84 @@ public class PhotoDraweeView extends SimpleDraweeView implements IAttacher {
                                                 Animatable animatable) {
                         super.onFinalImageSet(id, imageInfo, animatable);
                         mEnableDraweeMatrix = true;
+                        init();
                         if (imageInfo != null) {
-                            update(imageInfo.getWidth(), imageInfo.getHeight());
+                            mAttacher.resetMatrix();
+                            int width = imageInfo.getWidth();
+                            int height = imageInfo.getHeight();
+                            update(width, height);
+                            if (width >= height) {
+                                switch (getResources().getDisplayMetrics().densityDpi) {
+
+                                    case DisplayMetrics.DENSITY_MEDIUM:
+                                        mProductImage.setZoomTransitionDuration(800);
+                                        mProductImage.setScale((float) 1.27);
+                                        mProductImage.setMinimumScale((float) 1.27);
+                                        break;
+                                    case DisplayMetrics.DENSITY_HIGH:
+                                        mProductImage.setZoomTransitionDuration(800);
+                                        mProductImage.setScale((float) 1.27);
+                                        mProductImage.setMinimumScale((float) 1.27);
+                                        break;
+                                    case DisplayMetrics.DENSITY_XHIGH:
+                                        mProductImage.setZoomTransitionDuration(800);
+                                        mProductImage.setScale((float) 1.27);
+                                        mProductImage.setMinimumScale((float) 1.27);
+                                        break;
+                                    case DisplayMetrics.DENSITY_XXHIGH:
+                                        mProductImage.setZoomTransitionDuration(800);
+                                        mProductImage.setScale((float) 1.27);
+                                        mProductImage.setMinimumScale((float) 1.27);
+                                        break;
+                                    case DisplayMetrics.DENSITY_XXXHIGH:
+                                        mProductImage.setZoomTransitionDuration(800);
+                                        mProductImage.setScale((float) 1.27);
+                                        mProductImage.setMinimumScale((float) 1.27);
+                                        break;
+                                    default:
+                                        Log.e("defaultScale..", "dvl");
+                                        mProductImage.setZoomTransitionDuration(800);
+                                        mProductImage.setScale((float) 1.27);
+                                        mProductImage.setMinimumScale((float) 1.27);
+                                        break;
+                                }
+                            } else {
+                                switch (getResources().getDisplayMetrics().densityDpi) {
+                                    case DisplayMetrics.DENSITY_MEDIUM:
+                                        mProductImage.setZoomTransitionDuration(800);
+                                        mProductImage.setScale((float) 1.3855);
+                                        mProductImage.setMinimumScale((float) 1.3855);
+                                        break;
+                                    case DisplayMetrics.DENSITY_HIGH:
+                                        mProductImage.setZoomTransitionDuration(800);
+                                        mProductImage.setScale((float) 1.315);
+                                        mProductImage.setMinimumScale((float) 1.315);
+                                        break;
+                                    case DisplayMetrics.DENSITY_XHIGH:
+                                        mProductImage.setZoomTransitionDuration(800);
+                                        mProductImage.setScale((float) 1.205);
+                                        mProductImage.setMinimumScale((float) 1.205);
+                                        break;
+                                    case DisplayMetrics.DENSITY_XXHIGH:
+                                        mProductImage.setZoomTransitionDuration(800);
+                                        mProductImage.setScale((float) 1.335);
+                                        mProductImage.setMinimumScale((float) 1.335);
+                                        break;
+
+                                    case DisplayMetrics.DENSITY_XXXHIGH:
+                                        mProductImage.setZoomTransitionDuration(800);
+                                        mProductImage.setScale((float) 1.4);
+                                        mProductImage.setMinimumScale((float) 1.4);
+                                        break;
+
+                                    default:
+                                        mProductImage.setZoomTransitionDuration(800);
+                                        mProductImage.setScale((float) 1.305);
+                                        mProductImage.setMinimumScale((float) 1.305);
+                                        break;
+                                }
+                            }
+                            mProductImage.setMaximumScale((float) 4.0);
                         }
                     }
 
@@ -239,6 +325,7 @@ public class PhotoDraweeView extends SimpleDraweeView implements IAttacher {
                     }
                 })
                 .build();
+        setHierarchy(hierarchy);
         setController(controller);
     }
 }

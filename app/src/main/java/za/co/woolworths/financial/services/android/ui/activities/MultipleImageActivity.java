@@ -16,16 +16,19 @@ import com.awfs.coordination.R;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.adapters.MultipleImageAdapter;
+import za.co.woolworths.financial.services.android.ui.views.MultiTouchViewPager;
 
 public class MultipleImageActivity extends AppCompatActivity implements View.OnClickListener {
 
     private int mCurrentPosition;
-    private ArrayList<String> mAuxiliaryImages;
-    private ViewPager mViewPagerProduct;
+    private ArrayList mAuxiliaryImages;
+    private MultiTouchViewPager mViewPagerProduct;
     private LinearLayout mLlPagerDots;
     private ImageView[] ivArrayDotsPager;
     private MultipleImageAdapter multipleImageAdapter;
+    private int currentPosition = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,6 +40,7 @@ public class MultipleImageActivity extends AppCompatActivity implements View.OnC
         fillAdapter();
         setupPagerIndicatorDots();
         viewPagerListener();
+
     }
 
     private void viewPagerListener() {
@@ -48,6 +52,7 @@ public class MultipleImageActivity extends AppCompatActivity implements View.OnC
 
             @Override
             public void onPageSelected(int position) {
+                updateItem(position);
                 for (ImageView anIvArrayDotsPager : ivArrayDotsPager) {
                     anIvArrayDotsPager.setImageResource(R.drawable.unselected_drawable);
                 }
@@ -56,7 +61,6 @@ public class MultipleImageActivity extends AppCompatActivity implements View.OnC
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                multipleImageAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -66,6 +70,7 @@ public class MultipleImageActivity extends AppCompatActivity implements View.OnC
         multipleImageAdapter = new MultipleImageAdapter(this, mAuxiliaryImages);
         mViewPagerProduct.setAdapter(multipleImageAdapter);
         mViewPagerProduct.setCurrentItem(mCurrentPosition);
+        updateItem(mCurrentPosition);
     }
 
     private void getBundle() {
@@ -81,7 +86,7 @@ public class MultipleImageActivity extends AppCompatActivity implements View.OnC
 
     private void initView() {
         ImageView mCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
-        mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
+        mViewPagerProduct = (MultiTouchViewPager) findViewById(R.id.mProductDetailPager);
         mCloseProduct.setOnClickListener(this);
     }
 
@@ -128,5 +133,10 @@ public class MultipleImageActivity extends AppCompatActivity implements View.OnC
             }
             ivArrayDotsPager[mCurrentPosition].setImageResource(R.drawable.selected_drawable);
         }
+    }
+
+    public void updateItem(int position) {
+        currentPosition = position;
+        ((WoolworthsApplication) getApplication()).setMultiImagePosition(currentPosition);//Save current viewpager position
     }
 }

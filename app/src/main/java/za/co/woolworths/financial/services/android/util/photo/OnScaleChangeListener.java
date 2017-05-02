@@ -1,4 +1,4 @@
-package me.relex.photodraweeview;
+package za.co.woolworths.financial.services.android.util.photo;
 
 /**
  * Interface definition for callback to be invoked when attached ImageView scale changes

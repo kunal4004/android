@@ -326,4 +326,5 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             getProductRequest(mEditBarcodeNumber.getText().toString());
         }
     }
+
 }

@@ -27,6 +27,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
@@ -58,7 +59,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ProductDetailViewActivity extends BaseActivity implements SelectedProductView, View.OnClickListener,ProductViewPagerAdapter.MultipleImageInterface {
+public class ProductDetailViewActivity extends BaseActivity implements SelectedProductView, View.OnClickListener, ProductViewPagerAdapter.MultipleImageInterface {
 
     public final int IMAGE_QUALITY = 85;
     private WTextView mTextSelectSize;
@@ -107,6 +108,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private ViewPager mTouchTarget;
     public ImageView mColorArrow;
     public ProductViewPagerAdapter mProductViewPagerAdapter;
+    private int currentPosition = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -168,7 +170,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             mAuxiliaryImages.clear();
             mAuxiliaryImages.addAll(removeAuxiliaryImageDuplicate);
 
-            mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages,this);
+            mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages, this);
             mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
             mProductViewPagerAdapter.notifyDataSetChanged();
             setupPagerIndicatorDots();
@@ -759,7 +761,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 } else {
                     if (wasPrice.equalsIgnoreCase(price)) {
                         //wasPrice equals currentPrice
-                        wPrice.setText( WFormatter.formatAmount(price));
+                        wPrice.setText(WFormatter.formatAmount(price));
                         WwasPrice.setText("");
                         wPrice.setPaintFlags(0);
                     } else {
@@ -887,10 +889,27 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     @Override
     public void SelectedImage(int position, View view) {
         Intent openMultipleImage = new Intent(this, MultipleImageActivity.class);
-        openMultipleImage.putExtra("position",position);
+        openMultipleImage.putExtra("position", position);
         openMultipleImage.putExtra("auxiliaryImages", mAuxiliaryImages);
         startActivity(openMultipleImage);
         overridePendingTransition(0, 0);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateViewPagerPosition();
+    }
+
+    public void updateViewPagerPosition() {
+        Integer position = ((WoolworthsApplication) getApplication()).getMultiImagePosition();
+        if (mAuxiliaryImages != null) {
+            if (mAuxiliaryImages.size() > 0) {
+                if (position != null) {
+                    mViewPagerProduct.setCurrentItem(position, false);
+                }
+            }
+        }
     }
 }
 

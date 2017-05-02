@@ -41,6 +41,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
@@ -1081,10 +1082,29 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     @Override
     public void SelectedImage(int position, View v) {
         Intent openMultipleImage = new Intent(this, MultipleImageActivity.class);
-        openMultipleImage.putExtra("position",position);
+        openMultipleImage.putExtra("position", position);
         openMultipleImage.putExtra("auxiliaryImages", mAuxiliaryImages);
         startActivity(openMultipleImage);
-        overridePendingTransition(0, 0);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateViewPagerPosition();
+    }
+
+    public void updateViewPagerPosition() {
+        Integer position = ((WoolworthsApplication) getApplication()).getMultiImagePosition();
+        if (mAuxiliaryImages != null) {
+            if (mAuxiliaryImages.size() > 0) {
+                if (position != null) {
+                    Log.e("bigPosition",String.valueOf(position));
+                    mViewPagerProduct.setCurrentItem(position, false);
+                }
+            }
+        }
     }
 }
 
