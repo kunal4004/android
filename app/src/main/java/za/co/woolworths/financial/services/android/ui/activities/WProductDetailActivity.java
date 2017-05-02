@@ -1100,7 +1100,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         if (mAuxiliaryImages != null) {
             if (mAuxiliaryImages.size() > 0) {
                 if (position != null) {
-                    Log.e("bigPosition",String.valueOf(position));
                     mViewPagerProduct.setCurrentItem(position, false);
                 }
             }
