@@ -723,7 +723,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         updatePrice();
     }
 
-
     public void updatePrice() {
         String fromPrice = String.valueOf(mObjProductDetail.fromPrice);
         String wasPrice = highestSKUWasPrice();
