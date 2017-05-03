@@ -83,7 +83,8 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
                         }
                     }
                 });
-        mGestureDetector.setOnDoubleTapListener(new DefaultOnDoubleTapListener(this));
+        // uncomment to enable onDoubleTapZoom
+        //  mGestureDetector.setOnDoubleTapListener(new DefaultOnDoubleTapListener(this));
     }
 
     public void setOnDoubleTapListener(GestureDetector.OnDoubleTapListener newOnDoubleTapListener) {
