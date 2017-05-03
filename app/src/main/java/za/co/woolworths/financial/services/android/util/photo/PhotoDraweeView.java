@@ -305,7 +305,7 @@ public class PhotoDraweeView extends SimpleDraweeView implements IAttacher {
                                         break;
                                 }
                             }
-                            mProductImage.setMaximumScale((float) 4.0);
+                            mProductImage.setMaximumScale((float) 6.0);
                         }
                     }
 
