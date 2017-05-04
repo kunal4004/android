@@ -109,6 +109,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 
                         break;
                     default:
+                        Utils.alertErrorMessage(WTransactionsActivity.this,transactionHistoryResponse.response.desc);
                         break;
                 }
                 dismissProgress();

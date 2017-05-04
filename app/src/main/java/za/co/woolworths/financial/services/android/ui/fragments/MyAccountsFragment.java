@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsA
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WChangePasswordActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
@@ -101,6 +102,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
     LinearLayout unlinkedLayout;
     WButton linkAccountsBtn;
     RelativeLayout signOutBtn;
+    RelativeLayout changePasswordBtn;
     ViewPager viewPager;
     MyAccountOverViewPagerAdapter adapter;
     LinearLayout pager_indicator;
@@ -166,6 +168,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         unlinkedLayout = (LinearLayout) view.findViewById(R.id.llUnlinkedAccount);
         linkAccountsBtn = (WButton) view.findViewById(R.id.linkAccountsBtn);
         signOutBtn = (RelativeLayout) view.findViewById(R.id.signOutBtn);
+        changePasswordBtn=(RelativeLayout)view.findViewById(R.id.changePassword);
         viewPager = (ViewPager) view.findViewById(R.id.pager);
         pager_indicator = (LinearLayout) view.findViewById(R.id.viewPagerCountDots);
         sc_available_funds = (WTextView) view.findViewById(R.id.sc_available_funds);
@@ -192,6 +195,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         linkedPersonalCardView.setOnClickListener(this);
         openShoppingList.setOnClickListener(this);
         signOutBtn.setOnClickListener(this);
+        changePasswordBtn.setOnClickListener(this);
         mImageView.setOnClickListener(this);
         relFAQ.setOnClickListener(this);
         mWObservableScrollView.setScrollViewCallbacks(this);
@@ -320,6 +324,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 String initials = jwtDecodedModel.name.substring(0, 1).concat(" ").concat(jwtDecodedModel.family_name.substring(0, 1));
                 userInitials.setText(initials);
                 signOutBtn.setVisibility(View.VISIBLE);
+                changePasswordBtn.setVisibility(View.VISIBLE);
                 if (jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
                     //user is linked and signed in
                     linkedAccountsLayout.setVisibility(View.VISIBLE);
@@ -345,6 +350,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         loggedInHeaderLayout.setVisibility(View.GONE);
         loggedOutHeaderLayout.setVisibility(View.GONE);
         signOutBtn.setVisibility(View.GONE);
+        changePasswordBtn.setVisibility(View.GONE);
         linkedAccountsLayout.setVisibility(View.GONE);
         applyNowAccountsLayout.setVisibility(View.GONE);
         contactUs.setVisibility(View.GONE);
@@ -441,7 +447,10 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
             case R.id.imgBurgerButton:
                 hideActionBar.onBurgerButtonPressed();
                 break;
-
+            case R.id.changePassword:
+                startActivity(new Intent(getActivity(), WChangePasswordActivity.class));
+                getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+                break;
             default:
                 break;
 
@@ -535,8 +544,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                         break;
                     case 440:
                         AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
-                        mError.setTitle("Authentication Error");
-                        mError.setMessage("Your session expired. You've been signed out.");
+                        mError.setTitle(getString(R.string.title_authentication_error));
+                        mError.setMessage(getString(R.string.session_out_message));
                         mError.show();
                         new android.os.AsyncTask<Void, Void, String>() {
 
@@ -561,6 +570,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
                         break;
                     default:
+                        Utils.alertErrorMessage(getActivity(),accountsResponse.response.desc);
                         break;
                 }
                 dismissProgress();
