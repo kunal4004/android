@@ -401,6 +401,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         if (getActivity() != null) {
             Utils.saveLastLocation(location, getActivity());
             updateMyCurrentLocationOnMap(location);
+            getActivity().invalidateOptionsMenu();
             init(location);
             //If permission is not granted, request permission.
             if (hasPermissions())
@@ -753,10 +754,19 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.w_store_locator_menu, menu);
+        MenuItem searchMenu=menu.findItem(R.id.action_search).setVisible(true);
+        //Disable until finding location
+        searchMenu.getIcon().setAlpha(130);
         if (navigateMenuState) {
             menu.findItem(R.id.action_locate).setVisible(true);
         } else {
             menu.findItem(R.id.action_locate).setVisible(false);
+        }
+
+        if(Utils.getLastSavedLocation(getActivity())!=null)
+        {
+           searchMenu.setEnabled(true);
+           searchMenu.getIcon().setAlpha(255);
         }
 
     }
