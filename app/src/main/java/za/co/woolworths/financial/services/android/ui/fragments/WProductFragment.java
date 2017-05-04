@@ -33,6 +33,7 @@ import java.util.List;
 
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity;
@@ -125,6 +126,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         setUIListener();
         showAccountToolbar();
         mNestedScrollview.getParent().requestChildFocus(mNestedScrollview, mNestedScrollview);
+        showOneTimePopup();
     }
 
     @Override
@@ -422,5 +424,18 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         mRecycleProductSearch.setLayoutManager(mLayoutManager);
         mRecycleProductSearch.setNestedScrollingEnabled(false);
         mRecycleProductSearch.setAdapter(myAdapter);
+    }
+
+    public void showOneTimePopup()
+    {
+        try {
+            String firstTime = Utils.getSessionDaoValue(getActivity(), SessionDao.KEY.PRODUCTS_ONE_TIME_POPUP);
+            if (firstTime == null) {
+                Utils.displayValidationMessage(getActivity(), TransientActivity.VALIDATION_MESSAGE_LIST.INFO, getActivity().getResources().getString(R.string.products_onetime_popup_text));
+                Utils.sessionDaoSave(getActivity(), SessionDao.KEY.PRODUCTS_ONE_TIME_POPUP, "1");
+            }
+        } catch (NullPointerException ignored) {
+        }
+
     }
 }
