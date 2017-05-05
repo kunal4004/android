@@ -43,7 +43,6 @@ import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
-import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
@@ -103,7 +102,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     private WProductDetail mObjProductDetail;
     private String mDefaultColor;
     private String mDefaultColorRef;
-    private String mDefaultSize;
+    public String mDefaultSize;
     private int mPreviousState;
     private ViewPager mTouchTarget;
     public ImageView mColorArrow;
@@ -246,9 +245,10 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             WProductDetail mProduct = mproductDetail.get(0);
             otherSkusList = mProduct.otherSkus;
             mCheckOutLink = mProduct.checkOutLink;
-            mDefaultImage = mProduct.externalImageRef;
             String skuId = mProduct.sku;
+            OtherSku mOtherSku = getDefaultSKU(otherSkusList, skuId);
             getDefaultColor(otherSkusList, skuId);
+            mDefaultImage = mOtherSku.externalImageRef;
             populateView();
             promoImages(mProduct.promotionImages);
             displayProduct(mProductName);
@@ -720,9 +720,20 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 mDefaultColor = otherSku.colour;
                 mDefaultColorRef = otherSku.externalColourRef;
                 mDefaultSize = otherSku.size;
+                mDefaultImage = otherSku.externalImageRef;
             }
         }
     }
+
+    protected OtherSku getDefaultSKU(List<OtherSku> otherSkus, String skuId) {
+        for (OtherSku otherSku : otherSkus) {
+            if (skuId.equalsIgnoreCase(otherSku.sku)) {
+                return otherSku;
+            }
+        }
+        return null;
+    }
+
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -760,7 +771,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 } else {
                     if (wasPrice.equalsIgnoreCase(price)) {
                         //wasPrice equals currentPrice
-                        wPrice.setText( WFormatter.formatAmount(price));
+                        wPrice.setText(WFormatter.formatAmount(price));
                         WwasPrice.setText("");
                         wPrice.setPaintFlags(0);
                     } else {
