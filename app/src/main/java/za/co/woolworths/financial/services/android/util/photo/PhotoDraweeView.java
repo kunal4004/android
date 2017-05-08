@@ -21,10 +21,11 @@ import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.image.ImageInfo;
 
-public class PhotoDraweeView extends SimpleDraweeView implements IAttacher {
+public class PhotoDraweeView extends SimpleDraweeView implements IAttacher, OnScaleInterface {
 
     private Attacher mAttacher;
     private boolean mEnableDraweeMatrix = true;
+    private float permScaleFactor;
 
     public PhotoDraweeView(Context context, GenericDraweeHierarchy hierarchy) {
         super(context, hierarchy);
@@ -48,11 +49,11 @@ public class PhotoDraweeView extends SimpleDraweeView implements IAttacher {
 
     protected void init() {
         if (mAttacher == null || mAttacher.getDraweeView() == null) {
-            mAttacher = new za.co.woolworths.financial.services.android.util.photo.Attacher(this);
+            mAttacher = new Attacher(this, this);
         }
     }
 
-    public za.co.woolworths.financial.services.android.util.photo.Attacher getAttacher() {
+    public Attacher getAttacher() {
         return mAttacher;
     }
 
@@ -327,5 +328,20 @@ public class PhotoDraweeView extends SimpleDraweeView implements IAttacher {
                 .build();
         setHierarchy(hierarchy);
         setController(controller);
+    }
+
+
+    @Override
+    public float onScale(float scaleFactor) {
+        setPermScaleFactor(scaleFactor);
+        return scaleFactor;
+    }
+
+    public float getPermScaleFactor() {
+        return permScaleFactor;
+    }
+
+    public void setPermScaleFactor(float permScaleFactor) {
+        this.permScaleFactor = permScaleFactor;
     }
 }

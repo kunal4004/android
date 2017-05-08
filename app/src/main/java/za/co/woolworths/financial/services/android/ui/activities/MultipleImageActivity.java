@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.adapters.MultipleImageAdapter;
 import za.co.woolworths.financial.services.android.ui.views.MultiTouchViewPager;
+import za.co.woolworths.financial.services.android.util.photo.OnViewPagerDisableInterface;
+import za.co.woolworths.financial.services.android.util.photo.SwipeDirection;
 
-public class MultipleImageActivity extends AppCompatActivity implements View.OnClickListener {
+public class MultipleImageActivity extends AppCompatActivity implements View.OnClickListener, OnViewPagerDisableInterface {
 
     private int mCurrentPosition;
     private ArrayList mAuxiliaryImages;
@@ -63,11 +65,12 @@ public class MultipleImageActivity extends AppCompatActivity implements View.OnC
             public void onPageScrollStateChanged(int state) {
             }
         });
+        pagerIsEnabled();
     }
 
     private void fillAdapter() {
         mLlPagerDots = (LinearLayout) findViewById(R.id.pager_dots);
-        multipleImageAdapter = new MultipleImageAdapter(this, mAuxiliaryImages);
+        multipleImageAdapter = new MultipleImageAdapter(this, mAuxiliaryImages, this);
         mViewPagerProduct.setAdapter(multipleImageAdapter);
         mViewPagerProduct.setCurrentItem(mCurrentPosition);
         updateItem(mCurrentPosition);
@@ -106,7 +109,7 @@ public class MultipleImageActivity extends AppCompatActivity implements View.OnC
 
     private void closeView() {
         finish();
-        overridePendingTransition(0, 0);
+        overridePendingTransition(R.anim.stay, R.anim.fade_out);
     }
 
     private void setupPagerIndicatorDots() {
@@ -138,5 +141,26 @@ public class MultipleImageActivity extends AppCompatActivity implements View.OnC
     public void updateItem(int position) {
         currentPosition = position;
         ((WoolworthsApplication) getApplication()).setMultiImagePosition(currentPosition);//Save current viewpager position
+    }
+
+    @Override
+    public void onViewDisabled() {
+        pagerIsDisabled();
+        mLlPagerDots.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onViewEnabled() {
+        pagerIsEnabled();
+        mLlPagerDots.setVisibility(View.VISIBLE);
+    }
+
+    private void pagerIsEnabled() {
+        mViewPagerProduct.setAllowedSwipeDirection(SwipeDirection.left_and_right);
+    }
+
+    private void pagerIsDisabled() {
+        mViewPagerProduct.setAllowedSwipeDirection(SwipeDirection.none);
+
     }
 }

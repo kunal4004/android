@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.widget.ScrollerCompat;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +31,8 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
     private static final int EDGE_LEFT = 0, EDGE_TOP = 0;
     private static final int EDGE_RIGHT = 1, EDGE_BOTTOM = 1;
     private static final int EDGE_BOTH = 2;
+
+    private OnScaleInterface onScaleInterface;
 
     @IntDef({HORIZONTAL, VERTICAL})
     @Retention(RetentionPolicy.SOURCE)
@@ -68,8 +71,9 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
     private View.OnLongClickListener mLongClickListener;
     private OnScaleChangeListener mScaleChangeListener;
 
-    public Attacher(DraweeView<GenericDraweeHierarchy> draweeView) {
+    public Attacher(DraweeView<GenericDraweeHierarchy> draweeView, OnScaleInterface onScaleInterface) {
         mDraweeView = new WeakReference<>(draweeView);
+        this.onScaleInterface = onScaleInterface;
         draweeView.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FIT_START);
         draweeView.setOnTouchListener(this);
         mScaleDragDetector = new ScaleDragDetector(draweeView.getContext(), this);
@@ -365,6 +369,7 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
 
     @Override
     public void onScale(float scaleFactor, float focusX, float focusY) {
+        onScaleInterface.onScale(getScale());
         if (getScale() < mMaxScale || scaleFactor < 1.0F) {
             if (mScaleChangeListener != null) {
                 mScaleChangeListener.onScaleChange(scaleFactor, focusX, focusY);
@@ -372,11 +377,6 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
             mMatrix.postScale(scaleFactor, scaleFactor, focusX, focusY);
             checkMatrixAndInvalidate();
         }
-    }
-
-    @Override
-    public void onScaleEnd() {
-        checkMinScale();
     }
 
     @Override
@@ -561,6 +561,11 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
                 postOnAnimation(draweeView, this);
             }
         }
+    }
+
+    @Override
+    public void onScaleEnd() {
+        checkMinScale();
     }
 
     private void cancelFling() {

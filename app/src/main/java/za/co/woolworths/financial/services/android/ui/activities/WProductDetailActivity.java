@@ -1081,6 +1081,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 
     @Override
     public void SelectedImage(int position, View v) {
+        Log.e("selectedImage", "selectedImage--");
         Intent openMultipleImage = new Intent(this, MultipleImageActivity.class);
         openMultipleImage.putExtra("position", position);
         openMultipleImage.putExtra("auxiliaryImages", mAuxiliaryImages);
@@ -1105,6 +1106,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             }
         }
     }
+
 }
 
 

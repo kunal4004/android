@@ -52,7 +52,6 @@ public class ScaleDragDetector implements ScaleGestureDetector.OnScaleGestureLis
     @Override
     public boolean onScale(ScaleGestureDetector detector) {
         float scaleFactor = detector.getScaleFactor();
-
         if (Float.isNaN(scaleFactor) || Float.isInfinite(scaleFactor)) {
             return false;
         }

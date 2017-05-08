@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,7 @@ public class ProductViewPagerAdapter extends PagerAdapter {
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e("imageSelector","rear");
                 multipleImageInterface.SelectedImage(position,v);
             }
         });
