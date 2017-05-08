@@ -675,7 +675,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         getDefaultColor(otherSkusList, skuId);
         mCheckOutLink = mProduct.checkOutLink;
         mDefaultImage = getImageByWidth(mProduct.externalImageRef);
-        populateView();
+        getHtmlData();
         promoImages(mProduct.promotionImages);
         displayProduct(mProductName);
         initColorParam(mDefaultColor);
@@ -697,12 +697,23 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         }
     }
 
-    protected void populateView() {
+    protected void getHtmlData() {
         mObjProductDetail = mproductDetail.get(0);
-        String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
-                "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
-                "</style></head><body>";
-        String footerTag = "</body></html>";
+
+        String head = "<head>" +
+                "<meta charset=\"UTF-8\">" +
+                "<style>" +
+                "@font-face {font-family: 'myriad-pro-regular';src: url('file://"
+                + this.getFilesDir().getAbsolutePath() + "/fonts/MyriadPro-Regular.otf');}" +
+                "body {" +
+                "line-height: 110%;" +
+                "font-size: 92% !important;" +
+                "text-align: justify;" +
+                "color:grey;" +
+                "font-family:'myriad-pro-regular';}" +
+                "</style>" +
+                "</head>";
+
         String descriptionWithoutExtraTag = "";
         if (!TextUtils.isEmpty(mObjProductDetail.longDescription)) {
             descriptionWithoutExtraTag = mObjProductDetail.longDescription
@@ -710,16 +721,20 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                     .replaceAll("<p>&nbsp;</p>", "")
                     .replaceAll("<ul><p>&nbsp;</p></ul>", " ");
         }
+
+        String htmlData = "<!DOCTYPE html><html>"
+                + head
+                + "<body>"
+                + isEmpty(descriptionWithoutExtraTag)
+                + "</body></html>";
+
         mWebDescription.loadDataWithBaseURL("file:///android_res/drawable/",
-                headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag,
+                htmlData,
                 "text/html; charset=UTF-8", "UTF-8", null);
         mTextTitle.setText(Html.fromHtml(isEmpty(mObjProductDetail.productName)));
-        mProductCode.setText(getString(R.string.product_code)
-                + ": "
-                + mObjProductDetail.productId);
+        mProductCode.setText(getString(R.string.product_code) + ": " + mObjProductDetail.productId);
         updatePrice();
     }
-
 
     public void updatePrice() {
         String fromPrice = String.valueOf(mObjProductDetail.fromPrice);
@@ -746,7 +761,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                         WwasPrice.setText("");
                         wPrice.setPaintFlags(0);
                     } else {
-                        wPrice.setText( WFormatter.formatAmount(wasPrice));
+                        wPrice.setText(WFormatter.formatAmount(wasPrice));
                         wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                         WwasPrice.setText(WFormatter.formatAmount(price));
                     }
