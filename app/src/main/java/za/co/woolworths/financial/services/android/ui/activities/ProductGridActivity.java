@@ -560,7 +560,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
                 showProgressBar();
                 mIsLoading = true;
                 pageNumber += 1;
-                pagination();
+                 pagination();
             }
 
             @Override
