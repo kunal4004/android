@@ -52,7 +52,7 @@ import za.co.woolworths.financial.services.android.util.PauseHandlerFragment;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class ProductViewGridActivity extends WProductDetailActivity implements SelectedProductView,
+public class ProductGridActivity extends WProductDetailActivity implements SelectedProductView,
         View.OnClickListener {
     private Toolbar mToolbar;
     private WTextView mToolBarTitle;
@@ -60,7 +60,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     private String productName;
     private int pageNumber = 0;
     private RecyclerView mProductList;
-    private ProductViewGridActivity mContext;
+    private ProductGridActivity mContext;
     private List<ProductList> mProduct;
     private WTextView mNumberOfItem;
     private NestedScrollView mProductScroll;
@@ -90,7 +90,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         super.onCreate(savedInstanceState);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         setContentView(R.layout.product_layout);
-        Utils.updateStatusBarBackground(ProductViewGridActivity.this);
+        Utils.updateStatusBarBackground(ProductGridActivity.this);
         mContext = this;
         initUI();
         initProductDetailUI();
@@ -194,6 +194,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         if (mActionBar != null) {
             mActionBar.setDisplayHomeAsUpEnabled(true);
             mActionBar.setDisplayShowTitleEnabled(false);
+            mActionBar.setHomeAsUpIndicator(R.drawable.back24);
             mActionBar.setBackgroundDrawable(ContextCompat.getDrawable(this,
                     R.drawable.appbar_background));
         }
@@ -296,7 +297,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                 menuItem.getIcon().setAlpha(255);
             } else {
                 menuItem.setEnabled(false);
-                menuItem.getIcon().setAlpha(0);
+                menuItem.getIcon().setAlpha(25);
             }
         } catch (Exception ignored) {
         }
@@ -306,7 +307,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                Intent openSearchBarActivity = new Intent(ProductViewGridActivity.this,
+                Intent openSearchBarActivity = new Intent(ProductGridActivity.this,
                         ProductSearchActivity.class);
                 startActivity(openSearchBarActivity);
                 break;
@@ -400,6 +401,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
             @Override
             protected void onPostExecute(ProductView pv) {
                 super.onPostExecute(pv);
+                menuItemVisible(mMenu, true);
                 handleLoadAnSearchProductsResponse(pv);
             }
         }.execute();
@@ -485,9 +487,9 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                             break;
 
                         default:
-                            Utils.updateStatusBarBackground(ProductViewGridActivity.this);
+                            Utils.updateStatusBarBackground(ProductGridActivity.this);
                             hideProgressDetailLoad();
-                            Utils.alertErrorMessage(ProductViewGridActivity.this,wProduct.response.desc);
+                            Utils.alertErrorMessage(ProductGridActivity.this, wProduct.response.desc);
                             break;
                     }
 
@@ -604,7 +606,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     private void pagination() {
         if (mProduct.size() < num_of_item) {
             if (pageNumber == 1) {
-                pageOffset = Utils.PAGE_SIZE + 1;
+                pageOffset = Utils.PAGE_SIZE;  //+1
             } else {
                 pageOffset = pageOffset + Utils.PAGE_SIZE;
             }
@@ -650,10 +652,8 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         }
     }
 
-    public void handleLoadAnSearchProductsResponse(ProductView pv)
-    {
-        switch (pv.httpCode)
-        {
+    public void handleLoadAnSearchProductsResponse(ProductView pv) {
+        switch (pv.httpCode) {
             case 200:
                 mProduct = null;
                 mProduct = new ArrayList<>();
@@ -682,7 +682,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
             default:
                 mNumberOfItem.setText(String.valueOf(0));
                 hideVProgressBar();
-                Utils.alertErrorMessage(ProductViewGridActivity.this,pv.response.desc);
+                Utils.alertErrorMessage(ProductGridActivity.this, pv.response.desc);
                 break;
         }
     }

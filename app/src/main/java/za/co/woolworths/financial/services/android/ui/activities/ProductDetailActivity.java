@@ -43,7 +43,6 @@ import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
-import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
@@ -59,12 +58,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ProductDetailViewActivity extends BaseActivity implements SelectedProductView, View.OnClickListener {
+public class ProductDetailActivity extends BaseActivity implements SelectedProductView, View.OnClickListener {
 
     public final int IMAGE_QUALITY = 85;
     private WTextView mTextSelectSize;
     private RecyclerView mRecyclerviewSize;
-    private ProductDetailViewActivity mContext;
+    private ProductDetailActivity mContext;
     private ArrayList<WProductDetail> mproductDetail;
     private WTextView mTextTitle;
     private WTextView mTextPrice;
@@ -112,14 +111,14 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.updateStatusBarBackground(ProductDetailViewActivity.this, R.color.black);
+        Utils.updateStatusBarBackground(ProductDetailActivity.this, R.color.black);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.product_view_detail);
         mContext = this;
         SessionDao sessionDao;
         try {
-            sessionDao = new SessionDao(ProductDetailViewActivity.this,
+            sessionDao = new SessionDao(ProductDetailActivity.this,
                     SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
             mProductJSON = sessionDao.value;
         } catch (Exception e) {
@@ -773,7 +772,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
             default:
                 if (TextUtils.isEmpty(wasPrice)) {
-                    if (Utils.isLocationEnabled(ProductDetailViewActivity.this)) {
+                    if (Utils.isLocationEnabled(ProductDetailActivity.this)) {
                         ArrayList<Double> priceList = new ArrayList<>();
                         for (OtherSku os : mObjProductDetail.otherSkus) {
                             if (!TextUtils.isEmpty(os.price)) {
@@ -788,7 +787,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                     wPrice.setPaintFlags(0);
                     WwasPrice.setText("");
                 } else {
-                    if (Utils.isLocationEnabled(ProductDetailViewActivity.this)) {
+                    if (Utils.isLocationEnabled(ProductDetailActivity.this)) {
                         ArrayList<Double> priceList = new ArrayList<>();
                         for (OtherSku os : mObjProductDetail.otherSkus) {
                             if (!TextUtils.isEmpty(os.price)) {

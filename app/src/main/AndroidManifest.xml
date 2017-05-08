@@ -302,7 +302,7 @@
             android:theme="@style/CLI"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible"/>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductSearchSubCategoryActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductSubCategoryActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CLI"/>
         <activity
@@ -312,7 +312,7 @@
             android:uiOptions="splitActionBarWhenNarrow"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible"/>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductViewGridActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
         <activity
@@ -320,7 +320,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductDetailViewActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductDetailActivity"
             android:excludeFromRecents="true"
             android:screenOrientation="portrait"
             android:taskAffinity=""
