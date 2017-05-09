@@ -441,7 +441,7 @@ public class Utils {
 
     }
 
-    public static String addUTMCode(String url) {
-        return url + "&utm_source=Mobile&utm_medium=ANDROID&utm_campaign=OneApp";
+    public static String addUTMCode(String link) {
+        return link + "&utm_source=Mobile&utm_medium=ANDROID&utm_campaign=OneApp";
     }
 }
