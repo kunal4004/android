@@ -26,7 +26,8 @@ public class SessionDao extends BaseDao {
         STORE_SHOPPING_LIST("STORE_SHOPPING_LIST"),
         STORE_VOUCHER_COUNT("STORE_VOUCHER_COUNT"),
         ACCOUNT_IS_ACTIVE("ACCOUNT_IS_ACTIVE"),
-        USER_TOKEN("USER_TOKEN");
+        USER_TOKEN("USER_TOKEN"),
+        PRODUCTS_ONE_TIME_POPUP("PRODUCTS_ONE_TIME_POPUP");
 
         private final String text;
 
