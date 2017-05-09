@@ -309,7 +309,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(mCheckOutLink))
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mCheckOutLink)));
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Utils.addUTMCode(mCheckOutLink))));
             }
         });
     }
@@ -384,7 +384,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             String auxiliaryImages = jsProductList.getString("auxiliaryImages");
             JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
             Iterator<String> keysIterator = jsAuxiliaryImages.keys();
-            colour = colour.replace(" ","");
+            colour = colour.replace(" ", "");
             while (keysIterator.hasNext()) {
                 String keyStr = keysIterator.next();
                 if (keyStr.toLowerCase().contains(colour.toLowerCase())) {

@@ -440,4 +440,8 @@ public class Utils {
         dialog.show();
 
     }
+
+    public static String addUTMCode(String url) {
+        return url + "&utm_source=Mobile&utm_medium=ANDROID&utm_campaign=OneApp";
+    }
 }

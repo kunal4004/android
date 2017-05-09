@@ -590,7 +590,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
             case R.id.btnShopOnlineWoolies:
                 if (!TextUtils.isEmpty(mCheckOutLink))
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mCheckOutLink)));
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Utils.addUTMCode(mCheckOutLink))));
                 break;
         }
     }
@@ -760,7 +760,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                 } else {
                     if (wasPrice.equalsIgnoreCase(price)) {
                         //wasPrice equals currentPrice
-                        wPrice.setText( WFormatter.formatAmount(price));
+                        wPrice.setText(WFormatter.formatAmount(price));
                         WwasPrice.setText("");
                         wPrice.setPaintFlags(0);
                     } else {
