@@ -384,7 +384,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             String auxiliaryImages = jsProductList.getString("auxiliaryImages");
             JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
             Iterator<String> keysIterator = jsAuxiliaryImages.keys();
-            colour = colour.replace(" ","");
+            colour = colour.replace(" ", "");
             while (keysIterator.hasNext()) {
                 String keyStr = keysIterator.next();
                 if (keyStr.toLowerCase().contains(colour.toLowerCase())) {
