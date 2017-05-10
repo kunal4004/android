@@ -24,8 +24,8 @@ public class JWTDecodedModel {
     public String email;
     public String name; //this is sometimes an array
     public String family_name; //this is sometimes an array
-    public String AtgId; //this is sometimes an array
-    public String AtgSession; //json
+   // public String AtgId; //this is sometimes an array
+    public ArrayList<String> AtgSession; //json
     public String C2Id;
     public ArrayList<String> amr;
 }

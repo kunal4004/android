@@ -5,6 +5,9 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
@@ -34,6 +37,24 @@ public class JWTHelper {
             final String payload = parts[1];
             final String secret = parts[2];
             String json = getJson(payload);
+            //1. get AtgSession
+            //2. Inspect if AtgSession is a string or array
+            //3. If string, change the json object to an array
+            //3.1 [""JSESSIONID\":\"pGDxZBuD1rPraiEVWPfeo8sbxNi8plYU6W9u3ufwHVB_5Qwe99RN!261048321\""]
+            //4.  change the class JWTDecoded's AtgSession from String
+            JSONObject jsonObject = new JSONObject(json);
+            Object atgSession=jsonObject.get("AtgSession");
+            if(atgSession instanceof String)
+            {
+                Log.i(TAG,"IS STRING");
+                String data=jsonObject.getString("AtgSession").toString();
+                jsonObject.remove("AtgSession");
+                JSONArray jsonArray=new JSONArray();
+                jsonArray.put(data);
+                jsonObject.put("AtgSession",jsonArray);
+                json=jsonObject.toString();
+            }
+
             jwtDecodedModel = new Gson().fromJson(json, JWTDecodedModel.class);
         } catch (Exception e) {
             System.out.print(e.getStackTrace());
