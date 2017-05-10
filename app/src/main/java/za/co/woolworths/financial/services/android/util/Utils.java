@@ -339,7 +339,8 @@ public class Utils {
     public static void removeBadgeCounter(Context context) {
         try {
             ShortcutBadger.applyCount(context, 0);
-        }catch (NullPointerException ex){}
+        } catch (NullPointerException ex) {
+        }
     }
 
     public static boolean isLocationEnabled(Context context) {
@@ -425,9 +426,8 @@ public class Utils {
         ((AppCompatActivity) context).overridePendingTransition(0, 0);
     }
 
-    public static void alertErrorMessage(Context context,String message)
-    {
-        final AlertDialog.Builder builder=new AlertDialog.Builder(context);
+    public static void alertErrorMessage(Context context, String message) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(message);
         builder.setCancelable(false);
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -442,6 +442,6 @@ public class Utils {
     }
 
     public static String addUTMCode(String link) {
-        return link + "&utm_source=Mobile&utm_medium=ANDROID&utm_campaign=OneApp";
+        return link + "&utm_source=oneapp&utm_medium=referral&utm_campaign=product";
     }
 }
