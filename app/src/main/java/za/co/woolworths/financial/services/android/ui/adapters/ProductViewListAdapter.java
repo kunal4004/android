@@ -3,9 +3,11 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -49,6 +52,7 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
         SimpleDraweeView mImSave;
         SimpleDraweeView mImReward;
         SimpleDraweeView mVitalityView;
+        WrapContentDraweeView mBrandImage;
 
         SimpleViewHolder(View view) {
             super(view);
@@ -60,6 +64,7 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
             mImSave = (SimpleDraweeView) view.findViewById(R.id.imSave);
             mImReward = (SimpleDraweeView) view.findViewById(R.id.imReward);
             mVitalityView = (SimpleDraweeView) view.findViewById(R.id.imVitality);
+            mBrandImage = (WrapContentDraweeView) view.findViewById(R.id.brandImage);
         }
     }
 
@@ -70,6 +75,7 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
             String productName = productItem.productName;
             String imgUrl = productItem.externalImageRef;
             String productType = productItem.productType;
+            String brandImage = productItem.brandImage;
             PromotionImages promo = productItem.promotionImages;
             holder.productName.setText(Html.fromHtml(productName));
 
@@ -91,6 +97,10 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 
             productImage(holder.mSimpleDraweeView, imgUrl);
             promoImages(holder, promo);
+            if (!TextUtils.isEmpty(brandImage)) {
+                Log.e("brandImage",brandImage);
+                holder.mBrandImage.setImageURI(Uri.parse(brandImage), holder.mBrandImage);
+            }
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -108,11 +118,12 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
             }
         });
 
+
     }
 
     @Override
     public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_view_row, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.wproduct_row, parent, false);
         return new SimpleViewHolder(view);
     }
 
@@ -127,11 +138,10 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
         switch (productType) {
             case "clothingProducts":
                 if (TextUtils.isEmpty(wasPrice)) {
-                    wPrice.setText( WFormatter.formatAmount(price));
+                    wPrice.setText(WFormatter.formatAmount(price));
                     WwasPrice.setText("");
                 } else {
                     if (wasPrice.equalsIgnoreCase(price)) {
-                        //wasPrice equals currentPrice
                         wPrice.setText(WFormatter.formatAmount(price));
                         WwasPrice.setText("");
                         return;
@@ -157,6 +167,15 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
                     }
                 }
                 break;
+        }
+    }
+
+    private void loadBrandImage(SimpleDraweeView image, String imgUrl) {
+        if (imgUrl != null) {
+            try {
+                drawImage.dispImage(image, imgUrl);
+            } catch (IllegalArgumentException ignored) {
+            }
         }
     }
 
