@@ -28,7 +28,7 @@ import static android.R.attr.data;
 public class JWTHelper {
     static final String TAG = "JWTHelper";
     //List of keys
-    static final String[] keys={"name","family_name","AtgId","AtgSession"};
+    static final String[] keys={"name","family_name","AtgId","AtgSession","email"};
 
     public static JWTDecodedModel decode(String jwt){
         if(jwt.equals(""))
