@@ -6,6 +6,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -18,12 +19,16 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 
 import java.security.Key;
 
+import static android.R.attr.data;
+
 /**
  * Created by eesajacobs on 2016/12/01.
  */
 
 public class JWTHelper {
     static final String TAG = "JWTHelper";
+    //List of keys
+    static final String[] keys={"name","family_name","AtgId","AtgSession"};
 
     public static JWTDecodedModel decode(String jwt){
         if(jwt.equals(""))
@@ -37,25 +42,7 @@ public class JWTHelper {
             final String payload = parts[1];
             final String secret = parts[2];
             String json = getJson(payload);
-            //1. get AtgSession
-            //2. Inspect if AtgSession is a string or array
-            //3. If string, change the json object to an array
-            //3.1 [""JSESSIONID\":\"pGDxZBuD1rPraiEVWPfeo8sbxNi8plYU6W9u3ufwHVB_5Qwe99RN!261048321\""]
-            //4.  change the class JWTDecoded's AtgSession from String
-            JSONObject jsonObject = new JSONObject(json);
-            Object atgSession=jsonObject.get("AtgSession");
-            if(atgSession instanceof String)
-            {
-                Log.i(TAG,"IS STRING");
-                String data=jsonObject.getString("AtgSession").toString();
-                jsonObject.remove("AtgSession");
-                JSONArray jsonArray=new JSONArray();
-                jsonArray.put(data);
-                jsonObject.put("AtgSession",jsonArray);
-                json=jsonObject.toString();
-            }
-
-            jwtDecodedModel = new Gson().fromJson(json, JWTDecodedModel.class);
+            jwtDecodedModel = new Gson().fromJson(convertJSONStringTypeToArrayType(json), JWTDecodedModel.class);
         } catch (Exception e) {
             System.out.print(e.getStackTrace());
             //don't trust JWT!
@@ -66,5 +53,30 @@ public class JWTHelper {
     private static String getJson(String strEncoded) throws UnsupportedEncodingException {
         byte[] decodedBytes = Base64.decode(strEncoded, Base64.URL_SAFE);
         return new String(decodedBytes, "UTF-8");
+    }
+
+    //1. Inspect if key is a string or array
+    //2. If string, change the json object to an array
+    public static String convertJSONStringTypeToArrayType(String jsonData)  {
+        JSONObject jObject= null;
+        try {
+            jObject = new JSONObject(jsonData);
+            for(int i=0;i<keys.length;i++)
+            {
+                if(jObject.get(keys[i]) instanceof String)
+                {
+                    JSONObject jsonObject=new JSONObject(jsonData);
+                    String value=jsonObject.getString(keys[i].toString());
+                    jsonObject.remove(keys[i]);
+                    jsonObject.put(keys[i],new JSONArray().put(value));
+                    jsonData=jsonObject.toString();
+                }
+            }
+            return jsonData;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return jsonData;
+        }
+
     }
 }
