@@ -1,36 +1,27 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.awfs.coordination.R;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.ui.adapters.MultipleImageAdapter;
-import za.co.woolworths.financial.services.android.ui.views.MultiTouchViewPager;
-import za.co.woolworths.financial.services.android.util.photo.OnViewPagerDisableInterface;
-import za.co.woolworths.financial.services.android.util.photo.SwipeDirection;
+import za.co.woolworths.financial.services.android.util.photo.PhotoDraweeView;
 
-public class MultipleImageActivity extends AppCompatActivity implements View.OnClickListener, OnViewPagerDisableInterface {
 
-    private int mCurrentPosition;
+public class MultipleImageActivity extends AppCompatActivity implements View.OnClickListener {
+
     private ArrayList mAuxiliaryImages;
-    private MultiTouchViewPager mViewPagerProduct;
-    private LinearLayout mLlPagerDots;
-    private ImageView[] ivArrayDotsPager;
-    private MultipleImageAdapter multipleImageAdapter;
-    private int currentPosition = 0;
+    private PhotoDraweeView mProductImage;
+    private int mCurrentPosition;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,42 +30,9 @@ public class MultipleImageActivity extends AppCompatActivity implements View.OnC
         setContentView(R.layout.product_multiple_images);
         getBundle();
         initView();
-        fillAdapter();
-        setupPagerIndicatorDots();
-        viewPagerListener();
-
+        setImage();
     }
 
-    private void viewPagerListener() {
-        mViewPagerProduct.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset,
-                                       int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                updateItem(position);
-                for (ImageView anIvArrayDotsPager : ivArrayDotsPager) {
-                    anIvArrayDotsPager.setImageResource(R.drawable.unselected_drawable);
-                }
-                ivArrayDotsPager[position].setImageResource(R.drawable.selected_drawable);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
-        pagerIsEnabled();
-    }
-
-    private void fillAdapter() {
-        mLlPagerDots = (LinearLayout) findViewById(R.id.pager_dots);
-        multipleImageAdapter = new MultipleImageAdapter(this, mAuxiliaryImages, this);
-        mViewPagerProduct.setAdapter(multipleImageAdapter);
-        mViewPagerProduct.setCurrentItem(mCurrentPosition);
-        updateItem(mCurrentPosition);
-    }
 
     private void getBundle() {
         Intent extras = getIntent();
@@ -87,9 +45,14 @@ public class MultipleImageActivity extends AppCompatActivity implements View.OnC
         }
     }
 
+
+    private void setImage() {
+        mProductImage.setPhotoUri(Uri.parse(mAuxiliaryImages.get(mCurrentPosition).toString()), mProductImage);
+    }
+
     private void initView() {
         ImageView mCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
-        mViewPagerProduct = (MultiTouchViewPager) findViewById(R.id.mProductDetailPager);
+        mProductImage = (PhotoDraweeView) findViewById(R.id.imProductView);
         mCloseProduct.setOnClickListener(this);
     }
 
@@ -109,58 +72,6 @@ public class MultipleImageActivity extends AppCompatActivity implements View.OnC
 
     private void closeView() {
         finish();
-        overridePendingTransition(R.anim.stay, R.anim.fade_out);
-    }
-
-    private void setupPagerIndicatorDots() {
-        ivArrayDotsPager = null;
-        mLlPagerDots.removeAllViews();
-        if (mAuxiliaryImages.size() > 1) {
-            ivArrayDotsPager = new ImageView[mAuxiliaryImages.size()];
-            for (int i = 0; i < ivArrayDotsPager.length; i++) {
-                ivArrayDotsPager[i] = new ImageView(this);
-                LinearLayout.LayoutParams params =
-                        new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.setMargins(15, 0, 15, 0);
-                ivArrayDotsPager[i].setLayoutParams(params);
-                ivArrayDotsPager[i].setImageResource(R.drawable.unselected_drawable);
-                ivArrayDotsPager[i].setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        view.setAlpha(1);
-                    }
-                });
-                mLlPagerDots.addView(ivArrayDotsPager[i]);
-                mLlPagerDots.bringToFront();
-            }
-            ivArrayDotsPager[mCurrentPosition].setImageResource(R.drawable.selected_drawable);
-        }
-    }
-
-    public void updateItem(int position) {
-        currentPosition = position;
-        ((WoolworthsApplication) getApplication()).setMultiImagePosition(currentPosition);//Save current viewpager position
-    }
-
-    @Override
-    public void onViewDisabled() {
-        pagerIsDisabled();
-        mLlPagerDots.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onViewEnabled() {
-        pagerIsEnabled();
-        mLlPagerDots.setVisibility(View.VISIBLE);
-    }
-
-    private void pagerIsEnabled() {
-        mViewPagerProduct.setAllowedSwipeDirection(SwipeDirection.left_and_right);
-    }
-
-    private void pagerIsDisabled() {
-        mViewPagerProduct.setAllowedSwipeDirection(SwipeDirection.none);
-
+        overridePendingTransition(0, 0);
     }
 }

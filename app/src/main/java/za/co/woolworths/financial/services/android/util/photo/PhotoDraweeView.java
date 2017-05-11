@@ -264,7 +264,6 @@ public class PhotoDraweeView extends SimpleDraweeView implements IAttacher, OnSc
                                         mProductImage.setMinimumScale((float) 1.27);
                                         break;
                                     default:
-                                        Log.e("defaultScale..", "dvl");
                                         mProductImage.setZoomTransitionDuration(800);
                                         mProductImage.setScale((float) 1.27);
                                         mProductImage.setMinimumScale((float) 1.27);

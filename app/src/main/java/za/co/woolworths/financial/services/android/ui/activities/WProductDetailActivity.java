@@ -1090,22 +1090,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updateViewPagerPosition();
-    }
-
-    public void updateViewPagerPosition() {
-        Integer position = ((WoolworthsApplication) getApplication()).getMultiImagePosition();
-        if (mAuxiliaryImages != null) {
-            if (mAuxiliaryImages.size() > 0) {
-                if (position != null) {
-                    mViewPagerProduct.setCurrentItem(position, false);
-                }
-            }
-        }
-    }
 
 }
 
