@@ -54,7 +54,6 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<ProductCategory
         String imageUrl = rootCategory.imgUrl;
 
         if (imageUrl != null) {
-            Log.e("categoryImageUrl",imageUrl);
             DrawImage drawImage = new DrawImage(holder.mTextProduct.getContext());
             drawImage.widthDisplayImage(holder.mImageProductCategory, Uri.parse(imageUrl));
         }

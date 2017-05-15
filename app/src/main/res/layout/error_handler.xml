@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/relErrorHandler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:background="@color/white"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:gravity="center"
+                android:visibility="gone"
+    >
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/errorTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:gravity="center"
+        android:letterSpacing="0.2"
+        android:text="@string/connect_to_server"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:WTextView_font="medium"/>
+
+    <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/btnRetry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/errorTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/acc_fourteen_sp"
+        android:text="@string/retry"
+        app:WButton_font="bold"/>
+
+</RelativeLayout>

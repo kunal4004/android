@@ -7,15 +7,14 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -43,12 +42,11 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
+import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.MyRunnable;
-import za.co.woolworths.financial.services.android.util.PauseHandlerFragment;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -57,7 +55,6 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     private Toolbar mToolbar;
     private WTextView mToolBarTitle;
     private String productId;
-    private String productName;
     private int pageNumber = 0;
     private RecyclerView mProductList;
     private ProductViewGridActivity mContext;
@@ -75,7 +72,6 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     private String searchItem = "";
     private int num_of_item;
     private int pageOffset;
-    private PauseHandlerFragment mPauseHandlerFragment;
     private SlidingUpPanelLayout mSlideUpPanelLayout;
     public String mProductJSON;
     private LinearLayout mLinProductList;
@@ -84,6 +80,15 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     private Menu mMenu;
     private String mSkuId;
     private String mProductId;
+    private RelativeLayout mRelErrorHandler;
+    private ErrorHandlerView mErrorHandlerView;
+    private WTextView mTitleError;
+
+    enum RUN_BACKGROUND_TASK {
+        SEARCH_PRODUCT, SEARCH_MORE_PRODUCT, LOAD_PRODUCT, LOAD_MORE_PRODUCT
+    }
+
+    private RUN_BACKGROUND_TASK runTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,43 +101,12 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         initProductDetailUI();
         actionBar();
         bundle();
+        retryApiCall();
+        slideUpPanelListener();
+        registerReceiver(broadcast_reciever, new IntentFilter("closeProductView"));
+    }
 
-        //register pause handler
-        FragmentManager fm = getSupportFragmentManager();
-        String PAUSE_HANDLER_FRAGMENT_TAG = "pause_handler";
-        mPauseHandlerFragment = (PauseHandlerFragment) fm.
-                findFragmentByTag(PAUSE_HANDLER_FRAGMENT_TAG);
-        if (mPauseHandlerFragment == null) {
-            mPauseHandlerFragment = new PauseHandlerFragment();
-            fm.beginTransaction()
-                    .add(mPauseHandlerFragment, PAUSE_HANDLER_FRAGMENT_TAG)
-                    .commit();
-
-            hideProgressBar();
-            Bundle extras = getIntent().getExtras();
-            searchItem = extras.getString("searchProduct");
-            String mTitle = extras.getString("title");
-            String mTitleNav = extras.getString("titleNav");
-            if (TextUtils.isEmpty(searchItem)) {
-                if (!TextUtils.isEmpty(mTitle)) {
-                    productName = mTitleNav;
-                    productId = mTitle;
-                }
-                productConfig(productName);
-                searchItem = "";
-                loadProduct();
-            } else {
-                if (TextUtils.isEmpty(mTitle)) {
-                    productConfig(searchItem);
-                } else {
-                    productConfig(mTitle);
-                }
-                productId = searchItem;
-                searchProduct();
-            }
-            registerReceiver(broadcast_reciever, new IntentFilter("closeProductView"));
-        }
-
+    private void slideUpPanelListener() {
         mSlideUpPanelLayout.setFadeOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -179,13 +153,70 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         });
     }
 
+    private void retryApiCall() {
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                switch (runTask) {
+
+                    case SEARCH_PRODUCT:
+                        Log.e("runTask", "search_product");
+                        searchProduct();
+                        break;
+
+                    case SEARCH_MORE_PRODUCT:
+                        Log.e("runTask", "search_more_product");
+                        searchMoreProduct();
+                        break;
+
+                    case LOAD_PRODUCT:
+                        Log.e("runTask", "load_product");
+                        loadProduct();
+                        break;
+
+                    case LOAD_MORE_PRODUCT:
+                        Log.e("runTask", "load_more_product");
+                        loadMoreProduct();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+    }
+
     private void productConfig(String productName) {
         mToolBarTitle.setText(productName);
     }
 
     private void bundle() {
-        productName = getIntent().getStringExtra("sub_category_name");
+        String productName = getIntent().getStringExtra("sub_category_name");
         productId = getIntent().getStringExtra("sub_category_id");
+        mErrorHandlerView = new ErrorHandlerView(this, mRelErrorHandler, mTitleError);
+        hideProgressBar();
+        Bundle extras = getIntent().getExtras();
+        searchItem = extras.getString("searchProduct");
+        String mTitle = extras.getString("title");
+        String mTitleNav = extras.getString("titleNav");
+        if (TextUtils.isEmpty(searchItem)) {
+            if (!TextUtils.isEmpty(mTitle)) {
+                productName = mTitleNav;
+                productId = mTitle;
+            }
+            productConfig(productName);
+            searchItem = "";
+            loadProduct();
+        } else {
+            if (TextUtils.isEmpty(mTitle)) {
+                productConfig(searchItem);
+            } else {
+                productConfig(mTitle);
+            }
+            productId = searchItem;
+            searchProduct();
+        }
     }
 
     private void actionBar() {
@@ -206,6 +237,8 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         mProductList = (RecyclerView) findViewById(R.id.productList);
         mProgressBar = (ProgressBar) findViewById(R.id.mProgressBar);
         mProgressVBar = (ProgressBar) findViewById(R.id.mProgressB);
+        mRelErrorHandler = (RelativeLayout) findViewById(R.id.relErrorHandler);
+        mTitleError = (WTextView) findViewById(R.id.errorTitle);
         mRelProgressBar = (RelativeLayout) findViewById(R.id.relProgressBar);
         mSlideUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         mLinProductList = (LinearLayout) findViewById(R.id.linProductList);
@@ -327,13 +360,23 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         mRelProgressBar.setVisibility(View.GONE);
     }
 
-    public void loadProduct() {
-        mNumberOfItem.setText(String.valueOf(0));
-        new HttpAsyncTask<String, String, ProductView>() {
+    public void searchProduct() {
+        searchProductApi().execute();
+    }
+
+    private void loadProduct() {
+        loadProductAPI().execute();
+    }
+
+    public HttpAsyncTask<String, String, ProductView> loadProductAPI() {
+        runTask = RUN_BACKGROUND_TASK.LOAD_PRODUCT;
+        setNumberOfItem(0);
+        return new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
                 showVProgressBar();
+                mErrorHandlerView.hideErrorHandlerLayout();
                 mProductScroll.setVisibility(View.GONE);
             }
 
@@ -352,11 +395,11 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
             }
 
             @Override
-            protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                ProductView productResponse = new ProductView();
-                productResponse.response = new Response();
-                hideVProgressBar();
-                return productResponse;
+            protected ProductView httpError(String errorMessage, HttpErrorCode
+                    httpErrorCode) {
+                Log.e("NetWorkFailure", "load_Product");
+                networkFailureHandler(errorMessage);
+                return new ProductView();
             }
 
             @Override
@@ -364,15 +407,17 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                 super.onPostExecute(pv);
                 handleLoadAnSearchProductsResponse(pv);
             }
-        }.execute();
+        };
     }
 
-    public void searchProduct() {
-        new HttpAsyncTask<String, String, ProductView>() {
+    public HttpAsyncTask<String, String, ProductView> searchProductApi() {
+        runTask = RUN_BACKGROUND_TASK.SEARCH_PRODUCT;
+        return new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
                 showVProgressBar();
+                mErrorHandlerView.hideErrorHandlerLayout();
                 mProductScroll.setVisibility(View.GONE);
             }
 
@@ -391,10 +436,8 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
 
             @Override
             protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                ProductView productResponse = new ProductView();
-                productResponse.response = new Response();
-                hideVProgressBar();
-                return productResponse;
+                networkFailureHandler(errorMessage);
+                return new ProductView();
             }
 
             @Override
@@ -402,7 +445,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                 super.onPostExecute(pv);
                 handleLoadAnSearchProductsResponse(pv);
             }
-        }.execute();
+        };
     }
 
     private void bindDataWithUI(List<ProductList> prod) {
@@ -414,13 +457,13 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     }
 
     public void loadMoreProduct() {
+        runTask = RUN_BACKGROUND_TASK.LOAD_MORE_PRODUCT;
         new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
                 showProgressBar();
                 mIsLoading = true;
-                pageNumber += 1;
                 pagination();
             }
 
@@ -458,6 +501,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                     mProduct.addAll(moreProductList);
                     mProductAdapter.notifyItemRangeChanged(actualSize + 1, mProduct.size());
                 }
+                pageNumber += 1;
                 hideProgressBar();
             }
         }.execute();
@@ -487,7 +531,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                         default:
                             Utils.updateStatusBarBackground(ProductViewGridActivity.this);
                             hideProgressDetailLoad();
-                            Utils.alertErrorMessage(ProductViewGridActivity.this,wProduct.response.desc);
+                            Utils.alertErrorMessage(ProductViewGridActivity.this, wProduct.response.desc);
                             break;
                     }
 
@@ -497,6 +541,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
 
             @Override
             public void failure(RetrofitError error) {
+                Log.e("errorType", String.valueOf(error));
                 hideProductCode();
                 hideProgressDetailLoad();
             }
@@ -520,13 +565,13 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     public void onBackPressed() {
         switch (panelIsCollapsed) {
             case COLLAPSED:
-                finish();
+                finishActivity();
                 break;
             case EXPANDED:
                 mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
                 break;
             default:
-                finish();
+                finishActivity();
                 break;
         }
     }
@@ -546,18 +591,23 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         unregisterReceiver(broadcast_reciever);
     }
 
+    private void finishActivity() {
+        finish();
+        overridePendingTransition(0, 0);
+    }
+
     /***
      * LOAD MORE PRODUCT FROM SEARCH
      ***/
 
     public void searchMoreProduct() {
+        runTask = RUN_BACKGROUND_TASK.SEARCH_MORE_PRODUCT;
         new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
                 showProgressBar();
                 mIsLoading = true;
-                pageNumber += 1;
                 pagination();
             }
 
@@ -596,6 +646,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                     mProduct.addAll(moreProductList);
                     mProductAdapter.notifyItemRangeChanged(actualSize + 1, mProduct.size());
                 }
+                pageNumber += 1;
                 hideProgressBar();
             }
         }.execute();
@@ -612,29 +663,23 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
     }
 
     public void onCallback(final String productId, final String skuId, final boolean closeActivity) {
-        mPauseHandlerFragment.runProtected(new MyRunnable() {
-            @Override
-            public void run(AppCompatActivity context) {
-                //this block of code should be protected from IllegalStateException
-                resetProductSize();
-                loadHeroImage(getImageByWidth(mSelectedProduct.externalImageRef));
-                selectedColor("");
-                showSlideUpView();
-                setSelectedTextSize("");
-                setTextFromGrid();
-                showPrice();
-                setPromotionText("");
-                resetColourField();
-                showPromotionalImages(new PromotionImages());
-                showPromotionalImages(mSelectedProduct.promotionImages);
-                addButtonEvent();
-                setIngredients("");
-                resetLongDescription();
-                setupPagerIndicatorDots();
-                showSizeProgressBar();
-                getProductDetail(productId, skuId, closeActivity);
-            }
-        });
+        resetProductSize();
+        loadHeroImage(getImageByWidth(mSelectedProduct.externalImageRef));
+        selectedColor("");
+        showSlideUpView();
+        setSelectedTextSize("");
+        setTextFromGrid();
+        showPrice();
+        setPromotionText("");
+        resetColourField();
+        showPromotionalImages(new PromotionImages());
+        showPromotionalImages(mSelectedProduct.promotionImages);
+        addButtonEvent();
+        setIngredients("");
+        resetLongDescription();
+        setupPagerIndicatorDots();
+        showSizeProgressBar();
+        getProductDetail(productId, skuId, closeActivity);
     }
 
     private void showSlideUpView() {
@@ -650,42 +695,56 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         }
     }
 
-    public void handleLoadAnSearchProductsResponse(ProductView pv)
-    {
-        switch (pv.httpCode)
-        {
-            case 200:
-                mProduct = null;
-                mProduct = new ArrayList<>();
-                if (pv.products != null && pv.products.size() != 0) {
-                    mProduct = pv.products;
-                    if (pv.products.size() == 1) {
-                        mProductScroll.setVisibility(View.GONE);
-                        mSkuId = mProduct.get(0).otherSkus.get(0).sku;
-                        mProductId = mProduct.get(0).productId;
-                        mSelectedProduct = mProduct.get(0);
-                        onCallback(mProductId, mSkuId, true);
+    public void handleLoadAnSearchProductsResponse(ProductView pv) {
+        try {
+            switch (pv.httpCode) {
+                case 200:
+                    mProduct = null;
+                    mProduct = new ArrayList<>();
+                    if (pv.products != null && pv.products.size() != 0) {
+                        mProduct = pv.products;
+                        if (pv.products.size() == 1) {
+                            mProductScroll.setVisibility(View.GONE);
+                            mSkuId = mProduct.get(0).otherSkus.get(0).sku;
+                            mProductId = mProduct.get(0).productId;
+                            mSelectedProduct = mProduct.get(0);
+                            onCallback(mProductId, mSkuId, true);
+                        } else {
+                            num_of_item = pv.pagingResponse.numItemsInTotal;
+                            setNumberOfItem(num_of_item);
+                            bindDataWithUI(mProduct);
+                            mIsLastPage = false;
+                            pageNumber = 0;
+                            mIsLoading = false;
+                            hideVProgressBar();
+                        }
                     } else {
-                        num_of_item = pv.pagingResponse.numItemsInTotal;
-                        mNumberOfItem.setText(String.valueOf(num_of_item));
-                        bindDataWithUI(mProduct);
-                        mIsLastPage = false;
-                        pageNumber = 0;
-                        mIsLoading = false;
+                        setNumberOfItem(0);
                         hideVProgressBar();
                     }
-                } else {
-                    mNumberOfItem.setText(String.valueOf(0));
+                    break;
+                default:
+                    setNumberOfItem(0);
                     hideVProgressBar();
-                }
-                break;
-            default:
-                mNumberOfItem.setText(String.valueOf(0));
-                hideVProgressBar();
-                Utils.alertErrorMessage(ProductViewGridActivity.this,pv.response.desc);
-                break;
+                    Utils.alertErrorMessage(ProductViewGridActivity.this, pv.response.desc);
+                    break;
+            }
+        } catch (NullPointerException ignored) {
         }
     }
 
+    private void setNumberOfItem(int numberOfItem) {
+        mNumberOfItem.setText(String.valueOf(numberOfItem));
+    }
+
+    public void networkFailureHandler(final String errorMessage) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                hideVProgressBar();
+                mErrorHandlerView.diplayErrorMessage(errorMessage);
+            }
+        });
+    }
 }
 

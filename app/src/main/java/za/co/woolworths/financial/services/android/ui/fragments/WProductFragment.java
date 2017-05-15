@@ -31,7 +31,6 @@ import com.awfs.coordination.R;
 
 import java.util.List;
 
-
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
@@ -41,8 +40,8 @@ import za.co.woolworths.financial.services.android.ui.activities.ProductSearchSu
 import za.co.woolworths.financial.services.android.ui.activities.ProductViewGridActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductCategoryAdapter;
+import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -55,6 +54,9 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     private WTextView mToolbarText;
     private boolean actionBarIsHidden = false;
     private ActionBar mAppToolbar;
+    private ErrorHandlerView mErrorHandlerView;
+    private RelativeLayout mRelErrorHandler;
+    private WTextView mTitleError;
 
     @Override
     public void onSelectedProduct(View v, int position) {
@@ -97,7 +99,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     private ImageView mTBBarcodeScanner;
     private ImageView mImProductSearch;
     private ImageView mImBarcodeScanner;
-    private ConnectionDetector mConnectionDetector;
     public WTextView mTextProductSearch;
     private RecyclerView mRecycleProductSearch;
     private WProductFragment mContext;
@@ -120,19 +121,20 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         super.onViewCreated(view, savedInstanceState);
         mContext = this;
         mAppToolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        mConnectionDetector = new ConnectionDetector();
         mProductToolbar = (Toolbar) view.findViewById(R.id.productToolbar);
         initUI(view);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
         setUIListener();
         showAccountToolbar();
         mNestedScrollview.getParent().requestChildFocus(mNestedScrollview, mNestedScrollview);
+        retryApiCall(view);
         showOneTimePopup();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getRootCategoryRequest();
+        categoryRequest();
     }
 
     @Override
@@ -145,6 +147,8 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     }
 
     private void initUI(View v) {
+        mRelErrorHandler = (RelativeLayout) v.findViewById(R.id.relErrorHandler);
+        mTitleError = (WTextView) v.findViewById(R.id.errorTitle);
         mNestedScrollview = (NestedScrollView) v.findViewById(R.id.mNestedScrollview);
         mImProductSearch = (ImageView) v.findViewById(R.id.imProductSearch);
         mImBarcodeScanner = (ImageView) v.findViewById(R.id.imBarcodeScanner);
@@ -177,64 +181,8 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         });
     }
 
-    private void getRootCategoryRequest() {
-        if (mConnectionDetector.isOnline(getActivity())) {
-            new HttpAsyncTask<String, String, RootCategories>() {
-                @Override
-                protected RootCategories httpDoInBackground(String... params) {
-                    return ((WoolworthsApplication) getActivity().getApplication()).getApi().getRootCategory();
-                }
-
-                @Override
-                protected RootCategories httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                    return new RootCategories();
-                }
-
-                @Override
-                protected Class<RootCategories> httpDoInBackgroundReturnType() {
-                    return RootCategories.class;
-                }
-
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                }
-
-                @Override
-                protected void onPostExecute(RootCategories rootCategories) {
-                    super.onPostExecute(rootCategories);
-                    try {
-                        switch (rootCategories.httpCode) {
-                            case 200:
-                                if (rootCategories.rootCategories != null) {
-                                    mRootCategories = rootCategories.rootCategories;
-
-                                    bindViewWithUI(mRootCategories);
-                                }
-                                break;
-
-                            default:
-                                if (!TextUtils.isEmpty(rootCategories.response.desc)) {
-                                    Utils.displayValidationMessage(getActivity(),
-                                            TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                                            getString(R.string.connect_to_server));
-                                }
-                                break;
-                        }
-                    } catch (NullPointerException ignored) {
-                    }
-                }
-            }.execute();
-        } else {
-            Utils.displayValidationMessage(getActivity(),
-                    TransientActivity.VALIDATION_MESSAGE_LIST.INFO,
-                    getString(R.string.connect_to_server));
-        }
-    }
-
     @Override
     public void onClick(View v, int position) {
-
     }
 
     @Override
@@ -260,8 +208,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-
-
     }
 
     public int getToolBarHeight() {
@@ -426,8 +372,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         mRecycleProductSearch.setAdapter(myAdapter);
     }
 
-    public void showOneTimePopup()
-    {
+    public void showOneTimePopup() {
         try {
             String firstTime = Utils.getSessionDaoValue(getActivity(), SessionDao.KEY.PRODUCTS_ONE_TIME_POPUP);
             if (firstTime == null) {
@@ -438,4 +383,78 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         }
 
     }
+
+    public void networkFailureHandler(final String errorMessage) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mErrorHandlerView.diplayErrorMessage(errorMessage);
+            }
+        });
+    }
+
+    private void retryApiCall(View view) {
+        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                categoryRequest();
+            }
+        });
+    }
+
+    private void categoryRequest() {
+        getRootCategoryRequest().execute();
+    }
+
+    private HttpAsyncTask<String, String, RootCategories> getRootCategoryRequest() {
+        return new HttpAsyncTask<String, String, RootCategories>() {
+            @Override
+            protected RootCategories httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getActivity().getApplication()).getApi().getRootCategory();
+            }
+
+            @Override
+            protected RootCategories httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                networkFailureHandler(errorMessage);
+                return new RootCategories();
+            }
+
+            @Override
+            protected Class<RootCategories> httpDoInBackgroundReturnType() {
+                return RootCategories.class;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                mErrorHandlerView.hideErrorHandlerLayout();
+            }
+
+            @Override
+            protected void onPostExecute(RootCategories rootCategories) {
+                super.onPostExecute(rootCategories);
+                try {
+                    switch (rootCategories.httpCode) {
+                        case 200:
+                            if (rootCategories.rootCategories != null) {
+                                mRootCategories = rootCategories.rootCategories;
+
+                                bindViewWithUI(mRootCategories);
+                            }
+                            break;
+
+                        default:
+                            if (!TextUtils.isEmpty(rootCategories.response.desc)) {
+                                Utils.displayValidationMessage(getActivity(),
+                                        TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                        rootCategories.response.desc);
+                            }
+                            break;
+                    }
+                } catch (NullPointerException ignored) {
+                }
+            }
+        };
+    }
+
 }

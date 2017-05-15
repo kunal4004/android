@@ -63,8 +63,8 @@ public class WfsApi {
         this.mContext = mContext;
         OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder();
         httpBuilder.addInterceptor(new WfsApiInterceptor(mContext));
-        httpBuilder.readTimeout(60, TimeUnit.SECONDS);
-        httpBuilder.connectTimeout(60, TimeUnit.SECONDS);
+        httpBuilder.readTimeout(1, TimeUnit.SECONDS);
+        httpBuilder.connectTimeout(1, TimeUnit.SECONDS);
 
         mApiInterface = new RestAdapter.Builder()
                 .setClient((new Ok3Client(httpBuilder.build())))

@@ -25,10 +25,10 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
 import za.co.woolworths.financial.services.android.ui.adapters.PSSubCategoryAdapter;
+import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WObservableRecyclerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
@@ -42,7 +42,6 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
 
     private Toolbar mToolbar;
     private WObservableRecyclerView recyclerView;
-    private ConnectionDetector mConnectionDetector;
     private List<SubCategory> mSubCategories;
     private LinearLayoutManager mLayoutManager;
     private PSSubCategoryAdapter mPSRootCategoryAdapter;
@@ -55,6 +54,7 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
     private PopWindowValidationMessage mPopWindowValidationMessage;
     private ProgressBar mProgressBar;
     private RelativeLayout mSearchStore;
+    private ErrorHandlerView mErrorHandlerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,14 +69,16 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
             mCatStep = bundleSubCategory.getInt("catStep");
             mSubCategoriesName = bundleSubCategory.getString("sub_category_name");
         }
-        mConnectionDetector = new ConnectionDetector();
         mPopWindowValidationMessage = new PopWindowValidationMessage(this);
         initUI();
-        loadData();
+        getSubCategory();
+        retryApiCall();
     }
 
     private void initUI() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        RelativeLayout mRelErrorHandler = (RelativeLayout) findViewById(R.id.relErrorHandler);
+        WTextView mTitleError = (WTextView) findViewById(R.id.errorTitle);
         WTextView mToolBarTitle = (WTextView) findViewById(R.id.toolbarText);
         recyclerView = (WObservableRecyclerView) findViewById(R.id.productSearchList);
         mTextNoProductFound = (WTextView) findViewById(R.id.textNoProductFound);
@@ -84,7 +86,6 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
         mSearchStore = (RelativeLayout) findViewById(R.id.search_store_activity);
         mProgressBar = (ProgressBar) findViewById(R.id.mProgressBar);
         ImageView mImSearch = (ImageView) findViewById(R.id.imSearch);
-
         mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setScrollViewCallbacks(this);
@@ -94,6 +95,8 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
             mToolBarTitle.setText(mRootCategoryName);
         else
             mToolBarTitle.setText(mSubCategoriesName);
+
+        mErrorHandlerView = new ErrorHandlerView(this, mRelErrorHandler, mTitleError);
 
     }
 
@@ -133,37 +136,36 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
         return super.onOptionsItemSelected(item);
     }
 
-    private void getSubCategoryRequest(final String categeory_id) {
-        if (mConnectionDetector.isOnline(ProductSearchSubCategoryActivity.this)) {
-            new HttpAsyncTask<String, String, SubCategories>() {
-                @Override
-                protected SubCategories httpDoInBackground(String... params) {
-                    return ((WoolworthsApplication) getApplication()).getApi().getSubCategory(categeory_id);
-                }
+    private HttpAsyncTask<String, String, SubCategories> subCategoryAPI(final String category_id) {
+        return new HttpAsyncTask<String, String, SubCategories>() {
+            @Override
+            protected SubCategories httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getApplication()).getApi().getSubCategory(category_id);
+            }
 
-                @Override
-                protected SubCategories httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                    SubCategories subCategories = new SubCategories();
-                    hideProgressBar();
-                    //  hideRefreshView();
-                    return subCategories;
-                }
+            @Override
+            protected SubCategories httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                networkFailureHandler(errorMessage);
+                return new SubCategories();
+            }
 
-                @Override
-                protected Class<SubCategories> httpDoInBackgroundReturnType() {
-                    return SubCategories.class;
-                }
+            @Override
+            protected Class<SubCategories> httpDoInBackgroundReturnType() {
+                return SubCategories.class;
+            }
 
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                    showProgressBar();
-                }
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                mErrorHandlerView.hideErrorHandlerLayout();
+                showProgressBar();
+            }
 
-                @Override
-                protected void onPostExecute(SubCategories subCategories) {
-                    super.onPostExecute(subCategories);
+            @Override
+            protected void onPostExecute(SubCategories subCategories) {
+                super.onPostExecute(subCategories);
 
+                try {
                     switch (subCategories.httpCode) {
                         case 200:
                             if (subCategories.subCategories != null && subCategories.subCategories.size() != 0) {
@@ -189,15 +191,11 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
                                     PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                             break;
                     }
-                    mProgressBar.setVisibility(View.GONE);
-                    //  hideRefreshView();
+                } catch (NullPointerException ignored) {
                 }
-
-            }.execute();
-        } else {
-            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
-                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
-        }
+                mProgressBar.setVisibility(View.GONE);
+            }
+        };
     }
 
     private void showNoProductFound() {
@@ -218,13 +216,15 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
                 SubCategory subCategory = mSubCategories.get(position);
 
                 if (subCategory.hasChildren) {
-                    Intent openProductCategory = new Intent(ProductSearchSubCategoryActivity.this, ProductSearchSubCategoryActivity.class);
+                    Intent openProductCategory = new Intent(ProductSearchSubCategoryActivity.this,
+                            ProductSearchSubCategoryActivity.class);
                     openProductCategory.putExtra("root_category_id", subCategory.categoryId);
                     openProductCategory.putExtra("sub_category_name", subCategory.categoryName);
                     openProductCategory.putExtra("catStep", 1);
                     startActivity(openProductCategory);
                 } else {
-                    Intent openProductListIntent = new Intent(ProductSearchSubCategoryActivity.this, ProductViewGridActivity.class);
+                    Intent openProductListIntent = new Intent(ProductSearchSubCategoryActivity.this,
+                            ProductViewGridActivity.class);
                     openProductListIntent.putExtra("sub_category_name", subCategory.categoryName);
                     openProductListIntent.putExtra("sub_category_id", subCategory.categoryId);
                     startActivity(openProductListIntent);
@@ -233,10 +233,9 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
         }, 200);
     }
 
-    public void loadData() {
-        if (mConnectionDetector.isOnline(ProductSearchSubCategoryActivity.this)) {
-            getSubCategoryRequest(mRootCategoryId);
-        }
+    public void getSubCategory() {
+        subCategoryAPI(mRootCategoryId).execute();
+
     }
 
     @Override
@@ -266,5 +265,24 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
     private void showProgressBar() {
         mProgressBar.setVisibility(View.VISIBLE);
         mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+    }
+
+    public void networkFailureHandler(final String errorMessage) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                hideProgressBar();
+                mErrorHandlerView.diplayErrorMessage(errorMessage);
+            }
+        });
+    }
+
+    private void retryApiCall() {
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getSubCategory();
+            }
+        });
     }
 }

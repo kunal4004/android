@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -16,6 +17,7 @@ import com.awfs.coordination.R;
 
 import java.util.List;
 
+import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.FAQ;
 import za.co.woolworths.financial.services.android.models.dto.FAQDetail;
@@ -95,9 +97,11 @@ public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQ
 
                 @Override
                 protected FAQ httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                    Log.e("errorMessage", errorMessage+" "+httpErrorCode);
                     dismissProgress();
                     return new FAQ();
                 }
+
 
                 @Override
                 protected Class<FAQ> httpDoInBackgroundReturnType() {

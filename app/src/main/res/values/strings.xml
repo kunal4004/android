@@ -549,4 +549,13 @@
     <string name="change_password">Change password</string>
     <string name="change_password_url">https://www.woolworths.co.za/store/fragments/dashboard/dashboard-index.jsp?content=myaccount/user-details</string>
     <string name="products_onetime_popup_text">Browse or scan products here.\nTo shop, you’ll be linked to our online store.</string>
+    <string name="connection_error">Please Ensure you\'re connected to the internet and then try
+        again </string>
+    <string name="socket_timeout_error">Your request timed out, please try again</string>
+    <string name="runtime_eror">An error has occured</string>
+
+    <string name="socket_timeout_exception">SocketTimeoutException</string>
+    <string name="connect_exception">ConnectException</string>
+    <string name="runtime_exception">RuntimeExecutionException</string>
+
 </resources>
