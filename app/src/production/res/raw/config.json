@@ -1,0 +1,21 @@
+{
+  "checkInterval": 2160000,
+  "enviroment": {
+    "wwTodayURI": "https://wfs-tww.wigroup.co/",
+    "stsURI": "https://sts.woolworths.co.za",
+    "ssoRedirectURI": "https://wfs-appserver.wigroup.co/wfs/app/v4/sso/redirect/successful",
+    "ssoRedirectURILogout": "https://wfs-appserver.wigroup.co/wfs/app/v4/sso/redirect/logout",
+    "base_url": "https://wfs-appserver.wigroup.co/wfs/app/v4",
+    "sha1Password": "df62a0c7-9888-4dd6-9833-1dbc6f2a37cd",
+    "apiKey": "ANDROID"
+  },
+  "defaults": {
+    "applyNowLink": "https://caissanet.woolworths.co.za/WebClients/CustomerCentralMVC/WFSProductApplication/PersonalInfo#",
+    "registerTCLink": "http://m.wfs.co.za/ramp_wfs/http/wng/tandc?back=landing",
+    "rewardingLink": "http://m.woolies.co.za/?url=MyWRewards/Upgrade",
+    "faqLink": "https://m.woolies.co.za/?url=FAQ",
+    "howtosaveLink": "http://m.woolies.co.za/?url=MyWRewards/HowToSave",
+    "wrewardsLink": "http://www.woolworths.co.za/store/fragments/wrewards/wrewards-index.jsp?content=how-it-works",
+    "wrewardsTCLink": "http://www.woolworths.co.za/store/fragments/corporate/corporate-index.jsp?content=corporate-content&contentId=cmp205288"
+  }
+}
