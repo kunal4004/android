@@ -16,7 +16,6 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Defaults;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 
-import static com.awfs.coordination.R.id.applyNow;
 
 /**
  * Created by W7099877 on 30/11/2016.

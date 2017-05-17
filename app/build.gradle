@@ -109,7 +109,6 @@ dependencies {
 
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
     compile 'io.jsonwebtoken:jjwt:0.7.0'
-    compile 'za.co.wigroup.android:MenuDrawer:1.0.8'
     compile 'com.android.support:support-v4:23.4.0'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'za.co.wigroup.android:utils:1.1.8'

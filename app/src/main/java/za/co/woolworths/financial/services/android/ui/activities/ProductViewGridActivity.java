@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingLis
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MyRunnable;
 import za.co.woolworths.financial.services.android.util.PauseHandlerFragment;
@@ -465,9 +466,10 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
 
     private void getProductDetail(final String productId, final String skuId, final boolean closeActivity) {
         productCanClose = closeActivity;
-        ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
+        ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new CancelableCallback<String>() {
+
             @Override
-            public void success(String strProduct, retrofit.client.Response response) {
+            public void onSuccess(String strProduct, retrofit.client.Response response) {
                 WProduct wProduct = Utils.stringToJson(mContext, strProduct);
                 if (wProduct != null) {
                     switch (wProduct.httpCode) {
@@ -496,7 +498,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
             }
 
             @Override
-            public void failure(RetrofitError error) {
+            public void onFailure(RetrofitError error) {
                 hideProductCode();
                 hideProgressDetailLoad();
             }
@@ -632,6 +634,8 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                 resetLongDescription();
                 setupPagerIndicatorDots();
                 showSizeProgressBar();
+
+                CancelableCallback.cancelAll();
                 getProductDetail(productId, skuId, closeActivity);
             }
         });
