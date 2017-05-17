@@ -37,7 +37,7 @@ import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecorat
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.SubCategoryBinder;
 
-public class ProductSearchSubCategoryActivity extends BaseActivity implements View.OnClickListener,
+public class ProductSubCategoryActivity extends BaseActivity implements View.OnClickListener,
         SubCategoryBinder.OnClickListener, ObservableScrollViewCallbacks {
 
     private Toolbar mToolbar;
@@ -46,7 +46,7 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
     private List<SubCategory> mSubCategories;
     private LinearLayoutManager mLayoutManager;
     private PSSubCategoryAdapter mPSRootCategoryAdapter;
-    private ProductSearchSubCategoryActivity mContext;
+    private ProductSubCategoryActivity mContext;
     private WTextView mTextNoProductFound;
     private int mCatStep;
     private String mRootCategoryName;
@@ -123,7 +123,7 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                Intent openSearchBarActivity = new Intent(ProductSearchSubCategoryActivity.this, ProductSearchActivity.class);
+                Intent openSearchBarActivity = new Intent(ProductSubCategoryActivity.this, ProductSearchActivity.class);
                 startActivity(openSearchBarActivity);
                 break;
             case android.R.id.home:
@@ -134,7 +134,7 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
     }
 
     private void getSubCategoryRequest(final String categeory_id) {
-        if (mConnectionDetector.isOnline(ProductSearchSubCategoryActivity.this)) {
+        if (mConnectionDetector.isOnline(ProductSubCategoryActivity.this)) {
             new HttpAsyncTask<String, String, SubCategories>() {
                 @Override
                 protected SubCategories httpDoInBackground(String... params) {
@@ -169,7 +169,7 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
                             if (subCategories.subCategories != null && subCategories.subCategories.size() != 0) {
                                 mSubCategories = subCategories.subCategories;
                                 mPSRootCategoryAdapter = new PSSubCategoryAdapter(subCategories.subCategories, mContext);
-                                mLayoutManager = new LinearLayoutManager(ProductSearchSubCategoryActivity.this);
+                                mLayoutManager = new LinearLayoutManager(ProductSubCategoryActivity.this);
                                 mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                                 recyclerView.setLayoutManager(mLayoutManager);
                                 recyclerView.addItemDecoration(new SimpleDividerItemDecoration(mContext));
@@ -218,13 +218,13 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
                 SubCategory subCategory = mSubCategories.get(position);
 
                 if (subCategory.hasChildren) {
-                    Intent openProductCategory = new Intent(ProductSearchSubCategoryActivity.this, ProductSearchSubCategoryActivity.class);
+                    Intent openProductCategory = new Intent(ProductSubCategoryActivity.this, ProductSubCategoryActivity.class);
                     openProductCategory.putExtra("root_category_id", subCategory.categoryId);
                     openProductCategory.putExtra("sub_category_name", subCategory.categoryName);
                     openProductCategory.putExtra("catStep", 1);
                     startActivity(openProductCategory);
                 } else {
-                    Intent openProductListIntent = new Intent(ProductSearchSubCategoryActivity.this, ProductViewGridActivity.class);
+                    Intent openProductListIntent = new Intent(ProductSubCategoryActivity.this, ProductGridActivity.class);
                     openProductListIntent.putExtra("sub_category_name", subCategory.categoryName);
                     openProductListIntent.putExtra("sub_category_id", subCategory.categoryId);
                     startActivity(openProductListIntent);
@@ -234,7 +234,7 @@ public class ProductSearchSubCategoryActivity extends BaseActivity implements Vi
     }
 
     public void loadData() {
-        if (mConnectionDetector.isOnline(ProductSearchSubCategoryActivity.this)) {
+        if (mConnectionDetector.isOnline(ProductSubCategoryActivity.this)) {
             getSubCategoryRequest(mRootCategoryId);
         }
     }
