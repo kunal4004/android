@@ -42,6 +42,7 @@
     <color name="charcoal_grey">#4F5051</color>
     <color name="bg_status_bar_pl">#2F2439</color>
     <color name="bg_charcoalGreyThree">#2E353B</color>
+    <color name="product_text_color">#b2000000</color>
 
     <!-- step indicator -->
     <color name="background_default">#A5D6A7</color>

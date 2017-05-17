@@ -181,7 +181,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         //update default image
         mDefaultImage = getImageByWidth(mProductDetail.externalImageRef);
         setPromotionText(mProductDetail.saveText);
-        mProductLongDescription();
+        getHtmlData();
         mDefaultSKUModel = getDefaultSKUModel();
         updateHeroImage();
         updatePrice();
@@ -195,24 +195,40 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mScrollProductDetail.scrollTo(0, 0);
     }
 
-    protected void mProductLongDescription() {
+    protected void getHtmlData() {
         mObjProductDetail = mProductDetail.get(0);
-        String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
-                "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
-                "</style></head><body>";
-        String footerTag = "</body></html>";
-        String descriptionWithoutExtraTag = "";
 
+        String head = "<head>" +
+                "<meta charset=\"UTF-8\">" +
+                "<style>" +
+                "@font-face {font-family: 'myriad-pro-regular';src: url('file://"
+                + this.getFilesDir().getAbsolutePath() + "/fonts/MyriadPro-Regular.otf');}" +
+                "body {" +
+                "line-height: 110%;" +
+                "font-size: 92% !important;" +
+                "text-align: justify;" +
+                "color:grey;" +
+                "font-family:'myriad-pro-regular';}" +
+                "</style>" +
+                "</head>";
+
+        String descriptionWithoutExtraTag = "";
         if (!TextUtils.isEmpty(mObjProductDetail.longDescription)) {
             descriptionWithoutExtraTag = mObjProductDetail.longDescription
                     .replaceAll("</ul>\n\n<ul>\n", " ")
                     .replaceAll("<p>&nbsp;</p>", "")
                     .replaceAll("<ul><p>&nbsp;</p></ul>", " ");
         }
-        mWebDescription.loadDataWithBaseURL("file:///android_res/drawable/",
-                headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag,
-                "text/html; charset=UTF-8", "UTF-8", null);
 
+        String htmlData = "<!DOCTYPE html><html>"
+                + head
+                + "<body>"
+                + isEmpty(descriptionWithoutExtraTag)
+                + "</body></html>";
+
+        mWebDescription.loadDataWithBaseURL("file:///android_res/drawable/",
+                htmlData,
+                "text/html; charset=UTF-8", "UTF-8", null);
         mTextTitle.setText(Html.fromHtml(isEmpty(mObjProductDetail.productName)));
         mProductCode.setText(getString(R.string.product_code) + ": " + mObjProductDetail.productId);
     }
@@ -384,7 +400,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             String auxiliaryImages = jsProductList.getString("auxiliaryImages");
             JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
             Iterator<String> keysIterator = jsAuxiliaryImages.keys();
-            colour = colour.replace(" ","");
+            colour = colour.replace(" ", "");
             while (keysIterator.hasNext()) {
                 String keyStr = keysIterator.next();
                 if (keyStr.toLowerCase().contains(colour.toLowerCase())) {

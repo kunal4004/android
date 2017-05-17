@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:letterSpacing="0.2"
-                android:text="MESSAGES"
+                android:text="@string/messages"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="12sp"

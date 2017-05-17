@@ -2,12 +2,9 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="drawer_text_color">@android:color/darker_gray</item>
         <item name="android:windowBackground">@color/white</item>
         <item name="android:actionBarStyle">@style/WActionBarStyle</item>
-        <item name="drawer_background">@color/drawer_color</item>
         <item name="android:listDivider">@drawable/list_divider</item>
-        <item name="android:seekBarStyle">@style/SeekBarPLDD</item>
         <item name="borderColor">@color/indicator_border</item>
         <item name="selectedColor">@color/indicator_selected</item>
         <item name="unselectedColor">@color/indicator_unselected</item>
@@ -23,30 +20,6 @@
 
     <style name="WActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/black</item>
-    </style>
-
-    <style name="tierinfostate" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="drawer_text_color">@android:color/darker_gray</item>
-        <item name="android:windowBackground">@color/white</item>
-        <item name="android:actionBarStyle">@style/WActionBarStyle</item>
-        <item name="drawer_background">@color/drawer_color</item>
-        <item name="android:listDivider">@drawable/list_divider</item>
-        <item name="android:seekBarStyle">@style/SeekBarPLDD</item>
-    </style>
-
-    <style name="SeekBarPLDD" parent="android:Widget.SeekBar">
-        <item name="android:progressDrawable">
-            @drawable/pldd_scrubber_progress_horizontal_holo_light
-        </item>
-        <item name="android:indeterminateDrawable">
-            @drawable/pldd_scrubber_progress_horizontal_holo_light
-        </item>
-        <item name="android:minHeight">13dip</item>
-        <item name="android:maxHeight">13dip</item>
-        <item name="android:thumb">@drawable/pldd_scrubber_control_selector_holo_light</item>
-        <item name="android:thumbOffset">16dip</item>
-        <item name="android:paddingLeft">16dip</item>
-        <item name="android:paddingRight">16dip</item>
     </style>
 
     <style name="Button">
@@ -171,10 +144,6 @@
         <item name="android:windowExitAnimation">@anim/alpha_anim_exit</item>
     </style>
 
-    <style name="popwindow_style">
-        <item name="android:windowEnterAnimation">@anim/pop_fade_in</item>
-        <item name="android:windowExitAnimation">@anim/pop_fade_out</item>
-    </style>
 
     <style name="WRewardsInfo" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
@@ -233,7 +202,7 @@
         <item name="android:textAllCaps">true</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">12sp</item>
-        <item name="android:letterSpacing">0.1</item>
+        <item name="android:letterSpacing">0.2</item>
         <item name="android:stateListAnimator">@null</item>
     </style>
 
@@ -651,6 +620,25 @@
     <style name="Black_Theme" parent="Theme.AppCompat.NoActionBar">
         <!--<item name="android:windowBackground">@drawable/black_theme</item>-->
     </style>
-
+    <style name="contact_us_operating_hours_layout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">16dp</item>
+    </style>
+    <style name="contact_us_operating_hours_textview">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:lineSpacingExtra">-2dp</item>
+    </style>
 
 </resources>
