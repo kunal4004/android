@@ -1,0 +1,21 @@
+{
+  "checkInterval": 2160000,
+  "enviroment": {
+    "base_url": "http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4",
+    "wwTodayURI": "http://tww.wfs-apps-qa.wigroup.co/",
+    "sha1Password": "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3",
+    "ssoRedirectURILogout": "http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4/sso/redirect/logout",
+    "apiKey": "ANDROID",
+    "ssoRedirectURI": "http://wfs-appserver-qa.wigroup.co:8080/wfs/app/v4/sso/redirect/successful",
+    "stsURI": "https://stsqa.woolworths.co.za"
+  },
+  "defaults": {
+    "applyNowLink": "https://www-win-qa.woolworths.co.za/store/fragments/wfs/wfs-application-details.jsp?channel=Mobile",
+    "wrewardsTCLink": "http://www.woolworths.co.za/store/fragments/corporate/corporate-index.jsp?content=corporate-content&contentId=cmp205288",
+    "wrewardsLink": "http://www.woolworths.co.za/store/fragments/wrewards/wrewards-index.jsp?content=how-it-works",
+    "howtosaveLink": "http://qa.wigroup.co/wigroup/wfs/mobi/Index.php?url=MyWRewards/HowToSave",
+    "faqLink": "http://qa.wigroup.co/wigroup/wfs/mobi/Index.php?url=FAQ",
+    "rewardingLink": "http://qa.wigroup.co/wigroup/wfs/mobi/Index.php?url=MyWRewards/Upgrade",
+    "registerTCLink": "http://m.wfs.co.za/ramp_wfs/http/wng/tandc?back=landing"
+  }
+}
