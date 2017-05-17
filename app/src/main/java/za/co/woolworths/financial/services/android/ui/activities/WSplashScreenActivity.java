@@ -12,10 +12,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -38,7 +35,6 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
     private WVideoView videoView;
     private boolean isMinimized = false;
     PersistenceLayer dbHelper = null;
-    public final String TAG="WSplashScreenActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +47,89 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
         this.videoView.start();
 
         this.videoView.setOnCompletionListener(this);
-        String configResponseJSON=readConfigJSONFromRaw();
-        if(configResponseJSON!=null)
-        {
-            try {
-                ConfigResponse configResponse=new Gson().fromJson(configResponseJSON,ConfigResponse.class);
+
+        //Mobile Config Server
+        new HttpAsyncTask<String, String, ConfigResponse>() {
+
+            @Override
+            protected void onPreExecute() {
+
+            }
+
+            @Override
+            protected Class<ConfigResponse> httpDoInBackgroundReturnType() {
+                return ConfigResponse.class;
+            }
+
+            @Override
+            protected ConfigResponse httpDoInBackground(String... params) {
+                final String appName = "woneapp";
+                String appVersion = "5.0.0";//default to 5.0.0
+                String environment = "";//default to PROD
+                try {
+                    appVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+                    environment = com.awfs.coordination.BuildConfig.FLAVOR;
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                //MCS expects empty value for PROD
+                //woneapp-5.0 = PROD
+                //woneapp-5.0-qa = QA
+                //woneapp-5.0-dev = DEV
+                String majorMinorVersion = appVersion.substring(0, 3);
+                final String mcsAppVersion = (appName + "-" + majorMinorVersion + (environment.equals("production") ? "" : ("-" + environment)));
+                Log.d("MCS", mcsAppVersion);
+                ApiInterface mApiInterface = new RestAdapter.Builder()
+                        .setEndpoint(getString(R.string.config_endpoint))
+                        .setLogLevel(Util.isDebug(WSplashScreenActivity.this) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
+                        .build()
+                        .create(ApiInterface.class);
+
+                return mApiInterface.getConfig(getString(R.string.app_token), getDeviceID(), mcsAppVersion);
+            }
+
+            @Override
+            public ConfigResponse httpError(final String errorMessage, final HttpErrorCode httpErrorCode) {
+                if (httpErrorCode == HttpErrorCode.NETWORK_UNREACHABLE) {
+
+                    WSplashScreenActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog alertDialog = new AlertDialog.Builder(WSplashScreenActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
+                                    .setTitle("Connection Error")
+                                    .setMessage(errorMessage)
+                                    .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            finish();
+                                        }
+                                    }).show();
+                        }
+                    });
+                } else if (httpErrorCode == HttpErrorCode.UNKOWN_ERROR) {
+
+                    WSplashScreenActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlertDialog alertDialog = new AlertDialog.Builder(WSplashScreenActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
+                                    .setTitle("Service Error")
+                                    .setMessage(errorMessage)
+                                    .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            finish();
+                                        }
+                                    }).show();
+                        }
+                    });
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(ConfigResponse configResponse) {
                 WSplashScreenActivity.this.mVideoPlayerShouldPlay = false;
 
                 WoolworthsApplication.setBaseURL(configResponse.enviroment.getBase_url());
@@ -72,12 +146,8 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
                 WoolworthsApplication.setRewardingLink(configResponse.defaults.getRewardingLink());
                 WoolworthsApplication.setHowToSaveLink(configResponse.defaults.getHowtosaveLink());
                 WoolworthsApplication.setWrewardsTCLink(configResponse.defaults.getWrewardsTCLink());
-            }catch (Exception e)
-            {
-                Log.i(TAG,e.getMessage());
             }
-
-        }
+        }.execute();
     }
 
     //video player on completion
@@ -116,6 +186,21 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
         }
     }
 
+    private enum LoadingResult {
+        LOGIN,
+        ERROR,
+        SUCCESS
+    }
+
+    private String getDeviceID() {
+        try {
+
+            return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -141,22 +226,5 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
         listOfVideo.add(rawFolderPath+ R.raw.food_chocolate);
         Collections.shuffle(listOfVideo);
         return listOfVideo.get(0);
-    }
-
-    private String readConfigJSONFromRaw()
-    {
-        String json = null;
-        try {
-            InputStream is = getResources().openRawResource(R.raw.config);
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
     }
 }
