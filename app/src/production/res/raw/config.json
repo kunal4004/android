@@ -10,7 +10,7 @@
     "apiKey": "ANDROID"
   },
   "defaults": {
-    "applyNowLink": "https://caissanet.woolworths.co.za/WebClients/CustomerCentralMVC/WFSProductApplication/PersonalInfo#",
+    "applyNowLink": "https://www.woolworths.co.za/store/fragments/wfs/wfs-application-details.jsp?channel=Mobile",
     "registerTCLink": "http://m.wfs.co.za/ramp_wfs/http/wng/tandc?back=landing",
     "rewardingLink": "http://m.woolies.co.za/?url=MyWRewards/Upgrade",
     "faqLink": "https://m.woolies.co.za/?url=FAQ",
