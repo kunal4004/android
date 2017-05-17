@@ -524,7 +524,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 switch (accountsResponse.httpCode) {
                     case 200:
                         MyAccountsFragment.this.accountsResponse = accountsResponse;
-                        ArrayList<BaseAccountFragment> baseAccountFragments = new ArrayList<BaseAccountFragment>();
                         List<Account> accountList = accountsResponse.accountList;
                         for (Account p : accountList) {
                             accounts.put(p.productGroupCode.toUpperCase(), p);
