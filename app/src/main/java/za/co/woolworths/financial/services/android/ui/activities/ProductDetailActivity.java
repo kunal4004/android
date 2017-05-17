@@ -102,7 +102,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
     private WProductDetail mObjProductDetail;
     private String mDefaultColor;
     private String mDefaultColorRef;
-    private String mDefaultSize;
+    public String mDefaultSize;
     private int mPreviousState;
     private ViewPager mTouchTarget;
     public ImageView mColorArrow;
@@ -245,10 +245,12 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
             WProductDetail mProduct = mproductDetail.get(0);
             otherSkusList = mProduct.otherSkus;
             mCheckOutLink = mProduct.checkOutLink;
-            mDefaultImage = mProduct.externalImageRef;
             String skuId = mProduct.sku;
+            OtherSku mOtherSku = getDefaultSKU(otherSkusList, skuId);
             getDefaultColor(otherSkusList, skuId);
             getHtmlData();
+            mDefaultImage = mOtherSku.externalImageRef;
+
             promoImages(mProduct.promotionImages);
             displayProduct(mProductName);
             initColorParam(mDefaultColor);
@@ -738,9 +740,20 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
                 mDefaultColor = otherSku.colour;
                 mDefaultColorRef = otherSku.externalColourRef;
                 mDefaultSize = otherSku.size;
+                mDefaultImage = otherSku.externalImageRef;
             }
         }
     }
+
+    protected OtherSku getDefaultSKU(List<OtherSku> otherSkus, String skuId) {
+        for (OtherSku otherSku : otherSkus) {
+            if (skuId.equalsIgnoreCase(otherSku.sku)) {
+                return otherSku;
+            }
+        }
+        return null;
+    }
+
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {

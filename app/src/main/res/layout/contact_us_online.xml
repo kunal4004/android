@@ -135,14 +135,7 @@
         />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/white"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="6dp"
+        style="@style/contact_us_operating_hours_layout"
         >
         <ImageView
             android:layout_width="wrap_content"
@@ -151,15 +144,8 @@
             android:layout_centerVertical="true"
             />
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="122dp"
+            style="@style/contact_us_operating_hours_textview"
             android:text="@string/online_call_center_opening_hours"
-            android:textColor="@color/black"
-            app:WTextView_font="myriadpro_regular"
-            android:textSize="15sp"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="16dp"
             />
     </LinearLayout>
     <za.co.woolworths.financial.services.android.ui.views.WTextView

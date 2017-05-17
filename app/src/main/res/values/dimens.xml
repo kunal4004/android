@@ -72,6 +72,7 @@
     <dimen name="LoadingDots_dots_size_default">12dp</dimen>
     <dimen name="LoadingDots_dots_space_default">2dp</dimen>
     <dimen name="LoadingDots_jump_height_default">12dp</dimen>
+    <dimen name="product_image_height">220dp</dimen>
 
 </resources>
 

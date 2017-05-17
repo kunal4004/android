@@ -32,7 +32,6 @@ import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.Callback;
 import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -46,6 +45,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingLis
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MyRunnable;
 import za.co.woolworths.financial.services.android.util.PauseHandlerFragment;
@@ -467,9 +467,10 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
     private void getProductDetail(final String productId, final String skuId, final boolean closeActivity) {
         productCanClose = closeActivity;
-        ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
+        ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new CancelableCallback<String>() {
+
             @Override
-            public void success(String strProduct, retrofit.client.Response response) {
+            public void onSuccess(String strProduct, retrofit.client.Response response) {
                 WProduct wProduct = Utils.stringToJson(mContext, strProduct);
                 if (wProduct != null) {
                     switch (wProduct.httpCode) {
@@ -498,7 +499,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
             }
 
             @Override
-            public void failure(RetrofitError error) {
+            public void onFailure(RetrofitError error) {
                 hideProductCode();
                 hideProgressDetailLoad();
             }
@@ -634,6 +635,8 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
                 resetLongDescription();
                 setupPagerIndicatorDots();
                 showSizeProgressBar();
+
+                CancelableCallback.cancelAll();
                 getProductDetail(productId, skuId, closeActivity);
             }
         });
@@ -683,6 +686,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
                 mNumberOfItem.setText(String.valueOf(0));
                 hideVProgressBar();
                 Utils.alertErrorMessage(ProductGridActivity.this, pv.response.desc);
+
                 break;
         }
     }
