@@ -8,6 +8,7 @@ import android.net.Uri;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.controller.ControllerListener;
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.interfaces.DraweeController;
@@ -39,10 +40,29 @@ public class DrawImage {
         }
     }
 
+    public void dispImage(final SimpleDraweeView image, String imgUrl) {
+        if (imgUrl != null) {
+            try {
+                GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(mContext.getResources());
+               builder.setActualImageScaleType(ScalingUtils.ScaleType.FIT_END);
+                GenericDraweeHierarchy hierarchy = builder
+                        .build();
+                ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imgUrl))
+                        .build();
+                DraweeController controller = Fresco.newDraweeControllerBuilder()
+                        .setOldController(image.getController())
+                        .setImageRequest(request)
+                        .build();
+                image.setHierarchy(hierarchy);
+                image.setController(controller);
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+    }
+
     public void widthDisplayImage(final SimpleDraweeView image, String imgUrl) {
         if (imgUrl != null) {
             try {
-
                 ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imgUrl))
                         .build();
                 DraweeController controller = Fresco.newDraweeControllerBuilder()
@@ -60,7 +80,6 @@ public class DrawImage {
         GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(mContext.getResources());
         GenericDraweeHierarchy hierarchy = builder
                 .build();
-
         ImageRequest requestBuilder = ImageRequestBuilder.newBuilderWithSource(fileUri)
                 // .setResizeOptions(new ResizeOptions(600, 120))
                 .setProgressiveRenderingEnabled(true)

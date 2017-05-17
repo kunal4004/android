@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingLis
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MyRunnable;
 import za.co.woolworths.financial.services.android.util.PauseHandlerFragment;
@@ -465,9 +466,10 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
 
     private void getProductDetail(final String productId, final String skuId, final boolean closeActivity) {
         productCanClose = closeActivity;
-        ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
+        ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new CancelableCallback<String>() {
+
             @Override
-            public void success(String strProduct, retrofit.client.Response response) {
+            public void onSuccess(String strProduct, retrofit.client.Response response) {
                 WProduct wProduct = Utils.stringToJson(mContext, strProduct);
                 if (wProduct != null) {
                     switch (wProduct.httpCode) {
@@ -487,7 +489,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                         default:
                             Utils.updateStatusBarBackground(ProductViewGridActivity.this);
                             hideProgressDetailLoad();
-                            Utils.alertErrorMessage(ProductViewGridActivity.this,wProduct.response.desc);
+                            Utils.alertErrorMessage(ProductViewGridActivity.this, wProduct.response.desc);
                             break;
                     }
 
@@ -496,7 +498,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
             }
 
             @Override
-            public void failure(RetrofitError error) {
+            public void onFailure(RetrofitError error) {
                 hideProductCode();
                 hideProgressDetailLoad();
             }
@@ -632,6 +634,8 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
                 resetLongDescription();
                 setupPagerIndicatorDots();
                 showSizeProgressBar();
+
+                CancelableCallback.cancelAll();
                 getProductDetail(productId, skuId, closeActivity);
             }
         });
@@ -650,10 +654,8 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
         }
     }
 
-    public void handleLoadAnSearchProductsResponse(ProductView pv)
-    {
-        switch (pv.httpCode)
-        {
+    public void handleLoadAnSearchProductsResponse(ProductView pv) {
+        switch (pv.httpCode) {
             case 200:
                 mProduct = null;
                 mProduct = new ArrayList<>();
@@ -682,7 +684,7 @@ public class ProductViewGridActivity extends WProductDetailActivity implements S
             default:
                 mNumberOfItem.setText(String.valueOf(0));
                 hideVProgressBar();
-                Utils.alertErrorMessage(ProductViewGridActivity.this,pv.response.desc);
+                Utils.alertErrorMessage(ProductViewGridActivity.this, pv.response.desc);
                 break;
         }
     }
