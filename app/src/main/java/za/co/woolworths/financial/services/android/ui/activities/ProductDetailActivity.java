@@ -58,12 +58,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ProductDetailViewActivity extends BaseActivity implements SelectedProductView, View.OnClickListener, ProductViewPagerAdapter.MultipleImageInterface {
+public class ProductDetailActivity extends BaseActivity implements SelectedProductView, View.OnClickListener, ProductViewPagerAdapter.MultipleImageInterface {
+
 
     public final int IMAGE_QUALITY = 85;
     private WTextView mTextSelectSize;
     private RecyclerView mRecyclerviewSize;
-    private ProductDetailViewActivity mContext;
+    private ProductDetailActivity mContext;
     private ArrayList<WProductDetail> mproductDetail;
     private WTextView mTextTitle;
     private WTextView mTextPrice;
@@ -111,14 +112,14 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.updateStatusBarBackground(ProductDetailViewActivity.this, R.color.black);
+        Utils.updateStatusBarBackground(ProductDetailActivity.this, R.color.black);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.product_view_detail);
         mContext = this;
         SessionDao sessionDao;
         try {
-            sessionDao = new SessionDao(ProductDetailViewActivity.this,
+            sessionDao = new SessionDao(ProductDetailActivity.this,
                     SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
             mProductJSON = sessionDao.value;
         } catch (Exception e) {
@@ -248,8 +249,9 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
             String skuId = mProduct.sku;
             OtherSku mOtherSku = getDefaultSKU(otherSkusList, skuId);
             getDefaultColor(otherSkusList, skuId);
+            getHtmlData();
             mDefaultImage = mOtherSku.externalImageRef;
-            populateView();
+
             promoImages(mProduct.promotionImages);
             displayProduct(mProductName);
             initColorParam(mDefaultColor);
@@ -490,12 +492,23 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
         retrieveJson(colour);
     }
 
-    protected void populateView() {
+    protected void getHtmlData() {
         mObjProductDetail = mproductDetail.get(0);
-        String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
-                "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
-                "</style></head><body>";
-        String footerTag = "</body></html>";
+
+        String head = "<head>" +
+                "<meta charset=\"UTF-8\">" +
+                "<style>" +
+                "@font-face {font-family: 'myriad-pro-regular';src: url('file://"
+                + this.getFilesDir().getAbsolutePath() + "/fonts/MyriadPro-Regular.otf');}" +
+                "body {" +
+                "line-height: 110%;" +
+                "font-size: 92% !important;" +
+                "text-align: justify;" +
+                "color:grey;" +
+                "font-family:'myriad-pro-regular';}" +
+                "</style>" +
+                "</head>";
+
         String descriptionWithoutExtraTag = "";
         if (!TextUtils.isEmpty(mObjProductDetail.longDescription)) {
             descriptionWithoutExtraTag = mObjProductDetail.longDescription
@@ -503,13 +516,21 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                     .replaceAll("<p>&nbsp;</p>", "")
                     .replaceAll("<ul><p>&nbsp;</p></ul>", " ");
         }
+
+        String htmlData = "<!DOCTYPE html><html>"
+                + head
+                + "<body>"
+                + isEmpty(descriptionWithoutExtraTag)
+                + "</body></html>";
+
         mWebDescription.loadDataWithBaseURL("file:///android_res/drawable/",
-                headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag,
+                htmlData,
                 "text/html; charset=UTF-8", "UTF-8", null);
         mTextTitle.setText(Html.fromHtml(isEmpty(mObjProductDetail.productName)));
         mProductCode.setText(getString(R.string.product_code) + ": " + mObjProductDetail.productId);
         updatePrice();
     }
+
 
     private String isEmpty(String value) {
         if (TextUtils.isEmpty(value)) {
@@ -784,7 +805,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
 
             default:
                 if (TextUtils.isEmpty(wasPrice)) {
-                    if (Utils.isLocationEnabled(ProductDetailViewActivity.this)) {
+                    if (Utils.isLocationEnabled(ProductDetailActivity.this)) {
                         ArrayList<Double> priceList = new ArrayList<>();
                         for (OtherSku os : mObjProductDetail.otherSkus) {
                             if (!TextUtils.isEmpty(os.price)) {
@@ -799,7 +820,7 @@ public class ProductDetailViewActivity extends BaseActivity implements SelectedP
                     wPrice.setPaintFlags(0);
                     WwasPrice.setText("");
                 } else {
-                    if (Utils.isLocationEnabled(ProductDetailViewActivity.this)) {
+                    if (Utils.isLocationEnabled(ProductDetailActivity.this)) {
                         ArrayList<Double> priceList = new ArrayList<>();
                         for (OtherSku os : mObjProductDetail.otherSkus) {
                             if (!TextUtils.isEmpty(os.price)) {
