@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -28,22 +29,20 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
+import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-
 public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle {
-
 
     private PersonalLoanAmount personalLoanInfo;
     public WTextView availableBalance;
@@ -56,7 +55,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
     String productOfferingId;
     private WoolworthsApplication woolworthsApplication;
-    private ConnectionDetector connectionDetector;
     private ProgressBar mProgressCreditLimit;
     private boolean isOfferActive = true;
     private ImageView mImageArrow;
@@ -66,13 +64,13 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     private boolean cardHasId = false;
 
     private AccountsResponse temp = null;
+    private ErrorHandlerView mErrorHandlerView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.cards_common_fragment, container, false);
         woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-        connectionDetector = new ConnectionDetector();
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
         availableBalance = (WTextView) view.findViewById(R.id.available_funds);
         mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
@@ -86,6 +84,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
         txtIncreseLimit.setOnClickListener(this);
         transactions.setOnClickListener(this);
+
+        RelativeLayout mRelErrorHandler = (RelativeLayout) view.findViewById(R.id.relErrorHandler);
+        Utils.setMargin(mRelErrorHandler,0,0,0,0);
+        WTextView mTitleError = (WTextView) view.findViewById(R.id.errorTitle);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
+        retryApiCall(view);
         temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
         disableIncreaseLimit();
         hideProgressBar();
@@ -163,34 +167,37 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
     }
 
     private void getActiveOffer() {
-        if (connectionDetector.isOnline(getActivity())) {
-            asyncRequestPersonalLoan = new HttpAsyncTask<String, String, OfferActive>() {
-                @Override
-                protected OfferActive httpDoInBackground(String... params) {
-                    return (woolworthsApplication.getApi().getActiveOfferRequest(productOfferingId));
-                }
+        asyncRequestPersonalLoan = activeOfferAsyncAPI();
+        asyncRequestPersonalLoan.execute();
+    }
 
-                @Override
-                protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                    OfferActive offerActive = new OfferActive();
-                    offerActive.response = new Response();
-                    isOfferActive = false;
-                    hideProgressBar();
-                    return offerActive;
-                }
+    private HttpAsyncTask<String, String, OfferActive> activeOfferAsyncAPI() {
+        return new HttpAsyncTask<String, String, OfferActive>() {
+            @Override
+            protected OfferActive httpDoInBackground(String... params) {
+                return (woolworthsApplication.getApi().getActiveOfferRequest(productOfferingId));
+            }
 
-                @Override
-                protected void onPreExecute() {
-                    mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-                    mProgressCreditLimit.setVisibility(View.VISIBLE);
-                    mImageArrow.setVisibility(View.GONE);
-                    txtIncreseLimit.setVisibility(View.GONE);
-                    super.onPreExecute();
-                }
+            @Override
+            protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                networkFailureHandler(errorMessage);
+                return new OfferActive();
+            }
 
-                @Override
-                protected void onPostExecute(OfferActive offerActive) {
-                    super.onPostExecute(offerActive);
+            @Override
+            protected void onPreExecute() {
+                mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+                mProgressCreditLimit.setVisibility(View.VISIBLE);
+                mImageArrow.setVisibility(View.GONE);
+                txtIncreseLimit.setVisibility(View.GONE);
+                mErrorHandlerView.hideErrorHandlerLayout();
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(OfferActive offerActive) {
+                super.onPostExecute(offerActive);
+                try {
                     int httpCode = offerActive.httpCode;
                     String httpDesc = offerActive.response.desc;
                     if (httpCode == 200) {
@@ -206,21 +213,16 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                         mPopWindowValidationMessage.displayValidationMessage(httpDesc,
                                 PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     }
-                    hideProgressBar();
+                } catch (NullPointerException ignored) {
                 }
+                hideProgressBar();
+            }
 
-                @Override
-                protected Class<OfferActive> httpDoInBackgroundReturnType() {
-                    return OfferActive.class;
-                }
-            };
-
-            asyncRequestPersonalLoan.execute();
-        } else {
-            hideProgressBar();
-            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
-                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
-        }
+            @Override
+            protected Class<OfferActive> httpDoInBackgroundReturnType() {
+                return OfferActive.class;
+            }
+        };
     }
 
     public void hideProgressBar() {
@@ -290,6 +292,28 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 }
             }
         }, 100);
+    }
+
+    public void networkFailureHandler(final String errorMessage) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                isOfferActive = false;
+                hideProgressBar();
+                mErrorHandlerView.diplayErrorMessage(errorMessage);
+            }
+        });
+    }
+
+    private void retryApiCall(View view) {
+        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!cardHasId) {
+                    getActiveOffer();
+                }
+            }
+        });
     }
 }
 

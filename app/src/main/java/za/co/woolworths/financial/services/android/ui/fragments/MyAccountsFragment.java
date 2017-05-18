@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -35,7 +34,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import za.co.wigroup.logger.lib.WiGroupLogger;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -53,6 +51,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WChangePassword
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -62,7 +61,6 @@ import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -71,10 +69,6 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class MyAccountsFragment extends BaseFragment implements View.OnClickListener, ViewPager.OnPageChangeListener, ObservableScrollViewCallbacks {
 
 
@@ -83,11 +77,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
     ImageView openMessageActivity;
     ImageView openShoppingList;
     RelativeLayout contactUs;
-
-    boolean isLoggedIn = true;
-    boolean isCreditCard = false;
-    boolean isStoreCard = false;
-    boolean isPersonalCard = false;
 
     LinearLayout applyCreditCardView;
     LinearLayout applyStoreCardView;
@@ -113,7 +102,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
     WTextView messageCounter;
     WTextView userName;
     WTextView userInitials;
-    RelativeLayout signoutLayer;
 
     private ProgressDialogFragment mGetAccountsProgressDialog;
     private ProgressBar scProgressBar;
@@ -129,12 +117,10 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
     private int dotsCount;
     private ImageView[] dots;
-    private PopWindowValidationMessage mPopWindowValidationMessage;
-    private FragmentManager fm;
     private WObservableScrollView mWObservableScrollView;
     private Toolbar mToolbar;
-    private ImageView mImageView;
     private RelativeLayout relFAQ;
+    private ErrorHandlerView mErrorHandlerView;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -151,7 +137,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         View view = inflater.inflate(R.layout.my_accounts_fragment, container, false);
         woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
         openMessageActivity = (ImageView) view.findViewById(R.id.openMessageActivity);
-        mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         openShoppingList = (ImageView) view.findViewById(R.id.openShoppingList);
         contactUs = (RelativeLayout) view.findViewById(R.id.contactUs);
         applyStoreCardView = (LinearLayout) view.findViewById(R.id.applyStoreCard);
@@ -168,13 +153,13 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         unlinkedLayout = (LinearLayout) view.findViewById(R.id.llUnlinkedAccount);
         linkAccountsBtn = (WButton) view.findViewById(R.id.linkAccountsBtn);
         signOutBtn = (RelativeLayout) view.findViewById(R.id.signOutBtn);
-        changePasswordBtn=(RelativeLayout)view.findViewById(R.id.changePassword);
+        changePasswordBtn = (RelativeLayout) view.findViewById(R.id.changePassword);
         viewPager = (ViewPager) view.findViewById(R.id.pager);
         pager_indicator = (LinearLayout) view.findViewById(R.id.viewPagerCountDots);
         sc_available_funds = (WTextView) view.findViewById(R.id.sc_available_funds);
         cc_available_funds = (WTextView) view.findViewById(R.id.cc_available_funds);
         pl_available_funds = (WTextView) view.findViewById(R.id.pl_available_funds);
-        mImageView = (ImageView) view.findViewById(R.id.imgBurgerButton);
+        ImageView mImageView = (ImageView) view.findViewById(R.id.imgBurgerButton);
         scProgressBar = (ProgressBar) view.findViewById(R.id.scProgressBar);
         ccProgressBar = (ProgressBar) view.findViewById(R.id.ccProgressBar);
         plProgressBar = (ProgressBar) view.findViewById(R.id.plProgressBar);
@@ -184,6 +169,10 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         userInitials = (WTextView) view.findViewById(R.id.initials);
         imgCreditCard = (ImageView) view.findViewById(R.id.imgCreditCard);
         relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
+
+        RelativeLayout mRelErrorHandler = (RelativeLayout) view.findViewById(R.id.relErrorHandler);
+        WTextView mTitleError = (WTextView) view.findViewById(R.id.errorTitle);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
 
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
@@ -204,6 +193,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         viewPager.addOnPageChangeListener(this);
         setUiPageViewController();
 
+        retryApiCall(view);
         view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
         view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
         view.findViewById(R.id.linkAccountsBtn).setOnClickListener(this.btnLinkAccounts_onClick);
@@ -220,7 +210,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         this.unavailableAccounts.clear();
         this.unavailableAccounts.addAll(Arrays.asList("SC", "CC", "PL"));
 
-        JWTDecodedModel jwtDecodedModel = null;
+        JWTDecodedModel jwtDecodedModel;
         try {
             jwtDecodedModel = ((WOneAppBaseActivity) getActivity()).getJWTDecoded();
         } catch (NullPointerException ignored) {
@@ -249,48 +239,53 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         //show content for all available products
         for (Map.Entry<String, Account> item : accounts.entrySet()) {
             Account account = item.getValue();
-            if (account.productGroupCode.equals("SC")) {
-                linkedStoreCardView.setVisibility(View.VISIBLE);
-                applyStoreCardView.setVisibility(View.GONE);
+            switch (account.productGroupCode) {
+                case "SC":
+                    linkedStoreCardView.setVisibility(View.VISIBLE);
+                    applyStoreCardView.setVisibility(View.GONE);
+                    sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
+                    scProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
+                    break;
+                case "CC":
+                    linkedCreditCardView.setVisibility(View.VISIBLE);
+                    applyCreditCardView.setVisibility(View.GONE);
+                    //Check with AccountNumber and change the image accordingly
+                    if (account.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
+                        imgCreditCard.setBackgroundResource(R.drawable.small_5);
+                    } else if (account.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
+                        imgCreditCard.setBackgroundResource(R.drawable.small_4);
+                    } else if (account.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
+                        imgCreditCard.setBackgroundResource(R.drawable.small_3);
+                    }
 
-                sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                scProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
+                    cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
+                    ccProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
+                    break;
+                case "PL":
+                    linkedPersonalCardView.setVisibility(View.VISIBLE);
+                    applyPersonalCardView.setVisibility(View.GONE);
 
-            } else if (account.productGroupCode.equals("CC")) {
-                linkedCreditCardView.setVisibility(View.VISIBLE);
-                applyCreditCardView.setVisibility(View.GONE);
-                //Check with AccountNumber and change the image accordingly
-                if (account.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
-                    imgCreditCard.setBackgroundResource(R.drawable.small_5);
-                } else if (account.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
-                    imgCreditCard.setBackgroundResource(R.drawable.small_4);
-                } else if (account.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
-                    imgCreditCard.setBackgroundResource(R.drawable.small_3);
-                }
-
-                cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                ccProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
-
-            } else if (account.productGroupCode.equals("PL")) {
-                linkedPersonalCardView.setVisibility(View.VISIBLE);
-                applyPersonalCardView.setVisibility(View.GONE);
-
-                pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                plProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
+                    pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
+                    plProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
+                    break;
             }
         }
 
         //hide content for unavailable products
         for (String s : unavailableAccounts) {
-            if (s.equals("SC")) {
-                applyStoreCardView.setVisibility(View.VISIBLE);
-                linkedStoreCardView.setVisibility(View.GONE);
-            } else if (s.equals("CC")) {
-                applyCreditCardView.setVisibility(View.VISIBLE);
-                linkedCreditCardView.setVisibility(View.GONE);
-            } else if (s.equals("PL")) {
-                applyPersonalCardView.setVisibility(View.VISIBLE);
-                linkedPersonalCardView.setVisibility(View.GONE);
+            switch (s) {
+                case "SC":
+                    applyStoreCardView.setVisibility(View.VISIBLE);
+                    linkedStoreCardView.setVisibility(View.GONE);
+                    break;
+                case "CC":
+                    applyCreditCardView.setVisibility(View.VISIBLE);
+                    linkedCreditCardView.setVisibility(View.GONE);
+                    break;
+                case "PL":
+                    applyPersonalCardView.setVisibility(View.VISIBLE);
+                    linkedPersonalCardView.setVisibility(View.GONE);
+                    break;
             }
         }
 
@@ -308,7 +303,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
     }
 
     private void configureAndLayoutTopLayerView() {
-        JWTDecodedModel jwtDecodedModel = null;
+        JWTDecodedModel jwtDecodedModel;
         try {
             jwtDecodedModel = ((WOneAppBaseActivity) getActivity()).getJWTDecoded();
         } catch (Exception ignored) {
@@ -474,7 +469,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
     }
 
     private void loadAccounts() {
-        fm = getActivity().getSupportFragmentManager();
+        FragmentManager fm = getActivity().getSupportFragmentManager();
         mGetAccountsProgressDialog = ProgressDialogFragment.newInstance();
         try {
             if (!mGetAccountsProgressDialog.isAdded()) {
@@ -485,13 +480,18 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 mGetAccountsProgressDialog.show(fm, "v");
             }
 
+            accountAsyncRequest().execute();
 
         } catch (NullPointerException ignored) {
         }
-        new HttpAsyncTask<String, String, AccountsResponse>() {
+    }
+
+    private HttpAsyncTask<String, String, AccountsResponse> accountAsyncRequest() {
+        return new HttpAsyncTask<String, String, AccountsResponse>() {
 
             @Override
             protected void onPreExecute() {
+                mErrorHandlerView.hideErrorHandlerLayout();
                 mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
                 relFAQ.setVisibility(View.GONE);
                 showViews();
@@ -509,14 +509,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
             @Override
             protected AccountsResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-
-                WiGroupLogger.e(getActivity(), TAG, errorMessage);
-                AccountsResponse accountResponse = new AccountsResponse();
-                accountResponse.httpCode = 408;
-                accountResponse.response = new Response();
-                accountResponse.response.desc = errorMessage;
-                dismissProgress();
-                return accountResponse;
+                networkFailureHandler(errorMessage);
+                return new AccountsResponse();
             }
 
             @Override
@@ -524,7 +518,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 switch (accountsResponse.httpCode) {
                     case 200:
                         MyAccountsFragment.this.accountsResponse = accountsResponse;
-                        ArrayList<BaseAccountFragment> baseAccountFragments = new ArrayList<BaseAccountFragment>();
                         List<Account> accountList = accountsResponse.accountList;
                         for (Account p : accountList) {
                             accounts.put(p.productGroupCode.toUpperCase(), p);
@@ -563,19 +556,19 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
                             @Override
                             protected void onPostExecute(String s) {
-                                JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity) getActivity()).getJWTDecoded();
                                 MyAccountsFragment.this.initialize();
                             }
                         }.execute();
 
                         break;
                     default:
-                        Utils.alertErrorMessage(getActivity(),accountsResponse.response.desc);
+                        if (accountsResponse.response != null)
+                            Utils.alertErrorMessage(getActivity(), accountsResponse.response.desc);
                         break;
                 }
                 dismissProgress();
             }
-        }.execute();
+        };
     }
 
     public void redirectToMyAccountsCardsActivity(int position) {
@@ -711,10 +704,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         }
     }
 
-    public void setHideActionBar(HideActionBar hideActionBar) {
-        this.hideActionBar = hideActionBar;
-    }
-
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
 
@@ -753,4 +742,23 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
             return percentage;
     }
 
+
+    public void networkFailureHandler(final String errorMessage) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dismissProgress();
+                mErrorHandlerView.diplayErrorMessage(errorMessage);
+            }
+        });
+    }
+
+    private void retryApiCall(View view) {
+        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadAccounts();
+            }
+        });
+    }
 }

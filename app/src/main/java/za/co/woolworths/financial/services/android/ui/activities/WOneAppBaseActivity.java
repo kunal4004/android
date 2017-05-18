@@ -43,7 +43,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         , WProductFragment.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle, WRewardsFragment.HideActionBarComponent {
 
     public static Toolbar mToolbar;
-    //  public static AppBarLayout appbar;
     private WFragmentDrawer drawerFragment;
     public WTextView mToolbarTitle;
     private List<Fragment> fragmentList;
@@ -66,11 +65,9 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         mActionBar.setDisplayShowHomeEnabled(false);
         mActionBar.setDisplayShowTitleEnabled(false); // false for hiding the title from actoinBar
         mToolbarTitle = (WTextView) findViewById(R.id.toolbar_title);
-        // appbar = (AppBarLayout) findViewById(R.id.appbar);
         fragmentList = new ArrayList<>();
 
         mToolbar.setNavigationIcon(R.drawable.ic_drawer_menu);
-
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         drawerFragment = (WFragmentDrawer)
@@ -78,7 +75,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         drawerFragment.setUp(R.id.fragment_navigation_drawer, mDrawerLayout, mToolbar);
         drawerFragment.setDrawerListener(this);
         displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
-
         registerReceiver(logOutReceiver, new IntentFilter("logOutReceiver"));
     }
 

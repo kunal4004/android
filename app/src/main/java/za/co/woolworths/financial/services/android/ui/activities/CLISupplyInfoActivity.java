@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -39,16 +40,14 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreditLimit;
-import za.co.woolworths.financial.services.android.models.dto.OfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.CLICreditLimitAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanFragment;
+import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WEmpyViewDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICreditLimitContentBinder;
@@ -72,9 +71,8 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
     final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
     private CreateOfferRequest mCreateOfferRequest;
     private NestedScrollView mNestedScrollview;
-    WoolworthsApplication mWoolworthsApplication;
+    private WoolworthsApplication mWoolworthsApplication;
     private UpdateBankDetail mUpdateBankDetail;
-    ConnectionDetector connectionDetector;
     private WTextView mTextACreditLimit;
     private WTextView mTextProceedToSolvency;
 
@@ -83,6 +81,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
     private ProgressBar mProgressBar;
     private FragmentManager fm;
     private WEmpyViewDialogFragment mEmpyViewDialogFragment;
+    private ErrorHandlerView mErrorHandlerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +89,6 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
         setContentView(R.layout.activity_cli_supply_info);
         Utils.updateStatusBarBackground(CLISupplyInfoActivity.this);
         fm = getSupportFragmentManager();
-        connectionDetector = new ConnectionDetector();
         mWoolworthsApplication = (WoolworthsApplication) getApplication();
         mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
         mProgressBar = (ProgressBar) findViewById(R.id.mWoolworthsProgressBar);
@@ -107,15 +105,6 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 
         registerReceiver(confidentialBroadcastCheck, new IntentFilter("confidentialBroadcastCheck"));
         registerReceiver(insolvencyBroadcastCheck, new IntentFilter("insolvencyBroadcastCheck"));
-
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                mPopSlideValidation.displayValidationMessage(getString(R.string.cli_before_we_get_started),
-//                        PopWindowValidationMessage.OVERLAY_TYPE.MANDATORY_FIELD);
-//            }
-//        }, 1000);
-
     }
 
     private void radioCheckStateChanged() {
@@ -139,6 +128,10 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
         mTextACreditLimit = (WTextView) findViewById(R.id.textACreditLimit);
         mTextProceedToSolvency = (WTextView) findViewById(R.id.textProceedToSolvency);
         mImageCreditAmount = (ImageView) findViewById(R.id.imgInfo);
+        RelativeLayout mRelErrorHandler = (RelativeLayout) findViewById(R.id.relErrorHandler);
+        WTextView mTitleError = (WTextView) findViewById(R.id.errorTitle);
+        mErrorHandlerView = new ErrorHandlerView(this, mRelErrorHandler, mTitleError);
+        retryApiCall();
     }
 
     private void setActionBar() {
@@ -327,31 +320,34 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
         return false;
     }
 
-    public void createOfferRequest() {
-        if (connectionDetector.isOnline(CLISupplyInfoActivity.this)) {
-            new HttpAsyncTask<String, String, CreateOfferResponse>() {
-                @Override
-                protected CreateOfferResponse httpDoInBackground(String... params) {
-                    return ((WoolworthsApplication) getApplication()).getApi().createOfferRequest(mCreateOfferRequest);
-                }
+    private void createOfferRequest() {
+        createOfferAsyncApi().execute();
+    }
 
-                @Override
-                protected CreateOfferResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                    CreateOfferResponse offerResponse = new CreateOfferResponse();
-                    offerResponse.response = new OfferResponse();
-                    stopProgressDialog();
-                    return offerResponse;
-                }
+    public HttpAsyncTask<String, String, CreateOfferResponse> createOfferAsyncApi() {
+        return new HttpAsyncTask<String, String, CreateOfferResponse>() {
+            @Override
+            protected CreateOfferResponse httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getApplication()).getApi().createOfferRequest(mCreateOfferRequest);
+            }
 
-                @Override
-                protected void onPreExecute() {
-                    showProgressBar();
-                    super.onPreExecute();
-                }
+            @Override
+            protected CreateOfferResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                networkFailureHandler(errorMessage);
+                return new CreateOfferResponse();
+            }
 
-                @Override
-                protected void onPostExecute(CreateOfferResponse createOfferResponse) {
-                    super.onPostExecute(createOfferResponse);
+            @Override
+            protected void onPreExecute() {
+                showProgressBar();
+                mErrorHandlerView.hideErrorHandlerLayout();
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(CreateOfferResponse createOfferResponse) {
+                super.onPostExecute(createOfferResponse);
+                try {
                     if (createOfferResponse != null) {
                         int httpCode = createOfferResponse.httpCode;
                         switch (httpCode) {
@@ -368,19 +364,16 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
                                 break;
                         }
                     }
-                    stopProgressDialog();
+                } catch (NullPointerException ignored) {
                 }
+                stopProgressDialog();
+            }
 
-                @Override
-                protected Class<CreateOfferResponse> httpDoInBackgroundReturnType() {
-                    return CreateOfferResponse.class;
-                }
-            }.execute();
-        } else {
-            Utils.displayValidationMessage(CLISupplyInfoActivity.this,
-                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                    getString(R.string.connect_to_server));
-        }
+            @Override
+            protected Class<CreateOfferResponse> httpDoInBackgroundReturnType() {
+                return CreateOfferResponse.class;
+            }
+        };
     }
 
     public void openBankDetails() {
@@ -567,4 +560,22 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
         }
     };
 
+    public void networkFailureHandler(final String errorMessage) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                stopProgressDialog();
+                mErrorHandlerView.diplayErrorMessage(errorMessage);
+            }
+        });
+    }
+
+    private void retryApiCall() {
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createOfferRequest();
+            }
+        });
+    }
 }

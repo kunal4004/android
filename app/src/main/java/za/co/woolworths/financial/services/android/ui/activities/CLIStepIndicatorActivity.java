@@ -55,7 +55,6 @@ public class CLIStepIndicatorActivity extends BaseActivity implements WOnboardin
         registerReceiver(moveToPageBroadcastReceiver, new IntentFilter("moveToPageBroadcastReceiver"));
     }
 
-
     private void initViews() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mViewPStepIndicator = (WFragmentViewPager) findViewById(R.id.mViewPStepIndicator);
@@ -184,7 +183,6 @@ public class CLIStepIndicatorActivity extends BaseActivity implements WOnboardin
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.close_24);
         else
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.back24);
-
     }
 
     @Override
@@ -235,7 +233,6 @@ public class CLIStepIndicatorActivity extends BaseActivity implements WOnboardin
                 break;
         }
     }
-
 
     @Override
     protected void onDestroy() {

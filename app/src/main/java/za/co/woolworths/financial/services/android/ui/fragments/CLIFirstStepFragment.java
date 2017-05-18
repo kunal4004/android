@@ -1,13 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,18 +23,14 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
-import za.co.woolworths.financial.services.android.models.dto.DeaBanksResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
-import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CLISupplyInfoActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIDeaBankMapAdapter;
+import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICbxContentBinder;
 
@@ -42,10 +39,11 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 
     private StepNavigatorCallback stepNavigatorCallback;
     private int mSelectedPosition = -1;
-    private CLIStepIndicatorActivity mStepIndicatorActivity;
-    private CLIStepIndicatorActivity.OnFragmentRefresh onFragmentRefresh;
-    private PopWindowValidationMessage mPopWindowValidationMessage;
-    private FragmentManager fm;
+    public FragmentManager fm;
+    // private ProgressDialogFragment mGetAccountsProgressDialog;
+    private ErrorHandlerView mErrorHandlerView;
+    private RelativeLayout mRelErrorHandler;
+    private WTextView mTitleError;
     private ProgressDialogFragment mGetAccountsProgressDialog;
 
     public interface StepNavigatorCallback {
@@ -63,7 +61,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     private CLIFirstStepFragment mContext;
     private WoolworthsApplication mWoolworthsApplication;
     private UpdateBankDetail mUpdateBankDetail;
-    private ConnectionDetector mConnectionDetector;
 
     public CLIFirstStepFragment() {
     }
@@ -75,14 +72,19 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         view = inflater.inflate(R.layout.cli_fragment_step_one, container, false);
         mContext = this;
         mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-        mConnectionDetector = new ConnectionDetector();
-        mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         setRetainInstance(true);
         initUI();
         setListener();
         setText();
-        setDeaBanks();
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
+        retryApiCall(view);
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setDeaBanks();
     }
 
     private void initUI() {
@@ -91,6 +93,8 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         relButtonCLIDeaBank = (RelativeLayout) view.findViewById(R.id.relButtonCLIDeaBank);
         mBtnContinue = (WButton) view.findViewById(R.id.btnContinue);
         mImgInfo = (ImageView) view.findViewById(R.id.imgInfo);
+        mRelErrorHandler = (RelativeLayout) view.findViewById(R.id.relErrorHandler);
+        mTitleError = (WTextView) view.findViewById(R.id.errorTitle);
 
     }
 
@@ -109,7 +113,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     public void onAttach(Context context) {
         super.onAttach(context);
         stepNavigatorCallback = (StepNavigatorCallback) getActivity();
-        mStepIndicatorActivity = (CLIStepIndicatorActivity) context;
     }
 
     public void setDeaBanks() {
@@ -124,71 +127,68 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                 mGetAccountsProgressDialog.show(fm, "v");
             }
 
+            dEABankAsyncAPI().execute();
         } catch (NullPointerException ignored) {
         }
-        if (mConnectionDetector.isOnline(getActivity())) {
+    }
 
-            new HttpAsyncTask<String, String, DeaBanks>() {
+    private HttpAsyncTask<String, String, DeaBanks> dEABankAsyncAPI() {
+        return new HttpAsyncTask<String, String, DeaBanks>() {
 
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                }
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
 
-                @Override
-                protected DeaBanks httpDoInBackground(String... params) {
-                    return ((WoolworthsApplication) getActivity().getApplication()).getApi().getDeaBanks();
-                }
+                mErrorHandlerView.hideErrorHandlerLayout();
+            }
 
-                @Override
-                protected Class<DeaBanks> httpDoInBackgroundReturnType() {
-                    return DeaBanks.class;
-                }
+            @Override
+            protected DeaBanks httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getActivity().getApplication()).getApi().getDeaBanks();
+            }
 
-                @Override
-                protected DeaBanks httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                    stopProgressDialog();
-                    DeaBanks deaBanks = new DeaBanks();
-                    deaBanks.response = new DeaBanksResponse();
-                    return deaBanks;
-                }
+            @Override
+            protected Class<DeaBanks> httpDoInBackgroundReturnType() {
+                return DeaBanks.class;
+            }
 
-                @Override
-                protected void onPostExecute(DeaBanks deaBanks) {
-                    super.onPostExecute(deaBanks);
+            @Override
+            protected DeaBanks httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                Log.e("errorMsg", errorMessage);
+                networkFailureHandler(errorMessage);
+                return new DeaBanks();
+            }
 
-                    if (deaBanks.banks != null) {
-                        if (deaBanks.httpCode == 200) {
+            @Override
+            protected void onPostExecute(DeaBanks deaBanks) {
+                super.onPostExecute(deaBanks);
 
-                            mBanks = deaBanks.banks;
-                            otherChecked(deaBanks.banks);
-                            mCLIDeaBankMapAdapter = new CLIDeaBankMapAdapter(deaBanks.banks, mContext);
-                            mLayoutManager = new LinearLayoutManager(getActivity());
-                            mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                            mRecycleList.setLayoutManager(mLayoutManager);
-                            mRecycleList.setNestedScrollingEnabled(false);
-                            mRecycleList.setAdapter(mCLIDeaBankMapAdapter);
-                            mCLIDeaBankMapAdapter.setCLIContent();
-                            relButtonCLIDeaBank.setVisibility(View.VISIBLE);
-                        } else {
-                            relButtonCLIDeaBank.setVisibility(View.GONE);
-                        }
+                if (deaBanks.banks != null) {
+                    if (deaBanks.httpCode == 200) {
+                        mBanks = deaBanks.banks;
+                        otherChecked(deaBanks.banks);
+                        mCLIDeaBankMapAdapter = new CLIDeaBankMapAdapter(deaBanks.banks, mContext);
+                        mLayoutManager = new LinearLayoutManager(getActivity());
+                        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                        mRecycleList.setLayoutManager(mLayoutManager);
+                        mRecycleList.setNestedScrollingEnabled(false);
+                        mRecycleList.setAdapter(mCLIDeaBankMapAdapter);
+                        mCLIDeaBankMapAdapter.setCLIContent();
+                        relButtonCLIDeaBank.setVisibility(View.VISIBLE);
                     } else {
-
-                        if (!TextUtils.isEmpty(deaBanks.response.desc)) {
-                            Utils.displayValidationMessage(getActivity(),
-                                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                                    deaBanks.response.desc);
-                        }
+                        relButtonCLIDeaBank.setVisibility(View.GONE);
                     }
-                    stopProgressDialog();
+                } else {
+
+                    if (!TextUtils.isEmpty(deaBanks.response.desc)) {
+                        Utils.displayValidationMessage(getActivity(),
+                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                deaBanks.response.desc);
+                    }
                 }
-            }.execute();
-        } else {
-            Utils.displayValidationMessage(getActivity(),
-                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                    getString(R.string.connect_to_server));
-        }
+                stopProgressDialog();
+            }
+        };
     }
 
     public void otherChecked(List<Bank> bank) {
@@ -215,15 +215,9 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
                         }
                     }
                 } else {
-                    if (mConnectionDetector.isOnline(getActivity())) {
-                        Utils.displayValidationMessage(getActivity(),
-                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                                getString(R.string.cli_select_bank_error));
-                    } else {
-                        Utils.displayValidationMessage(getActivity(),
-                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                                getString(R.string.connect_to_server));
-                    }
+                    Utils.displayValidationMessage(getActivity(),
+                            TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                            getString(R.string.cli_select_bank_error));
                 }
                 break;
 
@@ -253,11 +247,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    @SuppressLint("ValidFragment")
-    public CLIFirstStepFragment(StepNavigatorCallback stepNavigatorCallback) {
-        this.stepNavigatorCallback = stepNavigatorCallback;
-    }
-
     public int lastPosition() {
         if (mBanks != null)
             return mBanks.size() - 1;
@@ -269,5 +258,25 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
             mGetAccountsProgressDialog.dismiss();
         }
+    }
+
+
+    public void networkFailureHandler(final String errorMessage) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                stopProgressDialog();
+                mErrorHandlerView.diplayErrorMessage(errorMessage);
+            }
+        });
+    }
+
+    private void retryApiCall(View view) {
+        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDeaBanks();
+            }
+        });
     }
 }

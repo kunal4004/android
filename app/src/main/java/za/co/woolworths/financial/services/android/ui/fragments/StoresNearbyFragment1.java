@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -79,6 +78,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SearchStoresAct
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter;
+import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -93,6 +93,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 import static android.content.Context.LOCATION_SERVICE;
 import static com.awfs.coordination.R.id.mProgressBar;
 import static com.awfs.coordination.R.id.textView;
+import static com.awfs.coordination.R.id.view_offset_helper;
 import static com.google.android.gms.wearable.DataMap.TAG;
 
 public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener {
@@ -155,6 +156,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     private boolean navigateMenuState = false;
 
     private PopWindowValidationMessage mPopWindowValidationMessage;
+    private ErrorHandlerView mErrorHandlerView;
+    private RelativeLayout mRelErrorHandler;
+    private WTextView mTitleError;
+    private Location mLocation;
 
     public StoresNearbyFragment1() {
         setHasOptionsMenu(true);
@@ -171,6 +176,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         close = (ImageView) v.findViewById(R.id.close);
         storeName = (WTextView) v.findViewById(R.id.storeName);
         storeOfferings = (WTextView) v.findViewById(R.id.offerings);
+        mRelErrorHandler = (RelativeLayout) v.findViewById(R.id.relErrorHandler);
+        mTitleError = (WTextView) v.findViewById(R.id.errorTitle);
         storeDistance = (WTextView) v.findViewById(R.id.distance);
         storeAddress = (WTextView) v.findViewById(R.id.storeAddress);
         storeNumber = (WTextView) v.findViewById(R.id.storeNumber);
@@ -188,6 +195,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         // Chcek of location Service Enable
         //  checkLocationServiceAndSetLayout(Utils.isLocationServiceEnabled(getActivity()));
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
         Criteria criteria = new Criteria();
         provider = locationManager.getBestProvider(criteria, false);
         try {
@@ -279,6 +287,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 getActivity().overridePendingTransition(0, 0);
             }
         });
+        retryApiCall(v);
         return v;
     }
 
@@ -398,10 +407,15 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
     @Override
     public void onLocationChanged(Location location) {
+        this.mLocation = location;
+        locationAPIRequest(location);
+    }
+
+    private void locationAPIRequest(Location location) {
         if (getActivity() != null) {
             Utils.saveLastLocation(location, getActivity());
             updateMyCurrentLocationOnMap(location);
-            init(location);
+            init(location).execute();
             //If permission is not granted, request permission.
             if (hasPermissions())
                 locationManager.removeUpdates(this);
@@ -592,11 +606,13 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         }
     }
 
-    public void init(final Location location) {
-        new HttpAsyncTask<String, String, LocationResponse>() {
+    public HttpAsyncTask<String, String, LocationResponse> init(final Location location) {
+        return new HttpAsyncTask<String, String, LocationResponse>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+                showProgressBar();
+                mErrorHandlerView.hideErrorHandlerLayout();
             }
 
             @Override
@@ -611,26 +627,21 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
             @Override
             protected LocationResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                LocationResponse locationResponse = new LocationResponse();
-                locationResponse.response = new Response();
-                hideProgressBar();
-                return locationResponse;
+                networkFailureHandler(errorMessage);
+                return new LocationResponse();
             }
 
             @Override
             protected void onPostExecute(LocationResponse locationResponse) {
                 super.onPostExecute(locationResponse);
                 hideProgressBar();
-
                 storeDetailsList = new ArrayList<>();
                 storeDetailsList = locationResponse.Locations;
                 if (storeDetailsList != null && storeDetailsList.size() != 0) {
                     bindDataWithUI(storeDetailsList);
                 }
             }
-        }.execute();
-
-
+        };
     }
 
     public List<StoreOfferings> getOfferingByType(List<StoreOfferings> offerings, String type) {
@@ -844,9 +855,34 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         }
     }
 
+    public void showProgressBar() {
+        try {
+            progressBar.setVisibility(View.VISIBLE);
+        } catch (NullPointerException ignored) {
+        }
+    }
+
     public void hideProgressBar() {
         if (progressBar != null)
             progressBar.setVisibility(View.GONE);
     }
 
+    public void networkFailureHandler(final String errorMessage) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                hideProgressBar();
+                mErrorHandlerView.diplayErrorMessage(errorMessage);
+            }
+        });
+    }
+
+    private void retryApiCall(View view) {
+        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                locationAPIRequest(mLocation);
+            }
+        });
+    }
 }

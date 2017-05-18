@@ -1,57 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/sliding_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="bottom"
-    sothree:umanoDragView="@+id/detailsView"
-    sothree:umanoFadeColor="@android:color/transparent"
-    sothree:umanoOverlay="false"
-    sothree:umanoPanelHeight="0dp"
-    sothree:umanoParallaxOffset="100dp"
-    sothree:umanoScrollableView="@+id/scrollProduct"
-    sothree:umanoShadowHeight="20dp">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:sothree="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/linProductList"
+    <za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
+        android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        sothree:umanoDragView="@+id/detailsView"
+        sothree:umanoFadeColor="@android:color/transparent"
+        sothree:umanoOverlay="false"
+        sothree:umanoPanelHeight="0dp"
+        sothree:umanoParallaxOffset="100dp"
+        sothree:umanoScrollableView="@+id/scrollProduct"
+        sothree:umanoShadowHeight="20dp">
 
-        <FrameLayout
+        <LinearLayout
+            android:id="@+id/linProductList"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <SurfaceView
-                android:id="@+id/sv_preview"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
 
-            <za.co.woolworths.financial.services.android.util.zxing.QRCodeView
-                android:id="@+id/qr_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                <SurfaceView
+                    android:id="@+id/sv_preview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
 
-            <View
-                android:id="@+id/v_empty"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white" />
+                <za.co.woolworths.financial.services.android.util.zxing.QRCodeView
+                    android:id="@+id/qr_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
 
-        </FrameLayout>
+                <View
+                    android:id="@+id/v_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"/>
 
-    </LinearLayout>
+            </FrameLayout>
 
-    <LinearLayout
-        android:id="@+id/detailsView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:clickable="true"
-        android:focusable="false"
-        android:orientation="vertical">
+        </LinearLayout>
 
-        <include layout="@layout/product_view_detail" />
+        <LinearLayout
+            android:id="@+id/detailsView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:clickable="true"
+            android:focusable="false"
+            android:orientation="vertical">
 
-    </LinearLayout>
-</za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
+            <include layout="@layout/product_view_detail"/>
+
+        </LinearLayout>
+    </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
+
+    <include layout="@layout/error_handler"/>
+</FrameLayout>

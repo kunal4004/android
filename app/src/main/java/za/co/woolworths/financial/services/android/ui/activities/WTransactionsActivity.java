@@ -7,16 +7,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
+import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
@@ -27,6 +30,7 @@ public class WTransactionsActivity extends AppCompatActivity {
     public ExpandableListView transactionListview;
     public String productOfferingId;
     private ProgressDialogFragment mGetTransactionProgressDialog;
+    private ErrorHandlerView mErrorHandlerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,11 @@ public class WTransactionsActivity extends AppCompatActivity {
         getSupportActionBar().setElevation(0);
         transactionListview = (ExpandableListView) findViewById(R.id.transactionListView);
         productOfferingId = getIntent().getStringExtra("productOfferingId");
+
+        RelativeLayout mRelErrorHandler = (RelativeLayout) findViewById(R.id.relErrorHandler);
+        WTextView mTitleError = (WTextView) findViewById(R.id.errorTitle);
+        mErrorHandlerView = new ErrorHandlerView(this, mRelErrorHandler, mTitleError);
+        retryApiCall();
         loadTransactionHistory(productOfferingId);
     }
 
@@ -55,17 +64,22 @@ public class WTransactionsActivity extends AppCompatActivity {
                 mGetTransactionProgressDialog.show(fm, "v");
             }
 
+            transactionAsyncAPI(prOfferId).execute();
+
         } catch (NullPointerException ignored) {
         }
-        new HttpAsyncTask<String, String, TransactionHistoryResponse>() {
+    }
+
+    private HttpAsyncTask<String, String, TransactionHistoryResponse> transactionAsyncAPI(final String prOfferId) {
+        return new HttpAsyncTask<String, String, TransactionHistoryResponse>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+                mErrorHandlerView.hideErrorHandlerLayout();
             }
 
             @Override
             protected TransactionHistoryResponse httpDoInBackground(String... params) {
-
                 return ((WoolworthsApplication) getApplication()).getApi().getAccountTransactionHistory(prOfferId);
             }
 
@@ -76,10 +90,8 @@ public class WTransactionsActivity extends AppCompatActivity {
 
             @Override
             protected TransactionHistoryResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                TransactionHistoryResponse transactionHistoryResponse = new TransactionHistoryResponse();
-                dismissProgress();
-                transactionHistoryResponse.response = new Response();
-                return transactionHistoryResponse;
+                networkFailureHandler(errorMessage);
+                return new TransactionHistoryResponse();
             }
 
             @Override
@@ -109,12 +121,16 @@ public class WTransactionsActivity extends AppCompatActivity {
 
                         break;
                     default:
-                        Utils.alertErrorMessage(WTransactionsActivity.this,transactionHistoryResponse.response.desc);
+                        try {
+                            Utils.alertErrorMessage(WTransactionsActivity.this,
+                                    transactionHistoryResponse.response.desc);
+                        } catch (NullPointerException ex) {
+                        }
                         break;
                 }
                 dismissProgress();
             }
-        }.execute();
+        };
     }
 
     @Override
@@ -138,4 +154,22 @@ public class WTransactionsActivity extends AppCompatActivity {
         }
     }
 
+    public void networkFailureHandler(final String errorMessage) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                mErrorHandlerView.diplayErrorMessage(errorMessage);
+            }
+        });
+    }
+
+    private void retryApiCall() {
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadTransactionHistory(productOfferingId);
+            }
+        });
+    }
 }

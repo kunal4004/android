@@ -11,7 +11,6 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
@@ -75,6 +74,7 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
+import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
@@ -84,7 +84,6 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
@@ -148,6 +147,13 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     private String mDefaultColorRef;
     public String mDefaultSize;
     public ProductViewPagerAdapter mProductViewPagerAdapter;
+    private final String MBGPRODUCTDETAIL = "PRODUCT_DETAIL";
+    private final String MBGPRODUCT = "PRODUCT";
+    private String mBarcodeNumber;
+    private String mCurrentBgTask = MBGPRODUCT;
+    private ErrorHandlerView mErrorHandlerView;
+    private String mProductId;
+    private String mSkuId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,13 +180,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                             public void run() {
                                 cameraManager.stopCamera();
                                 String barcodeNumber = qrResult.getResult().getText();
-                                if (new ConnectionDetector().isOnline(QRActivity.this)) {
-                                    getProductRequest(barcodeNumber);
-                                } else {
-                                    Utils.displayValidationMessage(QRActivity.this,
-                                            TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                                            getString(R.string.connect_to_server));
-                                }
+                                getProductRequest(barcodeNumber);
+
                             }
                         });
                     }
@@ -249,6 +250,9 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         mProgressBar = (ProgressBar) findViewById(R.id.ppBar);
         mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         mBtnManual = (WButton) findViewById(R.id.btnManual);
+        RelativeLayout mRelErrorHandler = (RelativeLayout) findViewById(R.id.relErrorHandler);
+        WTextView mTitleError = (WTextView) findViewById(R.id.errorTitle);
+        mErrorHandlerView = new ErrorHandlerView(this, mRelErrorHandler, mTitleError);
         mBtnManual.setOnClickListener(this);
     }
 
@@ -488,6 +492,9 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     }
 
     private void getProductDetail(final String productId, final String skuId) {
+        mCurrentBgTask = MBGPRODUCTDETAIL;
+        this.mProductId = productId;
+        this.mSkuId = skuId;
         ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
             @Override
             public void success(String strProduct, retrofit.client.Response response) {
@@ -518,7 +525,16 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
             @Override
             public void failure(RetrofitError error) {
-                hideProgressBar();
+                String errorMessage = error.getCause().toString();
+                if (errorMessage.equalsIgnoreCase("timeout")) {
+                    networkFailureHandler(getString(R.string.socket_timeout_exception));
+                } else if (errorMessage.contains("Unable to resolve host") ||
+                        errorMessage.contains("Connection timed out") ||
+                        errorMessage.contains("Connection closed by peer") ||
+                        errorMessage.contains("Failed to connect")) {
+                    networkFailureHandler(getString(R.string.connect_exception));
+                } else {
+                }
             }
         });
 
@@ -548,7 +564,14 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     }
 
     public void getProductRequest(final String query) {
-        new HttpAsyncTask<String, String, ProductView>() {
+        this.mBarcodeNumber = query;
+        this.mCurrentBgTask = MBGPRODUCT;
+
+        getProductAsyncRequestAPI(query).execute();
+    }
+
+    public HttpAsyncTask<String, String, ProductView> getProductAsyncRequestAPI(final String query) {
+        return new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected ProductView httpDoInBackground(String... params) {
                 return ((WoolworthsApplication) getApplication()).getApi()
@@ -557,41 +580,32 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
             @Override
             protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                hideProgressBar();
-                errorScanCode();
+                networkFailureHandler(errorMessage);
                 return new ProductView();
             }
 
             @Override
             protected void onPostExecute(ProductView product) {
                 super.onPostExecute(product);
-                ArrayList<ProductList> mProduct = product.products;
+                try {
+                    ArrayList<ProductList> mProduct = product.products;
 
-                if (mProduct != null) {
-                    if (mProduct.size() > 0) {
-                        getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
-                    } else {
-                        Handler handler = new Handler();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                hideProgressBar();
-                                //resetCamera();
-                            }
-                        }, 100);
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                errorScanCode();
-                            }
-                        }, 200);
+                    if (mProduct != null) {
+                        if (mProduct.size() > 0) {
+                            getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
+                        } else {
+                            hideProgressBar();
+                            errorScanCode();
+                        }
                     }
+                } catch (NullPointerException ex) {
                 }
             }
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+                mErrorHandlerView.hideErrorHandlerLayout();
                 showProgressBar();
             }
 
@@ -599,7 +613,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
             protected Class<ProductView> httpDoInBackgroundReturnType() {
                 return ProductView.class;
             }
-        }.execute();
+        };
     }
 
     private void errorScanCode() {
@@ -655,6 +669,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         mTextProductSize.setOnClickListener(this);
         mLinColor.setOnClickListener(this);
         mBtnShopOnlineWoolies.setOnClickListener(this);
+
+        retryApiCall();
     }
 
     protected void displayProductDetail(String mProductName, String mProductList, String skuId) {
@@ -746,7 +762,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                         WwasPrice.setText("");
                         wPrice.setPaintFlags(0);
                     } else {
-                        wPrice.setText( WFormatter.formatAmount(wasPrice));
+                        wPrice.setText(WFormatter.formatAmount(wasPrice));
                         wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                         WwasPrice.setText(WFormatter.formatAmount(price));
                     }
@@ -1306,4 +1322,30 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         return price;
     }
 
+    private void networkFailureHandler(final String errorMessage) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                hideProgressBar();
+                mErrorHandlerView.diplayErrorMessage(errorMessage);
+            }
+        });
+    }
+
+    private void retryApiCall() {
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (mCurrentBgTask) {
+                    case MBGPRODUCT:
+                        getProductRequest(mBarcodeNumber);
+                        break;
+
+                    case MBGPRODUCTDETAIL:
+                        getProductDetail(mProductId, mSkuId);
+                        break;
+                }
+            }
+        });
+    }
 }

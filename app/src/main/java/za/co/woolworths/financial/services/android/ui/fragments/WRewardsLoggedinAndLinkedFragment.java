@@ -7,39 +7,29 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
-
-import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
-import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
-import za.co.woolworths.financial.services.android.ui.adapters.ContactUsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
-
-import static com.google.android.gms.wearable.DataMap.TAG;
 
 /**
  * Created by W7099877 on 05/01/2017.
@@ -52,6 +42,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
     WRewardsFragmentPagerAdapter adapter;
     ProgressBar progressBar;
     LinearLayout fragmentView;
+    private ErrorHandlerView mErrorHandlerView;
 
     @Nullable
     @Override
@@ -60,12 +51,17 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         viewPager = (ViewPager) view.findViewById(R.id.viewpager);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         fragmentView = (LinearLayout) view.findViewById(R.id.fragmentView);
+        RelativeLayout mRelErrorHandler = (RelativeLayout) view.findViewById(R.id.relErrorHandler);
+        WTextView mTitleError = (WTextView) view.findViewById(R.id.errorTitle);
 
         tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         viewPager.setOffscreenPageLimit(3);
         progressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
 
-        getWrewards();
+        getWRewards().execute();
+        retryApiCall(view);
+
         return view;
     }
 
@@ -77,6 +73,8 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         adapter.addFrag(new WRewardsVouchersFragment(), getString(R.string.vouchers));
         adapter.addFrag(new WRewardsSavingsFragment(), getString(R.string.savings));
         viewPager.setAdapter(adapter);
+        viewPager.invalidate();
+        adapter.notifyDataSetChanged();
         tabLayout.setupWithViewPager(viewPager);
         try {
             setupTabIcons(voucherResponse.voucherCollection.vouchers.size());
@@ -111,17 +109,17 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         return view;
     }
 
-    public void getWrewards() {
-        new HttpAsyncTask<String, String, VoucherResponse>() {
+    public HttpAsyncTask<String, String, VoucherResponse> getWRewards() {
+        return new HttpAsyncTask<String, String, VoucherResponse>() {
             @Override
             protected void onPreExecute() {
                 progressBar.setVisibility(View.VISIBLE);
+                mErrorHandlerView.hideErrorHandlerLayout();
                 super.onPreExecute();
             }
 
             @Override
             protected VoucherResponse httpDoInBackground(String... params) {
-
                 return ((WoolworthsApplication) getActivity().getApplication()).getApi().getVouchers();
             }
 
@@ -132,9 +130,8 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 
             @Override
             protected VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                VoucherResponse voucherResponse = new VoucherResponse();
-                voucherResponse.response = new Response();
-                return voucherResponse;
+                networkFailureHandler(errorMessage);
+                return new VoucherResponse();
             }
 
             @Override
@@ -145,15 +142,13 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
                 handleVoucherResponse(voucherResponse);
 
             }
-        }.execute();
+        };
     }
 
     public void handleVoucherResponse(VoucherResponse voucherResponse) {
         switch (voucherResponse.httpCode) {
             case 200:
                 setupViewPager(viewPager, voucherResponse);
-
-
                 break;
             case 440:
                 AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
@@ -203,5 +198,23 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void networkFailureHandler(final String errorMessage) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mErrorHandlerView.diplayErrorMessage(errorMessage);
+            }
+        });
+    }
+
+    private void retryApiCall(View view) {
+        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getWRewards().execute();
+            }
+        });
     }
 }

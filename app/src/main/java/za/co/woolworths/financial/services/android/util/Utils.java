@@ -18,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -339,7 +340,8 @@ public class Utils {
     public static void removeBadgeCounter(Context context) {
         try {
             ShortcutBadger.applyCount(context, 0);
-        }catch (NullPointerException ex){}
+        } catch (NullPointerException ex) {
+        }
     }
 
     public static boolean isLocationEnabled(Context context) {
@@ -425,9 +427,8 @@ public class Utils {
         ((AppCompatActivity) context).overridePendingTransition(0, 0);
     }
 
-    public static void alertErrorMessage(Context context,String message)
-    {
-        final AlertDialog.Builder builder=new AlertDialog.Builder(context);
+    public static void alertErrorMessage(Context context, String message) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(message);
         builder.setCancelable(false);
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -439,5 +440,12 @@ public class Utils {
         AlertDialog dialog = builder.create();
         dialog.show();
 
+    }
+
+    public static void setMargin(View v, int left, int top, int right, int bottom) {
+        ViewGroup.MarginLayoutParams params =
+                (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+        params.setMargins(left, top,
+                right, bottom);
     }
 }

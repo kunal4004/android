@@ -271,6 +271,7 @@
             android:theme="@style/MyAccountCards"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/SSOActivity"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity"

@@ -17,8 +17,8 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -31,21 +31,19 @@ import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
 import za.co.woolworths.financial.services.android.models.dto.IncomeProof;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIBankAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIIncomeProofAdapter;
+import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WEmpyViewDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.CLIBankAccountTypeBinder;
 
@@ -65,21 +63,25 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     private CLIBankAccountTypeAdapter mCLIBankAccountAdapter;
     private UpdateBankDetail mUpdateBankDetail;
     private WoolworthsApplication mWoolworthsApplication;
-    private ConnectionDetector mConnectionDetector;
     private WEditTextView mEditAccountNumber;
     protected WTextView mTextIncomeProof;
     private LinearLayout mLinProofLayout;
     private LinearLayout mLinBankLayout;
     public WButton mBtnSendMail;
-    private PopWindowValidationMessage mPopWindowValidationMessage;
     private String mEmail = "";
-    private PopupWindow mDarkenScreen;
-    private PopupWindow mPopWindow;
     private FragmentManager fm;
     private WEmpyViewDialogFragment mEmailEmpyViewDialogFragment;
     private ProgressBar mEmailProgressBar;
     private ProgressBar mProgressBar;
     private WEmpyViewDialogFragment mEmpyViewDialogFragment;
+    private RelativeLayout mRelErrorHandler;
+    private WTextView mTitleError;
+    private ErrorHandlerView mErrorHandlerView;
+    private boolean isDeaBank;
+    private String retryBackgroundTask;
+    private final String SEND_EMAIL = "sendEmail";
+    private final String UPDATE_BANK_DETAIL = "updateBankDetail";
+    private final String GET_BANK_ACCOUNT_TYPES = "getBankAccountTypes";
 
 
     public CLIThirdStepFragment() {
@@ -89,7 +91,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContext = this;
         mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-        mConnectionDetector = new ConnectionDetector();
         view = inflater.inflate(R.layout.cli_fragment_step_three, container, false);
         SharePreferenceHelper mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
         setRetainInstance(true);
@@ -97,11 +98,15 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mEmail = mSharePreferenceHelper.getValue("email");
         CLIStepIndicatorActivity mStepIndicator = (CLIStepIndicatorActivity) getActivity();
         mStepIndicator.setOnFragmentRefresh(this);
-        mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         mLinProofLayout = (LinearLayout) view.findViewById(R.id.linProofLayout);
         mLinBankLayout = (LinearLayout) view.findViewById(R.id.linBankLayout);
         mProgressBar = (ProgressBar) view.findViewById(R.id.mWoolworthsProgressBar);
         mEmailProgressBar = (ProgressBar) view.findViewById(R.id.mEmailWoolworthsProgressBar);
+        mRelErrorHandler = (RelativeLayout) view.findViewById(R.id.relErrorHandler);
+        mTitleError = (WTextView) view.findViewById(R.id.errorTitle);
+        Utils.setMargin(mRelErrorHandler, 0, 0, 0, 0);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
+        retryApiCall(view);
 
         initUI();
         setListener();
@@ -118,7 +123,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     }
 
     public void loadView() {
-        boolean isDeaBank = mWoolworthsApplication.isDEABank();
+        isDeaBank = mWoolworthsApplication.isDEABank();
         if (isDeaBank) {
             mLinBankLayout.setVisibility(View.VISIBLE);
             mLinProofLayout.setVisibility(View.GONE);
@@ -147,61 +152,56 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
     }
 
-    public void getBankAccountTypes() {
-        if (mConnectionDetector.isOnline(getActivity())) {
-            new HttpAsyncTask<String, String, BankAccountTypes>() {
+    public HttpAsyncTask<String, String, BankAccountTypes> bankAccountTypeAsyncApI() {
+        return new HttpAsyncTask<String, String, BankAccountTypes>() {
 
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                }
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                mErrorHandlerView.hideErrorHandlerLayout();
+            }
 
-                @Override
-                protected BankAccountTypes httpDoInBackground(String... params) {
-                    return ((WoolworthsApplication) getActivity().getApplication()).getApi().getBankAccountTypes();
-                }
+            @Override
+            protected BankAccountTypes httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getActivity().getApplication()).getApi().getBankAccountTypes();
+            }
 
-                @Override
-                protected Class<BankAccountTypes> httpDoInBackgroundReturnType() {
-                    return BankAccountTypes.class;
-                }
+            @Override
+            protected Class<BankAccountTypes> httpDoInBackgroundReturnType() {
+                return BankAccountTypes.class;
+            }
 
-                @Override
-                protected BankAccountTypes httpError(String errorMessage, HttpAsyncTask.HttpErrorCode httpErrorCode) {
-                    BankAccountTypes bankAccountTypes = new BankAccountTypes();
-                    bankAccountTypes.response = new BankAccountResponse();
-                    return bankAccountTypes;
-                }
+            @Override
+            protected BankAccountTypes httpError(String errorMessage, HttpAsyncTask.HttpErrorCode httpErrorCode) {
+                BankAccountTypes bankAccountTypes = new BankAccountTypes();
+                bankAccountTypes.response = new BankAccountResponse();
+                return bankAccountTypes;
+            }
 
-                @Override
-                protected void onPostExecute(BankAccountTypes bankAccountTypes) {
-                    super.onPostExecute(bankAccountTypes);
-                    if (bankAccountTypes.bankAccountTypes != null) {
-                        if (bankAccountTypes.httpCode == 200) {
-                            mBankAccountType = bankAccountTypes.bankAccountTypes;
-                            mCLIBankAccountAdapter = new CLIBankAccountTypeAdapter(mBankAccountType, mContext);
-                            mLayoutManager = new LinearLayoutManager(getActivity());
-                            mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                            mRecycleList.setLayoutManager(mLayoutManager);
-                            mRecycleList.setNestedScrollingEnabled(false);
-                            mRecycleList.setAdapter(mCLIBankAccountAdapter);
-                            mCLIBankAccountAdapter.setCLIContent();
-                        } else {
-                            if (bankAccountTypes.response.desc != null &&
-                                    !TextUtils.isEmpty(bankAccountTypes.response.desc)) {
-                                Utils.displayValidationMessage(getActivity(),
-                                        TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                                        bankAccountTypes.response.desc);
-                            }
+            @Override
+            protected void onPostExecute(BankAccountTypes bankAccountTypes) {
+                super.onPostExecute(bankAccountTypes);
+                if (bankAccountTypes.bankAccountTypes != null) {
+                    if (bankAccountTypes.httpCode == 200) {
+                        mBankAccountType = bankAccountTypes.bankAccountTypes;
+                        mCLIBankAccountAdapter = new CLIBankAccountTypeAdapter(mBankAccountType, mContext);
+                        mLayoutManager = new LinearLayoutManager(getActivity());
+                        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                        mRecycleList.setLayoutManager(mLayoutManager);
+                        mRecycleList.setNestedScrollingEnabled(false);
+                        mRecycleList.setAdapter(mCLIBankAccountAdapter);
+                        mCLIBankAccountAdapter.setCLIContent();
+                    } else {
+                        if (bankAccountTypes.response.desc != null &&
+                                !TextUtils.isEmpty(bankAccountTypes.response.desc)) {
+                            Utils.displayValidationMessage(getActivity(),
+                                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                    bankAccountTypes.response.desc);
                         }
                     }
                 }
-            }.execute();
-        } else {
-            Utils.displayValidationMessage(getActivity(),
-                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                    getString(R.string.connect_to_server));
-        }
+            }
+        };
     }
 
     //Method to hide keyboard
@@ -241,16 +241,9 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                                 getString(R.string.cli_select_acc_type));
                     }
                 } else {
-                    if (mConnectionDetector.isOnline(getActivity())) {
-                        Utils.displayValidationMessage(getActivity(),
-                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                                getString(R.string.cli_select_acc_type));
-
-                    } else {
-                        Utils.displayValidationMessage(getActivity(),
-                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                                getString(R.string.connect_to_server));
-                    }
+                    Utils.displayValidationMessage(getActivity(),
+                            TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                            getString(R.string.cli_select_acc_type));
                 }
                 break;
 
@@ -284,7 +277,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     public void onAttach(Context context) {
         super.onAttach(context);
         stepNavigatorCallback = (CLIFirstStepFragment.StepNavigatorCallback) getActivity();
-
     }
 
     public List<IncomeProof> arrIncomeProof() {
@@ -327,90 +319,98 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         loadView();
     }
 
-    public void sendEmail() {
-        if (mConnectionDetector.isOnline(getActivity())) {
-            new HttpAsyncTask<String, String, CLIEmailResponse>() {
-                @Override
-                protected CLIEmailResponse httpDoInBackground(String... params) {
-                    return ((WoolworthsApplication) getActivity().getApplication()).getApi().cliEmailResponse();
-                }
+    private void sendEmail() {
+        retryBackgroundTask = SEND_EMAIL;
+        sendEmailAsyncAPI().execute();
+    }
 
-                @Override
-                protected CLIEmailResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                    stopProgressDialog();
-                    CLIEmailResponse cliEmailResponse = new CLIEmailResponse();
-                    stopEmailProgressDialog();
-                    cliEmailResponse.response = new Response();
-                    return cliEmailResponse;
-                }
+    private void updateBankDetail() {
+        retryBackgroundTask = UPDATE_BANK_DETAIL;
+        updateBankDetailAPI().execute();
+    }
 
-                @Override
-                protected Class<CLIEmailResponse> httpDoInBackgroundReturnType() {
-                    return CLIEmailResponse.class;
-                }
+    private void getBankAccountTypes() {
+        retryBackgroundTask = GET_BANK_ACCOUNT_TYPES;
+        bankAccountTypeAsyncApI().execute();
+    }
 
-                @Override
-                protected void onPreExecute() {
-                    showEmailProgressBar();
-                    super.onPreExecute();
-                }
+    public HttpAsyncTask<String, String, CLIEmailResponse> sendEmailAsyncAPI() {
 
-                @Override
-                protected void onPostExecute(CLIEmailResponse cliEmailResponse) {
-                    super.onPostExecute(cliEmailResponse);
-                    stopProgressDialog();
+        return new HttpAsyncTask<String, String, CLIEmailResponse>() {
+            @Override
+            protected CLIEmailResponse httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getActivity().getApplication()).getApi().cliEmailResponse();
+            }
+
+            @Override
+            protected CLIEmailResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                networkFailureHandler(errorMessage);
+                return new CLIEmailResponse();
+            }
+
+            @Override
+            protected Class<CLIEmailResponse> httpDoInBackgroundReturnType() {
+                return CLIEmailResponse.class;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                showEmailProgressBar();
+                mErrorHandlerView.hideErrorHandlerLayout();
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(CLIEmailResponse cliEmailResponse) {
+                super.onPostExecute(cliEmailResponse);
+                stopProgressDialog();
+                try {
                     int httpCode = cliEmailResponse.httpCode;
                     String desc = cliEmailResponse.response.desc;
                     if (httpCode == 200) {
                         Utils.displayValidationMessage(getActivity(),
                                 TransientActivity.VALIDATION_MESSAGE_LIST.EMAIL, mEmail);
                     } else {
-                        if (!TextUtils.isEmpty(desc) && desc == null) {
-                            Utils.displayValidationMessage(getActivity(),
-                                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                                    getString(R.string.connect_to_server));
-                        }
+                        Utils.displayValidationMessage(getActivity(),
+                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR, desc);
                     }
-                    stopEmailProgressDialog();
+                } catch (NullPointerException ex) {
                 }
-
-            }.execute();
-        } else {
-            Utils.displayValidationMessage(getActivity(),
-                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                    getString(R.string.connect_to_server));
-        }
+                stopEmailProgressDialog();
+            }
+        };
     }
 
-    public void updateBankDetail() {
-        if (mConnectionDetector.isOnline(getActivity())) {
-            showProgressBar();
-            new HttpAsyncTask<String, String, UpdateBankDetailResponse>() {
-                @Override
-                protected UpdateBankDetailResponse httpDoInBackground(String... params) {
-                    return mWoolworthsApplication.getApi().cliUpdateBankDetail(mUpdateBankDetail);
-                }
+    private HttpAsyncTask<String, String, UpdateBankDetailResponse> updateBankDetailAPI() {
+        showProgressBar();
+        return new HttpAsyncTask<String, String, UpdateBankDetailResponse>() {
+            @Override
+            protected UpdateBankDetailResponse httpDoInBackground(String... params) {
+                return mWoolworthsApplication.getApi().cliUpdateBankDetail(mUpdateBankDetail);
+            }
 
-                @Override
-                protected UpdateBankDetailResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                    UpdateBankDetailResponse updateBankDetailResponse = new UpdateBankDetailResponse();
-                    stopProgressDialog();
-                    return updateBankDetailResponse;
-                }
+            @Override
+            protected UpdateBankDetailResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                networkFailureHandler(errorMessage);
+                //stopProgressDialog();
+                return new UpdateBankDetailResponse();
+            }
 
-                @Override
-                protected Class<UpdateBankDetailResponse> httpDoInBackgroundReturnType() {
-                    return UpdateBankDetailResponse.class;
-                }
+            @Override
+            protected Class<UpdateBankDetailResponse> httpDoInBackgroundReturnType() {
+                return UpdateBankDetailResponse.class;
+            }
 
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                }
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                mErrorHandlerView.hideErrorHandlerLayout();
+            }
 
-                @Override
-                protected void onPostExecute(UpdateBankDetailResponse updateBankDetailResponse) {
-                    super.onPostExecute(updateBankDetailResponse);
+            @Override
+            protected void onPostExecute(UpdateBankDetailResponse updateBankDetailResponse) {
+                super.onPostExecute(updateBankDetailResponse);
+                try {
                     if (updateBankDetailResponse != null) {
                         if (updateBankDetailResponse.httpCode == 200) {
                             stepNavigatorCallback.openNextFragment(3);
@@ -424,14 +424,11 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                             }
                         }
                     }
-                    stopProgressDialog();
+                } catch (Exception ignored) {
                 }
-            }.execute();
-        } else {
-            Utils.displayValidationMessage(getActivity(),
-                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                    getString(R.string.connect_to_server));
-        }
+                stopProgressDialog();
+            }
+        };
     }
 
     public void showProgressBar() {
@@ -480,5 +477,47 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
             mEmailProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         }
         mBtnSendMail.setVisibility(View.VISIBLE);
+    }
+
+
+    private void networkFailureHandler(final String errorMessage) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (retryBackgroundTask) {
+                    case SEND_EMAIL:
+                        stopProgressDialog();
+                        break;
+
+                    case UPDATE_BANK_DETAIL:
+                        break;
+
+                    case GET_BANK_ACCOUNT_TYPES:
+                        break;
+                }
+                mErrorHandlerView.diplayErrorMessage(errorMessage);
+            }
+        });
+    }
+
+    private void retryApiCall(View view) {
+        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (retryBackgroundTask) {
+                    case SEND_EMAIL:
+                        sendEmail();
+                        break;
+
+                    case UPDATE_BANK_DETAIL:
+                        updateBankDetail();
+                        break;
+
+                    case GET_BANK_ACCOUNT_TYPES:
+                        getBankAccountTypes();
+                        break;
+                }
+            }
+        });
     }
 }
