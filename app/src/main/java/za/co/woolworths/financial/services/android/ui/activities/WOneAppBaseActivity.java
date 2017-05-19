@@ -23,7 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.Counter;
+import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.Voucher;
+import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
+import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
@@ -31,7 +37,9 @@ import za.co.woolworths.financial.services.android.ui.fragments.WProductFragment
 import za.co.woolworths.financial.services.android.ui.fragments.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
@@ -78,6 +86,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         drawerFragment.setUp(R.id.fragment_navigation_drawer, mDrawerLayout, mToolbar);
         drawerFragment.setDrawerListener(this);
         displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
+
+        showVoucherCount();
 
         registerReceiver(logOutReceiver, new IntentFilter("logOutReceiver"));
     }
@@ -200,6 +210,51 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             ScreenManager.presentSSOLogout(WOneAppBaseActivity.this);
         }
     };
+
+    public void showVoucherCount() {
+        if (new ConnectionDetector().isOnline()) {
+            new HttpAsyncTask<String, String, VoucherResponse>() {
+
+                @Override
+                protected VoucherResponse httpDoInBackground(String... params) {
+
+                    return ((WoolworthsApplication) getApplication()).getApi().getVouchers();
+                }
+
+                @Override
+                protected Class<VoucherResponse> httpDoInBackgroundReturnType() {
+                    return VoucherResponse.class;
+                }
+
+                @Override
+                protected VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                    VoucherResponse voucherResponse = new VoucherResponse();
+                    voucherResponse.response = new Response();
+                    return voucherResponse;
+                }
+
+                @Override
+                protected void onPostExecute(VoucherResponse voucherResponse) {
+                    super.onPostExecute(voucherResponse);
+                    try {
+                        Counter mCounter = ((WoolworthsApplication) getApplication()).getCounter();
+                        VoucherCollection voucher = voucherResponse.voucherCollection;
+                        if (voucher != null) {
+                            List<Voucher> voucherSize = voucher.vouchers;
+                            if (voucherSize != null) {
+                                mCounter.setActiveVoucher(voucherSize.size());
+
+                            }
+                        } else {
+                            mCounter.setActiveVoucher(0);
+                        }
+                    } catch (NullPointerException ignored) {
+                    }
+                }
+
+            }.execute();
+        }
+    }
 }
 
 

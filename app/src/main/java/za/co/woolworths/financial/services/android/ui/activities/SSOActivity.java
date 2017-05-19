@@ -379,12 +379,12 @@ public class SSOActivity extends WebViewActivity {
     };
 
     public void hideProgressBar() {
-        if (progressDialog != null) {
+        try {
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
                 progressDialog = null;
             }
-        }
+        } catch (Exception ex){}
     }
 
     public void showProgressBar() {
