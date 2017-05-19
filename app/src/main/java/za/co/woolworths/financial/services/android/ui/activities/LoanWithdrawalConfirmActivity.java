@@ -46,6 +46,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
     private int mRepaymentPeriod;
     private ProgressBar mConfirmProgressBar;
     private AsyncTask<String, String, AuthoriseLoanResponse> authoriseLoanRequest;
+    private int minDrawnDownAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +59,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
         Bundle intent = getIntent().getExtras();
         if (intent != null) {
             mDrawanDownAmount = intent.getString("drawnDownAmount");
-            String mAvailableFund = intent.getString("availableFunds");
-            String mCreditLimit = intent.getString("creditLimit");
+            minDrawnDownAmount = intent.getInt("minDrawnDownAmount");
             mRepaymentPeriod = intent.getInt("repaymentPeriod");
         }
 
@@ -112,6 +112,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 
     public void previousActivity() {
         Intent openLoanWithdrawal = new Intent(LoanWithdrawalConfirmActivity.this, LoanWithdrawalActivity.class);
+        openLoanWithdrawal.putExtra("minDrawnDownAmount", minDrawnDownAmount * 100);
         startActivity(openLoanWithdrawal);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         finish();
@@ -152,7 +153,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
                         String desc = authoriseLoanResponse.response.desc;
                         if (desc != null && !TextUtils.isEmpty(desc)) {
                             Utils.displayValidationMessage(LoanWithdrawalConfirmActivity.this,
-                                    TransientActivity.VALIDATION_MESSAGE_LIST.HIGH_LOAN_AMOUNT,
+                                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
                                     desc);
                         }
                     }
