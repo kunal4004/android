@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.flexbox.FlexboxLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/card_shadow"
-    app:alignContent="stretch"
-    app:alignItems="stretch"
-    app:flexWrap="wrap">
+                                          xmlns:app="http://schemas.android.com/apk/res-auto"
+                                          android:layout_width="match_parent"
+                                          android:layout_height="wrap_content"
+                                          android:background="@drawable/card_shadow"
+                                          app:alignContent="stretch"
+                                          app:alignItems="stretch"
+                                          app:flexWrap="wrap">
 
     <include
         layout="@layout/product_promo"
         android:layout_width="match_parent"
         android:layout_height="204dp"
-        android:maxHeight="204dp" />
+        android:maxHeight="204dp"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_marginBottom="15dp"
-        android:background="@color/horizontal_line" />
+        android:background="@color/horizontal_line"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/textTitle"
@@ -30,16 +30,17 @@
         android:ellipsize="end"
         android:gravity="top|start"
         android:letterSpacing="0.02"
-        android:lineSpacingExtra="1.6dp"
+        android:lineSpacingExtra="2sp"
         android:maxLines="3"
         android:minLines="3"
-        android:textColor="@color/black_desc_opacity_light"
+        android:textColor="@color/product_text_color"
         android:textSize="14sp"
-        app:WTextView_font="medium" />
+        app:WTextView_font="medium"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp">
+
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/linPriceContainer"
             android:layout_width="match_parent"
@@ -66,7 +67,7 @@
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:WTextView_font="medium_bold"
-                app:layout_alignSelf="flex_start" />
+                app:layout_alignSelf="flex_start"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/textWasPrice"
@@ -79,7 +80,7 @@
                 android:textColor="@color/red"
                 android:textSize="14sp"
                 app:WTextView_font="medium_bold"
-                app:layout_alignSelf="flex_end" />
+                app:layout_alignSelf="flex_end"/>
         </com.google.android.flexbox.FlexboxLayout>
     </RelativeLayout>
 </com.google.android.flexbox.FlexboxLayout>

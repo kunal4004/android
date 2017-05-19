@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.Counter;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
@@ -64,7 +65,6 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         viewPager.setOffscreenPageLimit(3);
         progressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-
         getWrewards();
         return view;
     }
@@ -104,8 +104,10 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         if (pos == 1 && activeVoucherCount > 0) {
             tv_count.setVisibility(View.VISIBLE);
             tv_count.setText("" + activeVoucherCount);
-        } else
+        } else {
             tv_count.setVisibility(View.GONE);
+        }
+
 
 
         return view;

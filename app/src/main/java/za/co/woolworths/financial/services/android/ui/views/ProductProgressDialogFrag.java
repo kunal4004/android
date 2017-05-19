@@ -24,7 +24,6 @@ import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.activities.ProductViewGridActivity;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductProgressDialogFrag extends DialogFragment {
