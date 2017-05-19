@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/sliding_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="bottom"
-    sothree:umanoDragView="@+id/detailsView"
-    sothree:umanoFadeColor="@android:color/transparent"
-    sothree:umanoOverlay="false"
-    sothree:umanoPanelHeight="0dp"
-    sothree:umanoParallaxOffset="100dp"
-    sothree:umanoScrollableView="@+id/scrollProduct"
-    sothree:umanoShadowHeight="20dp">
+                                                                           xmlns:sothree="http://schemas.android.com/apk/res-auto"
+                                                                           android:id="@+id/sliding_layout"
+                                                                           android:layout_width="match_parent"
+                                                                           android:layout_height="match_parent"
+                                                                           android:gravity="bottom"
+                                                                           sothree:umanoDragView="@+id/detailsView"
+                                                                           sothree:umanoFadeColor="@android:color/transparent"
+                                                                           sothree:umanoOverlay="false"
+                                                                           sothree:umanoPanelHeight="0dp"
+                                                                           sothree:umanoParallaxOffset="100dp"
+                                                                           sothree:umanoScrollableView="@+id/scrollProduct"
+                                                                           sothree:umanoShadowHeight="20dp">
 
     <LinearLayout
         android:id="@+id/linProductList"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include layout="@layout/activity_product_list" />
+        <include layout="@layout/activity_product_list"/>
     </LinearLayout>
 
     <LinearLayout
@@ -31,7 +30,7 @@
         android:focusable="false"
         android:orientation="vertical">
 
-        <include layout="@layout/product_view_detail" />
+        <include layout="@layout/product_view_detail"/>
 
     </LinearLayout>
 </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
