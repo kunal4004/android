@@ -58,7 +58,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ProductDetailActivity extends BaseActivity implements SelectedProductView, View.OnClickListener {
+public class ProductDetailActivity extends BaseActivity implements SelectedProductView, View.OnClickListener, ProductViewPagerAdapter.MultipleImageInterface {
+
 
     public final int IMAGE_QUALITY = 85;
     private WTextView mTextSelectSize;
@@ -168,7 +169,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
             mAuxiliaryImages.clear();
             mAuxiliaryImages.addAll(removeAuxiliaryImageDuplicate);
 
-            mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
+            mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages, this);
             mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
             mProductViewPagerAdapter.notifyDataSetChanged();
             setupPagerIndicatorDots();
@@ -914,6 +915,15 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
             return price;
         }
         return price;
+    }
+
+    @Override
+    public void SelectedImage(int position, View view) {
+        Intent openMultipleImage = new Intent(this, MultipleImageActivity.class);
+        openMultipleImage.putExtra("position", position);
+        openMultipleImage.putExtra("auxiliaryImages", mAuxiliaryImages);
+        startActivity(openMultipleImage);
+        overridePendingTransition(0, 0);
     }
 }
 

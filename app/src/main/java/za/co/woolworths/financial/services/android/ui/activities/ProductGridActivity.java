@@ -689,7 +689,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
                 break;
         }
-    }
 
+    }
 }
 

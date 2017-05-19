@@ -203,6 +203,7 @@
             android:theme="@style/MyAccountCards"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/SSOActivity"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity"
@@ -237,6 +238,12 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.ProductSubCategoryActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CLI"/>
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity"
             android:label="@string/app_name"
@@ -262,17 +269,6 @@
             android:name="za.co.woolworths.financial.services.android.util.GlideConfiguration"
             android:value="GlideModule"/>
 
-        <!--
-        <activity
-            android:name="za.co.woolworths.financial.services.android.util.barcode.scanner.ProductCategoryBarcodeActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppOverlayTheme"
-            android:uiOptions="splitActionBarWhenNarrow">
-            <meta-data
-                android:name="android.support.UI_OPTIONS"
-                android:value="splitActionBarWhenNarrow"/>
-        </activity>
-        -->
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.TransientActivity"
             android:screenOrientation="portrait"
@@ -284,13 +280,11 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.FAQDetailsWebActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle">
-        </activity>
+            android:theme="@style/FaqStyle"></activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WChangePasswordActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle">
-        </activity>
+            android:theme="@style/FaqStyle"></activity>
     </application>
 
 </manifest>

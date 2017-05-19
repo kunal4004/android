@@ -108,7 +108,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/default_margin"
             android:ellipsize="end"
-            android:gravity="left|center"
+            android:gravity="center"
             android:letterSpacing="0.2"
             android:maxLines="1"
             android:singleLine="true"

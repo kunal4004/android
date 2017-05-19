@@ -75,6 +75,7 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
+import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
@@ -92,7 +93,7 @@ import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecorat
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class QRActivity extends Activity<QRModel> implements View.OnClickListener, SelectedProductView {
+public class QRActivity extends Activity<QRModel> implements View.OnClickListener, SelectedProductView, ProductViewPagerAdapter.MultipleImageInterface {
     public final int IMAGE_QUALITY = 85;
     public static final int CODE_PICK_IMAGE = 0x100;
     private BaseCameraManager cameraManager;
@@ -954,7 +955,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
             mAuxiliaryImages.clear();
             mAuxiliaryImages.addAll(removeAuxiliaryImageDuplicate);
 
-            mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
+            mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages, this);
             mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
             mProductViewPagerAdapter.notifyDataSetChanged();
             setupPagerIndicatorDots();
@@ -989,7 +990,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                 }
             });
 
-        } catch (JSONException e) {
+        }catch (JSONException e) {
         }
     }
 
@@ -1321,4 +1322,12 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         return price;
     }
 
+    @Override
+    public void SelectedImage(int position, View view) {
+        Intent openMultipleImage = new Intent(this, MultipleImageActivity.class);
+        openMultipleImage.putExtra("position", position);
+        openMultipleImage.putExtra("auxiliaryImages", mAuxiliaryImages);
+        startActivity(openMultipleImage);
+        overridePendingTransition(0, 0);
+    }
 }
