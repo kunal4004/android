@@ -41,8 +41,12 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
+import za.co.woolworths.financial.services.android.models.dto.Counter;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.Voucher;
+import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
+import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.FAQActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -135,6 +139,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
     private Toolbar mToolbar;
     private ImageView mImageView;
     private RelativeLayout relFAQ;
+    private Counter mCounter;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -185,6 +190,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         imgCreditCard = (ImageView) view.findViewById(R.id.imgCreditCard);
         relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
 
+        mCounter = ((WoolworthsApplication) getActivity().getApplication()).getCounter();
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
         applyPersonalCardView.setOnClickListener(this);
@@ -327,21 +333,25 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 changePasswordBtn.setVisibility(View.VISIBLE);
                 if (jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
                     //user is linked and signed in
+                    showAccountActiveCount();
                     linkedAccountsLayout.setVisibility(View.VISIBLE);
                 } else {
                     //user is not linked
                     //but signed in
+                    showAccountActiveCount();
                     unlinkedLayout.setVisibility(View.VISIBLE);
                     setUiPageViewController();
                 }
             } else {
                 //user is signed out
                 loggedOutHeaderLayout.setVisibility(View.VISIBLE);
+                hideAccountActiveCount();
                 setUiPageViewController();
             }
         } else {
             //user is signed out
             loggedOutHeaderLayout.setVisibility(View.VISIBLE);
+            hideAccountActiveCount();
             setUiPageViewController();
         }
     }
@@ -570,7 +580,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
                         break;
                     default:
-                        Utils.alertErrorMessage(getActivity(),accountsResponse.response.desc);
+                        Utils.alertErrorMessage(getActivity(), accountsResponse.response.desc);
                         break;
                 }
                 dismissProgress();
@@ -753,4 +763,58 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
             return percentage;
     }
 
+    private void showVoucherCounter() {
+        new HttpAsyncTask<String, String, VoucherResponse>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected VoucherResponse httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getActivity().getApplication()).getApi().getVouchers();
+            }
+
+            @Override
+            protected Class<VoucherResponse> httpDoInBackgroundReturnType() {
+                return VoucherResponse.class;
+            }
+
+            @Override
+            protected VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                VoucherResponse voucherResponse = new VoucherResponse();
+                voucherResponse.response = new Response();
+                return voucherResponse;
+            }
+
+            @Override
+            protected void onPostExecute(VoucherResponse voucherResponse) {
+                super.onPostExecute(voucherResponse);
+                VoucherCollection voucher = voucherResponse.voucherCollection;
+                if (voucher != null) {
+                    List<Voucher> voucherSize = voucher.vouchers;
+                    if (voucherSize != null) {
+                        mCounter.setActiveVoucher(voucherSize.size());
+
+                    }
+                } else {
+                    mCounter.setActiveVoucher(0);
+                }
+            }
+        }.execute();
+    }
+
+    private void hideVoucherCounter() {
+        mCounter.setActiveVoucher(0);
+    }
+
+    private void showAccountActiveCount() {
+        mCounter.setAccountIsActive(true);
+        showVoucherCounter();
+    }
+
+    private void hideAccountActiveCount() {
+        mCounter.setAccountIsActive(false);
+        hideVoucherCounter();
+    }
 }

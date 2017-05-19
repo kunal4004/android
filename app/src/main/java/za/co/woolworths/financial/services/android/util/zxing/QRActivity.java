@@ -746,7 +746,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                         WwasPrice.setText("");
                         wPrice.setPaintFlags(0);
                     } else {
-                        wPrice.setText( WFormatter.formatAmount(wasPrice));
+                        wPrice.setText(WFormatter.formatAmount(wasPrice));
                         wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                         WwasPrice.setText(WFormatter.formatAmount(price));
                     }
@@ -1305,5 +1305,4 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         }
         return price;
     }
-
 }
