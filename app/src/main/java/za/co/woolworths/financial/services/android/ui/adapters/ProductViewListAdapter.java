@@ -127,16 +127,16 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
         switch (productType) {
             case "clothingProducts":
                 if (TextUtils.isEmpty(wasPrice)) {
-                    wPrice.setText("From: " + WFormatter.formatAmount(price));
+                    wPrice.setText( WFormatter.formatAmount(price));
                     WwasPrice.setText("");
                 } else {
                     if (wasPrice.equalsIgnoreCase(price)) {
                         //wasPrice equals currentPrice
-                        wPrice.setText("From: " + WFormatter.formatAmount(price));
+                        wPrice.setText(WFormatter.formatAmount(price));
                         WwasPrice.setText("");
                         return;
                     }
-                    wPrice.setText("From: " + WFormatter.formatAmount(wasPrice));
+                    wPrice.setText(WFormatter.formatAmount(wasPrice));
                     wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                     WwasPrice.setText(WFormatter.formatAmount(price));
                 }

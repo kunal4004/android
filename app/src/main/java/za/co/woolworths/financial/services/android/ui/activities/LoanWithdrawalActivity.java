@@ -432,9 +432,6 @@ public class LoanWithdrawalActivity extends BaseActivity {
             hasFractionalPart = false;
         }
 
-        @SuppressWarnings("unused")
-        private static final String TAG = "NumberTextWatcher";
-
         @Override
         public void afterTextChanged(Editable s) {
             et.removeTextChangedListener(this);
