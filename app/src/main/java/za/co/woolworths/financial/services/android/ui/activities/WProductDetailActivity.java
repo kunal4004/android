@@ -305,7 +305,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(mCheckOutLink))
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mCheckOutLink)));
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Utils.addUTMCode(mCheckOutLink))));
             }
         });
     }

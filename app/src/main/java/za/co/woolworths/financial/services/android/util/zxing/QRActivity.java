@@ -477,8 +477,10 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                 break;
 
             case R.id.btnShopOnlineWoolies:
-                if (!TextUtils.isEmpty(mCheckOutLink))
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mCheckOutLink)));
+                if (!TextUtils.isEmpty(mCheckOutLink)) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Utils.addUTMCode
+                            (mCheckOutLink))));
+                }
                 break;
 
             case R.id.btnManual:

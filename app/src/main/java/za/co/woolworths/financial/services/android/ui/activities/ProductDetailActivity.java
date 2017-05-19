@@ -611,7 +611,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 
             case R.id.btnShopOnlineWoolies:
                 if (!TextUtils.isEmpty(mCheckOutLink))
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mCheckOutLink)));
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Utils.addUTMCode(mCheckOutLink))));
                 break;
         }
     }
