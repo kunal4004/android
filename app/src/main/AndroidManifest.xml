@@ -14,33 +14,15 @@
     <uses-permission android:name="android.permission.CALL_PHONE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
     <!-- Barcode scanner -->
     <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.FLASHLIGHT"/>
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.FLASHLIGHT"/>
     <!--Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7-->
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false"/>
-    <uses-feature
-        android:name="android.hardware.camera.front"
-        android:required="false"/>
-
-    <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.FLASHLIGHT"/>
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -297,11 +279,11 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.FAQDetailsWebActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle"></activity>
+            android:theme="@style/FaqStyle"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WChangePasswordActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle"></activity>
+            android:theme="@style/FaqStyle"/>
     </application>
 
 </manifest>
