@@ -152,7 +152,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             SessionDao sessionDao = new SessionDao(WOneAppBaseActivity.this, SessionDao.KEY.USER_TOKEN).get();
             if (sessionDao.value != null && !sessionDao.value.equals("")) {
                 result = JWTHelper.decode(sessionDao.value);
-                mSharePreferenceHelper.save(result.email, "email");
+                mSharePreferenceHelper.save(result.email.get(0), "email");
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

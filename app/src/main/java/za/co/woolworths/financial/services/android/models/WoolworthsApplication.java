@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
+import android.support.v7.app.AppCompatActivity;
 
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
@@ -58,6 +59,7 @@ public class WoolworthsApplication extends Application {
     private boolean isOther = false;
     private int productOfferingId;
     private LatLng lastKnowLatLng;
+    private AppCompatActivity mCurrentActivity = null;
 
     private static int NumVouchers = 0;
 
@@ -383,7 +385,6 @@ public class WoolworthsApplication extends Application {
     public static Context getAppContext() {
         return mContextApplication;
     }
-
 
     public Counter getCounter() {
         return mCounter;

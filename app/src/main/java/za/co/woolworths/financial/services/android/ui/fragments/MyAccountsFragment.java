@@ -325,9 +325,9 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
             if (jwtDecodedModel.AtgSession != null) {
                 loggedInHeaderLayout.setVisibility(View.VISIBLE);
                 //logged in user's name and family name will be displayed on the page
-                userName.setText(jwtDecodedModel.name + " " + jwtDecodedModel.family_name);
+                userName.setText(jwtDecodedModel.name.get(0) + " " + jwtDecodedModel.family_name.get(0));
                 //initials of the logged in user will be displayed on the page
-                String initials = jwtDecodedModel.name.substring(0, 1).concat(" ").concat(jwtDecodedModel.family_name.substring(0, 1));
+                String initials = jwtDecodedModel.name.get(0).substring(0, 1).concat(" ").concat(jwtDecodedModel.family_name.get(0).substring(0, 1));
                 userInitials.setText(initials);
                 signOutBtn.setVisibility(View.VISIBLE);
                 changePasswordBtn.setVisibility(View.VISIBLE);
@@ -534,7 +534,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 switch (accountsResponse.httpCode) {
                     case 200:
                         MyAccountsFragment.this.accountsResponse = accountsResponse;
-                        ArrayList<BaseAccountFragment> baseAccountFragments = new ArrayList<BaseAccountFragment>();
                         List<Account> accountList = accountsResponse.accountList;
                         for (Account p : accountList) {
                             accounts.put(p.productGroupCode.toUpperCase(), p);

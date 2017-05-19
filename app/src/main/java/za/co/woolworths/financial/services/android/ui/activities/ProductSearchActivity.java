@@ -115,7 +115,7 @@ public class ProductSearchActivity extends BaseActivity
             SearchHistory search = new SearchHistory();
             search.searchedValue = searchProductBrand;
             saveRecentSearch(search);
-            Intent searchProduct = new Intent(ProductSearchActivity.this, ProductViewGridActivity.class);
+            Intent searchProduct = new Intent(ProductSearchActivity.this, ProductGridActivity.class);
             searchProduct.putExtra("searchProduct", searchProductBrand);
             startActivity(searchProduct);
             mEditSearchProduct.setText("");
