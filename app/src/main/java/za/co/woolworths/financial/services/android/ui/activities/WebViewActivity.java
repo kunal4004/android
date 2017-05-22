@@ -29,13 +29,14 @@ public class WebViewActivity extends AppCompatActivity {
     WebView webView;
     public Toolbar toolbar;
     public WTextView toolbarTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
-        webView = (WebView)findViewById(R.id.webview);
+        webView = (WebView) findViewById(R.id.webview);
         Bundle b = new Bundle();
-        b= getIntent().getBundleExtra("Bundle");
+        b = getIntent().getBundleExtra("Bundle");
         // getActionBar().setTitle(FontHyperTextParser.getSpannable(b.getString("title"), 1, this));
 
         //getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -52,7 +53,7 @@ public class WebViewActivity extends AppCompatActivity {
         webView.clearHistory();
         clearCookies(this);
         webView.loadUrl(url);
-        webView.setWebChromeClient(new WebChromeClient(){
+        webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onReceivedTitle(WebView view, String title) {
                 super.onReceivedTitle(view, title);
@@ -65,7 +66,11 @@ public class WebViewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                if (this.webView.canGoBack()) {
+                    this.webView.goBack();
+                } else {
+                    finish();
+                }
                 break;
         }
         return true;
@@ -78,28 +83,28 @@ public class WebViewActivity extends AppCompatActivity {
             view.loadUrl(url);
             return true;
         }
+
         @Override
         public void onPageFinished(WebView view, String url) {
             // do your stuff here
-            if(url.contains("Login")){
+            if (url.contains("Login")) {
                 finish();
             }
         }
     }
+
     @SuppressWarnings("deprecation")
-    public static void clearCookies(Context context)
-    {
+    public static void clearCookies(Context context) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-           // Log.d(TAG, "Using clearCookies code for API >=" + String.valueOf(Build.VERSION_CODES.LOLLIPOP_MR1));
+            // Log.d(TAG, "Using clearCookies code for API >=" + String.valueOf(Build.VERSION_CODES.LOLLIPOP_MR1));
             CookieManager.getInstance().removeAllCookies(null);
             CookieManager.getInstance().flush();
-        } else
-        {
-          //  Log.d(C.TAG, "Using clearCookies code for API <" + String.valueOf(Build.VERSION_CODES.LOLLIPOP_MR1));
-            CookieSyncManager cookieSyncMngr=CookieSyncManager.createInstance(context);
+        } else {
+            //  Log.d(C.TAG, "Using clearCookies code for API <" + String.valueOf(Build.VERSION_CODES.LOLLIPOP_MR1));
+            CookieSyncManager cookieSyncMngr = CookieSyncManager.createInstance(context);
             cookieSyncMngr.startSync();
-            CookieManager cookieManager=CookieManager.getInstance();
+            CookieManager cookieManager = CookieManager.getInstance();
             cookieManager.removeAllCookie();
             cookieManager.removeSessionCookie();
             cookieSyncMngr.stopSync();

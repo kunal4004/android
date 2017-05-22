@@ -36,8 +36,8 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity;
-import za.co.woolworths.financial.services.android.ui.activities.ProductSearchSubCategoryActivity;
-import za.co.woolworths.financial.services.android.ui.activities.ProductViewGridActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ProductSubCategoryActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductCategoryAdapter;
 import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
@@ -62,14 +62,14 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     public void onSelectedProduct(View v, int position) {
         RootCategory rootCategory = mRootCategories.get(position);
         if (rootCategory.hasChildren) {
-            Intent openSubCategory = new Intent(getActivity(), ProductSearchSubCategoryActivity.class);
+            Intent openSubCategory = new Intent(getActivity(), ProductSubCategoryActivity.class);
             openSubCategory.putExtra("root_category_id", rootCategory.categoryId);
             openSubCategory.putExtra("root_category_name", rootCategory.categoryName);
             openSubCategory.putExtra("catStep", 0);
             startActivity(openSubCategory);
             getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
         } else {
-            Intent openProductListIntent = new Intent(getActivity(), ProductViewGridActivity.class);
+            Intent openProductListIntent = new Intent(getActivity(), ProductGridActivity.class);
             openProductListIntent.putExtra("sub_category_name", rootCategory.categoryName);
             openProductListIntent.putExtra("sub_category_id", rootCategory.categoryId);
             startActivity(openProductListIntent);

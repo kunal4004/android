@@ -61,7 +61,6 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 
         getWRewards().execute();
         retryApiCall(view);
-
         return view;
     }
 
@@ -102,8 +101,10 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         if (pos == 1 && activeVoucherCount > 0) {
             tv_count.setVisibility(View.VISIBLE);
             tv_count.setText("" + activeVoucherCount);
-        } else
+        } else {
             tv_count.setVisibility(View.GONE);
+        }
+
 
 
         return view;

@@ -282,7 +282,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
                             }
                             GsonBuilder builder = new GsonBuilder();
                             Gson gson = builder.create();
-                            Intent openDetailView = new Intent(mContext, ProductDetailViewActivity.class);
+                            Intent openDetailView = new Intent(mContext, ProductDetailActivity.class);
                             openDetailView.putExtra("product_name", mProductList.get(0).productName);
                             openDetailView.putExtra("product_detail", gson.toJson(mProductList));
                             startActivity(openDetailView);
@@ -326,4 +326,5 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             getProductRequest(mEditBarcodeNumber.getText().toString());
         }
     }
+
 }

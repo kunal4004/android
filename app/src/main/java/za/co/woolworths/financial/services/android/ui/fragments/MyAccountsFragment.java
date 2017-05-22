@@ -39,8 +39,12 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
+import za.co.woolworths.financial.services.android.models.dto.Counter;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.Voucher;
+import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
+import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.FAQActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -121,6 +125,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
     private Toolbar mToolbar;
     private RelativeLayout relFAQ;
     private ErrorHandlerView mErrorHandlerView;
+    private Counter mCounter;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -173,7 +178,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         RelativeLayout mRelErrorHandler = (RelativeLayout) view.findViewById(R.id.relErrorHandler);
         WTextView mTitleError = (WTextView) view.findViewById(R.id.errorTitle);
         mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
-
+        mCounter = ((WoolworthsApplication) getActivity().getApplication()).getCounter();
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
         applyPersonalCardView.setOnClickListener(this);
@@ -314,29 +319,33 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
             if (jwtDecodedModel.AtgSession != null) {
                 loggedInHeaderLayout.setVisibility(View.VISIBLE);
                 //logged in user's name and family name will be displayed on the page
-                userName.setText(jwtDecodedModel.name + " " + jwtDecodedModel.family_name);
+                userName.setText(jwtDecodedModel.name.get(0) + " " + jwtDecodedModel.family_name.get(0));
                 //initials of the logged in user will be displayed on the page
-                String initials = jwtDecodedModel.name.substring(0, 1).concat(" ").concat(jwtDecodedModel.family_name.substring(0, 1));
+                String initials = jwtDecodedModel.name.get(0).substring(0, 1).concat(" ").concat(jwtDecodedModel.family_name.get(0).substring(0, 1));
                 userInitials.setText(initials);
                 signOutBtn.setVisibility(View.VISIBLE);
                 changePasswordBtn.setVisibility(View.VISIBLE);
                 if (jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
                     //user is linked and signed in
+                    showAccountActiveCount();
                     linkedAccountsLayout.setVisibility(View.VISIBLE);
                 } else {
                     //user is not linked
                     //but signed in
+                    showAccountActiveCount();
                     unlinkedLayout.setVisibility(View.VISIBLE);
                     setUiPageViewController();
                 }
             } else {
                 //user is signed out
                 loggedOutHeaderLayout.setVisibility(View.VISIBLE);
+                hideAccountActiveCount();
                 setUiPageViewController();
             }
         } else {
             //user is signed out
             loggedOutHeaderLayout.setVisibility(View.VISIBLE);
+            hideAccountActiveCount();
             setUiPageViewController();
         }
     }
@@ -564,6 +573,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                     default:
                         if (accountsResponse.response != null)
                             Utils.alertErrorMessage(getActivity(), accountsResponse.response.desc);
+
                         break;
                 }
                 dismissProgress();
@@ -742,7 +752,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
             return percentage;
     }
 
-
     public void networkFailureHandler(final String errorMessage) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -760,5 +769,60 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
                 loadAccounts();
             }
         });
+    }
+
+    private void showVoucherCounter() {
+        new HttpAsyncTask<String, String, VoucherResponse>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected VoucherResponse httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getActivity().getApplication()).getApi().getVouchers();
+            }
+
+            @Override
+            protected Class<VoucherResponse> httpDoInBackgroundReturnType() {
+                return VoucherResponse.class;
+            }
+
+            @Override
+            protected VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                VoucherResponse voucherResponse = new VoucherResponse();
+                voucherResponse.response = new Response();
+                return voucherResponse;
+            }
+
+            @Override
+            protected void onPostExecute(VoucherResponse voucherResponse) {
+                super.onPostExecute(voucherResponse);
+                VoucherCollection voucher = voucherResponse.voucherCollection;
+                if (voucher != null) {
+                    List<Voucher> voucherSize = voucher.vouchers;
+                    if (voucherSize != null) {
+                        mCounter.setActiveVoucher(voucherSize.size());
+
+                    }
+                } else {
+                    mCounter.setActiveVoucher(0);
+                }
+            }
+        }.execute();
+    }
+
+    private void hideVoucherCounter() {
+        mCounter.setActiveVoucher(0);
+    }
+
+    private void showAccountActiveCount() {
+        mCounter.setAccountIsActive(true);
+        showVoucherCounter();
+    }
+
+    private void hideAccountActiveCount() {
+        mCounter.setAccountIsActive(false);
+        hideVoucherCounter();
     }
 }

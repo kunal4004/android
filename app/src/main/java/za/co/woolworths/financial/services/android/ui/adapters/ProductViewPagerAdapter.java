@@ -1,13 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -17,16 +15,24 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 
 public class ProductViewPagerAdapter extends PagerAdapter {
+
+    public interface MultipleImageInterface {
+        void SelectedImage(int position,View view);
+    }
+    private MultipleImageInterface multipleImageInterface;
+
     private final Context mContext;
     private List<String> mViewPager;
 
-    public ProductViewPagerAdapter(Context mContext, List<String> mViewPager) {
+    public ProductViewPagerAdapter(Context mContext, List<String> mViewPager,
+                                   MultipleImageInterface multipleImageInterface) {
         this.mContext = mContext;
+        this.multipleImageInterface = multipleImageInterface;
         this.mViewPager = mViewPager;
     }
 
     @Override
-    public Object instantiateItem(ViewGroup collection, int position) {
+    public Object instantiateItem(ViewGroup collection, final int position) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         ViewGroup v = (ViewGroup) inflater.inflate(R.layout.product_view,
                 collection, false);
@@ -35,6 +41,14 @@ public class ProductViewPagerAdapter extends PagerAdapter {
         DrawImage drawImage = new DrawImage(mContext);
         drawImage.displayImage(mProductImage, image);
         collection.addView(v, 0);
+
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("imageSelector","rear");
+                multipleImageInterface.SelectedImage(position,v);
+            }
+        });
         return v;
     }
 

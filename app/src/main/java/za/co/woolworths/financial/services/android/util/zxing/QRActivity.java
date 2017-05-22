@@ -74,6 +74,8 @@ import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
+
+import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
 import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
@@ -91,7 +93,7 @@ import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecorat
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class QRActivity extends Activity<QRModel> implements View.OnClickListener, SelectedProductView {
+public class QRActivity extends Activity<QRModel> implements View.OnClickListener, SelectedProductView, ProductViewPagerAdapter.MultipleImageInterface {
     public final int IMAGE_QUALITY = 85;
     public static final int CODE_PICK_IMAGE = 0x100;
     private BaseCameraManager cameraManager;
@@ -480,8 +482,10 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                 break;
 
             case R.id.btnShopOnlineWoolies:
-                if (!TextUtils.isEmpty(mCheckOutLink))
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mCheckOutLink)));
+                if (!TextUtils.isEmpty(mCheckOutLink)) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Utils.addUTMCode
+                            (mCheckOutLink))));
+                }
                 break;
 
             case R.id.btnManual:
@@ -691,7 +695,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         getDefaultColor(otherSkusList, skuId);
         mCheckOutLink = mProduct.checkOutLink;
         mDefaultImage = getImageByWidth(mProduct.externalImageRef);
-        populateView();
+        getHtmlData();
         promoImages(mProduct.promotionImages);
         displayProduct(mProductName);
         initColorParam(mDefaultColor);
@@ -713,12 +717,23 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         }
     }
 
-    protected void populateView() {
+    protected void getHtmlData() {
         mObjProductDetail = mproductDetail.get(0);
-        String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
-                "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
-                "</style></head><body>";
-        String footerTag = "</body></html>";
+
+        String head = "<head>" +
+                "<meta charset=\"UTF-8\">" +
+                "<style>" +
+                "@font-face {font-family: 'myriad-pro-regular';src: url('file://"
+                + this.getFilesDir().getAbsolutePath() + "/fonts/MyriadPro-Regular.otf');}" +
+                "body {" +
+                "line-height: 110%;" +
+                "font-size: 92% !important;" +
+                "text-align: justify;" +
+                "color:grey;" +
+                "font-family:'myriad-pro-regular';}" +
+                "</style>" +
+                "</head>";
+
         String descriptionWithoutExtraTag = "";
         if (!TextUtils.isEmpty(mObjProductDetail.longDescription)) {
             descriptionWithoutExtraTag = mObjProductDetail.longDescription
@@ -726,16 +741,20 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                     .replaceAll("<p>&nbsp;</p>", "")
                     .replaceAll("<ul><p>&nbsp;</p></ul>", " ");
         }
+
+        String htmlData = "<!DOCTYPE html><html>"
+                + head
+                + "<body>"
+                + isEmpty(descriptionWithoutExtraTag)
+                + "</body></html>";
+
         mWebDescription.loadDataWithBaseURL("file:///android_res/drawable/",
-                headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag,
+                htmlData,
                 "text/html; charset=UTF-8", "UTF-8", null);
         mTextTitle.setText(Html.fromHtml(isEmpty(mObjProductDetail.productName)));
-        mProductCode.setText(getString(R.string.product_code)
-                + ": "
-                + mObjProductDetail.productId);
+        mProductCode.setText(getString(R.string.product_code) + ": " + mObjProductDetail.productId);
         updatePrice();
     }
-
 
     public void updatePrice() {
         String fromPrice = String.valueOf(mObjProductDetail.fromPrice);
@@ -955,7 +974,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
             mAuxiliaryImages.clear();
             mAuxiliaryImages.addAll(removeAuxiliaryImageDuplicate);
 
-            mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
+            mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages, this);
             mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
             mProductViewPagerAdapter.notifyDataSetChanged();
             setupPagerIndicatorDots();
@@ -990,7 +1009,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                 }
             });
 
-        } catch (JSONException e) {
+        }catch (JSONException e) {
         }
     }
 
@@ -1347,5 +1366,14 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                 }
             }
         });
+    }
+
+    @Override
+    public void SelectedImage(int position, View view) {
+        Intent openMultipleImage = new Intent(this, MultipleImageActivity.class);
+        openMultipleImage.putExtra("position", position);
+        openMultipleImage.putExtra("auxiliaryImages", mAuxiliaryImages);
+        startActivity(openMultipleImage);
+        overridePendingTransition(0, 0);
     }
 }

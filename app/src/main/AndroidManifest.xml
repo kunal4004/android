@@ -14,19 +14,16 @@
     <uses-permission android:name="android.permission.CALL_PHONE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
     <!-- Barcode scanner -->
     <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="android.permission.FLASHLIGHT"/>
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.FLASHLIGHT"/>
-    <!-- Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7 -->
+    <!--Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7-->
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false"/>
@@ -119,67 +116,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardsActivity"
-            android:icon="@drawable/ic_action_bar_logo"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.AccountsActivity"
-            android:icon="@drawable/ic_action_bar_logo"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.ContactUsActivity"
-            android:icon="@drawable/ic_action_bar_logo"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.LoginActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/LoginTheme"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.TransactionHistoryActivity"
-            android:icon="@drawable/ic_action_bar_logo"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.PersonalLoanWithdrawalActivity"
-            android:icon="@drawable/ic_action_bar_logo"
-            android:label="@string/personal_loan_withdrawal"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.PersonalLoanWithdrawalConfirmationActivity"
-            android:icon="@drawable/ic_action_bar_logo"
-            android:label="@string/withdrawal"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardDetailActivity"
-            android:icon="@drawable/ic_action_bar_logo"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.StatementHistoryActivity"
-            android:icon="@drawable/ic_action_bar_logo"
-            android:label="@string/statement"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.StatusInfoActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.WRewardInfoActivity"
-            android:icon="@drawable/ic_action_bar_logo"
-            android:label="@string/information"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.VoucherTermsAndConditionsActivity"
-            android:icon="@drawable/ic_action_bar_logo"
-            android:label=""
-            android:screenOrientation="portrait"/>
-        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WebViewActivity"
             android:icon="@drawable/ic_action_bar_logo"
             android:screenOrientation="portrait"
             android:theme="@style/SSOActivity"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/StoreLocator"/>
         <!-- Goolge Maps API Key -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
@@ -198,10 +138,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/CLI"
             android:windowSoftInputMode="stateHidden"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountTestActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/ShoppingList"/>
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity"
             android:screenOrientation="portrait"
@@ -263,16 +200,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/MyAccountCards"/>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/ContactUs"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivityTest"
-            android:theme="@style/MyAccountCards"/>
-        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SSOActivity"/>
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity"
             android:screenOrientation="portrait"/>
@@ -303,9 +234,15 @@
             android:theme="@style/CLI"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible"/>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductSearchSubCategoryActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductSubCategoryActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CLI"/>
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity"
             android:label="@string/app_name"
@@ -313,7 +250,7 @@
             android:uiOptions="splitActionBarWhenNarrow"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible"/>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductViewGridActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
         <activity
@@ -321,7 +258,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductDetailViewActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductDetailActivity"
             android:excludeFromRecents="true"
             android:screenOrientation="portrait"
             android:taskAffinity=""
@@ -331,17 +268,6 @@
             android:name="za.co.woolworths.financial.services.android.util.GlideConfiguration"
             android:value="GlideModule"/>
 
-        <!--
-        <activity
-            android:name="za.co.woolworths.financial.services.android.util.barcode.scanner.ProductCategoryBarcodeActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppOverlayTheme"
-            android:uiOptions="splitActionBarWhenNarrow">
-            <meta-data
-                android:name="android.support.UI_OPTIONS"
-                android:value="splitActionBarWhenNarrow"/>
-        </activity>
-        -->
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.TransientActivity"
             android:screenOrientation="portrait"
@@ -353,13 +279,11 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.FAQDetailsWebActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle">
-        </activity>
+            android:theme="@style/FaqStyle"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WChangePasswordActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FaqStyle">
-        </activity>
+            android:theme="@style/FaqStyle"/>
     </application>
 
 </manifest>

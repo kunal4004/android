@@ -448,4 +448,8 @@ public class Utils {
         params.setMargins(left, top,
                 right, bottom);
     }
+
+    public static String addUTMCode(String link) {
+        return link + "&utm_source=oneapp&utm_medium=referral&utm_campaign=product";
+    }
 }
