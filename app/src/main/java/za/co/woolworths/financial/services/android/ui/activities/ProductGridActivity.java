@@ -715,7 +715,8 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
                         mSelectedProduct = mProduct.get(0);
                         onCallback(mProductId, mSkuId, true);
                     } else {
-                        setNumberOfItem(0);
+                        setNumberOfItem(mProduct.size());
+                        bindDataWithUI(mProduct);
                         hideVProgressBar();
                     }
                     break;

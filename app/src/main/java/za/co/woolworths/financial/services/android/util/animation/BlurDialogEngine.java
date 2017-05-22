@@ -419,7 +419,9 @@ public class BlurDialogEngine {
         if (mUseRenderScript) {
             overlay = RenderScriptBlurHelper.doBlur(overlay, mBlurRadius, true, mHoldingActivity);
         } else {
-            overlay = FastBlurHelper.doBlur(overlay, mBlurRadius, true);
+            try {
+                overlay = FastBlurHelper.doBlur(overlay, mBlurRadius, true);
+            }catch (Exception ex){}
         }
         if (mDebugEnable) {
             String blurTime = (System.currentTimeMillis() - startMs) + " ms";
