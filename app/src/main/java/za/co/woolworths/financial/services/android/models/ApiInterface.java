@@ -366,7 +366,7 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Body UpdateBankDetail updateBankDetail);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:120"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:900"})
     @GET("/content/promotions")
     PromotionsResponse getPromotions(
             @Header("apiId") String apiId,
