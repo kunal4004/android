@@ -191,14 +191,16 @@ public class Utils {
 
     public static void updateStatusBarBackground(Activity activity) {
         Window window = activity.getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         View decor = activity.getWindow().getDecorView();
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(ContextCompat.getColor(activity, R.color.black));
             decor.setSystemUiVisibility(0);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(ContextCompat.getColor(activity, R.color.white));
             decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
@@ -206,14 +208,17 @@ public class Utils {
 
     public static void updateStatusBarBackground(Activity activity, int color) {
         Window window = activity.getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
         View decor = activity.getWindow().getDecorView();
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(ContextCompat.getColor(activity, R.color.black));
             decor.setSystemUiVisibility(0);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.setStatusBarColor(ContextCompat.getColor(activity, color));
         }
     }

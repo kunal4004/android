@@ -486,15 +486,20 @@ public class MyAccountCardsActivity extends BaseActivity
     }
 
     public void updateStatusBarBackground(int color) {
-        Window window = getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        View decor = getWindow().getDecorView();
+
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            View decor = getWindow().getDecorView();
             window.setStatusBarColor(color);
             decor.setSystemUiVisibility(0);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            View decor = getWindow().getDecorView();
             window.setStatusBarColor(color);
         }
 
