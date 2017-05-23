@@ -41,7 +41,7 @@ import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 
 public interface ApiInterface {
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800"})
     @GET("/user/accounts")
     AccountResponse getAccount(
             @Header("apiId") String apiId,
@@ -56,7 +56,7 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Query("productOfferingId") String productOfferingId);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:900"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800"})
     @GET("/user/accounts")
     AccountsResponse getAccounts(
             @Header("apiId") String apiId,
@@ -86,7 +86,7 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Path("productOfferingId") String productOfferingId);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800"})
     @GET("/user/vouchers")
     VoucherResponse getVouchers(
             @Header("apiId") String apiId,
@@ -363,7 +363,7 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Body UpdateBankDetail updateBankDetail);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:120"})
     @GET("/content/promotions")
     PromotionsResponse getPromotions(
             @Header("apiId") String apiId,
