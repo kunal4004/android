@@ -14,6 +14,7 @@
     <dimen name="default_width">30dp</dimen>
     <dimen name="recent_search_margin">18dp</dimen>
     <dimen name="bank_spacing_width">32dp</dimen>
+    <dimen name="toolbar_spacing">52dp</dimen>
     <dimen name="cli_bottom_margin">80dp</dimen>
     <dimen name="cli_top_margin">48dp</dimen>
     <dimen name="cli_bottom_dp">10dp</dimen>
@@ -21,7 +22,6 @@
     <dimen name="cli_button_height">40dp</dimen>
     <dimen name="cli_button_height_popup">50dp</dimen>
     <dimen name="cli_eight_dp">8dp</dimen>
-    <dimen name="ten_dp">10dp</dimen>
     <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:
          https://developer.android.com/design/patterns/navigation-drawer.html -->
     <dimen name="navigation_drawer_width">240dp</dimen>
@@ -32,4 +32,47 @@
     <dimen name="default_stack_spacing">12dp</dimen>
     <dimen name="button_style_height">48dp</dimen>
     <dimen name="edittext_top_padding">10dp</dimen>
+    <dimen name="page_margin">16dp</dimen>
+    <dimen name="card_margin">45dp</dimen>
+    <dimen name="card_padding_margin">16dp</dimen>
+    <dimen name="account_margin">10dp</dimen>
+    <dimen name="acc_fifteen_dp">12sp</dimen>
+    <dimen name="acc_fourteen_sp">14sp</dimen>
+    <dimen name="acc_thirteen_sp">13sp</dimen>
+    <dimen name="toolbar_elevation">4dp</dimen>
+    <dimen name="image_width">120dp</dimen>
+    <dimen name="image_final_width">32dp</dimen>
+    <dimen name="spacing_normal">16dp</dimen>
+    <dimen name="product_search_top_margin">105dp</dimen>
+    <dimen name="barcode_margin">16dp</dimen>
+    <dimen name="unlinked_account_copy_padding_left_right">33dp</dimen>
+    <dimen name="voucher_message_layout_height">191dp</dimen>
+    <dimen name="voucher_barcode_margin">16dp</dimen>
+    <dimen name="voucher_barcode_number_margintop">18dp</dimen>
+    <dimen name="voucher_min_spend_margintop">18dp</dimen>
+    <dimen name="voucher_min_spend_padding">16dp</dimen>
+    <dimen name="voucher_barcode_number_margin">16.5dp</dimen>
+    <dimen name="voucher_barcode_number_text_size">17.5dp</dimen>
+    <dimen name="terms_and_conditions_margin">16dp</dimen>
+    <dimen name="voucher_card_margin">8dp</dimen>
+    <dimen name="voucher_card_layout_padding">8dp</dimen>
+    <dimen name="ten_dp">10dp</dimen>
+    <dimen name="size_qr_box_view_corner">2dp</dimen>
+    <dimen name="size_qr_box_view_corner_offset">-12dp</dimen>
+    <dimen name="length_qr_box_view_corner">30dp</dimen>
+    <dimen name="f_qr_box_view_desc">16sp</dimen>
+    <dimen name="f_qr_box_action_desc">12sp</dimen>
+    <dimen name="barcode_dimens">15dp</dimen>
+
+    <dimen name="ml_qr_box_action">10dp</dimen>
+    <dimen name="width_qr_box_view">240dp</dimen>
+    <dimen name="height_qr_box_view">240dp</dimen>
+    <dimen name="height_qr_box_view_desc">35dp</dimen>
+    <dimen name="cornerOffsetBottom">-12dp</dimen>
+    <dimen name="LoadingDots_dots_size_default">12dp</dimen>
+    <dimen name="LoadingDots_dots_space_default">2dp</dimen>
+    <dimen name="LoadingDots_jump_height_default">12dp</dimen>
+    <dimen name="product_image_height">220dp</dimen>
+
 </resources>
+

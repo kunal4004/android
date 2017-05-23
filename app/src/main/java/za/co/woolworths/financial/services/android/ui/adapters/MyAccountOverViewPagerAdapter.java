@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
@@ -51,6 +52,11 @@ public class MyAccountOverViewPagerAdapter extends PagerAdapter {
         boardingImage.setImageResource(images.getResourceId(position,-1));
         title.setText(titles[position]);
         description.setText(descriptions[position]);
+        Typeface tf = Typeface.createFromAsset(mContext.getAssets(), "fonts/MyriadPro-Regular.otf");
+        description.setTypeface(tf);
+        description.setTextSize(15);
+        description.setLineSpacing(0.0f, 1.3f);
+        description.setTextColor(mContext.getResources().getColor(R.color.black_50));
 
         container.addView(cView);
         return cView;

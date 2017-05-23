@@ -7,17 +7,21 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
+import android.support.v7.app.AppCompatActivity;
 
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
+
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONObject;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.models.dto.Counter;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 
 
@@ -31,6 +35,7 @@ public class WoolworthsApplication extends Application {
     private static Context mContextApplication;
     private UserManager mUserManager;
     private WfsApi mWfsApi;
+    private RetrofitAsyncClient mRetrofitClient;
     private Tracker mTracker;
     private boolean swapSecondFragment = false;
     private static String applyNowLink;
@@ -45,13 +50,23 @@ public class WoolworthsApplication extends Application {
     private static String baseURL;
     private static String apiKey;
     private static String sha1Password;
+    private static String ssoRedirectURI;
+    private static String stsURI;
+    private static String ssoRedirectURILogout;
+    private static String wwTodayURI;
+    private static String creditCardType;
     private boolean isDEABank = false;
     private boolean isOther = false;
     private int productOfferingId;
+    private LatLng lastKnowLatLng;
+    private AppCompatActivity mCurrentActivity = null;
 
     private static int NumVouchers = 0;
 
     public UpdateBankDetail updateBankDetail;
+
+    public Counter mCounter;
+
 
     public static void setSha1Password(String sha1Password) {
         WoolworthsApplication.sha1Password = sha1Password;
@@ -141,11 +156,54 @@ public class WoolworthsApplication extends Application {
         WoolworthsApplication.applyNowLink = applyNowLink;
     }
 
+    public static String getSsoRedirectURI() {
+        return ssoRedirectURI;
+    }
+
+    public static void setSsoRedirectURI(String ssoRedirectURI) {
+        WoolworthsApplication.ssoRedirectURI = ssoRedirectURI;
+    }
+
+    public static String getSsoRedirectURILogout() {
+        return ssoRedirectURILogout;
+    }
+
+    public static void setSsoRedirectURILogout(String ssoRedirectURILogout) {
+        WoolworthsApplication.ssoRedirectURILogout = ssoRedirectURILogout;
+    }
+
+    public static String getWwTodayURI() {
+        return wwTodayURI;
+    }
+
+    public static void setWwTodayURI(String wwTodayURI) {
+        WoolworthsApplication.wwTodayURI = wwTodayURI;
+    }
+
+    public static String getCreditCardType() {
+        return creditCardType;
+    }
+
+    public static void setCreditCardType(String creditCardType) {
+        WoolworthsApplication.creditCardType = creditCardType;
+    }
+
+    public static String getStsURI() {
+        return stsURI;
+    }
+
+    public static void setStsURI(String stsURI) {
+        WoolworthsApplication.stsURI = stsURI;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        Fresco.initialize(this);
+
         updateBankDetail = new UpdateBankDetail();
         WoolworthsApplication.context = this.getApplicationContext();
+        mCounter = new Counter(this.getApplicationContext());
         // set app context
         mContextApplication = getApplicationContext();
         Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
@@ -189,7 +247,6 @@ public class WoolworthsApplication extends Application {
 
 
         });
-        Fresco.initialize(this);
     }
 
     public UserManager getUserManager() {
@@ -206,11 +263,19 @@ public class WoolworthsApplication extends Application {
         return mWfsApi;
     }
 
+    public RetrofitAsyncClient getAsyncApi() {
+        if (mRetrofitClient == null) {
+            mRetrofitClient = new RetrofitAsyncClient(this);
+        }
+        return mRetrofitClient;
+    }
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();
         mUserManager = null;
         mWfsApi = null;
+        mRetrofitClient = null;
     }
 
     public Tracker getTracker() {
@@ -304,6 +369,14 @@ public class WoolworthsApplication extends Application {
         this.productOfferingId = productOfferingId;
     }
 
+    public LatLng getLastKnowLatLng() {
+        return lastKnowLatLng;
+    }
+
+    public void setLastKnowLatLng(LatLng lastKnowLatLng) {
+        this.lastKnowLatLng = lastKnowLatLng;
+    }
+
     /**
      * retrieve application context
      *
@@ -313,4 +386,7 @@ public class WoolworthsApplication extends Application {
         return mContextApplication;
     }
 
+    public Counter getCounter() {
+        return mCounter;
+    }
 }

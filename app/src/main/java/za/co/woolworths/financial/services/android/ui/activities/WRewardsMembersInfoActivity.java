@@ -28,7 +28,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.WRewardsVipMembe
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity.appbar;
 import static za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity.mToolbar;
 
 public class WRewardsMembersInfoActivity extends AppCompatActivity {

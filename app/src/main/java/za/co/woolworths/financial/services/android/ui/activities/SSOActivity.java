@@ -1,20 +1,18 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
+import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
@@ -33,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
-import io.jsonwebtoken.Jwts;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
@@ -42,9 +39,6 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static android.R.attr.data;
-import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
 public class SSOActivity extends WebViewActivity {
 
@@ -79,8 +73,7 @@ public class SSOActivity extends WebViewActivity {
     public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 
     private Toolbar mToolbar;
-    // TODO: This redirectURIString be pulled from MCS.
-    private String redirectURIString = "http://wfs-appserver-dev.wigroup.co:8080/wfs/app/v4/sso/redirect/successful";
+    private String redirectURIString = WoolworthsApplication.getSsoRedirectURI();
     private Protocol protocol;
     private Host host;
     private Path path;
@@ -99,6 +92,7 @@ public class SSOActivity extends WebViewActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.instantiateWebView();
+        Utils.updateStatusBarBackground(this, R.color.black);
     }
 
     private void instantiateWebView() {
@@ -165,7 +159,7 @@ public class SSOActivity extends WebViewActivity {
     }
 
     public enum Host implements SSORequiredParameter {
-        STS("stsqa.woolworths.co.za");
+        STS(WoolworthsApplication.getStsURI());
 
         private String host;
 
@@ -220,8 +214,7 @@ public class SSOActivity extends WebViewActivity {
 
 
         Uri.Builder builder = new Uri.Builder();
-        builder.scheme(this.protocol.rawValue())
-                .authority(this.host.rawValue())
+        builder.scheme(this.host.rawValue()) // moved host.rawValue() from authority to schema as MCS returns host with " https:// "
                 .appendEncodedPath(this.path.rawValue())
                 .appendQueryParameter("client_id", "WWOneApp")
                 .appendQueryParameter("response_type", "id_token") // Identity token
@@ -363,20 +356,35 @@ public class SSOActivity extends WebViewActivity {
         }
 
         @Override
-        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+        public void onReceivedSslError(WebView view, final SslErrorHandler handler, SslError error) {
             //super.onReceivedSslError(view, handler, error);
             hideProgressBar();
-            handler.proceed();
+            final AlertDialog.Builder builder = new AlertDialog.Builder(SSOActivity.this);
+            builder.setMessage(R.string.ssl_error);
+            builder.setPositiveButton("continue", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    handler.proceed();
+                }
+            });
+            builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    handler.cancel();
+                }
+            });
+            final AlertDialog dialog = builder.create();
+            dialog.show();
         }
     };
 
     public void hideProgressBar() {
-        if (progressDialog != null) {
+        try {
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
                 progressDialog = null;
             }
-        }
+        } catch (Exception ex){}
     }
 
     public void showProgressBar() {
@@ -431,5 +439,22 @@ public class SSOActivity extends WebViewActivity {
             }
         }.execute();
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_BACK:
+                    if (this.webView.canGoBack()) {
+                        this.webView.goBack();
+                    } else {
+                        finish();
+                    }
+                    return true;
+            }
+
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

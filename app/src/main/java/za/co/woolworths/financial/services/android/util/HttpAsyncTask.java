@@ -61,6 +61,7 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
                 cancel(false);
             }
         }
+        Log.e("result",result.toString());
         return result;
     }
 

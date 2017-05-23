@@ -7,7 +7,7 @@
     android:layout_marginTop="?attr/actionBarSize"
     android:background="@color/purple"
     android:orientation="vertical"
-    android:visibility="visible">
+    android:visibility="gone">
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/txtWithdrawAmount"
@@ -98,11 +98,18 @@
         android:id="@+id/relWithdrawalAmount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/txtWithdrawAmount"
         android:layout_marginTop="21dp"
         android:gravity="center"
-        android:minHeight="92dp"
-        android:layout_below="@+id/txtWithdrawAmount"
-        android:layout_alignParentStart="true">
+        android:minHeight="92dp">
+
+        <ProgressBar
+            android:id="@+id/mLoanWithdrawalProgress"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:visibility="gone" />
 
         <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
             android:id="@+id/editWithdrawAmount"
@@ -115,7 +122,7 @@
             android:background="@android:color/transparent"
             android:digits="0123456789"
             android:gravity="center"
-            android:hint="R "
+            android:hint="R   "
             android:imeOptions="actionDone"
             android:inputType="numberDecimal"
             android:maxLines="1"
@@ -124,6 +131,7 @@
             android:textColorHint="@color/recent_search_bg"
             android:textCursorDrawable="@drawable/colorcursor"
             android:textSize="45sp"
+            android:visibility="visible"
             app:WEditTextView_font="light">
 
             <requestFocus />

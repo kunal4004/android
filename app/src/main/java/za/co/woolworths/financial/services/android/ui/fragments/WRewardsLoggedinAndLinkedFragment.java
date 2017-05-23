@@ -27,10 +27,12 @@ import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.Counter;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
 import za.co.woolworths.financial.services.android.ui.adapters.ContactUsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -55,63 +57,57 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.wrewards_loggedin_and_linked_fragment, container, false);
+        View view = inflater.inflate(R.layout.wrewards_loggedin_and_linked_fragment, container, false);
         viewPager = (ViewPager) view.findViewById(R.id.viewpager);
-        progressBar=(ProgressBar)view.findViewById(R.id.progressBar);
-        fragmentView=(LinearLayout) view.findViewById(R.id.fragmentView);
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+        fragmentView = (LinearLayout) view.findViewById(R.id.fragmentView);
 
         tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         viewPager.setOffscreenPageLimit(3);
         progressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-
         getWrewards();
         return view;
     }
 
-    private void setupViewPager(ViewPager viewPager,VoucherResponse voucherResponse) {
-        Bundle bundle=new Bundle();
+    private void setupViewPager(ViewPager viewPager, VoucherResponse voucherResponse) {
+        Bundle bundle = new Bundle();
         bundle.putString("WREWARDS", Utils.objectToJson(voucherResponse));
-        adapter=new WRewardsFragmentPagerAdapter(getChildFragmentManager(),bundle);
+        adapter = new WRewardsFragmentPagerAdapter(getChildFragmentManager(), bundle);
         adapter.addFrag(new WRewardsOverviewFragment(), getString(R.string.overview));
         adapter.addFrag(new WRewardsVouchersFragment(), getString(R.string.vouchers));
         adapter.addFrag(new WRewardsSavingsFragment(), getString(R.string.savings));
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-        try
-        {
+        try {
             setupTabIcons(voucherResponse.voucherCollection.vouchers.size());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void setupTabIcons(int activeVoucherCount)
-    {
-        String[] tabTitle={getActivity().getString(R.string.overview),getActivity().getString(R.string.vouchers),getActivity().getString(R.string.savings)};
+    private void setupTabIcons(int activeVoucherCount) {
+        String[] tabTitle = {getActivity().getString(R.string.overview), getActivity().getString(R.string.vouchers), getActivity().getString(R.string.savings)};
 
 
-        for(int i=0;i<tabTitle.length;i++)
-        {
-            tabLayout.getTabAt(i).setCustomView(prepareTabView(i,tabTitle,activeVoucherCount));
+        for (int i = 0; i < tabTitle.length; i++) {
+            tabLayout.getTabAt(i).setCustomView(prepareTabView(i, tabTitle, activeVoucherCount));
         }
         tabLayout.getTabAt(0).getCustomView().setSelected(true);
     }
 
 
-    private View prepareTabView(int pos,String[] tabTitle,int activeVoucherCount) {
-        View view = getActivity().getLayoutInflater().inflate(R.layout.wrewards_custom_tab,null);
+    private View prepareTabView(int pos, String[] tabTitle, int activeVoucherCount) {
+        View view = getActivity().getLayoutInflater().inflate(R.layout.wrewards_custom_tab, null);
         TextView tv_title = (TextView) view.findViewById(R.id.tv_title);
         TextView tv_count = (TextView) view.findViewById(R.id.tv_count);
         tv_title.setText(tabTitle[pos]);
-        if(pos==1 && activeVoucherCount>0)
-        {
+        if (pos == 1 && activeVoucherCount > 0) {
             tv_count.setVisibility(View.VISIBLE);
-            tv_count.setText(""+activeVoucherCount);
-        }
-        else
+            tv_count.setText("" + activeVoucherCount);
+        } else {
             tv_count.setVisibility(View.GONE);
+        }
+
 
 
         return view;
@@ -154,21 +150,20 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         }.execute();
     }
 
-    public void handleVoucherResponse(VoucherResponse voucherResponse)
-    {
+    public void handleVoucherResponse(VoucherResponse voucherResponse) {
         switch (voucherResponse.httpCode) {
             case 200:
-                setupViewPager(viewPager,voucherResponse);
+                setupViewPager(viewPager, voucherResponse);
 
 
                 break;
             case 440:
                 AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
-                mError.setTitle("Authentication Error");
-                mError.setMessage("Your session expired. You've been signed out.");
+                mError.setTitle(getString(R.string.title_authentication_error));
+                mError.setMessage(getString(R.string.session_out_message));
                 mError.show();
 
-                new android.os.AsyncTask<Void, Void, String>(){
+                new android.os.AsyncTask<Void, Void, String>() {
 
                     @Override
                     protected String doInBackground(Void... params) {
@@ -189,11 +184,26 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
                 }.execute();
 
                 break;
-            default:break;
+            default:
+                setupErrorViewPager(viewPager);
+                break;
 
         }
     }
 
-
-
+    private void setupErrorViewPager(ViewPager viewPager) {
+        Bundle bundle = new Bundle();
+        bundle.putString("WREWARDS", "");
+        adapter = new WRewardsFragmentPagerAdapter(getChildFragmentManager(), bundle);
+        adapter.addFrag(new WRewardsErrorFragment(), getString(R.string.overview));
+        adapter.addFrag(new WRewardsErrorFragment(), getString(R.string.vouchers));
+        adapter.addFrag(new WRewardsErrorFragment(), getString(R.string.savings));
+        viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
+        try {
+            setupTabIcons(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

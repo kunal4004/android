@@ -4,19 +4,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -33,6 +30,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
@@ -48,14 +46,17 @@ import za.co.woolworths.financial.services.android.ui.views.WCustomPager;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WViewPager;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-
-public class MyAccountCardsActivity extends AppCompatActivity implements View.OnClickListener, ObservableScrollViewCallbacks, PersonalLoanAmount {
+public class MyAccountCardsActivity extends BaseActivity
+        implements View.OnClickListener,
+        ObservableScrollViewCallbacks,
+        PersonalLoanAmount {
 
     WViewPager pager;
     WCustomPager fragmentPager;
@@ -74,15 +75,16 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     private int wMinDrawnDownAmount;
     private LinearLayout llRootLayout;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_accounts_offline_layout);
         setActionBar();
         init();
+
         mWoolworthsApplication = (WoolworthsApplication) getApplication();
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(MyAccountCardsActivity.this);
-        getScreenResolution(this);
         position = getIntent().getIntExtra("position", 0);
         mWObservableScrollView.setScrollViewCallbacks(this);
         fragmentPager = (WCustomPager) findViewById(R.id.fragmentpager);
@@ -92,44 +94,73 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         changeViewPagerAndActionBarBackground(position);
         mBtnApplyNow.setVisibility(View.GONE);
         changeButtonColor(position);
-        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
+        getScreenResolution();
 
-            @Override
-            public void onPageSelected(int position) {
-                mWoolworthsApplication.setCliCardPosition(position);
-                fragmentPager.setCurrentItem(position);
-                changeViewPagerAndActionBarBackground(position);
-                changeButtonColor(position);
-                setStatusBarColor(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
         cardsHasAccount = getIntent().hasExtra("accounts");
         if (cardsHasAccount) {
             AccountsResponse accountsResponse = new Gson().fromJson(getIntent().getExtras().getString("accounts"), AccountsResponse.class);
             handleAccountsResponse(accountsResponse);
         } else {
-            fragmentsAdapter = new CardsFragmentPagerAdapter(getSupportFragmentManager());
+            fragmentsAdapter = new CardsFragmentPagerAdapter(getSupportFragmentManager()) {
+
+                @Override
+                public int getItemPosition(Object object) {
+
+                    return POSITION_NONE;
+                }
+
+            };
             fragmentsAdapter.addFrag(new WStoreCardEmptyFragment());
             fragmentsAdapter.addFrag(new WCreditCardEmptyFragment());
             fragmentsAdapter.addFrag(new WPersonalLoanEmptyFragment());
             fragmentPager.setAdapter(fragmentsAdapter);
             fragmentPager.setCurrentItem(getIntent().getIntExtra("position", 0));
             cards.add(R.drawable.w_store_card);
-            cards.add(R.drawable.w_credi_card);
+            cards.add(R.drawable.creditcardbenfits);
             cards.add(R.drawable.w_personal_loan_card);
             setUpAdapter(cards);
         }
 
-        setStatusBarColor(position);
+
         mSharePreferenceHelper.save("acc_card_activity", "acc_card_activity");
         this.registerReceiver(this.finishAlert, new IntentFilter(mSharePreferenceHelper.getValue("acc_card_activity")));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            View decor = getWindow().getDecorView();
+
+            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            // We want to change tint color to white again.
+            // You can also record the flags in advance so that you can turn UI back completely if
+            // you have set other flags before, such as translucent or full screen.
+            //  decor.setSystemUiVisibility(0);
+        }
+
+        fragmentInterfaceListener(position);
+
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            int currentPosition = 0;
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int newPosition) {
+                fragmentInterfaceListener(newPosition);
+                mWoolworthsApplication.setCliCardPosition(newPosition);
+                fragmentPager.setCurrentItem(newPosition);
+                changeViewPagerAndActionBarBackground(newPosition);
+                changeButtonColor(newPosition);
+                setStatusBarColor(newPosition);
+
+                currentPosition = newPosition;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+        setStatusBarColor(position);
     }
 
     public void setActionBar() {
@@ -199,7 +230,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                 return true;
         }
         return false;
@@ -237,7 +267,7 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                         }
                     }
                     if (!containsCreditCard) {
-                        cards.add(R.drawable.w_credi_card);
+                        cards.add(R.drawable.creditcardbenfits);
                     }
                     cards.add(R.drawable.w_personal_loan_card);
                     setUpAdapter(cards);
@@ -342,7 +372,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                                 Intent openWithdrawCashNow = new Intent(MyAccountCardsActivity.this, LoanWithdrawalActivity.class);
                                 openWithdrawCashNow.putExtra("minDrawnDownAmount", wMinDrawnDownAmount);
                                 startActivity(openWithdrawCashNow);
-                                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                             }
                             break;
                     }
@@ -370,25 +399,6 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
     public void setUpAdapter(ArrayList<Integer> cardsList) {
         pager.setAdapter(new MyAccountsCardsAdapter(MyAccountCardsActivity.this, cardsList));
         pager.setCurrentItem(getIntent().getIntExtra("position", 0));
-    }
-
-    private void getScreenResolution(Context context) {
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getMetrics(metrics);
-        int width = metrics.widthPixels;
-        int height = metrics.heightPixels;
-        if (width < 1000 && height < 1500) {
-            pager.setPadding(100, 0, 100, 0);
-            pager.setClipToPadding(false);
-            pager.setPageMargin(16);
-
-        } else {
-            pager.setPadding(200, 0, 200, 0);
-            pager.setClipToPadding(false);
-            pager.setPageMargin(16);
-        }
     }
 
     public void changeButtonColor(int position) {
@@ -462,11 +472,16 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        if (scrollState.UP == scrollState) {
-            hideViews();
-        } else if (scrollState == scrollState.DOWN) {
-            showViews();
-        } else {
+        try {
+            switch (scrollState) {
+                case UP:
+                    hideViews();
+                    break;
+                case DOWN:
+                    showViews();
+                    break;
+            }
+        } catch (Exception ignored) {
         }
     }
 
@@ -481,14 +496,9 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.setStatusBarColor(color);
-            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
 
         llRootLayout.setBackgroundColor(color);
-    }
-
-    private void whiteBackground() {
-        llRootLayout.setBackgroundColor(Color.WHITE);
     }
 
     private void setStatusBarColor(int position) {
@@ -508,16 +518,26 @@ public class MyAccountCardsActivity extends AppCompatActivity implements View.On
                 updateStatusBarBackground(personalLoanColor);
                 break;
         }
+    }
 
-        if (containsCreditCard) {
-            whiteBackground();
+    private void getScreenResolution() {
+        int marginPx = getResources().getDimensionPixelSize(R.dimen.page_margin);
+        int cardMarginPx = getResources().getDimensionPixelSize(R.dimen.card_margin);
+        pager.setPadding(cardMarginPx, 0, cardMarginPx, 0);
+        pager.setPageMargin(marginPx);
+        pager.setClipToPadding(false);
+    }
+
+    private void fragmentInterfaceListener(int position) {
+        try {
+            FragmentLifecycle fragmentToShow = (FragmentLifecycle) fragmentsAdapter.getItem(position);
+            fragmentToShow.onResumeFragment();
+
+            FragmentLifecycle fragmentToHide = (FragmentLifecycle) fragmentsAdapter.getItem(position);
+            fragmentToHide.onPauseFragment();
+        } catch (ClassCastException ignore){
+
         }
 
-        if (containsPersonalLoan) {
-            whiteBackground();
-        }
-        if (containsStoreCard) {
-            whiteBackground();
-        }
     }
 }

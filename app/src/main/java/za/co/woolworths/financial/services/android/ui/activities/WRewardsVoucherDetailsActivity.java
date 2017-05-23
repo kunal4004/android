@@ -27,7 +27,6 @@ import za.co.woolworths.financial.services.android.ui.views.SwipeStack;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.toolbar;
 
 public class WRewardsVoucherDetailsActivity extends AppCompatActivity implements SwipeStack.SwipeStackListener{
 

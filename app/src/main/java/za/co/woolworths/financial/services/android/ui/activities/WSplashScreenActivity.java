@@ -10,9 +10,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.widget.VideoView;
 
 import com.awfs.coordination.R;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
@@ -20,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.ApiInterface;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
+import za.co.woolworths.financial.services.android.ui.views.WVideoView;
 import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
@@ -29,16 +32,17 @@ import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCompletionListener {
 
     private boolean mVideoPlayerShouldPlay = false;
-    private VideoView videoView;
+    private WVideoView videoView;
     private boolean isMinimized = false;
-    PersistenceLayer dbHelper= null;
+    PersistenceLayer dbHelper = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wsplash_screen);
-        this.videoView = (VideoView) findViewById(R.id.activity_wsplash_screen_videoview);
+        this.videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
 
-        Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.wsplash_screen_video);
+        Uri videoUri = Uri.parse(getRandomVideos());
         this.videoView.setVideoURI(videoUri);
         this.videoView.start();
 
@@ -82,12 +86,12 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
                         .build()
                         .create(ApiInterface.class);
 
-                return mApiInterface.getConfig(getString(R.string.app_token),getDeviceID(), mcsAppVersion);
+                return mApiInterface.getConfig(getString(R.string.app_token), getDeviceID(), mcsAppVersion);
             }
 
             @Override
             public ConfigResponse httpError(final String errorMessage, final HttpErrorCode httpErrorCode) {
-                if (httpErrorCode == HttpErrorCode.NETWORK_UNREACHABLE){
+                if (httpErrorCode == HttpErrorCode.NETWORK_UNREACHABLE) {
 
                     WSplashScreenActivity.this.runOnUiThread(new Runnable() {
                         @Override
@@ -103,7 +107,7 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
                                     }).show();
                         }
                     });
-                } else if (httpErrorCode == HttpErrorCode.UNKOWN_ERROR){
+                } else if (httpErrorCode == HttpErrorCode.UNKOWN_ERROR) {
 
                     WSplashScreenActivity.this.runOnUiThread(new Runnable() {
                         @Override
@@ -131,6 +135,10 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
                 WoolworthsApplication.setBaseURL(configResponse.enviroment.getBase_url());
                 WoolworthsApplication.setApiKey(configResponse.enviroment.getApiId());
                 WoolworthsApplication.setSha1Password(configResponse.enviroment.getApiPassword());
+                WoolworthsApplication.setSsoRedirectURI(configResponse.enviroment.getSsoRedirectURI());
+                WoolworthsApplication.setStsURI(configResponse.enviroment.getStsURI());
+                WoolworthsApplication.setSsoRedirectURILogout(configResponse.enviroment.getSsoRedirectURILogout());
+                WoolworthsApplication.setWwTodayURI(configResponse.enviroment.getWwTodayURI());
                 WoolworthsApplication.setApplyNowLink(configResponse.defaults.getApplyNowLink());
                 WoolworthsApplication.setRegistrationTCLink(configResponse.defaults.getRegisterTCLink());
                 WoolworthsApplication.setFaqLink(configResponse.defaults.getFaqLink());
@@ -146,7 +154,7 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
     @Override
     public void onCompletion(MediaPlayer mp) {
 
-        if(!WSplashScreenActivity.this.mVideoPlayerShouldPlay){
+        if (!WSplashScreenActivity.this.mVideoPlayerShouldPlay) {
             /*
             * When creating a SessionDao with a key where the entry doesn't exist
             * in SQL lite, return a new SessionDao where the key is equal to the
@@ -161,19 +169,19 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
             *
             *
             * */
-            try{
+            try {
                 SessionDao sessionDao = new SessionDao(WSplashScreenActivity.this, SessionDao.KEY.USER_TOKEN).get();
-                if (sessionDao.value != null && !sessionDao.value.equals("")){
+                if (sessionDao.value != null && !sessionDao.value.equals("")) {
                     ScreenManager.presentMain(WSplashScreenActivity.this);
                     return;
                 }
-            }catch(Exception e){
+            } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
             ScreenManager.presentOnboarding(WSplashScreenActivity.this);
             mp.stop();
 
-        }else{
+        } else {
             mp.start();
         }
     }
@@ -184,11 +192,11 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
         SUCCESS
     }
 
-    private String getDeviceID(){
-        try{
+    private String getDeviceID() {
+        try {
 
-            return  Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        }catch (Exception e){
+            return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        } catch (Exception e) {
             return null;
         }
     }
@@ -196,17 +204,27 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
     @Override
     protected void onStop() {
         super.onStop();
-        isMinimized=true;
+        isMinimized = true;
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if(isMinimized)
-        {
-            startActivity(new Intent(this , WSplashScreenActivity.class));
+        if (isMinimized) {
+            startActivity(new Intent(this, WSplashScreenActivity.class));
             isMinimized = false;
             finish();
         }
+    }
+
+    private String getRandomVideos() {
+        ArrayList<String> listOfVideo = new ArrayList<>();
+        String rawFolderPath = "android.resource://" + getPackageName() + "/";
+        listOfVideo.add(rawFolderPath + R.raw.fashion_studiow_men);
+        listOfVideo.add(rawFolderPath+ R.raw.fashion_summertime);
+        listOfVideo.add(rawFolderPath+ R.raw.food_broccoli);
+        listOfVideo.add(rawFolderPath+ R.raw.food_chocolate);
+        Collections.shuffle(listOfVideo);
+        return listOfVideo.get(0);
     }
 }

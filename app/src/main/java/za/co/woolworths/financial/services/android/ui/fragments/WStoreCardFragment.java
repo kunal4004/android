@@ -6,12 +6,9 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.AbsoluteSizeSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -27,6 +24,7 @@ import java.text.ParseException;
 import java.util.List;
 
 import za.co.wigroup.logger.lib.WiGroupLogger;
+import za.co.woolworths.financial.services.android.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
@@ -37,14 +35,13 @@ import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsA
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.CustomTypefaceSpan;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 
-public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener {
+public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle {
 
     public WTextView availableBalance;
     public WTextView creditLimit;
@@ -56,19 +53,19 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
     String productOfferingId;
     WoolworthsApplication woolworthsApplication;
-    ConnectionDetector connectionDetector;
     private ProgressBar mProgressCreditLimit;
 
     private boolean isOfferActive = true;
     private ImageView mImageArrow;
     private PopWindowValidationMessage mPopWindowValidationMessage;
+    private AsyncTask<String, String, OfferActive> asyncTaskStore;
+    private boolean cardHasId = false;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.cards_common_fragment, container, false);
         woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-        connectionDetector = new ConnectionDetector();
         availableBalance = (WTextView) view.findViewById(R.id.available_funds);
         creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
         mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
@@ -88,13 +85,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         return view;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getActiveOffer();
-    }
-
-
     //To remove negative signs from negative balance and add "CR" after the negative balance
     public String removeNegativeSymbol(SpannableString amount) {
         String currentAmount = amount.toString();
@@ -113,12 +103,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                     woolworthsApplication.setProductOfferingId(p.productOfferingId);
                     availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.availableFunds), 1, getActivity())));
                     creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.creditLimit), 1, getActivity())));
-//                    minAmountDue.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.minimumAmountDue), 1, getActivity())));
-//                    currentBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.currentBalance), 1, getActivity())));
                     minAmountDue.setText(removeNegativeSymbol(WFormatter.formatAmount(p.minimumAmountDue)));
                     currentBalance.setText(removeNegativeSymbol(WFormatter.formatAmount(p.currentBalance)));
                     try {
-                        // dueDate.setText(setTypeFace(FontHyperTextParser.getSpannable(WFormatter.formatDate(p.paymentDueDate), 1, getActivity())));
                         dueDate.setText(WFormatter.formatDate(p.paymentDueDate));
                     } catch (ParseException e) {
                         dueDate.setText(p.paymentDueDate);
@@ -140,7 +127,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 
             case R.id.txtIncreseLimit:
+                Log.e("productOfferIdStore", String.valueOf(productOfferingId));
                 if (!isOfferActive) {
+                    ((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
                     startActivity(openCLIIncrease);
                     getActivity().overridePendingTransition(0, 0);
@@ -150,10 +139,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         }
     }
 
-
     private void getActiveOffer() {
+        ConnectionDetector connectionDetector = new ConnectionDetector();
         if (connectionDetector.isOnline(getActivity())) {
-            new HttpAsyncTask<String, String, OfferActive>() {
+            asyncTaskStore = new HttpAsyncTask<String, String, OfferActive>() {
                 @Override
                 protected OfferActive httpDoInBackground(String... params) {
                     return (woolworthsApplication.getApi().getActiveOfferRequest(productOfferingId));
@@ -181,11 +170,12 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                 protected void onPostExecute(OfferActive offerActive) {
                     super.onPostExecute(offerActive);
                     int httpCode = offerActive.httpCode;
-                    Log.e("isOfferActive-store",String.valueOf(isOfferActive));
+                    Log.e("isOfferActive-store", String.valueOf(isOfferActive));
                     String httpDesc = offerActive.response.desc;
                     if (httpCode == 200) {
                         isOfferActive = offerActive.offerActive;
                         if (isOfferActive) {
+                            cardHasId = true;
                             disableIncreaseLimit();
                         } else {
                             enableIncreaseLimit();
@@ -202,7 +192,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
                 protected Class<OfferActive> httpDoInBackgroundReturnType() {
                     return OfferActive.class;
                 }
-            }.execute();
+            };
+            asyncTaskStore.execute();
         } else {
             hideProgressBar();
             mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
@@ -223,17 +214,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     }
 
     public void disableIncreaseLimit() {
+
         txtIncreseLimit.setEnabled(false);
         txtIncreseLimit.setTextColor(Color.GRAY);
         mImageArrow.setImageAlpha(75);
-    }
-
-    private String setTypeFace(SpannableString value) {
-        Typeface mMyriaProFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Regular.otf");
-        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(value);
-        spannableStringBuilder.setSpan(new CustomTypefaceSpan("", mMyriaProFont), 0, value.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
-        spannableStringBuilder.setSpan(new AbsoluteSizeSpan(15, true), 0, value.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return spannableStringBuilder.toString();
     }
 
     private void setTextSize() {
@@ -253,13 +237,32 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         setTextSize();
     }
 
-
     //To remove negative signs from negative balance and add "CR" after the negative balance
     public String removeNegativeSymbol(String amount) {
-        String currentAmount = amount.toString();
+        String currentAmount = amount;
         if (currentAmount.contains("-")) {
             currentAmount = currentAmount.replace("-", "") + " CR";
         }
         return currentAmount;
+    }
+
+    @Override
+    public void onPauseFragment() {
+        if (asyncTaskStore != null) {
+            asyncTaskStore.isCancelled();
+        }
+    }
+
+    @Override
+    public void onResumeFragment() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!cardHasId) {
+                    getActiveOffer();
+                }
+            }
+        }, 100);
     }
 }

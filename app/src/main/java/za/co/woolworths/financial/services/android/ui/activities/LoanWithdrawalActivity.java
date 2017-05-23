@@ -1,12 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -19,29 +20,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.PopupWindow;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
-import java.lang.ref.WeakReference;
-import java.math.BigDecimal;
-import java.util.Locale;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class LoanWithdrawalActivity extends AppCompatActivity {
+public class LoanWithdrawalActivity extends BaseActivity {
 
     private WLoanEditTextView mEditWithdrawalAmount;
     private WTextView mTextAvailableFund;
@@ -50,16 +51,16 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
     private RelativeLayout mRelLoanWithdrawal;
     private SharePreferenceHelper mSharePreferenceHelper;
     private ConnectionDetector mConnectionDetector;
-    private PopWindowValidationMessage mPopWindowValidationMessage;
-    private ProgressDialog mGetProgressDialog;
-    Handler handler = new Handler();
+    Handler handler = new Handler();//not nice
     private String mDrawnDownAmount;
     private String mCreditLimit;
     private String mAvailableFunds;
-    private WeakReference<WLoanEditTextView> mEditTextWeakReference;
-    private WLoanEditTextView mEditText;
     private int wminDrawnDownAmount = 0;
-
+    private ProgressBar mLoanWithdrawalProgress;
+    private boolean arrowIsVisible = false;
+    private AsyncTask<String, String, IssueLoanResponse> issueLoanRequest;
+    private RelativeLayout mLinLoanWithdrawalSuccess;
+    private boolean deleteKeyIsPressed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,22 +69,19 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
         setContentView(R.layout.loan_withdrawal_activity);
         mConnectionDetector = new ConnectionDetector();
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(LoanWithdrawalActivity.this);
-        mPopWindowValidationMessage = new PopWindowValidationMessage(LoanWithdrawalActivity.this);
         setActionBar();
         initViews();
         setContent();
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            wminDrawnDownAmount = bundle.getInt("minDrawnDownAmount")/100;
+            wminDrawnDownAmount = bundle.getInt("minDrawnDownAmount") / 100;
         }
-        Log.e("wminDrawnDownAmount", String.valueOf(wminDrawnDownAmount));
 
         String shareDrawDownAmount = mSharePreferenceHelper.getValue("lw_amount_drawn_cent");
         if (TextUtils.isEmpty(shareDrawDownAmount)) {
             mEditWithdrawalAmount.setText("R ");
-            mEditWithdrawalAmount.setSelection(2);
         } else {
-            mEditWithdrawalAmount.setText(shareDrawDownAmount);
+            mEditWithdrawalAmount.setText(String.valueOf(Integer.valueOf(shareDrawDownAmount) / 100));
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -91,6 +89,8 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                 }
             }, 1000);
         }
+
+
     }
 
     private void initViews() {
@@ -98,6 +98,11 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
         mTextCreditLimit = (WTextView) findViewById(R.id.textCreditLimit);
         mEditWithdrawalAmount = (WLoanEditTextView) findViewById(R.id.editWithdrawAmount);
         mRelLoanWithdrawal = (RelativeLayout) findViewById(R.id.relLoanWithdrawal);
+        mLoanWithdrawalProgress = (ProgressBar) findViewById(R.id.mLoanWithdrawalProgress);
+        ScrollView mScrollLoanWithdrawal = (ScrollView) findViewById(R.id.scrollLoanWithdrawal);
+        mLinLoanWithdrawalSuccess = (RelativeLayout) findViewById(R.id.linLoanWithdrawalSuccess);
+        mScrollLoanWithdrawal.setVisibility(View.GONE);
+        mLinLoanWithdrawalSuccess.setVisibility(View.GONE);
     }
 
     private void setActionBar() {
@@ -125,67 +130,35 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                 boolean handled = false;
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     handled = true;
+                    if (arrowIsVisible) {
+                        setAmount();
+                    }
                 }
                 return handled;
             }
         });
-        mEditWithdrawalAmount.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+
+
+        mEditWithdrawalAmount.setOnKeyListener(new View.OnKeyListener() {
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                mEditTextWeakReference = new WeakReference<>(mEditWithdrawalAmount);
-                mEditText = mEditTextWeakReference.get();
-                if (mEditText == null) return;
-                String s = editable.toString();
-                mEditText.removeTextChangedListener(this);
-                String cleanString = s.replaceAll("[\\D]", "");
-                if (TextUtils.isEmpty(cleanString)) {
-                    cleanString = "0.00";
-                }
-                BigDecimal parsed = new BigDecimal(cleanString).setScale(2, BigDecimal.ROUND_FLOOR).divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR);
-                java.util.Currency usd = java.util.Currency.getInstance("USD");
-                java.text.NumberFormat format = java.text.NumberFormat.getCurrencyInstance(java.util.Locale.US);
-                format.setCurrency(usd);
-                String formatted = format.format(parsed);
-                String newFormat = formatted.replace(",", " ");
-                String symbol = format.getCurrency().getSymbol(Locale.US);
-                int checkAmount = 0;
-                if (!TextUtils.isEmpty(newFormat)) {
-                    checkAmount = Double.valueOf(newFormat.replace(symbol, "").replace(" ", "")).intValue();
-                }
-                if (newFormat.length() > 0) {
-                    newFormat = newFormat.replace(symbol, "R ");
-                }
-                if (checkAmount == 0) {
-                    menuItemVisible(mMenu, false);
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_DEL) {
+                    Log.e("deletekey", mEditWithdrawalAmount.getText().toString());
+                    deleteKeyIsPressed = true;
                 } else {
-                    menuItemVisible(mMenu, true);
+                    deleteKeyIsPressed = false;
                 }
-                if (newFormat.equalsIgnoreCase("R 0.00")) {
-                    newFormat = "R ";
-                }
-                mEditText.setText(newFormat);
-                if (newFormat.length() > 6 && !newFormat.equalsIgnoreCase("R 0.00")) {
-                    mEditText.setSelection(newFormat.length());
-                } else {
-                    mEditText.setSelection(newFormat.length());
-                }
-                mEditText.addTextChangedListener(this);
+                return false;
             }
         });
+
+        mEditWithdrawalAmount.addTextChangedListener(new NumberTextWatcher(mEditWithdrawalAmount));
 
         WLoanEditTextView.OnKeyPreImeListener onKeyPreImeListener =
                 new WLoanEditTextView.OnKeyPreImeListener() {
                     @Override
                     public void onBackPressed() {
-                        Log.d("TAG", "CALL BACK RECEIVED");
                         LoanWithdrawalActivity.this.onBackPressed();
                     }
                 };
@@ -213,71 +186,32 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                 previousScreen();
                 return true;
             case R.id.itemNextArrow:
-                Log.e("wminDrawnAmount", String.valueOf(wminDrawnDownAmount));
-                if (getDrawnDownAmount() < wminDrawnDownAmount) {
-
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            hideKeyboard();
-                        }
-                    }, 100);
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mPopWindowValidationMessage.displayValidationMessage(String.valueOf(wminDrawnDownAmount),
-                                    PopWindowValidationMessage.OVERLAY_TYPE.LOW_LOAN_AMOUNT)
-                                    .setOnDismissListener(new PopupWindow.OnDismissListener() {
-                                        @Override
-                                        public void onDismiss() {
-                                            showSoftKeyboard();
-                                            Utils.updateStatusBarBackground(LoanWithdrawalActivity.this, R.color.purple);
-                                        }
-                                    });
-                        }
-                    }, 200);
-                } else if (getDrawnDownAmount() >= wminDrawnDownAmount
-                        && getDrawnDownAmount() <= getAvailableFund()) {
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            hideKeyboard();
-                        }
-                    }, 100);
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mDrawnDownAmount = mEditWithdrawalAmount.getText().toString();
-                            mCreditLimit = amountInCents(mTextCreditLimit.getText().toString());
-                            mAvailableFunds = amountInCents(mTextAvailableFund.getText().toString());
-                            loanRequest();
-                        }
-                    }, 200);
-                } else {
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            hideKeyboard();
-                        }
-                    }, 100);
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mPopWindowValidationMessage.displayValidationMessage("",
-                                    PopWindowValidationMessage.OVERLAY_TYPE.HIGH_LOAN_AMOUNT)
-                                    .setOnDismissListener(new PopupWindow.OnDismissListener() {
-                                        @Override
-                                        public void onDismiss() {
-                                            showSoftKeyboard();
-                                            Utils.updateStatusBarBackground(LoanWithdrawalActivity.this, R.color.purple);
-                                        }
-                                    });
-                        }
-                    }, 200);
-                }
+                setAmount();
                 break;
         }
         return false;
+    }
+
+    private void setAmount() {
+        if (getDrawnDownAmount() < wminDrawnDownAmount) {
+            Utils.displayValidationMessage(LoanWithdrawalActivity.this,
+                    TransientActivity.VALIDATION_MESSAGE_LIST.LOW_LOAN_AMOUNT,
+                    String.valueOf(wminDrawnDownAmount));
+        } else if (getDrawnDownAmount() >= wminDrawnDownAmount
+                && getDrawnDownAmount() <= getAvailableFund()) {
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mDrawnDownAmount = mEditWithdrawalAmount.getText().toString();
+                    mCreditLimit = amountInCents(mTextCreditLimit.getText().toString());
+                    mAvailableFunds = amountInCents(mTextAvailableFund.getText().toString());
+                    loanRequest();
+                }
+            }, 200);
+        } else {
+            Utils.displayValidationMessage(LoanWithdrawalActivity.this,
+                    TransientActivity.VALIDATION_MESSAGE_LIST.HIGH_LOAN_AMOUNT, "");
+        }
     }
 
     @Override
@@ -296,12 +230,12 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
             @Override
             public void run() {
                 finish();
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
         }, 200);
     }
 
     public void menuItemVisible(Menu menu, boolean isVisible) {
+        arrowIsVisible = isVisible;
         try {
             MenuItem menuItem = menu.findItem(R.id.itemNextArrow);
             if (isVisible) {
@@ -328,7 +262,6 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -336,7 +269,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
 
     public void loanRequest() {
         if (mConnectionDetector.isOnline(this)) {
-            new HttpAsyncTask<String, String, IssueLoanResponse>() {
+            issueLoanRequest = new HttpAsyncTask<String, String, IssueLoanResponse>() {
                 @Override
                 protected IssueLoanResponse httpDoInBackground(String... params) {
                     int productOfferingId = Integer.valueOf(mSharePreferenceHelper.getValue("lw_product_offering_id"));
@@ -358,40 +291,34 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
 
                 @Override
                 protected void onPreExecute() {
-                    mGetProgressDialog = new ProgressDialog(LoanWithdrawalActivity.this);
-                    mGetProgressDialog.setMessage(FontHyperTextParser.getSpannable(getString(R.string.issueing_loan), 1, LoanWithdrawalActivity.this));
-                    mGetProgressDialog.setCancelable(false);
-                    mGetProgressDialog.show();
+                    showProgressBar();
                     super.onPreExecute();
                 }
 
                 @Override
                 protected void onPostExecute(IssueLoanResponse issueLoanResponse) {
                     super.onPostExecute(issueLoanResponse);
-                    hideProgressDialog();
+                    hideProgressBar();
                     if (issueLoanResponse.httpCode == 200) {
                         mSharePreferenceHelper.save(String.valueOf(issueLoanResponse.installmentAmount), "lw_installment_amount");
                         Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this, LoanWithdrawalConfirmActivity.class);
                         openConfirmWithdrawal.putExtra("drawnDownAmount", mDrawnDownAmount);
                         openConfirmWithdrawal.putExtra("availableFunds", mAvailableFunds);
                         openConfirmWithdrawal.putExtra("creditLimit", mCreditLimit);
+                        openConfirmWithdrawal.putExtra("minDrawnDownAmount", wminDrawnDownAmount);
                         openConfirmWithdrawal.putExtra("repaymentPeriod", repaymentPeriod(getCreditAmount()));
                         startActivity(openConfirmWithdrawal);
-                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                         finish();
                     } else {
                         try {
+                            hideKeyboard();
                             String responseDesc = issueLoanResponse.response.desc;
                             if (responseDesc != null) {
-                                mPopWindowValidationMessage.displayValidationMessage(responseDesc,
-                                        PopWindowValidationMessage.OVERLAY_TYPE.ERROR)
-                                        .setOnDismissListener(new PopupWindow.OnDismissListener() {
-                                            @Override
-                                            public void onDismiss() {
-                                                showSoftKeyboard();
-                                                Utils.updateStatusBarBackground(LoanWithdrawalActivity.this, R.color.purple);
-                                            }
-                                        });
+                                if (!TextUtils.isEmpty(responseDesc)) {
+                                    Utils.displayValidationMessage(LoanWithdrawalActivity.this,
+                                            TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                                            responseDesc);
+                                }
                             }
                         } catch (NullPointerException ignored) {
                         }
@@ -401,7 +328,7 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                 @Override
                 protected IssueLoanResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                     IssueLoanResponse issueLoanResponse = new IssueLoanResponse();
-                    hideProgressDialog();
+                    hideProgressBar();
                     return issueLoanResponse;
                 }
 
@@ -409,10 +336,14 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
                 protected Class<IssueLoanResponse> httpDoInBackgroundReturnType() {
                     return IssueLoanResponse.class;
                 }
-            }.execute();
+            };
+
+            issueLoanRequest.execute();
 
         } else {
-            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server), PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+            Utils.displayValidationMessage(LoanWithdrawalActivity.this,
+                    TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+                    getString(R.string.connect_to_server));
         }
     }
 
@@ -421,12 +352,6 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
             return 36;
         } else {
             return 60;
-        }
-    }
-
-    private void hideProgressDialog() {
-        if (mGetProgressDialog != null && mGetProgressDialog.isShowing()) {
-            mGetProgressDialog.dismiss();
         }
     }
 
@@ -464,5 +389,141 @@ public class LoanWithdrawalActivity extends AppCompatActivity {
     public void showSoftKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(mEditWithdrawalAmount, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    private void showProgressBar() {
+        mLoanWithdrawalProgress.setVisibility(View.VISIBLE);
+        mLoanWithdrawalProgress.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+        mEditWithdrawalAmount.setVisibility(View.GONE);
+        menuItemVisible(mMenu, false);
+    }
+
+    private void hideProgressBar() {
+        mLoanWithdrawalProgress.setVisibility(View.GONE);
+        mLoanWithdrawalProgress.getIndeterminateDrawable().setColorFilter(null);
+        mEditWithdrawalAmount.setVisibility(View.VISIBLE);
+        menuItemVisible(mMenu, true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (issueLoanRequest != null) {
+            if (!issueLoanRequest.isCancelled()) {
+                issueLoanRequest.cancel(true);
+            }
+        }
+    }
+
+
+    public class NumberTextWatcher implements TextWatcher {
+
+        private DecimalFormat df;
+        private DecimalFormat dfnd;
+        private boolean hasFractionalPart;
+
+        private EditText et;
+
+        NumberTextWatcher(EditText et) {
+            df = new DecimalFormat("#,###.##");
+            df.setDecimalSeparatorAlwaysShown(true);
+            dfnd = new DecimalFormat("#,###");
+            this.et = et;
+            hasFractionalPart = false;
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            et.removeTextChangedListener(this);
+            try {
+                int inilen, endlen;
+                inilen = et.getText().length();
+                if (!deleteKeyIsPressed) {
+                    String v = s.toString().replace(String.valueOf(df.getDecimalFormatSymbols()
+                            .getGroupingSeparator()), "").replace(" .", ".")
+                            .replace(" ", "").replace("R ", "")
+                            .replace("R", "").replace(".00", "");
+                    Number n = null;
+                    if (TextUtils.isEmpty(v)) {
+                        et.setText("");
+                        menuItemVisible(mMenu, false);
+                    } else {
+                        try {
+                            n = df.parse(v);
+                        } catch (ParseException ignored) {
+                        }
+                        int cp = et.getSelectionStart();
+                        String finalAmount = null;
+                        if (hasFractionalPart) {
+                            finalAmount = "R " + df.format(n).replace(".", "").replace(",", " ") + ".00";
+                        } else {
+                            finalAmount = "R " + dfnd.format(n).replace(".", "").replace(",", " ") + ".00";
+                        }
+
+                        et.setText(finalAmount);
+                        endlen = et.getText().length();
+                        int sel = (cp + (endlen - inilen));
+                        if (sel > 0 && sel <= et.getText().length()) {
+                            et.setSelection(endlen);
+                        } else {
+                            // place cursor at the end?
+                            et.setSelection(et.getText().length());
+                        }
+                        menuItemVisible(mMenu, true);
+                    }
+                } else {
+                    String withdrawalAmount = mEditWithdrawalAmount.getText().toString();
+                    String intWithdrawalAmount = withdrawalAmount
+                            .replace(String.valueOf(df.getDecimalFormatSymbols()
+                                    .getGroupingSeparator()), "").replace(" .", ".")
+                            .replace(" ", "").replace("R ", "")
+                            .replace("R", "").replace(".00", "").replace(".0", "");
+                    intWithdrawalAmount = intWithdrawalAmount.substring(0, intWithdrawalAmount.length() - 1);
+                    Number n = null;
+                    if (TextUtils.isEmpty(intWithdrawalAmount)) {
+                        et.setText("");
+                        menuItemVisible(mMenu, false);
+                    } else {
+                        try {
+                            n = df.parse(intWithdrawalAmount);
+                        } catch (ParseException ignored) {
+                        }
+                        int cp = et.getSelectionStart();
+                        String finalAmount = null;
+
+                        if (hasFractionalPart) {
+                            finalAmount = "R " + df.format(n).replace(".", "").replace(",", " ") + ".00";
+                        } else {
+                            finalAmount = "R " + dfnd.format(n).replace(".", "").replace(",", " ") + ".00";
+                        }
+
+                        et.setText(finalAmount);
+                        endlen = et.getText().length();
+                        int sel = (cp + (endlen - inilen));
+                        if (sel > 0 && sel <= et.getText().length()) {
+                            et.setSelection(sel);
+                        } else {
+                            // place cursor at the end?
+                            et.setSelection(et.getText().length());
+                        }
+                        menuItemVisible(mMenu, true);
+                    }
+                }
+            } catch (NumberFormatException ignored) {
+            }
+            et.addTextChangedListener(this);
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (before - count == 1) { // onDeleteButton pressed
+            } else if (s.subSequence(start, start + count).toString().equals("\n")) {
+                hasFractionalPart = s.toString().contains(String.valueOf(df.getDecimalFormatSymbols().getDecimalSeparator()));
+            }
+        }
     }
 }

@@ -2,19 +2,25 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
+import android.graphics.Paint;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,40 +28,37 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.zxing.common.StringUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Currency;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
+
+import me.leolin.shortcutbadger.ShortcutBadger;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
-import za.co.woolworths.financial.services.android.ui.fragments.CLISecondStepFragment;
+import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 import static android.Manifest.permission_group.STORAGE;
-
-/**
- * Created by W7099877 on 26/10/2016.
- */
 
 public class Utils {
 
     public final static float BIG_SCALE = 2.4f;
     public final static float SMALL_SCALE = 1.9f;
     public final static float DIFF_SCALE = BIG_SCALE - SMALL_SCALE;
+    public final static int PAGE_SIZE = 60;
     public static int FIRST_PAGE = 0;
     public static int DEFAULT_SELECTED_NAVIGATION_ITEM = 0;
 
@@ -77,6 +80,7 @@ public class Utils {
     public static final String SILVER_CARD = "400154";
     public static final String GOLD_CARD = "410374";
     public static final String BLACK_CARD = "410375";
+    public static final int ACCOUNTS_PROGRESS_BAR_MAX_VALUE = 10000;
 
     public static void saveLastLocation(Location loc, Context mContext) {
 
@@ -211,8 +215,6 @@ public class Utils {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.setStatusBarColor(ContextCompat.getColor(activity, color));
-            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-
         }
     }
 
@@ -270,56 +272,176 @@ public class Utils {
         return response;
     }
 
-//
-//    public void setTaskBarColored(int color) {
-//        Window w = this.getWindow();
-//        // w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        //status bar height
-//        w.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//        w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        int statusBarHeight = getStatusBarHeight();
-//        View view = new View(this);
-//        view.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//        view.getLayoutParams().height = statusBarHeight;
-//        ((ViewGroup) w.getDecorView()).addView(view);
-//        view.setBackgroundColor(color);
-//        llRootLayout.setBackgroundColor(color);
-//        //View decor = getWindow().getDecorView();
-//        //decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-//    }
+    public static int getToolbarHeight(Context context) {
+        final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
+                new int[]{R.attr.actionBarSize});
+        int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
 
-//
-//    public void setStatusBarColor(View statusBar, int color) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            Window w = getWindow();
-//            w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//            //status bar height
-//            // int actionBarHeight = getActionBarHeight();
-//            // int statusBarHeight = getStatusBarHeight();
-//            //action bar height
-//            //  statusBar.getLayoutParams().height = actionBarHeight + statusBarHeight;
-//            statusBar.setBackgroundColor(color);
-//            llRootLayout.setBackgroundColor(color);
-//        }
-//    }
-//
-//    public int getActionBarHeight() {
-//        int actionBarHeight = 0;
-//        TypedValue tv = new TypedValue();
-//        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-//            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-//        }
-//        return actionBarHeight;
-//    }
-//
-//    public int getStatusBarHeight() {
-//        int result = 0;
-//        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-//        if (resourceId > 0) {
-//            result = getResources().getDimensionPixelSize(resourceId);
-//        }
-//        return result;
-//    }
-//
+        return toolbarHeight;
+    }
 
+    public static int getTabsHeight(Context context) {
+        return (int) context.getResources().getDimension(R.dimen.bank_spacing_width);
+    }
+
+    public static WProduct stringToJson(Context context, String value) {
+        if (TextUtils.isEmpty(value))
+            return null;
+
+        try {
+            SessionDao sessionDao = new SessionDao(context);
+            sessionDao.key = SessionDao.KEY.STORES_LATEST_PAYLOAD;
+            sessionDao.value = value;
+            try {
+                sessionDao.save();
+            } catch (Exception e) {
+                Log.e("TAG", e.getMessage());
+            }
+        } catch (Exception e) {
+            Log.e("exception", String.valueOf(e));
+        }
+
+        TypeToken<WProduct> token = new TypeToken<WProduct>() {
+        };
+        return new Gson().fromJson(value, token.getType());
+    }
+
+
+    public static void sessionDaoSave(Context context, SessionDao.KEY key, String value) {
+        SessionDao sessionDao = new SessionDao(context);
+        sessionDao.key = key;
+        sessionDao.value = value;
+        try {
+            sessionDao.save();
+        } catch (Exception e) {
+            Log.e("TAG", e.getMessage());
+        }
+    }
+
+    public static String getSessionDaoValue(Context context, SessionDao.KEY key) {
+        SessionDao sessionDao = null;
+        try {
+            sessionDao = new SessionDao(context, key).get();
+            return sessionDao.value;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    public static void setBadgeCounter(Context context, int badgeCount) {
+        ShortcutBadger.applyCount(context, badgeCount);
+        sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
+    }
+
+    public static void removeBadgeCounter(Context context) {
+        try {
+            ShortcutBadger.applyCount(context, 0);
+        } catch (NullPointerException ex) {
+        }
+    }
+
+    public static boolean isLocationEnabled(Context context) {
+        int locationMode = 0;
+        String locationProviders;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
+
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+
+        } else {
+            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            return !TextUtils.isEmpty(locationProviders);
+        }
+    }
+
+    public static void addToShoppingCart(Context context, ShoppingList addtoShoppingCart) {
+        List<ShoppingList> addtoShoppingCarts = getShoppingList(context);
+        SessionDao sessionDao = new SessionDao(context);
+        sessionDao.key = SessionDao.KEY.STORE_SHOPPING_LIST;
+        Gson gson = new Gson();
+        boolean isExist = false;
+        if (addtoShoppingCarts == null) {
+            addtoShoppingCarts = new ArrayList<>();
+            addtoShoppingCarts.add(0, addtoShoppingCart);
+            sessionDao.value = gson.toJson(addtoShoppingCarts);
+            try {
+                sessionDao.save();
+            } catch (Exception e) {
+                Log.e("TAG", e.getMessage());
+            }
+        } else {
+            for (ShoppingList s : addtoShoppingCarts) {
+                if (s.getProduct_id().equalsIgnoreCase(addtoShoppingCart.getProduct_id())) {
+                    isExist = true;
+                }
+            }
+            if (!isExist) {
+                addtoShoppingCarts.add(0, addtoShoppingCart);
+                sessionDao.value = gson.toJson(addtoShoppingCarts);
+                try {
+                    sessionDao.save();
+                } catch (Exception e) {
+                    Log.e("TAG", e.getMessage());
+                }
+            }
+        }
+    }
+
+    public static List<ShoppingList> getShoppingList(Context context) {
+        List<ShoppingList> historyList = null;
+        try {
+            SessionDao sessionDao = new SessionDao(context,
+                    SessionDao.KEY.STORE_SHOPPING_LIST).get();
+            if (sessionDao.value == null) {
+                historyList = new ArrayList<>();
+            } else {
+                Gson gson = new Gson();
+                Type type = new TypeToken<List<ShoppingList>>() {
+                }.getType();
+                historyList = gson.fromJson(sessionDao.value, type);
+            }
+        } catch (Exception e) {
+            Log.e("TAG", e.getMessage());
+        }
+        return historyList;
+    }
+
+    public static void displayValidationMessage(Context context, TransientActivity.VALIDATION_MESSAGE_LIST key, String description) {
+        Intent openMsg = new Intent(context, TransientActivity.class);
+        Bundle args = new Bundle();
+        args.putSerializable("key", key);
+        args.putString("description", description);
+        openMsg.putExtras(args);
+        context.startActivity(openMsg);
+        ((AppCompatActivity) context).overridePendingTransition(0, 0);
+    }
+
+    public static void alertErrorMessage(Context context, String message) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(message);
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+
+    public static String addUTMCode(String link) {
+        return link + "&utm_source=oneapp&utm_medium=referral&utm_campaign=product";
+    }
 }

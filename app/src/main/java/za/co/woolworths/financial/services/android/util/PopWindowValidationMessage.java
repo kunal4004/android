@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,9 +22,8 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-import java.util.Locale;
-
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
@@ -41,7 +42,8 @@ public class PopWindowValidationMessage {
 
     public enum OVERLAY_TYPE {
         CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
-        HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT
+        HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
+        SHOPPING_LIST_INFO
     }
 
     public PopWindowValidationMessage(Context context) {
@@ -109,13 +111,13 @@ public class PopWindowValidationMessage {
                 setAnimation();
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
-                mView.findViewById(R.id.btnOK)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startExitAnimation(overlay_type);
-                            }
-                        });
+//                mView.findViewById(R.id.btnOK)
+//                        .setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                startExitAnimation(overlay_type);
+//                            }
+//                        });
                 break;
 
             case INSOLVENCY:
@@ -124,13 +126,13 @@ public class PopWindowValidationMessage {
                 setAnimation();
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
-                mView.findViewById(R.id.btnOK)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startExitAnimation(overlay_type);
-                            }
-                        });
+//                mView.findViewById(R.id.btnOK)
+//                        .setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                startExitAnimation(overlay_type);
+//                            }
+//                        });
                 break;
 
             case CONFIDENTIAL:
@@ -141,13 +143,13 @@ public class PopWindowValidationMessage {
                 setAnimation();
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
-                mView.findViewById(R.id.btnOK)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startExitAnimation(overlay_type);
-                            }
-                        });
+//                mView.findViewById(R.id.btnOK)
+//                        .setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                startExitAnimation(overlay_type);
+//                            }
+//                        });
                 break;
 
             case STORE_LOCATOR_DIRECTION:
@@ -232,21 +234,13 @@ public class PopWindowValidationMessage {
                 setAnimation();
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
-                mView.findViewById(R.id.btnOK)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startExitAnimation(overlay_type);
-                            }
-                        });
-
-                mView.findViewById(R.id.btCancel)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startExitAnimation(overlay_type.ERROR);
-                            }
-                        });
+//                mView.findViewById(R.id.btnOK)
+//                        .setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                startExitAnimation(overlay_type);
+//                            }
+//                        });
 
                 mRelPopContainer
                         .setOnClickListener(new View.OnClickListener() {
@@ -266,7 +260,6 @@ public class PopWindowValidationMessage {
                 textEmailContent.setText(description);
                 mRelPopContainer.setAnimation(mFadeInAnimation);
                 mRelRootContainer.setAnimation(mPopEnterAnimation);
-
                 mRelPopContainer
                         .setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -279,6 +272,56 @@ public class PopWindowValidationMessage {
                         });
                 break;
 
+            case BARCODE_ERROR:
+                mView = mLayoutInflater.inflate(R.layout.barcode_error, null);
+                popupWindowSetting(mView);
+                setAnimation();
+                touchToDismiss(overlay_type);
+                mRelPopContainer.setAnimation(mFadeInAnimation);
+                mRelRootContainer.setAnimation(mPopEnterAnimation);
+                mView.findViewById(R.id.btnOk)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startExitAnimation(overlay_type);
+                            }
+                        });
+                break;
+
+            case SHOPPING_LIST_INFO:
+                mView = mLayoutInflater.inflate(R.layout.shopping_list_info, null);
+                popupWindowSetting(mView);
+                setAnimation();
+                if (description.equalsIgnoreCase("viewShoppingList")) {
+                    mView.findViewById(R.id.shoppingListDivider).setVisibility(View.VISIBLE);
+                    mView.findViewById(R.id.btnViewShoppingList).setVisibility(View.VISIBLE);
+                }
+
+                mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startExitAnimation(overlay_type);
+                    }
+                });
+//                touchToDismiss(overlay_type);
+                mRelPopContainer.setAnimation(mFadeInAnimation);
+                mRelRootContainer.setAnimation(mPopEnterAnimation);
+                mView.findViewById(R.id.btnViewShoppingList).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent shoppingList = new Intent(mContext, ShoppingListActivity.class);
+                        mContext.startActivity(shoppingList);
+                        dismissLayout();
+                    }
+                });
+                mView.findViewById(R.id.btnOk)
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startExitAnimation(overlay_type);
+                            }
+                        });
+                break;
         }
 
         return mDarkenScreen;
@@ -290,15 +333,17 @@ public class PopWindowValidationMessage {
     }
 
     private void popupWindowSetting(View view) {
+        view.bringToFront();
         hideStatusBar((Activity) mContext);
         mDarkenScreen = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, true);
         mDarkenScreen.setAnimationStyle(R.style.Darken_Screen);
-        mDarkenScreen.showAtLocation(view, Gravity.CENTER, 0, 0);
+        mDarkenScreen.showAtLocation(view, Gravity.AXIS_PULL_BEFORE, 0, 0);
         mDarkenScreen.setOutsideTouchable(true);
         mDarkenScreen.setFocusable(true);
         mDarkenScreen.setAnimationStyle(R.style.Animations_popup);
         mRelPopContainer = (RelativeLayout) view.findViewById(R.id.relPopContainer);
         mRelRootContainer = (RelativeLayout) view.findViewById(R.id.relContainerRootMessage);
+
     }
 
     private void startExitAnimation(final OVERLAY_TYPE type) {
@@ -385,6 +430,13 @@ public class PopWindowValidationMessage {
         window.addFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Utils.updateStatusBarBackground(activity);
+        //Utils.updateStatusBarBackground(activity);
+        View decor = activity.getWindow().getDecorView();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            decor.setSystemUiVisibility(0);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
     }
 }

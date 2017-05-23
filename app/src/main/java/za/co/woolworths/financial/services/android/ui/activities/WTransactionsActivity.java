@@ -16,7 +16,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
-import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
+import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
@@ -26,7 +26,7 @@ public class WTransactionsActivity extends AppCompatActivity {
     public Toolbar toolbar;
     public ExpandableListView transactionListview;
     public String productOfferingId;
-    private WProgressDialogFragment mGetTransactionProgressDialog;
+    private ProgressDialogFragment mGetTransactionProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +45,21 @@ public class WTransactionsActivity extends AppCompatActivity {
 
     public void loadTransactionHistory(final String prOfferId) {
         final FragmentManager fm = getSupportFragmentManager();
-        mGetTransactionProgressDialog = WProgressDialogFragment.newInstance("transaction");
-        mGetTransactionProgressDialog.setCancelable(false);
+        mGetTransactionProgressDialog = ProgressDialogFragment.newInstance();
+        try {
+            if (!mGetTransactionProgressDialog.isAdded()) {
+                mGetTransactionProgressDialog.show(fm, "v");
+            } else {
+                mGetTransactionProgressDialog.dismiss();
+                mGetTransactionProgressDialog = ProgressDialogFragment.newInstance();
+                mGetTransactionProgressDialog.show(fm, "v");
+            }
+
+        } catch (NullPointerException ignored) {
+        }
         new HttpAsyncTask<String, String, TransactionHistoryResponse>() {
             @Override
             protected void onPreExecute() {
-                mGetTransactionProgressDialog.show(fm,"transaction");
                 super.onPreExecute();
             }
 
@@ -100,6 +109,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 
                         break;
                     default:
+                        Utils.alertErrorMessage(WTransactionsActivity.this,transactionHistoryResponse.response.desc);
                         break;
                 }
                 dismissProgress();
@@ -120,12 +130,10 @@ public class WTransactionsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
-
     }
 
-    private void dismissProgress(){
-        if (mGetTransactionProgressDialog!=null&&mGetTransactionProgressDialog.isVisible()){
+    private void dismissProgress() {
+        if (mGetTransactionProgressDialog != null && mGetTransactionProgressDialog.isVisible()) {
             mGetTransactionProgressDialog.dismiss();
         }
     }

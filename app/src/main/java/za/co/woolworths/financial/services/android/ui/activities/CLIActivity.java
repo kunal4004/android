@@ -10,12 +10,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
@@ -26,9 +27,10 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CLI;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class CLIActivity extends AppCompatActivity implements View.OnClickListener {
+public class CLIActivity extends BaseActivity implements View.OnClickListener {
 
     private WTextView mTextToolbar;
     private Toolbar mToolbar;
@@ -96,8 +98,21 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
 
     private void setPagerCard(int id) {
         int[] cards = {R.drawable.w_store_card, R.drawable.w_credi_card, R.drawable.w_personal_loan_card};
-        mImageAccount.setImageResource(cards[id]);
+        if(id==1)
+        {
+            if (WoolworthsApplication.getCreditCardType().equalsIgnoreCase(Utils.SILVER_CARD)) {
+                mImageAccount.setImageResource(R.drawable.w_silver_credit_card);
+            } else if (WoolworthsApplication.getCreditCardType().equalsIgnoreCase(Utils.GOLD_CARD)) {
+                mImageAccount.setImageResource(R.drawable.w_gold_credit_card);
+            } else if (WoolworthsApplication.getCreditCardType().equalsIgnoreCase(Utils.BLACK_CARD)) {
+                mImageAccount.setImageResource(R.drawable.w_credi_card);
+            }
+        }
+        else {
+            mImageAccount.setImageResource(cards[id]);
+        }
         setCLIContent(id);
+
     }
 
     public void setCLIContent(int position) {
@@ -107,10 +122,12 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         mTextToolbar.setText(cli.getmTitle());
         mCollapsingToolbarLayout.setBackgroundResource(cli.getmImage());
         mCollapsingToolbarLayout.setContentScrimColor(Color.TRANSPARENT);
+        mCollapsingToolbarLayout.setScrimsShown(false);
         mTextCreditLimit.setText(cli.getmSubTitle());
         mTextBeforeStart.setText(cli.getmBoldText());
         mTextClIContent.setText(cli.getmDescription());
         mToolbar.setBackgroundColor(mColor);
+        //closeButton.setBackgroundColor(mColor);
         Utils.updateStatusBarBackground(CLIActivity.this, cli.getmColor());
     }
 
@@ -142,19 +159,6 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
         return arrCLI;
     }
 
-    private void setAppBarDragging(final boolean newValue) {
-        CoordinatorLayout.LayoutParams params =
-                (CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams();
-        AppBarLayout.Behavior behavior = new AppBarLayout.Behavior();
-        behavior.setDragCallback(new AppBarLayout.Behavior.DragCallback() {
-            @Override
-            public boolean canDrag(AppBarLayout appBarLayout) {
-                return newValue;
-            }
-        });
-        params.setBehavior(behavior);
-    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -181,39 +185,23 @@ public class CLIActivity extends AppCompatActivity implements View.OnClickListen
                 Intent openCLIStepIndicator = new Intent(CLIActivity.this, CLISupplyInfoActivity.class);
                 startActivity(openCLIStepIndicator);
                 finish();
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
-        }
-    }
-
-    public void lockAppBar(boolean locked) {
-        if (locked) {
-            mAppBarLayout.setExpanded(false, true);
-            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
-            CoordinatorLayout.LayoutParams lp = (CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams();
-            lp.height = px;
-            mAppBarLayout.setLayoutParams(lp);
-        } else {
-            mAppBarLayout.setExpanded(true, false);
-            mAppBarLayout.setActivated(true);
         }
     }
 
     private void setStatusBarColor(int position) {
         switch (position) {
             case 0:
-                int storeCardColor = ContextCompat.getColor(this, R.color.cli_store_card);
-                Utils.updateStatusBarBackground(this, storeCardColor);
+                Utils.updateStatusBarBackground(this, R.color.cli_store_card);
                 break;
 
             case 1:
-                int creditCardColor = ContextCompat.getColor(this, R.color.cli_credit_card);
-                Utils.updateStatusBarBackground(this, creditCardColor);
+                Utils.updateStatusBarBackground(this, R.color.cli_credit_card);
                 break;
 
             case 2:
-                int personalLoanColor = ContextCompat.getColor(this, R.color.cli_personal_loan);
-                Utils.updateStatusBarBackground(this, personalLoanColor);
+                Utils.updateStatusBarBackground(this, R.color.cli_personal_loan);
                 break;
         }
     }

@@ -2,12 +2,9 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="drawer_text_color">@android:color/darker_gray</item>
         <item name="android:windowBackground">@color/white</item>
         <item name="android:actionBarStyle">@style/WActionBarStyle</item>
-        <item name="drawer_background">@color/drawer_color</item>
         <item name="android:listDivider">@drawable/list_divider</item>
-        <item name="android:seekBarStyle">@style/SeekBarPLDD</item>
         <item name="borderColor">@color/indicator_border</item>
         <item name="selectedColor">@color/indicator_selected</item>
         <item name="unselectedColor">@color/indicator_unselected</item>
@@ -23,30 +20,6 @@
 
     <style name="WActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/black</item>
-    </style>
-
-    <style name="tierinfostate" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="drawer_text_color">@android:color/darker_gray</item>
-        <item name="android:windowBackground">@color/white</item>
-        <item name="android:actionBarStyle">@style/WActionBarStyle</item>
-        <item name="drawer_background">@color/drawer_color</item>
-        <item name="android:listDivider">@drawable/list_divider</item>
-        <item name="android:seekBarStyle">@style/SeekBarPLDD</item>
-    </style>
-
-    <style name="SeekBarPLDD" parent="android:Widget.SeekBar">
-        <item name="android:progressDrawable">
-            @drawable/pldd_scrubber_progress_horizontal_holo_light
-        </item>
-        <item name="android:indeterminateDrawable">
-            @drawable/pldd_scrubber_progress_horizontal_holo_light
-        </item>
-        <item name="android:minHeight">13dip</item>
-        <item name="android:maxHeight">13dip</item>
-        <item name="android:thumb">@drawable/pldd_scrubber_control_selector_holo_light</item>
-        <item name="android:thumbOffset">16dip</item>
-        <item name="android:paddingLeft">16dip</item>
-        <item name="android:paddingRight">16dip</item>
     </style>
 
     <style name="Button">
@@ -96,6 +69,18 @@
         <item name="android:actionBarStyle">@style/LoanWithdrawalStyle</item>
     </style>
 
+    <style name="FaqStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
+        <item name="android:actionBarItemBackground">@null</item>
+        <item name="actionBarItemBackground">@null</item>
+    </style>
+
+
     <style name="WSearchViewStyle" parent="Widget.AppCompat.SearchView">
         <item name="searchHintIcon">@null</item>
         <item name="queryBackground">@null</item>
@@ -123,7 +108,7 @@
         <item name="android:homeAsUpIndicator">@drawable/back_white</item>
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:windowActionBarOverlay">false</item>
-        <item name="android:theme">@android:style/Theme.NoTitleBar</item>
+
     </style>
 
     <style name="ContactUs" parent="Theme.AppCompat.Light.NoActionBar">
@@ -137,6 +122,8 @@
     <style name="OneAppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 
     <style name="WTransaction" parent="Theme.AppCompat.Light.NoActionBar">
@@ -157,10 +144,6 @@
         <item name="android:windowExitAnimation">@anim/alpha_anim_exit</item>
     </style>
 
-    <style name="popwindow_style">
-        <item name="android:windowEnterAnimation">@anim/pop_fade_in</item>
-        <item name="android:windowExitAnimation">@anim/pop_fade_out</item>
-    </style>
 
     <style name="WRewardsInfo" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
@@ -211,10 +194,35 @@
         <item name="android:stateListAnimator">@null</item>
     </style>
 
+    <style name="whiteWButtonStyle" parent="android:Theme">
+        <item name="android:layout_height">@dimen/button_style_height</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@drawable/account_button_bg</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.2</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
     <style name="blackButtonStyle" parent="android:Theme">
         <item name="android:layout_height">@dimen/button_style_height</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:background">@color/black</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.15</item>
+        <item name="WButton_font">medium_bold</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="blackBarcodeButtonStyle" parent="android:Theme">
+        <item name="android:layout_height">@dimen/button_style_height</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">@android:color/transparent</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:gravity">center</item>
@@ -254,6 +262,15 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:background">@drawable/list_bg</item>
+        <item name="android:minHeight">50dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+    </style>
+
+    <style name="listStyleLoggedOut" parent="android:Theme">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@drawable/list_bg_logout</item>
         <item name="android:minHeight">50dp</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">16dp</item>
@@ -302,7 +319,7 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">17.5sp</item>
         <item name="WTextView_font">medium</item>
-        <item name="android:letterSpacing">0.06</item>
+        <item name="android:letterSpacing">0.02</item>
     </style>
 
     <style name="account_logged_out_reward_detail" parent="android:Theme">
@@ -311,10 +328,10 @@
         <item name="android:background">@color/white</item>
         <item name="android:paddingBottom">@dimen/bank_spacing_width</item>
         <item name="android:gravity">center|top</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#80000000</item>
+        <item name="android:textSize">15sp</item>
         <item name="WTextView_font">myriadpro_regular</item>
-        <item name="android:lineSpacingExtra">2.1dp</item>
+        <item name="android:lineSpacingExtra">4dp</item>
     </style>
 
     <style name="account_logged_out_reward_bullet" parent="android:Theme">
@@ -357,10 +374,10 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:gravity">start|center</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">#80000000</item>
         <item name="android:text">@string/bullet</item>
         <item name="android:layout_marginRight">@dimen/default_margin</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">15sp</item>
         <item name="WTextView_font">medium_bold</item>
     </style>
 
@@ -391,10 +408,10 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:gravity">start|top</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#80000000</item>
+        <item name="android:textSize">15sp</item>
         <item name="WTextView_font">myriadpro_regular</item>
-        <item name="android:lineSpacingExtra">2.1dp</item>
+        <item name="android:lineSpacingExtra">4dp</item>
     </style>
 
     <style name="apply_now_btn" parent="android:Theme">
@@ -402,9 +419,9 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">14sp</item>
-        <item name="WTextView_font">medium</item>
-        <item name="android:letterSpacing">0.1</item>
+        <item name="android:textSize">12sp</item>
+        <item name="WButton_font">medium_bold</item>
+        <item name="android:letterSpacing">0.2</item>
         <item name="android:textAllCaps">true</item>
     </style>
 
@@ -446,6 +463,182 @@
         <item name="android:layout_marginRight">@dimen/default_margin</item>
         <item name="android:textSize">15sp</item>
         <item name="WTextView_font">medium_bold</item>
+    </style>
+
+    <style name="AppOverlayTheme" parent="@style/Theme.AppCompat.Light">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="TransparentToolbar" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:windowActionBarOverlay">true</item>
+        <!-- Support Library compability -->
+        <item name="windowActionBarOverlay">true</item>
+    </style>
+
+    <style name="Toolbar" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorAccent">@color/white</item>
+    </style>
+
+    <style name="ToolbarWhiteTheme" parent="android:Theme.Holo">
+        <item name="android:actionBarStyle">@null</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="windowActionBarOverlay">true</item>
+        <item name="android:windowActionBarOverlay">@null</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="AppTheme.ActionBar" parent="android:Widget.ActionBar">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/popup_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/popup_exit</item>
+        <item name="android:activityCloseEnterAnimation">@anim/popup_enter</item>
+        <item name="android:activityCloseExitAnimation">@anim/popup_exit</item>
+    </style>
+
+    <style name="Theme.AppCompat.Translucent">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+    </style>
+
+    <style name="colorSizeStyle" parent="android:Theme">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:gravity">center|start</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="WTextView_font">medium_bold</item>
+    </style>
+
+    <style name="Sliding.Light" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="content_background">@color/light_background</item>
+        <item name="popup_theme">@style/ThemeOverlay.AppCompat.Light</item>
+    </style>
+    x
+    <!-- Customize theme for transparent activity -->
+    <style name="Theme.AppCompat.Transparent.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="FragmentDialogStyle" parent="Base.Theme.AppCompat.Dialog">
+        <item name="android:windowMinWidthMajor">100%</item>
+        <item name="android:windowMinWidthMinor">100%</item>
+    </style>
+
+    <style name="shoppingListTitle" parent="android:Theme">
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/description_color</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:gravity">left</item>
+        <item name="WTextView_font">medium</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="contact_us_item_header_textview" parent="android:Theme">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:singleLine">true</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:textSize">15sp</item>
+
+    </style>
+
+    <style name="contact_us_item_desc_textview" parent="android:Theme">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">#4d000000</item>
+        <item name="android:singleLine">true</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:textSize">13sp</item>
+
+    </style>
+
+    <!-- Barcode Style-->
+    <style name="style_qr_box_view_button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/f_qr_box_action_desc</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:background">@null</item>
+        <item name="android:layout_marginLeft">@dimen/ml_qr_box_action</item>
+    </style>
+
+    <style name="style_dialog_result_desc">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/result_minor_text</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:gravity">right</item>
+    </style>
+
+    <style name="style_dialog_result_value">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:textIsSelectable">true</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:text">@string/app_name</item>
+    </style>
+
+    <style name="Black_Theme" parent="Theme.AppCompat.NoActionBar">
+        <!--<item name="android:windowBackground">@drawable/black_theme</item>-->
+    </style>
+    <style name="contact_us_operating_hours_layout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">16dp</item>
+    </style>
+    <style name="contact_us_operating_hours_textview">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:lineSpacingExtra">-2dp</item>
     </style>
 
 </resources>

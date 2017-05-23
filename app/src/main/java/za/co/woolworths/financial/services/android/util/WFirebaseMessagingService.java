@@ -6,31 +6,22 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.awfs.coordination.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Map;
 
-import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity;
 
-import static android.R.attr.data;
 import static android.R.attr.id;
-import static android.R.id.message;
-import static za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer.getData;
 
 /**
  * Created by W7099877 on 09/11/2016.
@@ -44,9 +35,21 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.e(TAG, "From: " + remoteMessage.getFrom());
         if (remoteMessage == null)
             return;
+
+        try {
+            String unreadCountValue = Utils.getSessionDaoValue(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT);
+
+            if (TextUtils.isEmpty(unreadCountValue) || unreadCountValue == null) {
+                Utils.sessionDaoSave(this, SessionDao.KEY.UNREAD_MESSAGE_COUNT, "0");
+                Utils.setBadgeCounter(this, 1);
+            } else {
+                int unreadCount = Integer.valueOf(unreadCountValue) + 1;
+                Utils.setBadgeCounter(this, unreadCount);
+            }
+        } catch (NullPointerException ignored) {
+        }
 
         Map<String, String> data = remoteMessage.getData();
         if (data.size() > 0 && NotificationUtils.isAppIsInBackground(getApplicationContext())) {// Check if message contains a data payload.
@@ -68,8 +71,8 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             builder.setAutoCancel(true);
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.notify(id, builder.build());
-        }else if(!NotificationUtils.isAppIsInBackground(getApplicationContext())){
-            Intent intent=new Intent("UpdateCounter");
+        } else if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
+            Intent intent = new Intent("UpdateCounter");
             LocalBroadcastManager.
                     getInstance(getApplicationContext()).sendBroadcast(intent);
         }

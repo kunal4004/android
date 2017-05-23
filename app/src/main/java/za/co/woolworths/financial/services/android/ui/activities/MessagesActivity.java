@@ -8,10 +8,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.MessageDetails;
 import za.co.woolworths.financial.services.android.models.dto.MessageRead;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
@@ -29,22 +30,21 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
-import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
-public class MessagesActivity extends AppCompatActivity {
+public class MessagesActivity extends BaseActivity {
     public RecyclerView messsageListview;
     public MesssagesListAdapter adapter = null;
     public LinearLayoutManager mLayoutManager;
     public Toolbar toolbar;
     SwipeRefreshLayout swipeRefreshLayout;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
-
 
     //Pagination-----------------------------------------//
     public static final int PAGE_SIZE = 5;
@@ -55,9 +55,8 @@ public class MessagesActivity extends AppCompatActivity {
     public List<MessageDetails> messageList;
     //public ProgressBar mLoadingImageView;
     public int visibleThreshold = 5;
-    ConnectionDetector  connectionDetector;
+    ConnectionDetector connectionDetector;
     private FragmentManager fm;
-    private WProgressDialogFragment mGetMessageProgressDialog;
     private WTextView noMessagesText;
 
 
@@ -75,7 +74,7 @@ public class MessagesActivity extends AppCompatActivity {
         messsageListview = (RecyclerView) findViewById(R.id.messsageListView);
         //mLoadingImageView = (ProgressBar) findViewById(R.id.loadingBar);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
-        noMessagesText=(WTextView)findViewById(R.id.noMessagesText);
+        noMessagesText = (WTextView) findViewById(R.id.noMessagesText);
 
         messsageListview.setHasFixedSize(true);
         messsageListview.setLayoutManager(mLayoutManager);
@@ -83,9 +82,9 @@ public class MessagesActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
-                if(connectionDetector.isOnline(MessagesActivity.this)){
+                if (connectionDetector.isOnline(MessagesActivity.this)) {
                     loadMessages();
-                }else {
+                } else {
                     WErrorDialog.getErrConnectToServer(MessagesActivity.this);
                     hideRefreshView();
                 }
@@ -124,19 +123,16 @@ public class MessagesActivity extends AppCompatActivity {
 
         if (connectionDetector.isOnline(MessagesActivity.this)) {
             loadMessages();
-        }else {
+        } else {
             WErrorDialog.getErrConnectToServer(MessagesActivity.this);
         }
     }
 
     public void loadMessages() {
         fm = getSupportFragmentManager();
-        mGetMessageProgressDialog = WProgressDialogFragment.newInstance("message");
-        mGetMessageProgressDialog.setCancelable(false);
         new HttpAsyncTask<String, String, MessageResponse>() {
             @Override
             protected void onPreExecute() {
-                mGetMessageProgressDialog.show(fm,"message");
                 super.onPreExecute();
             }
 
@@ -156,7 +152,6 @@ public class MessagesActivity extends AppCompatActivity {
             protected MessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 MessageResponse messageResponse = new MessageResponse();
                 messageResponse.response = new Response();
-                dismissProgress();
                 hideRefreshView();
                 return messageResponse;
             }
@@ -165,33 +160,17 @@ public class MessagesActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(MessageResponse messageResponse) {
                 super.onPostExecute(messageResponse);
-                messageList = null;
-                messageList = new ArrayList<>();
-                if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
-                    messageList = messageResponse.messagesList;
-                    bindDataWithUI(messageList);
-                    setMeassagesAsRead(messageList);
-                    mIsLastPage = false;
-                    mCurrentPage = 1;
-                    mIsLoading = false;
-                }
-                else if(messageResponse.messagesList.size() == 0)
-                {
-                    messsageListview.setVisibility(View.GONE);
-                    noMessagesText.setVisibility(View.VISIBLE);
-                }
-                dismissProgress();
-                hideRefreshView();
+                handleLoadMessagesResponse(messageResponse);
             }
         }.execute();
     }
 
     public void bindDataWithUI(List<MessageDetails> messageDetailsList) {
-            noMessagesText.setVisibility(View.GONE);
-            messsageListview.setVisibility(View.VISIBLE);
-            adapter = new MesssagesListAdapter(MessagesActivity.this, messageDetailsList);
-            ((MesssagesListAdapter) adapter).setMode(Attributes.Mode.Single);
-            messsageListview.setAdapter(adapter);
+        noMessagesText.setVisibility(View.GONE);
+        messsageListview.setVisibility(View.VISIBLE);
+        adapter = new MesssagesListAdapter(MessagesActivity.this, messageDetailsList);
+        ((MesssagesListAdapter) adapter).setMode(Attributes.Mode.Single);
+        messsageListview.setAdapter(adapter);
 
     }
 
@@ -341,7 +320,7 @@ public class MessagesActivity extends AppCompatActivity {
             finish();
         } else {
             super.onBackPressed();
-           // overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+            // overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
         }
     }
 
@@ -350,14 +329,42 @@ public class MessagesActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                return  true;
+                return true;
         }
         return false;
     }
 
-    private void dismissProgress(){
-        if (mGetMessageProgressDialog!=null&&mGetMessageProgressDialog.isVisible()){
-            mGetMessageProgressDialog.dismiss();
+    public void handleLoadMessagesResponse(MessageResponse messageResponse) {
+        switch (messageResponse.httpCode) {
+            case 200:
+                messageList = null;
+                messageList = new ArrayList<>();
+                if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
+                    messageList = messageResponse.messagesList;
+                    bindDataWithUI(messageList);
+                    String unreadCountValue = Utils.getSessionDaoValue(MessagesActivity.this,
+                            SessionDao.KEY.UNREAD_MESSAGE_COUNT);
+                    if (TextUtils.isEmpty(unreadCountValue)) {
+                        Utils.setBadgeCounter(MessagesActivity.this, 0);
+                    } else {
+                        int unreadCount = Integer.valueOf(unreadCountValue) - messageList.size();
+                        Utils.setBadgeCounter(MessagesActivity.this, unreadCount);
+                    }
+                    setMeassagesAsRead(messageList);
+                    mIsLastPage = false;
+                    mCurrentPage = 1;
+                    mIsLoading = false;
+                } else if (messageResponse.messagesList.size() == 0) {
+                    messsageListview.setVisibility(View.GONE);
+                    noMessagesText.setVisibility(View.VISIBLE);
+                }
+                hideRefreshView();
+                break;
+            default:
+                hideRefreshView();
+                Utils.alertErrorMessage(MessagesActivity.this,messageResponse.response.desc);
+                break;
         }
     }
+
 }

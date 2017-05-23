@@ -1,6 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -8,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -22,10 +24,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.CLIFourthStepFra
 import za.co.woolworths.financial.services.android.ui.fragments.CLISecondStepFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIThirdStepFragment;
 import za.co.woolworths.financial.services.android.ui.views.WFragmentViewPager;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 
-public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnboardingOnFragmentInteractionListener,
+public class CLIStepIndicatorActivity extends BaseActivity implements WOnboardingOnFragmentInteractionListener,
         CLIFirstStepFragment.StepNavigatorCallback {
 
     private OnFragmentRefresh onFragmentRefresh;
@@ -49,6 +52,7 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
         initViews();
         setActionBar();
         setCLIContent();
+        registerReceiver(moveToPageBroadcastReceiver, new IntentFilter("moveToPageBroadcastReceiver"));
     }
 
 
@@ -75,10 +79,10 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
         mViewPStepIndicator.setAdapter(mPagerFragmentAdapter);
 
 
-         int limit = mPagerFragmentAdapter.getCount();
-         // Set the number of pages that should be retained to either
-         // side of the current page in the view hierarchy in an idle state.
-         mViewPStepIndicator.setOffscreenPageLimit(limit);
+        int limit = mPagerFragmentAdapter.getCount();
+        // Set the number of pages that should be retained to either
+        // side of the current page in the view hierarchy in an idle state.
+        mViewPStepIndicator.setOffscreenPageLimit(limit);
 
 
         //mStepIndicator.setupWithViewPager(mViewPStepIndicator);
@@ -99,6 +103,7 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
                 } else {
                     showCloseIconToolbar(false);
                 }
+
                 switch (position) {
                     case 0:
                         mImgStepIcon.setImageResource(R.drawable.clinumbersprogress_1);
@@ -226,8 +231,23 @@ public class CLIStepIndicatorActivity extends AppCompatActivity implements WOnbo
                 break;
             case 3:
                 finish();
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                 break;
         }
     }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(moveToPageBroadcastReceiver);
+    }
+
+    BroadcastReceiver moveToPageBroadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            moveToPage(3);
+        }
+    };
 }

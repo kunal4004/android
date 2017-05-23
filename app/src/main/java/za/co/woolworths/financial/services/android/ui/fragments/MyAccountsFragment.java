@@ -12,10 +12,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,18 +41,27 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
+import za.co.woolworths.financial.services.android.models.dto.Counter;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.Voucher;
+import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
+import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.ui.activities.FAQActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WChangePasswordActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
-import za.co.woolworths.financial.services.android.ui.views.WProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.BaseFragment;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -70,7 +79,7 @@ import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MyAccountsFragment extends Fragment implements View.OnClickListener, ViewPager.OnPageChangeListener, ObservableScrollViewCallbacks {
+public class MyAccountsFragment extends BaseFragment implements View.OnClickListener, ViewPager.OnPageChangeListener, ObservableScrollViewCallbacks {
 
 
     private HideActionBar hideActionBar;
@@ -94,8 +103,10 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     LinearLayout applyNowAccountsLayout;
     LinearLayout loggedOutHeaderLayout;
     LinearLayout loggedInHeaderLayout;
+    LinearLayout unlinkedLayout;
     WButton linkAccountsBtn;
     RelativeLayout signOutBtn;
+    RelativeLayout changePasswordBtn;
     ViewPager viewPager;
     MyAccountOverViewPagerAdapter adapter;
     LinearLayout pager_indicator;
@@ -108,7 +119,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     WTextView userInitials;
     RelativeLayout signoutLayer;
 
-    private WProgressDialogFragment mGetAccountsProgressDialog;
+    private ProgressDialogFragment mGetAccountsProgressDialog;
     private ProgressBar scProgressBar;
     private ProgressBar ccProgressBar;
     private ProgressBar plProgressBar;
@@ -128,6 +139,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     private Toolbar mToolbar;
     private ImageView mImageView;
     private RelativeLayout relFAQ;
+    private Counter mCounter;
 
     public MyAccountsFragment() {
         // Required empty public constructor
@@ -158,8 +170,10 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         applyNowAccountsLayout = (LinearLayout) view.findViewById(R.id.applyNowLayout);
         loggedOutHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedOutHeaderLayout);
         loggedInHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedInHeaderLayout);
+        unlinkedLayout = (LinearLayout) view.findViewById(R.id.llUnlinkedAccount);
         linkAccountsBtn = (WButton) view.findViewById(R.id.linkAccountsBtn);
         signOutBtn = (RelativeLayout) view.findViewById(R.id.signOutBtn);
+        changePasswordBtn=(RelativeLayout)view.findViewById(R.id.changePassword);
         viewPager = (ViewPager) view.findViewById(R.id.pager);
         pager_indicator = (LinearLayout) view.findViewById(R.id.viewPagerCountDots);
         sc_available_funds = (WTextView) view.findViewById(R.id.sc_available_funds);
@@ -176,7 +190,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         imgCreditCard = (ImageView) view.findViewById(R.id.imgCreditCard);
         relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
 
-
+        mCounter = ((WoolworthsApplication) getActivity().getApplication()).getCounter();
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
         applyPersonalCardView.setOnClickListener(this);
@@ -187,7 +201,9 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         linkedPersonalCardView.setOnClickListener(this);
         openShoppingList.setOnClickListener(this);
         signOutBtn.setOnClickListener(this);
+        changePasswordBtn.setOnClickListener(this);
         mImageView.setOnClickListener(this);
+        relFAQ.setOnClickListener(this);
         mWObservableScrollView.setScrollViewCallbacks(this);
 
         adapter = new MyAccountOverViewPagerAdapter(getActivity());
@@ -244,7 +260,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 applyStoreCardView.setVisibility(View.GONE);
 
                 sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                scProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
+                scProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
 
             } else if (account.productGroupCode.equals("CC")) {
                 linkedCreditCardView.setVisibility(View.VISIBLE);
@@ -259,14 +275,14 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 }
 
                 cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                ccProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
+                ccProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
 
             } else if (account.productGroupCode.equals("PL")) {
                 linkedPersonalCardView.setVisibility(View.VISIBLE);
                 applyPersonalCardView.setVisibility(View.GONE);
 
                 pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-                plProgressBar.setProgress(Math.round(100 - ((float) account.availableFunds / (float) account.creditLimit * 100f)));
+                plProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
             }
         }
 
@@ -292,6 +308,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         }
 
         contactUs.setVisibility(View.VISIBLE);
+        relFAQ.setVisibility(View.VISIBLE);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(0);
     }
@@ -304,32 +321,37 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             jwtDecodedModel = null;
         }
 
-        if (jwtDecodedModel!=null) {
+        if (jwtDecodedModel != null) {
             if (jwtDecodedModel.AtgSession != null) {
                 loggedInHeaderLayout.setVisibility(View.VISIBLE);
                 //logged in user's name and family name will be displayed on the page
-                userName.setText(jwtDecodedModel.name + " " + jwtDecodedModel.family_name);
+                userName.setText(jwtDecodedModel.name.get(0) + " " + jwtDecodedModel.family_name.get(0));
                 //initials of the logged in user will be displayed on the page
-                String initials = jwtDecodedModel.name.substring(0, 1).concat(" ").concat(jwtDecodedModel.family_name.substring(0, 1));
+                String initials = jwtDecodedModel.name.get(0).substring(0, 1).concat(" ").concat(jwtDecodedModel.family_name.get(0).substring(0, 1));
                 userInitials.setText(initials);
                 signOutBtn.setVisibility(View.VISIBLE);
+                changePasswordBtn.setVisibility(View.VISIBLE);
                 if (jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
                     //user is linked and signed in
+                    showAccountActiveCount();
                     linkedAccountsLayout.setVisibility(View.VISIBLE);
                 } else {
                     //user is not linked
                     //but signed in
-                    linkAccountsBtn.setVisibility(View.VISIBLE);
+                    showAccountActiveCount();
+                    unlinkedLayout.setVisibility(View.VISIBLE);
                     setUiPageViewController();
                 }
             } else {
                 //user is signed out
                 loggedOutHeaderLayout.setVisibility(View.VISIBLE);
+                hideAccountActiveCount();
                 setUiPageViewController();
             }
-        }else {
+        } else {
             //user is signed out
             loggedOutHeaderLayout.setVisibility(View.VISIBLE);
+            hideAccountActiveCount();
             setUiPageViewController();
         }
     }
@@ -338,33 +360,37 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         loggedInHeaderLayout.setVisibility(View.GONE);
         loggedOutHeaderLayout.setVisibility(View.GONE);
         signOutBtn.setVisibility(View.GONE);
+        changePasswordBtn.setVisibility(View.GONE);
         linkedAccountsLayout.setVisibility(View.GONE);
         applyNowAccountsLayout.setVisibility(View.GONE);
         contactUs.setVisibility(View.GONE);
-        linkAccountsBtn.setVisibility(View.GONE);
+        relFAQ.setVisibility(View.GONE);
+        unlinkedLayout.setVisibility(View.GONE);
     }
 
     private void setUiPageViewController() {
+        try {
+            pager_indicator.removeAllViews();
+            dotsCount = adapter.getCount();
+            dots = new ImageView[dotsCount];
 
-        pager_indicator.removeAllViews();
-        dotsCount = adapter.getCount();
-        dots = new ImageView[dotsCount];
+            for (int i = 0; i < dotsCount; i++) {
+                dots[i] = new ImageView(getActivity());
+                dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_default));
 
-        for (int i = 0; i < dotsCount; i++) {
-            dots[i] = new ImageView(getActivity());
-            dots[i].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_default));
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
+                params.setMargins(10, 0, 10, 0);
 
-            params.setMargins(10, 0, 10, 0);
+                pager_indicator.addView(dots[i], params);
+            }
 
-            pager_indicator.addView(dots[i], params);
+            dots[0].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_selected));
+        } catch (Exception ignored) {
         }
-
-        dots[0].setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.my_account_page_indicator_selected));
     }
 
     private View.OnClickListener btnSignin_onClick = new View.OnClickListener() {
@@ -393,7 +419,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         switch (v.getId()) {
             case R.id.openMessageActivity:
                 startActivity(new Intent(getActivity(), MessagesActivity.class).putExtra("fromNotification", false));
-                //getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
+                getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
             case R.id.applyStoreCard:
                 redirectToMyAccountsCardsActivity(0);
@@ -414,18 +440,27 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 redirectToMyAccountsCardsActivity(2);
                 break;
             case R.id.contactUs:
-                startActivity(new Intent(getActivity(), WContactUsActivity.class));
-                getActivity().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
+                startActivity(new Intent(getActivity(), WContactUsActivityNew.class));
+                getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+                break;
+            case R.id.relFAQ:
+                startActivity(new Intent(getActivity(), FAQActivity.class));
+                getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 break;
             case R.id.openShoppingList:
+                Intent openShoppingList = new Intent(getActivity(), ShoppingListActivity.class);
+                startActivity(openShoppingList);
                 break;
             case R.id.signOutBtn:
-                mPopWindowValidationMessage.displayValidationMessage("", PopWindowValidationMessage.OVERLAY_TYPE.SIGN_OUT);
+                Utils.displayValidationMessage(getActivity(), TransientActivity.VALIDATION_MESSAGE_LIST.SIGN_OUT, "");
                 break;
             case R.id.imgBurgerButton:
                 hideActionBar.onBurgerButtonPressed();
                 break;
-
+            case R.id.changePassword:
+                startActivity(new Intent(getActivity(), WChangePasswordActivity.class));
+                getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+                break;
             default:
                 break;
 
@@ -450,16 +485,26 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
     private void loadAccounts() {
         fm = getActivity().getSupportFragmentManager();
-        mGetAccountsProgressDialog = WProgressDialogFragment.newInstance("gettingAccount");
+        mGetAccountsProgressDialog = ProgressDialogFragment.newInstance();
+        try {
+            if (!mGetAccountsProgressDialog.isAdded()) {
+                mGetAccountsProgressDialog.show(fm, "v");
+            } else {
+                mGetAccountsProgressDialog.dismiss();
+                mGetAccountsProgressDialog = ProgressDialogFragment.newInstance();
+                mGetAccountsProgressDialog.show(fm, "v");
+            }
+
+
+        } catch (NullPointerException ignored) {
+        }
         new HttpAsyncTask<String, String, AccountsResponse>() {
 
             @Override
             protected void onPreExecute() {
-                mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.recent_search_bg));
+                mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
                 relFAQ.setVisibility(View.GONE);
                 showViews();
-                mGetAccountsProgressDialog.show(fm, "account");
-                mGetAccountsProgressDialog.setCancelable(false);
             }
 
             @Override
@@ -489,7 +534,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 switch (accountsResponse.httpCode) {
                     case 200:
                         MyAccountsFragment.this.accountsResponse = accountsResponse;
-                        ArrayList<BaseAccountFragment> baseAccountFragments = new ArrayList<BaseAccountFragment>();
                         List<Account> accountList = accountsResponse.accountList;
                         for (Account p : accountList) {
                             accounts.put(p.productGroupCode.toUpperCase(), p);
@@ -509,8 +553,8 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                         break;
                     case 440:
                         AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
-                        mError.setTitle("Authentication Error");
-                        mError.setMessage("Your session expired. You've been signed out.");
+                        mError.setTitle(getString(R.string.title_authentication_error));
+                        mError.setMessage(getString(R.string.session_out_message));
                         mError.show();
                         new android.os.AsyncTask<Void, Void, String>() {
 
@@ -535,6 +579,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
                         break;
                     default:
+                        Utils.alertErrorMessage(getActivity(), accountsResponse.response.desc);
                         break;
                 }
                 dismissProgress();
@@ -551,7 +596,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
             intent.putExtra("accounts", Utils.objectToJson(accountsResponse));
         }
         startActivityForResult(intent, 0);
-        getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 
     }
 
@@ -586,9 +631,13 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
                 super.onPostExecute(messageResponse);
                 if (messageResponse.unreadCount > 0) {
                     messageCounter.setVisibility(View.VISIBLE);
-                    messageCounter.setText(String.valueOf(messageResponse.unreadCount));
-
+                    int unreadCount = messageResponse.unreadCount;
+                    if (TextUtils.isEmpty(String.valueOf(unreadCount)))
+                        unreadCount = 0;
+                    Utils.setBadgeCounter(getActivity(), unreadCount);
+                    messageCounter.setText(String.valueOf(unreadCount));
                 } else {
+                    Utils.removeBadgeCounter(getActivity());
                     messageCounter.setVisibility(View.GONE);
                 }
             }
@@ -635,7 +684,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     }
 
     private void dismissProgress() {
-        mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.white));
+        mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.white));
         relFAQ.setVisibility(View.VISIBLE);
         if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
             mGetAccountsProgressDialog.dismiss();
@@ -649,7 +698,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
         }
     };
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -659,6 +707,7 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
     @Override
     public void onDestroy() {
         super.onDestroy();
+        dismissProgress();
         ((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
 
@@ -685,8 +734,6 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
     }
 
-
-
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
         if (scrollState.UP == scrollState) {
@@ -703,5 +750,70 @@ public class MyAccountsFragment extends Fragment implements View.OnClickListener
 
     private void showViews() {
         mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
+    }
+
+    public int getAvailableFundsPercentage(int availableFund, int creditLimit) {
+        // Progressbar MAX value is 10000 to manage float values
+        int percentage = Math.round((100 * ((float) availableFund / (float) creditLimit)) * 100);
+
+        if (percentage < 0 || percentage > Utils.ACCOUNTS_PROGRESS_BAR_MAX_VALUE)
+            return Utils.ACCOUNTS_PROGRESS_BAR_MAX_VALUE;
+        else
+            return percentage;
+    }
+
+    private void showVoucherCounter() {
+        new HttpAsyncTask<String, String, VoucherResponse>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected VoucherResponse httpDoInBackground(String... params) {
+                return ((WoolworthsApplication) getActivity().getApplication()).getApi().getVouchers();
+            }
+
+            @Override
+            protected Class<VoucherResponse> httpDoInBackgroundReturnType() {
+                return VoucherResponse.class;
+            }
+
+            @Override
+            protected VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                VoucherResponse voucherResponse = new VoucherResponse();
+                voucherResponse.response = new Response();
+                return voucherResponse;
+            }
+
+            @Override
+            protected void onPostExecute(VoucherResponse voucherResponse) {
+                super.onPostExecute(voucherResponse);
+                VoucherCollection voucher = voucherResponse.voucherCollection;
+                if (voucher != null) {
+                    List<Voucher> voucherSize = voucher.vouchers;
+                    if (voucherSize != null) {
+                        mCounter.setActiveVoucher(voucherSize.size());
+
+                    }
+                } else {
+                    mCounter.setActiveVoucher(0);
+                }
+            }
+        }.execute();
+    }
+
+    private void hideVoucherCounter() {
+        mCounter.setActiveVoucher(0);
+    }
+
+    private void showAccountActiveCount() {
+        mCounter.setAccountIsActive(true);
+        showVoucherCounter();
+    }
+
+    private void hideAccountActiveCount() {
+        mCounter.setAccountIsActive(false);
+        hideVoucherCounter();
     }
 }
