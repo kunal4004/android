@@ -16,8 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
@@ -76,11 +74,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         txtIncreseLimit = (WTextView) view.findViewById(R.id.txtIncreseLimit);
         mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
         mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
-        RelativeLayout mRelErrorHandler = (RelativeLayout) view.findViewById(R.id.relErrorHandler);
-        Utils.setMargin(mRelErrorHandler, 0, 0, 0, 0);
-        WTextView mTitleError = (WTextView) view.findViewById(R.id.errorTitle);
-        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
-        retryApiCall(view);
+        mErrorHandlerView = new ErrorHandlerView(woolworthsApplication);
         txtIncreseLimit.setOnClickListener(this);
         transactions.setOnClickListener(this);
         AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
@@ -158,7 +152,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
             @Override
             protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new OfferActive();
             }
 
@@ -238,6 +232,11 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     public void onResume() {
         super.onResume();
         setTextSize();
+        if (woolworthsApplication.isTriggerErrorHandler()) {
+            if (!cardHasId) {
+                getActiveOffer();
+            }
+        }
     }
 
     //To remove negative signs from negative balance and add "CR" after the negative balance
@@ -269,25 +268,15 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         }, 100);
     }
 
-    public void networkFailureHandler(final String errorMessage) {
+    public void networkFailureHandler() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 isOfferActive = false;
                 hideProgressBar();
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
+                mErrorHandlerView.startActivity(getActivity());
             }
         });
     }
 
-    private void retryApiCall(View view) {
-        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!cardHasId) {
-                    getActiveOffer();
-                }
-            }
-        });
-    }
 }

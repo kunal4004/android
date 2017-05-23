@@ -348,7 +348,7 @@ public class BlurDialogEngine {
         if ((mHoldingActivity.getWindow().getAttributes().flags
                 & WindowManager.LayoutParams.FLAG_FULLSCREEN) == 0) {
             //not in fullscreen mode
-            statusBarHeight =0;
+            statusBarHeight = 0;
         }
 
         // check if status bar is translucent to remove status bar offset in order to provide blur
@@ -421,7 +421,8 @@ public class BlurDialogEngine {
         } else {
             try {
                 overlay = FastBlurHelper.doBlur(overlay, mBlurRadius, true);
-            }catch (Exception ex){}
+            } catch (Exception ex) {
+            }
         }
         if (mDebugEnable) {
             String blurTime = (System.currentTimeMillis() - startMs) + " ms";

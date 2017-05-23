@@ -156,6 +156,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     private ErrorHandlerView mErrorHandlerView;
     private String mProductId;
     private String mSkuId;
+    public WoolworthsApplication mWoolworthsApplication;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -252,9 +253,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         mProgressBar = (ProgressBar) findViewById(R.id.ppBar);
         mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         mBtnManual = (WButton) findViewById(R.id.btnManual);
-        RelativeLayout mRelErrorHandler = (RelativeLayout) findViewById(R.id.relErrorHandler);
-        WTextView mTitleError = (WTextView) findViewById(R.id.errorTitle);
-        mErrorHandlerView = new ErrorHandlerView(this, mRelErrorHandler, mTitleError);
+        mWoolworthsApplication = (WoolworthsApplication) getApplication();
+        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
         mBtnManual.setOnClickListener(this);
     }
 
@@ -262,6 +262,17 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     protected void onResume() {
         super.onResume();
         resumeScan();
+        if (mWoolworthsApplication.isTriggerErrorHandler()) {
+            switch (mCurrentBgTask) {
+                case MBGPRODUCT:
+                    getProductRequest(mBarcodeNumber);
+                    break;
+
+                case MBGPRODUCTDETAIL:
+                    getProductDetail(mProductId, mSkuId);
+                    break;
+            }
+        }
     }
 
     @Override
@@ -529,16 +540,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
             @Override
             public void failure(RetrofitError error) {
-                String errorMessage = error.getCause().toString();
-                if (errorMessage.equalsIgnoreCase("timeout")) {
-                    networkFailureHandler(getString(R.string.socket_timeout_exception));
-                } else if (errorMessage.contains("Unable to resolve host") ||
-                        errorMessage.contains("Connection timed out") ||
-                        errorMessage.contains("Connection closed by peer") ||
-                        errorMessage.contains("Failed to connect")) {
-                    networkFailureHandler(getString(R.string.connect_exception));
-                } else {
-                }
+                networkFailureHandler();
             }
         });
 
@@ -584,7 +586,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
             @Override
             protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new ProductView();
             }
 
@@ -602,7 +604,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                             errorScanCode();
                         }
                     }
-                } catch (NullPointerException ex) {
+                } catch (NullPointerException ignored) {
                 }
             }
 
@@ -673,8 +675,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         mTextProductSize.setOnClickListener(this);
         mLinColor.setOnClickListener(this);
         mBtnShopOnlineWoolies.setOnClickListener(this);
-
-        retryApiCall();
     }
 
     protected void displayProductDetail(String mProductName, String mProductList, String skuId) {
@@ -1009,7 +1009,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                 }
             });
 
-        }catch (JSONException e) {
+        } catch (JSONException ignored) {
         }
     }
 
@@ -1341,29 +1341,12 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         return price;
     }
 
-    private void networkFailureHandler(final String errorMessage) {
+    private void networkFailureHandler() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 hideProgressBar();
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
-            }
-        });
-    }
-
-    private void retryApiCall() {
-        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (mCurrentBgTask) {
-                    case MBGPRODUCT:
-                        getProductRequest(mBarcodeNumber);
-                        break;
-
-                    case MBGPRODUCTDETAIL:
-                        getProductDetail(mProductId, mSkuId);
-                        break;
-                }
+                mErrorHandlerView.startActivity(QRActivity.this);
             }
         });
     }

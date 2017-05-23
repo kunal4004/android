@@ -284,6 +284,11 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.WChangePasswordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle"/>
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.WConnectionHandlerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoConnectionStyle"/>
     </application>
 
 </manifest>

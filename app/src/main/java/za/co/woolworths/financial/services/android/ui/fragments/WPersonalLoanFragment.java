@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -39,7 +38,6 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
-import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle {
@@ -85,11 +83,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         txtIncreseLimit.setOnClickListener(this);
         transactions.setOnClickListener(this);
 
-        RelativeLayout mRelErrorHandler = (RelativeLayout) view.findViewById(R.id.relErrorHandler);
-        Utils.setMargin(mRelErrorHandler,0,0,0,0);
-        WTextView mTitleError = (WTextView) view.findViewById(R.id.errorTitle);
-        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
-        retryApiCall(view);
+        mErrorHandlerView = new ErrorHandlerView(woolworthsApplication);
         temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
         disableIncreaseLimit();
         hideProgressBar();
@@ -180,7 +174,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
             @Override
             protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new OfferActive();
             }
 
@@ -292,26 +286,21 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 }
             }
         }, 100);
+
+        if (woolworthsApplication.isTriggerErrorHandler()){
+            if (!cardHasId) {
+                getActiveOffer();
+            }
+        }
     }
 
-    public void networkFailureHandler(final String errorMessage) {
+    public void networkFailureHandler() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 isOfferActive = false;
                 hideProgressBar();
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
-            }
-        });
-    }
-
-    private void retryApiCall(View view) {
-        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!cardHasId) {
-                    getActiveOffer();
-                }
+                mErrorHandlerView.startActivity(getActivity());
             }
         });
     }

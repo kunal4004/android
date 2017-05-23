@@ -14,7 +14,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -70,7 +69,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
     private boolean mIsLastPage = false;
     private ProgressBar mProgressVBar;
     private String searchItem = "";
-    private int num_of_item;
+    public int num_of_item;
     private int pageOffset;
     private SlidingUpPanelLayout mSlideUpPanelLayout;
     public String mProductJSON;
@@ -80,11 +79,10 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
     private Menu mMenu;
     private String mSkuId;
     private String mProductId;
-    private RelativeLayout mRelErrorHandler;
     private ErrorHandlerView mErrorHandlerView;
-    private WTextView mTitleError;
+    private WoolworthsApplication mWoolWorthApplication;
 
-    enum RUN_BACKGROUND_TASK {
+    private enum RUN_BACKGROUND_TASK {
         SEARCH_PRODUCT, SEARCH_MORE_PRODUCT, LOAD_PRODUCT, LOAD_MORE_PRODUCT
     }
 
@@ -101,7 +99,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
         initProductDetailUI();
         actionBar();
         bundle();
-        retryApiCall();
         slideUpPanelListener();
         registerReceiver(broadcast_reciever, new IntentFilter("closeProductView"));
     }
@@ -153,40 +150,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
         });
     }
 
-    private void retryApiCall() {
-        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                switch (runTask) {
-
-                    case SEARCH_PRODUCT:
-                        Log.e("runTask", "search_product");
-                        searchProduct();
-                        break;
-
-                    case SEARCH_MORE_PRODUCT:
-                        Log.e("runTask", "search_more_product");
-                        searchMoreProduct();
-                        break;
-
-                    case LOAD_PRODUCT:
-                        Log.e("runTask", "load_product");
-                        loadProduct();
-                        break;
-
-                    case LOAD_MORE_PRODUCT:
-                        Log.e("runTask", "load_more_product");
-                        loadMoreProduct();
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-    }
-
     private void productConfig(String productName) {
         mToolBarTitle.setText(productName);
     }
@@ -194,7 +157,8 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
     private void bundle() {
         String productName = getIntent().getStringExtra("sub_category_name");
         productId = getIntent().getStringExtra("sub_category_id");
-        mErrorHandlerView = new ErrorHandlerView(this, mRelErrorHandler, mTitleError);
+        mWoolWorthApplication = (WoolworthsApplication) getApplication();
+        mErrorHandlerView = new ErrorHandlerView(mWoolWorthApplication);
         hideProgressBar();
         Bundle extras = getIntent().getExtras();
         searchItem = extras.getString("searchProduct");
@@ -238,8 +202,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
         mProductList = (RecyclerView) findViewById(R.id.productList);
         mProgressBar = (ProgressBar) findViewById(R.id.mProgressBar);
         mProgressVBar = (ProgressBar) findViewById(R.id.mProgressB);
-        mRelErrorHandler = (RelativeLayout) findViewById(R.id.relErrorHandler);
-        mTitleError = (WTextView) findViewById(R.id.errorTitle);
         mRelProgressBar = (RelativeLayout) findViewById(R.id.relProgressBar);
         mSlideUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         mLinProductList = (LinearLayout) findViewById(R.id.linProductList);
@@ -398,8 +360,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
             @Override
             protected ProductView httpError(String errorMessage, HttpErrorCode
                     httpErrorCode) {
-                Log.e("NetWorkFailure", "load_Product");
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new ProductView();
             }
 
@@ -437,7 +398,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
             @Override
             protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new ProductView();
             }
 
@@ -702,46 +663,76 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
     }
 
     public void handleLoadAnSearchProductsResponse(ProductView pv) {
-        switch (pv.httpCode) {
-            case 200:
-                mProduct = null;
-                mProduct = new ArrayList<>();
-                if (pv.products != null && pv.products.size() != 0) {
-                    mProduct = pv.products;
-                    if (pv.products.size() == 1) {
-                        mProductScroll.setVisibility(View.GONE);
-                        mSkuId = mProduct.get(0).otherSkus.get(0).sku;
-                        mProductId = mProduct.get(0).productId;
-                        mSelectedProduct = mProduct.get(0);
-                        onCallback(mProductId, mSkuId, true);
-                    } else {
-                        setNumberOfItem(mProduct.size());
-                        bindDataWithUI(mProduct);
-                        hideVProgressBar();
+        try {
+            switch (pv.httpCode) {
+                case 200:
+                    mProduct = null;
+                    mProduct = new ArrayList<>();
+                    if (pv.products != null && pv.products.size() != 0) {
+                        mProduct = pv.products;
+                        if (pv.products.size() == 1) {
+                            mProductScroll.setVisibility(View.GONE);
+                            mSkuId = mProduct.get(0).otherSkus.get(0).sku;
+                            mProductId = mProduct.get(0).productId;
+                            mSelectedProduct = mProduct.get(0);
+                            onCallback(mProductId, mSkuId, true);
+                        } else {
+                            setNumberOfItem(mProduct.size());
+                            bindDataWithUI(mProduct);
+                            hideVProgressBar();
+                        }
+                        break;
                     }
-                    break;
-                }
-            default:
-                mNumberOfItem.setText(String.valueOf(0));
-                hideVProgressBar();
-                Utils.alertErrorMessage(ProductGridActivity.this, pv.response.desc);
+                default:
+                    mNumberOfItem.setText(String.valueOf(0));
+                    hideVProgressBar();
+                    Utils.alertErrorMessage(ProductGridActivity.this, pv.response.desc);
 
-                break;
-        }
+                    break;
+            }
+        }catch (Exception ignored){}
     }
 
     private void setNumberOfItem(int numberOfItem) {
         mNumberOfItem.setText(String.valueOf(numberOfItem));
     }
 
-    public void networkFailureHandler(final String errorMessage) {
+    public void networkFailureHandler() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 hideVProgressBar();
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
+                mErrorHandlerView.startActivity(ProductGridActivity.this);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mWoolWorthApplication.isTriggerErrorHandler()) {
+            switch (runTask) {
+
+                case SEARCH_PRODUCT:
+                    searchProduct();
+                    break;
+
+                case SEARCH_MORE_PRODUCT:
+                    searchMoreProduct();
+                    break;
+
+                case LOAD_PRODUCT:
+                    loadProduct();
+                    break;
+
+                case LOAD_MORE_PRODUCT:
+                    loadMoreProduct();
+                    break;
+
+                default:
+                    break;
+            }
+        }
     }
 }
 

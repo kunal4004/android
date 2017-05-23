@@ -72,13 +72,10 @@ public class ProductSubCategoryActivity extends BaseActivity implements View.OnC
         mPopWindowValidationMessage = new PopWindowValidationMessage(this);
         initUI();
         getSubCategory();
-        retryApiCall();
     }
 
     private void initUI() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        RelativeLayout mRelErrorHandler = (RelativeLayout) findViewById(R.id.relErrorHandler);
-        WTextView mTitleError = (WTextView) findViewById(R.id.errorTitle);
         WTextView mToolBarTitle = (WTextView) findViewById(R.id.toolbarText);
         recyclerView = (WObservableRecyclerView) findViewById(R.id.productSearchList);
         mTextNoProductFound = (WTextView) findViewById(R.id.textNoProductFound);
@@ -96,8 +93,7 @@ public class ProductSubCategoryActivity extends BaseActivity implements View.OnC
         else
             mToolBarTitle.setText(mSubCategoriesName);
 
-        mErrorHandlerView = new ErrorHandlerView(this, mRelErrorHandler, mTitleError);
-
+        mErrorHandlerView = new ErrorHandlerView((WoolworthsApplication) getApplication());
     }
 
 
@@ -145,7 +141,7 @@ public class ProductSubCategoryActivity extends BaseActivity implements View.OnC
 
             @Override
             protected SubCategories httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new SubCategories();
             }
 
@@ -264,22 +260,21 @@ public class ProductSubCategoryActivity extends BaseActivity implements View.OnC
         mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
     }
 
-    public void networkFailureHandler(final String errorMessage) {
+    public void networkFailureHandler() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 hideProgressBar();
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
+                mErrorHandlerView.startActivity(ProductSubCategoryActivity.this);
             }
         });
     }
 
-    private void retryApiCall() {
-        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getSubCategory();
-            }
-        });
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (((WoolworthsApplication) getApplication()).isTriggerErrorHandler()) {
+            getSubCategory();
+        }
     }
 }

@@ -40,10 +40,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     private StepNavigatorCallback stepNavigatorCallback;
     private int mSelectedPosition = -1;
     public FragmentManager fm;
-    // private ProgressDialogFragment mGetAccountsProgressDialog;
     private ErrorHandlerView mErrorHandlerView;
-    private RelativeLayout mRelErrorHandler;
-    private WTextView mTitleError;
     private ProgressDialogFragment mGetAccountsProgressDialog;
 
     public interface StepNavigatorCallback {
@@ -76,8 +73,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         initUI();
         setListener();
         setText();
-        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
-        retryApiCall(view);
+        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
         return view;
     }
 
@@ -93,9 +89,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         relButtonCLIDeaBank = (RelativeLayout) view.findViewById(R.id.relButtonCLIDeaBank);
         mBtnContinue = (WButton) view.findViewById(R.id.btnContinue);
         mImgInfo = (ImageView) view.findViewById(R.id.imgInfo);
-        mRelErrorHandler = (RelativeLayout) view.findViewById(R.id.relErrorHandler);
-        mTitleError = (WTextView) view.findViewById(R.id.errorTitle);
-
     }
 
     private void setListener() {
@@ -155,7 +148,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
             @Override
             protected DeaBanks httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 Log.e("errorMsg", errorMessage);
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new DeaBanks();
             }
 
@@ -232,11 +225,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void onCheckboxViewClick(View v, int position) {
         mSelectedPosition = position;
         if (mBanks != null) {
@@ -261,22 +249,22 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     }
 
 
-    public void networkFailureHandler(final String errorMessage) {
+    public void networkFailureHandler() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 stopProgressDialog();
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
+                mErrorHandlerView.startActivity(getActivity());
             }
         });
     }
 
-    private void retryApiCall(View view) {
-        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setDeaBanks();
-            }
-        });
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mWoolworthsApplication.isTriggerErrorHandler()) {
+            setDeaBanks();
+        }
     }
 }

@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
@@ -26,7 +25,6 @@ import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
@@ -37,12 +35,13 @@ import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
 public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 
-    public TabLayout tabLayout;
-    public ViewPager viewPager;
-    WRewardsFragmentPagerAdapter adapter;
-    ProgressBar progressBar;
-    LinearLayout fragmentView;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+    private WRewardsFragmentPagerAdapter adapter;
+    private ProgressBar progressBar;
+    private LinearLayout fragmentView;
     private ErrorHandlerView mErrorHandlerView;
+    private WoolworthsApplication mWoolworthApp;
 
     @Nullable
     @Override
@@ -51,16 +50,12 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         viewPager = (ViewPager) view.findViewById(R.id.viewpager);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         fragmentView = (LinearLayout) view.findViewById(R.id.fragmentView);
-        RelativeLayout mRelErrorHandler = (RelativeLayout) view.findViewById(R.id.relErrorHandler);
-        WTextView mTitleError = (WTextView) view.findViewById(R.id.errorTitle);
-
+        mWoolworthApp = (WoolworthsApplication) getActivity().getApplication();
         tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         viewPager.setOffscreenPageLimit(3);
         progressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
-
+        mErrorHandlerView = new ErrorHandlerView(mWoolworthApp);
         getWRewards().execute();
-        retryApiCall(view);
         return view;
     }
 
@@ -106,7 +101,6 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         }
 
 
-
         return view;
     }
 
@@ -131,7 +125,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 
             @Override
             protected VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new VoucherResponse();
             }
 
@@ -147,41 +141,44 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
     }
 
     public void handleVoucherResponse(VoucherResponse voucherResponse) {
-        switch (voucherResponse.httpCode) {
-            case 200:
-                setupViewPager(viewPager, voucherResponse);
-                break;
-            case 440:
-                AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
-                mError.setTitle(getString(R.string.title_authentication_error));
-                mError.setMessage(getString(R.string.session_out_message));
-                mError.show();
+        try {
+            switch (voucherResponse.httpCode) {
+                case 200:
+                    setupViewPager(viewPager, voucherResponse);
+                    break;
+                case 440:
+                    AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
+                    mError.setTitle(getString(R.string.title_authentication_error));
+                    mError.setMessage(getString(R.string.session_out_message));
+                    mError.show();
 
-                new android.os.AsyncTask<Void, Void, String>() {
+                    new android.os.AsyncTask<Void, Void, String>() {
 
-                    @Override
-                    protected String doInBackground(Void... params) {
-                        try {
-                            new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        @Override
+                        protected String doInBackground(Void... params) {
+                            try {
+                                new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            return "";
                         }
-                        return "";
-                    }
 
-                    @Override
-                    protected void onPostExecute(String s) {
-                        Intent intent = new Intent();
-                        getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-                        getFragmentManager().popBackStack();
-                    }
-                }.execute();
+                        @Override
+                        protected void onPostExecute(String s) {
+                            Intent intent = new Intent();
+                            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+                            getFragmentManager().popBackStack();
+                        }
+                    }.execute();
 
-                break;
-            default:
-                setupErrorViewPager(viewPager);
-                break;
+                    break;
+                default:
+                    setupErrorViewPager(viewPager);
+                    break;
 
+            }
+        } catch (Exception ignored) {
         }
     }
 
@@ -201,21 +198,20 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         }
     }
 
-    public void networkFailureHandler(final String errorMessage) {
+    public void networkFailureHandler() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
+                mErrorHandlerView.startActivity(getActivity());
             }
         });
     }
 
-    private void retryApiCall(View view) {
-        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getWRewards().execute();
-            }
-        });
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mWoolworthApp.isTriggerErrorHandler()) {
+            getWRewards().execute();
+        }
     }
 }

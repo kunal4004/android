@@ -27,7 +27,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -128,10 +127,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
         mTextACreditLimit = (WTextView) findViewById(R.id.textACreditLimit);
         mTextProceedToSolvency = (WTextView) findViewById(R.id.textProceedToSolvency);
         mImageCreditAmount = (ImageView) findViewById(R.id.imgInfo);
-        RelativeLayout mRelErrorHandler = (RelativeLayout) findViewById(R.id.relErrorHandler);
-        WTextView mTitleError = (WTextView) findViewById(R.id.errorTitle);
-        mErrorHandlerView = new ErrorHandlerView(this, mRelErrorHandler, mTitleError);
-        retryApiCall();
+        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
     }
 
     private void setActionBar() {
@@ -300,6 +296,9 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
     protected void onResume() {
         super.onResume();
         setRadioButtonBold();
+        if (mWoolworthsApplication.isTriggerErrorHandler()) {
+            createOfferRequest();
+        }
     }
 
     @Override
@@ -333,7 +332,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 
             @Override
             protected CreateOfferResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new CreateOfferResponse();
             }
 
@@ -399,7 +398,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
         }
     }
 
-    public class NumberTextWatcher implements TextWatcher {
+    private class NumberTextWatcher implements TextWatcher {
 
         private DecimalFormat df;
         private DecimalFormat dfnd;
@@ -415,8 +414,6 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
             hasFractionalPart = false;
         }
 
-        @SuppressWarnings("unused")
-        private static final String TAG = "NumberTextWatcher";
 
         @Override
         public void afterTextChanged(Editable s) {
@@ -560,21 +557,12 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
         }
     };
 
-    public void networkFailureHandler(final String errorMessage) {
+    public void networkFailureHandler() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 stopProgressDialog();
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
-            }
-        });
-    }
-
-    private void retryApiCall() {
-        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createOfferRequest();
+                mErrorHandlerView.startActivity(CLISupplyInfoActivity.this);
             }
         });
     }

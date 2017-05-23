@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -38,7 +37,6 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
-import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 
@@ -77,11 +75,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
         mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
 
-        RelativeLayout mRelErrorHandler = (RelativeLayout) view.findViewById(R.id.relErrorHandler);
-        Utils.setMargin(mRelErrorHandler, 0, 0, 0, 0);
-        WTextView mTitleError = (WTextView) view.findViewById(R.id.errorTitle);
-        retryApiCall(view);
-        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
+        mErrorHandlerView = new ErrorHandlerView(woolworthsApplication);
         transactions.setOnClickListener(this);
         txtIncreseLimit.setOnClickListener(this);
 
@@ -161,7 +155,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
             @Override
             protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new OfferActive();
             }
 
@@ -238,6 +232,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     public void onResume() {
         super.onResume();
         setTextSize();
+        if (woolworthsApplication.isTriggerErrorHandler()) {
+            if (!cardHasId) {
+                getActiveOffer();
+            }
+        }
     }
 
     //To remove negative signs from negative balance and add "CR" after the negative balance
@@ -269,24 +268,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         }, 100);
     }
 
-    public void networkFailureHandler(final String errorMessage) {
+    public void networkFailureHandler() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 isOfferActive = false;
                 hideProgressBar();
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
-            }
-        });
-    }
-
-    private void retryApiCall(View view) {
-        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!cardHasId) {
-                    getActiveOffer();
-                }
+                mErrorHandlerView.startActivity(getActivity());
             }
         });
     }

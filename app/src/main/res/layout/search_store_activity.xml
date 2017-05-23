@@ -1,84 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/search_store_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/recent_search_bg"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/search_store_activity"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/recent_search_bg"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:background="@drawable/appbar_background"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:elevation="0dp">
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/appbar"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/appbar_background"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:elevation="0dp">
+            android:layout_marginTop="0dp"
+            android:background="@color/white"
+            android:minHeight="?attr/actionBarSize"
+            app:popupTheme="@style/StoreSearch"
+            app:theme="@style/StoreSearch"/>
+    </android.support.design.widget.AppBarLayout>
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="0dp"
-                android:background="@color/white"
-                android:minHeight="?attr/actionBarSize"
-                app:popupTheme="@style/StoreSearch"
-                app:theme="@style/StoreSearch"/>
-        </android.support.design.widget.AppBarLayout>
+    <include
+        android:id="@+id/recentSearchLayout"
+        layout="@layout/recent_serachs_layout"
+        android:visibility="gone"
+        />
 
-        <include
-            android:id="@+id/recentSearchLayout"
-            layout="@layout/recent_serachs_layout"
-            android:visibility="gone"
-            />
+    <RelativeLayout
+        android:id="@+id/search_Error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone"
+        >
 
-        <RelativeLayout
-            android:id="@+id/search_Error"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:text="@string/no_results_to_show"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:WTextView_font="medium_bold"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView2"
+            android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:padding="32dp"
-            android:visibility="gone"
-            >
+            android:text="@string/search_error_message"
+            android:textSize="15sp"
+            app:WTextView_font="myriadpro_regular"/>
+    </RelativeLayout>
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="10dp"
-                android:text="@string/no_results_to_show"
-                android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                app:WTextView_font="medium_bold"/>
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/textView2"
-                android:layout_centerHorizontal="true"
-                android:gravity="center"
-                android:text="@string/search_error_message"
-                android:textSize="15sp"
-                app:WTextView_font="myriadpro_regular"/>
-        </RelativeLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/storeList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingTop="12dp"
-            android:scrollbars="none"
-            />
-    </LinearLayout>
-
-    <include layout="@layout/error_handler"/>
-
-</FrameLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/storeList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="12dp"
+        android:scrollbars="none"
+        />
+</LinearLayout>

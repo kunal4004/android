@@ -36,7 +36,6 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.ui.adapters.StoreSearchListAdapter;
@@ -61,23 +60,21 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
     SearchHistory search;
     public static final String TAG = "SearchStoresActivity";
     private ErrorHandlerView mErrorHandlerView;
-    private RelativeLayout mRelErrorHandler;
-    private WTextView mTitleError;
     public String mSearchText = "";
+    private WoolworthsApplication mWoolworthsApplication;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_store_activity);
         Utils.updateStatusBarBackground(this);
+        mWoolworthsApplication = (WoolworthsApplication) getApplication();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         recyclerView = (RecyclerView) findViewById(R.id.storeList);
         recentSearchLayout = (LinearLayout) findViewById(R.id.recentSearchLayout);
         recentSearchList = (LinearLayout) findViewById(R.id.recentSearchList);
         searchErrorLayout = (RelativeLayout) findViewById(R.id.search_Error);
-        mRelErrorHandler = (RelativeLayout) findViewById(R.id.relErrorHandler);
-        mTitleError = (WTextView) findViewById(R.id.errorTitle);
-        mErrorHandlerView = new ErrorHandlerView(this, mRelErrorHandler, mTitleError);
+        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         showRecentSearchHistoryView(true);
         setSupportActionBar(toolbar);
@@ -123,8 +120,6 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
                 super.onScrolled(recyclerView, dx, dy);
             }
         });
-
-        retryApiCall();
     }
 
     @Override
@@ -252,7 +247,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 
             @Override
             protected LocationResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new LocationResponse();
             }
 
@@ -408,22 +403,21 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
     }
 
 
-    public void networkFailureHandler(final String errorMessage) {
+    public void networkFailureHandler() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
+                mErrorHandlerView.startActivity(SearchStoresActivity.this);
             }
         });
     }
 
-    private void retryApiCall() {
-        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mSearchText.length() >= 2)
-                    startSearch(mSearchText).execute();
-            }
-        });
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mWoolworthsApplication.isTriggerErrorHandler()) {
+            if (mSearchText.length() >= 2)
+                startSearch(mSearchText).execute();
+        }
     }
 }

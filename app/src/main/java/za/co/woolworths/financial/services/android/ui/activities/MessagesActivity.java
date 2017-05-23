@@ -14,7 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.util.Attributes;
@@ -55,6 +54,7 @@ public class MessagesActivity extends BaseActivity {
     private final ThreadLocal<FragmentManager> fm = new ThreadLocal<>();
     private WTextView noMessagesText;
     private ErrorHandlerView mErrorHandlerView;
+    private WoolworthsApplication mWoolWorthsApplication;
 
 
     @Override
@@ -62,6 +62,7 @@ public class MessagesActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.messages_activity);
         Utils.updateStatusBarBackground(this);
+        mWoolWorthsApplication = (WoolworthsApplication) getApplication();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -70,11 +71,7 @@ public class MessagesActivity extends BaseActivity {
         messsageListview = (RecyclerView) findViewById(R.id.messsageListView);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
         noMessagesText = (WTextView) findViewById(R.id.noMessagesText);
-
-        RelativeLayout mRelErrorHandler = (RelativeLayout) findViewById(R.id.relErrorHandler);
-        WTextView mTitleError = (WTextView) findViewById(R.id.errorTitle);
-        mErrorHandlerView = new ErrorHandlerView(this, mRelErrorHandler, mTitleError);
-
+        mErrorHandlerView = new ErrorHandlerView(mWoolWorthsApplication);
         messsageListview.setHasFixedSize(true);
         messsageListview.setLayoutManager(mLayoutManager);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -116,7 +113,6 @@ public class MessagesActivity extends BaseActivity {
         };
 
         loadMessages();
-        retryApiCall();
     }
 
     public void loadMessages() {
@@ -146,7 +142,7 @@ public class MessagesActivity extends BaseActivity {
 
             @Override
             protected MessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage, 0);
+                networkFailureHandler(0);
                 return new MessageResponse();
             }
 
@@ -194,7 +190,7 @@ public class MessagesActivity extends BaseActivity {
 
             @Override
             protected MessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage, 1);
+                networkFailureHandler(1);
                 return new MessageResponse();
             }
 
@@ -298,7 +294,9 @@ public class MessagesActivity extends BaseActivity {
                 new IntentFilter(Utils.PUSH_NOTIFICATION));
         // clear the notification area when the app is opened
         NotificationUtils.clearNotifications(getApplicationContext());
-
+        if (mWoolWorthsApplication.isTriggerErrorHandler()) {
+            loadMessages();
+        }
     }
 
     @Override
@@ -325,43 +323,44 @@ public class MessagesActivity extends BaseActivity {
     }
 
     public void handleLoadMessagesResponse(MessageResponse messageResponse) {
-        switch (messageResponse.httpCode) {
-            case 200:
-                messageList = null;
-                messageList = new ArrayList<>();
-                if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
-                    messageList = messageResponse.messagesList;
-                    bindDataWithUI(messageList);
-                    String unreadCountValue = Utils.getSessionDaoValue(MessagesActivity.this,
-                            SessionDao.KEY.UNREAD_MESSAGE_COUNT);
-                    if (TextUtils.isEmpty(unreadCountValue)) {
-                        Utils.setBadgeCounter(MessagesActivity.this, 0);
+        try {
+            switch (messageResponse.httpCode) {
+                case 200:
+                    messageList = null;
+                    messageList = new ArrayList<>();
+                    if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
+                        messageList = messageResponse.messagesList;
+                        bindDataWithUI(messageList);
+                        String unreadCountValue = Utils.getSessionDaoValue(MessagesActivity.this,
+                                SessionDao.KEY.UNREAD_MESSAGE_COUNT);
+                        if (TextUtils.isEmpty(unreadCountValue)) {
+                            Utils.setBadgeCounter(MessagesActivity.this, 0);
+                        } else {
+                            int unreadCount = Integer.valueOf(unreadCountValue) - messageList.size();
+                            Utils.setBadgeCounter(MessagesActivity.this, unreadCount);
+                        }
+                        setMeassagesAsRead(messageList);
+                        mIsLastPage = false;
+                        mCurrentPage = 1;
+                        mIsLoading = false;
                     } else {
-                        int unreadCount = Integer.valueOf(unreadCountValue) - messageList.size();
-                        Utils.setBadgeCounter(MessagesActivity.this, unreadCount);
+                        assert messageResponse.messagesList != null;
+                        if (messageResponse.messagesList.size() == 0) {
+                            messsageListview.setVisibility(View.GONE);
+                            noMessagesText.setVisibility(View.VISIBLE);
+                        }
                     }
-                    setMeassagesAsRead(messageList);
-                    mIsLastPage = false;
-                    mCurrentPage = 1;
-                    mIsLoading = false;
-                } else {
-                    assert messageResponse.messagesList != null;
-                    if (messageResponse.messagesList.size() == 0) {
-                        messsageListview.setVisibility(View.GONE);
-                        noMessagesText.setVisibility(View.VISIBLE);
-                    }
-                }
-                hideRefreshView();
-                break;
-            default:
-                hideRefreshView();
-                Utils.alertErrorMessage(MessagesActivity.this, messageResponse.response.desc);
-                break;
-        }
+                    hideRefreshView();
+                    break;
+                default:
+                    hideRefreshView();
+                    Utils.alertErrorMessage(MessagesActivity.this, messageResponse.response.desc);
+                    break;
+            }
+        }catch (Exception ignored){}
     }
 
-
-    public void networkFailureHandler(final String errorMessage, final int type) {
+    public void networkFailureHandler(final int type) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -371,17 +370,10 @@ public class MessagesActivity extends BaseActivity {
                     mIsLoading = false;
                 }
 
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
+                mErrorHandlerView.startActivity(MessagesActivity.this);
             }
         });
     }
 
-    private void retryApiCall() {
-        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadMessages();
-            }
-        });
-    }
+
 }

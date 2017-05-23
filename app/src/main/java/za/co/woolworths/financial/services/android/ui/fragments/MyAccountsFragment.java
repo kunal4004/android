@@ -174,10 +174,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         userInitials = (WTextView) view.findViewById(R.id.initials);
         imgCreditCard = (ImageView) view.findViewById(R.id.imgCreditCard);
         relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
-
-        RelativeLayout mRelErrorHandler = (RelativeLayout) view.findViewById(R.id.relErrorHandler);
-        WTextView mTitleError = (WTextView) view.findViewById(R.id.errorTitle);
-        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
+        mErrorHandlerView = new ErrorHandlerView((WoolworthsApplication) getActivity().getApplication());
         mCounter = ((WoolworthsApplication) getActivity().getApplication()).getCounter();
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
@@ -198,7 +195,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         viewPager.addOnPageChangeListener(this);
         setUiPageViewController();
 
-        retryApiCall(view);
         view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
         view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
         view.findViewById(R.id.linkAccountsBtn).setOnClickListener(this.btnLinkAccounts_onClick);
@@ -518,7 +514,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
             @Override
             protected AccountsResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new AccountsResponse();
             }
 
@@ -664,6 +660,9 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         super.onResume();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("UpdateCounter"));
         loadMessages();
+        if (woolworthsApplication.isTriggerErrorHandler()) {
+            loadAccounts();
+        }
     }
 
     @Override
@@ -752,21 +751,12 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
             return percentage;
     }
 
-    public void networkFailureHandler(final String errorMessage) {
+    public void networkFailureHandler() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 dismissProgress();
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
-            }
-        });
-    }
-
-    private void retryApiCall(View view) {
-        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadAccounts();
+                mErrorHandlerView.startActivity(getActivity());
             }
         });
     }

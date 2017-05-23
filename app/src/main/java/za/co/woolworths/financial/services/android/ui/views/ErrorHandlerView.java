@@ -1,50 +1,26 @@
 package za.co.woolworths.financial.services.android.ui.views;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.view.View;
-import android.widget.RelativeLayout;
+import android.app.Activity;
+import android.content.Intent;
 
-import com.awfs.coordination.R;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.ui.activities.WConnectionHandlerActivity;
 
 public class ErrorHandlerView {
 
-    private WTextView mErrorTitle;
-    private RelativeLayout mRelativeLayout;
-    private Context mContext;
+    private WoolworthsApplication mWoolworthApp;
 
-    public ErrorHandlerView(Context context,
-                            RelativeLayout relativeLayout,
-                            WTextView errorTitle) {
-        this.mContext = context;
-        this.mRelativeLayout = relativeLayout;
-        this.mErrorTitle = errorTitle;
-    }
-
-    public void showErrorHandlerLayout() {
-        mRelativeLayout.setVisibility(View.VISIBLE);
+    public ErrorHandlerView(WoolworthsApplication woolworthsApplication) {
+        this.mWoolworthApp = woolworthsApplication;
     }
 
     public void hideErrorHandlerLayout() {
-        this.mRelativeLayout.setVisibility(View.GONE);
+        mWoolworthApp.setTriggerErrorHandler(false);
     }
 
-    public void setErrorTitle(String errorMessage) {
-        mErrorTitle.setText(errorMessage);
+    public void startActivity(Activity currentActivity) {
+        Intent currentIntent = new Intent(currentActivity, WConnectionHandlerActivity.class);
+        currentActivity.startActivity(currentIntent);
+        currentActivity.overridePendingTransition(0, 0);
     }
-
-    public void diplayErrorMessage(String type) {
-        showErrorHandlerLayout();
-        Resources res = mContext.getResources();
-        if (type.equalsIgnoreCase("SocketTimeoutException")) {
-            setErrorTitle(res.getString(R.string.socket_timeout_error));
-        } else if (type.equalsIgnoreCase("ConnectException")) {
-            setErrorTitle(res.getString(R.string.connection_error));
-        } else if (type.startsWith("RuntimeExecutionException")) {
-            setErrorTitle(res.getString(R.string.runtime_eror));
-        } else {
-            setErrorTitle(res.getString(R.string.runtime_eror));
-        }
-    }
-
 }

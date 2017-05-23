@@ -18,7 +18,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -74,10 +73,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     private ProgressBar mEmailProgressBar;
     private ProgressBar mProgressBar;
     private WEmpyViewDialogFragment mEmpyViewDialogFragment;
-    private RelativeLayout mRelErrorHandler;
-    private WTextView mTitleError;
     private ErrorHandlerView mErrorHandlerView;
-    private boolean isDeaBank;
     private String retryBackgroundTask;
     private final String SEND_EMAIL = "sendEmail";
     private final String UPDATE_BANK_DETAIL = "updateBankDetail";
@@ -102,11 +98,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mLinBankLayout = (LinearLayout) view.findViewById(R.id.linBankLayout);
         mProgressBar = (ProgressBar) view.findViewById(R.id.mWoolworthsProgressBar);
         mEmailProgressBar = (ProgressBar) view.findViewById(R.id.mEmailWoolworthsProgressBar);
-        mRelErrorHandler = (RelativeLayout) view.findViewById(R.id.relErrorHandler);
-        mTitleError = (WTextView) view.findViewById(R.id.errorTitle);
-        Utils.setMargin(mRelErrorHandler, 0, 0, 0, 0);
-        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
-        retryApiCall(view);
+        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
 
         initUI();
         setListener();
@@ -123,8 +115,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     }
 
     public void loadView() {
-        isDeaBank = mWoolworthsApplication.isDEABank();
-        if (isDeaBank) {
+        if (mWoolworthsApplication.isDEABank()) {
             mLinBankLayout.setVisibility(View.VISIBLE);
             mLinProofLayout.setVisibility(View.GONE);
         } else {
@@ -256,6 +247,21 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
+        if (mWoolworthsApplication.isTriggerErrorHandler()) {
+            switch (retryBackgroundTask) {
+                case SEND_EMAIL:
+                    sendEmail();
+                    break;
+
+                case UPDATE_BANK_DETAIL:
+                    updateBankDetail();
+                    break;
+
+                case GET_BANK_ACCOUNT_TYPES:
+                    getBankAccountTypes();
+                    break;
+            }
+        }
     }
 
     @Override
@@ -344,7 +350,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
             @Override
             protected CLIEmailResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new CLIEmailResponse();
             }
 
@@ -374,7 +380,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                         Utils.displayValidationMessage(getActivity(),
                                 TransientActivity.VALIDATION_MESSAGE_LIST.ERROR, desc);
                     }
-                } catch (NullPointerException ex) {
+                } catch (NullPointerException ignored) {
                 }
                 stopEmailProgressDialog();
             }
@@ -391,8 +397,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
             @Override
             protected UpdateBankDetailResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
-                //stopProgressDialog();
+                networkFailureHandler();
                 return new UpdateBankDetailResponse();
             }
 
@@ -417,7 +422,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                         } else {
 
                             String desc = updateBankDetailResponse.response.desc;
-                            if (!TextUtils.isEmpty(desc) && desc != null) {
+                            if (!TextUtils.isEmpty(desc)) {
                                 Utils.displayValidationMessage(getActivity(),
                                         TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
                                         desc);
@@ -480,43 +485,24 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     }
 
 
-    private void networkFailureHandler(final String errorMessage) {
+    private void networkFailureHandler() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 switch (retryBackgroundTask) {
                     case SEND_EMAIL:
+                        stopEmailProgressDialog();
+                        break;
+
+                    case UPDATE_BANK_DETAIL:
                         stopProgressDialog();
                         break;
 
-                    case UPDATE_BANK_DETAIL:
-                        break;
-
                     case GET_BANK_ACCOUNT_TYPES:
+
                         break;
                 }
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
-            }
-        });
-    }
-
-    private void retryApiCall(View view) {
-        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (retryBackgroundTask) {
-                    case SEND_EMAIL:
-                        sendEmail();
-                        break;
-
-                    case UPDATE_BANK_DETAIL:
-                        updateBankDetail();
-                        break;
-
-                    case GET_BANK_ACCOUNT_TYPES:
-                        getBankAccountTypes();
-                        break;
-                }
+                mErrorHandlerView.startActivity(getActivity());
             }
         });
     }

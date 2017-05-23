@@ -7,9 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -19,7 +17,6 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionHistory
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
@@ -31,6 +28,7 @@ public class WTransactionsActivity extends AppCompatActivity {
     public String productOfferingId;
     private ProgressDialogFragment mGetTransactionProgressDialog;
     private ErrorHandlerView mErrorHandlerView;
+    private WoolworthsApplication mWoolworthsApplication;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,16 +37,13 @@ public class WTransactionsActivity extends AppCompatActivity {
         Utils.updateStatusBarBackground(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mWoolworthsApplication = (WoolworthsApplication) getApplication();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
         getSupportActionBar().setElevation(0);
         transactionListview = (ExpandableListView) findViewById(R.id.transactionListView);
         productOfferingId = getIntent().getStringExtra("productOfferingId");
-
-        RelativeLayout mRelErrorHandler = (RelativeLayout) findViewById(R.id.relErrorHandler);
-        WTextView mTitleError = (WTextView) findViewById(R.id.errorTitle);
-        mErrorHandlerView = new ErrorHandlerView(this, mRelErrorHandler, mTitleError);
-        retryApiCall();
+        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
         loadTransactionHistory(productOfferingId);
     }
 
@@ -90,7 +85,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 
             @Override
             protected TransactionHistoryResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new TransactionHistoryResponse();
             }
 
@@ -124,7 +119,7 @@ public class WTransactionsActivity extends AppCompatActivity {
                         try {
                             Utils.alertErrorMessage(WTransactionsActivity.this,
                                     transactionHistoryResponse.response.desc);
-                        } catch (NullPointerException ex) {
+                        } catch (NullPointerException ignored) {
                         }
                         break;
                 }
@@ -154,22 +149,20 @@ public class WTransactionsActivity extends AppCompatActivity {
         }
     }
 
-    public void networkFailureHandler(final String errorMessage) {
+    public void networkFailureHandler() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
+                mErrorHandlerView.startActivity(WTransactionsActivity.this);
             }
         });
     }
 
-    private void retryApiCall() {
-        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadTransactionHistory(productOfferingId);
-            }
-        });
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mWoolworthsApplication.isTriggerErrorHandler()) {
+            loadTransactionHistory(productOfferingId);
+        }
     }
 }

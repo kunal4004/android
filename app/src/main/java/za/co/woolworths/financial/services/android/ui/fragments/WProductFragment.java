@@ -55,8 +55,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     private boolean actionBarIsHidden = false;
     private ActionBar mAppToolbar;
     private ErrorHandlerView mErrorHandlerView;
-    private RelativeLayout mRelErrorHandler;
-    private WTextView mTitleError;
+    private WoolworthsApplication mWoolworthsApplication;
 
     @Override
     public void onSelectedProduct(View v, int position) {
@@ -123,11 +122,11 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         mAppToolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         mProductToolbar = (Toolbar) view.findViewById(R.id.productToolbar);
         initUI(view);
-        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
+        mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
+        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
         setUIListener();
         showAccountToolbar();
         mNestedScrollview.getParent().requestChildFocus(mNestedScrollview, mNestedScrollview);
-        retryApiCall(view);
         showOneTimePopup();
     }
 
@@ -147,8 +146,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     }
 
     private void initUI(View v) {
-        mRelErrorHandler = (RelativeLayout) v.findViewById(R.id.relErrorHandler);
-        mTitleError = (WTextView) v.findViewById(R.id.errorTitle);
         mNestedScrollview = (NestedScrollView) v.findViewById(R.id.mNestedScrollview);
         mImProductSearch = (ImageView) v.findViewById(R.id.imProductSearch);
         mImBarcodeScanner = (ImageView) v.findViewById(R.id.imBarcodeScanner);
@@ -384,20 +381,11 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 
     }
 
-    public void networkFailureHandler(final String errorMessage) {
+    public void networkFailureHandler() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
-            }
-        });
-    }
-
-    private void retryApiCall(View view) {
-        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                categoryRequest();
+                mErrorHandlerView.startActivity(getActivity());
             }
         });
     }
@@ -415,7 +403,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 
             @Override
             protected RootCategories httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new RootCategories();
             }
 
@@ -457,4 +445,11 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         };
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mWoolworthsApplication.isTriggerErrorHandler()) {
+            categoryRequest();
+        }
+    }
 }

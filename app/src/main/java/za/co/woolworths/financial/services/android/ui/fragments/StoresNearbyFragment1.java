@@ -2,14 +2,12 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -23,9 +21,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,7 +29,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -51,7 +46,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -71,7 +65,6 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity;
@@ -91,9 +84,6 @@ import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static android.content.Context.LOCATION_SERVICE;
-import static com.awfs.coordination.R.id.mProgressBar;
-import static com.awfs.coordination.R.id.textView;
-import static com.awfs.coordination.R.id.view_offset_helper;
 import static com.google.android.gms.wearable.DataMap.TAG;
 
 public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener {
@@ -157,9 +147,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
     private PopWindowValidationMessage mPopWindowValidationMessage;
     private ErrorHandlerView mErrorHandlerView;
-    private RelativeLayout mRelErrorHandler;
-    private WTextView mTitleError;
     private Location mLocation;
+    private WoolworthsApplication mWoolworthsApplication;
 
     public StoresNearbyFragment1() {
         setHasOptionsMenu(true);
@@ -176,8 +165,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         close = (ImageView) v.findViewById(R.id.close);
         storeName = (WTextView) v.findViewById(R.id.storeName);
         storeOfferings = (WTextView) v.findViewById(R.id.offerings);
-        mRelErrorHandler = (RelativeLayout) v.findViewById(R.id.relErrorHandler);
-        mTitleError = (WTextView) v.findViewById(R.id.errorTitle);
         storeDistance = (WTextView) v.findViewById(R.id.distance);
         storeAddress = (WTextView) v.findViewById(R.id.storeAddress);
         storeNumber = (WTextView) v.findViewById(R.id.storeNumber);
@@ -195,7 +182,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         // Chcek of location Service Enable
         //  checkLocationServiceAndSetLayout(Utils.isLocationServiceEnabled(getActivity()));
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelErrorHandler, mTitleError);
+        mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
+        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
         Criteria criteria = new Criteria();
         provider = locationManager.getBestProvider(criteria, false);
         try {
@@ -287,7 +275,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 getActivity().overridePendingTransition(0, 0);
             }
         });
-        retryApiCall(v);
         return v;
     }
 
@@ -311,7 +298,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
              *selected marker come in front of unselected marker.
              */
             googleMap.setInfoWindowAdapter(new MapWindowAdapter(getContext()));
-
             googleMap.setMyLocationEnabled(false);
             googleMap.setOnMarkerClickListener(this);
             unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
@@ -627,7 +613,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
             @Override
             protected LocationResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
+                networkFailureHandler();
                 return new LocationResponse();
             }
 
@@ -827,6 +813,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 searchForCurrentLocation();
             }
         }
+
+        if (mWoolworthsApplication.isTriggerErrorHandler()) {
+            locationAPIRequest(mLocation);
+        }
     }
 
     public boolean hasPermissions() {
@@ -867,21 +857,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
             progressBar.setVisibility(View.GONE);
     }
 
-    public void networkFailureHandler(final String errorMessage) {
+    public void networkFailureHandler() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 hideProgressBar();
-                mErrorHandlerView.diplayErrorMessage(errorMessage);
-            }
-        });
-    }
-
-    private void retryApiCall(View view) {
-        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                locationAPIRequest(mLocation);
+                mErrorHandlerView.startActivity(getActivity());
             }
         });
     }
