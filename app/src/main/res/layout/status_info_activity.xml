@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<za.co.woolworths.financial.services.android.ui.views.FragmentSlider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/status_info_fragment_slider"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />

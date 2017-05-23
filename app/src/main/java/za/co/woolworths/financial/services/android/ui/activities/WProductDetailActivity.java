@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -40,6 +41,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
@@ -60,7 +62,8 @@ import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecorat
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class WProductDetailActivity extends AppCompatActivity implements View.OnClickListener, SelectedProductView {
+public class WProductDetailActivity extends AppCompatActivity implements View.OnClickListener, SelectedProductView,
+        ProductViewPagerAdapter.MultipleImageInterface {
 
     private WTextView mTextSelectSize;
     private RecyclerView mRecyclerviewSize;
@@ -181,7 +184,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         //update default image
         mDefaultImage = getImageByWidth(mProductDetail.externalImageRef);
         setPromotionText(mProductDetail.saveText);
-        mProductLongDescription();
+        getHtmlData();
         mDefaultSKUModel = getDefaultSKUModel();
         updateHeroImage();
         updatePrice();
@@ -195,24 +198,40 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mScrollProductDetail.scrollTo(0, 0);
     }
 
-    protected void mProductLongDescription() {
+    protected void getHtmlData() {
         mObjProductDetail = mProductDetail.get(0);
-        String headerTag = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">" +
-                "<style  type=\"text/css\">body {text-align: justify;font-size:15px !important;text:#50000000 !important;}" +
-                "</style></head><body>";
-        String footerTag = "</body></html>";
-        String descriptionWithoutExtraTag = "";
 
+        String head = "<head>" +
+                "<meta charset=\"UTF-8\">" +
+                "<style>" +
+                "@font-face {font-family: 'myriad-pro-regular';src: url('file://"
+                + this.getFilesDir().getAbsolutePath() + "/fonts/MyriadPro-Regular.otf');}" +
+                "body {" +
+                "line-height: 110%;" +
+                "font-size: 92% !important;" +
+                "text-align: justify;" +
+                "color:grey;" +
+                "font-family:'myriad-pro-regular';}" +
+                "</style>" +
+                "</head>";
+
+        String descriptionWithoutExtraTag = "";
         if (!TextUtils.isEmpty(mObjProductDetail.longDescription)) {
             descriptionWithoutExtraTag = mObjProductDetail.longDescription
                     .replaceAll("</ul>\n\n<ul>\n", " ")
                     .replaceAll("<p>&nbsp;</p>", "")
                     .replaceAll("<ul><p>&nbsp;</p></ul>", " ");
         }
-        mWebDescription.loadDataWithBaseURL("file:///android_res/drawable/",
-                headerTag + isEmpty(descriptionWithoutExtraTag) + footerTag,
-                "text/html; charset=UTF-8", "UTF-8", null);
 
+        String htmlData = "<!DOCTYPE html><html>"
+                + head
+                + "<body>"
+                + isEmpty(descriptionWithoutExtraTag)
+                + "</body></html>";
+
+        mWebDescription.loadDataWithBaseURL("file:///android_res/drawable/",
+                htmlData,
+                "text/html; charset=UTF-8", "UTF-8", null);
         mTextTitle.setText(Html.fromHtml(isEmpty(mObjProductDetail.productName)));
         mProductCode.setText(getString(R.string.product_code) + ": " + mObjProductDetail.productId);
     }
@@ -244,33 +263,10 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
                 mColorView.setVisibility(View.GONE);
                 mRelContainer.setVisibility(View.GONE);
                 if (TextUtils.isEmpty(wasPrice)) {
-                    if (Utils.isLocationEnabled(WProductDetailActivity.this)) {
-//                        ArrayList<Double> priceList = new ArrayList<>();
-//                        for (OtherSkus os : mSelectedProduct.otherSkus) {
-//                            if (!TextUtils.isEmpty(os.price)) {
-//                                priceList.add(Double.valueOf(os.price));
-//                            }
-//                        }
-//                        if (priceList.size() > 0) {
-//                            price = String.valueOf(Collections.max(priceList));
-//                        }
-                    }
                     wPrice.setText(WFormatter.formatAmount(price));
                     wPrice.setPaintFlags(0);
                     WwasPrice.setText("");
                 } else {
-                    if (Utils.isLocationEnabled(WProductDetailActivity.this)) {
-//                        ArrayList<Double> priceList = new ArrayList<>();
-//                        for (OtherSkus os : mSelectedProduct.otherSkus) {
-//                            if (!TextUtils.isEmpty(os.price)) {
-//                                priceList.add(Double.valueOf(os.price));
-//                            }
-//                        }
-//                        if (priceList.size() > 0) {
-//                            price = String.valueOf(Collections.max(priceList));
-//                        }
-                    }
-
                     if (wasPrice.equalsIgnoreCase(price)) { //wasPrice equals currentPrice
                         wPrice.setText(WFormatter.formatAmount(price));
                         WwasPrice.setText("");
@@ -309,7 +305,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(mCheckOutLink))
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mCheckOutLink)));
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Utils.addUTMCode(mCheckOutLink))));
             }
         });
     }
@@ -384,7 +380,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             String auxiliaryImages = jsProductList.getString("auxiliaryImages");
             JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
             Iterator<String> keysIterator = jsAuxiliaryImages.keys();
-            colour = colour.replace(" ","");
+            colour = colour.replace(" ", "");
             while (keysIterator.hasNext()) {
                 String keyStr = keysIterator.next();
                 if (keyStr.toLowerCase().contains(colour.toLowerCase())) {
@@ -400,7 +396,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             mAuxiliaryImages.clear();
             mAuxiliaryImages.addAll(removeAuxiliaryImageDuplicate);
 
-            mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
+            mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages, this);
             mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
             mProductViewPagerAdapter.notifyDataSetChanged();
             setupPagerIndicatorDots();
@@ -751,7 +747,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
         mAuxiliaryImages = new ArrayList<>();
         mAuxiliaryImages.clear();
         mAuxiliaryImages.add(heroImage);
-        mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
+        mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages, this);
         mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
         mProductViewPagerAdapter.notifyDataSetChanged();
     }
@@ -912,7 +908,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
     }
 
     public void setUpBinder(ArrayList<String> mAuxiliaryImages) {
-        mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages);
+        mProductViewPagerAdapter = new ProductViewPagerAdapter(this, mAuxiliaryImages, this);
         mViewPagerProduct.setAdapter(mProductViewPagerAdapter);
         mProductViewPagerAdapter.notifyDataSetChanged();
         setupPagerIndicatorDots();
@@ -1098,6 +1094,19 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
             }
         }
     }
+
+    @Override
+    public void SelectedImage(int position, View v) {
+        Log.e("selectedImage", "selectedImage--");
+        Intent openMultipleImage = new Intent(this, MultipleImageActivity.class);
+        openMultipleImage.putExtra("position", position);
+        openMultipleImage.putExtra("auxiliaryImages", mAuxiliaryImages);
+        startActivity(openMultipleImage);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+
+    }
+
+
 }
 
 
