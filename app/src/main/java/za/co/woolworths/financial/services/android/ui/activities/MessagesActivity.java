@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.util.Attributes;
@@ -30,7 +32,7 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
-import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -52,7 +54,6 @@ public class MessagesActivity extends BaseActivity {
     private int mCurrentPage = 1;
     public List<MessageDetails> messageList;
     private final ThreadLocal<FragmentManager> fm = new ThreadLocal<>();
-    private WTextView noMessagesText;
     private ErrorHandlerView mErrorHandlerView;
     private WoolworthsApplication mWoolWorthsApplication;
 
@@ -70,8 +71,11 @@ public class MessagesActivity extends BaseActivity {
         mLayoutManager = new LinearLayoutManager(MessagesActivity.this);
         messsageListview = (RecyclerView) findViewById(R.id.messsageListView);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
-        noMessagesText = (WTextView) findViewById(R.id.noMessagesText);
-        mErrorHandlerView = new ErrorHandlerView(mWoolWorthsApplication);
+        mErrorHandlerView = new ErrorHandlerView(this, mWoolWorthsApplication,
+                (RelativeLayout) findViewById(R.id.relEmptyStateHandler),
+                (ImageView) findViewById(R.id.imgEmpyStateIcon),
+                (WTextView) findViewById(R.id.txtEmptyStateTitle),
+                (WTextView) findViewById(R.id.txtEmptyStateDesc));
         messsageListview.setHasFixedSize(true);
         messsageListview.setLayoutManager(mLayoutManager);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -150,20 +154,20 @@ public class MessagesActivity extends BaseActivity {
             @Override
             protected void onPostExecute(MessageResponse messageResponse) {
                 super.onPostExecute(messageResponse);
+                messsageListview.setVisibility(View.GONE);
                 handleLoadMessagesResponse(messageResponse);
             }
         };
     }
 
     public void bindDataWithUI(List<MessageDetails> messageDetailsList) {
-        noMessagesText.setVisibility(View.GONE);
+        mErrorHandlerView.hideEmpyState();
         messsageListview.setVisibility(View.VISIBLE);
         adapter = new MesssagesListAdapter(MessagesActivity.this, messageDetailsList);
         adapter.setMode(Attributes.Mode.Single);
         messsageListview.setAdapter(adapter);
 
     }
-
 
     private void loadMoreMessages() {
         moreMessageAsyncRequest().execute();
@@ -347,7 +351,7 @@ public class MessagesActivity extends BaseActivity {
                         assert messageResponse.messagesList != null;
                         if (messageResponse.messagesList.size() == 0) {
                             messsageListview.setVisibility(View.GONE);
-                            noMessagesText.setVisibility(View.VISIBLE);
+                            mErrorHandlerView.showEmptyState(5);
                         }
                     }
                     hideRefreshView();
@@ -357,7 +361,8 @@ public class MessagesActivity extends BaseActivity {
                     Utils.alertErrorMessage(MessagesActivity.this, messageResponse.response.desc);
                     break;
             }
-        }catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
     }
 
     public void networkFailureHandler(final int type) {

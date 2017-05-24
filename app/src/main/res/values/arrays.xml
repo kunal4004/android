@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <string-array name="fonts">
-       <item>fonts/WFutura-Light.ttf</item>
-       <item>fonts/WFutura-Medium.ttf</item>
-       <item>fonts/WFutura-SemiBold.ttf</item>
-       <item>fonts/WFutura-Bold.ttf</item>
-       <item>fonts/MyriadPro-Regular.otf</item>
-       <item>fonts/MyriadPro-Semibold.otf</item>
-   </string-array>
+    <string-array name="fonts">
+        <item>fonts/WFutura-Light.ttf</item>
+        <item>fonts/WFutura-Medium.ttf</item>
+        <item>fonts/WFutura-SemiBold.ttf</item>
+        <item>fonts/WFutura-Bold.ttf</item>
+        <item>fonts/MyriadPro-Regular.otf</item>
+        <item>fonts/MyriadPro-Semibold.otf</item>
+    </string-array>
     <integer-array name="months_default">
         <item>12</item>
         <item>24</item>
@@ -26,7 +26,7 @@
         <item>@string/nav_item_products</item>
         <item>@string/nav_item_store</item>
         <item>@string/nav_item_wrewards</item>
-         <item>@string/nav_item_accounts</item>
+        <item>@string/nav_item_accounts</item>
     </string-array>
 
     <string-array name="accounts_walkthrough_descriptions">
@@ -97,4 +97,14 @@
         <item>@drawable/icon_paperclip</item>
         <item>@drawable/icon_fax</item>
     </array>
+
+    <integer-array name="empty_state_icon">
+        <item>@drawable/icon_empty_vouchers</item>
+        <item>@drawable/icon_empty_tierhistory</item>
+        <item>@drawable/icon_empty_statement</item>
+        <item>@drawable/icon_empty_transactions</item>
+        <item>@drawable/icon_empty_shoppinglist</item>
+        <item>@drawable/icon_empty_inbox</item>
+    </integer-array>
+
 </resources>

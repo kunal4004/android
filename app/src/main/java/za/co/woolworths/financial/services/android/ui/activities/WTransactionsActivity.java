@@ -7,7 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -15,7 +18,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
-import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -38,12 +42,16 @@ public class WTransactionsActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mWoolworthsApplication = (WoolworthsApplication) getApplication();
+        mErrorHandlerView = new ErrorHandlerView(this, mWoolworthsApplication,
+                (RelativeLayout) findViewById(R.id.relEmptyStateHandler),
+                (ImageView) findViewById(R.id.imgEmpyStateIcon),
+                (WTextView) findViewById(R.id.txtEmptyStateTitle),
+                (WTextView) findViewById(R.id.txtEmptyStateDesc));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
         getSupportActionBar().setElevation(0);
         transactionListview = (ExpandableListView) findViewById(R.id.transactionListView);
         productOfferingId = getIntent().getStringExtra("productOfferingId");
-        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
         loadTransactionHistory(productOfferingId);
     }
 
@@ -91,37 +99,47 @@ public class WTransactionsActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(TransactionHistoryResponse transactionHistoryResponse) {
-                switch (transactionHistoryResponse.httpCode) {
-                    case 200:
-                        transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this, Utils.getdata(transactionHistoryResponse.transactions)));
-                        break;
-                    case 440:
-                        AlertDialog mError = WErrorDialog.getSimplyErrorDialog(WTransactionsActivity.this);
-                        mError.setTitle("Authentication Error");
-                        mError.setMessage("Your session expired. You've been signed out.");
-                        mError.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                setResult(SSOActivity.SSOActivityResult.EXPIRED.rawValue());
-                                finish();
+                try {
+                    switch (transactionHistoryResponse.httpCode) {
+                        case 200:
+                            if (transactionHistoryResponse.transactions.size() > 0) {
+                                transactionListview.setVisibility(View.VISIBLE);
+                                mErrorHandlerView.hideEmpyState();
+                                transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this, Utils.getdata(transactionHistoryResponse.transactions)));
+                            } else {
+                                transactionListview.setVisibility(View.GONE);
+                                mErrorHandlerView.showEmptyState(3);
                             }
-                        });
-                        mError.show();
+                            break;
+                        case 440:
+                            AlertDialog mError = WErrorDialog.getSimplyErrorDialog(WTransactionsActivity.this);
+                            mError.setTitle("Authentication Error");
+                            mError.setMessage("Your session expired. You've been signed out.");
+                            mError.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    setResult(SSOActivity.SSOActivityResult.EXPIRED.rawValue());
+                                    finish();
+                                }
+                            });
+                            mError.show();
 
-                        try {
-                            new SessionDao(WTransactionsActivity.this, SessionDao.KEY.USER_TOKEN).delete();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                            try {
+                                new SessionDao(WTransactionsActivity.this, SessionDao.KEY.USER_TOKEN).delete();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
-                        break;
-                    default:
-                        try {
-                            Utils.alertErrorMessage(WTransactionsActivity.this,
-                                    transactionHistoryResponse.response.desc);
-                        } catch (NullPointerException ignored) {
-                        }
-                        break;
+                            break;
+                        default:
+                            try {
+                                Utils.alertErrorMessage(WTransactionsActivity.this,
+                                        transactionHistoryResponse.response.desc);
+                            } catch (NullPointerException ignored) {
+                            }
+                            break;
+                    }
+                } catch (NullPointerException ignored) {
                 }
                 dismissProgress();
             }

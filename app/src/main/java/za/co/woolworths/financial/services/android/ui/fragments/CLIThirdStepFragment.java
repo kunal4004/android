@@ -36,7 +36,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicato
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIBankAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIIncomeProofAdapter;
-import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WEmpyViewDialogFragment;

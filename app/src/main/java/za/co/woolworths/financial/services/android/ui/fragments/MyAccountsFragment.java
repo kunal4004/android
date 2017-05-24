@@ -55,7 +55,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WChangePassword
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
-import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;

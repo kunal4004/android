@@ -250,6 +250,9 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
             }.execute();
         }
     }
+
+    public void preventClicks(View view) { return; }
+
 }
 
 

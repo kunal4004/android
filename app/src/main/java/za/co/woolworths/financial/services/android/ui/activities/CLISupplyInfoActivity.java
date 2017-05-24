@@ -41,7 +41,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreateOfferRespons
 import za.co.woolworths.financial.services.android.models.dto.CreditLimit;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.CLICreditLimitAdapter;
-import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WEmpyViewDialogFragment;

@@ -26,7 +26,7 @@ import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIDeaBankMapAdapter;
-import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;

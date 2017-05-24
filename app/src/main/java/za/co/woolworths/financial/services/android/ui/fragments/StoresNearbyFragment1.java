@@ -71,7 +71,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SearchStoresAct
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter;
-import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;

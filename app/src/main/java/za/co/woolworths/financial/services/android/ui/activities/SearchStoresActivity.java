@@ -39,7 +39,7 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.ui.adapters.StoreSearchListAdapter;
-import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;

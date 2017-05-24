@@ -25,7 +25,8 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
 import za.co.woolworths.financial.services.android.ui.adapters.PSSubCategoryAdapter;
-import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WObservableRecyclerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
@@ -93,7 +94,16 @@ public class ProductSubCategoryActivity extends BaseActivity implements View.OnC
         else
             mToolBarTitle.setText(mSubCategoriesName);
 
-        mErrorHandlerView = new ErrorHandlerView((WoolworthsApplication) getApplication());
+        mErrorHandlerView = new ErrorHandlerView(this, (WoolworthsApplication) getApplication()
+                , (RelativeLayout) findViewById(R.id.no_connection_layout));
+
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline())
+                    getSubCategory();
+            }
+        });
     }
 
 
@@ -141,7 +151,7 @@ public class ProductSubCategoryActivity extends BaseActivity implements View.OnC
 
             @Override
             protected SubCategories httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler();
+                mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new SubCategories();
             }
 
@@ -258,23 +268,5 @@ public class ProductSubCategoryActivity extends BaseActivity implements View.OnC
     private void showProgressBar() {
         mProgressBar.setVisibility(View.VISIBLE);
         mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-    }
-
-    public void networkFailureHandler() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                hideProgressBar();
-                mErrorHandlerView.startActivity(ProductSubCategoryActivity.this);
-            }
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (((WoolworthsApplication) getApplication()).isTriggerErrorHandler()) {
-            getSubCategory();
-        }
     }
 }

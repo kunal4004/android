@@ -32,7 +32,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
-import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -254,6 +254,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
             asyncTaskStore.isCancelled();
         }
     }
+
 
     @Override
     public void onResumeFragment() {

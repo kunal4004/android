@@ -88,6 +88,7 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnAddShoppingList:
+
                 Utils.addToShoppingCart(getActivity(), new ShoppingList(
                         productId,
                         productName, false));
@@ -95,6 +96,7 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
                 Utils.displayValidationMessage(getActivity(),
                         TransientActivity.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
                         "viewShoppingList");
+
                 break;
         }
     }

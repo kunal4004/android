@@ -24,7 +24,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
-import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;

@@ -40,7 +40,8 @@ import za.co.woolworths.financial.services.android.ui.activities.ProductSubCateg
 import za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductCategoryAdapter;
-import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
@@ -56,35 +57,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     private ActionBar mAppToolbar;
     private ErrorHandlerView mErrorHandlerView;
     private WoolworthsApplication mWoolworthsApplication;
-
-    @Override
-    public void onSelectedProduct(View v, int position) {
-        RootCategory rootCategory = mRootCategories.get(position);
-        if (rootCategory.hasChildren) {
-            Intent openSubCategory = new Intent(getActivity(), ProductSubCategoryActivity.class);
-            openSubCategory.putExtra("root_category_id", rootCategory.categoryId);
-            openSubCategory.putExtra("root_category_name", rootCategory.categoryName);
-            openSubCategory.putExtra("catStep", 0);
-            startActivity(openSubCategory);
-            getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-        } else {
-            Intent openProductListIntent = new Intent(getActivity(), ProductGridActivity.class);
-            openProductListIntent.putExtra("sub_category_name", rootCategory.categoryName);
-            openProductListIntent.putExtra("sub_category_id", rootCategory.categoryId);
-            startActivity(openProductListIntent);
-            getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-        }
-    }
-
-    @Override
-    public void onLongPressState(View v, int position) {
-
-    }
-
-    @Override
-    public void onSelectedColor(View v, int position) {
-
-    }
 
     public interface HideActionBarComponent {
         void onBurgerButtonPressed();
@@ -123,11 +95,19 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         mProductToolbar = (Toolbar) view.findViewById(R.id.productToolbar);
         initUI(view);
         mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), mWoolworthsApplication
+                , (RelativeLayout) view.findViewById(R.id.no_connection_layout));
         setUIListener();
         showAccountToolbar();
         mNestedScrollview.getParent().requestChildFocus(mNestedScrollview, mNestedScrollview);
         showOneTimePopup();
+        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline())
+                    categoryRequest();
+            }
+        });
     }
 
     @Override
@@ -367,6 +347,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         mRecycleProductSearch.setLayoutManager(mLayoutManager);
         mRecycleProductSearch.setNestedScrollingEnabled(false);
         mRecycleProductSearch.setAdapter(myAdapter);
+
     }
 
     public void showOneTimePopup() {
@@ -379,15 +360,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         } catch (NullPointerException ignored) {
         }
 
-    }
-
-    public void networkFailureHandler() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mErrorHandlerView.startActivity(getActivity());
-            }
-        });
     }
 
     private void categoryRequest() {
@@ -403,7 +375,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 
             @Override
             protected RootCategories httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler();
+                mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new RootCategories();
             }
 
@@ -426,7 +398,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
                         case 200:
                             if (rootCategories.rootCategories != null) {
                                 mRootCategories = rootCategories.rootCategories;
-
                                 bindViewWithUI(mRootCategories);
                             }
                             break;
@@ -446,10 +417,32 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (mWoolworthsApplication.isTriggerErrorHandler()) {
-            categoryRequest();
+    public void onSelectedProduct(View v, int position) {
+        RootCategory rootCategory = mRootCategories.get(position);
+        if (rootCategory.hasChildren) {
+            Intent openSubCategory = new Intent(getActivity(), ProductSubCategoryActivity.class);
+            openSubCategory.putExtra("root_category_id", rootCategory.categoryId);
+            openSubCategory.putExtra("root_category_name", rootCategory.categoryName);
+            openSubCategory.putExtra("catStep", 0);
+            startActivity(openSubCategory);
+            getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+        } else {
+            Intent openProductListIntent = new Intent(getActivity(), ProductGridActivity.class);
+            openProductListIntent.putExtra("sub_category_name", rootCategory.categoryName);
+            openProductListIntent.putExtra("sub_category_id", rootCategory.categoryId);
+            startActivity(openProductListIntent);
+            getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
         }
     }
+
+    @Override
+    public void onLongPressState(View v, int position) {
+
+    }
+
+    @Override
+    public void onSelectedColor(View v, int position) {
+
+    }
+
 }

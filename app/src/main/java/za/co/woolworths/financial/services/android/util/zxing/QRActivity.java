@@ -76,7 +76,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
 
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
-import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;

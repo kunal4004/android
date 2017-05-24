@@ -40,7 +40,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
-import za.co.woolworths.financial.services.android.ui.views.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -101,6 +101,33 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
         bundle();
         slideUpPanelListener();
         registerReceiver(broadcast_reciever, new IntentFilter("closeProductView"));
+
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (runTask) {
+
+                    case SEARCH_PRODUCT:
+                        searchProduct();
+                        break;
+
+                    case SEARCH_MORE_PRODUCT:
+                        searchMoreProduct();
+                        break;
+
+                    case LOAD_PRODUCT:
+                        loadProduct();
+                        break;
+
+                    case LOAD_MORE_PRODUCT:
+                        loadMoreProduct();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
     }
 
     private void slideUpPanelListener() {
@@ -158,7 +185,8 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
         String productName = getIntent().getStringExtra("sub_category_name");
         productId = getIntent().getStringExtra("sub_category_id");
         mWoolWorthApplication = (WoolworthsApplication) getApplication();
-        mErrorHandlerView = new ErrorHandlerView(mWoolWorthApplication);
+        mErrorHandlerView = new ErrorHandlerView(this, mWoolWorthApplication
+                , (RelativeLayout) findViewById(R.id.no_connection_layout));
         hideProgressBar();
         Bundle extras = getIntent().getExtras();
         searchItem = extras.getString("searchProduct");
@@ -360,7 +388,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
             @Override
             protected ProductView httpError(String errorMessage, HttpErrorCode
                     httpErrorCode) {
-                networkFailureHandler();
+                mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new ProductView();
             }
 
@@ -398,7 +426,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
             @Override
             protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler();
+                mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new ProductView();
             }
 
@@ -690,49 +718,12 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
                     break;
             }
-        }catch (Exception ignored){}
+        } catch (Exception ignored) {
+        }
     }
 
     private void setNumberOfItem(int numberOfItem) {
         mNumberOfItem.setText(String.valueOf(numberOfItem));
-    }
-
-    public void networkFailureHandler() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                hideVProgressBar();
-                mErrorHandlerView.startActivity(ProductGridActivity.this);
-            }
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mWoolWorthApplication.isTriggerErrorHandler()) {
-            switch (runTask) {
-
-                case SEARCH_PRODUCT:
-                    searchProduct();
-                    break;
-
-                case SEARCH_MORE_PRODUCT:
-                    searchMoreProduct();
-                    break;
-
-                case LOAD_PRODUCT:
-                    loadProduct();
-                    break;
-
-                case LOAD_MORE_PRODUCT:
-                    loadMoreProduct();
-                    break;
-
-                default:
-                    break;
-            }
-        }
     }
 }
 

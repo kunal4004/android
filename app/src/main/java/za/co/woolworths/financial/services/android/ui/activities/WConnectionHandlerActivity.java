@@ -19,7 +19,7 @@ public class WConnectionHandlerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.updateStatusBarBackground(this, R.color.header_red);
+        Utils.updateStatusBarBackground(this);
         setContentView(R.layout.no_connection_handler);
         init();
         setActionBar();

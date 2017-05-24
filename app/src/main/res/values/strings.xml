@@ -561,4 +561,23 @@
     <string name="no_connection">NO CONNECTION</string>
     <string name="no_connection_desc">OOPS. SOMETHING WENT WRONG</string>
     <string name="no_connection_desc_1">We could not load this content.\nPlease try again later.</string>
+
+    <string-array name="empty_state_title">
+        <item>no vouchers</item>
+        <item>no tier history to display</item>
+        <item>no statements</item>
+        <item>no transactions</item>
+        <item>shopping list is empty</item>
+        <item>inbox is empty</item>
+    </string-array>
+
+    <string-array name="empty_state_desc">
+        <item>You currently have no active vouchers.</item>
+        <item>We have no data for the current year.</item>
+        <item>We have no data for the current year.</item>
+        <item>We have no transaction data to show.</item>
+        <item>You have no items in your  shopping list yet.</item>
+        <item>When you receive messages you will see them here.</item>
+    </string-array>
+
 </resources>
