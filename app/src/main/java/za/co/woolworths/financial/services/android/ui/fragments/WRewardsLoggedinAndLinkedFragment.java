@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
@@ -24,6 +25,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -54,8 +56,20 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         tabLayout = (TabLayout) view.findViewById(R.id.tabs);
         viewPager.setOffscreenPageLimit(3);
         progressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-        mErrorHandlerView = new ErrorHandlerView(mWoolworthApp);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
         getWRewards().execute();
+
+        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    getWRewards().execute();
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+
+        });
         return view;
     }
 
@@ -125,7 +139,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 
             @Override
             protected VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler();
+                mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new VoucherResponse();
             }
 
@@ -195,23 +209,6 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
             setupTabIcons(0);
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    public void networkFailureHandler() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mErrorHandlerView.startActivity(getActivity());
-            }
-        });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mWoolworthApp.isTriggerErrorHandler()) {
-            getWRewards().execute();
         }
     }
 }

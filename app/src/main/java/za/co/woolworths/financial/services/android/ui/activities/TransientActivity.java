@@ -364,6 +364,7 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
             case R.id.btnViewShoppingList:
                 Intent shoppingList = new Intent(this, ShoppingListActivity.class);
                 startActivity(shoppingList);
+                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
                 dismissLayout();
                 break;
 

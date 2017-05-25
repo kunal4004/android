@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
@@ -32,6 +34,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
@@ -59,6 +62,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     private AsyncTask<String, String, OfferActive> asyncTaskStore;
     private boolean cardHasId = false;
     private ErrorHandlerView mErrorHandlerView;
+    private RelativeLayout mRelConnectionLayout;
 
     @Nullable
     @Override
@@ -74,13 +78,28 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         txtIncreseLimit = (WTextView) view.findViewById(R.id.txtIncreseLimit);
         mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
         mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
-        mErrorHandlerView = new ErrorHandlerView(woolworthsApplication);
+        mRelConnectionLayout = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelConnectionLayout);
+        mErrorHandlerView.setMargin(mRelConnectionLayout,0,0,0,0);
         txtIncreseLimit.setOnClickListener(this);
         transactions.setOnClickListener(this);
         AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
         bindData(accountsResponse);
         disableIncreaseLimit();
         hideProgressBar();
+        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    if (!cardHasId) {
+                        getActiveOffer();
+                    }
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+
+        });
         return view;
     }
 
@@ -152,7 +171,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
             @Override
             protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler();
+                networkFailureHandler(errorMessage);
                 return new OfferActive();
             }
 
@@ -232,11 +251,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
     public void onResume() {
         super.onResume();
         setTextSize();
-        if (woolworthsApplication.isTriggerErrorHandler()) {
-            if (!cardHasId) {
-                getActiveOffer();
-            }
-        }
     }
 
     //To remove negative signs from negative balance and add "CR" after the negative balance
@@ -269,13 +283,13 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
         }, 100);
     }
 
-    public void networkFailureHandler() {
+    public void networkFailureHandler(final String errorMessage) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 isOfferActive = false;
                 hideProgressBar();
-                mErrorHandlerView.startActivity(getActivity());
+                mErrorHandlerView.networkFailureHandler(errorMessage);
             }
         });
     }

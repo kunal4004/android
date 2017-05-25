@@ -43,7 +43,7 @@ public class WRewardsVouchersFragment extends Fragment {
         voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
-        mErrorHandlerView = new ErrorHandlerView(getActivity(), (WoolworthsApplication) getActivity().getApplication(),
+        mErrorHandlerView = new ErrorHandlerView(getActivity(),
                 (RelativeLayout) view.findViewById(R.id.relEmptyStateHandler),
                 (ImageView) view.findViewById(R.id.imgEmpyStateIcon),
                 (WTextView) view.findViewById(R.id.txtEmptyStateTitle),

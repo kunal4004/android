@@ -561,6 +561,7 @@
     <string name="no_connection">NO CONNECTION</string>
     <string name="no_connection_desc">OOPS. SOMETHING WENT WRONG</string>
     <string name="no_connection_desc_1">We could not load this content.\nPlease try again later.</string>
+    <string name="go_to_products">go to products</string>
 
     <string-array name="empty_state_title">
         <item>no vouchers</item>

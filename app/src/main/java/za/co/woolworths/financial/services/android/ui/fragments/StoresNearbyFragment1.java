@@ -71,6 +71,7 @@ import za.co.woolworths.financial.services.android.ui.activities.SearchStoresAct
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -183,7 +184,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
         //  checkLocationServiceAndSetLayout(Utils.isLocationServiceEnabled(getActivity()));
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
+        mErrorHandlerView = new ErrorHandlerView(getActivity()
+                , (RelativeLayout) v.findViewById(R.id.no_connection_layout));
         Criteria criteria = new Criteria();
         provider = locationManager.getBestProvider(criteria, false);
         try {
@@ -273,6 +275,16 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 Intent locIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 getActivity().startActivity(locIntent);
                 getActivity().overridePendingTransition(0, 0);
+            }
+        });
+
+        v.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline())
+                    locationAPIRequest(mLocation);
+                else
+                    mErrorHandlerView.showToast();
             }
         });
         return v;
@@ -613,7 +625,13 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
             @Override
             protected LocationResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        hideProgressBar();
+                    }
+                });
+                mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new LocationResponse();
             }
 
@@ -813,10 +831,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
                 searchForCurrentLocation();
             }
         }
-
-        if (mWoolworthsApplication.isTriggerErrorHandler()) {
-            locationAPIRequest(mLocation);
-        }
     }
 
     public boolean hasPermissions() {
@@ -855,15 +869,5 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
     public void hideProgressBar() {
         if (progressBar != null)
             progressBar.setVisibility(View.GONE);
-    }
-
-    public void networkFailureHandler() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                hideProgressBar();
-                mErrorHandlerView.startActivity(getActivity());
-            }
-        });
     }
 }

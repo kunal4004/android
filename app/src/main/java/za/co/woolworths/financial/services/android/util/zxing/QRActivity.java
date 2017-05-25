@@ -76,6 +76,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
 
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
@@ -195,6 +196,26 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         initUI();
         initProductDetailUI();
         slideUpPanel();
+
+
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    switch (mCurrentBgTask) {
+                        case MBGPRODUCT:
+                            getProductRequest(mBarcodeNumber);
+                            break;
+
+                        case MBGPRODUCTDETAIL:
+                            getProductDetail(mProductId, mSkuId);
+                            break;
+                    }
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+        });
     }
 
     private void slideUpPanel() {
@@ -254,7 +275,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         mBtnManual = (WButton) findViewById(R.id.btnManual);
         mWoolworthsApplication = (WoolworthsApplication) getApplication();
-        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
+        mErrorHandlerView = new ErrorHandlerView(this
+                , (RelativeLayout) findViewById(R.id.no_connection_layout));
         mBtnManual.setOnClickListener(this);
     }
 
@@ -262,17 +284,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     protected void onResume() {
         super.onResume();
         resumeScan();
-        if (mWoolworthsApplication.isTriggerErrorHandler()) {
-            switch (mCurrentBgTask) {
-                case MBGPRODUCT:
-                    getProductRequest(mBarcodeNumber);
-                    break;
-
-                case MBGPRODUCTDETAIL:
-                    getProductDetail(mProductId, mSkuId);
-                    break;
-            }
-        }
     }
 
     @Override
@@ -540,8 +551,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
             @Override
             public void failure(RetrofitError error) {
-                networkFailureHandler();
-            }
+                if (error.toString().contains("Unable to resolve host"))
+                    mErrorHandlerView.showToast();            }
         });
 
     }
@@ -586,7 +597,13 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
             @Override
             protected ProductView httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        hideProgressBar();
+                    }
+                });
+                mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new ProductView();
             }
 

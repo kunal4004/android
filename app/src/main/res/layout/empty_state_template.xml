@@ -14,8 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:alpha="0.4"
-        android:src="@drawable/icon_something_went_wrong"/>
+        android:alpha="0.4"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/txtEmptyStateTitle"
@@ -29,7 +28,6 @@
         android:gravity="center_horizontal"
         android:letterSpacing="0.03"
         android:lineSpacingExtra="2sp"
-        android:text="@string/no_connection_desc"
         android:textAllCaps="true"
         android:textColor="@color/black"
         android:textSize="16sp"
@@ -45,9 +43,30 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="44dp"
         android:gravity="center"
-        android:text="@string/no_connection_desc_1"
         android:textColor="@color/semi_transparent_black"
         app:WTextView_font="myriadpro_regular"/>
+
+
+    <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/btnGoToProduct"
+        style="@style/whiteButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/txtEmptyStateDesc"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="18dp"
+        android:layout_marginLeft="@dimen/bank_spacing_width"
+        android:layout_marginRight="@dimen/bank_spacing_width"
+        android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:letterSpacing="0.15"
+        android:text="@string/go_to_products"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:WButton_font="medium_bold"/>
+
 
 </RelativeLayout>
 

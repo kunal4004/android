@@ -55,6 +55,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WChangePassword
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
@@ -174,7 +175,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         userInitials = (WTextView) view.findViewById(R.id.initials);
         imgCreditCard = (ImageView) view.findViewById(R.id.imgCreditCard);
         relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
-        mErrorHandlerView = new ErrorHandlerView((WoolworthsApplication) getActivity().getApplication());
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
         mCounter = ((WoolworthsApplication) getActivity().getApplication()).getCounter();
         openMessageActivity.setOnClickListener(this);
         contactUs.setOnClickListener(this);
@@ -201,6 +202,19 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         showViews();
         //hide all views, load accounts may occur
         this.initialize();
+
+        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    loadAccounts();
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+
+        });
+
         return view;
     }
 
@@ -409,7 +423,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         switch (v.getId()) {
             case R.id.openMessageActivity:
                 startActivity(new Intent(getActivity(), MessagesActivity.class).putExtra("fromNotification", false));
-                getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+                getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
                 break;
             case R.id.applyStoreCard:
                 redirectToMyAccountsCardsActivity(0);
@@ -440,6 +454,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
             case R.id.openShoppingList:
                 Intent openShoppingList = new Intent(getActivity(), ShoppingListActivity.class);
                 startActivity(openShoppingList);
+                getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
                 break;
             case R.id.signOutBtn:
                 Utils.displayValidationMessage(getActivity(), TransientActivity.VALIDATION_MESSAGE_LIST.SIGN_OUT, "");
@@ -515,6 +530,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
             @Override
             protected AccountsResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
                 networkFailureHandler();
+                mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new AccountsResponse();
             }
 
@@ -660,9 +676,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
         super.onResume();
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("UpdateCounter"));
         loadMessages();
-        if (woolworthsApplication.isTriggerErrorHandler()) {
-            loadAccounts();
-        }
     }
 
     @Override
@@ -756,7 +769,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
             @Override
             public void run() {
                 dismissProgress();
-                mErrorHandlerView.startActivity(getActivity());
             }
         });
     }

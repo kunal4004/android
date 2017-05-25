@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -46,13 +47,25 @@ public class WTransactionsActivity extends AppCompatActivity {
                 (RelativeLayout) findViewById(R.id.relEmptyStateHandler),
                 (ImageView) findViewById(R.id.imgEmpyStateIcon),
                 (WTextView) findViewById(R.id.txtEmptyStateTitle),
-                (WTextView) findViewById(R.id.txtEmptyStateDesc));
+                (WTextView) findViewById(R.id.txtEmptyStateDesc),
+                (RelativeLayout) findViewById(R.id.no_connection_layout));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
         getSupportActionBar().setElevation(0);
         transactionListview = (ExpandableListView) findViewById(R.id.transactionListView);
         productOfferingId = getIntent().getStringExtra("productOfferingId");
         loadTransactionHistory(productOfferingId);
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    loadTransactionHistory(productOfferingId);
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+
+        });
     }
 
     public void loadTransactionHistory(final String prOfferId) {
@@ -93,7 +106,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 
             @Override
             protected TransactionHistoryResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler();
+                networkFailureHandler(errorMessage);
                 return new TransactionHistoryResponse();
             }
 
@@ -167,20 +180,12 @@ public class WTransactionsActivity extends AppCompatActivity {
         }
     }
 
-    public void networkFailureHandler() {
+    public void networkFailureHandler(final String errorMessage) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mErrorHandlerView.startActivity(WTransactionsActivity.this);
+                mErrorHandlerView.networkFailureHandler(errorMessage);
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mWoolworthsApplication.isTriggerErrorHandler()) {
-            loadTransactionHistory(productOfferingId);
-        }
     }
 }

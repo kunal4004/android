@@ -96,7 +96,7 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
                 Utils.displayValidationMessage(getActivity(),
                         TransientActivity.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
                         "viewShoppingList");
-
+                dismiss();
                 break;
         }
     }

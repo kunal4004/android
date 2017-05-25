@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -31,6 +32,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
@@ -63,6 +65,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
     private AccountsResponse temp = null;
     private ErrorHandlerView mErrorHandlerView;
+    private RelativeLayout mRelConnectionLayout;
 
     @Nullable
     @Override
@@ -82,12 +85,27 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
         txtIncreseLimit.setOnClickListener(this);
         transactions.setOnClickListener(this);
-
-        mErrorHandlerView = new ErrorHandlerView(woolworthsApplication);
+        mRelConnectionLayout = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelConnectionLayout);
+        mErrorHandlerView.setMargin(mRelConnectionLayout, 0, 0, 0, 0);
         temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
         disableIncreaseLimit();
         hideProgressBar();
         setTextSize();
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
+        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    if (!cardHasId) {
+                        getActiveOffer();
+                    }
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+
+        });
         return view;
     }
 
@@ -150,12 +168,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
             case R.id.txtIncreseLimit:
-                if (!isOfferActive) {
+               if (!isOfferActive) {
                     ((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
                     startActivity(openCLIIncrease);
                     getActivity().overridePendingTransition(0, 0);
-                }
+               }
                 break;
         }
     }
@@ -174,7 +192,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
             @Override
             protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler();
+                networkFailureHandler(errorMessage);
                 return new OfferActive();
             }
 
@@ -286,23 +304,18 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 }
             }
         }, 100);
-
-        if (woolworthsApplication.isTriggerErrorHandler()){
-            if (!cardHasId) {
-                getActiveOffer();
-            }
-        }
     }
 
-    public void networkFailureHandler() {
+    public void networkFailureHandler(final String errorMessage) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 isOfferActive = false;
                 hideProgressBar();
-                mErrorHandlerView.startActivity(getActivity());
+                mErrorHandlerView.networkFailureHandler(errorMessage);
             }
         });
     }
+
 }
 

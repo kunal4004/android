@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIDeaBankMapAdapter;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -73,7 +74,18 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
         initUI();
         setListener();
         setText();
-        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
+        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    setDeaBanks();
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+
+        });
         return view;
     }
 
@@ -147,8 +159,13 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 
             @Override
             protected DeaBanks httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                Log.e("errorMsg", errorMessage);
-                networkFailureHandler();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        stopProgressDialog();
+                    }
+                });
+                mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new DeaBanks();
             }
 
@@ -245,26 +262,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
     public void stopProgressDialog() {
         if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
             mGetAccountsProgressDialog.dismiss();
-        }
-    }
-
-
-    public void networkFailureHandler() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                stopProgressDialog();
-                mErrorHandlerView.startActivity(getActivity());
-            }
-        });
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mWoolworthsApplication.isTriggerErrorHandler()) {
-            setDeaBanks();
         }
     }
 }

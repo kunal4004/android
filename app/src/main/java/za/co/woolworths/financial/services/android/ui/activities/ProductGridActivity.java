@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -101,30 +102,34 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
         bundle();
         slideUpPanelListener();
         registerReceiver(broadcast_reciever, new IntentFilter("closeProductView"));
-
         findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (runTask) {
+                if (new ConnectionDetector().isOnline()) {
 
-                    case SEARCH_PRODUCT:
-                        searchProduct();
-                        break;
+                    switch (runTask) {
 
-                    case SEARCH_MORE_PRODUCT:
-                        searchMoreProduct();
-                        break;
+                        case SEARCH_PRODUCT:
+                            searchProduct();
+                            break;
 
-                    case LOAD_PRODUCT:
-                        loadProduct();
-                        break;
+                        case SEARCH_MORE_PRODUCT:
+                            searchMoreProduct();
+                            break;
 
-                    case LOAD_MORE_PRODUCT:
-                        loadMoreProduct();
-                        break;
+                        case LOAD_PRODUCT:
+                            loadProduct();
+                            break;
 
-                    default:
-                        break;
+                        case LOAD_MORE_PRODUCT:
+                            loadMoreProduct();
+                            break;
+
+                        default:
+                            break;
+                    }
+                } else {
+                    mErrorHandlerView.showToast();
                 }
             }
         });
@@ -185,7 +190,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
         String productName = getIntent().getStringExtra("sub_category_name");
         productId = getIntent().getStringExtra("sub_category_id");
         mWoolWorthApplication = (WoolworthsApplication) getApplication();
-        mErrorHandlerView = new ErrorHandlerView(this, mWoolWorthApplication
+        mErrorHandlerView = new ErrorHandlerView(this
                 , (RelativeLayout) findViewById(R.id.no_connection_layout));
         hideProgressBar();
         Bundle extras = getIntent().getExtras();
@@ -535,6 +540,8 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
             public void onFailure(RetrofitError error) {
                 hideProductCode();
                 hideProgressDetailLoad();
+                if (error.toString().contains("Unable to resolve host"))
+                    mErrorHandlerView.showToast();
             }
         });
     }

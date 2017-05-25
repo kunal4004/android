@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -32,6 +33,7 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
@@ -39,7 +41,7 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class MessagesActivity extends BaseActivity {
+public class MessagesActivity extends AppCompatActivity {
     public RecyclerView messsageListview;
     public MesssagesListAdapter adapter = null;
     public LinearLayoutManager mLayoutManager;
@@ -75,7 +77,8 @@ public class MessagesActivity extends BaseActivity {
                 (RelativeLayout) findViewById(R.id.relEmptyStateHandler),
                 (ImageView) findViewById(R.id.imgEmpyStateIcon),
                 (WTextView) findViewById(R.id.txtEmptyStateTitle),
-                (WTextView) findViewById(R.id.txtEmptyStateDesc));
+                (WTextView) findViewById(R.id.txtEmptyStateDesc),
+                (RelativeLayout) findViewById(R.id.no_connection_layout));
         messsageListview.setHasFixedSize(true);
         messsageListview.setLayoutManager(mLayoutManager);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -117,6 +120,17 @@ public class MessagesActivity extends BaseActivity {
         };
 
         loadMessages();
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    loadMessages();
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+
+        });
     }
 
     public void loadMessages() {
@@ -146,7 +160,7 @@ public class MessagesActivity extends BaseActivity {
 
             @Override
             protected MessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(0);
+                networkFailureHandler(errorMessage, 0);
                 return new MessageResponse();
             }
 
@@ -194,7 +208,7 @@ public class MessagesActivity extends BaseActivity {
 
             @Override
             protected MessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(1);
+                networkFailureHandler(errorMessage, 1);
                 return new MessageResponse();
             }
 
@@ -298,9 +312,6 @@ public class MessagesActivity extends BaseActivity {
                 new IntentFilter(Utils.PUSH_NOTIFICATION));
         // clear the notification area when the app is opened
         NotificationUtils.clearNotifications(getApplicationContext());
-        if (mWoolWorthsApplication.isTriggerErrorHandler()) {
-            loadMessages();
-        }
     }
 
     @Override
@@ -311,8 +322,10 @@ public class MessagesActivity extends BaseActivity {
         if (fromNotification) {
             startActivity(new Intent(MessagesActivity.this, WOneAppBaseActivity.class));
             finish();
+            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
         } else {
             super.onBackPressed();
+            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
         }
     }
 
@@ -321,6 +334,7 @@ public class MessagesActivity extends BaseActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
                 return true;
         }
         return false;
@@ -365,7 +379,7 @@ public class MessagesActivity extends BaseActivity {
         }
     }
 
-    public void networkFailureHandler(final int type) {
+    public void networkFailureHandler(final String errorMessage, final int type) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -375,7 +389,7 @@ public class MessagesActivity extends BaseActivity {
                     mIsLoading = false;
                 }
 
-                mErrorHandlerView.startActivity(MessagesActivity.this);
+                mErrorHandlerView.networkFailureHandler(errorMessage);
             }
         });
     }

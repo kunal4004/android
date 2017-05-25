@@ -23,6 +23,7 @@ import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
@@ -42,6 +43,8 @@ import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -57,6 +60,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
     private final int DELAY_SOFT_KEYBOARD = 100;
     private final int DELAY_POPUP = 200;
     private WButton mBtnBarcodeConfirm;
+    private ErrorHandlerView mErrorHandlerView;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -67,6 +71,8 @@ public class EnterBarcodeActivity extends AppCompatActivity {
         setContentView(R.layout.enter_barcode_activity);
         initUI();
         setActionBar();
+        mErrorHandlerView = new ErrorHandlerView(this
+                , (RelativeLayout) findViewById(R.id.no_connection_layout));
 
         mBtnBarcodeConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +118,16 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    getProductDetail();
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+        });
 
     }
 
@@ -131,7 +147,6 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             mActionBar.setDisplayHomeAsUpEnabled(true);
             mActionBar.setDisplayShowTitleEnabled(false);
             mActionBar.setDisplayUseLogoEnabled(false);
-            mActionBar.setDefaultDisplayHomeAsUpEnabled(false);
             mActionBar.setHomeAsUpIndicator(R.drawable.back_white);
         }
     }
@@ -167,8 +182,8 @@ public class EnterBarcodeActivity extends AppCompatActivity {
         imm.hideSoftInputFromWindow(mEditBarcodeNumber.getWindowToken(), 0);
     }
 
-    public void getProductRequest(final String query) {
-        new HttpAsyncTask<String, String, ProductView>() {
+    public HttpAsyncTask<String, String, ProductView> getProductRequest(final String query) {
+        return new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected ProductView httpDoInBackground(String... params) {
                 return ((WoolworthsApplication) getApplication()).getApi()
@@ -193,6 +208,8 @@ public class EnterBarcodeActivity extends AppCompatActivity {
                         errorScanCode();
                     }
                 }, DELAY_POPUP);
+                if (errorMessage.contains("Connect") || errorMessage.contains("Socket"))
+                    mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new ProductView();
             }
 
@@ -227,13 +244,14 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             protected void onPreExecute() {
                 super.onPreExecute();
                 showProgressBar();
+                mErrorHandlerView.hideErrorHandlerLayout();
             }
 
             @Override
             protected Class<ProductView> httpDoInBackgroundReturnType() {
                 return ProductView.class;
             }
-        }.execute();
+        };
     }
 
 
@@ -299,6 +317,8 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             @Override
             public void failure(RetrofitError error) {
                 handleError();
+                if (error.toString().contains("Unable to resolve host"))
+                    mErrorHandlerView.showToast();
             }
         });
     }
@@ -323,7 +343,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 
     private void getProductDetail() {
         if (mEditBarcodeNumber.getText().length() > 0) {
-            getProductRequest(mEditBarcodeNumber.getText().toString());
+            getProductRequest(mEditBarcodeNumber.getText().toString()).execute();
         }
     }
 

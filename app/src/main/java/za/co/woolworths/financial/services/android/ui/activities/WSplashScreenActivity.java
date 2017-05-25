@@ -7,7 +7,12 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -21,25 +26,47 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 
-public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCompletionListener {
+public class WSplashScreenActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
 
     private boolean mVideoPlayerShouldPlay = false;
     private boolean isMinimized = false;
+    private ErrorHandlerView mErrorHandlerView;
+    private WVideoView videoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_wsplash_screen);
-        WVideoView videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.mToolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().hide();
+        videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
         Uri videoUri = Uri.parse(getRandomVideos());
         videoView.setVideoURI(videoUri);
         videoView.start();
         videoView.setOnCompletionListener(this);
         //Mobile Config Server
+        mErrorHandlerView = new ErrorHandlerView(this
+                , (RelativeLayout) findViewById(R.id.no_connection_layout));
         executeConfigServer();
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    executeConfigServer();
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+
+        });
     }
 
     private void executeConfigServer() {
@@ -51,6 +78,8 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
 
             @Override
             protected void onPreExecute() {
+                mErrorHandlerView.hideErrorHandlerLayout();
+                videoView.start();
             }
 
             @Override
@@ -88,6 +117,13 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
 
             @Override
             public ConfigResponse httpError(final String errorMessage, final HttpErrorCode httpErrorCode) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        videoView.pause();
+                    }
+                });
+                mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new ConfigResponse();
             }
 
@@ -150,12 +186,6 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
         } else {
             mp.start();
         }
-    }
-
-    private enum LoadingResult {
-        LOGIN,
-        ERROR,
-        SUCCESS
     }
 
     private String getDeviceID() {

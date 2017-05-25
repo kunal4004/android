@@ -95,7 +95,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
         mProductToolbar = (Toolbar) view.findViewById(R.id.productToolbar);
         initUI(view);
         mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-        mErrorHandlerView = new ErrorHandlerView(getActivity(), mWoolworthsApplication
+        mErrorHandlerView = new ErrorHandlerView(getActivity()
                 , (RelativeLayout) view.findViewById(R.id.no_connection_layout));
         setUIListener();
         showAccountToolbar();

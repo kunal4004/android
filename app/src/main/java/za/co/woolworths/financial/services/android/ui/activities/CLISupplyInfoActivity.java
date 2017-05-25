@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -41,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreateOfferRespons
 import za.co.woolworths.financial.services.android.models.dto.CreditLimit;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.CLICreditLimitAdapter;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
@@ -104,6 +106,18 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 
         registerReceiver(confidentialBroadcastCheck, new IntentFilter("confidentialBroadcastCheck"));
         registerReceiver(insolvencyBroadcastCheck, new IntentFilter("insolvencyBroadcastCheck"));
+
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    createOfferRequest();
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+
+        });
     }
 
     private void radioCheckStateChanged() {
@@ -127,7 +141,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
         mTextACreditLimit = (WTextView) findViewById(R.id.textACreditLimit);
         mTextProceedToSolvency = (WTextView) findViewById(R.id.textProceedToSolvency);
         mImageCreditAmount = (ImageView) findViewById(R.id.imgInfo);
-        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
+        mErrorHandlerView = new ErrorHandlerView(this, (RelativeLayout)findViewById(R.id.no_connection_layout));
     }
 
     private void setActionBar() {
@@ -296,9 +310,6 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
     protected void onResume() {
         super.onResume();
         setRadioButtonBold();
-        if (mWoolworthsApplication.isTriggerErrorHandler()) {
-            createOfferRequest();
-        }
     }
 
     @Override
@@ -332,7 +343,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 
             @Override
             protected CreateOfferResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler();
+                networkFailureHandler(errorMessage);
                 return new CreateOfferResponse();
             }
 
@@ -557,12 +568,12 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
         }
     };
 
-    public void networkFailureHandler() {
+    public void networkFailureHandler(final String errorMessage) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 stopProgressDialog();
-                mErrorHandlerView.startActivity(CLISupplyInfoActivity.this);
+                mErrorHandlerView.networkFailureHandler(errorMessage);
             }
         });
     }

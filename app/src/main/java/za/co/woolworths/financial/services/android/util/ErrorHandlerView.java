@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -22,29 +23,26 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class ErrorHandlerView {
 
+    private RelativeLayout mRelErrorLayout;
     private WTextView mTxtEmptyStateDesc;
     private WTextView mTxtEmptyStateTitle;
     private ImageView mImgEmptyStateIcon;
     private RelativeLayout mRelativeLayout;
-    private WoolworthsApplication mWoolworthApp;
     private Context mContext;
 
-
-    public ErrorHandlerView(WoolworthsApplication woolworthsApplication) {
-        this.mWoolworthApp = woolworthsApplication;
-    }
-
-    public ErrorHandlerView(Context context, WoolworthsApplication woolworthsApplication,
-                            RelativeLayout rel) {
-        this.mWoolworthApp = woolworthsApplication;
-        this.mRelativeLayout = rel;
+    public ErrorHandlerView(Context context) {
         this.mContext = context;
     }
 
-    public ErrorHandlerView(Context context, WoolworthsApplication woolworthsApplication,
+    public ErrorHandlerView(Context context,
+                            RelativeLayout rel) {
+        this.mRelErrorLayout = rel;
+        this.mContext = context;
+    }
+
+    public ErrorHandlerView(Context context,
                             RelativeLayout relativeLayout, ImageView imageIcon, WTextView
                                     textTitle, WTextView textDesc) {
-        this.mWoolworthApp = woolworthsApplication;
         this.mRelativeLayout = relativeLayout;
         this.mContext = context;
         this.mImgEmptyStateIcon = imageIcon;
@@ -52,8 +50,19 @@ public class ErrorHandlerView {
         this.mTxtEmptyStateDesc = textDesc;
     }
 
+    public ErrorHandlerView(Context context, WoolworthsApplication woolworthsApplication,
+                            RelativeLayout relativeLayout, ImageView imageIcon, WTextView
+                                    textTitle, WTextView textDesc,
+                            RelativeLayout relative) {
+        this.mRelativeLayout = relativeLayout;
+        this.mContext = context;
+        this.mImgEmptyStateIcon = imageIcon;
+        this.mTxtEmptyStateTitle = textTitle;
+        this.mTxtEmptyStateDesc = textDesc;
+        this.mRelErrorLayout = relative;
+    }
+
     public void hideErrorHandlerLayout() {
-        mWoolworthApp.setTriggerErrorHandler(false);
         try {
             hideErrorHandler();
         } catch (Exception ex) {
@@ -87,11 +96,11 @@ public class ErrorHandlerView {
     }
 
     public void showErrorHandler() {
-        mRelativeLayout.setVisibility(View.VISIBLE);
+        mRelErrorLayout.setVisibility(View.VISIBLE);
     }
 
     public void hideErrorHandler() {
-        mRelativeLayout.setVisibility(View.GONE);
+        mRelErrorLayout.setVisibility(View.GONE);
     }
 
     public void showToast() {
@@ -118,9 +127,16 @@ public class ErrorHandlerView {
                 if (errorMessage.contains("Connect")) {
                     showToast();
                 }
-
                 showErrorHandler();
             }
         });
     }
+
+    public void setMargin(View v, int left, int top, int right, int bottom) {
+        ViewGroup.MarginLayoutParams params =
+                (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+        params.setMargins(left, top,
+                right, bottom);
+    }
+
 }

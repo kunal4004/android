@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListCheckedAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingUnCheckedListAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -55,6 +56,8 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
     private RelativeLayout mRelRootContainer;
     private boolean viewWasClicked = false;
     private ErrorHandlerView mErrorHandlerView;
+    private WButton mBtnGoProducts;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,7 +65,7 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
         Utils.updateStatusBarBackground(this);
         setContentView(R.layout.shopping_list_activity);
         initUI();
-        mErrorHandlerView = new ErrorHandlerView(this, (WoolworthsApplication) getApplication(),
+        mErrorHandlerView = new ErrorHandlerView(this,
                 (RelativeLayout) findViewById(R.id.relEmptyStateHandler),
                 (ImageView) findViewById(R.id.imgEmpyStateIcon),
                 (WTextView) findViewById(R.id.txtEmptyStateTitle),
@@ -70,6 +73,17 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
         actionBar();
         bindDataWithView(this);
         confidentialAnimation();
+        mBtnGoProducts.setVisibility(View.VISIBLE);
+        mBtnGoProducts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), WOneAppBaseActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("myAccount", 1);
+                startActivity(intent);
+                overridePendingTransition(0,0);
+            }
+        });
     }
 
     private void initUI() {
@@ -79,6 +93,8 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
         mCheckListTitle = (WTextView) findViewById(R.id.checkListTitle);
         mNestedScroll = (WObservableScrollView) findViewById(R.id.nestedScroll);
         mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+        mBtnGoProducts = (WButton) findViewById(R.id.btnGoToProduct);
+
 
         mNestedScroll.setScrollViewCallbacks(this);
     }
@@ -255,6 +271,7 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
                 return true;
         }
         return false;

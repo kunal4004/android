@@ -82,9 +82,19 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         drawerFragment.setUp(R.id.fragment_navigation_drawer, mDrawerLayout, mToolbar);
         drawerFragment.setDrawerListener(this);
-        displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
         showVoucherCount();
         registerReceiver(logOutReceiver, new IntentFilter("logOutReceiver"));
+        Bundle intent = getIntent().getExtras();
+        if (intent != null) {
+            int mOpenProduct = intent.getInt("myAccount");
+            if (mOpenProduct == 1) {
+                displayView(1);
+            } else {
+                displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
+            }
+        } else {
+            displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
+        }
     }
 
     @Override
@@ -121,14 +131,17 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 
         }
 
-        if (fragment != null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.container_body, fragment);
-            fragmentTransaction.commit();
-            // set the toolbar title
-            mToolbarTitle.setText(title);
-            fragmentList.add(fragment);
+        try {
+            if (fragment != null) {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment);
+                fragmentTransaction.commit();
+                // set the toolbar title
+                mToolbarTitle.setText(title);
+                fragmentList.add(fragment);
+            }
+        } catch (Exception ignored) {
         }
     }
 
@@ -206,6 +219,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         }
     };
 
+
     public void showVoucherCount() {
         if (new ConnectionDetector().isOnline()) {
             new HttpAsyncTask<String, String, VoucherResponse>() {
@@ -251,7 +265,9 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         }
     }
 
-    public void preventClicks(View view) { return; }
+    public void preventClicks(View view) {
+        return;
+    }
 
 }
 

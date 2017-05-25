@@ -94,7 +94,7 @@ public class ProductSubCategoryActivity extends BaseActivity implements View.OnC
         else
             mToolBarTitle.setText(mSubCategoriesName);
 
-        mErrorHandlerView = new ErrorHandlerView(this, (WoolworthsApplication) getApplication()
+        mErrorHandlerView = new ErrorHandlerView(this
                 , (RelativeLayout) findViewById(R.id.no_connection_layout));
 
         findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
@@ -102,6 +102,8 @@ public class ProductSubCategoryActivity extends BaseActivity implements View.OnC
             public void onClick(View v) {
                 if (new ConnectionDetector().isOnline())
                     getSubCategory();
+                else
+                    mErrorHandlerView.showToast();
             }
         });
     }

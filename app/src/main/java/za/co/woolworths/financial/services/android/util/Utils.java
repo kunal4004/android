@@ -443,13 +443,6 @@ public class Utils {
 
     }
 
-    public static void setMargin(View v, int left, int top, int right, int bottom) {
-        ViewGroup.MarginLayoutParams params =
-                (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-        params.setMargins(left, top,
-                right, bottom);
-    }
-
     public static String addUTMCode(String link) {
         return link + "&utm_source=oneapp&utm_medium=referral&utm_campaign=product";
     }

@@ -10,8 +10,12 @@
         <item name="unselectedColor">@color/indicator_unselected</item>
     </style>
 
-    <style name="SplashTheme" parent="android:Theme.Holo.Light.NoActionBar">
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:actionBarSize">0dp</item>
     </style>
 
     <style name="LoginTheme" parent="android:Theme.Holo.Light.NoActionBar">
@@ -630,6 +634,7 @@
     <style name="Black_Theme" parent="Theme.AppCompat.NoActionBar">
         <!--<item name="android:windowBackground">@drawable/black_theme</item>-->
     </style>
+
     <style name="contact_us_operating_hours_layout">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -640,6 +645,7 @@
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">16dp</item>
     </style>
+
     <style name="contact_us_operating_hours_textview">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

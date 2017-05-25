@@ -39,6 +39,7 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.ui.adapters.StoreSearchListAdapter;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -74,7 +75,8 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         recentSearchLayout = (LinearLayout) findViewById(R.id.recentSearchLayout);
         recentSearchList = (LinearLayout) findViewById(R.id.recentSearchList);
         searchErrorLayout = (RelativeLayout) findViewById(R.id.search_Error);
-        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
+        mErrorHandlerView = new ErrorHandlerView(this
+                , (RelativeLayout) findViewById(R.id.no_connection_layout));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         showRecentSearchHistoryView(true);
         setSupportActionBar(toolbar);
@@ -118,6 +120,18 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 
 
                 super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    if (mSearchText.length() >= 2)
+                        startSearch(mSearchText).execute();
+                } else {
+                    mErrorHandlerView.showToast();
+                }
             }
         });
     }
@@ -247,7 +261,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 
             @Override
             protected LocationResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler();
+                mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new LocationResponse();
             }
 
@@ -400,24 +414,5 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
             Log.e(TAG, e.getMessage());
         }
         return historyList;
-    }
-
-
-    public void networkFailureHandler() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mErrorHandlerView.startActivity(SearchStoresActivity.this);
-            }
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mWoolworthsApplication.isTriggerErrorHandler()) {
-            if (mSearchText.length() >= 2)
-                startSearch(mSearchText).execute();
-        }
     }
 }

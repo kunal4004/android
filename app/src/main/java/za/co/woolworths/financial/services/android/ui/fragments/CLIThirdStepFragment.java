@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -36,6 +37,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicato
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIBankAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIIncomeProofAdapter;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
@@ -78,6 +80,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     private final String SEND_EMAIL = "sendEmail";
     private final String UPDATE_BANK_DETAIL = "updateBankDetail";
     private final String GET_BANK_ACCOUNT_TYPES = "getBankAccountTypes";
+    private RelativeLayout mRelConnectionLayout;
 
 
     public CLIThirdStepFragment() {
@@ -98,8 +101,9 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         mLinBankLayout = (LinearLayout) view.findViewById(R.id.linBankLayout);
         mProgressBar = (ProgressBar) view.findViewById(R.id.mWoolworthsProgressBar);
         mEmailProgressBar = (ProgressBar) view.findViewById(R.id.mEmailWoolworthsProgressBar);
-        mErrorHandlerView = new ErrorHandlerView(mWoolworthsApplication);
-
+        mRelConnectionLayout = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelConnectionLayout);
+        mErrorHandlerView.setMargin(mRelConnectionLayout, 0, 0, 0, 0);
         initUI();
         setListener();
         setContent();
@@ -111,6 +115,29 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
         setProofContent();
 
         loadView();
+        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    switch (retryBackgroundTask) {
+                        case SEND_EMAIL:
+                            sendEmail();
+                            break;
+
+                        case UPDATE_BANK_DETAIL:
+                            updateBankDetail();
+                            break;
+
+                        case GET_BANK_ACCOUNT_TYPES:
+                            getBankAccountTypes();
+                            break;
+                    }
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+
+        });
         return view;
     }
 
@@ -245,26 +272,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (mWoolworthsApplication.isTriggerErrorHandler()) {
-            switch (retryBackgroundTask) {
-                case SEND_EMAIL:
-                    sendEmail();
-                    break;
-
-                case UPDATE_BANK_DETAIL:
-                    updateBankDetail();
-                    break;
-
-                case GET_BANK_ACCOUNT_TYPES:
-                    getBankAccountTypes();
-                    break;
-            }
-        }
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
     }
@@ -350,7 +357,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
             @Override
             protected CLIEmailResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler();
+                networkFailureHandler(errorMessage);
                 return new CLIEmailResponse();
             }
 
@@ -397,7 +404,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
             @Override
             protected UpdateBankDetailResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler();
+                networkFailureHandler(errorMessage);
                 return new UpdateBankDetailResponse();
             }
 
@@ -485,7 +492,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
     }
 
 
-    private void networkFailureHandler() {
+    private void networkFailureHandler(final String errorMessage) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -499,10 +506,9 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                         break;
 
                     case GET_BANK_ACCOUNT_TYPES:
-
                         break;
                 }
-                mErrorHandlerView.startActivity(getActivity());
+                mErrorHandlerView.networkFailureHandler(errorMessage);
             }
         });
     }

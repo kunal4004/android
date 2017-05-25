@@ -67,8 +67,6 @@ public class WoolworthsApplication extends Application {
 
     public Counter mCounter;
 
-    private boolean triggerErrorHandler = false;
-
     public static void setSha1Password(String sha1Password) {
         WoolworthsApplication.sha1Password = sha1Password;
     }
@@ -389,13 +387,5 @@ public class WoolworthsApplication extends Application {
 
     public Counter getCounter() {
         return mCounter;
-    }
-
-    public boolean isTriggerErrorHandler() {
-        return triggerErrorHandler;
-    }
-
-    public void setTriggerErrorHandler(boolean triggerErrorHandler) {
-        this.triggerErrorHandler = triggerErrorHandler;
     }
 }
