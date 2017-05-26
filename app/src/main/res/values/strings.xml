@@ -351,7 +351,7 @@
     <string name="onboarding_desc_screen_1">The new Woolies app gives you easy access to fashion trends, recipes, stores, account information and so much more.</string>
     <string name="onboarding_desc_screen_2">See how much you’ve saved, track your tier status and access all your vouchers.</string>
     <string name="onboarding_desc_screen_3">Conveniently view your available funds, next payment due, recent transactions and so much more.</string>
-    <string name="onboarding_desc_screen_4">Create a profile or use your existing Woolies online sign in to get started. Your sign in details will be the same on the app, mobi site and website.</string>
+    <string name="onboarding_desc_screen_4">Create a profile or use your existing Woolies online sign in details to get started. Your sign in details will be the same on the app, mobi site and website.</string>
     <string name="welcome_back">Welcome back</string>
     <string name="cli_activity_desc">To help us calculate how much additional credit you can qualify for, please answer a few quick and easy questions.  Once you have completed this, you will need to submit proof of income in order for us to proceed with your application.</string>
     <string name="cli_attach_drive_desc">Select your existing saved documents from your device and email it to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.</string>
@@ -550,4 +550,9 @@
     <string name="change_password_url">https://www.woolworths.co.za/store/fragments/dashboard/dashboard-index.jsp?content=myaccount/user-details</string>
     <string name="products_onetime_popup_text">Browse or scan products here.\nTo shop, you’ll be linked to our online store.</string>
     <string name="messages">MESSAGES</string>
+    <string name="on_boarding_title_1">WELCOME</string>
+    <string name="on_boarding_title_2">WREWARDS AT A GLANCE</string>
+    <string name="on_boarding_title_3">FINANCIAL SERVICES</string>
+    <string name="on_boarding_title_4">CREATE A DIGITAL PROFILE</string>
+    <string name="get_started">get started</string>
 </resources>
