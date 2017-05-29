@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/layoutLocationServiceOff"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="#efefef"
               android:orientation="vertical"
               android:paddingLeft="24dp"
-              android:paddingRight="24dp"
-              android:id="@+id/layoutLocationServiceOff"
-
-    >
+              android:paddingRight="24dp">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/locationservicesdisabled"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/emptylocation"
         />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -25,12 +23,12 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="36dp"
         android:gravity="center_horizontal"
+        android:letterSpacing="0.01"
         android:text="@string/why_we_need_location_services"
         android:textAllCaps="true"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:WTextView_font="medium_bold"
-        android:letterSpacing="0.01"
 
         />
 
@@ -41,27 +39,27 @@
         android:layout_marginTop="16dp"
         android:alpha=".5"
         android:gravity="center_horizontal"
+        android:lineSpacingExtra="2sp"
         android:text="@string/location_off_message"
         android:textColor="@color/black"
         android:textSize="15sp"
-        android:lineSpacingExtra="2sp"
         app:WTextView_font="myriadpro_regular"
 
         />
 
     <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/buttonLocationOn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/buttonLocationOn"
         android:layout_marginTop="28dp"
+        android:background="@drawable/register_button_bg"
         android:gravity="center"
+        android:letterSpacing="0.2"
         android:minHeight="48dp"
         android:text="@string/go_to_settings"
         android:textColor="@color/black"
         android:textSize="12sp"
         app:WButton_font="medium_bold"
-        android:letterSpacing="0.2"
-        android:background="@drawable/register_button_bg"
         />
 
 

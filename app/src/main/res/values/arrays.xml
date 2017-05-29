@@ -99,12 +99,12 @@
     </array>
 
     <integer-array name="empty_state_icon">
-        <item>@drawable/icon_empty_vouchers</item>
-        <item>@drawable/icon_empty_tierhistory</item>
-        <item>@drawable/icon_empty_statement</item>
-        <item>@drawable/icon_empty_transactions</item>
-        <item>@drawable/icon_empty_shoppinglist</item>
-        <item>@drawable/icon_empty_inbox</item>
+        <item>@drawable/emptyvouchers</item>
+        <item>@drawable/emptytierhistory</item>
+        <item>@drawable/empty_statement</item>
+        <item>@drawable/emptytransactions</item>
+        <item>@drawable/emptyshoppinglist</item>
+        <item>@drawable/emptyinbox</item>
     </integer-array>
 
 </resources>

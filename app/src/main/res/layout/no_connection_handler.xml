@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top"
         android:alpha="0.4"
-        android:src="@drawable/icon_something_went_wrong"/>
+        android:src="@drawable/emptyoopssomethingwentwrong"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/txtConnectionTitle"
@@ -67,9 +67,6 @@
         android:textSize="12sp"
         android:textStyle="bold"
         app:WButton_font="medium_bold"/>
-
-
-
 
 </RelativeLayout>
 
