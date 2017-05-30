@@ -5,13 +5,11 @@ import android.content.Intent;
 
 import com.awfs.coordination.R;
 
-import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity;
+import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 
@@ -52,7 +50,7 @@ public class ScreenManager {
 
     public static void presentOnboarding(Activity activity){
 
-        Intent intent = new Intent(activity, WOnboardingActivity.class);
+        Intent intent = new Intent(activity, OnBoardingActivity.class);
 
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

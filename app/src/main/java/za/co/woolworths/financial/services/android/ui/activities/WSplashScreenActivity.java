@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.views.WVideoView;
 import za.co.woolworths.financial.services.android.util.PersistenceLayer;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
@@ -178,7 +179,15 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
-            ScreenManager.presentOnboarding(WSplashScreenActivity.this);
+            try {
+                String isFirstTime=Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
+                if(isFirstTime==null)
+                    ScreenManager.presentOnboarding(WSplashScreenActivity.this);
+                else
+                    ScreenManager.presentMain(WSplashScreenActivity.this);
+            } catch (NullPointerException ignored) {
+            }
+
             mp.stop();
 
         } else {
