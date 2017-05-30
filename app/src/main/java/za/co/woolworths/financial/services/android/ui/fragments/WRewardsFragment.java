@@ -17,8 +17,6 @@ import android.widget.ImageView;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.Counter;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -37,7 +35,6 @@ public class WRewardsFragment extends AbstractFragmentListener {
     UpdateNavDrawerTitle updateTitle;
     ImageView mBurgerButtonPressed;
     WTextView wRewarsToolbarTitle;
-    private Counter mCounter;
 
     public interface HideActionBarComponent {
         void onWRewardsDrawerPressed();
@@ -55,8 +52,6 @@ public class WRewardsFragment extends AbstractFragmentListener {
         FragmentTransaction childFragTrans = childFragMan.beginTransaction();
         childFragTrans.add(R.id.content_frame,new WRewardsLoggedinAndNotLinkedFragment());
         childFragTrans.commit();*/
-        mCounter = ((WoolworthsApplication) getActivity().getApplication()).getCounter();
-
         updateTitle = (UpdateNavDrawerTitle) getActivity();
         mBurgerButtonPressed.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,13 +111,9 @@ public class WRewardsFragment extends AbstractFragmentListener {
                 childFragTrans.commit();
                 //user is linked and signed in
                 wRewarsToolbarTitle.setText(getString(R.string.wrewards));
-                mCounter.setAccountIsActive(true);
-                mCounter.setActiveVoucher(1);
             } else {
                 //user is not linked
                 //but signed in
-                mCounter.setAccountIsActive(true);
-                mCounter.setActiveVoucher(1);
                 FragmentManager childFragMan = getChildFragmentManager();
                 FragmentTransaction childFragTrans = childFragMan.beginTransaction();
                 WRewardsLoggedinAndNotLinkedFragment fragmentChild = new WRewardsLoggedinAndNotLinkedFragment();
@@ -132,9 +123,6 @@ public class WRewardsFragment extends AbstractFragmentListener {
                 wRewarsToolbarTitle.setText("");
             }
         } else {
-
-            mCounter.setAccountIsActive(false);
-            mCounter.setActiveVoucher(0);
             //user is signed out
             FragmentManager childFragMan = getChildFragmentManager();
             FragmentTransaction childFragTrans = childFragMan.beginTransaction();

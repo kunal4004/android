@@ -351,7 +351,7 @@
     <string name="onboarding_desc_screen_1">The new Woolies app gives you easy access to fashion trends, recipes, stores, account information and so much more.</string>
     <string name="onboarding_desc_screen_2">See how much you’ve saved, track your tier status and access all your vouchers.</string>
     <string name="onboarding_desc_screen_3">Conveniently view your available funds, next payment due, recent transactions and so much more.</string>
-    <string name="onboarding_desc_screen_4">Create a profile or use your existing Woolies online sign in to get started. Your sign in details will be the same on the app, mobi site and website.</string>
+    <string name="onboarding_desc_screen_4">Create a profile or use your existing Woolies online sign in details to get started. Your sign in details will be the same on the app, mobi site and website.</string>
     <string name="welcome_back">Welcome back</string>
     <string name="cli_activity_desc">To help us calculate how much additional credit you can qualify for, please answer a few quick and easy questions.  Once you have completed this, you will need to submit proof of income in order for us to proceed with your application.</string>
     <string name="cli_attach_drive_desc">Select your existing saved documents from your device and email it to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.</string>
@@ -367,8 +367,8 @@
     <string name="issueing_loan">Processing your loan...</string>
 
     <string name="wrewards_tag_line">|!b|W|!?|Rewards is our way of rewarding customers INSTANTLY.|!b|W|!?|Rewards members save millions every week.</string>
-    <string name="wrewards_unlinked_tag_line">We see that your account is not yet linked. To see how much you\'ve saved, track your tier status and access all your vouchers, please link your account now.</string>
-    <string name="link_account">link account</string>
+    <string name="wrewards_unlinked_tag_line">We see that your Woolies Card is not yet linked. To see how much you\'ve saved, track your tier status and access all your vouchers, please link your Woolies Card now.</string>
+    <string name="link_account">LINK WOOLIES CARD</string>
     <string name="apply_for_wrewards">JOIN WREWARDS</string>
     <string name="get_more">Get more</string>
     <string name="wrewards_three_levels">There are three tiers to WRewards - the more you spend, the more guaranteed rewards you\'ll enjoy. You\'ll start out on the Valued tier, and we\'ll upgrade your status automatically as you qualify for the next tier.</string>
@@ -496,7 +496,7 @@
     <string name="product_description">Update your modern wardrobe with this crisp short sleeved stretch cotton shirt, designed with polka dots for a pop of urban cool. Wear it with jeans for easy casual flair, or with fitted chinos for a smarter update.</string>
     <string name="product_code">Product Code</string>
     <string name="product_colour">Colour</string>
-    <string name="unlinked_account_copy">We see that your account is not yet linked. To conveniently view your available funds, next payment due, recent transactions and so much more, please link your account now.</string>
+    <string name="unlinked_account_copy">We see that your Woolies Card is not yet linked. To conveniently view your available funds, next payment due, recent transactions and so much more, please link your Woolies Card now.</string>
     <string name="get_more_back_at_woolies">Get more back at Woolies</string>
     <string name="get_more_description">Get up to 3\%% back in WRewards quarterly vouchers when shopping at Woolies.</string>
     <string name="cc_cash_when_you_need_it">Cash When You Need It</string>
@@ -583,4 +583,9 @@
         <item>When you receive messages you will see them here.</item>
     </string-array>
 
+    <string name="on_boarding_title_1">WELCOME</string>
+    <string name="on_boarding_title_2">WREWARDS AT A GLANCE</string>
+    <string name="on_boarding_title_3">FINANCIAL SERVICES</string>
+    <string name="on_boarding_title_4">CREATE A DIGITAL PROFILE</string>
+    <string name="get_started">get started</string>
 </resources>

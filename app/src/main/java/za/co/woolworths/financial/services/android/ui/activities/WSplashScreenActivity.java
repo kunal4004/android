@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WSplashScreenActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
 
@@ -184,7 +185,15 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
-            ScreenManager.presentOnboarding(WSplashScreenActivity.this);
+            try {
+                String isFirstTime=Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
+                if(isFirstTime==null)
+                    ScreenManager.presentOnboarding(WSplashScreenActivity.this);
+                else
+                    ScreenManager.presentMain(WSplashScreenActivity.this);
+            } catch (NullPointerException ignored) {
+            }
+
             mp.stop();
 
         } else {

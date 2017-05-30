@@ -11,10 +11,6 @@ public class ProductList {
     @SerializedName("productId")
     @Expose
     public String productId;
-    @SerializedName("brandImage")
-    @Expose
-    public String brandImage;
-    @SerializedName("productName")
     @Expose
     public String productName;
     @SerializedName("externalImageRef")
