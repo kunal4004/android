@@ -21,7 +21,6 @@ import org.json.JSONObject;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.wigroup.androidutils.Util;
-import za.co.woolworths.financial.services.android.models.dto.Counter;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 
 
@@ -64,9 +63,6 @@ public class WoolworthsApplication extends Application {
     private static int NumVouchers = 0;
 
     public UpdateBankDetail updateBankDetail;
-
-    public Counter mCounter;
-
 
     public static void setSha1Password(String sha1Password) {
         WoolworthsApplication.sha1Password = sha1Password;
@@ -203,7 +199,6 @@ public class WoolworthsApplication extends Application {
 
         updateBankDetail = new UpdateBankDetail();
         WoolworthsApplication.context = this.getApplicationContext();
-        mCounter = new Counter(this.getApplicationContext());
         // set app context
         mContextApplication = getApplicationContext();
         Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
@@ -384,9 +379,5 @@ public class WoolworthsApplication extends Application {
      */
     public static Context getAppContext() {
         return mContextApplication;
-    }
-
-    public Counter getCounter() {
-        return mCounter;
     }
 }

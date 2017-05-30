@@ -11,8 +11,6 @@ import com.awfs.coordination.R;
 
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.Counter;
 import za.co.woolworths.financial.services.android.models.dto.NavListItem;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -25,8 +23,6 @@ public class NavigationDrawerAdapter extends BaseAdapter {
     public Activity mContext;
     private List<NavListItem> navListItems;
     private int selectedPosition = Utils.DEFAULT_SELECTED_NAVIGATION_ITEM;
-    private Counter counter;
-
 
     public NavigationDrawerAdapter(Activity mContext, List<NavListItem> navListItems) {
         this.mContext = mContext;
@@ -57,7 +53,6 @@ public class NavigationDrawerAdapter extends BaseAdapter {
 
             mHolder.textInListView = (WTextView) convertView.findViewById(R.id.textView);
             mHolder.imageInListView = (ImageView) convertView.findViewById(R.id.imageView);
-            mHolder.mActiveItem = (ImageView) convertView.findViewById(R.id.activeItem);
 
             convertView.setTag(mHolder);
         } else {
@@ -78,48 +73,12 @@ public class NavigationDrawerAdapter extends BaseAdapter {
         } else {
             convertView.setBackgroundColor(Color.parseColor("#ffffff"));
         }
-
-        displayCounter(position, mHolder);
-
         return convertView;
     }
 
     static class ViewHolder {
         WTextView textInListView;
         ImageView imageInListView;
-        ImageView mActiveItem;
-    }
-
-    private void showCount(ViewHolder holder) {
-        holder.mActiveItem.setVisibility(View.VISIBLE);
-    }
-
-    private void hideCount(ViewHolder holder) {
-        holder.mActiveItem.setVisibility(View.GONE);
-    }
-
-    private void displayCounter(int position, ViewHolder mHolder) {
-        counter = ((WoolworthsApplication) mContext.getApplication()).getCounter();
-        //show hide active counter
-        switch (position) {
-            case 3:
-                if (counter.getActiveVoucher() > 0)
-                    showCount(mHolder);
-                else
-                    hideCount(mHolder);
-                break;
-
-            case 4:
-                if (counter.accountIsActive())
-                    showCount(mHolder);
-                else
-                    hideCount(mHolder);
-                break;
-
-            default:
-                hideCount(mHolder);
-                break;
-        }
     }
 
     public void setSelectedPosition(int position) {
