@@ -418,7 +418,8 @@ public class SSOActivity extends WebViewActivity {
 
             @Override
             protected CreateUpdateDeviceResponse httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().getResponseOnCreateUpdateDevice(device);
+                return ((WoolworthsApplication) SSOActivity.this.getApplication()).getApi()
+                        .getResponseOnCreateUpdateDevice(device);
             }
 
             @Override

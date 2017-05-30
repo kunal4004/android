@@ -37,6 +37,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
     private boolean isMinimized = false;
     private ErrorHandlerView mErrorHandlerView;
     private WVideoView videoView;
+    private String TAG = "WSplashScreen";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,7 +182,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
                     return;
                 }
             } catch (Exception e) {
-                Log.e("WSplashScreen", e.getMessage());
+                Log.e(TAG, e.getMessage());
             }
             ScreenManager.presentOnboarding(WSplashScreenActivity.this);
             mp.stop();

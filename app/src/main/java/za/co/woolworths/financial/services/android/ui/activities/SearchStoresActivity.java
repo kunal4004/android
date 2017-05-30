@@ -69,7 +69,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_store_activity);
         Utils.updateStatusBarBackground(this);
-        mWoolworthsApplication = (WoolworthsApplication) getApplication();
+        mWoolworthsApplication = (WoolworthsApplication) SearchStoresActivity.this.getApplication();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         recyclerView = (RecyclerView) findViewById(R.id.storeList);
         recentSearchLayout = (LinearLayout) findViewById(R.id.recentSearchLayout);
@@ -246,10 +246,10 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
             protected LocationResponse httpDoInBackground(String... params) {
                 Location location = Utils.getLastSavedLocation(SearchStoresActivity.this);
                 if (location != null) {
-                    return ((WoolworthsApplication) getApplication()).getApi().getLocations(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), query, "50000");
+                    return mWoolworthsApplication.getApi().getLocations(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), query, "50000");
 
                 } else {
-                    return ((WoolworthsApplication) getApplication()).getApi().getLocations(null, null, query, null);
+                    return mWoolworthsApplication.getApi().getLocations(null, null, query, null);
 
                 }
             }

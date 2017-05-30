@@ -556,6 +556,8 @@
 
     <string name="socket_timeout_exception">SocketTimeoutException</string>
     <string name="connect_exception">ConnectException</string>
+    <string name="connect_flag">Connect</string>
+    <string name="socket_flag">Socket</string>
     <string name="runtime_exception">RuntimeExecutionException</string>
     <string name="messages">MESSAGES</string>
     <string name="no_connection">NO CONNECTION</string>

@@ -92,7 +92,8 @@ public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQ
             new HttpAsyncTask<String, String, FAQ>() {
                 @Override
                 protected FAQ httpDoInBackground(String... params) {
-                    return ((WoolworthsApplication) getApplication()).getApi().getFAQ();
+                    return ((WoolworthsApplication) FAQActivity.this.getApplication()).getApi()
+                            .getFAQ();
                 }
 
                 @Override

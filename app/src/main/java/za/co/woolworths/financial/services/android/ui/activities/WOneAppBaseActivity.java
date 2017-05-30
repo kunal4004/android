@@ -228,7 +228,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
                 @Override
                 protected VoucherResponse httpDoInBackground(String... params) {
 
-                    return ((WoolworthsApplication) getApplication()).getApi().getVouchers();
+                    return ((WoolworthsApplication) WOneAppBaseActivity.this.getApplication())
+                            .getApi().getVouchers();
                 }
 
                 @Override
@@ -247,7 +248,9 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
                 protected void onPostExecute(VoucherResponse voucherResponse) {
                     super.onPostExecute(voucherResponse);
                     try {
-                        Counter mCounter = ((WoolworthsApplication) getApplication()).getCounter();
+                        Counter mCounter = ((WoolworthsApplication) WOneAppBaseActivity
+                                .this.getApplication())
+                                .getCounter();
                         VoucherCollection voucher = voucherResponse.voucherCollection;
                         if (voucher != null) {
                             List<Voucher> voucherSize = voucher.vouchers;

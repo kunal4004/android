@@ -208,7 +208,8 @@ public class EnterBarcodeActivity extends AppCompatActivity {
                         errorScanCode();
                     }
                 }, DELAY_POPUP);
-                if (errorMessage.contains("Connect") || errorMessage.contains("Socket"))
+                if (errorMessage.contains(getString(R.string.connect_flag)) || errorMessage.contains
+                        (getString(R.string.socket_flag)))
                     mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new ProductView();
             }
@@ -284,43 +285,45 @@ public class EnterBarcodeActivity extends AppCompatActivity {
     }
 
     private void getProductDetail(final String productId, final String skuId) {
-        ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
-            @Override
-            public void success(String strProduct, retrofit.client.Response response) {
-                hideProgressBar();
-                WProduct wProduct = Utils.stringToJson(mContext, strProduct);
-                if (wProduct != null) {
-                    switch (wProduct.httpCode) {
-                        case 200:
-                            ArrayList<WProductDetail> mProductList;
-                            WProductDetail productList = wProduct.product;
-                            mProductList = new ArrayList<>();
-                            if (productList != null) {
-                                mProductList.add(productList);
+        ((WoolworthsApplication) EnterBarcodeActivity.this.getApplication()).getAsyncApi()
+                .getProductDetail(productId,
+                        skuId, new Callback<String>() {
+                            @Override
+                            public void success(String strProduct, retrofit.client.Response response) {
+                                hideProgressBar();
+                                WProduct wProduct = Utils.stringToJson(mContext, strProduct);
+                                if (wProduct != null) {
+                                    switch (wProduct.httpCode) {
+                                        case 200:
+                                            ArrayList<WProductDetail> mProductList;
+                                            WProductDetail productList = wProduct.product;
+                                            mProductList = new ArrayList<>();
+                                            if (productList != null) {
+                                                mProductList.add(productList);
+                                            }
+                                            GsonBuilder builder = new GsonBuilder();
+                                            Gson gson = builder.create();
+                                            Intent openDetailView = new Intent(mContext, ProductDetailActivity.class);
+                                            openDetailView.putExtra("product_name", mProductList.get(0).productName);
+                                            openDetailView.putExtra("product_detail", gson.toJson(mProductList));
+                                            startActivity(openDetailView);
+                                            overridePendingTransition(0, R.anim.anim_slide_up);
+                                            break;
+
+                                        default:
+                                            handleError();
+                                            break;
+                                    }
+                                }
                             }
-                            GsonBuilder builder = new GsonBuilder();
-                            Gson gson = builder.create();
-                            Intent openDetailView = new Intent(mContext, ProductDetailActivity.class);
-                            openDetailView.putExtra("product_name", mProductList.get(0).productName);
-                            openDetailView.putExtra("product_detail", gson.toJson(mProductList));
-                            startActivity(openDetailView);
-                            overridePendingTransition(0, R.anim.anim_slide_up);
-                            break;
 
-                        default:
-                            handleError();
-                            break;
-                    }
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                handleError();
-                if (error.toString().contains("Unable to resolve host"))
-                    mErrorHandlerView.showToast();
-            }
-        });
+                            @Override
+                            public void failure(RetrofitError error) {
+                                handleError();
+                                if (error.toString().contains("Unable to resolve host"))
+                                    mErrorHandlerView.showToast();
+                            }
+                        });
     }
 
     private void handleError() {

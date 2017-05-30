@@ -166,9 +166,9 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         setContentView(R.layout.barcode_scanner_layout);
         setupToolbar();
         if (Build.VERSION_CODES.LOLLIPOP >= Build.VERSION.SDK_INT) {
-            cameraManager = new CameraManager(getApplication());
+            cameraManager = new CameraManager(QRActivity.this.getApplication());
         } else {
-            cameraManager = new CameraManager(getApplication());
+            cameraManager = new CameraManager(QRActivity.this.getApplication());
         }
         model = new QRModel(new QRView(this));
         model.onCreate();
@@ -274,7 +274,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         mProgressBar = (ProgressBar) findViewById(R.id.ppBar);
         mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
         mBtnManual = (WButton) findViewById(R.id.btnManual);
-        mWoolworthsApplication = (WoolworthsApplication) getApplication();
+        mWoolworthsApplication = (WoolworthsApplication) QRActivity.this.getApplication();
         mErrorHandlerView = new ErrorHandlerView(this
                 , (RelativeLayout) findViewById(R.id.no_connection_layout));
         mBtnManual.setOnClickListener(this);
@@ -379,9 +379,9 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         if (allowed) {
             //user granted all permissions we can perform our task.
             if (Build.VERSION_CODES.LOLLIPOP >= Build.VERSION.SDK_INT) {
-                cameraManager = new CameraManager(getApplication());
+                cameraManager = new CameraManager(QRActivity.this.getApplication());
             } else {
-                cameraManager = new CameraManager(getApplication());
+                cameraManager = new CameraManager(QRActivity.this.getApplication());
             }
             model = new QRModel(new QRView(this));
             model.onCreate();
@@ -521,7 +521,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         mCurrentBgTask = MBGPRODUCTDETAIL;
         this.mProductId = productId;
         this.mSkuId = skuId;
-        ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
+        ((WoolworthsApplication) QRActivity.this.getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
             @Override
             public void success(String strProduct, retrofit.client.Response response) {
                 hideProgressBar();
@@ -592,7 +592,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         return new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected ProductView httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi()
+                return ((WoolworthsApplication) QRActivity.this.getApplication()).getApi()
                         .getProductSearchList(query, true, 0, Utils.PAGE_SIZE);
             }
 

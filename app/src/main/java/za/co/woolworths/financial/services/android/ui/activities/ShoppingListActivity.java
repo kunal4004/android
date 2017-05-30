@@ -77,11 +77,12 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
         mBtnGoProducts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), WOneAppBaseActivity.class);
+                Intent intent = new Intent(ShoppingListActivity.this.getApplicationContext(),
+                        WOneAppBaseActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("myAccount", 1);
                 startActivity(intent);
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
             }
         });
     }

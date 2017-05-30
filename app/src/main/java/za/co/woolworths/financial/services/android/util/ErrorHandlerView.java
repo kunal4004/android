@@ -84,7 +84,6 @@ public class ErrorHandlerView {
         setEmptyState(position);
     }
 
-    // message(5) 4. 3. 2. 1.
     public void setEmptyState(int position) {
         Resources resources = mContext.getResources();
         TypedArray emptyStateIcon = resources.obtainTypedArray(R.array.empty_state_icon);
@@ -124,7 +123,7 @@ public class ErrorHandlerView {
         ((Activity) mContext).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (errorMessage.contains("Connect")) {
+                if (errorMessage.contains(mContext.getString(R.string.connect_flag))) {
                     showToast();
                 }
                 showErrorHandler();

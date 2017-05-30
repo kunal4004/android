@@ -83,7 +83,7 @@ public class MyAccountCardsActivity extends BaseActivity
         setActionBar();
         init();
 
-        mWoolworthsApplication = (WoolworthsApplication) getApplication();
+        mWoolworthsApplication = (WoolworthsApplication) MyAccountCardsActivity.this.getApplication();
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(MyAccountCardsActivity.this);
         position = getIntent().getIntExtra("position", 0);
         mWObservableScrollView.setScrollViewCallbacks(this);
@@ -175,7 +175,8 @@ public class MyAccountCardsActivity extends BaseActivity
     }
 
     private void init() {
-        mWoolworthsApplication = (WoolworthsApplication) getApplication();
+        mWoolworthsApplication = (WoolworthsApplication) MyAccountCardsActivity
+                .this.getApplication();
         toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
         pager = (WViewPager) findViewById(R.id.myAccountsCardPager);
 
@@ -244,7 +245,10 @@ public class MyAccountCardsActivity extends BaseActivity
         switch (accountsResponse.httpCode) {
             case 200:
 
-                ((WoolworthsApplication) getApplication()).getUserManager().setAccounts(accountsResponse);
+                ((WoolworthsApplication) MyAccountCardsActivity.this.getApplication())
+                        .getUserManager
+                        ().setAccounts
+                        (accountsResponse);
                 List<Account> accountList = accountsResponse.accountList;
 
                 if (accountList != null) {

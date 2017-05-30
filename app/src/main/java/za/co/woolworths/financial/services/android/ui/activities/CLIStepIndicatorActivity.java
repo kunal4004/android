@@ -48,7 +48,7 @@ public class CLIStepIndicatorActivity extends BaseActivity implements WOnboardin
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cli_step);
         Utils.updateStatusBarBackground(CLIStepIndicatorActivity.this);
-        mWoolworthApplication = (WoolworthsApplication) getApplication();
+        mWoolworthApplication = (WoolworthsApplication) CLIStepIndicatorActivity.this.getApplication();
         initViews();
         setActionBar();
         setCLIContent();

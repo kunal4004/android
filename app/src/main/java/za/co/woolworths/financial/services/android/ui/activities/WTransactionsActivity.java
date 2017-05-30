@@ -96,7 +96,9 @@ public class WTransactionsActivity extends AppCompatActivity {
 
             @Override
             protected TransactionHistoryResponse httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().getAccountTransactionHistory(prOfferId);
+                return ((WoolworthsApplication) WTransactionsActivity.this.getApplication())
+                        .getApi()
+                        .getAccountTransactionHistory(prOfferId);
             }
 
             @Override

@@ -338,7 +338,9 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
         return new HttpAsyncTask<String, String, CreateOfferResponse>() {
             @Override
             protected CreateOfferResponse httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().createOfferRequest(mCreateOfferRequest);
+                return ((WoolworthsApplication) CLISupplyInfoActivity.this.getApplication())
+                        .getApi().createOfferRequest
+                        (mCreateOfferRequest);
             }
 
             @Override

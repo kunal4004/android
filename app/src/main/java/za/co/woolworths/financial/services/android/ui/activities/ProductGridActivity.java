@@ -24,7 +24,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -82,6 +81,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
     private String mSkuId;
     private String mProductId;
     private ErrorHandlerView mErrorHandlerView;
+    private WoolworthsApplication mWoolWorthsApplication;
 
     private enum RUN_BACKGROUND_TASK {
         SEARCH_PRODUCT, SEARCH_MORE_PRODUCT, LOAD_PRODUCT, LOAD_MORE_PRODUCT
@@ -96,6 +96,8 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
         setContentView(R.layout.product_layout);
         Utils.updateStatusBarBackground(ProductGridActivity.this);
         mContext = this;
+        mWoolWorthsApplication = ((WoolworthsApplication) ProductGridActivity.this.getApplication
+                ());
         initUI();
         initProductDetailUI();
 
@@ -382,8 +384,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
             protected ProductView httpDoInBackground(String... params) {
                 pageNumber = 0;
                 mIsLastPage = false;
-                return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(false,
-                        pageNumber, Utils.PAGE_SIZE, productId);
+                return mWoolWorthsApplication.getApi().productViewRequest(false, pageNumber, Utils.PAGE_SIZE, productId);
 
             }
 
@@ -422,7 +423,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
             protected ProductView httpDoInBackground(String... params) {
                 pageNumber = 0;
                 mIsLastPage = false;
-                return ((WoolworthsApplication) getApplication()).getApi()
+                return mWoolWorthsApplication.getApi()
                         .getProductSearchList(searchItem, false, pageNumber, Utils.PAGE_SIZE);
             }
 
@@ -467,7 +468,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
             @Override
             protected ProductView httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().productViewRequest(false,
+                return mWoolWorthsApplication.getApi().productViewRequest(false,
                         pageOffset, Utils.PAGE_SIZE, productId);
             }
 
@@ -508,7 +509,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
     private void getProductDetail(final String productId, final String skuId, final boolean closeActivity) {
         productCanClose = closeActivity;
-        ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new CancelableCallback<String>() {
+        mWoolWorthsApplication.getAsyncApi().getProductDetail(productId, skuId, new CancelableCallback<String>() {
 
             @Override
             public void onSuccess(String strProduct, retrofit.client.Response response) {

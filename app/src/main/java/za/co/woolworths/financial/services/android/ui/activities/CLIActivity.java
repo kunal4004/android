@@ -50,7 +50,7 @@ public class CLIActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cli);
-        woolworthsApplication = (WoolworthsApplication) getApplication();
+        woolworthsApplication = (WoolworthsApplication) CLIActivity.this.getApplication();
         Utils.updateStatusBarBackground(CLIActivity.this);
         initViews();
         setCurrentIndex();

@@ -30,7 +30,6 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WObservableRecyclerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
@@ -119,7 +118,7 @@ public class ProductSubCategoryActivity extends AppCompatActivity implements Vie
             case R.id.imSearch:
                 Intent openSearchActivity = new Intent(this, ProductSearchActivity.class);
                 startActivity(openSearchActivity);
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
         }
     }
@@ -137,7 +136,7 @@ public class ProductSubCategoryActivity extends AppCompatActivity implements Vie
             case R.id.action_search:
                 Intent openSearchBarActivity = new Intent(ProductSubCategoryActivity.this, ProductSearchActivity.class);
                 startActivity(openSearchBarActivity);
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
             case android.R.id.home:
                 onBackPressed();
@@ -151,7 +150,8 @@ public class ProductSubCategoryActivity extends AppCompatActivity implements Vie
         return new HttpAsyncTask<String, String, SubCategories>() {
             @Override
             protected SubCategories httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().getSubCategory(category_id);
+                return ((WoolworthsApplication) ProductSubCategoryActivity.this.getApplication())
+                        .getApi().getSubCategory(category_id);
             }
 
             @Override

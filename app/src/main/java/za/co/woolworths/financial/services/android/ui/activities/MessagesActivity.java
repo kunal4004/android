@@ -65,7 +65,7 @@ public class MessagesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.messages_activity);
         Utils.updateStatusBarBackground(this);
-        mWoolWorthsApplication = (WoolworthsApplication) getApplication();
+        mWoolWorthsApplication = (WoolworthsApplication) MessagesActivity.this.getApplication();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -150,7 +150,9 @@ public class MessagesActivity extends AppCompatActivity {
             protected MessageResponse httpDoInBackground(String... params) {
                 mCurrentPage = 1;
                 mIsLastPage = false;
-                return ((WoolworthsApplication) getApplication()).getApi().getMessagesResponse(PAGE_SIZE, mCurrentPage);
+                return ((WoolworthsApplication) MessagesActivity.this.getApplication()).getApi()
+                        .getMessagesResponse
+                        (PAGE_SIZE, mCurrentPage);
             }
 
             @Override
@@ -198,7 +200,9 @@ public class MessagesActivity extends AppCompatActivity {
 
             @Override
             protected MessageResponse httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().getMessagesResponse(PAGE_SIZE, mCurrentPage);
+                return ((WoolworthsApplication) MessagesActivity.this.getApplication()).getApi()
+                        .getMessagesResponse
+                        (PAGE_SIZE, mCurrentPage);
             }
 
             @Override
@@ -242,7 +246,8 @@ public class MessagesActivity extends AppCompatActivity {
 
             @Override
             protected ReadMessagesResponse httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().getReadMessagesResponse(getJsonString(readMessages));
+                return ((WoolworthsApplication) MessagesActivity.this.getApplication()).getApi()
+                        .getReadMessagesResponse(getJsonString(readMessages));
             }
 
             @Override

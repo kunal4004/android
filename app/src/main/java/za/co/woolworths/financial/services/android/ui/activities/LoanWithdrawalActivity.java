@@ -287,7 +287,9 @@ public class LoanWithdrawalActivity extends BaseActivity {
                             drawnDownAmountCent,
                             repaymentPeriod(creditLimit),
                             creditLimit);
-                    return ((WoolworthsApplication) getApplication()).getApi().issueLoan(issueLoanRequest);
+                    return ((WoolworthsApplication) LoanWithdrawalActivity.this.getApplication())
+                            .getApi().issueLoan
+                            (issueLoanRequest);
                 }
 
                 @Override
