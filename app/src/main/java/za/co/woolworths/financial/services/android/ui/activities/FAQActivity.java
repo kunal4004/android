@@ -47,8 +47,6 @@ public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQ
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         Utils.updateStatusBarBackground(this);
         setContentView(R.layout.faq_activity);
         mContext = this;
