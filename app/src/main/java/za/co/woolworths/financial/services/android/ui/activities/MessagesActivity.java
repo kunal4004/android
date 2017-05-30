@@ -8,12 +8,15 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.daimajia.swipe.util.Attributes;
@@ -30,15 +33,15 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
-public class MessagesActivity extends BaseActivity {
+public class MessagesActivity extends AppCompatActivity {
     public RecyclerView messsageListview;
     public MesssagesListAdapter adapter = null;
     public LinearLayoutManager mLayoutManager;
@@ -51,13 +54,10 @@ public class MessagesActivity extends BaseActivity {
     private boolean mIsLoading = false;
     private boolean mIsLastPage = false;
     private int mCurrentPage = 1;
-    int previousTotal = 0;
     public List<MessageDetails> messageList;
-    //public ProgressBar mLoadingImageView;
-    public int visibleThreshold = 5;
-    ConnectionDetector connectionDetector;
-    private FragmentManager fm;
-    private WTextView noMessagesText;
+    private final ThreadLocal<FragmentManager> fm = new ThreadLocal<>();
+    private ErrorHandlerView mErrorHandlerView;
+    private WoolworthsApplication mWoolWorthsApplication;
 
 
     @Override
@@ -65,29 +65,27 @@ public class MessagesActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.messages_activity);
         Utils.updateStatusBarBackground(this);
+        mWoolWorthsApplication = (WoolworthsApplication) MessagesActivity.this.getApplication();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
-        connectionDetector = new ConnectionDetector();
         mLayoutManager = new LinearLayoutManager(MessagesActivity.this);
         messsageListview = (RecyclerView) findViewById(R.id.messsageListView);
-        //mLoadingImageView = (ProgressBar) findViewById(R.id.loadingBar);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
-        noMessagesText = (WTextView) findViewById(R.id.noMessagesText);
-
+        mErrorHandlerView = new ErrorHandlerView(this, mWoolWorthsApplication,
+                (RelativeLayout) findViewById(R.id.relEmptyStateHandler),
+                (ImageView) findViewById(R.id.imgEmpyStateIcon),
+                (WTextView) findViewById(R.id.txtEmptyStateTitle),
+                (WTextView) findViewById(R.id.txtEmptyStateDesc),
+                (RelativeLayout) findViewById(R.id.no_connection_layout));
         messsageListview.setHasFixedSize(true);
         messsageListview.setLayoutManager(mLayoutManager);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
-                if (connectionDetector.isOnline(MessagesActivity.this)) {
-                    loadMessages();
-                } else {
-                    WErrorDialog.getErrConnectToServer(MessagesActivity.this);
-                    hideRefreshView();
-                }
+                loadMessages();
             }
         });
         messsageListview.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -121,26 +119,40 @@ public class MessagesActivity extends BaseActivity {
             }
         };
 
-        if (connectionDetector.isOnline(MessagesActivity.this)) {
-            loadMessages();
-        } else {
-            WErrorDialog.getErrConnectToServer(MessagesActivity.this);
-        }
+        loadMessages();
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    loadMessages();
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+
+        });
     }
 
     public void loadMessages() {
-        fm = getSupportFragmentManager();
-        new HttpAsyncTask<String, String, MessageResponse>() {
+        messageAsyncRequest().execute();
+    }
+
+    public HttpAsyncTask<String, String, MessageResponse> messageAsyncRequest() {
+        fm.set(getSupportFragmentManager());
+        return new HttpAsyncTask<String, String, MessageResponse>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
+                mErrorHandlerView.hideErrorHandlerLayout();
             }
 
             @Override
             protected MessageResponse httpDoInBackground(String... params) {
                 mCurrentPage = 1;
                 mIsLastPage = false;
-                return ((WoolworthsApplication) getApplication()).getApi().getMessagesResponse(PAGE_SIZE, mCurrentPage);
+                return ((WoolworthsApplication) MessagesActivity.this.getApplication()).getApi()
+                        .getMessagesResponse
+                        (PAGE_SIZE, mCurrentPage);
             }
 
             @Override
@@ -150,44 +162,47 @@ public class MessagesActivity extends BaseActivity {
 
             @Override
             protected MessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                MessageResponse messageResponse = new MessageResponse();
-                messageResponse.response = new Response();
-                hideRefreshView();
-                return messageResponse;
+                networkFailureHandler(errorMessage, 0);
+                return new MessageResponse();
             }
 
 
             @Override
             protected void onPostExecute(MessageResponse messageResponse) {
                 super.onPostExecute(messageResponse);
+                messsageListview.setVisibility(View.GONE);
                 handleLoadMessagesResponse(messageResponse);
             }
-        }.execute();
+        };
     }
 
     public void bindDataWithUI(List<MessageDetails> messageDetailsList) {
-        noMessagesText.setVisibility(View.GONE);
+        mErrorHandlerView.hideEmpyState();
         messsageListview.setVisibility(View.VISIBLE);
         adapter = new MesssagesListAdapter(MessagesActivity.this, messageDetailsList);
-        ((MesssagesListAdapter) adapter).setMode(Attributes.Mode.Single);
+        adapter.setMode(Attributes.Mode.Single);
         messsageListview.setAdapter(adapter);
 
     }
 
-    public void loadMoreMessages() {
-        new HttpAsyncTask<String, String, MessageResponse>() {
+    private void loadMoreMessages() {
+        moreMessageAsyncRequest().execute();
+    }
+
+    public HttpAsyncTask<String, String, MessageResponse> moreMessageAsyncRequest() {
+        return new HttpAsyncTask<String, String, MessageResponse>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                //mLoadingImageView.setVisibility(View.VISIBLE);
+                mErrorHandlerView.hideErrorHandlerLayout();
                 mIsLoading = true;
-                mCurrentPage += 1;
-
             }
 
             @Override
             protected MessageResponse httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().getMessagesResponse(PAGE_SIZE, mCurrentPage);
+                return ((WoolworthsApplication) MessagesActivity.this.getApplication()).getApi()
+                        .getMessagesResponse
+                        (PAGE_SIZE, mCurrentPage);
             }
 
             @Override
@@ -197,20 +212,16 @@ public class MessagesActivity extends BaseActivity {
 
             @Override
             protected MessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                MessageResponse messageResponse = new MessageResponse();
-                messageResponse.response = new Response();
-                //mLoadingImageView.setVisibility(View.GONE);
-                mIsLoading = false;
-                return messageResponse;
+                networkFailureHandler(errorMessage, 1);
+                return new MessageResponse();
             }
 
             @Override
             protected void onPostExecute(MessageResponse messageResponse) {
                 super.onPostExecute(messageResponse);
-                //mLoadingImageView.setVisibility(View.GONE);
+                mCurrentPage += 1;
                 mIsLoading = false;
-                List<MessageDetails> moreMessageList = null;
-                moreMessageList = new ArrayList<MessageDetails>();
+                List<MessageDetails> moreMessageList;
                 moreMessageList = messageResponse.messagesList;
                 if (moreMessageList != null && moreMessageList.size() != 0) {
                     if (moreMessageList.size() < PAGE_SIZE) {
@@ -223,7 +234,7 @@ public class MessagesActivity extends BaseActivity {
 
 
             }
-        }.execute();
+        };
     }
 
     public void setMeassagesAsRead(final List<MessageDetails> readMessages) {
@@ -231,12 +242,12 @@ public class MessagesActivity extends BaseActivity {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-
             }
 
             @Override
             protected ReadMessagesResponse httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().getReadMessagesResponse(getJsonString(readMessages));
+                return ((WoolworthsApplication) MessagesActivity.this.getApplication()).getApi()
+                        .getReadMessagesResponse(getJsonString(readMessages));
             }
 
             @Override
@@ -280,7 +291,7 @@ public class MessagesActivity extends BaseActivity {
     public MessageReadRequest getJsonString(List<MessageDetails> readMessages) {
         MessageReadRequest msgRequest = new MessageReadRequest();
         List<MessageRead> msgList = new ArrayList<>();
-        MessageRead msg = null;
+        MessageRead msg;
         for (int i = 0; i < readMessages.size(); i++) {
             msg = new MessageRead();
             msg.id = Integer.parseInt(readMessages.get(i).id);
@@ -306,7 +317,6 @@ public class MessagesActivity extends BaseActivity {
                 new IntentFilter(Utils.PUSH_NOTIFICATION));
         // clear the notification area when the app is opened
         NotificationUtils.clearNotifications(getApplicationContext());
-
     }
 
     @Override
@@ -316,11 +326,11 @@ public class MessagesActivity extends BaseActivity {
             fromNotification = getIntent().getExtras().getBoolean("fromNotification");
         if (fromNotification) {
             startActivity(new Intent(MessagesActivity.this, WOneAppBaseActivity.class));
-            //overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
             finish();
+            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
         } else {
             super.onBackPressed();
-            // overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+            overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
         }
     }
 
@@ -329,42 +339,65 @@ public class MessagesActivity extends BaseActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
                 return true;
         }
         return false;
     }
 
     public void handleLoadMessagesResponse(MessageResponse messageResponse) {
-        switch (messageResponse.httpCode) {
-            case 200:
-                messageList = null;
-                messageList = new ArrayList<>();
-                if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
-                    messageList = messageResponse.messagesList;
-                    bindDataWithUI(messageList);
-                    String unreadCountValue = Utils.getSessionDaoValue(MessagesActivity.this,
-                            SessionDao.KEY.UNREAD_MESSAGE_COUNT);
-                    if (TextUtils.isEmpty(unreadCountValue)) {
-                        Utils.setBadgeCounter(MessagesActivity.this, 0);
+        try {
+            switch (messageResponse.httpCode) {
+                case 200:
+                    messageList = null;
+                    messageList = new ArrayList<>();
+                    if (messageResponse.messagesList != null && messageResponse.messagesList.size() != 0) {
+                        messageList = messageResponse.messagesList;
+                        bindDataWithUI(messageList);
+                        String unreadCountValue = Utils.getSessionDaoValue(MessagesActivity.this,
+                                SessionDao.KEY.UNREAD_MESSAGE_COUNT);
+                        if (TextUtils.isEmpty(unreadCountValue)) {
+                            Utils.setBadgeCounter(MessagesActivity.this, 0);
+                        } else {
+                            int unreadCount = Integer.valueOf(unreadCountValue) - messageList.size();
+                            Utils.setBadgeCounter(MessagesActivity.this, unreadCount);
+                        }
+                        setMeassagesAsRead(messageList);
+                        mIsLastPage = false;
+                        mCurrentPage = 1;
+                        mIsLoading = false;
                     } else {
-                        int unreadCount = Integer.valueOf(unreadCountValue) - messageList.size();
-                        Utils.setBadgeCounter(MessagesActivity.this, unreadCount);
+                        assert messageResponse.messagesList != null;
+                        if (messageResponse.messagesList.size() == 0) {
+                            messsageListview.setVisibility(View.GONE);
+                            mErrorHandlerView.showEmptyState(5);
+                        }
                     }
-                    setMeassagesAsRead(messageList);
-                    mIsLastPage = false;
-                    mCurrentPage = 1;
-                    mIsLoading = false;
-                } else if (messageResponse.messagesList.size() == 0) {
-                    messsageListview.setVisibility(View.GONE);
-                    noMessagesText.setVisibility(View.VISIBLE);
-                }
-                hideRefreshView();
-                break;
-            default:
-                hideRefreshView();
-                Utils.alertErrorMessage(MessagesActivity.this,messageResponse.response.desc);
-                break;
+                    hideRefreshView();
+                    break;
+                default:
+                    hideRefreshView();
+                    Utils.alertErrorMessage(MessagesActivity.this, messageResponse.response.desc);
+                    break;
+            }
+        } catch (Exception ignored) {
         }
     }
+
+    public void networkFailureHandler(final String errorMessage, final int type) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (type == 0) {
+                    hideRefreshView();
+                } else {
+                    mIsLoading = false;
+                }
+
+                mErrorHandlerView.networkFailureHandler(errorMessage);
+            }
+        });
+    }
+
 
 }

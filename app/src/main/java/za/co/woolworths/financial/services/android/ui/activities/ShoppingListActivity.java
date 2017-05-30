@@ -14,6 +14,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.TranslateAnimation;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
@@ -25,12 +26,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListCheckedAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingUnCheckedListAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -38,7 +42,7 @@ import za.co.woolworths.financial.services.android.util.WOnItemClickListener;
 
 public class ShoppingListActivity extends AppCompatActivity implements WOnItemClickListener, ObservableScrollViewCallbacks {
 
-    private static final int ANIM_DOWN_DURATION = 2000 ;
+    private static final int ANIM_DOWN_DURATION = 2000;
     private RecyclerView mUncheckedItem;
     private RecyclerView mCheckItem;
     private Toolbar mToolbar;
@@ -48,10 +52,12 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
     private ArrayList<ShoppingList> checkedItemList;
     public WTextView mCheckListTitle;
     private List<ShoppingList> mGetShoppingList;
-    private RelativeLayout mNoItemInList;
     private WObservableScrollView mNestedScroll;
     private RelativeLayout mRelRootContainer;
-    private boolean viewWasClicked=false;
+    private boolean viewWasClicked = false;
+    private ErrorHandlerView mErrorHandlerView;
+    private WButton mBtnGoProducts;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,9 +65,26 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
         Utils.updateStatusBarBackground(this);
         setContentView(R.layout.shopping_list_activity);
         initUI();
+        mErrorHandlerView = new ErrorHandlerView(this,
+                (RelativeLayout) findViewById(R.id.relEmptyStateHandler),
+                (ImageView) findViewById(R.id.imgEmpyStateIcon),
+                (WTextView) findViewById(R.id.txtEmptyStateTitle),
+                (WTextView) findViewById(R.id.txtEmptyStateDesc));
         actionBar();
         bindDataWithView(this);
         confidentialAnimation();
+        mBtnGoProducts.setVisibility(View.VISIBLE);
+        mBtnGoProducts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ShoppingListActivity.this.getApplicationContext(),
+                        WOneAppBaseActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("myAccount", 1);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            }
+        });
     }
 
     private void initUI() {
@@ -69,9 +92,10 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
         mUncheckedItem = (RecyclerView) findViewById(R.id.uncheckedItem);
         mCheckItem = (RecyclerView) findViewById(R.id.checkedItem);
         mCheckListTitle = (WTextView) findViewById(R.id.checkListTitle);
-        mNoItemInList = (RelativeLayout) findViewById(R.id.noItemInList);
         mNestedScroll = (WObservableScrollView) findViewById(R.id.nestedScroll);
         mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+        mBtnGoProducts = (WButton) findViewById(R.id.btnGoToProduct);
+
 
         mNestedScroll.setScrollViewCallbacks(this);
     }
@@ -87,25 +111,25 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
     }
 
     private void confidentialAnimation() {
-            TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
-            animation.setFillAfter(true);
-            animation.setDuration(ANIM_DOWN_DURATION);
-            animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+        TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+        animation.setFillAfter(true);
+        animation.setDuration(ANIM_DOWN_DURATION);
+        animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
 
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
 
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
 
-                @Override
-                public void onAnimationEnd(Animation animation) {
+            @Override
+            public void onAnimationEnd(Animation animation) {
 
-                }
-            });
-            mRelRootContainer.startAnimation(animation);
+            }
+        });
+        mRelRootContainer.startAnimation(animation);
     }
 
     private void bindDataWithView(WOnItemClickListener context) {
@@ -185,7 +209,6 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
                 checkedShoppingListAdapter.notifyDataSetChanged();
                 checkedShoppingListAdapter.mItemManger.closeAllItems();
 
-
                 Utils.sessionDaoSave(this, SessionDao.KEY.STORE_SHOPPING_LIST,
                         new Gson().toJson(mGetShoppingList));
                 break;
@@ -249,6 +272,7 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
                 return true;
         }
         return false;
@@ -256,10 +280,9 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
 
     private void shoppingListEmptyView() {
         if (mGetShoppingList.size() == 0) {
-            mNoItemInList.setVisibility(View.VISIBLE);
-            mNestedScroll.setVisibility(View.GONE);
+            mErrorHandlerView.showEmptyState(4);
         } else {
-            mNoItemInList.setVisibility(View.GONE);
+            mErrorHandlerView.hideEmpyState();
             mNestedScroll.setVisibility(View.VISIBLE);
         }
     }

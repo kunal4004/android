@@ -65,8 +65,7 @@
                 android:textColor="@color/black_desc_opacity"
                 android:textSize="12sp"
                 android:visibility="gone"
-                app:WTextView_font="medium" />
-
+                app:WTextView_font="medium"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/textTitle"

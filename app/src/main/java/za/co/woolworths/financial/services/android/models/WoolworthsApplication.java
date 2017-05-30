@@ -63,7 +63,6 @@ public class WoolworthsApplication extends Application {
     private static int NumVouchers = 0;
 
     public UpdateBankDetail updateBankDetail;
-
     public static void setSha1Password(String sha1Password) {
         WoolworthsApplication.sha1Password = sha1Password;
     }

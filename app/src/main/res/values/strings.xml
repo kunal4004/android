@@ -135,7 +135,7 @@
     <string name="faqs">FAQs</string>
     <string name="sign_out">Sign Out</string>
     <string name="brands">Brands</string>
-    <string name="why_we_need_location_services">Why we need Location Services</string>
+    <string name="why_we_need_location_services">Location Services</string>
     <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
     <string name="title_activity_wmain">WMainActivity</string>
@@ -549,7 +549,40 @@
     <string name="change_password">Change password</string>
     <string name="change_password_url">https://www.woolworths.co.za/store/fragments/dashboard/dashboard-index.jsp?content=myaccount/user-details</string>
     <string name="products_onetime_popup_text">Browse or scan products here.\nTo shop, you’ll be linked to our online store.</string>
+    <string name="connection_error">Please Ensure you\'re connected to the internet and then try
+        again </string>
+    <string name="socket_timeout_error">Your request timed out, please try again</string>
+    <string name="runtime_eror">An error has occured</string>
+
+    <string name="socket_timeout_exception">SocketTimeoutException</string>
+    <string name="connect_exception">ConnectException</string>
+    <string name="connect_flag">Connect</string>
+    <string name="socket_flag">Socket</string>
+    <string name="runtime_exception">RuntimeExecutionException</string>
     <string name="messages">MESSAGES</string>
+    <string name="no_connection">NO CONNECTION</string>
+    <string name="no_connection_desc">OOPS. SOMETHING WENT WRONG</string>
+    <string name="no_connection_desc_1">We could not load this content.\nPlease try again later.</string>
+    <string name="go_to_products">go to products</string>
+
+    <string-array name="empty_state_title">
+        <item>no vouchers</item>
+        <item>no tier history to display</item>
+        <item>no statements</item>
+        <item>no transactions</item>
+        <item>shopping list is empty</item>
+        <item>inbox is empty</item>
+    </string-array>
+
+    <string-array name="empty_state_desc">
+        <item>You currently have no active vouchers.</item>
+        <item>We have no data for the current year.</item>
+        <item>We have no data for the current year.</item>
+        <item>We have no transaction data to show.</item>
+        <item>You have no items in your  shopping list yet.</item>
+        <item>When you receive messages you will see them here.</item>
+    </string-array>
+
     <string name="on_boarding_title_1">WELCOME</string>
     <string name="on_boarding_title_2">WREWARDS AT A GLANCE</string>
     <string name="on_boarding_title_3">FINANCIAL SERVICES</string>

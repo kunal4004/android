@@ -230,6 +230,7 @@ public class LoanWithdrawalActivity extends BaseActivity {
             @Override
             public void run() {
                 finish();
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
             }
         }, 200);
     }
@@ -286,7 +287,9 @@ public class LoanWithdrawalActivity extends BaseActivity {
                             drawnDownAmountCent,
                             repaymentPeriod(creditLimit),
                             creditLimit);
-                    return ((WoolworthsApplication) getApplication()).getApi().issueLoan(issueLoanRequest);
+                    return ((WoolworthsApplication) LoanWithdrawalActivity.this.getApplication())
+                            .getApi().issueLoan
+                            (issueLoanRequest);
                 }
 
                 @Override

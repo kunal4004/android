@@ -8,6 +8,7 @@ import android.graphics.PixelFormat;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -311,6 +312,9 @@ public class PopWindowValidationMessage {
                     public void onClick(View v) {
                         Intent shoppingList = new Intent(mContext, ShoppingListActivity.class);
                         mContext.startActivity(shoppingList);
+                        AppCompatActivity activity = (AppCompatActivity) mContext;
+                        activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+
                         dismissLayout();
                     }
                 });

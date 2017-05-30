@@ -1,112 +1,121 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/recent_search_bg">
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/linStepIndicator"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_below="@+id/productToolbar"
-        android:clipToPadding="false"
-        android:orientation="vertical">
+        android:background="@color/recent_search_bg">
 
-        <android.support.v4.widget.NestedScrollView
-            android:id="@+id/mNestedScrollview"
+        <LinearLayout
+            android:id="@+id/linStepIndicator"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:layout_alignParentTop="true"
+            android:layout_below="@+id/productToolbar"
+            android:clipToPadding="false"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/llNestedDeoBank"
-                android:layout_width="wrap_content"
+            <android.support.v4.widget.NestedScrollView
+                android:id="@+id/mNestedScrollview"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:descendantFocusability="blocksDescendants"
-                android:orientation="vertical">
+                android:fillViewport="true"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/llNestedDeoBank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:descendantFocusability="blocksDescendants"
                     android:orientation="vertical">
 
-                    <include layout="@layout/search_layout_row" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <include layout="@layout/search_layout_row"/>
+
+                    </LinearLayout>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycleProductSearch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:fastScrollEnabled="false"
+                        android:nestedScrollingEnabled="false"/>
 
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycleProductSearch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:fastScrollEnabled="false"
-                    android:nestedScrollingEnabled="false" />
+            </android.support.v4.widget.NestedScrollView>
+        </LinearLayout>
 
-            </LinearLayout>
-
-        </android.support.v4.widget.NestedScrollView>
-    </LinearLayout>
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/productToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@drawable/appbar_background"
-        android:visibility="visible">
-
-        <RelativeLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/productToolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/appbar_background"
+            android:visibility="visible">
 
-            <ImageView
-                android:id="@+id/imBurgerButtonPressed"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/ic_drawer_menu" />
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/toolbarText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/bank_spacing_width"
-                android:layout_toRightOf="@+id/imBurgerButtonPressed"
-                android:gravity="left"
-                android:letterSpacing="0.2"
-                android:text="@string/nav_item_products"
-                android:textAllCaps="true"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                app:WTextView_font="medium_bold" />
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/textTBProductSearch"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="38dp"
-                android:background="@android:color/transparent"
-                android:gravity="start|center"
-                android:paddingStart="@dimen/recent_search_margin"
-                android:text="@string/product_search_hint"
-                android:textColor="@color/product_search_hint"
-                android:textSize="16sp"
-                android:visibility="gone"
-                app:WTextView_font="myriadpro_regular" />
+                android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/imTBBarcodeScanner"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/default_margin"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/barcode" />
-        </RelativeLayout>
-    </android.support.v7.widget.Toolbar>
-</RelativeLayout>
+                <ImageView
+                    android:id="@+id/imBurgerButtonPressed"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_drawer_menu"/>
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/toolbarText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="@dimen/bank_spacing_width"
+                    android:layout_toRightOf="@+id/imBurgerButtonPressed"
+                    android:gravity="left"
+                    android:letterSpacing="0.2"
+                    android:text="@string/nav_item_products"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:WTextView_font="medium_bold"/>
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/textTBProductSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="38dp"
+                    android:background="@android:color/transparent"
+                    android:gravity="start|center"
+                    android:paddingStart="@dimen/recent_search_margin"
+                    android:text="@string/product_search_hint"
+                    android:textColor="@color/product_search_hint"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    app:WTextView_font="myriadpro_regular"/>
+
+                <ImageView
+                    android:id="@+id/imTBBarcodeScanner"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="@dimen/default_margin"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/barcode"/>
+            </RelativeLayout>
+        </android.support.v7.widget.Toolbar>
+    </RelativeLayout>
+
+    <include layout="@layout/no_connection_handler"/>
+
+</FrameLayout>
