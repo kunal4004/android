@@ -83,7 +83,7 @@ public class MyAccountCardsActivity extends BaseActivity
         setActionBar();
         init();
 
-        mWoolworthsApplication = (WoolworthsApplication) getApplication();
+        mWoolworthsApplication = (WoolworthsApplication) MyAccountCardsActivity.this.getApplication();
         mSharePreferenceHelper = SharePreferenceHelper.getInstance(MyAccountCardsActivity.this);
         position = getIntent().getIntExtra("position", 0);
         mWObservableScrollView.setScrollViewCallbacks(this);
@@ -175,7 +175,8 @@ public class MyAccountCardsActivity extends BaseActivity
     }
 
     private void init() {
-        mWoolworthsApplication = (WoolworthsApplication) getApplication();
+        mWoolworthsApplication = (WoolworthsApplication) MyAccountCardsActivity
+                .this.getApplication();
         toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
         pager = (WViewPager) findViewById(R.id.myAccountsCardPager);
 
@@ -244,7 +245,10 @@ public class MyAccountCardsActivity extends BaseActivity
         switch (accountsResponse.httpCode) {
             case 200:
 
-                ((WoolworthsApplication) getApplication()).getUserManager().setAccounts(accountsResponse);
+                ((WoolworthsApplication) MyAccountCardsActivity.this.getApplication())
+                        .getUserManager
+                        ().setAccounts
+                        (accountsResponse);
                 List<Account> accountList = accountsResponse.accountList;
 
                 if (accountList != null) {
@@ -372,6 +376,7 @@ public class MyAccountCardsActivity extends BaseActivity
                                 Intent openWithdrawCashNow = new Intent(MyAccountCardsActivity.this, LoanWithdrawalActivity.class);
                                 openWithdrawCashNow.putExtra("minDrawnDownAmount", wMinDrawnDownAmount);
                                 startActivity(openWithdrawCashNow);
+                                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
                             }
                             break;
                     }
@@ -486,15 +491,20 @@ public class MyAccountCardsActivity extends BaseActivity
     }
 
     public void updateStatusBarBackground(int color) {
-        Window window = getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        View decor = getWindow().getDecorView();
+
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            View decor = getWindow().getDecorView();
             window.setStatusBarColor(color);
             decor.setSystemUiVisibility(0);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            View decor = getWindow().getDecorView();
             window.setStatusBarColor(color);
         }
 
@@ -535,7 +545,7 @@ public class MyAccountCardsActivity extends BaseActivity
 
             FragmentLifecycle fragmentToHide = (FragmentLifecycle) fragmentsAdapter.getItem(position);
             fragmentToHide.onPauseFragment();
-        } catch (ClassCastException ignore){
+        } catch (ClassCastException ignore) {
 
         }
 

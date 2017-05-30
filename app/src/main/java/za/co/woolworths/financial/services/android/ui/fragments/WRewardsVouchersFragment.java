@@ -9,15 +9,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsVoucherDetailsActivity;
-import za.co.woolworths.financial.services.android.ui.adapters.WRewardsSavingsHorizontalScrollAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsVoucherListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -30,7 +33,7 @@ public class WRewardsVouchersFragment extends Fragment {
     private WRewardsVoucherListAdapter mAdapter;
     private RecyclerView recyclerView;
     public VoucherResponse voucherResponse;
-    public WTextView noVouchers;
+    private ErrorHandlerView mErrorHandlerView;
 
     @Nullable
     @Override
@@ -39,17 +42,22 @@ public class WRewardsVouchersFragment extends Fragment {
         Bundle bundle = getArguments();
         voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        noVouchers = (WTextView) view.findViewById(R.id.noVouchers);
+
+        mErrorHandlerView = new ErrorHandlerView(getActivity(),
+                (RelativeLayout) view.findViewById(R.id.relEmptyStateHandler),
+                (ImageView) view.findViewById(R.id.imgEmpyStateIcon),
+                (WTextView) view.findViewById(R.id.txtEmptyStateTitle),
+                (WTextView) view.findViewById(R.id.txtEmptyStateDesc));
+
         mLayoutManager = new LinearLayoutManager(
                 getActivity(),
                 LinearLayoutManager.VERTICAL,
                 false
         );
         recyclerView.setLayoutManager(mLayoutManager);
-        if(voucherResponse.voucherCollection.vouchers==null || voucherResponse.voucherCollection.vouchers.size()==0)
-        {
+        if (voucherResponse.voucherCollection.vouchers == null || voucherResponse.voucherCollection.vouchers.size() == 0) {
             displayNoVouchersView();
-        }else {
+        } else {
             displayVouchers(voucherResponse);
         }
 
@@ -58,12 +66,12 @@ public class WRewardsVouchersFragment extends Fragment {
 
 
     public void displayNoVouchersView() {
-        noVouchers.setVisibility(View.VISIBLE);
+        mErrorHandlerView.showEmptyState(0);
         recyclerView.setVisibility(View.GONE);
     }
 
     public void displayVouchers(final VoucherResponse vResponse) {
-        noVouchers.setVisibility(View.GONE);
+        mErrorHandlerView.hideEmpyState();
         recyclerView.setVisibility(View.VISIBLE);
         mAdapter = new WRewardsVoucherListAdapter(getActivity(), vResponse.voucherCollection.vouchers);
         recyclerView.setAdapter(mAdapter);

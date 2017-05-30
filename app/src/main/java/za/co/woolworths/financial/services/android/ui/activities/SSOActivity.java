@@ -110,6 +110,7 @@ public class SSOActivity extends WebViewActivity {
         this.webView.setWebViewClient(this.webviewClient);
         this.webView.getSettings().setUseWideViewPort(true);
         this.webView.getSettings().setLoadWithOverviewMode(true);
+
     }
 
     //override intent to return expected link that's to be used in the WebViewActivity
@@ -314,8 +315,6 @@ public class SSOActivity extends WebViewActivity {
                         Intent intent = new Intent();
 
                         if (state.equals(webviewState)) {
-
-
                             String jwt = list.get(1);
                             intent.putExtra(SSOActivity.TAG_JWT, jwt);
                             //Save JWT
@@ -384,7 +383,8 @@ public class SSOActivity extends WebViewActivity {
                 progressDialog.dismiss();
                 progressDialog = null;
             }
-        } catch (Exception ex){}
+        } catch (Exception ex) {
+        }
     }
 
     public void showProgressBar() {
@@ -418,7 +418,8 @@ public class SSOActivity extends WebViewActivity {
 
             @Override
             protected CreateUpdateDeviceResponse httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().getResponseOnCreateUpdateDevice(device);
+                return ((WoolworthsApplication) SSOActivity.this.getApplication()).getApi()
+                        .getResponseOnCreateUpdateDevice(device);
             }
 
             @Override
@@ -450,6 +451,7 @@ public class SSOActivity extends WebViewActivity {
                         this.webView.goBack();
                     } else {
                         finish();
+                        overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
                     }
                     return true;
             }

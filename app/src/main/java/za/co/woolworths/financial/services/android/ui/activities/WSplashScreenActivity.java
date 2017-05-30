@@ -1,15 +1,18 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -23,37 +26,65 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
-import za.co.woolworths.financial.services.android.util.PersistenceLayer;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.Utils;
 
-import static com.google.android.gms.plus.PlusOneDummyView.TAG;
-
-public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCompletionListener {
+public class WSplashScreenActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
 
     private boolean mVideoPlayerShouldPlay = false;
-    private WVideoView videoView;
     private boolean isMinimized = false;
-    PersistenceLayer dbHelper = null;
+    private ErrorHandlerView mErrorHandlerView;
+    private WVideoView videoView;
+    private String TAG = "WSplashScreen";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_wsplash_screen);
-        this.videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.mToolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().hide();
+        videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
+        String randomVideo = getRandomVideos();
+        Log.e("randomVideo", randomVideo);
+        Uri videoUri = Uri.parse(randomVideo);
 
-        Uri videoUri = Uri.parse(getRandomVideos());
-        this.videoView.setVideoURI(videoUri);
-        this.videoView.start();
-
-        this.videoView.setOnCompletionListener(this);
-
+        videoView.setVideoURI(videoUri);
+        videoView.start();
+        videoView.setOnCompletionListener(this);
         //Mobile Config Server
-        new HttpAsyncTask<String, String, ConfigResponse>() {
+        mErrorHandlerView = new ErrorHandlerView(this
+                , (RelativeLayout) findViewById(R.id.no_connection_layout));
+        executeConfigServer();
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    executeConfigServer();
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+
+        });
+    }
+
+    private void executeConfigServer() {
+        mobileConfigServer().execute();
+    }
+
+    private HttpAsyncTask<String, String, ConfigResponse> mobileConfigServer() {
+        return new HttpAsyncTask<String, String, ConfigResponse>() {
 
             @Override
             protected void onPreExecute() {
-
+                mErrorHandlerView.hideErrorHandlerLayout();
+                videoView.start();
             }
 
             @Override
@@ -91,63 +122,39 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
 
             @Override
             public ConfigResponse httpError(final String errorMessage, final HttpErrorCode httpErrorCode) {
-                if (httpErrorCode == HttpErrorCode.NETWORK_UNREACHABLE) {
-
-                    WSplashScreenActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog alertDialog = new AlertDialog.Builder(WSplashScreenActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
-                                    .setTitle("Connection Error")
-                                    .setMessage(errorMessage)
-                                    .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            finish();
-                                        }
-                                    }).show();
-                        }
-                    });
-                } else if (httpErrorCode == HttpErrorCode.UNKOWN_ERROR) {
-
-                    WSplashScreenActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlertDialog alertDialog = new AlertDialog.Builder(WSplashScreenActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
-                                    .setTitle("Service Error")
-                                    .setMessage(errorMessage)
-                                    .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            finish();
-                                        }
-                                    }).show();
-                        }
-                    });
-                }
-
-                return null;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        videoView.pause();
+                    }
+                });
+                mErrorHandlerView.networkFailureHandler(errorMessage);
+                return new ConfigResponse();
             }
 
             @Override
             protected void onPostExecute(ConfigResponse configResponse) {
-                WSplashScreenActivity.this.mVideoPlayerShouldPlay = false;
+                try {
+                    WSplashScreenActivity.this.mVideoPlayerShouldPlay = false;
 
-                WoolworthsApplication.setBaseURL(configResponse.enviroment.getBase_url());
-                WoolworthsApplication.setApiKey(configResponse.enviroment.getApiId());
-                WoolworthsApplication.setSha1Password(configResponse.enviroment.getApiPassword());
-                WoolworthsApplication.setSsoRedirectURI(configResponse.enviroment.getSsoRedirectURI());
-                WoolworthsApplication.setStsURI(configResponse.enviroment.getStsURI());
-                WoolworthsApplication.setSsoRedirectURILogout(configResponse.enviroment.getSsoRedirectURILogout());
-                WoolworthsApplication.setWwTodayURI(configResponse.enviroment.getWwTodayURI());
-                WoolworthsApplication.setApplyNowLink(configResponse.defaults.getApplyNowLink());
-                WoolworthsApplication.setRegistrationTCLink(configResponse.defaults.getRegisterTCLink());
-                WoolworthsApplication.setFaqLink(configResponse.defaults.getFaqLink());
-                WoolworthsApplication.setWrewardsLink(configResponse.defaults.getWrewardsLink());
-                WoolworthsApplication.setRewardingLink(configResponse.defaults.getRewardingLink());
-                WoolworthsApplication.setHowToSaveLink(configResponse.defaults.getHowtosaveLink());
-                WoolworthsApplication.setWrewardsTCLink(configResponse.defaults.getWrewardsTCLink());
+                    WoolworthsApplication.setBaseURL(configResponse.enviroment.getBase_url());
+                    WoolworthsApplication.setApiKey(configResponse.enviroment.getApiId());
+                    WoolworthsApplication.setSha1Password(configResponse.enviroment.getApiPassword());
+                    WoolworthsApplication.setSsoRedirectURI(configResponse.enviroment.getSsoRedirectURI());
+                    WoolworthsApplication.setStsURI(configResponse.enviroment.getStsURI());
+                    WoolworthsApplication.setSsoRedirectURILogout(configResponse.enviroment.getSsoRedirectURILogout());
+                    WoolworthsApplication.setWwTodayURI(configResponse.enviroment.getWwTodayURI());
+                    WoolworthsApplication.setApplyNowLink(configResponse.defaults.getApplyNowLink());
+                    WoolworthsApplication.setRegistrationTCLink(configResponse.defaults.getRegisterTCLink());
+                    WoolworthsApplication.setFaqLink(configResponse.defaults.getFaqLink());
+                    WoolworthsApplication.setWrewardsLink(configResponse.defaults.getWrewardsLink());
+                    WoolworthsApplication.setRewardingLink(configResponse.defaults.getRewardingLink());
+                    WoolworthsApplication.setHowToSaveLink(configResponse.defaults.getHowtosaveLink());
+                    WoolworthsApplication.setWrewardsTCLink(configResponse.defaults.getWrewardsTCLink());
+                } catch (NullPointerException ignored) {
+                }
             }
-        }.execute();
+        };
     }
 
     //video player on completion
@@ -178,7 +185,15 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
-            ScreenManager.presentOnboarding(WSplashScreenActivity.this);
+            try {
+                String isFirstTime=Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
+                if(isFirstTime==null)
+                    ScreenManager.presentOnboarding(WSplashScreenActivity.this);
+                else
+                    ScreenManager.presentMain(WSplashScreenActivity.this);
+            } catch (NullPointerException ignored) {
+            }
+
             mp.stop();
 
         } else {
@@ -186,15 +201,8 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
         }
     }
 
-    private enum LoadingResult {
-        LOGIN,
-        ERROR,
-        SUCCESS
-    }
-
     private String getDeviceID() {
         try {
-
             return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         } catch (Exception e) {
             return null;
@@ -221,9 +229,9 @@ public class WSplashScreenActivity extends Activity implements MediaPlayer.OnCom
         ArrayList<String> listOfVideo = new ArrayList<>();
         String rawFolderPath = "android.resource://" + getPackageName() + "/";
         listOfVideo.add(rawFolderPath + R.raw.fashion_studiow_men);
-        listOfVideo.add(rawFolderPath+ R.raw.fashion_summertime);
-        listOfVideo.add(rawFolderPath+ R.raw.food_broccoli);
-        listOfVideo.add(rawFolderPath+ R.raw.food_chocolate);
+        listOfVideo.add(rawFolderPath + R.raw.fashion_summertime);
+        listOfVideo.add(rawFolderPath + R.raw.food_broccoli);
+        listOfVideo.add(rawFolderPath + R.raw.food_chocolate);
         Collections.shuffle(listOfVideo);
         return listOfVideo.get(0);
     }

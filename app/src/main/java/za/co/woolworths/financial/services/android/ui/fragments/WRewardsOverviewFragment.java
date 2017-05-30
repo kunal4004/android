@@ -15,10 +15,7 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.TierInfo;
@@ -115,6 +112,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 
     public void redirectToWRewardsMemberActivity(int type) {
         startActivity(new Intent(getActivity(), WRewardsMembersInfoActivity.class).putExtra("type", type));
+        getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
     }
 
     public void handleNoTireHistoryView() {

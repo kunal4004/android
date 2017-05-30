@@ -70,6 +70,7 @@ public class WebViewActivity extends AppCompatActivity {
                     this.webView.goBack();
                 } else {
                     finish();
+                    overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
                 }
                 break;
         }

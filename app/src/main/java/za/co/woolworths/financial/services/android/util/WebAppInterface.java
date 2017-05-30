@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.activities.TransientActivi
 import za.co.woolworths.financial.services.android.ui.views.ProductProgressDialogFrag;
 
 public class WebAppInterface {
+    private ErrorHandlerView mErrorHandlerView;
     private Context mContext;
     private ProductProgressDialogFrag mProgressDialogFragment;
     private PauseHandlerFragment mPauseHandlerFragment;
@@ -39,11 +40,11 @@ public class WebAppInterface {
 
     public WebAppInterface(Context c) {
         mContext = c;
+        mErrorHandlerView = new ErrorHandlerView(c);
     }
 
     @JavascriptInterface
     public void showProducts(String id, String productName) {
-
         Intent openProductName = new Intent(mContext, ProductGridActivity.class);
         openProductName.putExtra("searchProduct", "");
         openProductName.putExtra("title", id);
@@ -159,6 +160,8 @@ public class WebAppInterface {
                     @Override
                     public void failure(RetrofitError error) {
                         dismissFragmentDialog();
+                        if (error.toString().contains("Unable to resolve host"))
+                            mErrorHandlerView.showToast();
                     }
                 });
     }

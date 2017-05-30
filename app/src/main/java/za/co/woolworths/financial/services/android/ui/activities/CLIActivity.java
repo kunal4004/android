@@ -50,7 +50,7 @@ public class CLIActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cli);
-        woolworthsApplication = (WoolworthsApplication) getApplication();
+        woolworthsApplication = (WoolworthsApplication) CLIActivity.this.getApplication();
         Utils.updateStatusBarBackground(CLIActivity.this);
         initViews();
         setCurrentIndex();
@@ -92,14 +92,13 @@ public class CLIActivity extends BaseActivity implements View.OnClickListener {
         mActionBar.setDisplayHomeAsUpEnabled(true);
         mActionBar.setDisplayShowTitleEnabled(false);
         mActionBar.setDisplayUseLogoEnabled(false);
-        mActionBar.setDefaultDisplayHomeAsUpEnabled(false);
+        //mActionBar.setDefaultDisplayHomeAsUpEnabled(false);
         mActionBar.setHomeAsUpIndicator(R.drawable.close_white);
     }
 
     private void setPagerCard(int id) {
         int[] cards = {R.drawable.w_store_card, R.drawable.w_credi_card, R.drawable.w_personal_loan_card};
-        if(id==1)
-        {
+        if (id == 1) {
             if (WoolworthsApplication.getCreditCardType().equalsIgnoreCase(Utils.SILVER_CARD)) {
                 mImageAccount.setImageResource(R.drawable.w_silver_credit_card);
             } else if (WoolworthsApplication.getCreditCardType().equalsIgnoreCase(Utils.GOLD_CARD)) {
@@ -107,8 +106,7 @@ public class CLIActivity extends BaseActivity implements View.OnClickListener {
             } else if (WoolworthsApplication.getCreditCardType().equalsIgnoreCase(Utils.BLACK_CARD)) {
                 mImageAccount.setImageResource(R.drawable.w_credi_card);
             }
-        }
-        else {
+        } else {
             mImageAccount.setImageResource(cards[id]);
         }
         setCLIContent(id);
@@ -165,7 +163,7 @@ public class CLIActivity extends BaseActivity implements View.OnClickListener {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                overridePendingTransition(0, 0);
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
                 return true;
         }
         return false;
@@ -174,7 +172,7 @@ public class CLIActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(0, 0);
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
     }
 
     @Override

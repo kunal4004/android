@@ -88,5 +88,6 @@ public class WRewardsLoggedOutFragment extends Fragment implements View.OnClickL
     public void redirectToWRewardsMemberActivity( int type)
     {
        startActivity(new Intent(getActivity(), WRewardsMembersInfoActivity.class).putExtra("type",type));
+        getActivity().overridePendingTransition(R.anim.slide_up_anim,R.anim.stay);
     }
 }

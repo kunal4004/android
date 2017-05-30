@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -29,12 +30,12 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
@@ -57,6 +58,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
     private PopWindowValidationMessage mPopWindowValidationMessage;
     private AsyncTask<String, String, OfferActive> asyncRequestCredit;
     private boolean cardHasId = false;
+    private ErrorHandlerView mErrorHandlerView;
+    private RelativeLayout mRelConnectionLayout;
 
     @Nullable
     @Override
@@ -74,13 +77,31 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
         mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
         mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
         mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
+        mRelConnectionLayout = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelConnectionLayout);
+        mErrorHandlerView.setMargin(mRelConnectionLayout, 0, 0, 0, 0);
+
         transactions.setOnClickListener(this);
         txtIncreseLimit.setOnClickListener(this);
+
         AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
         bindData(accountsResponse);
         disableIncreaseLimit();
         hideProgressBar();
         view.setBackgroundColor(Color.WHITE);
+        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    if (!cardHasId) {
+                        getActiveOffer();
+                    }
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+
+        });
         return view;
     }
 
@@ -132,42 +153,43 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                     ((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
                     startActivity(openCLIIncrease);
-                    getActivity().overridePendingTransition(0, 0);
+                    getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
                 }
                 break;
         }
     }
 
-
     private void getActiveOffer() {
-        ConnectionDetector connectionDetector = new ConnectionDetector();
-        if (connectionDetector.isOnline(getActivity())) {
-            asyncRequestCredit = new HttpAsyncTask<String, String, OfferActive>() {
-                @Override
-                protected OfferActive httpDoInBackground(String... params) {
-                    return (woolworthsApplication.getApi().getActiveOfferRequest(productOfferingId));
-                }
+        asyncRequestCredit = activeOfferAsyncAPI();
+        activeOfferAsyncAPI().execute();
+    }
 
-                @Override
-                protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                    OfferActive offerActive = new OfferActive();
-                    offerActive.response = new Response();
-                    isOfferActive = false;
-                    hideProgressBar();
-                    return offerActive;
-                }
+    private HttpAsyncTask<String, String, OfferActive> activeOfferAsyncAPI() {
+        return new HttpAsyncTask<String, String, OfferActive>() {
+            @Override
+            protected OfferActive httpDoInBackground(String... params) {
+                return (woolworthsApplication.getApi().getActiveOfferRequest(productOfferingId));
+            }
 
-                @Override
-                protected void onPreExecute() {
-                    mProgressCreditLimit.setVisibility(View.VISIBLE);
-                    mImageArrow.setVisibility(View.GONE);
-                    txtIncreseLimit.setVisibility(View.GONE);
-                    super.onPreExecute();
-                }
+            @Override
+            protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                networkFailureHandler(errorMessage);
+                return new OfferActive();
+            }
 
-                @Override
-                protected void onPostExecute(OfferActive offerActive) {
-                    super.onPostExecute(offerActive);
+            @Override
+            protected void onPreExecute() {
+                mProgressCreditLimit.setVisibility(View.VISIBLE);
+                mImageArrow.setVisibility(View.GONE);
+                txtIncreseLimit.setVisibility(View.GONE);
+                mErrorHandlerView.hideErrorHandlerLayout();
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(OfferActive offerActive) {
+                super.onPostExecute(offerActive);
+                try {
                     int httpCode = offerActive.httpCode;
                     String httpDesc = offerActive.response.desc;
                     if (httpCode == 200) {
@@ -183,20 +205,16 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                         mPopWindowValidationMessage.displayValidationMessage(httpDesc,
                                 PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
                     }
-                    hideProgressBar();
+                } catch (NullPointerException ignored) {
                 }
+                hideProgressBar();
+            }
 
-                @Override
-                protected Class<OfferActive> httpDoInBackgroundReturnType() {
-                    return OfferActive.class;
-                }
-            };
-            asyncRequestCredit.execute();
-        } else {
-            hideProgressBar();
-            mPopWindowValidationMessage.displayValidationMessage(getString(R.string.connect_to_server),
-                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
-        }
+            @Override
+            protected Class<OfferActive> httpDoInBackgroundReturnType() {
+                return OfferActive.class;
+            }
+        };
     }
 
     public void hideProgressBar() {
@@ -261,5 +279,16 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                 }
             }
         }, 100);
+    }
+
+    public void networkFailureHandler(final String errorMessage) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                isOfferActive = false;
+                hideProgressBar();
+                mErrorHandlerView.networkFailureHandler(errorMessage);
+            }
+        });
     }
 }

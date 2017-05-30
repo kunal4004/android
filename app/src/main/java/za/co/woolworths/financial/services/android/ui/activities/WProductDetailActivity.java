@@ -13,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -41,7 +40,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
@@ -56,13 +54,15 @@ import za.co.woolworths.financial.services.android.ui.views.LoadingDots;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
+import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class WProductDetailActivity extends AppCompatActivity implements View.OnClickListener, SelectedProductView,
+public class WProductDetailActivity extends AppCompatActivity implements View.OnClickListener,
+        SelectedProductView,
         ProductViewPagerAdapter.MultipleImageInterface {
 
     private WTextView mTextSelectSize;
@@ -1097,16 +1097,12 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 
     @Override
     public void SelectedImage(int position, View v) {
-        Log.e("selectedImage", "selectedImage--");
         Intent openMultipleImage = new Intent(this, MultipleImageActivity.class);
         openMultipleImage.putExtra("position", position);
         openMultipleImage.putExtra("auxiliaryImages", mAuxiliaryImages);
         startActivity(openMultipleImage);
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-
     }
-
-
 }
 
 

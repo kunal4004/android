@@ -23,6 +23,7 @@ import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
@@ -42,6 +43,8 @@ import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -57,6 +60,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
     private final int DELAY_SOFT_KEYBOARD = 100;
     private final int DELAY_POPUP = 200;
     private WButton mBtnBarcodeConfirm;
+    private ErrorHandlerView mErrorHandlerView;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -67,6 +71,8 @@ public class EnterBarcodeActivity extends AppCompatActivity {
         setContentView(R.layout.enter_barcode_activity);
         initUI();
         setActionBar();
+        mErrorHandlerView = new ErrorHandlerView(this
+                , (RelativeLayout) findViewById(R.id.no_connection_layout));
 
         mBtnBarcodeConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +118,16 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline()) {
+                    getProductDetail();
+                } else {
+                    mErrorHandlerView.showToast();
+                }
+            }
+        });
 
     }
 
@@ -131,7 +147,6 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             mActionBar.setDisplayHomeAsUpEnabled(true);
             mActionBar.setDisplayShowTitleEnabled(false);
             mActionBar.setDisplayUseLogoEnabled(false);
-            mActionBar.setDefaultDisplayHomeAsUpEnabled(false);
             mActionBar.setHomeAsUpIndicator(R.drawable.back_white);
         }
     }
@@ -167,8 +182,8 @@ public class EnterBarcodeActivity extends AppCompatActivity {
         imm.hideSoftInputFromWindow(mEditBarcodeNumber.getWindowToken(), 0);
     }
 
-    public void getProductRequest(final String query) {
-        new HttpAsyncTask<String, String, ProductView>() {
+    public HttpAsyncTask<String, String, ProductView> getProductRequest(final String query) {
+        return new HttpAsyncTask<String, String, ProductView>() {
             @Override
             protected ProductView httpDoInBackground(String... params) {
                 return ((WoolworthsApplication) getApplication()).getApi()
@@ -193,6 +208,9 @@ public class EnterBarcodeActivity extends AppCompatActivity {
                         errorScanCode();
                     }
                 }, DELAY_POPUP);
+                if (errorMessage.contains(getString(R.string.connect_flag)) || errorMessage.contains
+                        (getString(R.string.socket_flag)))
+                    mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new ProductView();
             }
 
@@ -227,13 +245,14 @@ public class EnterBarcodeActivity extends AppCompatActivity {
             protected void onPreExecute() {
                 super.onPreExecute();
                 showProgressBar();
+                mErrorHandlerView.hideErrorHandlerLayout();
             }
 
             @Override
             protected Class<ProductView> httpDoInBackgroundReturnType() {
                 return ProductView.class;
             }
-        }.execute();
+        };
     }
 
 
@@ -266,41 +285,45 @@ public class EnterBarcodeActivity extends AppCompatActivity {
     }
 
     private void getProductDetail(final String productId, final String skuId) {
-        ((WoolworthsApplication) getApplication()).getAsyncApi().getProductDetail(productId, skuId, new Callback<String>() {
-            @Override
-            public void success(String strProduct, retrofit.client.Response response) {
-                hideProgressBar();
-                WProduct wProduct = Utils.stringToJson(mContext, strProduct);
-                if (wProduct != null) {
-                    switch (wProduct.httpCode) {
-                        case 200:
-                            ArrayList<WProductDetail> mProductList;
-                            WProductDetail productList = wProduct.product;
-                            mProductList = new ArrayList<>();
-                            if (productList != null) {
-                                mProductList.add(productList);
+        ((WoolworthsApplication) EnterBarcodeActivity.this.getApplication()).getAsyncApi()
+                .getProductDetail(productId,
+                        skuId, new Callback<String>() {
+                            @Override
+                            public void success(String strProduct, retrofit.client.Response response) {
+                                hideProgressBar();
+                                WProduct wProduct = Utils.stringToJson(mContext, strProduct);
+                                if (wProduct != null) {
+                                    switch (wProduct.httpCode) {
+                                        case 200:
+                                            ArrayList<WProductDetail> mProductList;
+                                            WProductDetail productList = wProduct.product;
+                                            mProductList = new ArrayList<>();
+                                            if (productList != null) {
+                                                mProductList.add(productList);
+                                            }
+                                            GsonBuilder builder = new GsonBuilder();
+                                            Gson gson = builder.create();
+                                            Intent openDetailView = new Intent(mContext, ProductDetailActivity.class);
+                                            openDetailView.putExtra("product_name", mProductList.get(0).productName);
+                                            openDetailView.putExtra("product_detail", gson.toJson(mProductList));
+                                            startActivity(openDetailView);
+                                            overridePendingTransition(0, R.anim.anim_slide_up);
+                                            break;
+
+                                        default:
+                                            handleError();
+                                            break;
+                                    }
+                                }
                             }
-                            GsonBuilder builder = new GsonBuilder();
-                            Gson gson = builder.create();
-                            Intent openDetailView = new Intent(mContext, ProductDetailActivity.class);
-                            openDetailView.putExtra("product_name", mProductList.get(0).productName);
-                            openDetailView.putExtra("product_detail", gson.toJson(mProductList));
-                            startActivity(openDetailView);
-                            overridePendingTransition(0, R.anim.anim_slide_up);
-                            break;
 
-                        default:
-                            handleError();
-                            break;
-                    }
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                handleError();
-            }
-        });
+                            @Override
+                            public void failure(RetrofitError error) {
+                                handleError();
+                                if (error.toString().contains("Unable to resolve host"))
+                                    mErrorHandlerView.showToast();
+                            }
+                        });
     }
 
     private void handleError() {
@@ -323,7 +346,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 
     private void getProductDetail() {
         if (mEditBarcodeNumber.getText().length() > 0) {
-            getProductRequest(mEditBarcodeNumber.getText().toString());
+            getProductRequest(mEditBarcodeNumber.getText().toString()).execute();
         }
     }
 

@@ -271,7 +271,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
                     callIntent.setData(Uri.parse("tel:" + storeDetail.phoneNumber));
                     //Check for permission before calling
                     //The app will ask permission before calling only on first use after installation
-                    if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(StoreDetailsActivity.this.getApplicationContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(StoreDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
                     } else {
                         startActivity(callIntent);

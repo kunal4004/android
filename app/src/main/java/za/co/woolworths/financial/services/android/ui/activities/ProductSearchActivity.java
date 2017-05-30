@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -33,7 +34,7 @@ import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class ProductSearchActivity extends BaseActivity
+public class ProductSearchActivity extends AppCompatActivity
         implements View.OnClickListener {
     public RecyclerView productListview;
     public LinearLayoutManager mLayoutManager;
@@ -231,6 +232,7 @@ public class ProductSearchActivity extends BaseActivity
     protected void onResume() {
         super.onResume();
         showRecentSearchHistoryView(true);
+
     }
 
     @Override
@@ -238,6 +240,4 @@ public class ProductSearchActivity extends BaseActivity
         super.onDestroy();
         hideSoftKeyboard();
     }
-
-
 }

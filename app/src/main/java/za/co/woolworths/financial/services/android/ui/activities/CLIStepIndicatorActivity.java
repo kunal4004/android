@@ -48,13 +48,12 @@ public class CLIStepIndicatorActivity extends BaseActivity implements WOnboardin
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cli_step);
         Utils.updateStatusBarBackground(CLIStepIndicatorActivity.this);
-        mWoolworthApplication = (WoolworthsApplication) getApplication();
+        mWoolworthApplication = (WoolworthsApplication) CLIStepIndicatorActivity.this.getApplication();
         initViews();
         setActionBar();
         setCLIContent();
         registerReceiver(moveToPageBroadcastReceiver, new IntentFilter("moveToPageBroadcastReceiver"));
     }
-
 
     private void initViews() {
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -184,7 +183,6 @@ public class CLIStepIndicatorActivity extends BaseActivity implements WOnboardin
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.close_24);
         else
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.back24);
-
     }
 
     @Override
@@ -235,7 +233,6 @@ public class CLIStepIndicatorActivity extends BaseActivity implements WOnboardin
                 break;
         }
     }
-
 
     @Override
     protected void onDestroy() {

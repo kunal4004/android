@@ -22,7 +22,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.FLASHLIGHT"/>
-    <!--Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7-->
+    <!-- Don't require camera, as this requires a rear camera. This allows it to work on the Nexus 7 -->
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -138,7 +138,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/CLI"
             android:windowSoftInputMode="stateHidden"/>
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity"
             android:screenOrientation="portrait"
@@ -202,11 +201,8 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/SSOActivity"
-            />
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity"
-            android:screenOrientation="portrait"/>
+            android:theme="@style/SSOActivity"/>
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity"
             android:screenOrientation="portrait"
@@ -237,12 +233,10 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.ProductSubCategoryActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CLI"/>
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
-
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity"
             android:label="@string/app_name"
@@ -284,6 +278,11 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.WChangePasswordActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle"/>
+
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity"
+            android:theme="@style/FaqStyle"
+            />
     </application>
 
 </manifest>

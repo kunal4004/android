@@ -132,7 +132,8 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
                     }
                     AuthoriseLoanRequest authoriseLoanRequest
                             = new AuthoriseLoanRequest(productOfferingId, drawDownAmount, mRepaymentPeriod, installment_amount, creditLimit * 100);
-                    return ((WoolworthsApplication) getApplication()).getApi().authoriseLoan(authoriseLoanRequest);
+                    return ((WoolworthsApplication) LoanWithdrawalConfirmActivity.this.getApplication()).getApi().authoriseLoan
+                            (authoriseLoanRequest);
                 }
 
                 @Override
