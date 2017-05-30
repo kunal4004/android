@@ -372,6 +372,7 @@ public class MyAccountCardsActivity extends BaseActivity
                                 Intent openWithdrawCashNow = new Intent(MyAccountCardsActivity.this, LoanWithdrawalActivity.class);
                                 openWithdrawCashNow.putExtra("minDrawnDownAmount", wMinDrawnDownAmount);
                                 startActivity(openWithdrawCashNow);
+                                overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
                             }
                             break;
                     }
@@ -535,7 +536,7 @@ public class MyAccountCardsActivity extends BaseActivity
 
             FragmentLifecycle fragmentToHide = (FragmentLifecycle) fragmentsAdapter.getItem(position);
             fragmentToHide.onPauseFragment();
-        } catch (ClassCastException ignore){
+        } catch (ClassCastException ignore) {
 
         }
 

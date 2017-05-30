@@ -110,6 +110,7 @@ public class SSOActivity extends WebViewActivity {
         this.webView.setWebViewClient(this.webviewClient);
         this.webView.getSettings().setUseWideViewPort(true);
         this.webView.getSettings().setLoadWithOverviewMode(true);
+
     }
 
     //override intent to return expected link that's to be used in the WebViewActivity
@@ -382,7 +383,8 @@ public class SSOActivity extends WebViewActivity {
                 progressDialog.dismiss();
                 progressDialog = null;
             }
-        } catch (Exception ex){}
+        } catch (Exception ex) {
+        }
     }
 
     public void showProgressBar() {
@@ -448,6 +450,7 @@ public class SSOActivity extends WebViewActivity {
                         this.webView.goBack();
                     } else {
                         finish();
+                        overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
                     }
                     return true;
             }

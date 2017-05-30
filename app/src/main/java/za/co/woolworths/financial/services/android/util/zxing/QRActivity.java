@@ -552,7 +552,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
             @Override
             public void failure(RetrofitError error) {
                 if (error.toString().contains("Unable to resolve host"))
-                    mErrorHandlerView.showToast();            }
+                    mErrorHandlerView.showToast();
+            }
         });
 
     }

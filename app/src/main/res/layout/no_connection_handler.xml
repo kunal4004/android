@@ -5,10 +5,10 @@
     android:id="@+id/no_connection_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:visibility="gone"
     android:layout_marginTop="?attr/actionBarSize"
     android:background="@color/recent_search_bg"
-    android:gravity="center">
+    android:gravity="center"
+    android:visibility="gone">
 
     <ImageView
         android:id="@+id/imgNoConnection"
@@ -67,6 +67,5 @@
         android:textSize="12sp"
         android:textStyle="bold"
         app:WButton_font="medium_bold"/>
-
 </RelativeLayout>
 

@@ -141,7 +141,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
         mTextACreditLimit = (WTextView) findViewById(R.id.textACreditLimit);
         mTextProceedToSolvency = (WTextView) findViewById(R.id.textProceedToSolvency);
         mImageCreditAmount = (ImageView) findViewById(R.id.imgInfo);
-        mErrorHandlerView = new ErrorHandlerView(this, (RelativeLayout)findViewById(R.id.no_connection_layout));
+        mErrorHandlerView = new ErrorHandlerView(this, (RelativeLayout) findViewById(R.id.no_connection_layout));
     }
 
     private void setActionBar() {
@@ -324,7 +324,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
                 Intent openPreviousActivity = new Intent(CLISupplyInfoActivity.this, CLIActivity.class);
                 startActivity(openPreviousActivity);
                 finish();
-                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
                 return true;
         }
         return false;
@@ -395,7 +395,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 
     public void canGoBack() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
     }
 
 

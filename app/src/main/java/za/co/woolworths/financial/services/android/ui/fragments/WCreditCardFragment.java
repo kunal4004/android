@@ -153,7 +153,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
                     ((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
                     startActivity(openCLIIncrease);
-                    getActivity().overridePendingTransition(0, 0);
+                    getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
                 }
                 break;
         }

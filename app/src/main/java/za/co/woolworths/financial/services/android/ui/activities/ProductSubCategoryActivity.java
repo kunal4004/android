@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -38,7 +39,7 @@ import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecorat
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.SubCategoryBinder;
 
-public class ProductSubCategoryActivity extends BaseActivity implements View.OnClickListener,
+public class ProductSubCategoryActivity extends AppCompatActivity implements View.OnClickListener,
         SubCategoryBinder.OnClickListener, ObservableScrollViewCallbacks {
 
     private Toolbar mToolbar;
@@ -108,17 +109,17 @@ public class ProductSubCategoryActivity extends BaseActivity implements View.OnC
         });
     }
 
-
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
             case R.id.imBurgerButtonPressed:
                 onBackPressed();
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                 break;
             case R.id.imSearch:
                 Intent openSearchActivity = new Intent(this, ProductSearchActivity.class);
                 startActivity(openSearchActivity);
+                overridePendingTransition(0,0);
                 break;
         }
     }
@@ -136,9 +137,11 @@ public class ProductSubCategoryActivity extends BaseActivity implements View.OnC
             case R.id.action_search:
                 Intent openSearchBarActivity = new Intent(ProductSubCategoryActivity.this, ProductSearchActivity.class);
                 startActivity(openSearchBarActivity);
+                overridePendingTransition(0,0);
                 break;
             case android.R.id.home:
                 onBackPressed();
+                overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -172,7 +175,6 @@ public class ProductSubCategoryActivity extends BaseActivity implements View.OnC
             @Override
             protected void onPostExecute(SubCategories subCategories) {
                 super.onPostExecute(subCategories);
-
                 try {
                     switch (subCategories.httpCode) {
                         case 200:
@@ -229,11 +231,13 @@ public class ProductSubCategoryActivity extends BaseActivity implements View.OnC
                     openProductCategory.putExtra("sub_category_name", subCategory.categoryName);
                     openProductCategory.putExtra("catStep", 1);
                     startActivity(openProductCategory);
+                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 } else {
                     Intent openProductListIntent = new Intent(ProductSubCategoryActivity.this, ProductGridActivity.class);
                     openProductListIntent.putExtra("sub_category_name", subCategory.categoryName);
                     openProductListIntent.putExtra("sub_category_id", subCategory.categoryId);
                     startActivity(openProductListIntent);
+                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                 }
             }
         }, 200);
@@ -270,5 +274,18 @@ public class ProductSubCategoryActivity extends BaseActivity implements View.OnC
     private void showProgressBar() {
         mProgressBar.setVisibility(View.VISIBLE);
         mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mPSRootCategoryAdapter != null)
+            mPSRootCategoryAdapter.resetSelectedIndex();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
     }
 }

@@ -65,7 +65,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
     private AccountsResponse temp = null;
     private ErrorHandlerView mErrorHandlerView;
-    private RelativeLayout mRelConnectionLayout;
 
     @Nullable
     @Override
@@ -85,7 +84,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
         mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
         txtIncreseLimit.setOnClickListener(this);
         transactions.setOnClickListener(this);
-        mRelConnectionLayout = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
+        RelativeLayout mRelConnectionLayout = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
         mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelConnectionLayout);
         mErrorHandlerView.setMargin(mRelConnectionLayout, 0, 0, 0, 0);
         temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
@@ -168,12 +167,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
                 getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
             case R.id.txtIncreseLimit:
-               if (!isOfferActive) {
+                if (!isOfferActive) {
                     ((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
                     Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
                     startActivity(openCLIIncrease);
-                    getActivity().overridePendingTransition(0, 0);
-               }
+                    getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+                }
                 break;
         }
     }

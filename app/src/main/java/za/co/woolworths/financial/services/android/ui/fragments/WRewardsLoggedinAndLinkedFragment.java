@@ -37,6 +37,7 @@ import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
 public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 
+    private MenuNavigationInterface mNavigationInterface;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private WRewardsFragmentPagerAdapter adapter;
@@ -50,6 +51,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.wrewards_loggedin_and_linked_fragment, container, false);
         viewPager = (ViewPager) view.findViewById(R.id.viewpager);
+        mNavigationInterface = (MenuNavigationInterface) getActivity();
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         fragmentView = (LinearLayout) view.findViewById(R.id.fragmentView);
         mWoolworthApp = (WoolworthsApplication) getActivity().getApplication();
@@ -58,12 +60,11 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         progressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
         mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
         getWRewards().execute();
-
         view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (new ConnectionDetector().isOnline()) {
-                    getWRewards().execute();
+                    mNavigationInterface.switchToView(3);
                 } else {
                     mErrorHandlerView.showToast();
                 }
@@ -81,9 +82,9 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         adapter.addFrag(new WRewardsVouchersFragment(), getString(R.string.vouchers));
         adapter.addFrag(new WRewardsSavingsFragment(), getString(R.string.savings));
         viewPager.setAdapter(adapter);
-        viewPager.invalidate();
         adapter.notifyDataSetChanged();
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.invalidate();
         try {
             setupTabIcons(voucherResponse.voucherCollection.vouchers.size());
         } catch (Exception e) {
@@ -101,7 +102,6 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         tabLayout.getTabAt(0).getCustomView().setSelected(true);
     }
 
-
     private View prepareTabView(int pos, String[] tabTitle, int activeVoucherCount) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.wrewards_custom_tab, null);
         TextView tv_title = (TextView) view.findViewById(R.id.tv_title);
@@ -113,7 +113,6 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
         } else {
             tv_count.setVisibility(View.GONE);
         }
-
 
         return view;
     }
@@ -149,7 +148,6 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
                 progressBar.setVisibility(View.GONE);
                 fragmentView.setVisibility(View.VISIBLE);
                 handleVoucherResponse(voucherResponse);
-
             }
         };
     }

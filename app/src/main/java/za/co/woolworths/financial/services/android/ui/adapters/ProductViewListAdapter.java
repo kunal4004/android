@@ -98,7 +98,7 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
             productImage(holder.mSimpleDraweeView, imgUrl);
             promoImages(holder, promo);
             if (!TextUtils.isEmpty(brandImage)) {
-                Log.e("brandImage",brandImage);
+                Log.e("brandImage", brandImage);
                 holder.mBrandImage.setImageURI(Uri.parse(brandImage), holder.mBrandImage);
             }
         }
@@ -167,15 +167,6 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
                     }
                 }
                 break;
-        }
-    }
-
-    private void loadBrandImage(SimpleDraweeView image, String imgUrl) {
-        if (imgUrl != null) {
-            try {
-                drawImage.dispImage(image, imgUrl);
-            } catch (IllegalArgumentException ignored) {
-            }
         }
     }
 

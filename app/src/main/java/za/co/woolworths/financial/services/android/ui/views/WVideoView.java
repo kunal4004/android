@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.VideoView;
 
 public class WVideoView extends VideoView {

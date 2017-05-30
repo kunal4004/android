@@ -48,7 +48,10 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
         setSupportActionBar(toolbar);
         getSupportActionBar().hide();
         videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
-        Uri videoUri = Uri.parse(getRandomVideos());
+        String randomVideo = getRandomVideos();
+        Log.e("randomVideo", randomVideo);
+        Uri videoUri = Uri.parse(randomVideo);
+
         videoView.setVideoURI(videoUri);
         videoView.start();
         videoView.setOnCompletionListener(this);

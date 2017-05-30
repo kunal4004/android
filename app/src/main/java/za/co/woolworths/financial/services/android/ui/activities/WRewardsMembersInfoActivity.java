@@ -44,40 +44,40 @@ public class WRewardsMembersInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wrewards_members_info_activity);
-        Utils.updateStatusBarBackground(this,R.color.green);
+        Utils.updateStatusBarBackground(this, R.color.green);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        NestedScrollView scrollView = (NestedScrollView) findViewById (R.id.nest_scrollview);
-        scrollView.setFillViewport (true);
+        NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nest_scrollview);
+        scrollView.setFillViewport(true);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        appBar=(AppBarLayout)findViewById(R.id.appBarLayout);
+        appBar = (AppBarLayout) findViewById(R.id.appBarLayout);
         toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         changeTabsFont(tabLayout);
-        if(getIntent().hasExtra("type"))
-            viewPager.setCurrentItem(getIntent().getIntExtra("type",0));
+        if (getIntent().hasExtra("type"))
+            viewPager.setCurrentItem(getIntent().getIntExtra("type", 0));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             toolbarTextView.setLetterSpacing(0.1f);
         }
-        appBar.addOnOffsetChangedListener(new   AppBarLayout.OnOffsetChangedListener() {
+        appBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 if (verticalOffset == -collapsingToolbarLayout.getHeight() + toolbar.getHeight()) {
                     toolbarTextView.setText("WRewards");
-                }
-                else {
+                } else {
                     toolbarTextView.setText("");
                 }
             }
         });
     }
+
     private void setupViewPager(ViewPager viewPager) {
-        adapter=new ContactUsFragmentPagerAdapter(getSupportFragmentManager());
+        adapter = new ContactUsFragmentPagerAdapter(getSupportFragmentManager());
         adapter.addFrag(new WRewardsValuedMembersInfoFragment(), getString(R.string.valued));
         adapter.addFrag(new WRewardsLoyalMembersInfoFragment(), getString(R.string.loyal));
         adapter.addFrag(new WRewardsVipMembersInfoFragment(), getString(R.string.vip));
@@ -86,7 +86,7 @@ public class WRewardsMembersInfoActivity extends AppCompatActivity {
 
 
     private void changeTabsFont(TabLayout tabLayout) {
-        Typeface type = Typeface.createFromAsset(getAssets(),"fonts/WFutura-Medium.ttf");
+        Typeface type = Typeface.createFromAsset(getAssets(), "fonts/WFutura-Medium.ttf");
         ViewGroup vg = (ViewGroup) tabLayout.getChildAt(0);
         int tabsCount = vg.getChildCount();
         for (int j = 0; j < tabsCount; j++) {
@@ -103,12 +103,13 @@ public class WRewardsMembersInfoActivity extends AppCompatActivity {
             }
         }
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                return  true;
+                return true;
         }
         return false;
     }
@@ -116,6 +117,7 @@ public class WRewardsMembersInfoActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 
     }
 }

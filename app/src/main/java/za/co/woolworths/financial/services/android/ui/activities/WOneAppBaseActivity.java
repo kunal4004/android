@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.Voucher;
 import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.ui.fragments.MenuNavigationInterface;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
@@ -48,7 +49,8 @@ import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
 
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
-        , WProductFragment.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle, WRewardsFragment.HideActionBarComponent {
+        , WProductFragment.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle,
+        WRewardsFragment.HideActionBarComponent, MenuNavigationInterface {
 
     public static Toolbar mToolbar;
     private WFragmentDrawer drawerFragment;
@@ -219,7 +221,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         }
     };
 
-
     public void showVoucherCount() {
         if (new ConnectionDetector().isOnline()) {
             new HttpAsyncTask<String, String, VoucherResponse>() {
@@ -269,6 +270,10 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
         return;
     }
 
+    @Override
+    public void switchToView(int position) {
+        displayView(position);
+    }
 }
 
 

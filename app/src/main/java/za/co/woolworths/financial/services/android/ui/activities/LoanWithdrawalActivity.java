@@ -230,6 +230,7 @@ public class LoanWithdrawalActivity extends BaseActivity {
             @Override
             public void run() {
                 finish();
+                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
             }
         }, 200);
     }

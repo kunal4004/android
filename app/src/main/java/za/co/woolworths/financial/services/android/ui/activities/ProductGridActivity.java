@@ -24,6 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -81,7 +82,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
     private String mSkuId;
     private String mProductId;
     private ErrorHandlerView mErrorHandlerView;
-    private WoolworthsApplication mWoolWorthApplication;
 
     private enum RUN_BACKGROUND_TASK {
         SEARCH_PRODUCT, SEARCH_MORE_PRODUCT, LOAD_PRODUCT, LOAD_MORE_PRODUCT
@@ -98,6 +98,8 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
         mContext = this;
         initUI();
         initProductDetailUI();
+
+
         actionBar();
         bundle();
         slideUpPanelListener();
@@ -189,7 +191,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
     private void bundle() {
         String productName = getIntent().getStringExtra("sub_category_name");
         productId = getIntent().getStringExtra("sub_category_id");
-        mWoolWorthApplication = (WoolworthsApplication) getApplication();
         mErrorHandlerView = new ErrorHandlerView(this
                 , (RelativeLayout) findViewById(R.id.no_connection_layout));
         hideProgressBar();
@@ -341,6 +342,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
                 break;
             case android.R.id.home:
                 onBackPressed();
+                overridePendingTransition(0, 0);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -480,6 +482,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
                 productResponse.response = new Response();
                 hideProgressBar();
                 mIsLoading = false;
+                mErrorHandlerView.showToast();
                 return productResponse;
             }
 
@@ -629,6 +632,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
                 productResponse.response = new Response();
                 hideProgressBar();
                 mIsLoading = false;
+                mErrorHandlerView.showToast();
                 return productResponse;
             }
 
@@ -721,8 +725,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
                 default:
                     mNumberOfItem.setText(String.valueOf(0));
                     hideVProgressBar();
-                    Utils.alertErrorMessage(ProductGridActivity.this, pv.response.desc);
-
                     break;
             }
         } catch (Exception ignored) {
