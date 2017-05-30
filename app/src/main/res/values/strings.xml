@@ -367,8 +367,8 @@
     <string name="issueing_loan">Processing your loan...</string>
 
     <string name="wrewards_tag_line">|!b|W|!?|Rewards is our way of rewarding customers INSTANTLY.|!b|W|!?|Rewards members save millions every week.</string>
-    <string name="wrewards_unlinked_tag_line">We see that your account is not yet linked. To see how much you\'ve saved, track your tier status and access all your vouchers, please link your account now.</string>
-    <string name="link_account">link account</string>
+    <string name="wrewards_unlinked_tag_line">We see that your Woolies Card is not yet linked. To see how much you\'ve saved, track your tier status and access all your vouchers, please link your Woolies Card now.</string>
+    <string name="link_account">LINK WOOLIES CARD</string>
     <string name="apply_for_wrewards">JOIN WREWARDS</string>
     <string name="get_more">Get more</string>
     <string name="wrewards_three_levels">There are three tiers to WRewards - the more you spend, the more guaranteed rewards you\'ll enjoy. You\'ll start out on the Valued tier, and we\'ll upgrade your status automatically as you qualify for the next tier.</string>
@@ -496,7 +496,7 @@
     <string name="product_description">Update your modern wardrobe with this crisp short sleeved stretch cotton shirt, designed with polka dots for a pop of urban cool. Wear it with jeans for easy casual flair, or with fitted chinos for a smarter update.</string>
     <string name="product_code">Product Code</string>
     <string name="product_colour">Colour</string>
-    <string name="unlinked_account_copy">We see that your account is not yet linked. To conveniently view your available funds, next payment due, recent transactions and so much more, please link your account now.</string>
+    <string name="unlinked_account_copy">We see that your Woolies Card is not yet linked. To conveniently view your available funds, next payment due, recent transactions and so much more, please link your Woolies Card now.</string>
     <string name="get_more_back_at_woolies">Get more back at Woolies</string>
     <string name="get_more_description">Get up to 3\%% back in WRewards quarterly vouchers when shopping at Woolies.</string>
     <string name="cc_cash_when_you_need_it">Cash When You Need It</string>
