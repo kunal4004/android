@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
@@ -12,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
@@ -34,11 +34,13 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WSplashScreenActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
 
-    private boolean mVideoPlayerShouldPlay = false;
+    private boolean mVideoPlayerShouldPlay = true;
     private boolean isMinimized = false;
-    private ErrorHandlerView mErrorHandlerView;
     private WVideoView videoView;
     private String TAG = "WSplashScreen";
+    private LinearLayout errorLayout;
+    private View noVideoView;
+    private RelativeLayout videoViewLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,24 +52,27 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
         setSupportActionBar(toolbar);
         getSupportActionBar().hide();
         videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
-        String randomVideo = getRandomVideos();
-        Log.e("randomVideo", randomVideo);
-        Uri videoUri = Uri.parse(randomVideo);
+        errorLayout=(LinearLayout)findViewById(R.id.errorLayout);
+        noVideoView=(View)findViewById(R.id.splashNoVideoView);
+        videoViewLayout=(RelativeLayout)findViewById(R.id.videoViewLayout);
 
-        videoView.setVideoURI(videoUri);
-        videoView.start();
-        videoView.setOnCompletionListener(this);
         //Mobile Config Server
-        mErrorHandlerView = new ErrorHandlerView(this
-                , (RelativeLayout) findViewById(R.id.no_connection_layout));
-        executeConfigServer();
-        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+        if(new ConnectionDetector().isOnline())
+        {
+            setUpScreen();
+            executeConfigServer();
+        }
+        else {
+            showNonVideoViewWithErrorLayout();
+        }
+        findViewById(R.id.retry).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (new ConnectionDetector().isOnline()) {
+                    setUpScreen();
                     executeConfigServer();
                 } else {
-                    mErrorHandlerView.showToast();
+                   showNonVideoViewWithErrorLayout();
                 }
             }
 
@@ -83,8 +88,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
             @Override
             protected void onPreExecute() {
-                mErrorHandlerView.hideErrorHandlerLayout();
-                videoView.start();
+
             }
 
             @Override
@@ -122,13 +126,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
             @Override
             public ConfigResponse httpError(final String errorMessage, final HttpErrorCode httpErrorCode) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        videoView.pause();
-                    }
-                });
-                mErrorHandlerView.networkFailureHandler(errorMessage);
+                showNonVideoViewWithErrorLayout();
                 return new ConfigResponse();
             }
 
@@ -151,6 +149,8 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
                     WoolworthsApplication.setRewardingLink(configResponse.defaults.getRewardingLink());
                     WoolworthsApplication.setHowToSaveLink(configResponse.defaults.getHowtosaveLink());
                     WoolworthsApplication.setWrewardsTCLink(configResponse.defaults.getWrewardsTCLink());
+                    if(!isFirstTime())
+                        presentNextScreen();
                 } catch (NullPointerException ignored) {
                 }
             }
@@ -162,42 +162,12 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
     public void onCompletion(MediaPlayer mp) {
 
         if (!WSplashScreenActivity.this.mVideoPlayerShouldPlay) {
-            /*
-            * When creating a SessionDao with a key where the entry doesn't exist
-            * in SQL lite, return a new SessionDao where the key is equal to the
-            * key that's passed in the constructor e.g
-            *
-            * SessionDoa sessionDao = SessionDao(SessionDao.USER_TOKEN) //and the record doesn't exist
-            * print(sessionDao.value) //null or empty
-            * print(sessionDao.key) //SessionDao.USER_TOKEN
-            *
-            * sessionDoa.key = SessionDao.USER_TOKEN
-            * sessionDao.save()
-            *
-            *
-            * */
-            try {
-                SessionDao sessionDao = new SessionDao(WSplashScreenActivity.this, SessionDao.KEY.USER_TOKEN).get();
-                if (sessionDao.value != null && !sessionDao.value.equals("")) {
-                    ScreenManager.presentMain(WSplashScreenActivity.this);
-                    return;
-                }
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-            }
-            try {
-                String isFirstTime=Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
-                if(isFirstTime==null)
-                    ScreenManager.presentOnboarding(WSplashScreenActivity.this);
-                else
-                    ScreenManager.presentMain(WSplashScreenActivity.this);
-            } catch (NullPointerException ignored) {
-            }
 
+            presentNextScreen();
             mp.stop();
 
         } else {
-            mp.start();
+            showNonVideoViewWithOutErrorLayout();
         }
     }
 
@@ -235,4 +205,84 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
         Collections.shuffle(listOfVideo);
         return listOfVideo.get(0);
     }
+
+    private void showVideoView()
+    {
+        noVideoView.setVisibility(View.GONE);
+        videoViewLayout.setVisibility(View.VISIBLE);
+        String randomVideo = getRandomVideos();
+        Log.e("randomVideo", randomVideo);
+        Uri videoUri = Uri.parse(randomVideo);
+
+        videoView.setVideoURI(videoUri);
+        videoView.start();
+        videoView.setOnCompletionListener(this);
+    }
+
+    private void showNonVideoViewWithErrorLayout()
+    {
+        videoViewLayout.setVisibility(View.GONE);
+        noVideoView.setVisibility(View.VISIBLE);
+        errorLayout.setVisibility(View.VISIBLE);
+    }
+    private void showNonVideoViewWithOutErrorLayout()
+    {
+        videoViewLayout.setVisibility(View.GONE);
+        errorLayout.setVisibility(View.GONE);
+        noVideoView.setVisibility(View.VISIBLE);
+    }
+
+    private boolean isFirstTime()
+    {
+        if (Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.SPLASH_VIDEO) == null)
+            return true;
+        else
+            return false;
+    }
+
+    private void setUpScreen()
+    {
+        if(isFirstTime())
+        {
+            showVideoView();
+        }else {
+            showNonVideoViewWithOutErrorLayout();
+        }
+    }
+
+    private void presentNextScreen()
+    {
+        /*
+            * When creating a SessionDao with a key where the entry doesn't exist
+            * in SQL lite, return a new SessionDao where the key is equal to the
+            * key that's passed in the constructor e.g
+            *
+            * SessionDoa sessionDao = SessionDao(SessionDao.USER_TOKEN) //and the record doesn't exist
+            * print(sessionDao.value) //null or empty
+            * print(sessionDao.key) //SessionDao.USER_TOKEN
+            *
+            * sessionDoa.key = SessionDao.USER_TOKEN
+            * sessionDao.save()
+            *
+            *
+            * */
+        try {
+            SessionDao sessionDao = new SessionDao(WSplashScreenActivity.this, SessionDao.KEY.USER_TOKEN).get();
+            if (sessionDao.value != null && !sessionDao.value.equals("")) {
+                ScreenManager.presentMain(WSplashScreenActivity.this);
+                return;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+        try {
+            String isFirstTime=Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
+            if(isFirstTime==null)
+                ScreenManager.presentOnboarding(WSplashScreenActivity.this);
+            else
+                ScreenManager.presentMain(WSplashScreenActivity.this);
+        } catch (NullPointerException ignored) {
+        }
+    }
+
 }

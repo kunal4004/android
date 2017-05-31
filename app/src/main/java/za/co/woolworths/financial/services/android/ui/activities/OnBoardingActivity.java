@@ -49,6 +49,7 @@ public class OnBoardingActivity extends AppCompatActivity implements ViewPager.O
         pager.setAdapter(adapter);
         pager.addOnPageChangeListener(this);
         setUiPageViewController();
+        setupForOneTimeVideoOnSplashScreen();
     }
 
     private void setUiPageViewController() {
@@ -120,5 +121,14 @@ public class OnBoardingActivity extends AppCompatActivity implements ViewPager.O
             Log.i(TAG, e.getMessage());
         }
 
+    }
+
+    private void setupForOneTimeVideoOnSplashScreen()
+    {
+        try {
+            Utils.sessionDaoSave(OnBoardingActivity.this, SessionDao.KEY.SPLASH_VIDEO, "1");
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
+        }
     }
 }
