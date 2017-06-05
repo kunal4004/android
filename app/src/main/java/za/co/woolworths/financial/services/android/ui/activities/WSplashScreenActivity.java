@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
@@ -41,7 +44,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
     private LinearLayout errorLayout;
     private View noVideoView;
     private RelativeLayout videoViewLayout;
-
+    private ProgressBar pBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +58,8 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
         errorLayout=(LinearLayout)findViewById(R.id.errorLayout);
         noVideoView=(View)findViewById(R.id.splashNoVideoView);
         videoViewLayout=(RelativeLayout)findViewById(R.id.videoViewLayout);
-
+        pBar=(ProgressBar)findViewById(R.id.progressBar);
+        pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
         //Mobile Config Server
         if(new ConnectionDetector().isOnline())
         {
@@ -221,12 +225,14 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
     private void showNonVideoViewWithErrorLayout()
     {
+        pBar.setVisibility(View.GONE);
         videoViewLayout.setVisibility(View.GONE);
         noVideoView.setVisibility(View.VISIBLE);
         errorLayout.setVisibility(View.VISIBLE);
     }
     private void showNonVideoViewWithOutErrorLayout()
     {
+        pBar.setVisibility(View.VISIBLE);
         videoViewLayout.setVisibility(View.GONE);
         errorLayout.setVisibility(View.GONE);
         noVideoView.setVisibility(View.VISIBLE);
