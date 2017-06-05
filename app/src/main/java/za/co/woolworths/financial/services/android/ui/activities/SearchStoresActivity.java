@@ -129,8 +129,6 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
                 if (new ConnectionDetector().isOnline()) {
                     if (mSearchText.length() >= 2)
                         startSearch(mSearchText).execute();
-                } else {
-                    mErrorHandlerView.showToast();
                 }
             }
         });
@@ -261,6 +259,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 
             @Override
             protected LocationResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                hideSoftKeyboard();
                 mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new LocationResponse();
             }

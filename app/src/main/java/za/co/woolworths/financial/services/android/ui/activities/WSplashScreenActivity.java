@@ -66,8 +66,6 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
             public void onClick(View v) {
                 if (new ConnectionDetector().isOnline()) {
                     executeConfigServer();
-                } else {
-                    mErrorHandlerView.showToast();
                 }
             }
 

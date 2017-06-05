@@ -112,8 +112,6 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
             public void onClick(View v) {
                 if (new ConnectionDetector().isOnline()) {
                     createOfferRequest();
-                } else {
-                    mErrorHandlerView.showToast();
                 }
             }
 

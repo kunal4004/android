@@ -202,8 +202,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			public void onClick(View v) {
 				if (new ConnectionDetector().isOnline()) {
 					loadAccounts();
-				} else {
-					mErrorHandlerView.showToast();
 				}
 			}
 
@@ -526,57 +524,62 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 			@Override
 			protected void onPostExecute(AccountsResponse accountsResponse) {
-				switch (accountsResponse.httpCode) {
-					case 200:
-						MyAccountsFragment.this.accountsResponse = accountsResponse;
-						List<Account> accountList = accountsResponse.accountList;
-						for (Account p : accountList) {
-							accounts.put(p.productGroupCode.toUpperCase(), p);
+				try {
+					switch (accountsResponse.httpCode) {
+						case 200:
+							MyAccountsFragment.this.accountsResponse = accountsResponse;
+							List<Account> accountList = accountsResponse.accountList;
+							for (Account p : accountList) {
+								accounts.put(p.productGroupCode.toUpperCase(), p);
 
-							int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
-							if (indexOfUnavailableAccount > -1) {
-								try {
-									unavailableAccounts.remove(indexOfUnavailableAccount);
-								} catch (Exception e) {
-									Log.e("", e.getMessage());
+								int indexOfUnavailableAccount = unavailableAccounts.indexOf(p.productGroupCode.toUpperCase());
+								if (indexOfUnavailableAccount > -1) {
+									try {
+										unavailableAccounts.remove(indexOfUnavailableAccount);
+									} catch (Exception e) {
+										Log.e("", e.getMessage());
+									}
 								}
 							}
-						}
 
-						configureView();
+							configureView();
 
-						break;
-					case 440:
-						AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
-						mError.setTitle(getString(R.string.title_authentication_error));
-						mError.setMessage(getString(R.string.session_out_message));
-						mError.show();
-						new android.os.AsyncTask<Void, Void, String>() {
+							break;
+						case 440:
+							AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
+							mError.setTitle(getString(R.string.title_authentication_error));
+							mError.setMessage(getString(R.string.session_out_message));
+							mError.show();
+							new android.os.AsyncTask<Void, Void, String>() {
 
-							@Override
-							protected String doInBackground(Void... params) {
-								try {
-									new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
-									new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_SEARCH).delete();
-									new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_LAST_LOCATION).delete();
-								} catch (Exception e) {
-									e.printStackTrace();
+								@Override
+								protected String doInBackground(Void... params) {
+									try {
+										new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
+										new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_SEARCH).delete();
+										new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_LAST_LOCATION).delete();
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+									return "";
 								}
-								return "";
+
+								@Override
+								protected void onPostExecute(String s) {
+									MyAccountsFragment.this.initialize();
+								}
+							}.execute();
+
+							break;
+						default:
+							if (accountsResponse.response != null) {
+								relFAQ.setVisibility(View.GONE);
+								Utils.alertErrorMessage(getActivity(), accountsResponse.response.desc);
 							}
 
-							@Override
-							protected void onPostExecute(String s) {
-								MyAccountsFragment.this.initialize();
-							}
-						}.execute();
-
-						break;
-					default:
-						if (accountsResponse.response != null)
-							Utils.alertErrorMessage(getActivity(), accountsResponse.response.desc);
-
-						break;
+							break;
+					}
+				} catch (Exception ignored) {
 				}
 				dismissProgress();
 			}
@@ -644,6 +647,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
+		Log.e("OnActivityResult", "TestActivity");
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 
 			initialize();

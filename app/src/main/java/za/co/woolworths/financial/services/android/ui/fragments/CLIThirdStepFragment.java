@@ -132,8 +132,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
                             getBankAccountTypes();
                             break;
                     }
-                } else {
-                    mErrorHandlerView.showToast();
                 }
             }
 

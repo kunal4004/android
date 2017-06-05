@@ -142,7 +142,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	private String provider;
 	Marker myLocation;
 	private Status status;
-	private static final int PERMS_REQUEST_CODE = 1234;
+	private static final int PERMS_REQUEST_CODE = 12345678;
 	private boolean permissionIsAllowed = false;
 	private boolean navigateMenuState = false;
 
@@ -239,7 +239,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 				if (newState != SlidingUpPanelLayout.PanelState.COLLAPSED) {
 				    /*
-                     * Previous result: Application would exit completely when back button is pressed
+				     * Previous result: Application would exit completely when back button is pressed
                      * New result: Panel just returns to its previous position (Panel collapses)
                      */
 					mLayout.setFocusableInTouchMode(true);
@@ -283,8 +283,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			public void onClick(View v) {
 				if (new ConnectionDetector().isOnline())
 					locationAPIRequest(mLocation);
-				else
-					mErrorHandlerView.showToast();
 			}
 		});
 		return v;
@@ -299,14 +297,18 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		}
 	}
 
-
 	@Override
 	public void onMapReady(GoogleMap map) {
 		googleMap = map;
+		onMapReady();
+
+	}
+
+	private void onMapReady() {
 		//If permission is not granted, request permission.
 		if (hasPermissions()) {
-              /*
-             *This process of setting adapter to googleMap is related to making
+		      /*
+		     *This process of setting adapter to googleMap is related to making
              *selected marker come in front of unselected marker.
              */
 			googleMap.setInfoWindowAdapter(new MapWindowAdapter(getContext()));
@@ -315,8 +317,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
 			selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
 		} else {
-              /*
-             *This process of setting adapter to googleMap is related to making
+		      /*
+		     *This process of setting adapter to googleMap is related to making
              *selected marker come in front of unselected marker.
              */
 			googleMap.setInfoWindowAdapter(new MapWindowAdapter(getContext()));
@@ -347,8 +349,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		markers.get(position).setIcon(selectedIcon);
 		googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markers.get(position).getPosition(), 13), CAMERA_ANIMATION_SPEED, null);
 		previousmarker = markers.get(position);
-        /*
-         *InfoWindow shows description above a marker.
+		/*
+		 *InfoWindow shows description above a marker.
          *Make info window invisible to make selected marker come in front of unselected marker.
          */
 		previousmarker.showInfoWindow();
@@ -566,6 +568,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		Log.e("googlePermission", "onRequestPermissionsResult");
+
 		permissionIsAllowed = true;
 		switch (requestCode) {
 			case REQUEST_CALL:
@@ -575,9 +579,31 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 				break;
 
 			case PERMS_REQUEST_CODE:
+				Log.e("googlePermission", "PERMS_REQUEST_CODE");
+
 				for (int res : grantResults) {
 					// if user granted all permissions.
 					permissionIsAllowed = permissionIsAllowed && (res == PackageManager.PERMISSION_GRANTED);
+				}
+				if (permissionIsAllowed) {
+					//user granted all permissions we can perform our task.
+					Log.e("googlePermission", "permissiongranted");
+					settingsRequest();
+					initMap();
+					googleMap.setMyLocationEnabled(false);
+					googleMap.setOnMarkerClickListener(this);
+
+				} else {
+					Log.e("googlePermission", "permissiondenied");
+
+					// we will give warning to user that they haven't granted permissions.
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+						if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)
+								&& shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+							Toast.makeText(getActivity(), "Location Permissions denied.", Toast.LENGTH_SHORT).show();
+
+						}
+					}
 				}
 				break;
 
@@ -586,23 +612,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 				permissionIsAllowed = false;
 				break;
 		}
-		if (permissionIsAllowed) {
-			//user granted all permissions we can perform our task.
-			settingsRequest();
-			initMap();
-			googleMap.setMyLocationEnabled(false);
-			googleMap.setOnMarkerClickListener(this);
 
-		} else {
-			// we will give warning to user that they haven't granted permissions.
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-				if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)
-						&& shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-					Toast.makeText(getActivity(), "Location Permissions denied.", Toast.LENGTH_SHORT).show();
-
-				}
-			}
-		}
 	}
 
 	public HttpAsyncTask<String, String, LocationResponse> init(final Location location) {
@@ -630,8 +640,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 					@Override
 					public void run() {
 						hideProgressBar();
+						Log.d(TAG, "mProgress");
 					}
 				});
+
 				mErrorHandlerView.networkFailureHandler(errorMessage);
 				return new LocationResponse();
 			}

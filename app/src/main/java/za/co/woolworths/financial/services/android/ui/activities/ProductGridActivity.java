@@ -132,8 +132,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
                         default:
                             break;
                     }
-                } else {
-                    mErrorHandlerView.showToast();
                 }
             }
         });

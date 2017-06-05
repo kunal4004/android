@@ -102,8 +102,6 @@ public class ProductSubCategoryActivity extends AppCompatActivity implements Vie
             public void onClick(View v) {
                 if (new ConnectionDetector().isOnline())
                     getSubCategory();
-                else
-                    mErrorHandlerView.showToast();
             }
         });
     }

@@ -80,8 +80,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
             public void onClick(View v) {
                 if (new ConnectionDetector().isOnline()) {
                     setDeaBanks();
-                } else {
-                    mErrorHandlerView.showToast();
                 }
             }
 

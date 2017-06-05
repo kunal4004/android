@@ -125,8 +125,6 @@ public class MessagesActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (new ConnectionDetector().isOnline()) {
                     loadMessages();
-                } else {
-                    mErrorHandlerView.showToast();
                 }
             }
 
