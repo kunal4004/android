@@ -283,11 +283,27 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
         }
         try {
             String isFirstTime=Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
-            if(isFirstTime==null)
+            if(isFirstTime==null || isAppUpdated())
                 ScreenManager.presentOnboarding(WSplashScreenActivity.this);
             else
                 ScreenManager.presentMain(WSplashScreenActivity.this);
         } catch (NullPointerException ignored) {
+        }
+    }
+
+    private boolean isAppUpdated()
+    {
+        String appVersionFromDB=Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.APP_VERSION);
+        String appLatestVersion=null;
+        try {
+            appLatestVersion=getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (appVersionFromDB == null || !appVersionFromDB.equalsIgnoreCase(appLatestVersion)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
