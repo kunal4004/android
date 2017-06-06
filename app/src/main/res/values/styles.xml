@@ -657,4 +657,14 @@
         <item name="android:lineSpacingExtra">-2dp</item>
     </style>
 
+    <style name="webViewStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:colorBackgroundCacheHint">@color/white</item>
+        <item name="android:selectableItemBackground">@color/white</item>
+        <item name="android:actionBarItemBackground">@color/white</item>
+        <item name="actionBarItemBackground">@null</item>
+    </style>
+
 </resources>

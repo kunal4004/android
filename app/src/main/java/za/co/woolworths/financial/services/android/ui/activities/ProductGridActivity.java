@@ -481,7 +481,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
                 productResponse.response = new Response();
                 hideProgressBar();
                 mIsLoading = false;
-                mErrorHandlerView.showToast();
                 return productResponse;
             }
 
@@ -631,7 +630,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
                 productResponse.response = new Response();
                 hideProgressBar();
                 mIsLoading = false;
-                mErrorHandlerView.showToast();
                 return productResponse;
             }
 

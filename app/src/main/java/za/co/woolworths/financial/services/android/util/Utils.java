@@ -53,6 +53,7 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionParentO
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WConnectionHandlerActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 import static android.Manifest.permission_group.STORAGE;
@@ -455,10 +456,9 @@ public class Utils {
 	}
 
 	public static void openExternalLink(Context context, String url) {
-		if (new ConnectionDetector().isOnline(context)) {
-			context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-			((AppCompatActivity) context).overridePendingTransition(R.anim.slide_up_anim, R.anim
-					.stay);
-		}
+			Intent openInternalWebView = new Intent(context, WInternalWebPageActivity.class);
+			openInternalWebView.putExtra("externalLink", url);
+			context.startActivity(openInternalWebView);
+			((AppCompatActivity) context).overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 }

@@ -391,21 +391,15 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
 					switch (pager.getCurrentItem()) {
 						case 0:
-
-							Utils.openExternalLink(MyAccountCardsActivity.this,
-									WoolworthsApplication
-											.getApplyNowLink());
-
+							Utils.openExternalLink(MyAccountCardsActivity.this, WoolworthsApplication.getApplyNowLink());
 							break;
 
 						case 1:
-							Utils.openExternalLink(MyAccountCardsActivity.this, WoolworthsApplication
-									.getApplyNowLink());
+							Utils.openExternalLink(MyAccountCardsActivity.this, WoolworthsApplication.getApplyNowLink());
 							break;
 
 						case 2:
-							Utils.openExternalLink(MyAccountCardsActivity.this, WoolworthsApplication
-									.getApplyNowLink());
+							Utils.openExternalLink(MyAccountCardsActivity.this, WoolworthsApplication.getApplyNowLink());
 							break;
 					}
 
@@ -416,7 +410,8 @@ public class MyAccountCardsActivity extends AppCompatActivity
 							if (!containsStoreCard) {
 								Utils.openExternalLink(MyAccountCardsActivity.this,
 										WoolworthsApplication
-												.getApplyNowLink());}
+												.getApplyNowLink());
+							}
 							break;
 
 						case 1:
