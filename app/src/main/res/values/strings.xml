@@ -588,4 +588,5 @@
     <string name="on_boarding_title_3">FINANCIAL SERVICES</string>
     <string name="on_boarding_title_4">CREATE A DIGITAL PROFILE</string>
     <string name="get_started">get started</string>
+    <string name="please_insure_connection">Please insure that you are connected \nto the internet.</string>
 </resources>

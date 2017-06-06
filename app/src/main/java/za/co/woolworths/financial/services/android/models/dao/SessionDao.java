@@ -28,7 +28,9 @@ public class SessionDao extends BaseDao {
         ACCOUNT_IS_ACTIVE("ACCOUNT_IS_ACTIVE"),
         USER_TOKEN("USER_TOKEN"),
         PRODUCTS_ONE_TIME_POPUP("PRODUCTS_ONE_TIME_POPUP"),
-        ON_BOARDING_SCREEN("ON_BOARDING_SCREEN");
+        ON_BOARDING_SCREEN("ON_BOARDING_SCREEN"),
+        SPLASH_VIDEO("SPLASH_VIDEO"),
+        APP_VERSION("APP_VERSION");
 
         private final String text;
 
