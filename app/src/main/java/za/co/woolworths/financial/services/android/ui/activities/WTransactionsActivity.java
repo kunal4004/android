@@ -120,8 +120,8 @@ public class WTransactionsActivity extends AppCompatActivity {
 								mErrorHandlerView.hideEmpyState();
 								transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this, Utils.getdata(transactionHistoryResponse.transactions)));
 							} else {
-								transactionListview.setVisibility(View.GONE);
-								mErrorHandlerView.showEmptyState(3);
+								//transactionListview.setVisibility(View.GONE);
+								//mErrorHandlerView.showEmptyState(3);
 							}
 							break;
 						case 440:

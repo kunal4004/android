@@ -103,7 +103,7 @@
         <item>@drawable/emptytierhistory</item>
         <item>@drawable/empty_statement</item>
         <item>@drawable/emptytransactions</item>
-        <item>@drawable/emptyshoppinglist</item>
+        <item>@drawable/shoppinglistemptyimg</item>
         <item>@drawable/emptyinbox</item>
     </integer-array>
 

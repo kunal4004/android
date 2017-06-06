@@ -172,4 +172,20 @@ public class ErrorHandlerView {
 	public void disableCardPageScrollGesture() {
 		mWoolWorthsApp.getWGlobalState().setCardGestureIsEnabled(true);
 	}
+
+	public void textDescription(String desc) {
+		mTxtEmptyStateDesc.setText(desc);
+	}
+
+	public void hideDescription() {
+		mTxtEmptyStateDesc.setVisibility(View.GONE);
+	}
+
+	public void hideIcon() {
+		mImgEmptyStateIcon.setVisibility(View.GONE);
+	}
+
+	public void hideTitle() {
+		mTxtEmptyStateTitle.setVisibility(View.GONE);
+	}
 }
