@@ -60,7 +60,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 public class MyAccountCardsActivity extends AppCompatActivity
 		implements View.OnClickListener,
 		ObservableScrollViewCallbacks,
-		PersonalLoanAmount, NetworkFailureInterface {
+		PersonalLoanAmount {
 
 	WViewPager pager;
 	WCustomPager fragmentPager;
@@ -78,7 +78,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 	private int position;
 	private int wMinDrawnDownAmount;
 	private LinearLayout llRootLayout;
-	private ErrorHandlerView mErrorHandlerView;
+	//private ErrorHandlerView mErrorHandlerView;
 	private AccountsResponse accountsResponse;
 
 
@@ -90,8 +90,8 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		setActionBar();
 		init();
 		mWoolworthsApplication = (WoolworthsApplication) MyAccountCardsActivity.this.getApplication();
-		mErrorHandlerView = new ErrorHandlerView(this, mWoolworthsApplication, (RelativeLayout) findViewById(R.id.no_connection_layout));
-		mErrorHandlerView.enableCardPageScrollGesture();
+		/*mErrorHandlerView = new ErrorHandlerView(this, mWoolworthsApplication, (RelativeLayout) findViewById(R.id.no_connection_layout));
+		mErrorHandlerView.enableCardPageScrollGesture();*/
 		retryConnect();
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(MyAccountCardsActivity.this);
 		position = getIntent().getIntExtra("position", 0);
@@ -448,14 +448,14 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
 	}
 
-	@Override
+	/*@Override
 	public void onNetworkFailure() {
 		if (mErrorHandlerView != null) {
 			mWObservableScrollView.scrollVerticallyTo(0);
 			mErrorHandlerView.networkFailureHandler("");
 			mErrorHandlerView.disableCardPageScrollGesture();
 		}
-	}
+	}*/
 
 	public static class MyAccountCardsFragment extends Fragment {
 

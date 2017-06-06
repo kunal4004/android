@@ -22,6 +22,8 @@ import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import za.co.wigroup.logger.lib.WiGroupLogger;
 import za.co.woolworths.financial.services.android.FragmentLifecycle;
@@ -34,16 +36,19 @@ import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsA
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkChangeReceiver;
 import za.co.woolworths.financial.services.android.util.NetworkFailureInterface;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 
-public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle {
+public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle,Observer {
 
-	private NetworkFailureInterface mNetworkFailureInterface;
+	//private NetworkFailureInterface mNetworkFailureInterface;
 	public WTextView availableBalance;
 	public WTextView creditLimit;
 	public WTextView dueDate;
@@ -60,6 +65,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private ImageView mImageArrow;
 	private AsyncTask<String, String, OfferActive> asyncTaskStore;
 	private boolean cardHasId = false;
+	private ErrorHandlerView mErrorHandlerView;
 
 	@Nullable
 	@Override
@@ -70,10 +76,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		try {
+		/*try {
 			mNetworkFailureInterface = (NetworkFailureInterface) getActivity();
 		} catch (ClassCastException ignored) {
-		}
+		}*/
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
 		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
@@ -90,6 +96,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		bindData(accountsResponse);
 		disableIncreaseLimit();
 		hideProgressBar();
+		mErrorHandlerView=new ErrorHandlerView(getActivity());
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -165,7 +172,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						mNetworkFailureInterface.onNetworkFailure();
+						//mNetworkFailureInterface.onNetworkFailure();
+						networkFailureHandler();
 					}
 				});
 				return new OfferActive();
@@ -246,6 +254,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	public void onResume() {
 		super.onResume();
 		setTextSize();
+		NetworkChangeReceiver.getObservable().addObserver(this);
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -272,10 +281,45 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			@Override
 			public void run() {
 				if (!cardHasId) {
-					getActiveOffer();
+					if (new ConnectionDetector().isOnline())
+						getActiveOffer();
+					else {
+						mErrorHandlerView.showToast();
+						disableIncreaseLimit();
+					}
 				}
 			}
 		}, 100);
 	}
+	public void networkFailureHandler() {
+		getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				isOfferActive = false;
+				hideProgressBar();
+				//mNetworkFailureInterface.onNetworkFailure();
+			}
+		});
+	}
 
+	@Override
+	public void update(Observable observable, Object data) {
+		//connection changed
+		final Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				if (!cardHasId) {
+					if (new ConnectionDetector().isOnline())
+						getActiveOffer();
+
+				}
+			}
+		}, 100);
+	}
+	@Override
+	public void onPause() {
+		super.onPause();
+		NetworkChangeReceiver.getObservable().deleteObserver(this);
+	}
 }
