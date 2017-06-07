@@ -1,9 +1,11 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Paint;
@@ -23,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -460,5 +463,19 @@ public class Utils {
 			openInternalWebView.putExtra("externalLink", url);
 			context.startActivity(openInternalWebView);
 			((AppCompatActivity) context).overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+	}
+
+	public static BroadcastReceiver connectionBroadCast(final Activity activity, final NetworkChangeListener networkChangeListener)
+	{
+		//IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+		 BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				// Hey I received something, let's put it on some toast
+				networkChangeListener.onConnectionChanged();
+			}
+		};
+		return  mBroadcastReceiver;
 	}
 }

@@ -246,7 +246,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onResume() {
 		super.onResume();
-		NetworkChangeReceiver.getObservable().addObserver(this);
+		//NetworkChangeReceiver.getObservable().addObserver(this);
 		setTextSize();
 	}
 
@@ -314,6 +314,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onPause() {
 		super.onPause();
-		NetworkChangeReceiver.getObservable().deleteObserver(this);
+		//NetworkChangeReceiver.getObservable().deleteObserver(this);
 	}
 }

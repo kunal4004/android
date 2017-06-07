@@ -1,6 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
@@ -8,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.SpannableString;
 import android.util.Log;
 import android.util.TypedValue;
@@ -40,13 +44,14 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkChangeReceiver;
 import za.co.woolworths.financial.services.android.util.NetworkFailureInterface;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 
-public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle,Observer {
+public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle,NetworkChangeListener {
 
 	//private NetworkFailureInterface mNetworkFailureInterface;
 	public WTextView availableBalance;
@@ -66,6 +71,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private AsyncTask<String, String, OfferActive> asyncTaskStore;
 	private boolean cardHasId = false;
 	private ErrorHandlerView mErrorHandlerView;
+	private BroadcastReceiver connectionBroadcast;
+	private NetworkChangeListener networkChangeListener;
 
 	@Nullable
 	@Override
@@ -92,6 +99,12 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
 		txtIncreseLimit.setOnClickListener(this);
 		transactions.setOnClickListener(this);
+		try {
+			networkChangeListener = (NetworkChangeListener) this;
+		} catch (ClassCastException ignored) {
+		}
+		connectionBroadcast=Utils.connectionBroadCast(getActivity(),networkChangeListener);
+
 		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		bindData(accountsResponse);
 		disableIncreaseLimit();
@@ -254,7 +267,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	public void onResume() {
 		super.onResume();
 		setTextSize();
-		NetworkChangeReceiver.getObservable().addObserver(this);
+		getActivity().registerReceiver(connectionBroadcast,new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -297,13 +311,18 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			public void run() {
 				isOfferActive = false;
 				hideProgressBar();
-				//mNetworkFailureInterface.onNetworkFailure();
 			}
 		});
 	}
 
 	@Override
-	public void update(Observable observable, Object data) {
+	public void onPause() {
+		super.onPause();
+		getActivity().unregisterReceiver(connectionBroadcast);
+	}
+
+	@Override
+	public void onConnectionChanged() {
 		//connection changed
 		final Handler handler = new Handler();
 		handler.postDelayed(new Runnable() {
@@ -316,10 +335,5 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				}
 			}
 		}, 100);
-	}
-	@Override
-	public void onPause() {
-		super.onPause();
-		NetworkChangeReceiver.getObservable().deleteObserver(this);
 	}
 }
