@@ -90,16 +90,6 @@ public class LoanWithdrawalActivity extends BaseActivity {
 				}
 			}, 1000);
 		}
-
-		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline()) {
-					loanRequest();
-				}
-			}
-
-		});
 	}
 
 	private void initViews() {
@@ -312,7 +302,6 @@ public class LoanWithdrawalActivity extends BaseActivity {
 				showSoftKeyboard();
 				showProgressBar();
 				super.onPreExecute();
-				mErrorHandlerView.hideErrorHandlerLayout();
 			}
 
 			@Override
@@ -355,7 +344,6 @@ public class LoanWithdrawalActivity extends BaseActivity {
 					@Override
 					public void run() {
 						hideProgressBar();
-						mErrorHandlerView.networkFailureHandler(errorMessage);
 					}
 				});
 				return issueLoanResponse;

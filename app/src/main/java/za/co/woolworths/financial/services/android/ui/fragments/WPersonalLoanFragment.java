@@ -167,12 +167,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						.stay);
 				break;
 			case R.id.txtIncreseLimit:
-				//if (!isOfferActive) {
-				((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
-				Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
-				startActivity(openCLIIncrease);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				//	}
+				if (!isOfferActive) {
+					((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
+					Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
+					startActivity(openCLIIncrease);
+					getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				}
 				break;
 		}
 	}
@@ -249,7 +249,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	}
 
 	public void disableIncreaseLimit() {
-		txtIncreseLimit.setEnabled(true);
+		txtIncreseLimit.setEnabled(false);
 		txtIncreseLimit.setTextColor(Color.GRAY);
 		mImageArrow.setImageAlpha(75);
 	}
@@ -316,7 +316,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			public void run() {
 				isOfferActive = false;
 				hideProgressBar();
-				//mNetworkFailureInterface.onNetworkFailure();
 			}
 		});
 	}
