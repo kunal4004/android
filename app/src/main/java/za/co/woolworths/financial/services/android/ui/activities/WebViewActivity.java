@@ -57,7 +57,10 @@ public class WebViewActivity extends AppCompatActivity {
             @Override
             public void onReceivedTitle(WebView view, String title) {
                 super.onReceivedTitle(view, title);
-                toolbarTextView.setText(title);
+                if(title.equalsIgnoreCase(getString(R.string.sso_title_text_submit_this_form)))
+                    toolbarTextView.setText("");
+                else
+                     toolbarTextView.setText(title);
             }
         });
     }
