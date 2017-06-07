@@ -27,7 +27,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -43,538 +42,621 @@ import za.co.woolworths.financial.services.android.models.dto.CreditLimit;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.CLICreditLimitAdapter;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WEmpyViewDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICreditLimitContentBinder;
 
 public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickListener,
-        CLICreditLimitContentBinder.OnClickListener, CompoundButton.OnCheckedChangeListener {
+		CLICreditLimitContentBinder.OnClickListener, CompoundButton.OnCheckedChangeListener,
+		NetworkChangeListener {
 
-    private WEditTextView mTextAmount;
-    private WButton mBtnContinue;
-    private RecyclerView mRecycleList;
-    private RadioGroup mRadApplySolvency;
-    private RadioButton mRadioYesSolvency;
-    private RadioButton mRadioNoSolvency;
-    private RadioGroup mRadConfidentialCredit;
-    private RadioButton mRadioYesConfidentialCredit;
-    private RadioButton mRadioNoConfidentialCredit;
-    private WTextView mTextApplySolvency;
-    private ImageView mImageCreditAmount;
-    private Toolbar mToolbar;
-    private List<CreditLimit> mArrCreditLimit;
-    final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
-    private CreateOfferRequest mCreateOfferRequest;
-    private NestedScrollView mNestedScrollview;
-    private WoolworthsApplication mWoolworthsApplication;
-    private UpdateBankDetail mUpdateBankDetail;
-    private WTextView mTextACreditLimit;
-    private WTextView mTextProceedToSolvency;
+	private WEditTextView mTextAmount;
+	private WButton mBtnContinue;
+	private RecyclerView mRecycleList;
+	private RadioGroup mRadApplySolvency;
+	private RadioButton mRadioYesSolvency;
+	private RadioButton mRadioNoSolvency;
+	private RadioGroup mRadConfidentialCredit;
+	private RadioButton mRadioYesConfidentialCredit;
+	private RadioButton mRadioNoConfidentialCredit;
+	private WTextView mTextApplySolvency;
+	private ImageView mImageCreditAmount;
+	private Toolbar mToolbar;
+	private List<CreditLimit> mArrCreditLimit;
+	final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
+	private CreateOfferRequest mCreateOfferRequest;
+	private NestedScrollView mNestedScrollview;
+	private WoolworthsApplication mWoolworthsApplication;
+	private UpdateBankDetail mUpdateBankDetail;
+	private WTextView mTextACreditLimit;
+	private WTextView mTextProceedToSolvency;
 
-    private Typeface mRdioGroupTypeFace;
-    private Typeface mRdioGroupTypeFaceBold;
-    private ProgressBar mProgressBar;
-    private FragmentManager fm;
-    private WEmpyViewDialogFragment mEmpyViewDialogFragment;
-    private ErrorHandlerView mErrorHandlerView;
+	private Typeface mRdioGroupTypeFace;
+	private Typeface mRdioGroupTypeFaceBold;
+	private ProgressBar mProgressBar;
+	private FragmentManager fm;
+	private WEmpyViewDialogFragment mEmpyViewDialogFragment;
+	private NetworkChangeListener networkChangeListener;
+	private BroadcastReceiver connectionBroadcast;
+	private ErrorHandlerView mErrorHandlerView;
+	private boolean continueButtonClicked = false;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cli_supply_info);
-        Utils.updateStatusBarBackground(CLISupplyInfoActivity.this);
-        fm = getSupportFragmentManager();
-        mWoolworthsApplication = (WoolworthsApplication) getApplication();
-        mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
-        mProgressBar = (ProgressBar) findViewById(R.id.mWoolworthsProgressBar);
-        mRdioGroupTypeFace = Typeface.createFromAsset(getAssets(), "fonts/WFutura-Medium.ttf");
-        mRdioGroupTypeFaceBold = Typeface.createFromAsset(getAssets(), "fonts/WFutura-SemiBold.ttf");
-        initViews();
-        setActionBar();
-        setListener();
-        setCLIContent();
-        mArrCreditLimit = getCreditLimitInfo();
-        setRecycleView(mArrCreditLimit);
-        hideSoftKeyboard();
-        radioCheckStateChanged();
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_cli_supply_info);
+		Utils.updateStatusBarBackground(CLISupplyInfoActivity.this);
+		fm = getSupportFragmentManager();
+		mErrorHandlerView = new ErrorHandlerView(CLISupplyInfoActivity.this);
+		mWoolworthsApplication = (WoolworthsApplication) getApplication();
+		mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
+		mProgressBar = (ProgressBar) findViewById(R.id.mWoolworthsProgressBar);
+		mRdioGroupTypeFace = Typeface.createFromAsset(getAssets(), "fonts/WFutura-Medium.ttf");
+		mRdioGroupTypeFaceBold = Typeface.createFromAsset(getAssets(), "fonts/WFutura-SemiBold.ttf");
+		initViews();
+		setActionBar();
+		setListener();
+		setCLIContent();
+		mArrCreditLimit = getCreditLimitInfo();
+		setRecycleView(mArrCreditLimit);
+		hideSoftKeyboard();
+		radioCheckStateChanged();
+		networkListener();
+		registerReceiver(confidentialBroadcastCheck, new IntentFilter("confidentialBroadcastCheck"));
+		registerReceiver(insolvencyBroadcastCheck, new IntentFilter("insolvencyBroadcastCheck"));
+	}
 
-        registerReceiver(confidentialBroadcastCheck, new IntentFilter("confidentialBroadcastCheck"));
-        registerReceiver(insolvencyBroadcastCheck, new IntentFilter("insolvencyBroadcastCheck"));
+	private void radioCheckStateChanged() {
+		mRadApplySolvency.setOnCheckedChangeListener(solvencyCheckListener);
+		mRadConfidentialCredit.setOnCheckedChangeListener(confidentialCheckListener);
+	}
 
-        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (new ConnectionDetector().isOnline()) {
-                    createOfferRequest();
-                }
-            }
+	private void networkListener() {
+		try {
+			networkChangeListener = CLISupplyInfoActivity.this;
+		} catch (ClassCastException ignored) {
+		}
+		connectionBroadcast = Utils.connectionBroadCast(CLISupplyInfoActivity.this, networkChangeListener);
+	}
 
-        });
-    }
+	private void initViews() {
+		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		mTextAmount = (WEditTextView) findViewById(R.id.textAmount);
+		mBtnContinue = (WButton) findViewById(R.id.btnContinue);
+		mRecycleList = (RecyclerView) findViewById(R.id.recycleList);
+		mNestedScrollview = (NestedScrollView) findViewById(R.id.mNestedScrollview);
+		mRadApplySolvency = (RadioGroup) findViewById(R.id.radApplySolvency);
+		mRadioYesSolvency = (RadioButton) findViewById(R.id.radioYesSolvency);
+		mRadioNoSolvency = (RadioButton) findViewById(R.id.radioNoSolvency);
+		mRadConfidentialCredit = (RadioGroup) findViewById(R.id.radConfidentialCredit);
+		mRadioYesConfidentialCredit = (RadioButton) findViewById(R.id.radioYesConfidentialCredit);
+		mRadioNoConfidentialCredit = (RadioButton) findViewById(R.id.radioNoConfidentialCredit);
+		mTextApplySolvency = (WTextView) findViewById(R.id.textApplySolvency);
+		mTextACreditLimit = (WTextView) findViewById(R.id.textACreditLimit);
+		mTextProceedToSolvency = (WTextView) findViewById(R.id.textProceedToSolvency);
+		mImageCreditAmount = (ImageView) findViewById(R.id.imgInfo);
+	}
 
-    private void radioCheckStateChanged() {
-        mRadApplySolvency.setOnCheckedChangeListener(solvencyCheckListener);
-        mRadConfidentialCredit.setOnCheckedChangeListener(confidentialCheckListener);
-    }
+	private void setActionBar() {
+		setSupportActionBar(mToolbar);
+		ActionBar mActionBar = getSupportActionBar();
+		if (mActionBar != null) {
+			mActionBar.setDisplayHomeAsUpEnabled(true);
+			mActionBar.setDisplayShowTitleEnabled(false);
+			mActionBar.setDisplayUseLogoEnabled(false);
+			mActionBar.setHomeAsUpIndicator(R.drawable.close_24);
+		}
+	}
 
-    private void initViews() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mTextAmount = (WEditTextView) findViewById(R.id.textAmount);
-        mBtnContinue = (WButton) findViewById(R.id.btnContinue);
-        mRecycleList = (RecyclerView) findViewById(R.id.recycleList);
-        mNestedScrollview = (NestedScrollView) findViewById(R.id.mNestedScrollview);
-        mRadApplySolvency = (RadioGroup) findViewById(R.id.radApplySolvency);
-        mRadioYesSolvency = (RadioButton) findViewById(R.id.radioYesSolvency);
-        mRadioNoSolvency = (RadioButton) findViewById(R.id.radioNoSolvency);
-        mRadConfidentialCredit = (RadioGroup) findViewById(R.id.radConfidentialCredit);
-        mRadioYesConfidentialCredit = (RadioButton) findViewById(R.id.radioYesConfidentialCredit);
-        mRadioNoConfidentialCredit = (RadioButton) findViewById(R.id.radioNoConfidentialCredit);
-        mTextApplySolvency = (WTextView) findViewById(R.id.textApplySolvency);
-        mTextACreditLimit = (WTextView) findViewById(R.id.textACreditLimit);
-        mTextProceedToSolvency = (WTextView) findViewById(R.id.textProceedToSolvency);
-        mImageCreditAmount = (ImageView) findViewById(R.id.imgInfo);
-        mErrorHandlerView = new ErrorHandlerView(this, (RelativeLayout) findViewById(R.id.no_connection_layout));
-    }
+	public void setListener() {
+		mBtnContinue.setOnClickListener(this);
+		mRadioYesSolvency.setOnCheckedChangeListener(this);
+		mRadioNoSolvency.setOnCheckedChangeListener(this);
+		mRadioYesConfidentialCredit.setOnCheckedChangeListener(this);
+		mRadioNoConfidentialCredit.setOnCheckedChangeListener(this);
+		mImageCreditAmount.setOnClickListener(this);
+	}
 
-    private void setActionBar() {
-        setSupportActionBar(mToolbar);
-        ActionBar mActionBar = getSupportActionBar();
-        if (mActionBar != null) {
-            mActionBar.setDisplayHomeAsUpEnabled(true);
-            mActionBar.setDisplayShowTitleEnabled(false);
-            mActionBar.setDisplayUseLogoEnabled(false);
-            mActionBar.setDefaultDisplayHomeAsUpEnabled(false);
-            mActionBar.setHomeAsUpIndicator(R.drawable.close_24);
-        }
-    }
+	private void setCLIContent() {
+		mBtnContinue.setText(getString(R.string.cli_yes_continue));
+		mTextApplySolvency.setText(getString(R.string.cli_apply_insolvency));
+		mTextAmount.setVisibility(View.VISIBLE);
+		mImageCreditAmount.setVisibility(View.GONE);
+		mImageCreditAmount.setVisibility(View.GONE);
+		mTextACreditLimit.setText(getString(R.string.cli_additional_credit_amount));
+		mTextACreditLimit.setAllCaps(true);
+		mTextAmount.addTextChangedListener(new NumberTextWatcher(mTextAmount));
+		mTextAmount.setSelection(mTextAmount.getText().length());
+		mTextProceedToSolvency.setVisibility(View.VISIBLE);
+	}
 
-    public void setListener() {
-        mBtnContinue.setOnClickListener(this);
-        mRadioYesSolvency.setOnCheckedChangeListener(this);
-        mRadioNoSolvency.setOnCheckedChangeListener(this);
-        mRadioYesConfidentialCredit.setOnCheckedChangeListener(this);
-        mRadioNoConfidentialCredit.setOnCheckedChangeListener(this);
-        mImageCreditAmount.setOnClickListener(this);
-    }
+	private void setRecycleView(List<CreditLimit> creditLimit) {
+		CLICreditLimitAdapter mCLICreditLimitAdapter = new CLICreditLimitAdapter(creditLimit, this);
+		LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
+		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+		mRecycleList.setLayoutManager(mLayoutManager);
+		mRecycleList.setNestedScrollingEnabled(false);
+		mRecycleList.setAdapter(mCLICreditLimitAdapter);
+		mCLICreditLimitAdapter.setCLIContent();
+		mRecycleList.setFocusable(false);
+	}
 
-    private void setCLIContent() {
-        mBtnContinue.setText(getString(R.string.cli_yes_continue));
-        mTextApplySolvency.setText(getString(R.string.cli_apply_insolvency));
-        mTextAmount.setVisibility(View.VISIBLE);
-        mImageCreditAmount.setVisibility(View.GONE);
-        mImageCreditAmount.setVisibility(View.GONE);
-        mTextACreditLimit.setText(getString(R.string.cli_additional_credit_amount));
-        mTextACreditLimit.setAllCaps(true);
-        mTextAmount.addTextChangedListener(new NumberTextWatcher(mTextAmount));
-        mTextAmount.setSelection(mTextAmount.getText().length());
-        mTextProceedToSolvency.setVisibility(View.VISIBLE);
-    }
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.btnContinue:
+				mBtnContinue.startAnimation(buttonClick);
+				hideSoftKeyboard();
 
-    private void setRecycleView(List<CreditLimit> creditLimit) {
-        CLICreditLimitAdapter mCLICreditLimitAdapter = new CLICreditLimitAdapter(creditLimit, this);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecycleList.setLayoutManager(mLayoutManager);
-        mRecycleList.setNestedScrollingEnabled(false);
-        mRecycleList.setAdapter(mCLICreditLimitAdapter);
-        mCLICreditLimitAdapter.setCLIContent();
-        mRecycleList.setFocusable(false);
-    }
+				boolean pageIsValid = true;
 
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btnContinue:
-                mBtnContinue.startAnimation(buttonClick);
-                hideSoftKeyboard();
+				int selectedInsolventRadioButtonId = mRadApplySolvency.getCheckedRadioButtonId();
+				int selectedAccessRequestRadioButton = mRadConfidentialCredit.getCheckedRadioButtonId();
 
-                boolean pageIsValid = true;
+				String creditAmount = mTextAmount.getText().toString().replaceAll("[^0-9.]", "");
+				String grossMonthlyIncome = mArrCreditLimit.get(0).getAmount().replaceAll("[^0-9.]", "");
+				String netMonthlyIncome = mArrCreditLimit.get(1).getAmount().replaceAll("[^0-9.]", "");
+				String additionalMonthlyIncome = mArrCreditLimit.get(2).getAmount().replaceAll("[^0-9.]", "");
+				String mortgagePayments = mArrCreditLimit.get(3).getAmount().replaceAll("[^0-9.]", "");
+				String rentalPayments = mArrCreditLimit.get(4).getAmount().replaceAll("[^0-9.]", "");
+				String maintenanceExpenses = mArrCreditLimit.get(5).getAmount().replaceAll("[^0-9.]", "");
+				String monthlyCreditPayments = mArrCreditLimit.get(6).getAmount().replaceAll("[^0-9.]", "");
+				String otherExpenses = mArrCreditLimit.get(7).getAmount().replaceAll("[^0-9.]", "");
 
-                int selectedInsolventRadioButtonId = mRadApplySolvency.getCheckedRadioButtonId();
-                int selectedAccessRequestRadioButton = mRadConfidentialCredit.getCheckedRadioButtonId();
+				if (creditAmount.equals("")) {
+					pageIsValid = false;
+				} else if (grossMonthlyIncome.equals("")) {
+					pageIsValid = false;
+				} else if (netMonthlyIncome.equals("")) {
+					pageIsValid = false;
+				} else if (additionalMonthlyIncome.equals("")) {
+					pageIsValid = false;
+				} else if (mortgagePayments.equals("")) {
+					pageIsValid = false;
+				} else if (rentalPayments.equals("")) {
+					pageIsValid = false;
+				} else if (maintenanceExpenses.equals("")) {
+					pageIsValid = false;
+				} else if (monthlyCreditPayments.equals("")) {
+					pageIsValid = false;
+				} else if (otherExpenses.equals("")) {
+					pageIsValid = false;
+				} else if (selectedInsolventRadioButtonId == -1 || selectedAccessRequestRadioButton == -1) {
+					pageIsValid = false;
+				}
 
-                String creditAmount = mTextAmount.getText().toString().replaceAll("[^0-9.]", "");
-                String grossMonthlyIncome = mArrCreditLimit.get(0).getAmount().replaceAll("[^0-9.]", "");
-                String netMonthlyIncome = mArrCreditLimit.get(1).getAmount().replaceAll("[^0-9.]", "");
-                String additionalMonthlyIncome = mArrCreditLimit.get(2).getAmount().replaceAll("[^0-9.]", "");
-                String mortgagePayments = mArrCreditLimit.get(3).getAmount().replaceAll("[^0-9.]", "");
-                String rentalPayments = mArrCreditLimit.get(4).getAmount().replaceAll("[^0-9.]", "");
-                String maintenanceExpenses = mArrCreditLimit.get(5).getAmount().replaceAll("[^0-9.]", "");
-                String monthlyCreditPayments = mArrCreditLimit.get(6).getAmount().replaceAll("[^0-9.]", "");
-                String otherExpenses = mArrCreditLimit.get(7).getAmount().replaceAll("[^0-9.]", "");
+				if (!pageIsValid) {
+					Utils.displayValidationMessage(CLISupplyInfoActivity.this,
+							TransientActivity.VALIDATION_MESSAGE_LIST.MANDATORY_FIELD,
+							getString(R.string.cli_cancel_application));
+					return;
+				}
 
-                if (creditAmount.equals("")) {
-                    pageIsValid = false;
-                } else if (grossMonthlyIncome.equals("")) {
-                    pageIsValid = false;
-                } else if (netMonthlyIncome.equals("")) {
-                    pageIsValid = false;
-                } else if (additionalMonthlyIncome.equals("")) {
-                    pageIsValid = false;
-                } else if (mortgagePayments.equals("")) {
-                    pageIsValid = false;
-                } else if (rentalPayments.equals("")) {
-                    pageIsValid = false;
-                } else if (maintenanceExpenses.equals("")) {
-                    pageIsValid = false;
-                } else if (monthlyCreditPayments.equals("")) {
-                    pageIsValid = false;
-                } else if (otherExpenses.equals("")) {
-                    pageIsValid = false;
-                } else if (selectedInsolventRadioButtonId == -1 || selectedAccessRequestRadioButton == -1) {
-                    pageIsValid = false;
-                }
+				int mCreditLimitAmount = 0;
+				if (!TextUtils.isEmpty(creditAmount)) {
+					mCreditLimitAmount = Integer.valueOf(creditAmount);
+				}
 
-                if (!pageIsValid) {
-                    Utils.displayValidationMessage(CLISupplyInfoActivity.this,
-                            TransientActivity.VALIDATION_MESSAGE_LIST.MANDATORY_FIELD,
-                            getString(R.string.cli_cancel_application));
-                    return;
-                }
+				mCreateOfferRequest = new CreateOfferRequest(mWoolworthsApplication.getProductOfferingId(),
+						mCreditLimitAmount,
+						Integer.valueOf(grossMonthlyIncome),
+						Integer.valueOf(netMonthlyIncome),
+						Integer.valueOf(additionalMonthlyIncome),
+						Integer.valueOf(mortgagePayments),
+						Integer.valueOf(rentalPayments),
+						Integer.valueOf(maintenanceExpenses),
+						Integer.valueOf(monthlyCreditPayments),
+						Integer.valueOf(otherExpenses));
 
-                int mCreditLimitAmount = 0;
-                if (!TextUtils.isEmpty(creditAmount)) {
-                    mCreditLimitAmount = Integer.valueOf(creditAmount);
-                }
+				continueButtonClicked = true;
+				createOfferRequest();
+				break;
+			default:
+				break;
+		}
+	}
 
-                mCreateOfferRequest = new CreateOfferRequest(mWoolworthsApplication.getProductOfferingId(),
-                        mCreditLimitAmount,
-                        Integer.valueOf(grossMonthlyIncome),
-                        Integer.valueOf(netMonthlyIncome),
-                        Integer.valueOf(additionalMonthlyIncome),
-                        Integer.valueOf(mortgagePayments),
-                        Integer.valueOf(rentalPayments),
-                        Integer.valueOf(maintenanceExpenses),
-                        Integer.valueOf(monthlyCreditPayments),
-                        Integer.valueOf(otherExpenses));
-                createOfferRequest();
-                break;
-            default:
-                break;
-        }
-    }
+	public List<CreditLimit> getCreditLimitInfo() {
+		ArrayList<CreditLimit> creditLimits = new ArrayList<>();
+		String[] clAmountArray = getResources().getStringArray(R.array.cl_amount);
+		String[] clArrayName = getResources().getStringArray(R.array.cl_label);
+		String[] clArrayDescription = getResources().getStringArray(R.array.cl_overlay_label);
 
-    public List<CreditLimit> getCreditLimitInfo() {
-        ArrayList<CreditLimit> creditLimits = new ArrayList<>();
-        String[] clAmountArray = getResources().getStringArray(R.array.cl_amount);
-        String[] clArrayName = getResources().getStringArray(R.array.cl_label);
-        String[] clArrayDescription = getResources().getStringArray(R.array.cl_overlay_label);
+		for (int x = 0; x < clAmountArray.length; x++) {
+			creditLimits.add(new CreditLimit(clArrayName[x], clAmountArray[x], clArrayDescription[x]));
+		}
+		return creditLimits;
+	}
 
-        for (int x = 0; x < clAmountArray.length; x++) {
-            creditLimits.add(new CreditLimit(clArrayName[x], clAmountArray[x], clArrayDescription[x]));
-        }
-        return creditLimits;
-    }
+	public void setRadioButtonBold() {
+		try {
+			RadioButton checked = (RadioButton) findViewById(mRadApplySolvency.getCheckedRadioButtonId());
+			checked.setTypeface(mRdioGroupTypeFaceBold);
+		} catch (NullPointerException ignored) {
+		}
+		try {
+			RadioButton checked = (RadioButton) findViewById(mRadConfidentialCredit.getCheckedRadioButtonId());
+			checked.setTypeface(mRdioGroupTypeFaceBold);
+		} catch (NullPointerException ignored) {
+		}
+	}
 
-    public void setRadioButtonBold() {
-        try {
-            RadioButton checked = (RadioButton) findViewById(mRadApplySolvency.getCheckedRadioButtonId());
-            checked.setTypeface(mRdioGroupTypeFaceBold);
-        } catch (NullPointerException ignored) {
-        }
-        try {
-            RadioButton checked = (RadioButton) findViewById(mRadConfidentialCredit.getCheckedRadioButtonId());
-            checked.setTypeface(mRdioGroupTypeFaceBold);
-        } catch (NullPointerException ignored) {
-        }
-    }
+	@Override
+	public void onClick(View v, int position) {
+		if (mArrCreditLimit != null) {
+			Utils.displayValidationMessage(CLISupplyInfoActivity.this,
+					TransientActivity.VALIDATION_MESSAGE_LIST.INFO,
+					mArrCreditLimit.get(position).getDescription());
+		}
+	}
 
-    @Override
-    public void onClick(View v, int position) {
-        if (mArrCreditLimit != null) {
-            Utils.displayValidationMessage(CLISupplyInfoActivity.this,
-                    TransientActivity.VALIDATION_MESSAGE_LIST.INFO,
-                    mArrCreditLimit.get(position).getDescription());
-        }
-    }
+	@Override
+	public void scrollToBottom() {
+		hideSoftKeyboard();
+		mNestedScrollview.fullScroll(View.FOCUS_DOWN);
+	}
 
-    @Override
-    public void scrollToBottom() {
-        hideSoftKeyboard();
-        mNestedScrollview.fullScroll(View.FOCUS_DOWN);
-    }
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		buttonView.setTypeface(isChecked ? mRdioGroupTypeFaceBold : mRdioGroupTypeFace);
+	}
 
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        buttonView.setTypeface(isChecked ? mRdioGroupTypeFaceBold : mRdioGroupTypeFace);
-    }
+	@Override
+	public void onBackPressed() {
+		canGoBack();
+	}
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setRadioButtonBold();
-    }
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				Intent openPreviousActivity = new Intent(CLISupplyInfoActivity.this, CLIActivity.class);
+				startActivity(openPreviousActivity);
+				finish();
+				overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+				return true;
+		}
+		return false;
+	}
 
-    @Override
-    public void onBackPressed() {
-        canGoBack();
-    }
+	private void createOfferRequest() {
+		createOfferAsyncApi().execute();
+	}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Intent openPreviousActivity = new Intent(CLISupplyInfoActivity.this, CLIActivity.class);
-                startActivity(openPreviousActivity);
-                finish();
-                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
-                return true;
-        }
-        return false;
-    }
+	public HttpAsyncTask<String, String, CreateOfferResponse> createOfferAsyncApi() {
+		return new HttpAsyncTask<String, String, CreateOfferResponse>() {
+			@Override
+			protected CreateOfferResponse httpDoInBackground(String... params) {
+				return ((WoolworthsApplication) CLISupplyInfoActivity.this.getApplication())
+						.getApi().createOfferRequest
+								(mCreateOfferRequest);
+			}
 
-    private void createOfferRequest() {
-        createOfferAsyncApi().execute();
-    }
+			@Override
+			protected CreateOfferResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						stopProgressDialog();
+					}
+				});
+				return new CreateOfferResponse();
+			}
 
-    public HttpAsyncTask<String, String, CreateOfferResponse> createOfferAsyncApi() {
-        return new HttpAsyncTask<String, String, CreateOfferResponse>() {
-            @Override
-            protected CreateOfferResponse httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) CLISupplyInfoActivity.this.getApplication())
-                        .getApi().createOfferRequest
-                        (mCreateOfferRequest);
-            }
+			@Override
+			protected void onPreExecute() {
+				showProgressBar();
+				super.onPreExecute();
+			}
 
-            @Override
-            protected CreateOfferResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                networkFailureHandler(errorMessage);
-                return new CreateOfferResponse();
-            }
+			@Override
+			protected void onPostExecute(CreateOfferResponse createOfferResponse) {
+				super.onPostExecute(createOfferResponse);
+				try {
+					if (createOfferResponse != null) {
+						int httpCode = createOfferResponse.httpCode;
+						switch (httpCode) {
+							case 200:
+								mUpdateBankDetail.setCliOfferID(createOfferResponse.cliOfferId);
+								openBankDetails();
+								break;
+							default:
+								if (!TextUtils.isEmpty(createOfferResponse.response.desc)) {
+									Utils.displayValidationMessage(CLISupplyInfoActivity.this,
+											TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+											createOfferResponse.response.desc);
+								}
+								break;
+						}
+					}
+				} catch (NullPointerException ignored) {
+				}
+				stopProgressDialog();
+			}
 
-            @Override
-            protected void onPreExecute() {
-                showProgressBar();
-                mErrorHandlerView.hideErrorHandlerLayout();
-                super.onPreExecute();
-            }
+			@Override
+			protected Class<CreateOfferResponse> httpDoInBackgroundReturnType() {
+				return CreateOfferResponse.class;
+			}
+		};
+	}
 
-            @Override
-            protected void onPostExecute(CreateOfferResponse createOfferResponse) {
-                super.onPostExecute(createOfferResponse);
-                try {
-                    if (createOfferResponse != null) {
-                        int httpCode = createOfferResponse.httpCode;
-                        switch (httpCode) {
-                            case 200:
-                                mUpdateBankDetail.setCliOfferID(createOfferResponse.cliOfferId);
-                                openBankDetails();
-                                break;
-                            default:
-                                if (!TextUtils.isEmpty(createOfferResponse.response.desc)) {
-                                    Utils.displayValidationMessage(CLISupplyInfoActivity.this,
-                                            TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                                            createOfferResponse.response.desc);
-                                }
-                                break;
-                        }
-                    }
-                } catch (NullPointerException ignored) {
-                }
-                stopProgressDialog();
-            }
+	public void openBankDetails() {
+		Intent openCLIStepIndicatorActivity = new Intent(CLISupplyInfoActivity.this, CLIStepIndicatorActivity.class);
+		startActivity(openCLIStepIndicatorActivity);
+		finish();
+		overridePendingTransition(0, 0);
+	}
 
-            @Override
-            protected Class<CreateOfferResponse> httpDoInBackgroundReturnType() {
-                return CreateOfferResponse.class;
-            }
-        };
-    }
-
-    public void openBankDetails() {
-        Intent openCLIStepIndicatorActivity = new Intent(CLISupplyInfoActivity.this, CLIStepIndicatorActivity.class);
-        startActivity(openCLIStepIndicatorActivity);
-        finish();
-        overridePendingTransition(0, 0);
-    }
-
-    public void canGoBack() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
-    }
-
-
-    public void hideSoftKeyboard() {
-        try {
-            if (getCurrentFocus() != null) {
-                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-            }
-        } catch (NullPointerException ignored) {
-        }
-    }
-
-    private class NumberTextWatcher implements TextWatcher {
-
-        private DecimalFormat df;
-        private DecimalFormat dfnd;
-        private boolean hasFractionalPart;
-
-        private EditText et;
-
-        NumberTextWatcher(EditText et) {
-            df = new DecimalFormat("#,###.##");
-            df.setDecimalSeparatorAlwaysShown(true);
-            dfnd = new DecimalFormat("#,###");
-            this.et = et;
-            hasFractionalPart = false;
-        }
+	public void canGoBack() {
+		super.onBackPressed();
+		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+	}
 
 
-        @Override
-        public void afterTextChanged(Editable s) {
-            et.removeTextChangedListener(this);
+	public void hideSoftKeyboard() {
+		try {
+			if (getCurrentFocus() != null) {
+				InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+				inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+			}
+		} catch (NullPointerException ignored) {
+		}
+	}
 
-            try {
-                int inilen, endlen;
-                inilen = et.getText().length();
-                String v = s.toString().replace(String.valueOf(df.getDecimalFormatSymbols().getGroupingSeparator()), "").replace(" ", "").replace("R ", "").replace("R", "");
-                Number n = null;
-                if (TextUtils.isEmpty(v)) {
-                    et.setText("");
-                } else {
-                    try {
-                        n = df.parse(v);
-                    } catch (ParseException ignored) {
-                    }
-                    int cp = et.getSelectionStart();
-                    String finalAmount;
-                    if (hasFractionalPart) {
-                        finalAmount = "" + df.format(n).replace(".", " ").replace(",", " ");
-                    } else {
-                        finalAmount = "" + dfnd.format(n).replace(".", " ").replace(",", " ");
-                    }
+	private class NumberTextWatcher implements TextWatcher {
 
-                    et.setText(finalAmount);
-                    endlen = et.getText().length();
-                    int sel = (cp + (endlen - inilen));
-                    if (sel > 0 && sel <= et.getText().length()) {
-                        et.setSelection(sel);
-                    } else {
-                        // place cursor at the end?
-                        et.setSelection(et.getText().length());
-                    }
-                }
-            } catch (NumberFormatException ignored) {
-            }
-            et.addTextChangedListener(this);
-        }
+		private DecimalFormat df;
+		private DecimalFormat dfnd;
+		private boolean hasFractionalPart;
 
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
+		private EditText et;
 
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            hasFractionalPart = s.toString().contains(String.valueOf(df.getDecimalFormatSymbols().getDecimalSeparator()));
-        }
-    }
-
-    public void showProgressBar() {
-        mEmpyViewDialogFragment = WEmpyViewDialogFragment.newInstance("blank");
-        mEmpyViewDialogFragment.setCancelable(false);
-        mEmpyViewDialogFragment.show(fm, "blank");
-        mProgressBar.bringToFront();
-        mProgressBar.setVisibility(View.VISIBLE);
-        mBtnContinue.setVisibility(View.GONE);
-        mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
-    }
-
-    public void stopProgressDialog() {
-        if (mEmpyViewDialogFragment != null) {
-            if (mEmpyViewDialogFragment.isVisible()) {
-                mEmpyViewDialogFragment.dismiss();
-            }
-        }
-        if (mProgressBar != null) {
-            mProgressBar.setVisibility(View.GONE);
-            mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
-        }
-        mBtnContinue.setVisibility(View.VISIBLE);
-    }
+		NumberTextWatcher(EditText et) {
+			df = new DecimalFormat("#,###.##");
+			df.setDecimalSeparatorAlwaysShown(true);
+			dfnd = new DecimalFormat("#,###");
+			this.et = et;
+			hasFractionalPart = false;
+		}
 
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(confidentialBroadcastCheck);
-        unregisterReceiver(insolvencyBroadcastCheck);
-    }
+		@Override
+		public void afterTextChanged(Editable s) {
+			et.removeTextChangedListener(this);
 
-    BroadcastReceiver confidentialBroadcastCheck = new BroadcastReceiver() {
+			try {
+				int inilen, endlen;
+				inilen = et.getText().length();
+				String v = s.toString().replace(String.valueOf(df.getDecimalFormatSymbols().getGroupingSeparator()), "").replace(" ", "").replace("R ", "").replace("R", "");
+				Number n = null;
+				if (TextUtils.isEmpty(v)) {
+					et.setText("");
+				} else {
+					try {
+						n = df.parse(v);
+					} catch (ParseException ignored) {
+					}
+					int cp = et.getSelectionStart();
+					String finalAmount;
+					if (hasFractionalPart) {
+						finalAmount = "" + df.format(n).replace(".", " ").replace(",", " ");
+					} else {
+						finalAmount = "" + dfnd.format(n).replace(".", " ").replace(",", " ");
+					}
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            mRadConfidentialCredit.setOnCheckedChangeListener(null);
-            mRadConfidentialCredit.clearCheck();
-            mRadConfidentialCredit.setOnCheckedChangeListener(confidentialCheckListener);
-            mRadioNoConfidentialCredit.setTypeface(mRdioGroupTypeFace);
-            mRadioYesConfidentialCredit.setTypeface(mRdioGroupTypeFace);
-        }
-    };
+					et.setText(finalAmount);
+					endlen = et.getText().length();
+					int sel = (cp + (endlen - inilen));
+					if (sel > 0 && sel <= et.getText().length()) {
+						et.setSelection(sel);
+					} else {
+						// place cursor at the end?
+						et.setSelection(et.getText().length());
+					}
+				}
+			} catch (NumberFormatException ignored) {
+			}
+			et.addTextChangedListener(this);
+		}
+
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+		}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+			hasFractionalPart = s.toString().contains(String.valueOf(df.getDecimalFormatSymbols().getDecimalSeparator()));
+		}
+	}
+
+	public void showProgressBar() {
+		mEmpyViewDialogFragment = WEmpyViewDialogFragment.newInstance("blank");
+		mEmpyViewDialogFragment.setCancelable(false);
+		mEmpyViewDialogFragment.show(fm, "blank");
+		mProgressBar.bringToFront();
+		mProgressBar.setVisibility(View.VISIBLE);
+		mBtnContinue.setVisibility(View.GONE);
+		mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+	}
+
+	public void stopProgressDialog() {
+		if (mEmpyViewDialogFragment != null) {
+			if (mEmpyViewDialogFragment.isVisible()) {
+				mEmpyViewDialogFragment.dismiss();
+			}
+		}
+		if (mProgressBar != null) {
+			mProgressBar.setVisibility(View.GONE);
+			mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+		}
+		mBtnContinue.setVisibility(View.VISIBLE);
+	}
 
 
-    BroadcastReceiver insolvencyBroadcastCheck = new BroadcastReceiver() {
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(confidentialBroadcastCheck);
+		unregisterReceiver(insolvencyBroadcastCheck);
+	}
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            mRadApplySolvency.setOnCheckedChangeListener(null);
-            mRadApplySolvency.clearCheck();
-            mRadApplySolvency.setOnCheckedChangeListener(solvencyCheckListener);
-            mRadioYesSolvency.setTypeface(mRdioGroupTypeFace);
-            mRadioNoSolvency.setTypeface(mRdioGroupTypeFace);
-        }
-    };
+	BroadcastReceiver confidentialBroadcastCheck = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			mRadConfidentialCredit.setOnCheckedChangeListener(null);
+			mRadConfidentialCredit.clearCheck();
+			mRadConfidentialCredit.setOnCheckedChangeListener(confidentialCheckListener);
+			mRadioNoConfidentialCredit.setTypeface(mRdioGroupTypeFace);
+			mRadioYesConfidentialCredit.setTypeface(mRdioGroupTypeFace);
+		}
+	};
 
 
-    private RadioGroup.OnCheckedChangeListener confidentialCheckListener = new RadioGroup.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(RadioGroup group, int checkedId) {
-            switch (checkedId) {
-                case R.id.radioYesConfidentialCredit:
-                    break;
-                case R.id.radioNoConfidentialCredit:
-                    Utils.displayValidationMessage(CLISupplyInfoActivity.this,
-                            TransientActivity.VALIDATION_MESSAGE_LIST.CONFIDENTIAL,
-                            "");
-                    break;
-                default:
-                    break;
-            }
-            hideSoftKeyboard();
-        }
-    };
+	BroadcastReceiver insolvencyBroadcastCheck = new BroadcastReceiver() {
 
-    private RadioGroup.OnCheckedChangeListener solvencyCheckListener = new RadioGroup.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(RadioGroup group, int checkedId) {
-            switch (checkedId) {
-                case R.id.radioNoSolvency:
-                    break;
-                case R.id.radioYesSolvency:
-                    Utils.displayValidationMessage(CLISupplyInfoActivity.this,
-                            TransientActivity.VALIDATION_MESSAGE_LIST.INSOLVENCY,
-                            "");
-                    break;
-                default:
-                    break;
-            }
-            hideSoftKeyboard();
-        }
-    };
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			mRadApplySolvency.setOnCheckedChangeListener(null);
+			mRadApplySolvency.clearCheck();
+			mRadApplySolvency.setOnCheckedChangeListener(solvencyCheckListener);
+			mRadioYesSolvency.setTypeface(mRdioGroupTypeFace);
+			mRadioNoSolvency.setTypeface(mRdioGroupTypeFace);
+		}
+	};
 
-    public void networkFailureHandler(final String errorMessage) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                stopProgressDialog();
-                mErrorHandlerView.networkFailureHandler(errorMessage);
-            }
-        });
-    }
+
+	private RadioGroup.OnCheckedChangeListener confidentialCheckListener = new RadioGroup.OnCheckedChangeListener() {
+		@Override
+		public void onCheckedChanged(RadioGroup group, int checkedId) {
+			switch (checkedId) {
+				case R.id.radioYesConfidentialCredit:
+					break;
+				case R.id.radioNoConfidentialCredit:
+					Utils.displayValidationMessage(CLISupplyInfoActivity.this,
+							TransientActivity.VALIDATION_MESSAGE_LIST.CONFIDENTIAL,
+							"");
+					break;
+				default:
+					break;
+			}
+			hideSoftKeyboard();
+		}
+	};
+
+	private RadioGroup.OnCheckedChangeListener solvencyCheckListener = new RadioGroup.OnCheckedChangeListener() {
+		@Override
+		public void onCheckedChanged(RadioGroup group, int checkedId) {
+			switch (checkedId) {
+				case R.id.radioNoSolvency:
+					break;
+				case R.id.radioYesSolvency:
+					Utils.displayValidationMessage(CLISupplyInfoActivity.this,
+							TransientActivity.VALIDATION_MESSAGE_LIST.INSOLVENCY,
+							"");
+					break;
+				default:
+					break;
+			}
+			hideSoftKeyboard();
+		}
+	};
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		unregisterReceiver(connectionBroadcast);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		setRadioButtonBold();
+		registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+	}
+
+	@Override
+	public void onConnectionChanged() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (new ConnectionDetector().isOnline()) {
+					if (valideView() && continueButtonClicked) {
+						createOfferRequest();
+					}
+				} else {
+					mErrorHandlerView.showToast();
+				}
+			}
+		});
+	}
+
+	private boolean valideView() {
+		boolean backgroundTaskValid;
+		boolean pageIsValid = true;
+
+		int selectedInsolventRadioButtonId = mRadApplySolvency.getCheckedRadioButtonId();
+		int selectedAccessRequestRadioButton = mRadConfidentialCredit.getCheckedRadioButtonId();
+
+		String creditAmount = mTextAmount.getText().toString().replaceAll("[^0-9.]", "");
+		String grossMonthlyIncome = mArrCreditLimit.get(0).getAmount().replaceAll("[^0-9.]", "");
+		String netMonthlyIncome = mArrCreditLimit.get(1).getAmount().replaceAll("[^0-9.]", "");
+		String additionalMonthlyIncome = mArrCreditLimit.get(2).getAmount().replaceAll("[^0-9.]", "");
+		String mortgagePayments = mArrCreditLimit.get(3).getAmount().replaceAll("[^0-9.]", "");
+		String rentalPayments = mArrCreditLimit.get(4).getAmount().replaceAll("[^0-9.]", "");
+		String maintenanceExpenses = mArrCreditLimit.get(5).getAmount().replaceAll("[^0-9.]", "");
+		String monthlyCreditPayments = mArrCreditLimit.get(6).getAmount().replaceAll("[^0-9.]", "");
+		String otherExpenses = mArrCreditLimit.get(7).getAmount().replaceAll("[^0-9.]", "");
+
+		if (creditAmount.equals("")) {
+			pageIsValid = false;
+		} else if (grossMonthlyIncome.equals("")) {
+			pageIsValid = false;
+		} else if (netMonthlyIncome.equals("")) {
+			pageIsValid = false;
+		} else if (additionalMonthlyIncome.equals("")) {
+			pageIsValid = false;
+		} else if (mortgagePayments.equals("")) {
+			pageIsValid = false;
+		} else if (rentalPayments.equals("")) {
+			pageIsValid = false;
+		} else if (maintenanceExpenses.equals("")) {
+			pageIsValid = false;
+		} else if (monthlyCreditPayments.equals("")) {
+			pageIsValid = false;
+		} else if (otherExpenses.equals("")) {
+			pageIsValid = false;
+		} else if (selectedInsolventRadioButtonId == -1 || selectedAccessRequestRadioButton == -1) {
+			pageIsValid = false;
+		}
+
+		if (!pageIsValid) {
+			backgroundTaskValid = false;
+		} else {
+			int mCreditLimitAmount = 0;
+			if (!TextUtils.isEmpty(creditAmount)) {
+				mCreditLimitAmount = Integer.valueOf(creditAmount);
+			}
+			mCreateOfferRequest = new CreateOfferRequest(mWoolworthsApplication.getProductOfferingId(),
+					mCreditLimitAmount,
+					Integer.valueOf(grossMonthlyIncome),
+					Integer.valueOf(netMonthlyIncome),
+					Integer.valueOf(additionalMonthlyIncome),
+					Integer.valueOf(mortgagePayments),
+					Integer.valueOf(rentalPayments),
+					Integer.valueOf(maintenanceExpenses),
+					Integer.valueOf(monthlyCreditPayments),
+					Integer.valueOf(otherExpenses));
+			backgroundTaskValid = true;
+
+		}
+		return backgroundTaskValid;
+	}
 }

@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -47,12 +48,20 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 	private AsyncTask<String, String, AuthoriseLoanResponse> authoriseLoanRequest;
 	private int minDrawnDownAmount;
 	ErrorHandlerView mErrorHandlerView;
+	private NetworkChangeListener networkChangeListener;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Utils.updateStatusBarBackground(LoanWithdrawalConfirmActivity.this, R.color.purple);
 		setContentView(R.layout.loan_withdrawal_activity);
+
+//		try {
+//			networkChangeListener = (NetworkChangeListener) .this;
+//		} catch (ClassCastException ignored) {
+//		}
+//		connectionBroadcast = Utils.connectionBroadCast(CLISupplyInfoActivity.this, networkChangeListener);
+
 		mErrorHandlerView = new ErrorHandlerView(this, (RelativeLayout) findViewById(R.id.no_connection_layout));
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(LoanWithdrawalConfirmActivity.this);
 		Bundle intent = getIntent().getExtras();

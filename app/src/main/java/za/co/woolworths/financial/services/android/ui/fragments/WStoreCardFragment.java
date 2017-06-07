@@ -51,7 +51,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 
-public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle,NetworkChangeListener {
+public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
 	//private NetworkFailureInterface mNetworkFailureInterface;
 	public WTextView availableBalance;
@@ -103,13 +103,13 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			networkChangeListener = (NetworkChangeListener) this;
 		} catch (ClassCastException ignored) {
 		}
-		connectionBroadcast=Utils.connectionBroadCast(getActivity(),networkChangeListener);
+		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
 
 		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		bindData(accountsResponse);
 		disableIncreaseLimit();
 		hideProgressBar();
-		mErrorHandlerView=new ErrorHandlerView(getActivity());
+		mErrorHandlerView = new ErrorHandlerView(getActivity());
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -267,8 +267,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	public void onResume() {
 		super.onResume();
 		setTextSize();
-		getActivity().registerReceiver(connectionBroadcast,new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-
+		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -305,6 +304,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			}
 		}, 100);
 	}
+
 	public void networkFailureHandler() {
 		getActivity().runOnUiThread(new Runnable() {
 			@Override

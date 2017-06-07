@@ -459,16 +459,15 @@ public class Utils {
 	}
 
 	public static void openExternalLink(Context context, String url) {
-			Intent openInternalWebView = new Intent(context, WInternalWebPageActivity.class);
-			openInternalWebView.putExtra("externalLink", url);
-			context.startActivity(openInternalWebView);
-			((AppCompatActivity) context).overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+		Intent openInternalWebView = new Intent(context, WInternalWebPageActivity.class);
+		openInternalWebView.putExtra("externalLink", url);
+		context.startActivity(openInternalWebView);
+		((AppCompatActivity) context).overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 
-	public static BroadcastReceiver connectionBroadCast(final Activity activity, final NetworkChangeListener networkChangeListener)
-	{
+	public static BroadcastReceiver connectionBroadCast(final Activity activity, final NetworkChangeListener networkChangeListener) {
 		//IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
-		 BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+		BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
 
 			@Override
 			public void onReceive(Context context, Intent intent) {
@@ -476,6 +475,6 @@ public class Utils {
 				networkChangeListener.onConnectionChanged();
 			}
 		};
-		return  mBroadcastReceiver;
+		return mBroadcastReceiver;
 	}
 }

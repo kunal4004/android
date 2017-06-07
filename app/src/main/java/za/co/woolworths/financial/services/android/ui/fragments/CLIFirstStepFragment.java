@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -32,234 +34,270 @@ import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragme
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICbxContentBinder;
 
 
-public class CLIFirstStepFragment extends Fragment implements View.OnClickListener, CLICbxContentBinder.OnCheckboxClickListener {
+public class CLIFirstStepFragment extends Fragment implements View.OnClickListener, CLICbxContentBinder.OnCheckboxClickListener, NetworkChangeListener {
 
-    private StepNavigatorCallback stepNavigatorCallback;
-    private int mSelectedPosition = -1;
-    public FragmentManager fm;
-    private ErrorHandlerView mErrorHandlerView;
-    private ProgressDialogFragment mGetAccountsProgressDialog;
+	private StepNavigatorCallback stepNavigatorCallback;
+	private int mSelectedPosition = -1;
+	public FragmentManager fm;
+	private ErrorHandlerView mErrorHandlerView;
+	private ProgressDialogFragment mGetAccountsProgressDialog;
 
-    public interface StepNavigatorCallback {
-        void openNextFragment(int index);
-    }
+	private BroadcastReceiver connectionBroadcast;
+	private NetworkChangeListener networkChangeListener;
+	private String TAG = "CLIFirstStepFragment";
 
-    private RecyclerView mRecycleList;
-    private CLIDeaBankMapAdapter mCLIDeaBankMapAdapter;
-    private WTextView mTextCreditLimit;
-    private RelativeLayout relButtonCLIDeaBank;
-    private LinearLayoutManager mLayoutManager;
-    private WButton mBtnContinue;
-    private ImageView mImgInfo;
-    private List<Bank> mBanks;
-    private CLIFirstStepFragment mContext;
-    private WoolworthsApplication mWoolworthsApplication;
-    private UpdateBankDetail mUpdateBankDetail;
+	public interface StepNavigatorCallback {
+		void openNextFragment(int index);
+	}
 
-    public CLIFirstStepFragment() {
-    }
+	private RecyclerView mRecycleList;
+	private CLIDeaBankMapAdapter mCLIDeaBankMapAdapter;
+	private WTextView mTextCreditLimit;
+	private RelativeLayout relButtonCLIDeaBank;
+	private LinearLayoutManager mLayoutManager;
+	private WButton mBtnContinue;
+	private ImageView mImgInfo;
+	private List<Bank> mBanks;
+	private CLIFirstStepFragment mContext;
+	private WoolworthsApplication mWoolworthsApplication;
+	private UpdateBankDetail mUpdateBankDetail;
 
-    View view;
+	private boolean backgroundTaskLoaded = true;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.cli_fragment_step_one, container, false);
-        mContext = this;
-        mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-        setRetainInstance(true);
-        initUI();
-        setListener();
-        setText();
-        mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
-        view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (new ConnectionDetector().isOnline()) {
-                    setDeaBanks();
-                }
-            }
+	public CLIFirstStepFragment() {
+	}
 
-        });
-        return view;
-    }
+	View view;
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setDeaBanks();
-    }
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		mContext = this;
+		mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
+		setRetainInstance(true);
+		return inflater.inflate(R.layout.cli_fragment_step_one, container, false);
+	}
 
-    private void initUI() {
-        mRecycleList = (RecyclerView) view.findViewById(R.id.recycleList);
-        mTextCreditLimit = (WTextView) view.findViewById(R.id.textACreditLimit);
-        relButtonCLIDeaBank = (RelativeLayout) view.findViewById(R.id.relButtonCLIDeaBank);
-        mBtnContinue = (WButton) view.findViewById(R.id.btnContinue);
-        mImgInfo = (ImageView) view.findViewById(R.id.imgInfo);
-    }
+	@Override
+	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		try {
+			networkChangeListener = (NetworkChangeListener) this;
+		} catch (ClassCastException ignored) {
+		}
+		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
+		initUI(view);
+		setListener();
+		setText();
+		mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
+	}
 
-    private void setListener() {
-        relButtonCLIDeaBank.setOnClickListener(this);
-        mBtnContinue.setOnClickListener(this);
-        mImgInfo.setOnClickListener(this);
-    }
+	@Override
+	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		//setDeaBanks();
+	}
 
-    private void setText() {
-        mImgInfo.setVisibility(View.GONE);
-        mTextCreditLimit.setText(getActivity().getResources().getString(R.string.cli_select_your_bank));
-    }
+	private void initUI(View view) {
+		mRecycleList = (RecyclerView) view.findViewById(R.id.recycleList);
+		mTextCreditLimit = (WTextView) view.findViewById(R.id.textACreditLimit);
+		relButtonCLIDeaBank = (RelativeLayout) view.findViewById(R.id.relButtonCLIDeaBank);
+		mBtnContinue = (WButton) view.findViewById(R.id.btnContinue);
+		mImgInfo = (ImageView) view.findViewById(R.id.imgInfo);
+	}
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        stepNavigatorCallback = (StepNavigatorCallback) getActivity();
-    }
+	private void setListener() {
+		relButtonCLIDeaBank.setOnClickListener(this);
+		mBtnContinue.setOnClickListener(this);
+		mImgInfo.setOnClickListener(this);
+	}
 
-    public void setDeaBanks() {
-        fm = getActivity().getSupportFragmentManager();
-        mGetAccountsProgressDialog = ProgressDialogFragment.newInstance();
-        try {
-            if (!mGetAccountsProgressDialog.isAdded()) {
-                mGetAccountsProgressDialog.show(fm, "v");
-            } else {
-                mGetAccountsProgressDialog.dismiss();
-                mGetAccountsProgressDialog = ProgressDialogFragment.newInstance();
-                mGetAccountsProgressDialog.show(fm, "v");
-            }
+	private void setText() {
+		mImgInfo.setVisibility(View.GONE);
+		mTextCreditLimit.setText(getActivity().getResources().getString(R.string.cli_select_your_bank));
+	}
 
-            dEABankAsyncAPI().execute();
-        } catch (NullPointerException ignored) {
-        }
-    }
+	@Override
+	public void onAttach(Context context) {
+		super.onAttach(context);
+		stepNavigatorCallback = (StepNavigatorCallback) getActivity();
+	}
 
-    private HttpAsyncTask<String, String, DeaBanks> dEABankAsyncAPI() {
-        return new HttpAsyncTask<String, String, DeaBanks>() {
+	public void setDeaBanks() {
+		fm = getActivity().getSupportFragmentManager();
+		mGetAccountsProgressDialog = ProgressDialogFragment.newInstance();
+		try {
+			if (!mGetAccountsProgressDialog.isAdded()) {
+				mGetAccountsProgressDialog.show(fm, "v");
+			} else {
+				mGetAccountsProgressDialog.dismiss();
+				mGetAccountsProgressDialog = ProgressDialogFragment.newInstance();
+				mGetAccountsProgressDialog.show(fm, "v");
+			}
 
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
+			dEABankAsyncAPI().execute();
+		} catch (NullPointerException ignored) {
+		}
+	}
 
-                mErrorHandlerView.hideErrorHandlerLayout();
-            }
+	private HttpAsyncTask<String, String, DeaBanks> dEABankAsyncAPI() {
+		return new HttpAsyncTask<String, String, DeaBanks>() {
 
-            @Override
-            protected DeaBanks httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getActivity().getApplication()).getApi().getDeaBanks();
-            }
+			@Override
+			protected void onPreExecute() {
+				super.onPreExecute();
+				backgroundTaskLoaded = true;
+			}
 
-            @Override
-            protected Class<DeaBanks> httpDoInBackgroundReturnType() {
-                return DeaBanks.class;
-            }
+			@Override
+			protected DeaBanks httpDoInBackground(String... params) {
+				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getDeaBanks();
+			}
 
-            @Override
-            protected DeaBanks httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        stopProgressDialog();
-                    }
-                });
-                mErrorHandlerView.networkFailureHandler(errorMessage);
-                return new DeaBanks();
-            }
+			@Override
+			protected Class<DeaBanks> httpDoInBackgroundReturnType() {
+				return DeaBanks.class;
+			}
 
-            @Override
-            protected void onPostExecute(DeaBanks deaBanks) {
-                super.onPostExecute(deaBanks);
+			@Override
+			protected DeaBanks httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						stopProgressDialog();
+						backgroundTaskLoaded = true;
+					}
+				});
+				return new DeaBanks();
+			}
 
-                if (deaBanks.banks != null) {
-                    if (deaBanks.httpCode == 200) {
-                        mBanks = deaBanks.banks;
-                        otherChecked(deaBanks.banks);
-                        mCLIDeaBankMapAdapter = new CLIDeaBankMapAdapter(deaBanks.banks, mContext);
-                        mLayoutManager = new LinearLayoutManager(getActivity());
-                        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                        mRecycleList.setLayoutManager(mLayoutManager);
-                        mRecycleList.setNestedScrollingEnabled(false);
-                        mRecycleList.setAdapter(mCLIDeaBankMapAdapter);
-                        mCLIDeaBankMapAdapter.setCLIContent();
-                        relButtonCLIDeaBank.setVisibility(View.VISIBLE);
-                    } else {
-                        relButtonCLIDeaBank.setVisibility(View.GONE);
-                    }
-                } else {
+			@Override
+			protected void onPostExecute(DeaBanks deaBanks) {
+				super.onPostExecute(deaBanks);
 
-                    if (!TextUtils.isEmpty(deaBanks.response.desc)) {
-                        Utils.displayValidationMessage(getActivity(),
-                                TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                                deaBanks.response.desc);
-                    }
-                }
-                stopProgressDialog();
-            }
-        };
-    }
+				if (deaBanks.banks != null) {
+					if (deaBanks.httpCode == 200) {
+						mBanks = deaBanks.banks;
+						otherChecked(deaBanks.banks);
+						mCLIDeaBankMapAdapter = new CLIDeaBankMapAdapter(deaBanks.banks, mContext);
+						mLayoutManager = new LinearLayoutManager(getActivity());
+						mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+						mRecycleList.setLayoutManager(mLayoutManager);
+						mRecycleList.setNestedScrollingEnabled(false);
+						mRecycleList.setAdapter(mCLIDeaBankMapAdapter);
+						mCLIDeaBankMapAdapter.setCLIContent();
+						relButtonCLIDeaBank.setVisibility(View.VISIBLE);
+					} else {
+						relButtonCLIDeaBank.setVisibility(View.GONE);
+					}
+				} else {
 
-    public void otherChecked(List<Bank> bank) {
-        if (bank == null) {
-            bank = new ArrayList<>();
-        }
-        bank.add(new Bank(getActivity().getResources().getString(R.string.cli_others)));
-    }
+					if (!TextUtils.isEmpty(deaBanks.response.desc)) {
+						Utils.displayValidationMessage(getActivity(),
+								TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+								deaBanks.response.desc);
+					}
+				}
+				backgroundTaskLoaded = false;
+				stopProgressDialog();
+			}
+		};
+	}
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btnContinue:
-                if (mUpdateBankDetail != null) {
-                    if (mUpdateBankDetail.getBankName() != null) {
-                        if (mSelectedPosition == lastPosition()) { //others position clicked
-                            mWoolworthsApplication.setDEABank(false);
-                            mWoolworthsApplication.setOther(true);
-                            stepNavigatorCallback.openNextFragment(2);
-                        } else {
-                            mWoolworthsApplication.setDEABank(true);
-                            mWoolworthsApplication.setOther(false);
-                            stepNavigatorCallback.openNextFragment(1);
-                        }
-                    }
-                } else {
-                    Utils.displayValidationMessage(getActivity(),
-                            TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-                            getString(R.string.cli_select_bank_error));
-                }
-                break;
+	public void otherChecked(List<Bank> bank) {
+		if (bank == null) {
+			bank = new ArrayList<>();
+		}
+		bank.add(new Bank(getActivity().getResources().getString(R.string.cli_others)));
+	}
 
-            case R.id.imgInfo:
-                break;
-        }
-    }
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.btnContinue:
+				if (mUpdateBankDetail != null) {
+					if (mUpdateBankDetail.getBankName() != null) {
+						if (mSelectedPosition == lastPosition()) { //others position clicked
+							mWoolworthsApplication.setDEABank(false);
+							mWoolworthsApplication.setOther(true);
+							stepNavigatorCallback.openNextFragment(2);
+						} else {
+							mWoolworthsApplication.setDEABank(true);
+							mWoolworthsApplication.setOther(false);
+							stepNavigatorCallback.openNextFragment(1);
+						}
+					}
+				} else {
+					Utils.displayValidationMessage(getActivity(),
+							TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+							getString(R.string.cli_select_bank_error));
+				}
+				break;
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
+			case R.id.imgInfo:
+				break;
+		}
+	}
 
-    @Override
-    public void onCheckboxViewClick(View v, int position) {
-        mSelectedPosition = position;
-        if (mBanks != null) {
-            mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
-            if (mUpdateBankDetail != null) {
-                mUpdateBankDetail.setBankName(mBanks.get(position).bankName);
-            }
-        }
-    }
+	@Override
+	public void onDetach() {
+		super.onDetach();
+	}
 
-    public int lastPosition() {
-        if (mBanks != null)
-            return mBanks.size() - 1;
-        else
-            return 0;
-    }
+	@Override
+	public void onCheckboxViewClick(View v, int position) {
+		mSelectedPosition = position;
+		if (mBanks != null) {
+			mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
+			if (mUpdateBankDetail != null) {
+				mUpdateBankDetail.setBankName(mBanks.get(position).bankName);
+			}
+		}
+	}
 
-    public void stopProgressDialog() {
-        if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
-            mGetAccountsProgressDialog.dismiss();
-        }
-    }
+	public int lastPosition() {
+		if (mBanks != null)
+			return mBanks.size() - 1;
+		else
+			return 0;
+	}
+
+	public void stopProgressDialog() {
+		if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
+			mGetAccountsProgressDialog.dismiss();
+		}
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		getActivity().unregisterReceiver(connectionBroadcast);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+	}
+
+	@Override
+	public void onConnectionChanged() {
+		//connection changed
+		getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (new ConnectionDetector().isOnline()) {
+					if (backgroundTaskLoaded) {
+						setDeaBanks();
+					}
+				} else {
+					mErrorHandlerView.showToast();
+				}
+			}
+		});
+	}
 }

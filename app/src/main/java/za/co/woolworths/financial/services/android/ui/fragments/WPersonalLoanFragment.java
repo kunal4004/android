@@ -45,7 +45,7 @@ import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle,Observer {
+public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, Observer {
 
 	//private NetworkFailureInterface mNetworkFailureInterface;
 
@@ -104,7 +104,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		disableIncreaseLimit();
 		hideProgressBar();
 		setTextSize();
-		mErrorHandlerView=new ErrorHandlerView(getActivity());
+		mErrorHandlerView = new ErrorHandlerView(getActivity());
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -167,12 +167,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						.stay);
 				break;
 			case R.id.txtIncreseLimit:
-				if (!isOfferActive) {
-					((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
-					Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
-					startActivity(openCLIIncrease);
-					getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				}
+				//if (!isOfferActive) {
+				((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
+				Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
+				startActivity(openCLIIncrease);
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				//	}
 				break;
 		}
 	}
@@ -249,7 +249,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	}
 
 	public void disableIncreaseLimit() {
-		txtIncreseLimit.setEnabled(false);
+		txtIncreseLimit.setEnabled(true);
 		txtIncreseLimit.setTextColor(Color.GRAY);
 		mImageArrow.setImageAlpha(75);
 	}
@@ -320,6 +320,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			}
 		});
 	}
+
 	public void update(Observable observable, Object data) {
 		//connection changed
 		final Handler handler = new Handler();
@@ -329,7 +330,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				if (!cardHasId) {
 					if (new ConnectionDetector().isOnline())
 						getActiveOffer();
-
 				}
 			}
 		}, 100);
