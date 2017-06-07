@@ -77,21 +77,12 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 		initViews();
 		clickListener();
 		setContent();
-		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline()) {
-					authoriseLoanWithdrawal();
-				}
-			}
-
-		});
 		networkListener();
 	}
 
 	private void networkListener() {
 		try {
-			networkChangeListener = (NetworkChangeListener) this;
+			networkChangeListener = LoanWithdrawalConfirmActivity.this;
 		} catch (ClassCastException ignored) {
 		}
 		connectionBroadcast = Utils.connectionBroadCast(LoanWithdrawalConfirmActivity.this, networkChangeListener);
@@ -200,7 +191,6 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 					@Override
 					public void run() {
 						hideProgressBar();
-						mErrorHandlerView.networkFailureHandler(errorMessage);
 					}
 				});
 				return authoriseLoanResponse;
@@ -295,7 +285,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (new ConnectionDetector().isOnline()) {
+				if (new ConnectionDetector().isOnline(LoanWithdrawalConfirmActivity.this)) {
 					if (isLoanWithdrawalClicked()) {
 						hideKeyboard();
 						authoriseLoanWithdrawal();

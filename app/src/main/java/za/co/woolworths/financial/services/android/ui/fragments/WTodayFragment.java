@@ -70,7 +70,7 @@ public class WTodayFragment extends Fragment {
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline()) {
+				if (new ConnectionDetector().isOnline(getActivity())) {
 					webView.goBack();
 					mErrorHandlerView.hideErrorHandlerLayout();
 				}

@@ -66,7 +66,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline()) {
+				if (new ConnectionDetector().isOnline(getActivity())) {
 					mNavigationInterface.switchToView(3);
 				}
 			}

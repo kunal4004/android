@@ -102,7 +102,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline())
+				if (new ConnectionDetector().isOnline(getActivity()))
 					categoryRequest();
 			}
 		});

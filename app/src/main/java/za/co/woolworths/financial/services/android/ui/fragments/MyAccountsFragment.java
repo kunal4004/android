@@ -200,7 +200,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline()) {
+				if (new ConnectionDetector().isOnline(getActivity())) {
 					loadAccounts();
 				}
 			}

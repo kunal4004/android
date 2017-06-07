@@ -100,7 +100,7 @@ public class ProductSubCategoryActivity extends AppCompatActivity implements Vie
         findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (new ConnectionDetector().isOnline())
+                if (new ConnectionDetector().isOnline(ProductSubCategoryActivity.this))
                     getSubCategory();
             }
         });

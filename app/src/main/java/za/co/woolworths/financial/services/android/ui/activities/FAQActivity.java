@@ -70,7 +70,7 @@ public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQ
         findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (new ConnectionDetector().isOnline()) {
+                if (new ConnectionDetector().isOnline(FAQActivity.this)) {
                     getFAQRequest();
                 }
             }

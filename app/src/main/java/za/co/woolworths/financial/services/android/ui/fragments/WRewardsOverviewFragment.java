@@ -71,7 +71,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline()) {
+				if (new ConnectionDetector().isOnline(getActivity())) {
 					loadPromotions();
 				}
 			}

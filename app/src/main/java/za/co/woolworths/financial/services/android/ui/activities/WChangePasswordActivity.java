@@ -109,7 +109,7 @@ public class WChangePasswordActivity extends BaseActivity {
         findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (new ConnectionDetector().isOnline()) {
+                if (new ConnectionDetector().isOnline(WChangePasswordActivity.this)) {
                     webView.goBack();
                     mErrorHandlerView.hideErrorHandlerLayout();
                 }

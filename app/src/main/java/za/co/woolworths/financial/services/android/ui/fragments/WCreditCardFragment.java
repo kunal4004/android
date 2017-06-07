@@ -283,7 +283,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			@Override
 			public void run() {
 				if (!cardHasId) {
-					if (new ConnectionDetector().isOnline())
+					if (new ConnectionDetector().isOnline(getActivity()))
 					getActiveOffer();
 					else {
 						mErrorHandlerView.showToast();
@@ -319,7 +319,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			@Override
 			public void run() {
 				if (!cardHasId) {
-					if (new ConnectionDetector().isOnline())
+					if (new ConnectionDetector().isOnline(getActivity()))
 						getActiveOffer();
 
 				}

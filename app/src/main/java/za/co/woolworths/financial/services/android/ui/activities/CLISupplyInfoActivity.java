@@ -587,7 +587,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (new ConnectionDetector().isOnline()) {
+				if (new ConnectionDetector().isOnline(CLISupplyInfoActivity.this)) {
 					if (valideView() && continueButtonClicked) {
 						createOfferRequest();
 					}

@@ -117,7 +117,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline()) {
+				if (new ConnectionDetector().isOnline(ProductGridActivity.this)) {
 
 					switch (runTask) {
 
@@ -762,7 +762,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (new ConnectionDetector().isOnline()) {
+				if (new ConnectionDetector().isOnline(ProductGridActivity.this)) {
 					if (selectProductDetail && productBackgroundFail) {
 						onCallback(mProductId, mSkuId, false);
 					}

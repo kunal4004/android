@@ -292,7 +292,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			@Override
 			public void run() {
 				if (!cardHasId) {
-					if (new ConnectionDetector().isOnline())
+					if (new ConnectionDetector().isOnline(getActivity()))
 						getActiveOffer();
 					else {
 						mErrorHandlerView.showToast();
@@ -327,7 +327,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			@Override
 			public void run() {
 				if (!cardHasId) {
-					if (new ConnectionDetector().isOnline())
+					if (new ConnectionDetector().isOnline(getActivity()))
 						getActiveOffer();
 
 				}

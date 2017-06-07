@@ -119,38 +119,11 @@ public class ErrorHandlerView {
 		Alerter.create((Activity) mContext)
 				.setTitle("")
 				.setText(mContext.getResources().getString(R.string.no_connection))
+				.setContentGravity(Gravity.CENTER)
 				.setBackgroundColor(R.color.header_red)
 				.setDuration(toastDurationInMilliSeconds)
 				.setIcon(null)
 				.show();
-		/*Resources resources = mContext.getResources();
-		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context
-				.LAYOUT_INFLATER_SERVICE);
-		View view = inflater.inflate(R.layout.custom_toast, null);
-		view.setBackgroundColor(ContextCompat.getColor(mContext, R.color.header_red));
-		WTextView text = (WTextView) view.findViewById(R.id.textWhite);
-		text.setGravity(Gravity.CENTER);
-		text.setText(resources.getString(R.string.no_connection));
-		text.setTextColor(Color.WHITE);
-		final Toast toast = new Toast(mContext.getApplicationContext());
-		toast.setGravity(Gravity.TOP | Gravity.FILL_HORIZONTAL, 0, 0);
-		toast.setDuration(Toast.LENGTH_LONG);
-		// Set the countdown to display the toast
-		CountDownTimer toastCountDown;
-		toastCountDown = new CountDownTimer(toastDurationInMilliSeconds, 1000 *//*Tick duration*//*) {
-			public void onTick(long millisUntilFinished) {
-				toast.show();
-			}
-
-			public void onFinish() {
-				toast.cancel();
-			}
-		};
-
-		toast.setView(view);
-		// Show the toast and starts the countdown
-		toast.show();
-		toastCountDown.start();*/
 	}
 
 	public void webViewBlankPage(WebView view) {

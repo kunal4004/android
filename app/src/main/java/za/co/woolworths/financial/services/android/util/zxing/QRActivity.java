@@ -202,7 +202,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (new ConnectionDetector().isOnline()) {
+                if (new ConnectionDetector().isOnline(QRActivity.this)) {
                     switch (mCurrentBgTask) {
                         case MBGPRODUCT:
                             getProductRequest(mBarcodeNumber);

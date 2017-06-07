@@ -246,7 +246,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			@RequiresApi(api = Build.VERSION_CODES.M)
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline()) {
+				if (new ConnectionDetector().isOnline(getActivity())) {
 					initLocationCheck();
 				}
 			}
@@ -407,10 +407,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			for (int i = 0; i < storeDetailsList.size(); i++) {
 				if (i == 0) {
 					drawMarker(new LatLng(storeDetailsList.get(i).latitude, storeDetailsList.get(i).longitude), selectedIcon, i);
-					final Location location = new Location("");
-					location.setLatitude(storeDetailsList.get(i).latitude);
-					location.setLongitude(storeDetailsList.get(i).longitude);
-					zoomToLocation(location);
 				} else
 					drawMarker(new LatLng(storeDetailsList.get(i).latitude, storeDetailsList.get(i).longitude), unSelectedIcon, i);
 			}

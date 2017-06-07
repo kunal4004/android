@@ -290,7 +290,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (new ConnectionDetector().isOnline()) {
+				if (new ConnectionDetector().isOnline(getActivity())) {
 					if (backgroundTaskLoaded) {
 						setDeaBanks();
 					}

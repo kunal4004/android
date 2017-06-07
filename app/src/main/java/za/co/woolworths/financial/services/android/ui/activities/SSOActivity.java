@@ -129,7 +129,7 @@ public class SSOActivity extends WebViewActivity {
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline()) {
+				if (new ConnectionDetector().isOnline(SSOActivity.this)) {
 					webView.goBack();
 					mErrorHandlerView.hideErrorHandlerLayout();
 				}

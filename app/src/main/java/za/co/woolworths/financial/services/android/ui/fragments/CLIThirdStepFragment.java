@@ -537,8 +537,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
 	@Override
 	public void onConnectionChanged() {
-		if (new ConnectionDetector().isOnline()) {
-			if (new ConnectionDetector().isOnline()) {
+			if (new ConnectionDetector().isOnline(getActivity())) {
 				Log.e("BankAccountType", "retryBackgroundTask " + retryBackgroundTask);
 				switch (retryBackgroundTask) {
 					case SEND_EMAIL:
@@ -560,7 +559,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 							getBankAccountTypes();
 						break;
 				}
-			}
 		} else {
 			mErrorHandlerView.showToast();
 		}

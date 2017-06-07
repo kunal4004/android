@@ -299,7 +299,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			@Override
 			public void run() {
 				if (!cardHasId) {
-					if (new ConnectionDetector().isOnline())
+					if (new ConnectionDetector().isOnline(getActivity()))
 						getActiveOffer();
 					else {
 						mErrorHandlerView.showToast();
@@ -327,7 +327,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			@Override
 			public void run() {
 				if (!cardHasId) {
-					if (new ConnectionDetector().isOnline())
+					if (new ConnectionDetector().isOnline(getActivity()))
 						getActiveOffer();
 				}
 			}

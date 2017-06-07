@@ -61,7 +61,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		pBar = (ProgressBar) findViewById(R.id.progressBar);
 		pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		//Mobile Config Server
-		if (new ConnectionDetector().isOnline()) {
+		if (new ConnectionDetector().isOnline(WSplashScreenActivity.this)) {
 			setUpScreen();
 			executeConfigServer();
 		} else {
@@ -70,7 +70,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		findViewById(R.id.retry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline()) {
+				if (new ConnectionDetector().isOnline(WSplashScreenActivity.this)) {
 					setUpScreen();
 					executeConfigServer();
 				} else {
