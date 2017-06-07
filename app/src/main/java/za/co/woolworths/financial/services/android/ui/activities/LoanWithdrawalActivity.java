@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
@@ -40,10 +42,11 @@ import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class LoanWithdrawalActivity extends BaseActivity {
+public class LoanWithdrawalActivity extends BaseActivity implements NetworkChangeListener {
 
 	private WLoanEditTextView mEditWithdrawalAmount;
 	private WTextView mTextAvailableFund;
@@ -62,6 +65,10 @@ public class LoanWithdrawalActivity extends BaseActivity {
 	private RelativeLayout mLinLoanWithdrawalSuccess;
 	private boolean deleteKeyIsPressed = false;
 	private ErrorHandlerView mErrorHandlerView;
+	private NetworkChangeListener networkChangeListener;
+	private BroadcastReceiver connectionBroadcast;
+
+	private boolean loanWithdrawalClicked = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +77,13 @@ public class LoanWithdrawalActivity extends BaseActivity {
 		setContentView(R.layout.loan_withdrawal_activity);
 		mErrorHandlerView = new ErrorHandlerView(this, (RelativeLayout) findViewById(R.id.no_connection_layout));
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(LoanWithdrawalActivity.this);
+
+		try {
+			networkChangeListener = LoanWithdrawalActivity.this;
+		} catch (ClassCastException ignored) {
+		}
+		connectionBroadcast = Utils.connectionBroadCast(LoanWithdrawalActivity.this, networkChangeListener);
+
 		setActionBar();
 		initViews();
 		setContent();
@@ -91,6 +105,7 @@ public class LoanWithdrawalActivity extends BaseActivity {
 			}, 1000);
 		}
 	}
+
 
 	private void initViews() {
 		mTextAvailableFund = (WTextView) findViewById(R.id.textAvailableFunds);
@@ -129,6 +144,7 @@ public class LoanWithdrawalActivity extends BaseActivity {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
 					handled = true;
 					if (arrowIsVisible) {
+						loanWithdrawalClicked = true;
 						setAmount();
 					}
 				}
@@ -184,10 +200,11 @@ public class LoanWithdrawalActivity extends BaseActivity {
 				previousScreen();
 				return true;
 			case R.id.itemNextArrow:
-				if (new ConnectionDetector().isOnline()) {
-					setAmount();
-					loanRequest();
+				if (new ConnectionDetector().isOnline(this)) {
+					showSoftKeyboard();
 				}
+				loanWithdrawalClicked = true;
+				setAmount();
 				break;
 		}
 		return false;
@@ -264,11 +281,6 @@ public class LoanWithdrawalActivity extends BaseActivity {
 		}
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-	}
-
 	private void loanRequest() {
 		issueLoanRequest = loanRequestAPI();
 		issueLoanRequest.execute();
@@ -299,9 +311,9 @@ public class LoanWithdrawalActivity extends BaseActivity {
 
 			@Override
 			protected void onPreExecute() {
+				super.onPreExecute();
 				showSoftKeyboard();
 				showProgressBar();
-				super.onPreExecute();
 			}
 
 			@Override
@@ -310,6 +322,7 @@ public class LoanWithdrawalActivity extends BaseActivity {
 				try {
 					hideProgressBar();
 					if (issueLoanResponse.httpCode == 200) {
+						loanWithdrawalClicked = false;
 						mSharePreferenceHelper.save(String.valueOf(issueLoanResponse.installmentAmount), "lw_installment_amount");
 						Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this, LoanWithdrawalConfirmActivity.class);
 						openConfirmWithdrawal.putExtra("drawnDownAmount", mDrawnDownAmount);
@@ -331,6 +344,7 @@ public class LoanWithdrawalActivity extends BaseActivity {
 								}
 							}
 						} catch (NullPointerException ignored) {
+							showSoftKeyboard();
 						}
 					}
 				} catch (Exception ignored) {
@@ -343,7 +357,9 @@ public class LoanWithdrawalActivity extends BaseActivity {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
+						loanWithdrawalClicked = true;
 						hideProgressBar();
+						showSoftKeyboard();
 					}
 				});
 				return issueLoanResponse;
@@ -423,7 +439,6 @@ public class LoanWithdrawalActivity extends BaseActivity {
 			}
 		}
 	}
-
 
 	public class NumberTextWatcher implements TextWatcher {
 
@@ -534,5 +549,54 @@ public class LoanWithdrawalActivity extends BaseActivity {
 				hasFractionalPart = s.toString().contains(String.valueOf(df.getDecimalFormatSymbols().getDecimalSeparator()));
 			}
 		}
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		unregisterReceiver(connectionBroadcast);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		showSoftKeyboard();
+		registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+	}
+
+	@Override
+	public void onConnectionChanged() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (new ConnectionDetector().isOnline()) {
+					try {
+						Log.e("loanWithdrawalAmt",loanAmount() + " "+loanWithdrawalClicked);
+						if (loanAmount() && loanWithdrawalClicked) {
+							setAmount();
+							loanWithdrawalClicked = false;
+						}
+					} catch (Exception ignored) {
+					}
+				} else {
+					mErrorHandlerView.showToast();
+					showSoftKeyboard();
+				}
+			}
+		});
+	}
+
+	private boolean loanAmount() {
+		boolean setAmount;
+		if (getDrawnDownAmount() < wminDrawnDownAmount) {
+			setAmount = false;
+		} else if (getDrawnDownAmount() >= wminDrawnDownAmount
+				&& getDrawnDownAmount() <= getAvailableFund()) {
+			return true;
+
+		} else {
+			setAmount = false;
+		}
+		return setAmount;
 	}
 }

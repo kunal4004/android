@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
@@ -33,7 +35,7 @@ import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.OnClickListener {
+public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.OnClickListener, NetworkChangeListener {
 
 	private ScrollView mScrollLoanWithdrawal;
 	private SharePreferenceHelper mSharePreferenceHelper;
@@ -49,18 +51,15 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 	private int minDrawnDownAmount;
 	ErrorHandlerView mErrorHandlerView;
 	private NetworkChangeListener networkChangeListener;
+	private BroadcastReceiver connectionBroadcast;
+	private boolean loanWithdrawalClicked;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Utils.updateStatusBarBackground(LoanWithdrawalConfirmActivity.this, R.color.purple);
 		setContentView(R.layout.loan_withdrawal_activity);
-
-//		try {
-//			networkChangeListener = (NetworkChangeListener) .this;
-//		} catch (ClassCastException ignored) {
-//		}
-//		connectionBroadcast = Utils.connectionBroadCast(CLISupplyInfoActivity.this, networkChangeListener);
 
 		mErrorHandlerView = new ErrorHandlerView(this, (RelativeLayout) findViewById(R.id.no_connection_layout));
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(LoanWithdrawalConfirmActivity.this);
@@ -87,6 +86,15 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 			}
 
 		});
+		networkListener();
+	}
+
+	private void networkListener() {
+		try {
+			networkChangeListener = (NetworkChangeListener) this;
+		} catch (ClassCastException ignored) {
+		}
+		connectionBroadcast = Utils.connectionBroadCast(LoanWithdrawalConfirmActivity.this, networkChangeListener);
 	}
 
 	private void initViews() {
@@ -160,7 +168,6 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 			protected void onPreExecute() {
 				showProgressBar();
 				super.onPreExecute();
-				mErrorHandlerView.hideErrorHandlerLayout();
 			}
 
 			@Override
@@ -172,6 +179,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 						Intent intent = new Intent(LoanWithdrawalConfirmActivity.this, LoanWithdrawalSuccessActivity.class);
 						startActivity(intent);
 						finish();
+						setLoanWithdrawalClicked(false);
 					} else {
 						String desc = authoriseLoanResponse.response.desc;
 						if (desc != null && !TextUtils.isEmpty(desc)) {
@@ -180,7 +188,9 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 									desc);
 						}
 					}
-				}catch (Exception ignored){}
+
+				} catch (Exception ignored) {
+				}
 			}
 
 			@Override
@@ -207,6 +217,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.btnConfirm:
+				setLoanWithdrawalClicked(true);
 				hideKeyboard();
 				authoriseLoanWithdrawal();
 				break;
@@ -271,5 +282,37 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 				authoriseLoanRequest.cancel(true);
 			}
 		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+	}
+
+	@Override
+	public void onConnectionChanged() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (new ConnectionDetector().isOnline()) {
+					if (isLoanWithdrawalClicked()) {
+						hideKeyboard();
+						authoriseLoanWithdrawal();
+						setLoanWithdrawalClicked(false);
+					}
+				} else {
+					mErrorHandlerView.showToast();
+				}
+			}
+		});
+	}
+
+	public boolean isLoanWithdrawalClicked() {
+		return loanWithdrawalClicked;
+	}
+
+	public void setLoanWithdrawalClicked(boolean pLoanWithdrawalClicked) {
+		loanWithdrawalClicked = pLoanWithdrawalClicked;
 	}
 }
