@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.awfs.coordination.R;
+import com.tapadoo.alerter.Alerter;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.activities.WConnectionHandlerActivity;
@@ -115,7 +116,14 @@ public class ErrorHandlerView {
 
 	public void showToast() {
 		int toastDurationInMilliSeconds = 3000;
-		Resources resources = mContext.getResources();
+		Alerter.create((Activity) mContext)
+				.setTitle("")
+				.setText(mContext.getResources().getString(R.string.no_connection))
+				.setBackgroundColor(R.color.header_red)
+				.setDuration(toastDurationInMilliSeconds)
+				.setIcon(null)
+				.show();
+		/*Resources resources = mContext.getResources();
 		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context
 				.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.custom_toast, null);
@@ -129,7 +137,7 @@ public class ErrorHandlerView {
 		toast.setDuration(Toast.LENGTH_LONG);
 		// Set the countdown to display the toast
 		CountDownTimer toastCountDown;
-		toastCountDown = new CountDownTimer(toastDurationInMilliSeconds, 1000 /*Tick duration*/) {
+		toastCountDown = new CountDownTimer(toastDurationInMilliSeconds, 1000 *//*Tick duration*//*) {
 			public void onTick(long millisUntilFinished) {
 				toast.show();
 			}
@@ -142,7 +150,7 @@ public class ErrorHandlerView {
 		toast.setView(view);
 		// Show the toast and starts the countdown
 		toast.show();
-		toastCountDown.start();
+		toastCountDown.start();*/
 	}
 
 	public void webViewBlankPage(WebView view) {
