@@ -87,7 +87,9 @@ public final class Alerter {
         return new Runnable() {
             @Override
             public void run() {
-                ((ViewGroup) childView.getParent()).removeView(childView);
+                try {
+                    ((ViewGroup) childView.getParent()).removeView(childView);
+                }catch (NullPointerException ex){}
             }
         };
     }
