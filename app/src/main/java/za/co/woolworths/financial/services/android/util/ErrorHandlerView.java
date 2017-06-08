@@ -5,11 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.os.CountDownTimer;
-import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -18,11 +14,11 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.awfs.coordination.R;
-import com.tapadoo.alerter.Alerter;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.activities.WConnectionHandlerActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.alert.Alerter;
 
 public class ErrorHandlerView {
 
@@ -144,14 +140,6 @@ public class ErrorHandlerView {
 				(ViewGroup.MarginLayoutParams) v.getLayoutParams();
 		params.setMargins(left, top,
 				right, bottom);
-	}
-
-	public void enableCardPageScrollGesture() {
-		mWoolWorthsApp.getWGlobalState().setCardGestureIsEnabled(false);
-	}
-
-	public void disableCardPageScrollGesture() {
-		mWoolWorthsApp.getWGlobalState().setCardGestureIsEnabled(true);
 	}
 
 	public void textDescription(String desc) {

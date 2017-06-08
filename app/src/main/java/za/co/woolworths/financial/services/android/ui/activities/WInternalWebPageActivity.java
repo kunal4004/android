@@ -7,8 +7,10 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -87,7 +89,18 @@ public class WInternalWebPageActivity extends AppCompatActivity {
 			public void onClick(View v) {
 				if (new ConnectionDetector().isOnline(WInternalWebPageActivity.this)) {
 					showProgressBar();
-					webInternalPage.goBack();
+					WebBackForwardList history = webInternalPage.copyBackForwardList();
+					int index = -1;
+					String url;
+					while (webInternalPage.canGoBackOrForward(index)) {
+						if (!history.getItemAtIndex(history.getCurrentIndex() + index).getUrl().equals("about:blank")) {
+							webInternalPage.goBackOrForward(index);
+							url = history.getItemAtIndex(-index).getUrl();
+							Log.e("tag", "first non empty" + url);
+							break;
+						}
+						index--;
+					}
 					mErrorHandlerView.hideErrorHandlerLayout();
 				}
 			}
@@ -112,12 +125,7 @@ public class WInternalWebPageActivity extends AppCompatActivity {
 		if (event.getAction() == KeyEvent.ACTION_DOWN) {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_BACK:
-					if (webInternalPage.canGoBack()) {
-						webInternalPage.goBack();
-					} else {
-						finish();
-						overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
-					}
+					goBackInWebView();
 					return true;
 			}
 
@@ -132,4 +140,37 @@ public class WInternalWebPageActivity extends AppCompatActivity {
 		}
 	}
 
+	public void goBackInWebView() {
+		if (new ConnectionDetector().isOnline(WInternalWebPageActivity.this)) {
+			WebBackForwardList history = webInternalPage.copyBackForwardList();
+			int index = -1;
+			String url = null;
+
+			while (webInternalPage.canGoBackOrForward(index)) {
+				if (!history.getItemAtIndex(history.getCurrentIndex() + index).getUrl().equals("about:blank")) {
+					mErrorHandlerView.hideErrorHandlerLayout();
+					webInternalPage.goBackOrForward(index);
+					url = history.getItemAtIndex(-index).getUrl();
+					Log.e("tag", "first non empty" + url);
+					break;
+				}
+				index--;
+			}
+			// no history found that is not empty
+			if (url == null) {
+				if (webInternalPage.canGoBack()) {
+					webInternalPage.goBack();
+				} else {
+					finishActivity();
+				}
+			}
+		} else {
+			finishActivity();
+		}
+	}
+
+	public void finishActivity() {
+		finish();
+		overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+	}
 }

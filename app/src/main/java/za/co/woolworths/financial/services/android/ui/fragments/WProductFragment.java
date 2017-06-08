@@ -345,6 +345,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 		mRecycleProductSearch.setLayoutManager(mLayoutManager);
 		mRecycleProductSearch.setNestedScrollingEnabled(false);
 		mRecycleProductSearch.setAdapter(myAdapter);
+		myAdapter.notifyDataSetChanged();
 
 	}
 

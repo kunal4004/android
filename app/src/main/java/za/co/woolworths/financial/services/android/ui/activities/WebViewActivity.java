@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -69,18 +70,19 @@ public class WebViewActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				if (this.webView.canGoBack()) {
-					this.webView.goBack();
-				} else {
-					finish();
-					overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
-				}
+				goBackInWebView();
 				break;
 		}
 		return true;
 	}
 
 	protected class WebViewController extends WebViewClient {
+
+		@Override
+		public void onLoadResource(WebView view, String url) {
+			super.onLoadResource(view, url);
+			Log.e("onLoadResource", url);
+		}
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -118,5 +120,42 @@ public class WebViewActivity extends AppCompatActivity {
 
 	public void clearTitle() {
 		toolbarTextView.setText("");
+	}
+
+
+	private void goBackInWebView() {
+		if (new ConnectionDetector().isOnline(WebViewActivity.this)) {
+			WebBackForwardList history = webView.copyBackForwardList();
+			int index = -1;
+			String url = null;
+			while (webView.canGoBackOrForward(index)) {
+				if (!history.getItemAtIndex(history.getCurrentIndex() + index).getUrl().equals("about:blank")) {
+					webView.goBackOrForward(index);
+					url = history.getItemAtIndex(-index).getUrl();
+					Log.e("tag", "first non empty" + url);
+					break;
+				}
+				index--;
+			}
+			// no history found that is not empty
+			if (url == null) {
+				canGoBack();
+			}
+		} else {
+			finishActivity();
+		}
+	}
+
+	public void canGoBack() {
+		if (webView.canGoBack()) {
+			webView.goBack();
+		} else {
+			finishActivity();
+		}
+	}
+
+	public void finishActivity() {
+		finish();
+		overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 	}
 }

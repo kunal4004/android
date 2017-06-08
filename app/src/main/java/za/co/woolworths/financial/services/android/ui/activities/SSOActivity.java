@@ -14,10 +14,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -45,12 +47,11 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
-import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class SSOActivity extends WebViewActivity {
 
-	private ErrorHandlerView mErrorHandlerView;
+	public ErrorHandlerView mErrorHandlerView;
 
 	public static enum SSOActivityResult {
 		LAUNCH(1),
@@ -130,7 +131,18 @@ public class SSOActivity extends WebViewActivity {
 			@Override
 			public void onClick(View v) {
 				if (new ConnectionDetector().isOnline(SSOActivity.this)) {
-					webView.goBack();
+					WebBackForwardList history = webView.copyBackForwardList();
+					int index = -1;
+					String url;
+					while (webView.canGoBackOrForward(index)) {
+						if (!history.getItemAtIndex(history.getCurrentIndex() + index).getUrl().equals("about:blank")) {
+							webView.goBackOrForward(index);
+							url = history.getItemAtIndex(-index).getUrl();
+							Log.e("tag", "first non empty" + url);
+							break;
+						}
+						index--;
+					}
 					mErrorHandlerView.hideErrorHandlerLayout();
 				}
 			}
@@ -439,8 +451,6 @@ public class SSOActivity extends WebViewActivity {
 
 	//1. sendRegistrationToServer is created twice: SSOActivity and WFirebaseInstanceIDSService
 	//
-
-
 	private void sendRegistrationToServer() {
 		// sending gcm token to server
 		final CreateUpdateDevice device = new CreateUpdateDevice();
@@ -480,7 +490,6 @@ public class SSOActivity extends WebViewActivity {
 				super.onPostExecute(createUpdateResponse);
 			}
 		}.execute();
-
 	}
 
 	@Override
@@ -488,16 +497,49 @@ public class SSOActivity extends WebViewActivity {
 		if (event.getAction() == KeyEvent.ACTION_DOWN) {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_BACK:
-					if (this.webView.canGoBack()) {
-						this.webView.goBack();
-					} else {
-						finish();
-						overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
-					}
+					goBackInWebView();
 					return true;
 			}
-
 		}
-		return super.onKeyDown(keyCode, event);
+		return false;
+	}
+
+	public void goBackInWebView() {
+		if (new ConnectionDetector().isOnline(SSOActivity.this)) {
+			WebBackForwardList history = webView.copyBackForwardList();
+			int index = -1;
+			String url = null;
+
+			while (webView.canGoBackOrForward(index)) {
+				if (!history.getItemAtIndex(history.getCurrentIndex() + index).getUrl().equals("about:blank")) {
+					mErrorHandlerView.hideErrorHandlerLayout();
+					webView.goBackOrForward(index);
+					url = history.getItemAtIndex(-index).getUrl();
+					Log.e("tag", "first non empty" + url);
+					break;
+				}
+				index--;
+			}
+			// no history found that is not empty
+			if (url == null) {
+				if (webView.canGoBack()) {
+					webView.goBack();
+				} else {
+					finishActivity();
+				}
+			}
+		} else {
+			finishActivity();
+		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				goBackInWebView();
+				break;
+		}
+		return true;
 	}
 }

@@ -19,22 +19,23 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WebAppInterface;
 
 public class WTodayFragment extends Fragment {
 	WebView webView;
 	ErrorHandlerView mErrorHandlerView;
+	MenuNavigationInterface mMenuNavigationInterface;
 
 	@Nullable
 	@Override
-	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
 		return inflater.inflate(R.layout.wtoday_fragment, container, false);
 	}
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		mMenuNavigationInterface = (MenuNavigationInterface) getActivity();
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
 		initWebView(view);
 		retryConnect(view);
@@ -71,8 +72,7 @@ public class WTodayFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				if (new ConnectionDetector().isOnline(getActivity())) {
-					webView.goBack();
-					mErrorHandlerView.hideErrorHandlerLayout();
+					mMenuNavigationInterface.switchToView(0);
 				}
 			}
 		});
