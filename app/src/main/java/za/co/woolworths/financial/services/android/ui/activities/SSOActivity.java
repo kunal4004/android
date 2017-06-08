@@ -394,7 +394,6 @@ public class SSOActivity extends WebViewActivity {
 			super.onReceivedError(view, request, error);
 			mErrorHandlerView.webViewBlankPage(view);
 			mErrorHandlerView.networkFailureHandler(error.toString());
-			clearTitle();
 		}
 
 		@SuppressWarnings("deprecation")

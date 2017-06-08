@@ -1,31 +1,20 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
-import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
-
-import static com.crittercism.internal.ap.C;
-
 public class WebViewActivity extends AppCompatActivity {
 
 	WebView webView;
@@ -47,6 +36,7 @@ public class WebViewActivity extends AppCompatActivity {
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(null);
+
 		String url = b.getString("link");
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.setWebViewClient(new WebViewController());
@@ -58,9 +48,10 @@ public class WebViewActivity extends AppCompatActivity {
 			@Override
 			public void onReceivedTitle(WebView view, String title) {
 				super.onReceivedTitle(view, title);
-				if (new ConnectionDetector().isOnline(WebViewActivity.this)) {
+				if (title.equalsIgnoreCase(getString(R.string.sso_title_text_submit_this_form)))
+					toolbarTextView.setText("");
+				else
 					toolbarTextView.setText(title);
-				}
 			}
 		});
 	}
@@ -69,19 +60,18 @@ public class WebViewActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				goBackInWebView();
+				if (this.webView.canGoBack()) {
+					this.webView.goBack();
+				} else {
+					finish();
+					overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+				}
 				break;
 		}
 		return true;
 	}
 
 	protected class WebViewController extends WebViewClient {
-
-		@Override
-		public void onLoadResource(WebView view, String url) {
-			super.onLoadResource(view, url);
-			Log.e("onLoadResource", url);
-		}
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -115,46 +105,5 @@ public class WebViewActivity extends AppCompatActivity {
 			cookieSyncMngr.stopSync();
 			cookieSyncMngr.sync();
 		}
-	}
-
-	public void clearTitle() {
-		toolbarTextView.setText("");
-	}
-
-
-	private void goBackInWebView() {
-		if (new ConnectionDetector().isOnline(WebViewActivity.this)) {
-			WebBackForwardList history = webView.copyBackForwardList();
-			int index = -1;
-			String url = null;
-			while (webView.canGoBackOrForward(index)) {
-				if (!history.getItemAtIndex(history.getCurrentIndex() + index).getUrl().equals("about:blank")) {
-					webView.goBackOrForward(index);
-					url = history.getItemAtIndex(-index).getUrl();
-					Log.e("tag", "first non empty" + url);
-					break;
-				}
-				index--;
-			}
-			// no history found that is not empty
-			if (url == null) {
-				canGoBack();
-			}
-		} else {
-			finishActivity();
-		}
-	}
-
-	public void canGoBack() {
-		if (webView.canGoBack()) {
-			webView.goBack();
-		} else {
-			finishActivity();
-		}
-	}
-
-	public void finishActivity() {
-		finish();
-		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
 }
