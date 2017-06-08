@@ -35,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.CameraUpdate;
@@ -126,7 +127,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	private ErrorHandlerView mErrorHandlerView;
 	private Location mLocation;
 	private StoresNearbyFragment1 mFragment;
-
+	MenuItem searchMenu;
 	public StoresNearbyFragment1() {
 		setHasOptionsMenu(true);
 	}
@@ -236,9 +237,14 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			@Override
 			public void onClick(View v) {
 				updateMap = true;
-				Intent locIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-				getActivity().startActivity(locIntent);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				if(checkLocationPermission()) {
+					Intent locIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+					getActivity().startActivity(locIntent);
+					getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				}
+				else {
+					checkLocationPermission();
+				}
 			}
 		});
 
@@ -296,7 +302,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	private void onMapReady() {
 		//If permission is not granted, request permission.
 		googleMap.setInfoWindowAdapter(new MapWindowAdapter(getContext()));
-		googleMap.setMyLocationEnabled(false);
 		googleMap.setOnMarkerClickListener(mFragment);
 		unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
 		selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
@@ -496,6 +501,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
+				disableSearchMenu();
 				showProgressBar();
 				mErrorHandlerView.hideErrorHandlerLayout();
 			}
@@ -515,6 +521,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
+						enableSearchMenu();
 						hideProgressBar();
 						Log.d(TAG, "mProgress");
 					}
@@ -527,6 +534,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			@Override
 			protected void onPostExecute(LocationResponse locationResponse) {
 				super.onPostExecute(locationResponse);
+				enableSearchMenu();
 				hideProgressBar();
 				storeDetailsList = new ArrayList<>();
 				storeDetailsList = locationResponse.Locations;
@@ -598,7 +606,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.w_store_locator_menu, menu);
-		MenuItem searchMenu = menu.findItem(R.id.action_search).setVisible(true);
+		 searchMenu = menu.findItem(R.id.action_search).setVisible(true);
 		//Disable until finding location
 		searchMenu.getIcon().setAlpha(130);
 		if (navigateMenuState) {
@@ -607,10 +615,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			menu.findItem(R.id.action_locate).setVisible(false);
 		}
 
-		if (Utils.getLastSavedLocation(getActivity()) != null) {
+		/*if (Utils.getLastSavedLocation(getActivity()) != null) {
 			searchMenu.setEnabled(true);
 			searchMenu.getIcon().setAlpha(255);
-		}
+		}*/
 
 	}
 
@@ -674,6 +682,9 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 						new IntentFilter(FusedLocationSingleton.INTENT_FILTER_LOCATION_UPDATE));
 			}
 		}
+		else {
+			checkLocationPermission();
+		}
 
 	}
 
@@ -719,6 +730,9 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 				!= PackageManager.PERMISSION_GRANTED) {
 			if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
 					Manifest.permission.ACCESS_FINE_LOCATION)) {
+				ActivityCompat.requestPermissions(getActivity(),
+						new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+						PERMS_REQUEST_CODE);
 			} else {
 				//we can request the permission.
 				ActivityCompat.requestPermissions(getActivity(),
@@ -776,6 +790,51 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			checkLocationServiceAndSetLayout(true);
 			initLocationCheck();
 			updateMap = false;
+		}
+	}
+	@Override
+	public void onRequestPermissionsResult(int requestCode,
+										   String permissions[], int[] grantResults) {
+		switch (requestCode) {
+			case PERMS_REQUEST_CODE: {
+				// If request is cancelled, the result arrays are empty.
+				if (grantResults.length > 0
+						&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+					// permission was granted. Do the
+					// contacts-related task you need to do.
+					if (ContextCompat.checkSelfPermission(getActivity(),
+							Manifest.permission.ACCESS_FINE_LOCATION)
+							== PackageManager.PERMISSION_GRANTED) {
+						startLocationUpdates();
+						googleMap.setMyLocationEnabled(false);
+					}
+
+				} else {
+
+					// Permission denied, Disable the functionality that depends on this permission.
+				}
+				return;
+			}
+
+			// other 'case' lines to check for other permissions this app might request.
+			// You can add here other case statements according to your requirement.
+		}
+	}
+	public void enableSearchMenu()
+	{
+		if(searchMenu!=null)
+		{
+			searchMenu.setEnabled(true);
+			searchMenu.getIcon().setAlpha(255);
+		}
+	}
+	public void disableSearchMenu()
+	{
+		if(searchMenu!=null)
+		{
+			searchMenu.setEnabled(false);
+			searchMenu.getIcon().setAlpha(130);
 		}
 	}
 }
