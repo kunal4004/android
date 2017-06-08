@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
@@ -38,14 +40,16 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.NetworkChangeReceiver;
 import za.co.woolworths.financial.services.android.util.NetworkFailureInterface;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, Observer {
+public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle,NetworkChangeListener {
 
 	//private NetworkFailureInterface mNetworkFailureInterface;
 
@@ -70,6 +74,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 	private AccountsResponse temp = null;
 	private ErrorHandlerView mErrorHandlerView;
+	private BroadcastReceiver connectionBroadcast;
+	private NetworkChangeListener networkChangeListener;
 
 	@Nullable
 	@Override
@@ -100,6 +106,11 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
 		txtIncreseLimit.setOnClickListener(this);
 		transactions.setOnClickListener(this);
+		try {
+			networkChangeListener = (NetworkChangeListener) this;
+		} catch (ClassCastException ignored) {
+		}
+		connectionBroadcast= Utils.connectionBroadCast(getActivity(),networkChangeListener);
 		temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		disableIncreaseLimit();
 		hideProgressBar();
@@ -267,7 +278,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onResume() {
 		super.onResume();
-		NetworkChangeReceiver.getObservable().addObserver(this);
+		getActivity().registerReceiver(connectionBroadcast,new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		mSharePreferenceHelper.removeValue("lw_installment_amount");
 		mSharePreferenceHelper.removeValue("lwf_drawDownAmount");
 		mSharePreferenceHelper.removeValue("lw_months");
@@ -320,7 +331,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		});
 	}
 
-	public void update(Observable observable, Object data) {
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		getActivity().unregisterReceiver(connectionBroadcast);
+	}
+	@Override
+	public void onConnectionChanged() {
 		//connection changed
 		final Handler handler = new Handler();
 		handler.postDelayed(new Runnable() {
@@ -329,15 +347,10 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				if (!cardHasId) {
 					if (new ConnectionDetector().isOnline(getActivity()))
 						getActiveOffer();
+
 				}
 			}
 		}, 100);
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		NetworkChangeReceiver.getObservable().deleteObserver(this);
 	}
 }
 
