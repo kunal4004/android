@@ -106,4 +106,9 @@ public class WebViewActivity extends AppCompatActivity {
 			cookieSyncMngr.sync();
 		}
 	}
+
+	public void finishActivity(){
+		finish();
+		overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+	}
 }
