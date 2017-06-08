@@ -47,11 +47,12 @@ import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductGridActivity extends WProductDetailActivity implements SelectedProductView,
-		View.OnClickListener {
+		View.OnClickListener, NetworkChangeListener {
 	private Toolbar mToolbar;
 	private WTextView mToolBarTitle;
 	private String productId;
@@ -83,6 +84,11 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	private ErrorHandlerView mErrorHandlerView;
 	private WoolworthsApplication mWoolWorthsApplication;
 
+	private ProductGridActivity networkChangeListener;
+	private BroadcastReceiver connectionBroadcast;
+	private boolean selectProductDetail = false;
+	private boolean productBackgroundFail = false;
+
 	private enum RUN_BACKGROUND_TASK {
 		SEARCH_PRODUCT, SEARCH_MORE_PRODUCT, LOAD_PRODUCT, LOAD_MORE_PRODUCT
 	}
@@ -93,14 +99,17 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+		mContext = this;
 		setContentView(R.layout.product_layout);
 		Utils.updateStatusBarBackground(ProductGridActivity.this);
-		mContext = this;
-		mWoolWorthsApplication = ((WoolworthsApplication) ProductGridActivity.this.getApplication
-				());
+		try {
+			networkChangeListener = ProductGridActivity.this;
+		} catch (ClassCastException ignored) {
+		}
+		connectionBroadcast = Utils.connectionBroadCast(ProductGridActivity.this, networkChangeListener);
+		mWoolWorthsApplication = ((WoolworthsApplication) ProductGridActivity.this.getApplication());
 		initUI();
 		initProductDetailUI();
-
 
 		actionBar();
 		bundle();
@@ -109,8 +118,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline()) {
-
+				if (new ConnectionDetector().isOnline(ProductGridActivity.this)) {
 					switch (runTask) {
 
 						case SEARCH_PRODUCT:
@@ -132,8 +140,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 						default:
 							break;
 					}
-				} else {
-					mErrorHandlerView.showToast();
 				}
 			}
 		});
@@ -161,6 +167,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 					case COLLAPSED:
 						panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
 						dismissPopWindow();
+						selectProductDetail = false;
 						if (productCanClose) { //close ProductView activity when maximum row 1
 							closeGridView();
 							finish();
@@ -283,6 +290,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
 	@Override
 	public void onSelectedProduct(View v, int position) {
+		selectProductDetail = true;
 		mSelectedProduct = mProduct.get(position);
 		mSkuId = mSelectedProduct.otherSkus.get(0).sku;
 		mProductId = mSelectedProduct.productId;
@@ -537,6 +545,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 					}
 
 					hideProgressDetailLoad();
+					productBackgroundFail = false;
 				}
 			}
 
@@ -544,8 +553,10 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 			public void onFailure(RetrofitError error) {
 				hideProductCode();
 				hideProgressDetailLoad();
-				if (error.toString().contains("Unable to resolve host"))
+				if (error.toString().contains("Unable to resolve host")) {
 					mErrorHandlerView.showToast();
+					productBackgroundFail = true;
+				}
 			}
 		});
 	}
@@ -736,6 +747,36 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
 	private void setNumberOfItem(int numberOfItem) {
 		mNumberOfItem.setText(String.valueOf(numberOfItem));
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		unregisterReceiver(connectionBroadcast);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+	}
+
+	@Override
+	public void onConnectionChanged() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (new ConnectionDetector().isOnline(ProductGridActivity.this)) {
+					if (selectProductDetail && productBackgroundFail) {
+						onCallback(mProductId, mSkuId, false);
+					}
+				} else {
+					if (selectProductDetail) {
+						mErrorHandlerView.showToast();
+					}
+				}
+			}
+		});
 	}
 }
 

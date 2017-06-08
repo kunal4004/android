@@ -135,7 +135,7 @@
     <string name="faqs">FAQs</string>
     <string name="sign_out">Sign Out</string>
     <string name="brands">Brands</string>
-    <string name="why_we_need_location_services">Location Services</string>
+    <string name="why_we_need_location_services">Why we need Location Services</string>
     <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
     <string name="title_activity_wmain">WMainActivity</string>
@@ -588,4 +588,6 @@
     <string name="on_boarding_title_3">FINANCIAL SERVICES</string>
     <string name="on_boarding_title_4">CREATE A DIGITAL PROFILE</string>
     <string name="get_started">get started</string>
+    <string name="please_ensure_connection">Please ensure that you are connected \nto the internet.</string>
+    <string name="sso_title_text_submit_this_form">SUBMIT THIS FORM</string>
 </resources>
