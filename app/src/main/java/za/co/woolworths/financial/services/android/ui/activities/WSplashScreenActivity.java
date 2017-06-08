@@ -221,10 +221,15 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 	}
 
 	private void showNonVideoViewWithErrorLayout() {
-		pBar.setVisibility(View.GONE);
-		videoViewLayout.setVisibility(View.GONE);
-		noVideoView.setVisibility(View.VISIBLE);
-		errorLayout.setVisibility(View.VISIBLE);
+		runOnUiThread(new Runnable() {
+			public void run(){
+				pBar.setVisibility(View.GONE);
+				videoViewLayout.setVisibility(View.GONE);
+				noVideoView.setVisibility(View.VISIBLE);
+				errorLayout.setVisibility(View.VISIBLE);
+			}
+		});
+
 	}
 
 	private void showNonVideoViewWithOutErrorLayout() {
