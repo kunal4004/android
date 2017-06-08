@@ -103,8 +103,7 @@
                 <RelativeLayout
                     android:id="@+id/relFAQ"
                     style="@style/listStyle"
-                    android:background="@drawable/stores_details_background"
-                    android:visibility="visible">
+                    android:background="@drawable/stores_details_background">
 
                     <ImageView
                         android:id="@+id/imgFaqQuery"

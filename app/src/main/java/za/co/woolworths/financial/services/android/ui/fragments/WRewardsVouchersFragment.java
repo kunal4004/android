@@ -67,6 +67,9 @@ public class WRewardsVouchersFragment extends Fragment {
 
     public void displayNoVouchersView() {
         mErrorHandlerView.showEmptyState(0);
+        mErrorHandlerView.hideIcon();
+        mErrorHandlerView.hideTitle();
+        mErrorHandlerView.textDescription(getActivity().getResources().getString(R.string.no_vouchers));
         recyclerView.setVisibility(View.GONE);
     }
 

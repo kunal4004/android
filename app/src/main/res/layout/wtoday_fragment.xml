@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_marginTop="?attr/actionBarSize"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
-    >
-
-    <WebView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/wtoday_fragment_webview"
-        ></WebView>
+        android:layout_marginTop="?attr/actionBarSize"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <WebView
+            android:id="@+id/wtoday_fragment_webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            ></WebView>
+
+    </LinearLayout>
+
+    <include layout="@layout/no_connection_handler"/>
+</FrameLayout>

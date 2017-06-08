@@ -29,7 +29,7 @@ public class WConnectionHandlerActivity extends AppCompatActivity {
         btnRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (new ConnectionDetector().isOnline()) {
+                if (new ConnectionDetector().isOnline(WConnectionHandlerActivity.this)) {
                     finish();
                     overridePendingTransition(0, 0);
                 }

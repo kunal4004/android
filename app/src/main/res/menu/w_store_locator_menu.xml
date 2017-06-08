@@ -13,6 +13,6 @@
         android:icon="@drawable/ic_search"
         app:showAsAction="always"
         android:visible="true"
-        android:enabled="false"
+        android:enabled="true"
         android:title="" />
 </menu>
