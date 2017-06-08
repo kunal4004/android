@@ -50,7 +50,7 @@
             android:layout_marginTop="8dp"
             android:gravity="center"
             android:lineSpacingExtra="4sp"
-            android:text="@string/please_insure_connection"
+            android:text="@string/please_ensure_connection"
             android:textColor="@color/semi_transparent_black"
             android:textSize="15sp"
             app:WTextView_font="myriadpro_regular"
