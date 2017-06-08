@@ -47,7 +47,6 @@ public class WebViewActivity extends AppCompatActivity {
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(null);
-
 		String url = b.getString("link");
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.setWebViewClient(new WebViewController());
@@ -156,6 +155,6 @@ public class WebViewActivity extends AppCompatActivity {
 
 	public void finishActivity() {
 		finish();
-		overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
 }

@@ -19,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -56,6 +57,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 	private boolean actionBarIsHidden = false;
 	private ActionBar mAppToolbar;
 	private ErrorHandlerView mErrorHandlerView;
+	private MenuNavigationInterface mMenuNavigationInterface;
 
 	public interface HideActionBarComponent {
 		void onBurgerButtonPressed();
@@ -90,6 +92,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		mContext = this;
+		mMenuNavigationInterface = (MenuNavigationInterface) getActivity();
 		mAppToolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 		mProductToolbar = (Toolbar) view.findViewById(R.id.productToolbar);
 		initUI(view);
@@ -103,7 +106,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 			@Override
 			public void onClick(View v) {
 				if (new ConnectionDetector().isOnline(getActivity()))
-					categoryRequest();
+					mMenuNavigationInterface.switchToView(1);
 			}
 		});
 	}
@@ -443,5 +446,4 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 	public void onSelectedColor(View v, int position) {
 
 	}
-
 }

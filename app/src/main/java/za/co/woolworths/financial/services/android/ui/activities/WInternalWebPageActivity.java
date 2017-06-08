@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -15,6 +16,7 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -24,22 +26,31 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class WInternalWebPageActivity extends AppCompatActivity {
+public class WInternalWebPageActivity extends AppCompatActivity implements View.OnClickListener {
 
 	private WebView webInternalPage;
 	private ErrorHandlerView mErrorHandlerView;
 	private String mExternalLink;
 	private ProgressBar mWoolworthsProgressBar;
+	private AppBarLayout mAppbar;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Utils.updateStatusBarBackground(this, R.color.black);
 		setContentView(R.layout.internal_webview_activity);
+		mToolbar();
 		bundle();
 		init();
+		hideAppBar();
 		webSetting();
 		retryConnect();
+	}
+
+	private void mToolbar() {
+		mAppbar = (AppBarLayout) findViewById(R.id.appbar);
+		ImageView imBackButton = (ImageView) findViewById(R.id.imBackButton);
+		imBackButton.setOnClickListener(this);
 	}
 
 	private void init() {
@@ -49,7 +60,6 @@ public class WInternalWebPageActivity extends AppCompatActivity {
 		mWoolworthsProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		RelativeLayout rlConnectLayout = (RelativeLayout) findViewById(R.id.no_connection_layout);
 		mErrorHandlerView = new ErrorHandlerView(WInternalWebPageActivity.this, rlConnectLayout);
-		mErrorHandlerView.setMargin(rlConnectLayout, 0, 0, 0, 0);
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")
@@ -61,6 +71,7 @@ public class WInternalWebPageActivity extends AppCompatActivity {
 			@Override
 			public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
 				super.onReceivedError(view, request, error);
+				showAppBar();
 				mErrorHandlerView.webViewBlankPage(view);
 				mErrorHandlerView.networkFailureHandler(error.toString());
 			}
@@ -69,6 +80,7 @@ public class WInternalWebPageActivity extends AppCompatActivity {
 			@Override
 			public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
 				mErrorHandlerView.webViewBlankPage(webView);
+				showAppBar();
 				mErrorHandlerView.networkFailureHandler(description);
 				hideProgressBar();
 			}
@@ -88,6 +100,7 @@ public class WInternalWebPageActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				if (new ConnectionDetector().isOnline(WInternalWebPageActivity.this)) {
+					hideAppBar();
 					showProgressBar();
 					WebBackForwardList history = webInternalPage.copyBackForwardList();
 					int index = -1;
@@ -171,6 +184,28 @@ public class WInternalWebPageActivity extends AppCompatActivity {
 
 	public void finishActivity() {
 		finish();
-		overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.imBackButton:
+				goBackInWebView();
+				break;
+		}
+	}
+
+	private void showAppBar() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				mAppbar.setVisibility(View.VISIBLE);
+			}
+		});
+	}
+
+	private void hideAppBar() {
+		mAppbar.setVisibility(View.GONE);
 	}
 }

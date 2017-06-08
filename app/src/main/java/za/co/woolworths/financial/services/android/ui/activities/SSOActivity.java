@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -83,7 +82,6 @@ public class SSOActivity extends WebViewActivity {
 	public static final String TAG_SCOPE = "TAG_SCOPE";
 	public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 
-	private Toolbar mToolbar;
 	private String redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 	private Protocol protocol;
 	private Host host;
