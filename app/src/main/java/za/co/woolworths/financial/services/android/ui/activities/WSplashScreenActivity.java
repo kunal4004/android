@@ -30,236 +30,233 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WSplashScreenActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
 
-    private boolean mVideoPlayerShouldPlay = true;
-    private boolean isMinimized = false;
-    private WVideoView videoView;
-    private String TAG = "WSplashScreen";
-    private LinearLayout errorLayout;
-    private View noVideoView;
-    private RelativeLayout videoViewLayout;
-    private ProgressBar pBar;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_wsplash_screen);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.mToolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().hide();
-        videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
-        errorLayout=(LinearLayout)findViewById(R.id.errorLayout);
-        noVideoView=(View)findViewById(R.id.splashNoVideoView);
-        videoViewLayout=(RelativeLayout)findViewById(R.id.videoViewLayout);
-        pBar=(ProgressBar)findViewById(R.id.progressBar);
-        pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-        //Mobile Config Server
-        if(new ConnectionDetector().isOnline())
-        {
-            setUpScreen();
-            executeConfigServer();
-        }
-        else {
-            showNonVideoViewWithErrorLayout();
-        }
-        findViewById(R.id.retry).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (new ConnectionDetector().isOnline()) {
-                    setUpScreen();
-                    executeConfigServer();
-                } else {
-                   showNonVideoViewWithErrorLayout();
-                }
-            }
+	private boolean mVideoPlayerShouldPlay = true;
+	private boolean isMinimized = false;
+	private WVideoView videoView;
+	private String TAG = "WSplashScreen";
+	private LinearLayout errorLayout;
+	private View noVideoView;
+	private RelativeLayout videoViewLayout;
+	private ProgressBar pBar;
 
-        });
-    }
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		setContentView(R.layout.activity_wsplash_screen);
+		Toolbar toolbar = (Toolbar) findViewById(R.id.mToolbar);
+		setSupportActionBar(toolbar);
+		getSupportActionBar().hide();
+		videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
+		errorLayout = (LinearLayout) findViewById(R.id.errorLayout);
+		noVideoView = (View) findViewById(R.id.splashNoVideoView);
+		videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
+		pBar = (ProgressBar) findViewById(R.id.progressBar);
+		pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+		//Mobile Config Server
+		if (new ConnectionDetector().isOnline(WSplashScreenActivity.this)) {
+			setUpScreen();
+			executeConfigServer();
+		} else {
+			showNonVideoViewWithErrorLayout();
+		}
+		findViewById(R.id.retry).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (new ConnectionDetector().isOnline(WSplashScreenActivity.this)) {
+					setUpScreen();
+					executeConfigServer();
+				} else {
+					showNonVideoViewWithErrorLayout();
+				}
+			}
 
-    private void executeConfigServer() {
-        mobileConfigServer().execute();
-    }
+		});
+	}
 
-    private HttpAsyncTask<String, String, ConfigResponse> mobileConfigServer() {
-        return new HttpAsyncTask<String, String, ConfigResponse>() {
+	private void executeConfigServer() {
+		mobileConfigServer().execute();
+	}
 
-            @Override
-            protected void onPreExecute() {
+	private HttpAsyncTask<String, String, ConfigResponse> mobileConfigServer() {
+		return new HttpAsyncTask<String, String, ConfigResponse>() {
 
-            }
+			@Override
+			protected void onPreExecute() {
 
-            @Override
-            protected Class<ConfigResponse> httpDoInBackgroundReturnType() {
-                return ConfigResponse.class;
-            }
+			}
 
-            @Override
-            protected ConfigResponse httpDoInBackground(String... params) {
-                final String appName = "woneapp";
-                String appVersion = "5.0.0";//default to 5.0.0
-                String environment = "";//default to PROD
-                try {
-                    appVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-                    environment = com.awfs.coordination.BuildConfig.FLAVOR;
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
-                }
+			@Override
+			protected Class<ConfigResponse> httpDoInBackgroundReturnType() {
+				return ConfigResponse.class;
+			}
 
-                //MCS expects empty value for PROD
-                //woneapp-5.0 = PROD
-                //woneapp-5.0-qa = QA
-                //woneapp-5.0-dev = DEV
-                String majorMinorVersion = appVersion.substring(0, 3);
-                final String mcsAppVersion = (appName + "-" + majorMinorVersion + (environment.equals("production") ? "" : ("-" + environment)));
-                Log.d("MCS", mcsAppVersion);
-                ApiInterface mApiInterface = new RestAdapter.Builder()
-                        .setEndpoint(getString(R.string.config_endpoint))
-                        .setLogLevel(Util.isDebug(WSplashScreenActivity.this) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
-                        .build()
-                        .create(ApiInterface.class);
+			@Override
+			protected ConfigResponse httpDoInBackground(String... params) {
+				final String appName = "woneapp";
+				String appVersion = "5.0.0";//default to 5.0.0
+				String environment = "";//default to PROD
+				try {
+					appVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+					environment = com.awfs.coordination.BuildConfig.FLAVOR;
+				} catch (PackageManager.NameNotFoundException e) {
+					e.printStackTrace();
+				}
 
-                return mApiInterface.getConfig(getString(R.string.app_token), getDeviceID(), mcsAppVersion);
-            }
+				//MCS expects empty value for PROD
+				//woneapp-5.0 = PROD
+				//woneapp-5.0-qa = QA
+				//woneapp-5.0-dev = DEV
+				String majorMinorVersion = appVersion.substring(0, 3);
+				final String mcsAppVersion = (appName + "-" + majorMinorVersion + (environment.equals("production") ? "" : ("-" + environment)));
+				Log.d("MCS", mcsAppVersion);
+				ApiInterface mApiInterface = new RestAdapter.Builder()
+						.setEndpoint(getString(R.string.config_endpoint))
+						.setLogLevel(Util.isDebug(WSplashScreenActivity.this) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
+						.build()
+						.create(ApiInterface.class);
 
-            @Override
-            public ConfigResponse httpError(final String errorMessage, final HttpErrorCode httpErrorCode) {
-                showNonVideoViewWithErrorLayout();
-                return new ConfigResponse();
-            }
+				return mApiInterface.getConfig(getString(R.string.app_token), getDeviceID(), mcsAppVersion);
+			}
 
-            @Override
-            protected void onPostExecute(ConfigResponse configResponse) {
-                try {
-                    WSplashScreenActivity.this.mVideoPlayerShouldPlay = false;
+			@Override
+			public ConfigResponse httpError(final String errorMessage, final HttpErrorCode httpErrorCode) {
+				showNonVideoViewWithErrorLayout();
+				return new ConfigResponse();
+			}
 
-                    WoolworthsApplication.setBaseURL(configResponse.enviroment.getBase_url());
-                    WoolworthsApplication.setApiKey(configResponse.enviroment.getApiId());
-                    WoolworthsApplication.setSha1Password(configResponse.enviroment.getApiPassword());
-                    WoolworthsApplication.setSsoRedirectURI(configResponse.enviroment.getSsoRedirectURI());
-                    WoolworthsApplication.setStsURI(configResponse.enviroment.getStsURI());
-                    WoolworthsApplication.setSsoRedirectURILogout(configResponse.enviroment.getSsoRedirectURILogout());
-                    WoolworthsApplication.setWwTodayURI(configResponse.enviroment.getWwTodayURI());
-                    WoolworthsApplication.setApplyNowLink(configResponse.defaults.getApplyNowLink());
-                    WoolworthsApplication.setRegistrationTCLink(configResponse.defaults.getRegisterTCLink());
-                    WoolworthsApplication.setFaqLink(configResponse.defaults.getFaqLink());
-                    WoolworthsApplication.setWrewardsLink(configResponse.defaults.getWrewardsLink());
-                    WoolworthsApplication.setRewardingLink(configResponse.defaults.getRewardingLink());
-                    WoolworthsApplication.setHowToSaveLink(configResponse.defaults.getHowtosaveLink());
-                    WoolworthsApplication.setWrewardsTCLink(configResponse.defaults.getWrewardsTCLink());
-                    if(!isFirstTime())
-                        presentNextScreen();
-                } catch (NullPointerException ignored) {
-                }
-            }
-        };
-    }
+			@Override
+			protected void onPostExecute(ConfigResponse configResponse) {
+				try {
+					WSplashScreenActivity.this.mVideoPlayerShouldPlay = false;
 
-    //video player on completion
-    @Override
-    public void onCompletion(MediaPlayer mp) {
+					WoolworthsApplication.setBaseURL(configResponse.enviroment.getBase_url());
+					WoolworthsApplication.setApiKey(configResponse.enviroment.getApiId());
+					WoolworthsApplication.setSha1Password(configResponse.enviroment.getApiPassword());
+					WoolworthsApplication.setSsoRedirectURI(configResponse.enviroment.getSsoRedirectURI());
+					WoolworthsApplication.setStsURI(configResponse.enviroment.getStsURI());
+					WoolworthsApplication.setSsoRedirectURILogout(configResponse.enviroment.getSsoRedirectURILogout());
+					WoolworthsApplication.setWwTodayURI(configResponse.enviroment.getWwTodayURI());
+					WoolworthsApplication.setApplyNowLink(configResponse.defaults.getApplyNowLink());
+					WoolworthsApplication.setRegistrationTCLink(configResponse.defaults.getRegisterTCLink());
+					WoolworthsApplication.setFaqLink(configResponse.defaults.getFaqLink());
+					WoolworthsApplication.setWrewardsLink(configResponse.defaults.getWrewardsLink());
+					WoolworthsApplication.setRewardingLink(configResponse.defaults.getRewardingLink());
+					WoolworthsApplication.setHowToSaveLink(configResponse.defaults.getHowtosaveLink());
+					WoolworthsApplication.setWrewardsTCLink(configResponse.defaults.getWrewardsTCLink());
+					if (!isFirstTime())
+						presentNextScreen();
+				} catch (NullPointerException ignored) {
+				}
+			}
+		};
+	}
 
-        if (!WSplashScreenActivity.this.mVideoPlayerShouldPlay) {
+	//video player on completion
+	@Override
+	public void onCompletion(MediaPlayer mp) {
 
-            presentNextScreen();
-            mp.stop();
+		if (!WSplashScreenActivity.this.mVideoPlayerShouldPlay) {
 
-        } else {
-            showNonVideoViewWithOutErrorLayout();
-        }
-    }
+			presentNextScreen();
+			mp.stop();
 
-    private String getDeviceID() {
-        try {
-            return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        } catch (Exception e) {
-            return null;
-        }
-    }
+		} else {
+			showNonVideoViewWithOutErrorLayout();
+		}
+	}
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        isMinimized = true;
-    }
+	private String getDeviceID() {
+		try {
+			return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (isMinimized) {
-            startActivity(new Intent(this, WSplashScreenActivity.class));
-            isMinimized = false;
-            finish();
-        }
-    }
+	@Override
+	protected void onStop() {
+		super.onStop();
+		isMinimized = true;
+	}
 
-    private String getRandomVideos() {
-        ArrayList<String> listOfVideo = new ArrayList<>();
-        String rawFolderPath = "android.resource://" + getPackageName() + "/";
-        listOfVideo.add(rawFolderPath + R.raw.fashion_studiow_men);
-        listOfVideo.add(rawFolderPath + R.raw.fashion_summertime);
-        listOfVideo.add(rawFolderPath + R.raw.food_broccoli);
-        listOfVideo.add(rawFolderPath + R.raw.food_chocolate);
-        Collections.shuffle(listOfVideo);
-        return listOfVideo.get(0);
-    }
+	@Override
+	protected void onStart() {
+		super.onStart();
+		if (isMinimized) {
+			startActivity(new Intent(this, WSplashScreenActivity.class));
+			isMinimized = false;
+			finish();
+		}
+	}
 
-    private void showVideoView()
-    {
-        noVideoView.setVisibility(View.GONE);
-        videoViewLayout.setVisibility(View.VISIBLE);
-        String randomVideo = getRandomVideos();
-        Log.e("randomVideo", randomVideo);
-        Uri videoUri = Uri.parse(randomVideo);
+	private String getRandomVideos() {
+		ArrayList<String> listOfVideo = new ArrayList<>();
+		String rawFolderPath = "android.resource://" + getPackageName() + "/";
+		listOfVideo.add(rawFolderPath + R.raw.fashion_studiow_men);
+		listOfVideo.add(rawFolderPath + R.raw.fashion_summertime);
+		listOfVideo.add(rawFolderPath + R.raw.food_broccoli);
+		listOfVideo.add(rawFolderPath + R.raw.food_chocolate);
+		Collections.shuffle(listOfVideo);
+		return listOfVideo.get(0);
+	}
 
-        videoView.setVideoURI(videoUri);
-        videoView.start();
-        videoView.setOnCompletionListener(this);
-    }
+	private void showVideoView() {
+		noVideoView.setVisibility(View.GONE);
+		videoViewLayout.setVisibility(View.VISIBLE);
+		String randomVideo = getRandomVideos();
+		Log.e("randomVideo", randomVideo);
+		Uri videoUri = Uri.parse(randomVideo);
 
-    private void showNonVideoViewWithErrorLayout()
-    {
-        pBar.setVisibility(View.GONE);
-        videoViewLayout.setVisibility(View.GONE);
-        noVideoView.setVisibility(View.VISIBLE);
-        errorLayout.setVisibility(View.VISIBLE);
-    }
-    private void showNonVideoViewWithOutErrorLayout()
-    {
-        pBar.setVisibility(View.VISIBLE);
-        videoViewLayout.setVisibility(View.GONE);
-        errorLayout.setVisibility(View.GONE);
-        noVideoView.setVisibility(View.VISIBLE);
-    }
+		videoView.setVideoURI(videoUri);
+		videoView.start();
+		videoView.setOnCompletionListener(this);
+	}
 
-    private boolean isFirstTime()
-    {
-        if (Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.SPLASH_VIDEO) == null)
-            return true;
-        else
-            return false;
-    }
+	private void showNonVideoViewWithErrorLayout() {
+		runOnUiThread(new Runnable() {
+			public void run(){
+				pBar.setVisibility(View.GONE);
+				videoViewLayout.setVisibility(View.GONE);
+				noVideoView.setVisibility(View.VISIBLE);
+				errorLayout.setVisibility(View.VISIBLE);
+			}
+		});
 
-    private void setUpScreen()
-    {
-        if(isFirstTime())
-        {
-            showVideoView();
-        }else {
-            showNonVideoViewWithOutErrorLayout();
-        }
-    }
+	}
 
-    private void presentNextScreen()
-    {
-        /*
-            * When creating a SessionDao with a key where the entry doesn't exist
+	private void showNonVideoViewWithOutErrorLayout() {
+		pBar.setVisibility(View.VISIBLE);
+		videoViewLayout.setVisibility(View.GONE);
+		errorLayout.setVisibility(View.GONE);
+		noVideoView.setVisibility(View.VISIBLE);
+	}
+
+	private boolean isFirstTime() {
+		if (Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.SPLASH_VIDEO) == null)
+			return true;
+		else
+			return false;
+	}
+
+	private void setUpScreen() {
+		if (isFirstTime()) {
+			showVideoView();
+		} else {
+			showNonVideoViewWithOutErrorLayout();
+		}
+	}
+
+	private void presentNextScreen() {
+	    /*
+	        * When creating a SessionDao with a key where the entry doesn't exist
             * in SQL lite, return a new SessionDao where the key is equal to the
             * key that's passed in the constructor e.g
             *
@@ -272,39 +269,38 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
             *
             *
             * */
-        try {
-            SessionDao sessionDao = new SessionDao(WSplashScreenActivity.this, SessionDao.KEY.USER_TOKEN).get();
-            if (sessionDao.value != null && !sessionDao.value.equals("")) {
-                ScreenManager.presentMain(WSplashScreenActivity.this);
-                return;
-            }
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
-        try {
-            String isFirstTime=Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
-            if(isFirstTime==null || isAppUpdated())
-                ScreenManager.presentOnboarding(WSplashScreenActivity.this);
-            else
-                ScreenManager.presentMain(WSplashScreenActivity.this);
-        } catch (NullPointerException ignored) {
-        }
-    }
+		try {
+			SessionDao sessionDao = new SessionDao(WSplashScreenActivity.this, SessionDao.KEY.USER_TOKEN).get();
+			if (sessionDao.value != null && !sessionDao.value.equals("")) {
+				ScreenManager.presentMain(WSplashScreenActivity.this);
+				return;
+			}
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage());
+		}
+		try {
+			String isFirstTime = Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
+			if (isFirstTime == null || isAppUpdated())
+				ScreenManager.presentOnboarding(WSplashScreenActivity.this);
+			else
+				ScreenManager.presentMain(WSplashScreenActivity.this);
+		} catch (NullPointerException ignored) {
+		}
+	}
 
-    private boolean isAppUpdated()
-    {
-        String appVersionFromDB=Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.APP_VERSION);
-        String appLatestVersion=null;
-        try {
-            appLatestVersion=getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        if (appVersionFromDB == null || !appVersionFromDB.equalsIgnoreCase(appLatestVersion)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+	private boolean isAppUpdated() {
+		String appVersionFromDB = Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.APP_VERSION);
+		String appLatestVersion = null;
+		try {
+			appLatestVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		if (appVersionFromDB == null || !appVersionFromDB.equalsIgnoreCase(appLatestVersion)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 }

@@ -17,6 +17,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembers
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 /**
  * Created by W7099877 on 05/01/2017.
@@ -73,7 +74,7 @@ public class WRewardsLoggedOutFragment extends Fragment implements View.OnClickL
                 redirectToWRewardsMemberActivity(2);
                 break;
             case R.id.applyForWRewards:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getWrewardsLink())));
+                Utils.openExternalLink(getActivity(),WoolworthsApplication.getWrewardsLink());
                 break;
             default:
                 break;

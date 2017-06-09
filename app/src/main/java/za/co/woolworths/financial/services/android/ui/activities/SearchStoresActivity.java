@@ -126,11 +126,9 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
         findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (new ConnectionDetector().isOnline()) {
+                if (new ConnectionDetector().isOnline(SearchStoresActivity.this)) {
                     if (mSearchText.length() >= 2)
                         startSearch(mSearchText).execute();
-                } else {
-                    mErrorHandlerView.showToast();
                 }
             }
         });
@@ -261,6 +259,7 @@ public class SearchStoresActivity extends AppCompatActivity implements View.OnCl
 
             @Override
             protected LocationResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                hideSoftKeyboard();
                 mErrorHandlerView.networkFailureHandler(errorMessage);
                 return new LocationResponse();
             }

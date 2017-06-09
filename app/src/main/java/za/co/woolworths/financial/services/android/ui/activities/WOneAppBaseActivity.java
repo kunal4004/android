@@ -1,12 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -25,10 +28,6 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 
-import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.Voucher;
-import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
-import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.fragments.MenuNavigationInterface;
 
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
@@ -44,7 +43,6 @@ import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
-
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
 		, WProductFragment.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle,
@@ -223,6 +221,58 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	public void switchToView(int position) {
 		displayView(position);
 	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+		switch (requestCode) {
+			case StoresNearbyFragment1.PERMS_REQUEST_CODE: {
+				// If request is cancelled, the result arrays are empty.
+				if (grantResults.length > 0
+						&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+					// permission was granted, yay! Do the
+					// location-related task you need to do.
+					if (ContextCompat.checkSelfPermission(this,
+							Manifest.permission.ACCESS_FINE_LOCATION)
+							== PackageManager.PERMISSION_GRANTED) {
+						displayView(2);
+					}
+
+				} else {
+
+					// permission denied, boo! Disable the
+					// functionality that depends on this permission.
+
+				}
+				return;
+			}
+
+			case StoresNearbyFragment1.REQUEST_CALL: {
+				// If request is cancelled, the result arrays are empty.
+				if (grantResults.length > 0
+						&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+					// permission was granted, yay! Do the
+					// location-related task you need to do.
+					if (ContextCompat.checkSelfPermission(this,
+							Manifest.permission.CALL_PHONE)
+							== PackageManager.PERMISSION_GRANTED) {
+						Intent intent = new Intent("broadcastCall");
+						sendBroadcast(intent);
+					}
+
+				} else {
+
+					// permission denied, boo! Disable the
+					// functionality that depends on this permission.
+
+				}
+				return;
+			}
+
+		}
+	}
+
 }
 
 
