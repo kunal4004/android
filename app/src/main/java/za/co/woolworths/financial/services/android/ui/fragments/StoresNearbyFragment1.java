@@ -609,7 +609,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		inflater.inflate(R.menu.w_store_locator_menu, menu);
 		 searchMenu = menu.findItem(R.id.action_search).setVisible(true);
 		//Disable until finding location
-		searchMenu.getIcon().setAlpha(130);
 		if (navigateMenuState) {
 			menu.findItem(R.id.action_locate).setVisible(true);
 		} else {
