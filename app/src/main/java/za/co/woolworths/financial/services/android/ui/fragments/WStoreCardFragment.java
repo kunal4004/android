@@ -71,7 +71,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
-
+	private boolean bolBroacastRegistred;
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -101,8 +101,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			networkChangeListener = (NetworkChangeListener) this;
 		} catch (ClassCastException ignored) {
 		}
+		bolBroacastRegistred=true;
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
-
+		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		bindData(accountsResponse);
 		disableIncreaseLimit();
@@ -265,7 +266,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	public void onResume() {
 		super.onResume();
 		setTextSize();
-		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -316,7 +316,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	@Override
 	public void onPause() {
 		super.onPause();
-		getActivity().unregisterReceiver(connectionBroadcast);
+		if(bolBroacastRegistred) {
+			getActivity().unregisterReceiver(connectionBroadcast);
+			bolBroacastRegistred=false;
+		}
 	}
 
 	@Override

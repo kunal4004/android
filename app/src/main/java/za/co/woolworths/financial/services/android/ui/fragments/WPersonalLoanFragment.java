@@ -76,6 +76,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
+	private boolean bolBroacastRegistred;
 
 	@Nullable
 	@Override
@@ -111,6 +112,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		} catch (ClassCastException ignored) {
 		}
 		connectionBroadcast= Utils.connectionBroadCast(getActivity(),networkChangeListener);
+		bolBroacastRegistred=true;
+		getActivity().registerReceiver(connectionBroadcast,new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		disableIncreaseLimit();
 		hideProgressBar();
@@ -278,7 +281,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onResume() {
 		super.onResume();
-		getActivity().registerReceiver(connectionBroadcast,new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		mSharePreferenceHelper.removeValue("lw_installment_amount");
 		mSharePreferenceHelper.removeValue("lwf_drawDownAmount");
 		mSharePreferenceHelper.removeValue("lw_months");
@@ -335,7 +337,10 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onPause() {
 		super.onPause();
-		getActivity().unregisterReceiver(connectionBroadcast);
+		if(bolBroacastRegistred) {
+			getActivity().unregisterReceiver(connectionBroadcast);
+			bolBroacastRegistred=false;
+		}
 	}
 	@Override
 	public void onConnectionChanged() {
