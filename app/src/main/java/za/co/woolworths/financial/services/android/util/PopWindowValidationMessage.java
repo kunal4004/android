@@ -177,15 +177,14 @@ public class PopWindowValidationMessage {
                 nativeMap.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String mTitle = getmName();
-                        //Uri gmmIntentUri = Uri.parse("google.navigation:q=" + getmLatitude() +"," + getmLongiude() +","+ mTitle);
-                        /*Uri gmmIntentUri = Uri.parse("google.navigation:q="+ getmLatitude() + "," + getmLongiude() + "," + mTitle);
-                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                        mapIntent.setPackage("com.google.android.apps.maps");
-                        mContext.startActivity(mapIntent);*/
                         Location location = Utils.getLastSavedLocation(mContext);
-                        Intent intent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("http://maps.google.com/maps?f=d&saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + getmLatitude() + "," + getmLongiude()));
+                        String uri = null;
+                        if (location != null) {
+                            uri = "http://maps.google.com/maps?f=d&saddr=" + location.getLatitude() + "," + location.getLongitude() + "&daddr=" + getmLatitude() + "," + getmLongiude();
+                        } else {
+                            uri = "http://maps.google.com/maps?q=loc:" + getmLatitude() + "," + getmLongiude();
+                        }
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                         intent.setComponent(new ComponentName("com.google.android.apps.maps",
                                 "com.google.android.maps.MapsActivity"));
                         mContext.startActivity(intent);
