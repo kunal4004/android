@@ -48,16 +48,13 @@ import java.util.List;
 
 
 import me.leolin.shortcutbadger.ShortcutBadger;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WConnectionHandlerActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 import static android.Manifest.permission_group.STORAGE;
 
@@ -476,5 +473,12 @@ public class Utils {
 			}
 		};
 		return mBroadcastReceiver;
+	}
+
+	public static void dialNumber(Context context, String number) {
+		Uri call = Uri.parse("tel:" + number);
+		Intent openNumericKeypad = new Intent(Intent.ACTION_DIAL, call);
+		context.startActivity(openNumericKeypad);
+		((Activity) context).overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 }

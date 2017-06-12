@@ -1,15 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,8 +27,6 @@ import za.co.woolworths.financial.services.android.util.binder.ContactUsFragment
 
 public class ContactUsOnlineFragment extends Fragment implements View.OnClickListener {
     public ContactUsFragmentChange contactUsFragmentChange;
-    private static final int REQUEST_CALL = 1;
-    Intent callIntent;
 
     @Nullable
     @Override
@@ -67,10 +62,10 @@ public class ContactUsOnlineFragment extends Fragment implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.localCaller:
-                makeCall(getActivity().getResources().getString(R.string.online_local_caller_number));
+                Utils.dialNumber(getActivity(),getActivity().getResources().getString(R.string.online_local_caller_number));
                 break;
             case R.id.internationalCaller:
-                makeCall(getActivity().getResources().getString(R.string.online_inter_national_caller_number));
+                Utils.dialNumber(getActivity(),getActivity().getResources().getString(R.string.online_inter_national_caller_number));
                 break;
             case R.id.onlineShop:
                 sendEmail(getActivity().getResources().getString(R.string.email_online_shop),getActivity().getResources().getString(R.string.online_shop_reg_login));
@@ -84,30 +79,6 @@ public class ContactUsOnlineFragment extends Fragment implements View.OnClickLis
             case R.id.orderQueries:
                 sendEmail(getActivity().getResources().getString(R.string.email_online_shop),getActivity().getResources().getString(R.string.txt_order_queries));
                 break;
-        }
-    }
-
-    public void makeCall(String number) {
-        callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:" + number));
-        //Check for permission before calling
-        //The app will ask permission before calling only on first use after installation
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
-        } else {
-            startActivity(callIntent);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_CALL:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startActivity(callIntent);
-                } else {
-                    ////
-                }
         }
     }
 

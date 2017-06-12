@@ -65,7 +65,7 @@ public class ContactUsMySchoolFragment extends Fragment implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.localCaller:
-                makeCall(getActivity().getResources().getString(R.string.my_school_local_caller_number));
+                Utils.dialNumber(getActivity(),getActivity().getResources().getString(R.string.my_school_local_caller_number));
                 break;
             case R.id.mySchoolCard:
                 sendEmail(getActivity().getResources().getString(R.string.email_myschool),getActivity().getResources().getString(R.string.txt_myschool_card));
@@ -76,30 +76,6 @@ public class ContactUsMySchoolFragment extends Fragment implements View.OnClickL
             case R.id.complaints:
                 sendEmail(getActivity().getResources().getString(R.string.email_myschool),getActivity().getResources().getString(R.string.txt_complaint));
                 break;
-        }
-    }
-
-    public void makeCall(String number) {
-        callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:" + number));
-        //Check for permission before calling
-        //The app will ask permission before calling only on first use after installation
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
-        } else {
-            startActivity(callIntent);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_CALL:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startActivity(callIntent);
-                } else {
-                    ////
-                }
         }
     }
 
