@@ -469,7 +469,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			@Override
 			public void onClick(View v) {
 				if (storeDetail.phoneNumber != null) {
-					Utils.dialNumber(getActivity(), storeDetail.phoneNumber);
+					Utils.makeCall(getActivity(), storeDetail.phoneNumber);
 				}
 
 			}

@@ -475,7 +475,7 @@ public class Utils {
 		return mBroadcastReceiver;
 	}
 
-	public static void dialNumber(Context context, String number) {
+	public static void makeCall(Context context, String number) {
 		Uri call = Uri.parse("tel:" + number);
 		Intent openNumericKeypad = new Intent(Intent.ACTION_DIAL, call);
 		context.startActivity(openNumericKeypad);

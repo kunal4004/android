@@ -1,15 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -65,7 +62,7 @@ public class ContactUsMySchoolFragment extends Fragment implements View.OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.localCaller:
-                Utils.dialNumber(getActivity(),getActivity().getResources().getString(R.string.my_school_local_caller_number));
+                Utils.makeCall(getActivity(),getActivity().getResources().getString(R.string.my_school_local_caller_number));
                 break;
             case R.id.mySchoolCard:
                 sendEmail(getActivity().getResources().getString(R.string.email_myschool),getActivity().getResources().getString(R.string.txt_myschool_card));

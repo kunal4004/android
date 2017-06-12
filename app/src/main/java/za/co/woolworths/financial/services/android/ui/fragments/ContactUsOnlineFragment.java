@@ -62,10 +62,10 @@ public class ContactUsOnlineFragment extends Fragment implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.localCaller:
-                Utils.dialNumber(getActivity(),getActivity().getResources().getString(R.string.online_local_caller_number));
+                Utils.makeCall(getActivity(),getActivity().getResources().getString(R.string.online_local_caller_number));
                 break;
             case R.id.internationalCaller:
-                Utils.dialNumber(getActivity(),getActivity().getResources().getString(R.string.online_inter_national_caller_number));
+                Utils.makeCall(getActivity(),getActivity().getResources().getString(R.string.online_inter_national_caller_number));
                 break;
             case R.id.onlineShop:
                 sendEmail(getActivity().getResources().getString(R.string.email_online_shop),getActivity().getResources().getString(R.string.online_shop_reg_login));
