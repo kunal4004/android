@@ -274,6 +274,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			Log.e(TAG, "!locationServiceIsEnabled & lastKnownLocationIsNull");
 		} else if (locationServiceIsEnabled && lastKnownLocationIsNull) {
 			Log.e(TAG, "locationServiceIsEnabled && lastKnownLocationIsNull");
+			checkLocationServiceAndSetLayout(true);
 			startLocationUpdates();
 		} else if (!locationServiceIsEnabled && !lastKnownLocationIsNull) {
 			updateMap(Utils.getLastSavedLocation(getActivity()));
@@ -827,7 +828,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			}
 
 			case REQUEST_CALL:
-				startActivity(callIntent);
+				if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+						startActivity(callIntent);
 				break;
 			// other 'case' lines to check for other permissions this app might request.
 			// You can add here other case statements according to your requirement.
