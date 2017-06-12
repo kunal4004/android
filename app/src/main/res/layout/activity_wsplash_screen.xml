@@ -11,7 +11,7 @@
         android:visibility="visible"/>
 
     <RelativeLayout
-        android:id="@+id/activity_wsplash_screen"
+        android:id="@+id/videoViewLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/dark_grey"
@@ -19,6 +19,7 @@
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
         android:paddingTop="0dp"
+        android:visibility="gone"
         tools:context="za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity">
 
         <za.co.woolworths.financial.services.android.ui.views.WVideoView
@@ -31,5 +32,8 @@
             android:layout_alignParentTop="true"/>
     </RelativeLayout>
 
-    <include layout="@layout/no_connection_handler"/>
+    <include
+        android:visibility="gone"
+        android:id="@+id/splashNoVideoView"
+        layout="@layout/activity_wsplash_screen_without_video"/>
 </FrameLayout>

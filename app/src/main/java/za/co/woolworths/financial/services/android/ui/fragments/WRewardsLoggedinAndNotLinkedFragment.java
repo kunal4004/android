@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembers
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 import static com.awfs.coordination.R.id.applyForWRewards;
 import static com.awfs.coordination.R.string.register;
@@ -76,8 +77,7 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
                 ScreenManager.presentSSOLinkAccounts(getActivity());
                 break;
             case R.id.applyForWRewards:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getWrewardsLink())));
-                getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+                Utils.openExternalLink(getActivity(),WoolworthsApplication.getWrewardsLink());
                 break;
             default:
                 break;

@@ -42,286 +42,287 @@ import za.co.woolworths.financial.services.android.util.WOnItemClickListener;
 
 public class ShoppingListActivity extends AppCompatActivity implements WOnItemClickListener, ObservableScrollViewCallbacks {
 
-    private static final int ANIM_DOWN_DURATION = 2000;
-    private RecyclerView mUncheckedItem;
-    private RecyclerView mCheckItem;
-    private Toolbar mToolbar;
-    private ShoppingListCheckedAdapter checkedShoppingListAdapter;
-    private ShoppingUnCheckedListAdapter unCheckedShoppingListAdapter;
-    private ArrayList<ShoppingList> uncheckedItemList;
-    private ArrayList<ShoppingList> checkedItemList;
-    public WTextView mCheckListTitle;
-    private List<ShoppingList> mGetShoppingList;
-    private WObservableScrollView mNestedScroll;
-    private RelativeLayout mRelRootContainer;
-    private boolean viewWasClicked = false;
-    private ErrorHandlerView mErrorHandlerView;
-    private WButton mBtnGoProducts;
+	private static final int ANIM_DOWN_DURATION = 2000;
+	private RecyclerView mUncheckedItem;
+	private RecyclerView mCheckItem;
+	private Toolbar mToolbar;
+	private ShoppingListCheckedAdapter checkedShoppingListAdapter;
+	private ShoppingUnCheckedListAdapter unCheckedShoppingListAdapter;
+	private ArrayList<ShoppingList> uncheckedItemList;
+	private ArrayList<ShoppingList> checkedItemList;
+	public WTextView mCheckListTitle;
+	private List<ShoppingList> mGetShoppingList;
+	private WObservableScrollView mNestedScroll;
+	private RelativeLayout mRelRootContainer;
+	private boolean viewWasClicked = false;
+	private ErrorHandlerView mErrorHandlerView;
+	private WButton mBtnGoProducts;
 
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Utils.updateStatusBarBackground(this);
-        setContentView(R.layout.shopping_list_activity);
-        initUI();
-        mErrorHandlerView = new ErrorHandlerView(this,
-                (RelativeLayout) findViewById(R.id.relEmptyStateHandler),
-                (ImageView) findViewById(R.id.imgEmpyStateIcon),
-                (WTextView) findViewById(R.id.txtEmptyStateTitle),
-                (WTextView) findViewById(R.id.txtEmptyStateDesc));
-        actionBar();
-        bindDataWithView(this);
-        confidentialAnimation();
-        mBtnGoProducts.setVisibility(View.VISIBLE);
-        mBtnGoProducts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ShoppingListActivity.this.getApplicationContext(),
-                        WOneAppBaseActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("myAccount", 1);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-            }
-        });
-    }
+	@Override
+	protected void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		Utils.updateStatusBarBackground(this);
+		setContentView(R.layout.shopping_list_activity);
+		initUI();
+		mErrorHandlerView = new ErrorHandlerView(this,
+				(RelativeLayout) findViewById(R.id.relEmptyStateHandler),
+				(ImageView) findViewById(R.id.imgEmpyStateIcon),
+				(WTextView) findViewById(R.id.txtEmptyStateTitle),
+				(WTextView) findViewById(R.id.txtEmptyStateDesc));
+		actionBar();
+		bindDataWithView(this);
+		confidentialAnimation();
+		mBtnGoProducts.setVisibility(View.GONE);
+		mBtnGoProducts.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(ShoppingListActivity.this.getApplicationContext(),
+						WOneAppBaseActivity.class);
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				intent.putExtra("myAccount", 1);
+				startActivity(intent);
+				overridePendingTransition(0, 0);
+			}
+		});
+	}
 
-    private void initUI() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mUncheckedItem = (RecyclerView) findViewById(R.id.uncheckedItem);
-        mCheckItem = (RecyclerView) findViewById(R.id.checkedItem);
-        mCheckListTitle = (WTextView) findViewById(R.id.checkListTitle);
-        mNestedScroll = (WObservableScrollView) findViewById(R.id.nestedScroll);
-        mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-        mBtnGoProducts = (WButton) findViewById(R.id.btnGoToProduct);
-
-
-        mNestedScroll.setScrollViewCallbacks(this);
-    }
-
-    private void actionBar() {
-        setSupportActionBar(mToolbar);
-        ActionBar mActionBar = getSupportActionBar();
-        if (mActionBar != null) {
-            mActionBar.setDisplayHomeAsUpEnabled(true);
-            mActionBar.setDisplayShowTitleEnabled(false);
-            mActionBar.setHomeAsUpIndicator(R.drawable.close_24);
-        }
-    }
-
-    private void confidentialAnimation() {
-        TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
-        animation.setFillAfter(true);
-        animation.setDuration(ANIM_DOWN_DURATION);
-        animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
-
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-        });
-        mRelRootContainer.startAnimation(animation);
-    }
-
-    private void bindDataWithView(WOnItemClickListener context) {
-        LinearLayoutManager checkedLayoutManager = new LinearLayoutManager(this);
-        LinearLayoutManager unCheckedLayoutManager = new LinearLayoutManager(this);
-
-        checkedLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        unCheckedLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
-        mUncheckedItem.setHasFixedSize(false);
-        mUncheckedItem.setLayoutManager(unCheckedLayoutManager);
-        mCheckItem.setHasFixedSize(false);
-        mCheckItem.setLayoutManager(checkedLayoutManager);
-
-        adapterList();
+	private void initUI() {
+		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		mUncheckedItem = (RecyclerView) findViewById(R.id.uncheckedItem);
+		mCheckItem = (RecyclerView) findViewById(R.id.checkedItem);
+		mCheckListTitle = (WTextView) findViewById(R.id.checkListTitle);
+		mNestedScroll = (WObservableScrollView) findViewById(R.id.nestedScroll);
+		mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+		mBtnGoProducts = (WButton) findViewById(R.id.btnGoToProduct);
 
 
-        checkedShoppingListAdapter = new ShoppingListCheckedAdapter(checkedItemList, context);
-        unCheckedShoppingListAdapter = new ShoppingUnCheckedListAdapter(uncheckedItemList, context);
-        checkedShoppingListAdapter.setMode(Attributes.Mode.Single);
-        unCheckedShoppingListAdapter.setMode(Attributes.Mode.Single);
+		mNestedScroll.setScrollViewCallbacks(this);
+	}
 
-        mCheckItem.setAdapter(checkedShoppingListAdapter);
-        mUncheckedItem.setAdapter(unCheckedShoppingListAdapter);
-    }
+	private void actionBar() {
+		setSupportActionBar(mToolbar);
+		ActionBar mActionBar = getSupportActionBar();
+		if (mActionBar != null) {
+			mActionBar.setDisplayHomeAsUpEnabled(true);
+			mActionBar.setDisplayShowTitleEnabled(false);
+			mActionBar.setHomeAsUpIndicator(R.drawable.close_24);
+		}
+	}
 
-    private void adapterList() {
-        if (mGetShoppingList != null)
-            mGetShoppingList.clear();
+	private void confidentialAnimation() {
+		TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+		animation.setFillAfter(true);
+		animation.setDuration(ANIM_DOWN_DURATION);
+		animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
 
-        mGetShoppingList = Utils.getShoppingList(this);
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
 
-        if (mGetShoppingList == null) {
-            mGetShoppingList = new ArrayList<>();
-        }
-        uncheckedItemList = new ArrayList<>();
-        checkedItemList = new ArrayList<>();
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
 
-        if (uncheckedItemList != null) {
-            uncheckedItemList.clear();
-        }
+			@Override
+			public void onAnimationEnd(Animation animation) {
 
-        if (checkedItemList != null) {
-            checkedItemList.clear();
-        }
+			}
+		});
+		mRelRootContainer.startAnimation(animation);
+	}
 
-        if (mGetShoppingList != null && mGetShoppingList.size() > 0) {
-            for (ShoppingList s : mGetShoppingList) {
-                if (s.isProductIsChecked()) {
-                    checkedItemList.add(s);
-                } else {
-                    uncheckedItemList.add(s);
-                }
-            }
-        }
+	private void bindDataWithView(WOnItemClickListener context) {
+		LinearLayoutManager checkedLayoutManager = new LinearLayoutManager(this);
+		LinearLayoutManager unCheckedLayoutManager = new LinearLayoutManager(this);
 
-        shoppingListEmptyView();
-    }
+		checkedLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+		unCheckedLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-    @Override
-    public void onItemClick(String productId, int section) {
-        switch (section) {
-            case 0:
-                for (int x = 0; x < mGetShoppingList.size(); x++) {
-                    if (productId.equalsIgnoreCase(mGetShoppingList.get(x).getProduct_id())) {
-                        ShoppingList shoppingList = mGetShoppingList.get(x);
-                        ShoppingList updatedShopList = new ShoppingList(shoppingList.getProduct_id(),
-                                shoppingList.getProduct_name(), true);
-                        mGetShoppingList.set(x, updatedShopList);
-                        Collections.swap(mGetShoppingList, 0, x);
-                        checkedItemList.add(0, updatedShopList);
-                    }
-                }
+		mUncheckedItem.setHasFixedSize(false);
+		mUncheckedItem.setLayoutManager(unCheckedLayoutManager);
+		mCheckItem.setHasFixedSize(false);
+		mCheckItem.setLayoutManager(checkedLayoutManager);
 
-                checkedShoppingListAdapter.notifyItemInserted(0);
-                checkedShoppingListAdapter.notifyItemRangeChanged(0, checkedItemList.size());
-                checkedShoppingListAdapter.notifyDataSetChanged();
-                checkedShoppingListAdapter.mItemManger.closeAllItems();
-
-                Utils.sessionDaoSave(this, SessionDao.KEY.STORE_SHOPPING_LIST,
-                        new Gson().toJson(mGetShoppingList));
-                break;
-
-            case 1:
-                for (int x = 0; x < mGetShoppingList.size(); x++) {
-                    if (productId.equalsIgnoreCase(mGetShoppingList.get(x).getProduct_id())) {
-                        ShoppingList shoppingList = mGetShoppingList.get(x);
-                        ShoppingList updatedShopList = new ShoppingList(shoppingList.getProduct_id(),
-                                shoppingList.getProduct_name(), false);
-                        mGetShoppingList.set(x, updatedShopList);
-                        Collections.swap(mGetShoppingList, 0, x);
-                        uncheckedItemList.add(uncheckedItemList.size(), updatedShopList);
-                    }
-                }
-
-                unCheckedShoppingListAdapter.notifyItemInserted(uncheckedItemList.size());
-                unCheckedShoppingListAdapter.notifyItemRangeChanged(0, uncheckedItemList.size());
-                unCheckedShoppingListAdapter.notifyDataSetChanged();
-                unCheckedShoppingListAdapter.mItemManger.closeAllItems();
-
-                Utils.sessionDaoSave(this, SessionDao.KEY.STORE_SHOPPING_LIST,
-                        new Gson().toJson(mGetShoppingList));
-                break;
-        }
-    }
-
-    @Override
-    public void onSwipeListener(int index, SwipeLayout layout) {
-        switch (index) {
-            case 0:
-                checkedShoppingListAdapter.closeAllItems();
-                checkedShoppingListAdapter.notifyDataSetChanged();
-
-                break;
-
-            case 1:
-                unCheckedShoppingListAdapter.closeAllItems();
-                unCheckedShoppingListAdapter.notifyDataSetChanged();
-                break;
-        }
-    }
-
-    @Override
-    public void onDelete(String productId) {
-        ArrayList toRemove = new ArrayList();
-        for (ShoppingList str : mGetShoppingList) {
-            if (productId.equalsIgnoreCase(str.getProduct_id())) {
-                toRemove.add(str);
-            }
-        }
-        mGetShoppingList.removeAll(toRemove);
-        Utils.sessionDaoSave(this, SessionDao.KEY.STORE_SHOPPING_LIST,
-                new Gson().toJson(mGetShoppingList));
-
-        shoppingListEmptyView();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
-                return true;
-        }
-        return false;
-    }
-
-    private void shoppingListEmptyView() {
-        if (mGetShoppingList.size() == 0) {
-            mErrorHandlerView.showEmptyState(4);
-        } else {
-            mErrorHandlerView.hideEmpyState();
-            mNestedScroll.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-
-    }
-
-    @Override
-    public void onDownMotionEvent() {
-
-    }
-
-    @Override
-    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        try {
-            switch (scrollState) {
-                case UP:
-                    hideViews();
-                    break;
-                case DOWN:
-                    showViews();
-                    break;
-                default:
-                    break;
-            }
-        } catch (Exception ignored) {
-        }
-    }
+		adapterList();
 
 
-    private void hideViews() {
-        mToolbar.animate().translationY(-mToolbar.getBottom())
-                .setInterpolator(new AccelerateInterpolator()).start();
-    }
+		checkedShoppingListAdapter = new ShoppingListCheckedAdapter(checkedItemList, context);
+		unCheckedShoppingListAdapter = new ShoppingUnCheckedListAdapter(uncheckedItemList, context);
+		checkedShoppingListAdapter.setMode(Attributes.Mode.Single);
+		unCheckedShoppingListAdapter.setMode(Attributes.Mode.Single);
 
-    private void showViews() {
-        mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
-    }
+		mCheckItem.setAdapter(checkedShoppingListAdapter);
+		mUncheckedItem.setAdapter(unCheckedShoppingListAdapter);
+	}
+
+	private void adapterList() {
+		if (mGetShoppingList != null)
+			mGetShoppingList.clear();
+
+		mGetShoppingList = Utils.getShoppingList(this);
+
+		if (mGetShoppingList == null) {
+			mGetShoppingList = new ArrayList<>();
+		}
+		uncheckedItemList = new ArrayList<>();
+		checkedItemList = new ArrayList<>();
+
+		if (uncheckedItemList != null) {
+			uncheckedItemList.clear();
+		}
+
+		if (checkedItemList != null) {
+			checkedItemList.clear();
+		}
+
+		if (mGetShoppingList != null && mGetShoppingList.size() > 0) {
+			for (ShoppingList s : mGetShoppingList) {
+				if (s.isProductIsChecked()) {
+					checkedItemList.add(s);
+				} else {
+					uncheckedItemList.add(s);
+				}
+			}
+		}
+
+		shoppingListEmptyView();
+	}
+
+	@Override
+	public void onItemClick(String productId, int section) {
+		switch (section) {
+			case 0:
+				for (int x = 0; x < mGetShoppingList.size(); x++) {
+					if (productId.equalsIgnoreCase(mGetShoppingList.get(x).getProduct_id())) {
+						ShoppingList shoppingList = mGetShoppingList.get(x);
+						ShoppingList updatedShopList = new ShoppingList(shoppingList.getProduct_id(),
+								shoppingList.getProduct_name(), true);
+						mGetShoppingList.set(x, updatedShopList);
+						Collections.swap(mGetShoppingList, 0, x);
+						checkedItemList.add(0, updatedShopList);
+					}
+				}
+
+				checkedShoppingListAdapter.notifyItemInserted(0);
+				checkedShoppingListAdapter.notifyItemRangeChanged(0, checkedItemList.size());
+				checkedShoppingListAdapter.notifyDataSetChanged();
+				checkedShoppingListAdapter.mItemManger.closeAllItems();
+
+				Utils.sessionDaoSave(this, SessionDao.KEY.STORE_SHOPPING_LIST,
+						new Gson().toJson(mGetShoppingList));
+				break;
+
+			case 1:
+				for (int x = 0; x < mGetShoppingList.size(); x++) {
+					if (productId.equalsIgnoreCase(mGetShoppingList.get(x).getProduct_id())) {
+						ShoppingList shoppingList = mGetShoppingList.get(x);
+						ShoppingList updatedShopList = new ShoppingList(shoppingList.getProduct_id(),
+								shoppingList.getProduct_name(), false);
+						mGetShoppingList.set(x, updatedShopList);
+						Collections.swap(mGetShoppingList, 0, x);
+						uncheckedItemList.add(uncheckedItemList.size(), updatedShopList);
+					}
+				}
+
+				unCheckedShoppingListAdapter.notifyItemInserted(uncheckedItemList.size());
+				unCheckedShoppingListAdapter.notifyItemRangeChanged(0, uncheckedItemList.size());
+				unCheckedShoppingListAdapter.notifyDataSetChanged();
+				unCheckedShoppingListAdapter.mItemManger.closeAllItems();
+
+				Utils.sessionDaoSave(this, SessionDao.KEY.STORE_SHOPPING_LIST,
+						new Gson().toJson(mGetShoppingList));
+				break;
+		}
+	}
+
+	@Override
+	public void onSwipeListener(int index, SwipeLayout layout) {
+		switch (index) {
+			case 0:
+				checkedShoppingListAdapter.closeAllItems();
+				checkedShoppingListAdapter.notifyDataSetChanged();
+
+				break;
+
+			case 1:
+				unCheckedShoppingListAdapter.closeAllItems();
+				unCheckedShoppingListAdapter.notifyDataSetChanged();
+				break;
+		}
+	}
+
+	@Override
+	public void onDelete(String productId) {
+		ArrayList toRemove = new ArrayList();
+		for (ShoppingList str : mGetShoppingList) {
+			if (productId.equalsIgnoreCase(str.getProduct_id())) {
+				toRemove.add(str);
+			}
+		}
+		mGetShoppingList.removeAll(toRemove);
+		Utils.sessionDaoSave(this, SessionDao.KEY.STORE_SHOPPING_LIST,
+				new Gson().toJson(mGetShoppingList));
+
+		shoppingListEmptyView();
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				onBackPressed();
+				overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+				return true;
+		}
+		return false;
+	}
+
+	private void shoppingListEmptyView() {
+		if (mGetShoppingList.size() == 0) {
+			mErrorHandlerView.showEmptyState(4);
+			mErrorHandlerView.hideDescription();
+		} else {
+			mErrorHandlerView.hideEmpyState();
+			mNestedScroll.setVisibility(View.VISIBLE);
+		}
+	}
+
+	@Override
+	public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+
+	}
+
+	@Override
+	public void onDownMotionEvent() {
+
+	}
+
+	@Override
+	public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+		try {
+			switch (scrollState) {
+				case UP:
+					hideViews();
+					break;
+				case DOWN:
+					showViews();
+					break;
+				default:
+					break;
+			}
+		} catch (Exception ignored) {
+		}
+	}
+
+
+	private void hideViews() {
+		mToolbar.animate().translationY(-mToolbar.getBottom())
+				.setInterpolator(new AccelerateInterpolator()).start();
+	}
+
+	private void showViews() {
+		mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
+	}
 
 }

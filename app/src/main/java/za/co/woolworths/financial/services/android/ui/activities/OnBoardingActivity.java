@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -49,6 +50,8 @@ public class OnBoardingActivity extends AppCompatActivity implements ViewPager.O
         pager.setAdapter(adapter);
         pager.addOnPageChangeListener(this);
         setUiPageViewController();
+        setupForOneTimeVideoOnSplashScreen();
+        saveApplicationVersion();
     }
 
     private void setUiPageViewController() {
@@ -120,5 +123,24 @@ public class OnBoardingActivity extends AppCompatActivity implements ViewPager.O
             Log.i(TAG, e.getMessage());
         }
 
+    }
+
+    private void setupForOneTimeVideoOnSplashScreen()
+    {
+        try {
+            Utils.sessionDaoSave(OnBoardingActivity.this, SessionDao.KEY.SPLASH_VIDEO, "1");
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
+        }
+    }
+
+    private void saveApplicationVersion()
+    {
+        try {
+            String appLatestVersion=getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+            Utils.sessionDaoSave(OnBoardingActivity.this, SessionDao.KEY.APP_VERSION, appLatestVersion);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -76,6 +76,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
 
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WProductDetailActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
@@ -201,7 +202,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
         findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (new ConnectionDetector().isOnline()) {
+                if (new ConnectionDetector().isOnline(QRActivity.this)) {
                     switch (mCurrentBgTask) {
                         case MBGPRODUCT:
                             getProductRequest(mBarcodeNumber);
@@ -211,8 +212,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
                             getProductDetail(mProductId, mSkuId);
                             break;
                     }
-                } else {
-                    mErrorHandlerView.showToast();
                 }
             }
         });
@@ -505,8 +504,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
             case R.id.btnShopOnlineWoolies:
                 if (!TextUtils.isEmpty(mCheckOutLink)) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Utils.addUTMCode
-                            (mCheckOutLink))));
+                    Utils.openExternalLink(QRActivity.this, Utils.addUTMCode(mCheckOutLink));
+
                 }
                 break;
 

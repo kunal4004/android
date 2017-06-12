@@ -3,8 +3,8 @@ apply plugin: 'com.android.application'
 android {
 
     def major = "5"
-    def minor = "0"
-    def fix = "1"
+    def minor = "1"
+    def fix = "0"
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
@@ -109,7 +109,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
     compile 'io.jsonwebtoken:jjwt:0.7.0'
-    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:support-v13:23.4.0'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'za.co.wigroup.android:utils:1.1.8'
     compile 'uk.co.chrisjenx:calligraphy:1.2.0'

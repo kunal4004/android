@@ -1,12 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -25,10 +28,6 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 
-import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.Voucher;
-import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
-import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.fragments.MenuNavigationInterface;
 
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
@@ -44,7 +43,6 @@ import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
-
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
 		, WProductFragment.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle,
@@ -223,6 +221,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	public void switchToView(int position) {
 		displayView(position);
 	}
+
+
 }
 
 

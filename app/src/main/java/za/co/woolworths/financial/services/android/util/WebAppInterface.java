@@ -79,7 +79,10 @@ public class WebAppInterface {
 
     @JavascriptInterface
     public void showProduct(String productId, String skuId) {
-        onPauseHandler(productId, skuId);
+        if (new ConnectionDetector().isOnline(mContext))
+            onPauseHandler(productId, skuId);
+        else
+            mErrorHandlerView.showToast();
     }
 
     private void onCallback(final String productId, final String skuId) {
