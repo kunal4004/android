@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,13 +10,11 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -35,7 +32,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.CameraUpdate;
@@ -118,7 +114,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	RelativeLayout relBrandLayout;
 
 	WButton btnOnLocationService;
-	protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+	protected static final int REQUEST_CHECK_SETTINGS = 99;
 	Marker myLocation;
 	public static final int PERMS_REQUEST_CODE = 123;
 	private boolean navigateMenuState = false;
@@ -128,6 +124,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	private Location mLocation;
 	private StoresNearbyFragment1 mFragment;
 	MenuItem searchMenu;
+	public boolean isLocationServiceButtonClicked = false;
+
 	public StoresNearbyFragment1() {
 		setHasOptionsMenu(true);
 	}
@@ -237,12 +235,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			@Override
 			public void onClick(View v) {
 				updateMap = true;
-				if(checkLocationPermission()) {
+				if (checkLocationPermission()) {
 					Intent locIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 					getActivity().startActivity(locIntent);
 					getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				}
-				else {
+				} else {
+					isLocationServiceButtonClicked = true;
 					checkLocationPermission();
 				}
 			}
@@ -272,6 +270,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			Log.e(TAG, "!locationServiceIsEnabled & lastKnownLocationIsNull");
 		} else if (locationServiceIsEnabled && lastKnownLocationIsNull) {
 			Log.e(TAG, "locationServiceIsEnabled && lastKnownLocationIsNull");
+			checkLocationServiceAndSetLayout(true);
 			startLocationUpdates();
 		} else if (!locationServiceIsEnabled && !lastKnownLocationIsNull) {
 			updateMap(Utils.getLastSavedLocation(getActivity()));
@@ -470,15 +469,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			@Override
 			public void onClick(View v) {
 				if (storeDetail.phoneNumber != null) {
-					callIntent = new Intent(Intent.ACTION_CALL);
-					callIntent.setData(Uri.parse("tel:" + storeDetail.phoneNumber));
-					//Check for permission before calling
-					//The app will ask permission before calling only on first use after installation
-					if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-						ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);
-					} else {
-						startActivity(callIntent);
-					}
+					Utils.makeCall(getActivity(), storeDetail.phoneNumber);
 				}
 
 			}
@@ -574,15 +565,13 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	@RequiresApi(api = Build.VERSION_CODES.M)
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 		Log.e("RequestSETTINGRESULT", String.valueOf(requestCode));
 		switch (requestCode) {
 			// Check for the integer request code originally supplied to startResolutionForResult().
 			case REQUEST_CHECK_SETTINGS:
-				switch (resultCode) {
-					case Activity.RESULT_OK:
-						startLocationUpdates();
-						break;
-				}
+				initLocationCheck();
+				break;
 		}
 	}
 
@@ -606,9 +595,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.w_store_locator_menu, menu);
-		 searchMenu = menu.findItem(R.id.action_search).setVisible(true);
+		searchMenu = menu.findItem(R.id.action_search).setVisible(true);
 		//Disable until finding location
-		searchMenu.getIcon().setAlpha(130);
 		if (navigateMenuState) {
 			menu.findItem(R.id.action_locate).setVisible(true);
 		} else {
@@ -681,8 +669,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 				LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mLocationUpdated,
 						new IntentFilter(FusedLocationSingleton.INTENT_FILTER_LOCATION_UPDATE));
 			}
-		}
-		else {
+		} else {
 			checkLocationPermission();
 		}
 
@@ -728,14 +715,14 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		if (ContextCompat.checkSelfPermission(getActivity(),
 				Manifest.permission.ACCESS_FINE_LOCATION)
 				!= PackageManager.PERMISSION_GRANTED) {
-			if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+			if (shouldShowRequestPermissionRationale(
 					Manifest.permission.ACCESS_FINE_LOCATION)) {
-				ActivityCompat.requestPermissions(getActivity(),
+				requestPermissions(
 						new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
 						PERMS_REQUEST_CODE);
 			} else {
 				//we can request the permission.
-				ActivityCompat.requestPermissions(getActivity(),
+				requestPermissions(
 						new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
 						PERMS_REQUEST_CODE);
 			}
@@ -792,9 +779,10 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			updateMap = false;
 		}
 	}
+
 	@Override
 	public void onRequestPermissionsResult(int requestCode,
-										   String permissions[], int[] grantResults) {
+	                                       String permissions[], int[] grantResults) {
 		switch (requestCode) {
 			case PERMS_REQUEST_CODE: {
 				// If request is cancelled, the result arrays are empty.
@@ -806,8 +794,15 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 					if (ContextCompat.checkSelfPermission(getActivity(),
 							Manifest.permission.ACCESS_FINE_LOCATION)
 							== PackageManager.PERMISSION_GRANTED) {
-						startLocationUpdates();
-						googleMap.setMyLocationEnabled(false);
+						if (isLocationServiceButtonClicked) {
+							Intent locIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+							startActivityForResult(locIntent, REQUEST_CHECK_SETTINGS);
+							getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+						} else {
+							startLocationUpdates();
+							if (googleMap != null)
+								googleMap.setMyLocationEnabled(false);
+						}
 					}
 
 				} else {
@@ -817,22 +812,24 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 				return;
 			}
 
+			case REQUEST_CALL:
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+					startActivity(callIntent);
+				break;
 			// other 'case' lines to check for other permissions this app might request.
 			// You can add here other case statements according to your requirement.
 		}
 	}
-	public void enableSearchMenu()
-	{
-		if(searchMenu!=null)
-		{
+
+	public void enableSearchMenu() {
+		if (searchMenu != null) {
 			searchMenu.setEnabled(true);
 			searchMenu.getIcon().setAlpha(255);
 		}
 	}
-	public void disableSearchMenu()
-	{
-		if(searchMenu!=null)
-		{
+
+	public void disableSearchMenu() {
+		if (searchMenu != null) {
 			searchMenu.setEnabled(false);
 			searchMenu.getIcon().setAlpha(130);
 		}

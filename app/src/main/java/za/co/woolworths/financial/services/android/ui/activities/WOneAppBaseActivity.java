@@ -222,56 +222,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		displayView(position);
 	}
 
-	@Override
-	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-		switch (requestCode) {
-			case StoresNearbyFragment1.PERMS_REQUEST_CODE: {
-				// If request is cancelled, the result arrays are empty.
-				if (grantResults.length > 0
-						&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-					// permission was granted, yay! Do the
-					// location-related task you need to do.
-					if (ContextCompat.checkSelfPermission(this,
-							Manifest.permission.ACCESS_FINE_LOCATION)
-							== PackageManager.PERMISSION_GRANTED) {
-						displayView(2);
-					}
-
-				} else {
-
-					// permission denied, boo! Disable the
-					// functionality that depends on this permission.
-
-				}
-				return;
-			}
-
-			case StoresNearbyFragment1.REQUEST_CALL: {
-				// If request is cancelled, the result arrays are empty.
-				if (grantResults.length > 0
-						&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-					// permission was granted, yay! Do the
-					// location-related task you need to do.
-					if (ContextCompat.checkSelfPermission(this,
-							Manifest.permission.CALL_PHONE)
-							== PackageManager.PERMISSION_GRANTED) {
-						Intent intent = new Intent("broadcastCall");
-						sendBroadcast(intent);
-					}
-
-				} else {
-
-					// permission denied, boo! Disable the
-					// functionality that depends on this permission.
-
-				}
-				return;
-			}
-
-		}
-	}
 
 }
 
