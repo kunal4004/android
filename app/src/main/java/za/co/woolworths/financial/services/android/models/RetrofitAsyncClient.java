@@ -29,8 +29,8 @@ public class RetrofitAsyncClient {
 
         OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder();
         httpBuilder.addInterceptor(new WfsApiInterceptor(mContext));
-        httpBuilder.readTimeout(60, TimeUnit.SECONDS);
-        httpBuilder.connectTimeout(60, TimeUnit.SECONDS);
+        httpBuilder.readTimeout(45, TimeUnit.SECONDS);
+        httpBuilder.connectTimeout(45, TimeUnit.SECONDS);
 
         mApiInterface = new RestAdapter.Builder()
                 .setClient(new Ok3Client(httpBuilder.build()))

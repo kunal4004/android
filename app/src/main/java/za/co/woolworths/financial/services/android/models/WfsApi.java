@@ -59,12 +59,12 @@ public class WfsApi {
     public static final String TAG = "WfsApi";
     private Location loc;
 
-    public WfsApi(Context mContext) {
+    WfsApi(Context mContext) {
         this.mContext = mContext;
         OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder();
         httpBuilder.addInterceptor(new WfsApiInterceptor(mContext));
-        httpBuilder.readTimeout(60, TimeUnit.SECONDS);
-        httpBuilder.connectTimeout(60, TimeUnit.SECONDS);
+        httpBuilder.readTimeout(45, TimeUnit.SECONDS);
+        httpBuilder.connectTimeout(45, TimeUnit.SECONDS);
 
         mApiInterface = new RestAdapter.Builder()
                 .setClient((new Ok3Client(httpBuilder.build())))
@@ -274,6 +274,5 @@ public class WfsApi {
             loc.setLatitude(0.0d);//your coords of course
             loc.setLongitude(0.0d);
         }
-        Log.e("locationIsEnabled", String.valueOf(locationIsEnabled) + " LocationIsEnabled " + String.valueOf(loc));
     }
 }

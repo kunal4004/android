@@ -17,7 +17,6 @@ public class SessionDao extends BaseDao {
     public KEY key;
     public String value;
 
-
     public enum KEY {
         STORES_USER_LAST_LOCATION("STORES_USER_LAST_LOCATION"),
         STORES_USER_SEARCH("STORES_USER_SEARCH"),
@@ -25,8 +24,13 @@ public class SessionDao extends BaseDao {
         STORES_LATEST_PAYLOAD("STORES_LATEST_PAYLOAD"),
         UNREAD_MESSAGE_COUNT("UNREAD_MESSAGE_COUNT"),
         STORE_SHOPPING_LIST("STORE_SHOPPING_LIST"),
+        STORE_VOUCHER_COUNT("STORE_VOUCHER_COUNT"),
+        ACCOUNT_IS_ACTIVE("ACCOUNT_IS_ACTIVE"),
         USER_TOKEN("USER_TOKEN"),
-        PRODUCTS_ONE_TIME_POPUP("PRODUCTS_ONE_TIME_POPUP");
+        PRODUCTS_ONE_TIME_POPUP("PRODUCTS_ONE_TIME_POPUP"),
+        ON_BOARDING_SCREEN("ON_BOARDING_SCREEN"),
+        SPLASH_VIDEO("SPLASH_VIDEO"),
+        APP_VERSION("APP_VERSION");
 
         private final String text;
 

@@ -22,12 +22,13 @@ import za.co.woolworths.financial.services.android.models.dto.Ingredient;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
-import za.co.woolworths.financial.services.android.ui.activities.ProductDetailViewActivity;
-import za.co.woolworths.financial.services.android.ui.activities.ProductViewGridActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ProductDetailActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.views.ProductProgressDialogFrag;
 
 public class WebAppInterface {
+    private ErrorHandlerView mErrorHandlerView;
     private Context mContext;
     private ProductProgressDialogFrag mProgressDialogFragment;
     private PauseHandlerFragment mPauseHandlerFragment;
@@ -39,12 +40,12 @@ public class WebAppInterface {
 
     public WebAppInterface(Context c) {
         mContext = c;
+        mErrorHandlerView = new ErrorHandlerView(c);
     }
 
     @JavascriptInterface
     public void showProducts(String id, String productName) {
-
-        Intent openProductName = new Intent(mContext, ProductViewGridActivity.class);
+        Intent openProductName = new Intent(mContext, ProductGridActivity.class);
         openProductName.putExtra("searchProduct", "");
         openProductName.putExtra("title", id);
         openProductName.putExtra("titleNav", productName);
@@ -78,7 +79,10 @@ public class WebAppInterface {
 
     @JavascriptInterface
     public void showProduct(String productId, String skuId) {
-        onPauseHandler(productId, skuId);
+        if (new ConnectionDetector().isOnline(mContext))
+            onPauseHandler(productId, skuId);
+        else
+            mErrorHandlerView.showToast();
     }
 
     private void onCallback(final String productId, final String skuId) {
@@ -140,7 +144,7 @@ public class WebAppInterface {
                                             }
                                             GsonBuilder builder = new GsonBuilder();
                                             Gson gson = builder.create();
-                                            Intent openDetailView = new Intent(mContext, ProductDetailViewActivity.class);
+                                            Intent openDetailView = new Intent(mContext, ProductDetailActivity.class);
                                             openDetailView.putExtra("product_name", mProductList.get(0).productName);
                                             openDetailView.putExtra("product_detail", gson.toJson(mProductList));
                                             mContext.startActivity(openDetailView);
@@ -159,6 +163,8 @@ public class WebAppInterface {
                     @Override
                     public void failure(RetrofitError error) {
                         dismissFragmentDialog();
+                        if (error.toString().contains("Unable to resolve host"))
+                            mErrorHandlerView.showToast();
                     }
                 });
     }

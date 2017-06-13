@@ -76,7 +76,10 @@ public class WRewardsFragment extends AbstractFragmentListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FRAGMENT_CODE_1 && resultCode == Activity.RESULT_OK) {
-            reloadFragment();
+            try {
+                reloadFragment();
+            } catch (Exception ex) {
+            }
         } else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
             getAvailableActivity(new IActivityEnabledListener() {
                 @Override

@@ -88,4 +88,8 @@ public class SubCategoryBinder extends DataBinder<SubCategoryBinder.ViewHolder> 
         }
     }
 
+    public void resetSelectedItemBg() {
+        row_index = -1;
+        notifyDataSetChanged();
+    }
 }

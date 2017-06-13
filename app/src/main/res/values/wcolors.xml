@@ -25,5 +25,6 @@
 	<!--<color name="black_off">#343434</color>-->
 	<color name="greyish">#ababab</color>
 	<color name="green">#bad110</color>
+	<color name="header_red">#CF0808</color>
 	<!--<color name="white">#ececec</color>-->
 </resources>

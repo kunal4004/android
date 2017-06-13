@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembers
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 import static com.awfs.coordination.R.id.applyForWRewards;
 import static com.awfs.coordination.R.string.register;
@@ -34,18 +35,19 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
     public WTextView wRewars_linkaccounts;
     public WTextView applyForWRewards;
     public WTextView wRewardsTagLine;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view=inflater.inflate(R.layout.wrewards_loggedout_loggedin_notlinked, container, false);
+        View view = inflater.inflate(R.layout.wrewards_loggedout_loggedin_notlinked, container, false);
         view.findViewById(R.id.layoutLoginLogout).setVisibility(View.GONE);
-        valuedMember=(RelativeLayout)view.findViewById(R.id.layoutValuedMember);
-        loyalMember=(RelativeLayout)view.findViewById(R.id.layoutLoyalMember);
-        vipMember=(RelativeLayout)view.findViewById(R.id.layoutVipMember);
-        wRewars_linkaccounts=(WTextView) view.findViewById(R.id.wRewars_linkaccounts);
-        applyForWRewards=(WTextView) view.findViewById(R.id.applyForWRewards);
-        wRewardsTagLine=(WTextView) view.findViewById(R.id.wRewards_tag_line);
+        valuedMember = (RelativeLayout) view.findViewById(R.id.layoutValuedMember);
+        loyalMember = (RelativeLayout) view.findViewById(R.id.layoutLoyalMember);
+        vipMember = (RelativeLayout) view.findViewById(R.id.layoutVipMember);
+        wRewars_linkaccounts = (WTextView) view.findViewById(R.id.wRewars_linkaccounts);
+        applyForWRewards = (WTextView) view.findViewById(R.id.applyForWRewards);
+        wRewardsTagLine = (WTextView) view.findViewById(R.id.wRewards_tag_line);
         valuedMember.setOnClickListener(this);
         loyalMember.setOnClickListener(this);
         vipMember.setOnClickListener(this);
@@ -61,8 +63,7 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
 
     @Override
     public void onClick(View v) {
-        switch (v.getId())
-        {
+        switch (v.getId()) {
             case R.id.layoutValuedMember:
                 redirectToWRewardsMemberActivity(0);
                 break;
@@ -76,15 +77,16 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
                 ScreenManager.presentSSOLinkAccounts(getActivity());
                 break;
             case R.id.applyForWRewards:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(WoolworthsApplication.getWrewardsLink())));
+                Utils.openExternalLink(getActivity(),WoolworthsApplication.getWrewardsLink());
                 break;
             default:
                 break;
         }
     }
-    public void redirectToWRewardsMemberActivity( int type)
-    {
-        startActivity(new Intent(getActivity(), WRewardsMembersInfoActivity.class).putExtra("type",type));
+
+    public void redirectToWRewardsMemberActivity(int type) {
+        startActivity(new Intent(getActivity(), WRewardsMembersInfoActivity.class).putExtra("type", type));
+        getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
     }
 
 }

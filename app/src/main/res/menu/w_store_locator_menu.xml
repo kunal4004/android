@@ -12,5 +12,7 @@
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
         app:showAsAction="always"
+        android:visible="true"
+        android:enabled="true"
         android:title="" />
 </menu>
