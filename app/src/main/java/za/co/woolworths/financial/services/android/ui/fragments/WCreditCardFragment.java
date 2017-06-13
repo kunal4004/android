@@ -69,6 +69,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
+	private boolean bolBroacastRegistred;
 
 	@Nullable
 	@Override
@@ -102,6 +103,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		} catch (ClassCastException ignored) {
 		}
 		connectionBroadcast= Utils.connectionBroadCast(getActivity(),networkChangeListener);
+		bolBroacastRegistred=true;
+		getActivity().registerReceiver(connectionBroadcast,new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		bindData(accountsResponse);
 		disableIncreaseLimit();
@@ -256,7 +259,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onResume() {
 		super.onResume();
-		getActivity().registerReceiver(connectionBroadcast,new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		setTextSize();
 	}
 
@@ -309,7 +311,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onPause() {
 		super.onPause();
-		getActivity().unregisterReceiver(connectionBroadcast);
+		if(bolBroacastRegistred) {
+			getActivity().unregisterReceiver(connectionBroadcast);
+			bolBroacastRegistred=false;
+		}
 	}
 	@Override
 	public void onConnectionChanged() {
