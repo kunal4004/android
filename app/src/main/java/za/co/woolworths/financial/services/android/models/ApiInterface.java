@@ -323,7 +323,7 @@ public interface ApiInterface {
             @Header("sessionToken") String sessionToken,
             @Body CreateOfferRequest createOfferRequest);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+    @Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:86400"})//cache for 24 hours
     @GET("/user/cli/offerActive")
     OfferActive getActiveOfferRequest(
             @Header("apiId") String apiId,
