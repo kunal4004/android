@@ -16,7 +16,6 @@
         android:paddingLeft="@dimen/default_margin"
         android:letterSpacing="0.1"
         android:paddingRight="@dimen/default_margin"
-        android:text="march"
         android:textAllCaps="true"
         android:textColor="@color/black"
         android:textSize="12sp"

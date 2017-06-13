@@ -1,37 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical"
-    >
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="68dp"
-    >
+              android:orientation="vertical">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="32dp"
-        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="68dp">
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView"
-        android:textSize="12.1sp"
-        android:letterSpacing="0.2"
-        app:WTextView_font="medium_bold"
-        android:textColor="@color/black"
-        android:layout_toRightOf="@+id/imageView"
-        android:layout_marginLeft="24dp"
-        android:layout_centerVertical="true"
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="32dp"/>
 
-        />
-</RelativeLayout>
-
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="24dp"
+            android:layout_toRightOf="@+id/imageView"
+            android:letterSpacing="0.2"
+            android:textColor="@color/black"
+            android:textSize="12.1sp"
+            app:WTextView_font="medium_bold"/>
+    </RelativeLayout>
 
 </LinearLayout>

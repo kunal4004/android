@@ -19,7 +19,6 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class CLISecondStepFragment extends Fragment implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
@@ -34,7 +33,6 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
 
     WoolworthsApplication mWoolworthsApplication;
     private CLIStepIndicatorActivity mMain;
-    private PopWindowValidationMessage mPopWindowValidationMessage;
     private Typeface mRdioGroupTypeFace;
     private Typeface mRdioGroupTypeFaceBold;
 
@@ -47,13 +45,13 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.cli_fragment_step_two, container, false);
         mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-        mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
         mRdioGroupTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/WFutura-Medium.ttf");
         mRdioGroupTypeFaceBold = Typeface.createFromAsset(getActivity().getAssets(), "fonts/WFutura-SemiBold.ttf");
 
         initUI();
         setListener();
         setText();
+
         return view;
     }
 
@@ -144,4 +142,5 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
         stepNavigatorCallback = (CLIFirstStepFragment.StepNavigatorCallback) getActivity();
         mMain = (CLIStepIndicatorActivity) getActivity();
     }
+
 }

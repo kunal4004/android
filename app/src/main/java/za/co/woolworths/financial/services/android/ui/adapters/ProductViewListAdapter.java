@@ -108,11 +108,12 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
             }
         });
 
+
     }
 
     @Override
     public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_view_row, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.wproduct_row, parent, false);
         return new SimpleViewHolder(view);
     }
 
@@ -127,11 +128,10 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
         switch (productType) {
             case "clothingProducts":
                 if (TextUtils.isEmpty(wasPrice)) {
-                    wPrice.setText( WFormatter.formatAmount(price));
+                    wPrice.setText(WFormatter.formatAmount(price));
                     WwasPrice.setText("");
                 } else {
                     if (wasPrice.equalsIgnoreCase(price)) {
-                        //wasPrice equals currentPrice
                         wPrice.setText(WFormatter.formatAmount(price));
                         WwasPrice.setText("");
                         return;

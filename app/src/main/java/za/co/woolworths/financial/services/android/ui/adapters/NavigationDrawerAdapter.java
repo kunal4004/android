@@ -24,11 +24,9 @@ public class NavigationDrawerAdapter extends BaseAdapter {
     private List<NavListItem> navListItems;
     private int selectedPosition = Utils.DEFAULT_SELECTED_NAVIGATION_ITEM;
 
-
-    public NavigationDrawerAdapter(Activity mContext,List<NavListItem> navListItems)
-    {
-        this.mContext=mContext;
-        this.navListItems =navListItems;
+    public NavigationDrawerAdapter(Activity mContext, List<NavListItem> navListItems) {
+        this.mContext = mContext;
+        this.navListItems = navListItems;
     }
 
     @Override
@@ -48,38 +46,42 @@ public class NavigationDrawerAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder listViewHolder;
-        if(convertView == null){
-            listViewHolder = new ViewHolder();
-            convertView = mContext.getLayoutInflater().inflate(R.layout.nav_drawer_row,null);
+        ViewHolder mHolder;
+        if (convertView == null) {
+            mHolder = new ViewHolder();
+            convertView = mContext.getLayoutInflater().inflate(R.layout.nav_drawer_row, null);
 
-            listViewHolder.textInListView = (WTextView) convertView.findViewById(R.id.textView);
-            listViewHolder.imageInListView = (ImageView)convertView.findViewById(R.id.imageView);
-            convertView.setTag(listViewHolder);
-        }else{
-            listViewHolder = (ViewHolder)convertView.getTag();
+            mHolder.textInListView = (WTextView) convertView.findViewById(R.id.textView);
+            mHolder.imageInListView = (ImageView) convertView.findViewById(R.id.imageView);
+
+            convertView.setTag(mHolder);
+        } else {
+            mHolder = (ViewHolder) convertView.getTag();
         }
+        NavListItem navItem = navListItems.get(position);
         try {
-            listViewHolder.textInListView.setText(navListItems.get(position).getName());
-            listViewHolder.imageInListView.setImageResource(navListItems.get(position).getImage());
-        }catch (Exception ex){}
+
+            mHolder.textInListView.setText(navItem.getName());
+            mHolder.imageInListView.setImageResource(navItem.getImage());
+
+
+        } catch (Exception ignored) {
+        }
 
         if (position == selectedPosition) {
             convertView.setBackgroundResource(R.drawable.vertical_line);
-        }else {
+        } else {
             convertView.setBackgroundColor(Color.parseColor("#ffffff"));
         }
         return convertView;
     }
 
-    static class ViewHolder{
-
+    static class ViewHolder {
         WTextView textInListView;
         ImageView imageInListView;
     }
+
     public void setSelectedPosition(int position) {
-
         this.selectedPosition = position;
-
     }
 }

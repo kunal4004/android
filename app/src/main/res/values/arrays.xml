@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-   <string-array name="fonts">
-       <item>fonts/WFutura-Light.ttf</item>
-       <item>fonts/WFutura-Medium.ttf</item>
-       <item>fonts/WFutura-SemiBold.ttf</item>
-       <item>fonts/WFutura-Bold.ttf</item>
-       <item>fonts/MyriadPro-Regular.otf</item>
-       <item>fonts/MyriadPro-Semibold.otf</item>
-   </string-array>
+    <string-array name="fonts">
+        <item>fonts/WFutura-Light.ttf</item>
+        <item>fonts/WFutura-Medium.ttf</item>
+        <item>fonts/WFutura-SemiBold.ttf</item>
+        <item>fonts/WFutura-Bold.ttf</item>
+        <item>fonts/MyriadPro-Regular.otf</item>
+        <item>fonts/MyriadPro-Semibold.otf</item>
+    </string-array>
     <integer-array name="months_default">
         <item>12</item>
         <item>24</item>
@@ -26,7 +26,7 @@
         <item>@string/nav_item_products</item>
         <item>@string/nav_item_store</item>
         <item>@string/nav_item_wrewards</item>
-         <item>@string/nav_item_accounts</item>
+        <item>@string/nav_item_accounts</item>
     </string-array>
 
     <string-array name="accounts_walkthrough_descriptions">
@@ -97,4 +97,32 @@
         <item>@drawable/icon_paperclip</item>
         <item>@drawable/icon_fax</item>
     </array>
+
+    <integer-array name="empty_state_icon">
+        <item>@drawable/emptyvouchers</item>
+        <item>@drawable/emptytierhistory</item>
+        <item>@drawable/empty_statement</item>
+        <item>@drawable/emptytransactions</item>
+        <item>@drawable/shoppinglistemptyimg</item>
+        <item>@drawable/emptyinbox</item>
+    </integer-array>
+
+    <string-array name="on_boarding_walkthrough_descriptions">
+        <item>@string/onboarding_desc_screen_1</item>
+        <item>@string/onboarding_desc_screen_2</item>
+        <item>@string/onboarding_desc_screen_3</item>
+        <item>@string/onboarding_desc_screen_4</item>
+    </string-array>
+    <string-array name="on_boarding_walkthrough_titles">
+        <item>@string/on_boarding_title_1</item>
+        <item>@string/on_boarding_title_2</item>
+        <item>@string/on_boarding_title_3</item>
+        <item>@string/on_boarding_title_4</item>
+    </string-array>
+    <integer-array name="on_boarding_walkthrough_images">
+        <item>@drawable/walkthrough_1</item>
+        <item>@drawable/walkthrough_2</item>
+        <item>@drawable/walkthrough_3</item>
+        <item>@drawable/walkthrough_4</item>
+    </integer-array>
 </resources>

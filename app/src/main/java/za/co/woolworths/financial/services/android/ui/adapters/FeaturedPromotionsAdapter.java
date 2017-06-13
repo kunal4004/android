@@ -13,7 +13,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Promotion;
-import za.co.woolworths.financial.services.android.ui.activities.ProductViewGridActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 
 public class FeaturedPromotionsAdapter extends PagerAdapter {
@@ -46,7 +46,7 @@ public class FeaturedPromotionsAdapter extends PagerAdapter {
         cView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent openProductName = new Intent(mContext, ProductViewGridActivity.class);
+                Intent openProductName = new Intent(mContext, ProductGridActivity.class);
                 openProductName.putExtra("searchProduct", "");
                 openProductName.putExtra("title", promotions.get(position).path);
                 openProductName.putExtra("titleNav", mContext.getResources().getString(R.string.featured_promotions));

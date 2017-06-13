@@ -2,19 +2,21 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="drawer_text_color">@android:color/darker_gray</item>
         <item name="android:windowBackground">@color/white</item>
         <item name="android:actionBarStyle">@style/WActionBarStyle</item>
-        <item name="drawer_background">@color/drawer_color</item>
         <item name="android:listDivider">@drawable/list_divider</item>
-        <item name="android:seekBarStyle">@style/SeekBarPLDD</item>
         <item name="borderColor">@color/indicator_border</item>
         <item name="selectedColor">@color/indicator_selected</item>
         <item name="unselectedColor">@color/indicator_unselected</item>
     </style>
 
-    <style name="SplashTheme" parent="android:Theme.Holo.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash_background</item>
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:actionBarSize">0dp</item>
     </style>
 
     <style name="LoginTheme" parent="android:Theme.Holo.Light.NoActionBar">
@@ -23,30 +25,6 @@
 
     <style name="WActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/black</item>
-    </style>
-
-    <style name="tierinfostate" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="drawer_text_color">@android:color/darker_gray</item>
-        <item name="android:windowBackground">@color/white</item>
-        <item name="android:actionBarStyle">@style/WActionBarStyle</item>
-        <item name="drawer_background">@color/drawer_color</item>
-        <item name="android:listDivider">@drawable/list_divider</item>
-        <item name="android:seekBarStyle">@style/SeekBarPLDD</item>
-    </style>
-
-    <style name="SeekBarPLDD" parent="android:Widget.SeekBar">
-        <item name="android:progressDrawable">
-            @drawable/pldd_scrubber_progress_horizontal_holo_light
-        </item>
-        <item name="android:indeterminateDrawable">
-            @drawable/pldd_scrubber_progress_horizontal_holo_light
-        </item>
-        <item name="android:minHeight">13dip</item>
-        <item name="android:maxHeight">13dip</item>
-        <item name="android:thumb">@drawable/pldd_scrubber_control_selector_holo_light</item>
-        <item name="android:thumbOffset">16dip</item>
-        <item name="android:paddingLeft">16dip</item>
-        <item name="android:paddingRight">16dip</item>
     </style>
 
     <style name="Button">
@@ -107,6 +85,16 @@
         <item name="actionBarItemBackground">@null</item>
     </style>
 
+    <style name="NoConnectionStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:selectableItemBackground">@android:color/transparent</item>
+        <item name="android:actionBarItemBackground">@null</item>
+        <item name="actionBarItemBackground">@null</item>
+    </style>
 
     <style name="WSearchViewStyle" parent="Widget.AppCompat.SearchView">
         <item name="searchHintIcon">@null</item>
@@ -171,10 +159,6 @@
         <item name="android:windowExitAnimation">@anim/alpha_anim_exit</item>
     </style>
 
-    <style name="popwindow_style">
-        <item name="android:windowEnterAnimation">@anim/pop_fade_in</item>
-        <item name="android:windowExitAnimation">@anim/pop_fade_out</item>
-    </style>
 
     <style name="WRewardsInfo" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
@@ -233,7 +217,7 @@
         <item name="android:textAllCaps">true</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">12sp</item>
-        <item name="android:letterSpacing">0.1</item>
+        <item name="android:letterSpacing">0.2</item>
         <item name="android:stateListAnimator">@null</item>
     </style>
 
@@ -576,7 +560,7 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">false</item>
-        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
     </style>
 
     <style name="FragmentDialogStyle" parent="Base.Theme.AppCompat.Dialog">
@@ -652,5 +636,64 @@
         <!--<item name="android:windowBackground">@drawable/black_theme</item>-->
     </style>
 
+    <style name="contact_us_operating_hours_layout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">16dp</item>
+    </style>
+
+    <style name="contact_us_operating_hours_textview">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:lineSpacingExtra">-2dp</item>
+    </style>
+
+    <style name="webViewStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:colorBackgroundCacheHint">@color/white</item>
+        <item name="android:selectableItemBackground">@color/white</item>
+        <item name="android:actionBarItemBackground">@color/white</item>
+        <item name="actionBarItemBackground">@null</item>
+    </style>
+
+    <style name="AlertTheme" parent="Base.Theme.AppCompat">
+        <item name="alertStyle">@style/AlertStyle</item>
+    </style>
+
+    <!--Alerter-->
+    <style name="AlertStyle" parent="@android:style/Widget">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/alerter_alert_min_height</item>
+        <item name="android:maxHeight">@dimen/alerter_alert_max_height</item>
+        <item name="android:clickable">true</item>
+        <item name="android:gravity">top</item>
+        <item name="android:paddingTop">@dimen/alerter_alert_padding</item>
+    </style>
+
+    <style name="AlertTextAppearance">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="AlertTextAppearance.Title">
+        <item name="android:textSize">@dimen/alerter_text_medium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AlertTextAppearance.Text">
+        <item name="android:textSize">@dimen/alerter_text_small</item>
+    </style>
 
 </resources>

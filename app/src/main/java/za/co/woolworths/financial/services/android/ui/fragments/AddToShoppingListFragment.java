@@ -18,7 +18,6 @@ import java.net.URL;
 
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
-import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -89,6 +88,7 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnAddShoppingList:
+
                 Utils.addToShoppingCart(getActivity(), new ShoppingList(
                         productId,
                         productName, false));
@@ -96,6 +96,7 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
                 Utils.displayValidationMessage(getActivity(),
                         TransientActivity.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
                         "viewShoppingList");
+                dismiss();
                 break;
         }
     }

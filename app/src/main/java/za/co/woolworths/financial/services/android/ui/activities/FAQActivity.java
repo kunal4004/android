@@ -8,14 +8,18 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
 import java.util.List;
 
+import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.FAQ;
 import za.co.woolworths.financial.services.android.models.dto.FAQDetail;
@@ -24,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragme
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -39,22 +44,38 @@ public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQ
     private Toolbar mToolbar;
     private List<FAQDetail> mFAQ;
     private ConnectionDetector mConnectionDetector;
-    private PopWindowValidationMessage mPopWindowValidaitonMessage;
+    //private PopWindowValidationMessage mPopWindowValidaitonMessage;
     private WTextView mtextNotFound;
+    private ErrorHandlerView mErrorHandlerView;
+    private WoolworthsApplication mWoolworthsApplication;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         Utils.updateStatusBarBackground(this);
         setContentView(R.layout.faq_activity);
         mContext = this;
         mConnectionDetector = new ConnectionDetector();
-        mPopWindowValidaitonMessage = new PopWindowValidationMessage(this);
+       // mPopWindowValidaitonMessage = new PopWindowValidationMessage(this);
+        mWoolworthsApplication = (WoolworthsApplication) getApplication();
+        mErrorHandlerView = new ErrorHandlerView(this, mWoolworthsApplication,
+                (RelativeLayout) findViewById(R.id.relEmptyStateHandler),
+                (ImageView) findViewById(R.id.imgEmpyStateIcon),
+                (WTextView) findViewById(R.id.txtEmptyStateTitle),
+                (WTextView) findViewById(R.id.txtEmptyStateDesc),
+                (RelativeLayout) findViewById(R.id.no_connection_layout));
         initUI();
         setActionBar();
         getFAQRequest();
+        findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (new ConnectionDetector().isOnline(FAQActivity.this)) {
+                    getFAQRequest();
+                }
+            }
+
+        });
 
     }
 
@@ -86,18 +107,21 @@ public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQ
         fm = getSupportFragmentManager();
         mGetProgressDialog = ProgressDialogFragment.newInstance();
         mGetProgressDialog.setCancelable(false);
-        if (mConnectionDetector.isOnline(this)) {
             new HttpAsyncTask<String, String, FAQ>() {
                 @Override
                 protected FAQ httpDoInBackground(String... params) {
-                    return ((WoolworthsApplication) getApplication()).getApi().getFAQ();
+                    return ((WoolworthsApplication) FAQActivity.this.getApplication()).getApi()
+                            .getFAQ();
                 }
 
                 @Override
                 protected FAQ httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+                    Log.e("errorMessage", errorMessage+" "+httpErrorCode);
                     dismissProgress();
+                    networkFailureHandler(errorMessage);
                     return new FAQ();
                 }
+
 
                 @Override
                 protected Class<FAQ> httpDoInBackgroundReturnType() {
@@ -106,6 +130,7 @@ public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQ
 
                 @Override
                 protected void onPreExecute() {
+                    mErrorHandlerView.hideErrorHandlerLayout();
                     try {
                         if (!mGetProgressDialog.isAdded()) {
                             mGetProgressDialog.show(fm, "v");
@@ -144,10 +169,7 @@ public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQ
                     dismissProgress();
                 }
             }.execute();
-        } else {
-            mPopWindowValidaitonMessage.displayValidationMessage(getString(R.string.connect_to_server),
-                    PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
-        }
+
     }
 
     private void dismissProgress() {
@@ -180,5 +202,12 @@ public class FAQActivity extends BaseActivity implements FAQTypeBinder.SelectedQ
         }
         return false;
     }
-
+    public void networkFailureHandler(final String errorMessage) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mErrorHandlerView.networkFailureHandler(errorMessage);
+            }
+        });
+    }
 }

@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.NavigationDrawerA
 public class WFragmentDrawer extends Fragment {
 
 
+    private static NavListItem navItem;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private NavigationDrawerAdapter adapter;
@@ -41,9 +42,12 @@ public class WFragmentDrawer extends Fragment {
     private FragmentDrawerListener drawerListener;
     private static String[] titles = null;
     private static TypedArray images = null;
+    private List<NavListItem> mMenuList;
+
     public WFragmentDrawer() {
         // Required empty public constructor
     }
+
     public void setDrawerListener(FragmentDrawerListener listener) {
         this.drawerListener = listener;
     }
@@ -52,14 +56,17 @@ public class WFragmentDrawer extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.w_navigation_drawer_fragment, container, false);
-        listView=(ListView)layout.findViewById(R.id.drawerList);
-        adapter = new NavigationDrawerAdapter(getActivity(), getData());
+        listView = (ListView) layout.findViewById(R.id.drawerList);
+
+        mMenuList = getData();
+        adapter = new NavigationDrawerAdapter(getActivity(), mMenuList);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                adapter.setSelectedPosition(position );
+                adapter.setSelectedPosition(position);
+
                 adapter.notifyDataSetChanged();
 
                 drawerListener.onDrawerItemSelected(view, position);
@@ -67,7 +74,8 @@ public class WFragmentDrawer extends Fragment {
                 new Handler().post(new Runnable() {
                     @Override
                     public void run() {
-                        mDrawerLayout.closeDrawer(containerView);                    }
+                        mDrawerLayout.closeDrawer(containerView);
+                    }
                 });
 
             }
@@ -82,19 +90,19 @@ public class WFragmentDrawer extends Fragment {
         images = getActivity().getResources().obtainTypedArray(R.array.nav_drawer_images);
 
     }
+
     public static List<NavListItem> getData() {
         List<NavListItem> data = new ArrayList<>();
-
-
         // preparing navigation drawer items
         for (int i = 0; i < titles.length; i++) {
-            NavListItem navItem = new NavListItem();
+            navItem = new NavListItem();
             navItem.setName(titles[i]);
-            navItem.setImage(images.getResourceId(i,-1));
+            navItem.setImage(images.getResourceId(i, -1));
             data.add(navItem);
         }
         return data;
     }
+
     public void setUp(int fragmentId, final DrawerLayout drawerLayout, final Toolbar toolbar) {
         containerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
@@ -104,7 +112,7 @@ public class WFragmentDrawer extends Fragment {
                 super.onDrawerOpened(drawerView);
                 containerView.setClickable(true);
                 getActivity().invalidateOptionsMenu();
-
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -112,6 +120,7 @@ public class WFragmentDrawer extends Fragment {
                 super.onDrawerClosed(drawerView);
                 containerView.setClickable(false);
                 getActivity().invalidateOptionsMenu();
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -144,8 +153,8 @@ public class WFragmentDrawer extends Fragment {
         });
 
     }
-    public interface FragmentDrawerListener {
-        public void onDrawerItemSelected(View view, int position);
-    }
 
+    public interface FragmentDrawerListener {
+        void onDrawerItemSelected(View view, int position);
+    }
 }

@@ -14,7 +14,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.ContactUsFragmentChange;
 
-import static za.co.woolworths.financial.services.android.ui.activities.StoreLocatorActivity.toolbar;
+
 
 public class WContactUsActivityNew extends AppCompatActivity implements ContactUsFragmentChange{
 

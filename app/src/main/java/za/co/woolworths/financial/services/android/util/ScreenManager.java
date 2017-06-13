@@ -5,13 +5,11 @@ import android.content.Intent;
 
 import com.awfs.coordination.R;
 
-import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.ui.activities.WOnboardingActivity;
+import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 
@@ -21,72 +19,69 @@ import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActi
 
 public class ScreenManager {
 
-    public static void presentMain(Activity activity){
+	public static void presentMain(Activity activity) {
 
-        Intent intent = new Intent(activity, WOneAppBaseActivity.class);
+		Intent intent = new Intent(activity, WOneAppBaseActivity.class);
+		activity.startActivity(intent);
+		activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+		activity.finish();
+	}
 
-        activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        activity.finish();
-    }
+	public static void presentSSOSignin(Activity activity) {
+		Intent intent = new Intent(activity, SSOActivity.class);
+		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
+		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
+		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
+		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
+		activity.overridePendingTransition(0, 0);
+	}
 
-    public static void presentSSOSignin(Activity activity){
+	public static void presentSSORegister(Activity activity) {
+		Intent intent = new Intent(activity, SSOActivity.class);
+		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
+		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
+		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.REGISTER.rawValue());
+		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
+		activity.overridePendingTransition(0, 0);
+	}
 
-        Intent intent = new Intent(activity, SSOActivity.class);
-        intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
-        intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
-        intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
+	public static void presentOnboarding(Activity activity) {
 
-        activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
-    }
+		Intent intent = new Intent(activity, OnBoardingActivity.class);
 
-    public static void presentSSORegister(Activity activity){
+		activity.startActivity(intent);
+		activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+		activity.finish();
+	}
 
-        Intent intent = new Intent(activity, SSOActivity.class);
-        intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
-        intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
-        intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.REGISTER.rawValue());
+	public static void presentSSOLinkAccounts(Activity activity) {
+		Intent intent = new Intent(activity, SSOActivity.class);
+		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
+		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
+		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
+		intent.putExtra(SSOActivity.TAG_SCOPE, "C2Id");
+		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
+		activity.overridePendingTransition(0, 0);
+	}
 
-        activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
-    }
+	public static void presentSSOLogout(Activity activity) {
+		HashMap<String, String> params = new HashMap<String, String>();
 
-    public static void presentOnboarding(Activity activity){
+		try {
+			SessionDao sessionDao = new SessionDao(activity, SessionDao.KEY.USER_TOKEN).get();
+			params.put("id_token_hint", sessionDao.value);
+			params.put("post_logout_redirect_uri", WoolworthsApplication.getSsoRedirectURILogout());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        Intent intent = new Intent(activity, WOnboardingActivity.class);
+		Intent intent = new Intent(activity, SSOActivity.class);
+		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
+		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
+		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.LOGOUT.rawValue());
+		intent.putExtra(SSOActivity.TAG_EXTRA_QUERYSTRING_PARAMS, params);
 
-        activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-        activity.finish();
-    }
-
-    public static void presentSSOLinkAccounts(Activity activity) {
-
-        Intent intent = new Intent(activity, SSOActivity.class);
-        intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
-        intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
-        intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
-        intent.putExtra(SSOActivity.TAG_SCOPE, "C2Id");
-
-        activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
-    }
-
-    public static void presentSSOLogout(Activity activity) {
-        HashMap<String, String> params = new HashMap<String, String>();
-
-        try {
-            SessionDao sessionDao = new SessionDao(activity, SessionDao.KEY.USER_TOKEN).get();
-            params.put("id_token_hint", sessionDao.value);
-            params.put("post_logout_redirect_uri", WoolworthsApplication.getSsoRedirectURILogout());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        Intent intent = new Intent(activity, SSOActivity.class);
-        intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
-        intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
-        intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.LOGOUT.rawValue());
-        intent.putExtra(SSOActivity.TAG_EXTRA_QUERYSTRING_PARAMS, params);
-
-        activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
-    }
+		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
+		activity.overridePendingTransition(0, 0);
+	}
 }
