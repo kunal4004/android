@@ -52,7 +52,7 @@ public class SSOActivity extends WebViewActivity {
 
 	public ErrorHandlerView mErrorHandlerView;
 
-	public static enum SSOActivityResult {
+	public enum SSOActivityResult {
 		LAUNCH(1),
 		NO_CACHED_STATE(2),
 		NO_CACHED_NONCE(3),
@@ -383,9 +383,28 @@ public class SSOActivity extends WebViewActivity {
 		}
 
 		@Override
+		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			super.shouldOverrideUrlLoading(view, url);
+			Log.e("shouldOverr", url);
+			view.loadUrl(url);
+			return true;
+		}
+
+		@Override
+		public void onLoadResource(WebView view, String url) {
+			super.onLoadResource(view, url);
+			mGoBack();
+		}
+
+		@Override
 		public void onPageFinished(WebView view, String url) {
-			hideProgressBar();
 			super.onPageFinished(view, url);
+			hideProgressBar();
+			if (canGoBack()) {
+				enableBackButton();
+			} else {
+				disableBackButton();
+			}
 		}
 
 		@TargetApi(android.os.Build.VERSION_CODES.M)
@@ -461,7 +480,6 @@ public class SSOActivity extends WebViewActivity {
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
-
 			}
 
 			@Override
@@ -494,7 +512,7 @@ public class SSOActivity extends WebViewActivity {
 		if (event.getAction() == KeyEvent.ACTION_DOWN) {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_BACK:
-					goBackInWebView();
+					finishActivity();
 					return true;
 			}
 		}
@@ -519,7 +537,7 @@ public class SSOActivity extends WebViewActivity {
 			}
 			// no history found that is not empty
 			if (url == null) {
-				if (webView.canGoBack()) {
+				if (canGoBack()) {
 					webView.goBack();
 				} else {
 					finishActivity();
@@ -534,9 +552,15 @@ public class SSOActivity extends WebViewActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				goBackInWebView();
+				if (canGoBack()) {
+					enableBackButton();
+					goBackInWebView();
+				} else {
+					disableBackButton();
+				}
 				break;
 		}
 		return true;
+
 	}
 }

@@ -83,6 +83,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	private String mProductId;
 	private ErrorHandlerView mErrorHandlerView;
 	private WoolworthsApplication mWoolWorthsApplication;
+
 	private ProductGridActivity networkChangeListener;
 	private BroadcastReceiver connectionBroadcast;
 	private boolean selectProductDetail = false;
@@ -118,7 +119,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 			@Override
 			public void onClick(View v) {
 				if (new ConnectionDetector().isOnline(ProductGridActivity.this)) {
-
 					switch (runTask) {
 
 						case SEARCH_PRODUCT:
@@ -491,6 +491,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 				productResponse.response = new Response();
 				hideProgressBar();
 				mIsLoading = false;
+				mErrorHandlerView.showToast();
 				return productResponse;
 			}
 
@@ -643,6 +644,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 				productResponse.response = new Response();
 				hideProgressBar();
 				mIsLoading = false;
+				mErrorHandlerView.showToast();
 				return productResponse;
 			}
 
@@ -726,7 +728,9 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 							mSelectedProduct = mProduct.get(0);
 							onCallback(mProductId, mSkuId, true);
 						} else {
-							setNumberOfItem(mProduct.size());
+							int totalItem = pv.pagingResponse.numItemsInTotal;
+							num_of_item = totalItem;
+							setNumberOfItem(totalItem);
 							bindDataWithUI(mProduct);
 							hideVProgressBar();
 						}
