@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,7 +18,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -45,19 +43,24 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.ObservableScrollView;
+import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
+import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.RootCategoryBinder;
 import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 
 public class WProductFragment extends Fragment implements RootCategoryBinder.OnClickListener, View.OnClickListener,
-		AppBarLayout.OnOffsetChangedListener, SelectedProductView {
+		AppBarLayout.OnOffsetChangedListener, SelectedProductView, ObservableScrollViewCallbacks {
 
 	private WTextView mToolbarText;
 	private boolean actionBarIsHidden = false;
 	private ActionBar mAppToolbar;
 	private ErrorHandlerView mErrorHandlerView;
 	private MenuNavigationInterface mMenuNavigationInterface;
+	private int mSearchRowHeight;
+	private int mScrollY;
 
 	public interface HideActionBarComponent {
 		void onBurgerButtonPressed();
@@ -78,7 +81,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 	private WTextView mTextTBProductSearch;
 	private RelativeLayout mRelSearchRowLayout;
 	private Toolbar mProductToolbar;
-	private NestedScrollView mNestedScrollview;
+	private ObservableScrollView mNestedScrollview;
 
 	@Nullable
 	@Override
@@ -101,6 +104,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 		setUIListener();
 		showAccountToolbar();
 		mNestedScrollview.getParent().requestChildFocus(mNestedScrollview, mNestedScrollview);
+		mSearchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight()));
 		showOneTimePopup();
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -127,7 +131,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 	}
 
 	private void initUI(View v) {
-		mNestedScrollview = (NestedScrollView) v.findViewById(R.id.mNestedScrollview);
+		mNestedScrollview = (ObservableScrollView) v.findViewById(R.id.mNestedScrollview);
 		mImProductSearch = (ImageView) v.findViewById(R.id.imProductSearch);
 		mImBarcodeScanner = (ImageView) v.findViewById(R.id.imBarcodeScanner);
 		mRecycleProductSearch = (RecyclerView) v.findViewById(R.id.recycleProductSearch);
@@ -146,17 +150,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 		mBurgerButtonPressed.setOnClickListener(this);
 		mTextTBProductSearch.setOnClickListener(this);
 		mTBBarcodeScanner.setOnClickListener(this);
-		mNestedScrollview.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-			@Override
-			public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-				int searchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight()) + getToolBarHeight() / 2);
-				if (scrollY < searchRowHeight) {
-					showViews();
-				} else {
-					hideViews();
-				}
-			}
-		});
+		mNestedScrollview.setScrollViewCallbacks(this);
 	}
 
 	@Override
@@ -259,19 +253,17 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 	private void hideViews() {
 		mRelSearchRowLayout.setAlpha(0);
 		if (!actionBarIsHidden) {
+			actionBarIsHidden = true;
 			mProductToolbar.animate()
 					.translationY(-mProductToolbar.getBottom())
 					.setInterpolator(new AccelerateInterpolator())
-					//  .setDuration(ANIMATION_START_DURATION)
 					.withEndAction(new Runnable() {
 						@Override
 						public void run() {
 							showBarcodeToolbar();
-							actionBarIsHidden = true;
 							mProductToolbar
 									.animate()
 									.translationY(0)
-									// .setDuration(ANIMATION_END_DURATION)
 									.start();
 						}
 					}).start();
@@ -283,7 +275,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 			mProductToolbar.animate()
 					.translationY(-mProductToolbar.getBottom())
 					.setInterpolator(new DecelerateInterpolator())
-					//  .setDuration(ANIMATION_START_DURATION)
 					.withEndAction(new Runnable() {
 						@Override
 						public void run() {
@@ -292,7 +283,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 							mProductToolbar
 									.animate()
 									.translationY(0)
-									//  .setDuration(ANIMATION_END_DURATION)
 									.setInterpolator(new DecelerateInterpolator())
 									.withEndAction(new Runnable() {
 										@Override
@@ -349,7 +339,8 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 		mRecycleProductSearch.setNestedScrollingEnabled(false);
 		mRecycleProductSearch.setAdapter(myAdapter);
 		myAdapter.notifyDataSetChanged();
-
+		mSearchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight())
+				+ getToolBarHeight() / 2);
 	}
 
 	public void showOneTimePopup() {
@@ -439,11 +430,30 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 
 	@Override
 	public void onLongPressState(View v, int position) {
-
 	}
 
 	@Override
 	public void onSelectedColor(View v, int position) {
+	}
 
+	@Override
+	public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+		this.mScrollY = scrollY;
+		if (mScrollY < mSearchRowHeight) {
+			showViews();
+		} else {
+			hideViews();
+		}
+	}
+
+	@Override
+	public void onDownMotionEvent() {
+	}
+
+	@Override
+	public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+		if (mScrollY < mSearchRowHeight) {
+			showViews();
+		}
 	}
 }
