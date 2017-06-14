@@ -273,7 +273,6 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 			SessionDao sessionDao = new SessionDao(WSplashScreenActivity.this, SessionDao.KEY.USER_TOKEN).get();
 			if (sessionDao.value != null && !sessionDao.value.equals("")) {
 				ScreenManager.presentMain(WSplashScreenActivity.this);
-				return;
 			}
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage());
