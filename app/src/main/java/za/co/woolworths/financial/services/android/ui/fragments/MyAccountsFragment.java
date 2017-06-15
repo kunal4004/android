@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.FAQActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -122,6 +123,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	private Toolbar mToolbar;
 	private RelativeLayout relFAQ;
 	private ErrorHandlerView mErrorHandlerView;
+	private WGlobalState wGlobalState;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -137,6 +139,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	                         Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.my_accounts_fragment, container, false);
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
+		wGlobalState = woolworthsApplication.getWGlobalState();
 		openMessageActivity = (ImageView) view.findViewById(R.id.openMessageActivity);
 		openShoppingList = (ImageView) view.findViewById(R.id.openShoppingList);
 		contactUs = (RelativeLayout) view.findViewById(R.id.contactUs);
@@ -224,8 +227,12 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			jwtDecodedModel = null;
 		}
 
-		if (jwtDecodedModel != null && jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
-			this.loadAccounts();
+		if (wGlobalState.getAccountSignInState()) {
+			if (jwtDecodedModel != null && jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
+				this.loadAccounts();
+			} else {
+				this.configureView();
+			}
 		} else {
 			this.configureView();
 		}
@@ -307,6 +314,10 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		relFAQ.setVisibility(View.VISIBLE);
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
+
+		// not login sign in
+		if (!wGlobalState.getAccountSignInState())
+			showLogOutScreen();
 	}
 
 	private void configureAndLayoutTopLayerView() {
@@ -649,11 +660,19 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 		Log.e("OnActivityResult", "TestActivity");
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-
+			Log.e("OnActivityResult", "case1 " + String.valueOf(SSOActivity.SSOActivityResult.SUCCESS
+					.rawValue()));
+			wGlobalState.setAccountSignInState(true);
 			initialize();
 		} else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()) {
+			Log.e("OnActivityResult", "case2 " + String.valueOf(SSOActivity.SSOActivityResult
+					.EXPIRED.rawValue()));
+			wGlobalState.setAccountSignInState(false);
 			initialize();
+			showLogOutScreen();
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
+			Log.e("OnActivityResult", "case3 " + String.valueOf(SSOActivity.SSOActivityResult
+					.SIGNED_OUT.rawValue()));
 			try {
 				SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
 				sessionDao.value = "";
@@ -767,5 +786,15 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		});
 	}
 
+	public void showLogOutScreen() {
+		loggedOutHeaderLayout.setVisibility(View.VISIBLE);
+		loggedInHeaderLayout.setVisibility(View.GONE);
+		changePasswordBtn.setVisibility(View.GONE);
+		signOutBtn.setVisibility(View.GONE);
+	}
 
+	public void showLogInScreen() {
+		loggedOutHeaderLayout.setVisibility(View.GONE);
+		loggedInHeaderLayout.setVisibility(View.VISIBLE);
+	}
 }

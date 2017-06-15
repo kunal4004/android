@@ -176,6 +176,7 @@
         </activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/OneAppBaseTheme"/>
 
@@ -195,6 +196,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:theme="@style/MyAccountCards"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity"

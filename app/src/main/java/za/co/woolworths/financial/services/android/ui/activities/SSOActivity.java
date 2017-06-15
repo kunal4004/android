@@ -530,7 +530,7 @@ public class SSOActivity extends WebViewActivity {
 					mErrorHandlerView.hideErrorHandlerLayout();
 					webView.goBackOrForward(index);
 					url = history.getItemAtIndex(-index).getUrl();
-					Log.e("tag", "first non empty" + url);
+					webView.goBack();
 					break;
 				}
 				index--;

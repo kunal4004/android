@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,14 +16,13 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
-import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
@@ -112,49 +112,51 @@ public class WTransactionsActivity extends AppCompatActivity {
 
 			@Override
 			protected void onPostExecute(TransactionHistoryResponse transactionHistoryResponse) {
-				try {
-					switch (transactionHistoryResponse.httpCode) {
-						case 200:
-							if (transactionHistoryResponse.transactions.size() > 0) {
-								transactionListview.setVisibility(View.VISIBLE);
-								mErrorHandlerView.hideEmpyState();
-								transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this, Utils.getdata(transactionHistoryResponse.transactions)));
-							} else {
-								//transactionListview.setVisibility(View.GONE);
-								//mErrorHandlerView.showEmptyState(3);
-							}
-							break;
-						case 440:
-							AlertDialog mError = WErrorDialog.getSimplyErrorDialog(WTransactionsActivity.this);
-							mError.setTitle("Authentication Error");
-							mError.setMessage("Your session expired. You've been signed out.");
-							mError.setOnDismissListener(new DialogInterface.OnDismissListener() {
-								@Override
-								public void onDismiss(DialogInterface dialog) {
-									setResult(SSOActivity.SSOActivityResult.EXPIRED.rawValue());
-									finish();
-								}
-							});
-							mError.show();
-
-							try {
-								new SessionDao(WTransactionsActivity.this, SessionDao.KEY.USER_TOKEN).delete();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-
-							break;
-						default:
-							try {
-								Utils.alertErrorMessage(WTransactionsActivity.this,
-										transactionHistoryResponse.response.desc);
-							} catch (NullPointerException ignored) {
-							}
-							break;
-					}
-				} catch (NullPointerException ignored) {
-				}
+				super.onPostExecute(transactionHistoryResponse);
 				dismissProgress();
+//				try {
+//					switch (transactionHistoryResponse.httpCode) {
+//						case 200:
+//							if (transactionHistoryResponse.transactions.size() > 0) {
+//								transactionListview.setVisibility(View.VISIBLE);
+//								mErrorHandlerView.hideEmpyState();
+//								transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this, Utils.getdata(transactionHistoryResponse.transactions)));
+//							} else {
+//								//transactionListview.setVisibility(View.GONE);
+//								//mErrorHandlerView.showEmptyState(3);
+//							}
+//							break;
+//						case 440:
+
+				final AlertDialog.Builder mAlertBuilder = WErrorDialog.expiredTokenDialog
+						(WTransactionsActivity.this);
+
+				mAlertBuilder.setPositiveButton(WErrorDialog.dialogFont(getString(R.string.token_timeout_authenticate), 1, WTransactionsActivity.this), new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						ScreenManager.presentSSOSignin(WTransactionsActivity.this);
+					}
+				});
+				mAlertBuilder.create();
+				mAlertBuilder.show();
+
+//							try {
+//								new SessionDao(WTransactionsActivity.this, SessionDao.KEY.USER_TOKEN).delete();
+//							} catch (Exception e) {
+//								e.printStackTrace();
+//							}
+
+//							break;
+//						default:
+//							try {
+//								Utils.alertErrorMessage(WTransactionsActivity.this,
+//										transactionHistoryResponse.response.desc);
+//							} catch (NullPointerException ignored) {
+//							}
+//							break;
+//					}
+//				} catch (NullPointerException ignored) {
+//				}
 			}
 		};
 	}
@@ -187,5 +189,11 @@ public class WTransactionsActivity extends AppCompatActivity {
 				mErrorHandlerView.networkFailureHandler(errorMessage);
 			}
 		});
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		loadTransactionHistory(productOfferingId);
 	}
 }
