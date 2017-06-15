@@ -26,8 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 
+import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.fragments.MenuNavigationInterface;
 
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
@@ -38,11 +40,14 @@ import za.co.woolworths.financial.services.android.ui.fragments.WRewardsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
+
+import static com.awfs.coordination.R.id.fragmentView;
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
 		, WProductFragment.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle,
@@ -93,6 +98,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		} else {
 			displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 		}
+
+		initGetVouchersCall();
 	}
 
 	@Override
@@ -222,6 +229,45 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		displayView(position);
 	}
 
+	public void initGetVouchersCall()
+	{
+		JWTDecodedModel jwtDecodedModel = getJWTDecoded();
+		if(jwtDecodedModel.AtgSession!=null && jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals(""))
+		{
+			getVouchers().execute();
+		}
+	}
+	public HttpAsyncTask<String, String, VoucherResponse> getVouchers() {
+		return new HttpAsyncTask<String, String, VoucherResponse>() {
+			@Override
+			protected void onPreExecute() {
+				super.onPreExecute();
+
+			}
+
+			@Override
+			protected VoucherResponse httpDoInBackground(String... params) {
+				return ((WoolworthsApplication) getApplication()).getApi().getVouchers();
+			}
+
+			@Override
+			protected Class<VoucherResponse> httpDoInBackgroundReturnType() {
+				return VoucherResponse.class;
+			}
+
+			@Override
+			protected VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+				return new VoucherResponse();
+			}
+
+			@Override
+			protected void onPostExecute(VoucherResponse voucherResponse) {
+				super.onPostExecute(voucherResponse);
+				if(voucherResponse.httpCode==200)
+					drawerFragment.updateNavigationDrawer(voucherResponse.voucherCollection.vouchers.size());
+			}
+		};
+	}
 
 }
 
