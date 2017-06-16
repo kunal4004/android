@@ -1,12 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -52,6 +52,7 @@ import za.co.woolworths.financial.services.android.ui.activities.WChangePassword
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
+import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
@@ -71,7 +72,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
-public class MyAccountsFragment extends BaseFragment implements View.OnClickListener, ViewPager.OnPageChangeListener, ObservableScrollViewCallbacks {
+public class MyAccountsFragment extends BaseFragment implements View.OnClickListener, ViewPager.OnPageChangeListener, ObservableScrollViewCallbacks, AlertDialogInterface {
 
 
 	private HideActionBar hideActionBar;
@@ -124,6 +125,9 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	private RelativeLayout relFAQ;
 	private ErrorHandlerView mErrorHandlerView;
 	private WGlobalState wGlobalState;
+	private WErrorDialog mTokenExpireDialog;
+	private MyAccountsFragment mContext;
+	private boolean loadMessageCounter = false;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -137,7 +141,13 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.my_accounts_fragment, container, false);
+		mContext = this;
+		return inflater.inflate(R.layout.my_accounts_fragment, container, false);
+	}
+
+	@Override
+	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 		wGlobalState = woolworthsApplication.getWGlobalState();
 		openMessageActivity = (ImageView) view.findViewById(R.id.openMessageActivity);
@@ -210,7 +220,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 		});
 
-		return view;
+		mTokenExpireDialog = new WErrorDialog(getActivity(), woolworthsApplication,
+				mContext);
 	}
 
 	private void initialize() {
@@ -231,7 +242,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			if (jwtDecodedModel != null && jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
 				this.loadAccounts();
 			} else {
-				this.configureView();
+				this.configureSignInNoC2ID();
 			}
 		} else {
 			this.configureView();
@@ -319,6 +330,76 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		if (!wGlobalState.getAccountSignInState())
 			showLogOutScreen();
 	}
+
+	private void configureSignInNoC2ID() {
+		this.configureAndLayoutTopLayerView();
+
+		//show content for all available products
+		for (Map.Entry<String, Account> item : accounts.entrySet()) {
+			Account account = item.getValue();
+			switch (account.productGroupCode) {
+				case "SC":
+					linkedStoreCardView.setVisibility(View.VISIBLE);
+					applyStoreCardView.setVisibility(View.GONE);
+					sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
+					scProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
+					break;
+				case "CC":
+					linkedCreditCardView.setVisibility(View.VISIBLE);
+					applyCreditCardView.setVisibility(View.GONE);
+					//Check with AccountNumber and change the image accordingly
+					if (account.accountNumberBin.equalsIgnoreCase(Utils.SILVER_CARD)) {
+						imgCreditCard.setBackgroundResource(R.drawable.small_5);
+					} else if (account.accountNumberBin.equalsIgnoreCase(Utils.GOLD_CARD)) {
+						imgCreditCard.setBackgroundResource(R.drawable.small_4);
+					} else if (account.accountNumberBin.equalsIgnoreCase(Utils.BLACK_CARD)) {
+						imgCreditCard.setBackgroundResource(R.drawable.small_3);
+					}
+
+					cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
+					ccProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
+					break;
+				case "PL":
+					linkedPersonalCardView.setVisibility(View.VISIBLE);
+					applyPersonalCardView.setVisibility(View.GONE);
+
+					pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
+					plProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
+					break;
+			}
+		}
+
+		//hide content for unavailable products
+		for (String s : unavailableAccounts) {
+			switch (s) {
+				case "SC":
+					applyStoreCardView.setVisibility(View.VISIBLE);
+					linkedStoreCardView.setVisibility(View.GONE);
+					break;
+				case "CC":
+					applyCreditCardView.setVisibility(View.VISIBLE);
+					linkedCreditCardView.setVisibility(View.GONE);
+					break;
+				case "PL":
+					applyPersonalCardView.setVisibility(View.VISIBLE);
+					linkedPersonalCardView.setVisibility(View.GONE);
+					break;
+			}
+		}
+
+		if (unavailableAccounts.size() == 0) {
+			//all accounts are shown/linked
+			applyNowAccountsLayout.setVisibility(View.GONE);
+		} else {
+			applyNowAccountsLayout.setVisibility(View.VISIBLE);
+		}
+
+		contactUs.setVisibility(View.VISIBLE);
+		relFAQ.setVisibility(View.VISIBLE);
+		viewPager.setAdapter(adapter);
+		viewPager.setCurrentItem(0);
+	}
+
 
 	private void configureAndLayoutTopLayerView() {
 		JWTDecodedModel jwtDecodedModel;
@@ -421,7 +502,9 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.openMessageActivity:
-				startActivity(new Intent(getActivity(), MessagesActivity.class).putExtra("fromNotification", false));
+				Intent openMessageActivity = new Intent(getActivity(), MessagesActivity.class);
+				openMessageActivity.putExtra("fromNotification", false);
+				startActivityForResult(openMessageActivity, 0);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 			case R.id.applyStoreCard:
@@ -510,9 +593,9 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 			@Override
 			protected void onPreExecute() {
+				loadMessageCounter = false;
 				mErrorHandlerView.hideErrorHandlerLayout();
 				mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
-				relFAQ.setVisibility(View.GONE);
 				showViews();
 			}
 
@@ -538,6 +621,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				try {
 					switch (accountsResponse.httpCode) {
 						case 200:
+							loadMessageCounter = false;
 							MyAccountsFragment.this.accountsResponse = accountsResponse;
 							List<Account> accountList = accountsResponse.accountList;
 							for (Account p : accountList) {
@@ -552,37 +636,17 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 									}
 								}
 							}
-
 							configureView();
-
 							break;
 						case 440:
-							AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
-							mError.setTitle(getString(R.string.title_authentication_error));
-							mError.setMessage(getString(R.string.session_out_message));
-							mError.show();
-							new android.os.AsyncTask<Void, Void, String>() {
-
-								@Override
-								protected String doInBackground(Void... params) {
-									try {
-										new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
-										new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_SEARCH).delete();
-										new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_LAST_LOCATION).delete();
-									} catch (Exception e) {
-										e.printStackTrace();
-									}
-									return "";
-								}
-
-								@Override
-								protected void onPostExecute(String s) {
-									MyAccountsFragment.this.initialize();
-								}
-							}.execute();
-
+//							new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
+//							new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_SEARCH).delete();
+//							new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_LAST_LOCATION).delete();
+							loadMessageCounter = false;
+							mTokenExpireDialog.showExpiredTokenDialog();
 							break;
 						default:
+							loadMessageCounter = false;
 							if (accountsResponse.response != null) {
 								relFAQ.setVisibility(View.GONE);
 								Utils.alertErrorMessage(getActivity(), accountsResponse.response.desc);
@@ -610,7 +674,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 	}
 
-	public void loadMessages() {
+	public void messageCounterRequest() {
 		new HttpAsyncTask<String, String, MessageResponse>() {
 			@Override
 			protected void onPreExecute() {
@@ -619,7 +683,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 			@Override
 			protected MessageResponse httpDoInBackground(String... params) {
-
 				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getMessagesResponse(5, 1);
 			}
 
@@ -637,58 +700,43 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 			@Override
 			protected void onPostExecute(MessageResponse messageResponse) {
-
 				super.onPostExecute(messageResponse);
-				if (messageResponse.unreadCount > 0) {
-					messageCounter.setVisibility(View.VISIBLE);
-					int unreadCount = messageResponse.unreadCount;
-					if (TextUtils.isEmpty(String.valueOf(unreadCount)))
-						unreadCount = 0;
-					Utils.setBadgeCounter(getActivity(), unreadCount);
-					messageCounter.setText(String.valueOf(unreadCount));
-				} else {
-					Utils.removeBadgeCounter(getActivity());
-					messageCounter.setVisibility(View.GONE);
+				try {
+					int httpCode = messageResponse.httpCode;
+					switch (httpCode) {
+						case 200:
+							if (messageResponse.unreadCount > 0) {
+								messageCounter.setVisibility(View.VISIBLE);
+								int unreadCount = messageResponse.unreadCount;
+								if (TextUtils.isEmpty(String.valueOf(unreadCount)))
+									unreadCount = 0;
+								Utils.setBadgeCounter(getActivity(), unreadCount);
+								messageCounter.setText(String.valueOf(unreadCount));
+							} else {
+								Utils.removeBadgeCounter(getActivity());
+								messageCounter.setVisibility(View.GONE);
+							}
+							break;
+
+						case 440:
+							loadMessageCounter = true;
+							mTokenExpireDialog.showExpiredTokenDialog();
+							break;
+
+						default:
+							break;
+					}
+				} catch (NullPointerException ignored) {
 				}
 			}
 		}.execute();
 	}
 
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-
-		Log.e("OnActivityResult", "TestActivity");
-		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-			Log.e("OnActivityResult", "case1 " + String.valueOf(SSOActivity.SSOActivityResult.SUCCESS
-					.rawValue()));
-			wGlobalState.setAccountSignInState(true);
-			initialize();
-		} else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()) {
-			Log.e("OnActivityResult", "case2 " + String.valueOf(SSOActivity.SSOActivityResult
-					.EXPIRED.rawValue()));
-			wGlobalState.setAccountSignInState(false);
-			initialize();
-			showLogOutScreen();
-		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
-			Log.e("OnActivityResult", "case3 " + String.valueOf(SSOActivity.SSOActivityResult
-					.SIGNED_OUT.rawValue()));
-			try {
-				SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
-				sessionDao.value = "";
-				sessionDao.save();
-			} catch (Exception e) {
-				Log.e(TAG, e.getMessage());
-			}
-			initialize();
-		}
-	}
-
-	@Override
 	public void onResume() {
 		super.onResume();
 		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("UpdateCounter"));
-		loadMessages();
+		messageCounterRequest();
 	}
 
 	@Override
@@ -699,12 +747,10 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		} catch (Exception e) {
 			Log.e(TAG, "Broadcast Unregister Exception");
 		}
-
 	}
 
 	private void dismissProgress() {
 		mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.white));
-		relFAQ.setVisibility(View.VISIBLE);
 		if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
 			mGetAccountsProgressDialog.dismiss();
 		}
@@ -713,7 +759,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			loadMessages();
+			messageCounterRequest();
 		}
 	};
 
@@ -787,6 +833,9 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	}
 
 	public void showLogOutScreen() {
+		applyCreditCardView.setVisibility(View.VISIBLE);
+		applyStoreCardView.setVisibility(View.VISIBLE);
+		applyPersonalCardView.setVisibility(View.VISIBLE);
 		loggedOutHeaderLayout.setVisibility(View.VISIBLE);
 		loggedInHeaderLayout.setVisibility(View.GONE);
 		changePasswordBtn.setVisibility(View.GONE);
@@ -797,4 +846,50 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		loggedOutHeaderLayout.setVisibility(View.GONE);
 		loggedInHeaderLayout.setVisibility(View.VISIBLE);
 	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+			wGlobalState.setAccountSignInState(true);
+			if (loadMessageCounter) {
+				messageCounterRequest();
+			} else {
+				initialize();
+			}
+		} else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()) {
+			wGlobalState.setAccountSignInState(false);
+			initialize();
+			showLogOutScreen();
+		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
+			try {
+				wGlobalState.setAccountSignInState(false);
+				SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
+				sessionDao.value = "";
+				sessionDao.save();
+			} catch (Exception e) {
+				Log.e(TAG, e.getMessage());
+			}
+			initialize();
+		} else {
+			//user not signed in
+			if (!wGlobalState.getAccountSignInState()) {
+				this.accounts.clear();
+				this.unavailableAccounts.clear();
+				this.unavailableAccounts.addAll(Arrays.asList("SC", "CC", "PL"));
+				this.configureView();
+			}
+		}
+	}
+
+	@Override
+	public void onExpiredTokenCancel() {
+		configureView();
+	}
+
+	@Override
+	public void onExpiredTokenAuthentication() {
+		mTokenExpireDialog.reAuthenticate();
+	}
+
 }

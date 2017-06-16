@@ -7,8 +7,11 @@ package za.co.woolworths.financial.services.android.models.dto;
 public class WGlobalState {
 
 	private boolean cardGestureIsEnabled;
+
+	// Account state
 	private boolean accountSignInState;
 	private boolean rewardSignInState;
+	private boolean onBackPressed;
 
 	public boolean cardGestureIsEnabled() {
 		return cardGestureIsEnabled;
@@ -32,5 +35,13 @@ public class WGlobalState {
 
 	public void setRewardSignInState(boolean pRewardSignInState) {
 		rewardSignInState = pRewardSignInState;
+	}
+
+	public boolean getOnBackPressed() {
+		return onBackPressed;
+	}
+
+	public void setOnBackPressed(boolean pOnBackPressed) {
+		onBackPressed = pOnBackPressed;
 	}
 }

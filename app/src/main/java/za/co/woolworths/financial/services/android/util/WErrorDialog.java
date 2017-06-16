@@ -3,21 +3,33 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.support.v4.content.IntentCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 
 public class WErrorDialog {
+
+	private Activity mActivity;
+	private WGlobalState mWGlobalState;
+	private Context mContext;
+	private AlertDialogInterface mAction;
+
+	public WErrorDialog(Context context, WoolworthsApplication mOneApp, AlertDialogInterface
+			alertDialogInterface) {
+		this.mContext = context;
+		this.mAction = alertDialogInterface;
+		this.mActivity = ((Activity) mContext);
+		this.mWGlobalState = mOneApp.getWGlobalState();
+	}
 
 	public static AlertDialog getSimplyErrorDialog(Context c) {
 		return new AlertDialog.Builder(c, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
@@ -30,35 +42,73 @@ public class WErrorDialog {
 				}).create();
 	}
 
-	public static AlertDialog.Builder expiredTokenDialog(final Context c) {
-		Resources res = c.getResources();
-		return new AlertDialog.Builder(c, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
-				.setMessage(dialogFont(res.getString(R.string.token_timeout_message), 1, c)).setNegativeButton(WErrorDialog.dialogFont(res.getString(R.string.cancel_button), 1, c), new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Activity activity = ((AppCompatActivity) c);
-						Intent i = new Intent(activity, WOneAppBaseActivity.class);
-						i.putExtra("tokenState", "expired");
-						i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-						i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//						i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-//								Intent.FLAG_ACTIVITY_SINGLE_TOP |
-//								IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
-						activity.setResult(SSOActivity.SSOActivityResult.EXPIRED.rawValue(), i);
-						activity.overridePendingTransition(0, 0);
-						activity.finish();
-//
-//
-//						Intent intent = new Intent(activity, WOneAppBaseActivity.class);
-//						ComponentName cn = intent.getComponent();
-//						Intent mainIntent = IntentCompat.makeRestartActivityTask(cn);
-//						activity.setResult(SSOActivity.SSOActivityResult.EXPIRED.rawValue(), mainIntent);
+	public void showExpiredTokenDialog() {
+		mWGlobalState.setAccountSignInState(false);
+		try {
+			Resources res = mContext.getResources();
+			AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).setMessage(dialogFont(res.getString(R.string.token_timeout_message), 1));
 
-					}
-				});
+			dialogBuilder.setNegativeButton(dialogFont(res.getString(R.string.cancel_button), 1), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					mAction.onExpiredTokenCancel();
+				}
+			});
+
+			dialogBuilder.setPositiveButton(dialogFont(res.getString(R.string.token_timeout_authenticate), 1), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					mAction.onExpiredTokenAuthentication();
+				}
+			});
+			AlertDialog alertDialog = dialogBuilder.create();
+			alertDialog.setCancelable(false);
+			alertDialog.setCanceledOnTouchOutside(false);
+			alertDialog.show();
+		} catch (Exception ignored) {
+		}
 	}
 
-	public static SpannableString dialogFont(String description, int fontType, Context context) {
-		return FontHyperTextParser.getSpannable(description, fontType, context);
+	public SpannableString dialogFont(String description, int fontType) {
+		return FontHyperTextParser.getSpannable(description, fontType, mContext);
+	}
+
+	public boolean getAccountSignInState() {
+		return mWGlobalState.getAccountSignInState();
+	}
+
+	public boolean getOnBackPressState() {
+		return mWGlobalState.getOnBackPressed();
+	}
+
+	public void onCancel() {
+		mWGlobalState.setOnBackPressed(false);
+		Intent i = new Intent(mActivity, WOneAppBaseActivity.class);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		mActivity.startActivity(i);
+		mActivity.overridePendingTransition(0, 0);
+		mActivity.finish();
+	}
+
+	public void onAccountCancel() {
+		mWGlobalState.setOnBackPressed(false);
+		mActivity.setResult(SSOActivity.SSOActivityResult.EXPIRED.rawValue());
+		mActivity.overridePendingTransition(0, 0);
+	}
+
+	public void reAuthenticate() {
+		ScreenManager.presentExpiredTokenSSOSignIn(mActivity, "");
+	}
+
+	public void onCancelResult() {
+		mWGlobalState.setOnBackPressed(false);
+		Intent i = new Intent(mActivity, WOneAppBaseActivity.class);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		mActivity.startActivityForResult(i, SSOActivity.SSOActivityResult.EXPIRED.rawValue());
+		mActivity.overridePendingTransition(0, 0);
+		mActivity.finish();
 	}
 }

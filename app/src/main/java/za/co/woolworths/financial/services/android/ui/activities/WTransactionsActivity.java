@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -17,23 +15,24 @@ import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
+import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
-public class WTransactionsActivity extends AppCompatActivity {
+public class WTransactionsActivity extends AppCompatActivity implements AlertDialogInterface {
 
 	public Toolbar toolbar;
 	public ExpandableListView transactionListview;
 	public String productOfferingId;
 	private ProgressDialogFragment mGetTransactionProgressDialog;
 	private ErrorHandlerView mErrorHandlerView;
-	private WoolworthsApplication mWoolworthsApplication;
+	private WErrorDialog mTokenExpireDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +41,17 @@ public class WTransactionsActivity extends AppCompatActivity {
 		Utils.updateStatusBarBackground(this);
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-		mWoolworthsApplication = (WoolworthsApplication) getApplication();
-		mErrorHandlerView = new ErrorHandlerView(this, mWoolworthsApplication,
+		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) WTransactionsActivity.this.getApplication();
+		mErrorHandlerView = new ErrorHandlerView(this, woolworthsApplication,
 				(RelativeLayout) findViewById(R.id.relEmptyStateHandler),
 				(ImageView) findViewById(R.id.imgEmpyStateIcon),
 				(WTextView) findViewById(R.id.txtEmptyStateTitle),
 				(WTextView) findViewById(R.id.txtEmptyStateDesc),
 				(RelativeLayout) findViewById(R.id.no_connection_layout));
+		mTokenExpireDialog = new WErrorDialog(WTransactionsActivity.this, woolworthsApplication,
+				WTransactionsActivity
+						.this);
+
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(null);
 		getSupportActionBar().setElevation(0);
@@ -114,49 +117,33 @@ public class WTransactionsActivity extends AppCompatActivity {
 			protected void onPostExecute(TransactionHistoryResponse transactionHistoryResponse) {
 				super.onPostExecute(transactionHistoryResponse);
 				dismissProgress();
-//				try {
-//					switch (transactionHistoryResponse.httpCode) {
-//						case 200:
-//							if (transactionHistoryResponse.transactions.size() > 0) {
-//								transactionListview.setVisibility(View.VISIBLE);
-//								mErrorHandlerView.hideEmpyState();
-//								transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this, Utils.getdata(transactionHistoryResponse.transactions)));
-//							} else {
-//								//transactionListview.setVisibility(View.GONE);
-//								//mErrorHandlerView.showEmptyState(3);
-//							}
-//							break;
-//						case 440:
-
-				final AlertDialog.Builder mAlertBuilder = WErrorDialog.expiredTokenDialog
-						(WTransactionsActivity.this);
-
-				mAlertBuilder.setPositiveButton(WErrorDialog.dialogFont(getString(R.string.token_timeout_authenticate), 1, WTransactionsActivity.this), new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						ScreenManager.presentSSOSignin(WTransactionsActivity.this);
+				try {
+					switch (transactionHistoryResponse.httpCode) {
+						case 200:
+							if (transactionHistoryResponse.transactions.size() > 0) {
+								transactionListview.setVisibility(View.VISIBLE);
+								mErrorHandlerView.hideEmpyState();
+								transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this, Utils.getdata(transactionHistoryResponse.transactions)));
+							} else {
+//								transactionListview.setVisibility(View.GONE);
+//								mErrorHandlerView.showEmptyState(3);
+							}
+							break;
+						case 440:
+							if (!(WTransactionsActivity.this.isFinishing())) {
+								mTokenExpireDialog.showExpiredTokenDialog();
+							}
+							break;
+						default:
+							try {
+								Utils.alertErrorMessage(WTransactionsActivity.this,
+										transactionHistoryResponse.response.desc);
+							} catch (NullPointerException ignored) {
+							}
+							break;
 					}
-				});
-				mAlertBuilder.create();
-				mAlertBuilder.show();
-
-//							try {
-//								new SessionDao(WTransactionsActivity.this, SessionDao.KEY.USER_TOKEN).delete();
-//							} catch (Exception e) {
-//								e.printStackTrace();
-//							}
-
-//							break;
-//						default:
-//							try {
-//								Utils.alertErrorMessage(WTransactionsActivity.this,
-//										transactionHistoryResponse.response.desc);
-//							} catch (NullPointerException ignored) {
-//							}
-//							break;
-//					}
-//				} catch (NullPointerException ignored) {
-//				}
+				} catch (NullPointerException ignored) {
+				}
 			}
 		};
 	}
@@ -174,6 +161,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
+		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
 
 	private void dismissProgress() {
@@ -194,6 +182,23 @@ public class WTransactionsActivity extends AppCompatActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		loadTransactionHistory(productOfferingId);
+		if (!mTokenExpireDialog.getAccountSignInState()) {
+			if (mTokenExpireDialog.getOnBackPressState()) {
+				mTokenExpireDialog.onCancel(); // go back on back press state
+			} else {
+				loadTransactionHistory(productOfferingId); //reload transaction after successful
+				// login
+			}
+		}
+	}
+
+	@Override
+	public void onExpiredTokenCancel() {
+		mTokenExpireDialog.onCancel();
+	}
+
+	@Override
+	public void onExpiredTokenAuthentication() {
+		mTokenExpireDialog.reAuthenticate();
 	}
 }

@@ -1,21 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -86,14 +82,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		Bundle intent = getIntent().getExtras();
 		if (intent != null) {
 			int mOpenProduct = intent.getInt("myAccount");
-			String mExpiredState = intent.getString("expiredState");
-			// expired state - reload the view
-			if (!TextUtils.isEmpty(mExpiredState)) {
-				setResult(SSOActivity.SSOActivityResult.EXPIRED.rawValue());
-				Log.e("setResult", "setResult");
-				//displayView(4);
-			}
-
 			if (mOpenProduct == 1) {
 				displayView(1);
 			} else {

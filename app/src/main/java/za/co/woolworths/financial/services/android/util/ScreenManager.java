@@ -22,7 +22,7 @@ public class ScreenManager {
 	public static void presentMain(Activity activity) {
 
 		Intent intent = new Intent(activity, WOneAppBaseActivity.class);
-		activity.startActivity(intent);
+		activity.startActivityForResult(intent,0);
 		activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 		activity.finish();
 	}
@@ -32,6 +32,15 @@ public class ScreenManager {
 		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
 		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
 		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
+		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
+		activity.overridePendingTransition(0, 0);
+	}
+
+	public static void presentExpiredTokenSSOSignIn(Activity activity, String newSTSParams) {
+		Intent intent = new Intent(activity, SSOActivity.class);
+		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
+		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
+		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue() + newSTSParams);
 		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
 		activity.overridePendingTransition(0, 0);
 	}
