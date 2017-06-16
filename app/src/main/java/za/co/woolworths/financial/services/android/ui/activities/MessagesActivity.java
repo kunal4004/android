@@ -240,7 +240,7 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 						break;
 					case 440:
 						loadMoreMessage = true;
-						mTokenExpireDialog.showExpiredTokenDialog();
+						mTokenExpireDialog.showExpiredTokenDialog(messageResponse.response.stsParams);
 						break;
 
 					default:
@@ -380,7 +380,7 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 					break;
 				case 440:
 					loadMoreMessage = false;
-					mTokenExpireDialog.showExpiredTokenDialog();
+					mTokenExpireDialog.showExpiredTokenDialog(messageResponse.response.stsParams);
 					break;
 				default:
 					Utils.alertErrorMessage(MessagesActivity.this, messageResponse.response.desc);

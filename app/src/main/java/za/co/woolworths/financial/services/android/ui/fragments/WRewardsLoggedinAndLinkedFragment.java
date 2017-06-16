@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -21,10 +20,10 @@ import android.widget.TextView;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
+import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -35,7 +34,7 @@ import za.co.woolworths.financial.services.android.util.WErrorDialog;
  * Created by W7099877 on 05/01/2017.
  */
 
-public class WRewardsLoggedinAndLinkedFragment extends Fragment {
+public class WRewardsLoggedinAndLinkedFragment extends Fragment implements AlertDialogInterface {
 
 	private MenuNavigationInterface mNavigationInterface;
 	private TabLayout tabLayout;
@@ -46,11 +45,19 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 	private ErrorHandlerView mErrorHandlerView;
 	private WoolworthsApplication mWoolworthApp;
 	private RelativeLayout mRlConnect;
+	private WErrorDialog mTokenExpireDialog;
+	private WRewardsLoggedinAndLinkedFragment mContext;
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.wrewards_loggedin_and_linked_fragment, container, false);
+		mContext = this;
+		return inflater.inflate(R.layout.wrewards_loggedin_and_linked_fragment, container, false);
+	}
+
+	@Override
+	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
 		viewPager = (ViewPager) view.findViewById(R.id.viewpager);
 		mNavigationInterface = (MenuNavigationInterface) getActivity();
 		progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
@@ -62,6 +69,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 		mRlConnect = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), mRlConnect);
 		mErrorHandlerView.setMargin(mRlConnect, 0, 0, 0, 0);
+		mTokenExpireDialog = new WErrorDialog(getActivity(), (WoolworthsApplication) getActivity().getApplication(), mContext);
 		getWRewards().execute();
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -71,7 +79,6 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 				}
 			}
 		});
-		return view;
 	}
 
 	private void setupViewPager(ViewPager viewPager, VoucherResponse voucherResponse) {
@@ -149,44 +156,45 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 	}
 
 	public void handleVoucherResponse(VoucherResponse voucherResponse) {
-		try {
-			switch (voucherResponse.httpCode) {
-				case 200:
-					setupViewPager(viewPager, voucherResponse);
-					break;
-				case 440:
-					AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
-					mError.setTitle(getString(R.string.title_authentication_error));
-					mError.setMessage(getString(R.string.session_out_message));
-					mError.show();
+		mTokenExpireDialog.showExpiredTokenDialog(voucherResponse.response.stsParams);
+//		try {
+//			switch (voucherResponse.httpCode) {
+//				case 200:
+//					setupViewPager(viewPager, voucherResponse);
+//					break;
+//				case 440:
+//					AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
+//					mError.setTitle(getString(R.string.title_authentication_error));
+//					mError.setMessage(getString(R.string.session_out_message));
+//					mError.show();
+//
+//					new android.os.AsyncTask<Void, Void, String>() {
+//
+//						@Override
+//						protected String doInBackground(Void... params) {
+//							try {
+//								new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
+//							} catch (Exception e) {
+//								e.printStackTrace();
+//							}
+//							return "";
+//						}
+//
+//						@Override
+//						protected void onPostExecute(String s) {
+//							Intent intent = new Intent();
+//							getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+//							getFragmentManager().popBackStack();
+//						}
+//					}.execute();
 
-					new android.os.AsyncTask<Void, Void, String>() {
-
-						@Override
-						protected String doInBackground(Void... params) {
-							try {
-								new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-							return "";
-						}
-
-						@Override
-						protected void onPostExecute(String s) {
-							Intent intent = new Intent();
-							getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-							getFragmentManager().popBackStack();
-						}
-					}.execute();
-
-					break;
-				default:
-					setupErrorViewPager(viewPager);
-					break;
-			}
-		} catch (Exception ignored) {
-		}
+//					break;
+//				default:
+//					setupErrorViewPager(viewPager);
+//					break;
+//			}
+//		} catch (Exception ignored) {
+//		}
 	}
 
 	private void setupErrorViewPager(ViewPager viewPager) {
@@ -203,5 +211,30 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void onExpiredTokenCancel() {
+		Intent intent = new Intent();
+		getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
+		getFragmentManager().popBackStack();
+		mTokenExpireDialog.onCancel();
+	}
+
+	@Override
+	public void onExpiredTokenAuthentication() {
+		mTokenExpireDialog.reAuthenticate();
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+//		if (!mTokenExpireDialog.getAccountSignInState()) {
+//			if (mTokenExpireDialog.getOnBackPressState()) {
+//				mTokenExpireDialog.onCancel(); // go back on back press state
+//			} else {
+//				getWRewards().execute();
+//			}
+//		}
 	}
 }

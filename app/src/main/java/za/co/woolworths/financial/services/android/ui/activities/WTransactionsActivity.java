@@ -131,7 +131,8 @@ public class WTransactionsActivity extends AppCompatActivity implements AlertDia
 							break;
 						case 440:
 							if (!(WTransactionsActivity.this.isFinishing())) {
-								mTokenExpireDialog.showExpiredTokenDialog();
+								mTokenExpireDialog.showExpiredTokenDialog
+										(transactionHistoryResponse.response.stsParams);
 							}
 							break;
 						default:

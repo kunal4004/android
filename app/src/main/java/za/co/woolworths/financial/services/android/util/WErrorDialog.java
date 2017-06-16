@@ -12,6 +12,7 @@ import android.text.SpannableString;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
@@ -22,6 +23,7 @@ public class WErrorDialog {
 	private WGlobalState mWGlobalState;
 	private Context mContext;
 	private AlertDialogInterface mAction;
+	private String mSTSParams;
 
 	public WErrorDialog(Context context, WoolworthsApplication mOneApp, AlertDialogInterface
 			alertDialogInterface) {
@@ -31,21 +33,11 @@ public class WErrorDialog {
 		this.mWGlobalState = mOneApp.getWGlobalState();
 	}
 
-	public static AlertDialog getSimplyErrorDialog(Context c) {
-		return new AlertDialog.Builder(c, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
-				.setTitle(FontHyperTextParser.getSpannable(c.getString(R.string.error), 2, c))
-				.setPositiveButton(FontHyperTextParser.getSpannable(c.getString(R.string.ok), 1, c), new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-
-					}
-				}).create();
-	}
-
-	public void showExpiredTokenDialog() {
+	public void showExpiredTokenDialog(String stsParams) {
+		this.mSTSParams = stsParams;
 		mWGlobalState.setAccountSignInState(false);
 		try {
-			Resources res = mContext.getResources();
+			final Resources res = mContext.getResources();
 			AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).setMessage(dialogFont(res.getString(R.string.token_timeout_message), 1));
 
 			dialogBuilder.setNegativeButton(dialogFont(res.getString(R.string.cancel_button), 1), new DialogInterface.OnClickListener() {
@@ -68,7 +60,7 @@ public class WErrorDialog {
 		}
 	}
 
-	public SpannableString dialogFont(String description, int fontType) {
+	private SpannableString dialogFont(String description, int fontType) {
 		return FontHyperTextParser.getSpannable(description, fontType, mContext);
 	}
 
@@ -91,14 +83,8 @@ public class WErrorDialog {
 		mActivity.finish();
 	}
 
-	public void onAccountCancel() {
-		mWGlobalState.setOnBackPressed(false);
-		mActivity.setResult(SSOActivity.SSOActivityResult.EXPIRED.rawValue());
-		mActivity.overridePendingTransition(0, 0);
-	}
-
 	public void reAuthenticate() {
-		ScreenManager.presentExpiredTokenSSOSignIn(mActivity, "");
+		ScreenManager.presentExpiredTokenSSOSignIn(mActivity, mSTSParams);
 	}
 
 	public void onCancelResult() {

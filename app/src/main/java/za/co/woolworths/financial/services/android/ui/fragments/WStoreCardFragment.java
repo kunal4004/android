@@ -217,7 +217,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 							enableIncreaseLimit();
 						}
 					} else if (httpCode == 440) {
-						mTokenExpireDialog.showExpiredTokenDialog();
+						mTokenExpireDialog.showExpiredTokenDialog(offerActive.response.stsParams);
 					} else {
 						disableIncreaseLimit();
 						Utils.displayValidationMessage(getActivity(),

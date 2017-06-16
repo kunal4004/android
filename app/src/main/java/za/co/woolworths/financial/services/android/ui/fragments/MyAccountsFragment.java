@@ -643,7 +643,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 //							new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_SEARCH).delete();
 //							new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_LAST_LOCATION).delete();
 							loadMessageCounter = false;
-							mTokenExpireDialog.showExpiredTokenDialog();
+							mTokenExpireDialog.showExpiredTokenDialog(accountsResponse.response.stsParams);
 							break;
 						default:
 							loadMessageCounter = false;
@@ -720,7 +720,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 						case 440:
 							loadMessageCounter = true;
-							mTokenExpireDialog.showExpiredTokenDialog();
+							mTokenExpireDialog.showExpiredTokenDialog(messageResponse.response.stsParams);
 							break;
 
 						default:

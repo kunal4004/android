@@ -75,6 +75,7 @@ public class WRewardsFragment extends AbstractFragmentListener {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("onActivityResult","onActivityResult rewards...");
         if (requestCode == FRAGMENT_CODE_1 && resultCode == Activity.RESULT_OK) {
             try {
                 reloadFragment();
