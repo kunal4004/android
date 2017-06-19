@@ -205,7 +205,10 @@ public class WRewardsFragment extends AbstractFragmentListener {
 				}
 			});
 		} else {
-			signOut();
+			try {
+				signOut();
+			} catch (Exception ignored) {
+			}
 		}
 	}
 }
