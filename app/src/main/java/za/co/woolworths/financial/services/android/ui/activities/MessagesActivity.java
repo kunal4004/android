@@ -58,18 +58,16 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 	public List<MessageDetails> messageList;
 	private final ThreadLocal<FragmentManager> fm = new ThreadLocal<>();
 	private ErrorHandlerView mErrorHandlerView;
-	private WoolworthsApplication mWoolWorthsApplication;
 	private AlertDialogManager mTokenExpireDialog;
-	private boolean loadMoreMessage = false;
-
+	private boolean paginationIsEnabled = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.messages_activity);
 		Utils.updateStatusBarBackground(this);
-		mWoolWorthsApplication = (WoolworthsApplication) MessagesActivity.this.getApplication();
-		mTokenExpireDialog = new AlertDialogManager(MessagesActivity.this, mWoolWorthsApplication,
+		WoolworthsApplication woolWorthsApplication = (WoolworthsApplication) MessagesActivity.this.getApplication();
+		mTokenExpireDialog = new AlertDialogManager(MessagesActivity.this, woolWorthsApplication,
 				MessagesActivity
 						.this);
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -79,7 +77,7 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 		mLayoutManager = new LinearLayoutManager(MessagesActivity.this);
 		messsageListview = (RecyclerView) findViewById(R.id.messsageListView);
 		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
-		mErrorHandlerView = new ErrorHandlerView(this, mWoolWorthsApplication,
+		mErrorHandlerView = new ErrorHandlerView(this, woolWorthsApplication,
 				(RelativeLayout) findViewById(R.id.relEmptyStateHandler),
 				(ImageView) findViewById(R.id.imgEmpyStateIcon),
 				(WTextView) findViewById(R.id.txtEmptyStateTitle),
@@ -239,7 +237,7 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 						}
 						break;
 					case 440:
-						loadMoreMessage = true;
+						paginationIsEnabled = true;
 						mTokenExpireDialog.showExpiredTokenDialog(messageResponse.response.stsParams);
 						break;
 
@@ -379,7 +377,7 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 					}
 					break;
 				case 440:
-					loadMoreMessage = false;
+					paginationIsEnabled = false;
 					mTokenExpireDialog.showExpiredTokenDialog(messageResponse.response.stsParams);
 					break;
 				default:
@@ -421,7 +419,7 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 			if (mTokenExpireDialog.getOnBackPressState()) {
 				mTokenExpireDialog.onCancelResult();
 			} else {
-				if (loadMoreMessage) {
+				if (paginationIsEnabled) {
 					loadMoreMessages();
 				} else {
 					loadMessages();
