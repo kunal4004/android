@@ -102,7 +102,7 @@ public class WFragmentDrawer extends Fragment {
         }
         return data;
     }
-    public void updateNavigationDrawer(int voucherCount)
+    public void notifyNavigationDrawer(int voucherCount)
     {
         mMenuList.get(3).setCount(voucherCount);
         adapter.notifyDataSetChanged();

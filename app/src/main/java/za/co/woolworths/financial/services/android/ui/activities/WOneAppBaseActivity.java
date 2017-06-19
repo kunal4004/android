@@ -1,15 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -44,14 +41,13 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
+import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
 
-import static com.awfs.coordination.R.id.fragmentView;
-
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
 		, WProductFragment.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle,
-		WRewardsFragment.HideActionBarComponent, MenuNavigationInterface {
+		WRewardsFragment.HideActionBarComponent, MenuNavigationInterface,UpdateNavigationDrawer {
 
 	public static Toolbar mToolbar;
 	private WFragmentDrawer drawerFragment;
@@ -264,11 +260,16 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 			protected void onPostExecute(VoucherResponse voucherResponse) {
 				super.onPostExecute(voucherResponse);
 				if(voucherResponse.httpCode==200)
-					drawerFragment.updateNavigationDrawer(voucherResponse.voucherCollection.vouchers.size());
+					updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
+
 			}
 		};
 	}
 
+	@Override
+	public void updateVoucherCount(int count) {
+		drawerFragment.notifyNavigationDrawer(count);
+	}
 }
 
 

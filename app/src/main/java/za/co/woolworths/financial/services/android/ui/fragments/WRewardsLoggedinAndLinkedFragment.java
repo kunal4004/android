@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentP
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
 
@@ -46,7 +47,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 	private ErrorHandlerView mErrorHandlerView;
 	private WoolworthsApplication mWoolworthApp;
 	private RelativeLayout mRlConnect;
-
+	private UpdateNavigationDrawer updateNavigationDrawer;
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -71,6 +72,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 				}
 			}
 		});
+		updateNavigationDrawer= (UpdateNavigationDrawer) getActivity();
 		return view;
 	}
 
@@ -153,6 +155,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 			switch (voucherResponse.httpCode) {
 				case 200:
 					setupViewPager(viewPager, voucherResponse);
+					updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
 					break;
 				case 440:
 					AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
@@ -166,6 +169,8 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 						protected String doInBackground(Void... params) {
 							try {
 								new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
+								//Remove voucher count on Navigation drawer
+								updateNavigationDrawer.updateVoucherCount(0);
 							} catch (Exception e) {
 								e.printStackTrace();
 							}

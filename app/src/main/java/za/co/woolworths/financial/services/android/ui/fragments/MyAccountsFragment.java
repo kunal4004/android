@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.FAQActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -64,6 +65,7 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.ScrollState;
+import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WErrorDialog;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -122,7 +124,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	private Toolbar mToolbar;
 	private RelativeLayout relFAQ;
 	private ErrorHandlerView mErrorHandlerView;
-
+	private UpdateNavigationDrawer updateNavigationDrawer;
 	public MyAccountsFragment() {
 		// Required empty public constructor
 		this.accounts = new HashMap<>();
@@ -206,7 +208,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			}
 
 		});
-
+		updateNavigationDrawer= (UpdateNavigationDrawer)getActivity();
 		return view;
 	}
 
@@ -489,7 +491,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			}
 
 			accountAsyncRequest().execute();
-
+			getVouchers().execute();
 		} catch (NullPointerException ignored) {
 		}
 	}
@@ -558,6 +560,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 										new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
 										new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_SEARCH).delete();
 										new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_LAST_LOCATION).delete();
+										//Remove voucher count on Navigation drawer
+										updateNavigationDrawer.updateVoucherCount(0);
 									} catch (Exception e) {
 										e.printStackTrace();
 									}
@@ -658,6 +662,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
 				sessionDao.value = "";
 				sessionDao.save();
+				//Remove voucher count on Navigation drawer
+				updateNavigationDrawer.updateVoucherCount(0);
 			} catch (Exception e) {
 				Log.e(TAG, e.getMessage());
 			}
@@ -767,5 +773,36 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		});
 	}
 
+	public HttpAsyncTask<String, String, VoucherResponse> getVouchers() {
+		return new HttpAsyncTask<String, String, VoucherResponse>() {
+			@Override
+			protected void onPreExecute() {
+				super.onPreExecute();
 
+			}
+
+			@Override
+			protected VoucherResponse httpDoInBackground(String... params) {
+				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getVouchers();
+			}
+
+			@Override
+			protected Class<VoucherResponse> httpDoInBackgroundReturnType() {
+				return VoucherResponse.class;
+			}
+
+			@Override
+			protected VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+				return new VoucherResponse();
+			}
+
+			@Override
+			protected void onPostExecute(VoucherResponse voucherResponse) {
+				super.onPostExecute(voucherResponse);
+				if(voucherResponse.httpCode==200)
+					updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
+
+			}
+		};
+	}
 }
