@@ -156,6 +156,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		signOutBtn = (RelativeLayout) view.findViewById(R.id.signOutBtn);
 		changePasswordBtn = (RelativeLayout) view.findViewById(R.id.changePassword);
 		viewPager = (ViewPager) view.findViewById(R.id.pager);
+
 		pager_indicator = (LinearLayout) view.findViewById(R.id.viewPagerCountDots);
 		sc_available_funds = (WTextView) view.findViewById(R.id.sc_available_funds);
 		cc_available_funds = (WTextView) view.findViewById(R.id.cc_available_funds);
@@ -451,8 +452,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				hideActionBar.onBurgerButtonPressed();
 				break;
 			case R.id.changePassword:
-				startActivity(new Intent(getActivity(), WChangePasswordActivity.class));
-				getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+				ScreenManager.presentSSOChangePassword(getActivity());
 				break;
 			default:
 				break;
@@ -662,7 +662,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				Log.e(TAG, e.getMessage());
 			}
 			initialize();
-		}
+		}else {}
 	}
 
 	@Override

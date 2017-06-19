@@ -60,8 +60,8 @@ public class SSOActivity extends WebViewActivity {
 		NONCE_MISMATCH(5),
 		SUCCESS(6),
 		EXPIRED(7),
-		SIGNED_OUT(8);
-
+		SIGNED_OUT(8),
+		CHANGE_PASSWORD(9);
 		private int result;
 
 		private SSOActivityResult(int i) {
@@ -219,7 +219,8 @@ public class SSOActivity extends WebViewActivity {
 	public enum Path implements SSORequiredParameter {
 		SIGNIN("customerid/connect/authorize"),
 		REGISTER("customerid/register/step1"),
-		LOGOUT("customerid/connect/endsession");
+		LOGOUT("customerid/connect/endsession"),
+		CHANGE_PASSWORD("customerid/userdetails/password");
 
 		private String path;
 
@@ -372,8 +373,7 @@ public class SSOActivity extends WebViewActivity {
 				if (indexOfQuestionMark > -1) {
 					String urlWithoutQueryString = url.substring(0, indexOfQuestionMark);
 
-					String redirectURI = extraQueryStringParams.get("post_logout_redirect_uri");
-					if (urlWithoutQueryString.equals(redirectURI)) {
+					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 						finish();
