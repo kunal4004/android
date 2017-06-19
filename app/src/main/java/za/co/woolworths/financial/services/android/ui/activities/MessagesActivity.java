@@ -40,7 +40,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
+import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 
 public class MessagesActivity extends AppCompatActivity implements AlertDialogInterface {
 	public RecyclerView messsageListview;
@@ -59,7 +59,7 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 	private final ThreadLocal<FragmentManager> fm = new ThreadLocal<>();
 	private ErrorHandlerView mErrorHandlerView;
 	private WoolworthsApplication mWoolWorthsApplication;
-	private WErrorDialog mTokenExpireDialog;
+	private AlertDialogManager mTokenExpireDialog;
 	private boolean loadMoreMessage = false;
 
 
@@ -69,7 +69,7 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 		setContentView(R.layout.messages_activity);
 		Utils.updateStatusBarBackground(this);
 		mWoolWorthsApplication = (WoolworthsApplication) MessagesActivity.this.getApplication();
-		mTokenExpireDialog = new WErrorDialog(MessagesActivity.this, mWoolWorthsApplication,
+		mTokenExpireDialog = new AlertDialogManager(MessagesActivity.this, mWoolWorthsApplication,
 				MessagesActivity
 						.this);
 		toolbar = (Toolbar) findViewById(R.id.toolbar);

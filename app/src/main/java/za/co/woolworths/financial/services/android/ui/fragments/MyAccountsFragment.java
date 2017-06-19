@@ -67,7 +67,7 @@ import za.co.woolworths.financial.services.android.util.ObservableScrollViewCall
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
+import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
@@ -125,7 +125,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	private RelativeLayout relFAQ;
 	private ErrorHandlerView mErrorHandlerView;
 	private WGlobalState wGlobalState;
-	private WErrorDialog mTokenExpireDialog;
+	private AlertDialogManager mTokenExpireDialog;
 	private MyAccountsFragment mContext;
 	private boolean loadMessageCounter = false;
 
@@ -220,7 +220,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 		});
 
-		mTokenExpireDialog = new WErrorDialog(getActivity(), woolworthsApplication,
+		mTokenExpireDialog = new AlertDialogManager(getActivity(), woolworthsApplication,
 				mContext);
 	}
 
@@ -867,6 +867,29 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
 				sessionDao.value = "";
 				sessionDao.save();
+				new HttpAsyncTask<Void, Void, Void>() {
+
+					@Override
+					protected Void httpDoInBackground(Void... params) {
+						try {
+							new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_SEARCH).delete();
+							new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_LAST_LOCATION).delete();
+						} catch (Exception pE) {
+							pE.printStackTrace();
+						}
+						return null;
+					}
+
+					@Override
+					protected Void httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+						return null;
+					}
+
+					@Override
+					protected Class<Void> httpDoInBackgroundReturnType() {
+						return null;
+					}
+				}.execute();
 			} catch (Exception e) {
 				Log.e(TAG, e.getMessage());
 			}

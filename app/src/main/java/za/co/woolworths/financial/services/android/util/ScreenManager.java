@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 
 import com.awfs.coordination.R;
 
@@ -40,8 +41,9 @@ public class ScreenManager {
 	public static void presentExpiredTokenSSOSignIn(Activity activity, String newSTSParams) {
 		Intent intent = new Intent(activity, SSOActivity.class);
 		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
-		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue() + "&" + newSTSParams);
+		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
 		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
+		intent.putExtra(SSOActivity.TAG_SCOPE, newSTSParams);
 		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
 		activity.overridePendingTransition(0, 0);
 	}

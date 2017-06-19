@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.text.SpannableString;
+import android.text.TextUtils;
 
 import com.awfs.coordination.R;
 
@@ -17,7 +18,7 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 
-public class WErrorDialog {
+public class AlertDialogManager {
 
 	private Activity mActivity;
 	private WGlobalState mWGlobalState;
@@ -25,7 +26,7 @@ public class WErrorDialog {
 	private AlertDialogInterface mAction;
 	private String mSTSParams;
 
-	public WErrorDialog(Context context, WoolworthsApplication mOneApp, AlertDialogInterface
+	public AlertDialogManager(Context context, WoolworthsApplication mOneApp, AlertDialogInterface
 			alertDialogInterface) {
 		this.mContext = context;
 		this.mAction = alertDialogInterface;
@@ -84,6 +85,11 @@ public class WErrorDialog {
 	}
 
 	public void reAuthenticate() {
+		if (TextUtils.isEmpty(this.mSTSParams)) {
+			this.mSTSParams = "";
+		} else {
+			this.mSTSParams = Utils.getScope(mSTSParams);
+		}
 		ScreenManager.presentExpiredTokenSSOSignIn(mActivity, mSTSParams);
 	}
 

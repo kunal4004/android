@@ -23,7 +23,7 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
+import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 
 public class WTransactionsActivity extends AppCompatActivity implements AlertDialogInterface {
 
@@ -32,7 +32,7 @@ public class WTransactionsActivity extends AppCompatActivity implements AlertDia
 	public String productOfferingId;
 	private ProgressDialogFragment mGetTransactionProgressDialog;
 	private ErrorHandlerView mErrorHandlerView;
-	private WErrorDialog mTokenExpireDialog;
+	private AlertDialogManager mTokenExpireDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,7 @@ public class WTransactionsActivity extends AppCompatActivity implements AlertDia
 				(WTextView) findViewById(R.id.txtEmptyStateTitle),
 				(WTextView) findViewById(R.id.txtEmptyStateDesc),
 				(RelativeLayout) findViewById(R.id.no_connection_layout));
-		mTokenExpireDialog = new WErrorDialog(WTransactionsActivity.this, woolworthsApplication,
+		mTokenExpireDialog = new AlertDialogManager(WTransactionsActivity.this, woolworthsApplication,
 				WTransactionsActivity
 						.this);
 

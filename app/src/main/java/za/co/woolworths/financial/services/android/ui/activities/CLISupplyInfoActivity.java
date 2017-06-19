@@ -52,7 +52,7 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
+import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICreditLimitContentBinder;
 
 public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickListener,
@@ -89,7 +89,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 	private BroadcastReceiver connectionBroadcast;
 	private ErrorHandlerView mErrorHandlerView;
 	private boolean continueButtonClicked = false;
-	private WErrorDialog mTokenExpireDialog;
+	private AlertDialogManager mTokenExpireDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +99,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 		fm = getSupportFragmentManager();
 		mErrorHandlerView = new ErrorHandlerView(CLISupplyInfoActivity.this);
 		mWoolworthsApplication = (WoolworthsApplication) getApplication();
-		mTokenExpireDialog = new WErrorDialog(CLISupplyInfoActivity.this, mWoolworthsApplication,
+		mTokenExpireDialog = new AlertDialogManager(CLISupplyInfoActivity.this, mWoolworthsApplication,
 				CLISupplyInfoActivity
 						.this);
 		mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;

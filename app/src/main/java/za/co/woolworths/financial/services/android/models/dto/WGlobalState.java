@@ -1,40 +1,40 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
+import android.content.Context;
+import android.text.TextUtils;
+
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.util.Utils;
+
 /**
  * Created by dimitrij on 04/06/2017.
  */
 
 public class WGlobalState {
 
-	private boolean cardGestureIsEnabled;
+	private final Context mContext;
 
-	// Account state
-	private boolean accountSignInState;
-	private boolean rewardSignInState;
-	private boolean onBackPressed;
-
-	public boolean cardGestureIsEnabled() {
-		return cardGestureIsEnabled;
+	public WGlobalState(Context context) {
+		this.mContext = context;
 	}
 
-	public void setCardGestureIsEnabled(boolean pCardGestureIsEnabled) {
-		cardGestureIsEnabled = pCardGestureIsEnabled;
+	private boolean cardGestureIsEnabled;
+	private boolean onBackPressed;
+
+	public void setAccountSignInState(boolean accountSignInState) {
+		setPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE, accountSignInState);
 	}
 
 	public boolean getAccountSignInState() {
-		return accountSignInState;
+		return getPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE);
 	}
 
-	public void setAccountSignInState(boolean pAccountSignInState) {
-		accountSignInState = pAccountSignInState;
+	public void setRewardSignInState(boolean rewardSignInState) {
+		setPersistentValue(SessionDao.KEY.REWARD_IS_ACTIVE, rewardSignInState);
 	}
 
 	public boolean getRewardSignInState() {
-		return rewardSignInState;
-	}
-
-	public void setRewardSignInState(boolean pRewardSignInState) {
-		rewardSignInState = pRewardSignInState;
+		return getPersistentValue(SessionDao.KEY.REWARD_IS_ACTIVE);
 	}
 
 	public boolean getOnBackPressed() {
@@ -44,4 +44,26 @@ public class WGlobalState {
 	public void setOnBackPressed(boolean pOnBackPressed) {
 		onBackPressed = pOnBackPressed;
 	}
+
+	public boolean cardGestureIsEnabled() {
+		return cardGestureIsEnabled;
+	}
+
+	public void setCardGestureIsEnabled(boolean pCardGestureIsEnabled) {
+		cardGestureIsEnabled = pCardGestureIsEnabled;
+	}
+
+	private void setPersistentValue(SessionDao.KEY key, boolean value) {
+		Utils.sessionDaoSave(mContext,
+				key, String.valueOf(value));
+	}
+
+	private boolean getPersistentValue(SessionDao.KEY key) {
+		String value = Utils.getSessionDaoValue(mContext, key);
+		if (TextUtils.isEmpty(value)) {
+			return false;
+		}
+		return Boolean.valueOf(value);
+	}
+
 }

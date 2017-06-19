@@ -21,6 +21,7 @@ import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
@@ -28,7 +29,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
+import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 
 /**
  * Created by W7099877 on 05/01/2017.
@@ -43,10 +44,11 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 	private ProgressBar progressBar;
 	private LinearLayout fragmentView;
 	private ErrorHandlerView mErrorHandlerView;
-	private WoolworthsApplication mWoolworthApp;
 	private RelativeLayout mRlConnect;
-	private WErrorDialog mTokenExpireDialog;
+	private AlertDialogManager mTokenExpireDialog;
 	private WRewardsLoggedinAndLinkedFragment mContext;
+	private WGlobalState mWGlobalState;
+	private HttpAsyncTask<String, String, VoucherResponse> asyncTaskReward;
 
 	@Nullable
 	@Override
@@ -58,19 +60,19 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		mWGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
 		viewPager = (ViewPager) view.findViewById(R.id.viewpager);
 		mNavigationInterface = (MenuNavigationInterface) getActivity();
 		progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 		fragmentView = (LinearLayout) view.findViewById(R.id.fragmentView);
-		mWoolworthApp = (WoolworthsApplication) getActivity().getApplication();
 		tabLayout = (TabLayout) view.findViewById(R.id.tabs);
 		viewPager.setOffscreenPageLimit(3);
 		progressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		mRlConnect = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), mRlConnect);
 		mErrorHandlerView.setMargin(mRlConnect, 0, 0, 0, 0);
-		mTokenExpireDialog = new WErrorDialog(getActivity(), (WoolworthsApplication) getActivity().getApplication(), mContext);
-		getWRewards().execute();
+		mTokenExpireDialog = new AlertDialogManager(getActivity(), (WoolworthsApplication) getActivity().getApplication(), mContext);
+		loadReward();
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -96,6 +98,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 
 	}
 
+
 	private void setupTabIcons(int activeVoucherCount) {
 		String[] tabTitle = {getActivity().getString(R.string.overview), getActivity().getString(R.string.vouchers), getActivity().getString(R.string.savings)};
 
@@ -118,6 +121,11 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 		}
 
 		return view;
+	}
+
+	private void loadReward() {
+		asyncTaskReward = getWRewards();
+		asyncTaskReward.execute();
 	}
 
 	public HttpAsyncTask<String, String, VoucherResponse> getWRewards() {
@@ -156,45 +164,23 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 	}
 
 	public void handleVoucherResponse(VoucherResponse voucherResponse) {
-		mTokenExpireDialog.showExpiredTokenDialog(voucherResponse.response.stsParams);
-//		try {
-//			switch (voucherResponse.httpCode) {
-//				case 200:
-//					setupViewPager(viewPager, voucherResponse);
-//					break;
-//				case 440:
-//					AlertDialog mError = WErrorDialog.getSimplyErrorDialog(getActivity());
-//					mError.setTitle(getString(R.string.title_authentication_error));
-//					mError.setMessage(getString(R.string.session_out_message));
-//					mError.show();
-//
-//					new android.os.AsyncTask<Void, Void, String>() {
-//
-//						@Override
-//						protected String doInBackground(Void... params) {
-//							try {
-//								new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
-//							} catch (Exception e) {
-//								e.printStackTrace();
-//							}
-//							return "";
-//						}
-//
-//						@Override
-//						protected void onPostExecute(String s) {
-//							Intent intent = new Intent();
-//							getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-//							getFragmentManager().popBackStack();
-//						}
-//					}.execute();
-
-//					break;
-//				default:
-//					setupErrorViewPager(viewPager);
-//					break;
-//			}
-//		} catch (Exception ignored) {
-//		}
+		try {
+			switch (voucherResponse.httpCode) {
+				case 200:
+					mWGlobalState.setRewardSignInState(true);
+					setupViewPager(viewPager, voucherResponse);
+					break;
+				case 440:
+					mWGlobalState.setRewardSignInState(false);
+					mTokenExpireDialog.showExpiredTokenDialog(voucherResponse.response.stsParams);
+					break;
+				default:
+					mWGlobalState.setRewardSignInState(false);
+					setupErrorViewPager(viewPager);
+					break;
+			}
+		} catch (Exception ignored) {
+		}
 	}
 
 	private void setupErrorViewPager(ViewPager viewPager) {
@@ -206,6 +192,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 		adapter.addFrag(new WRewardsErrorFragment(), getString(R.string.savings));
 		viewPager.setAdapter(adapter);
 		tabLayout.setupWithViewPager(viewPager);
+
 		try {
 			setupTabIcons(0);
 		} catch (Exception e) {
@@ -215,26 +202,17 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 
 	@Override
 	public void onExpiredTokenCancel() {
+		if (!asyncTaskReward.isCancelled()) {
+			asyncTaskReward.cancel(true);
+		}
+		mWGlobalState.setRewardSignInState(false);
 		Intent intent = new Intent();
 		getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
 		getFragmentManager().popBackStack();
-		mTokenExpireDialog.onCancel();
 	}
 
 	@Override
 	public void onExpiredTokenAuthentication() {
 		mTokenExpireDialog.reAuthenticate();
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-//		if (!mTokenExpireDialog.getAccountSignInState()) {
-//			if (mTokenExpireDialog.getOnBackPressState()) {
-//				mTokenExpireDialog.onCancel(); // go back on back press state
-//			} else {
-//				getWRewards().execute();
-//			}
-//		}
 	}
 }

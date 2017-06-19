@@ -37,7 +37,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
+import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICbxContentBinder;
 
 
@@ -51,7 +51,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
-	private WErrorDialog mTokenExpireDialog;
+	private AlertDialogManager mTokenExpireDialog;
 
 	public interface StepNavigatorCallback {
 		void openNextFragment(int index);
@@ -91,7 +91,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 			networkChangeListener = this;
 		} catch (ClassCastException ignored) {
 		}
-		mTokenExpireDialog = new WErrorDialog(getActivity(), (WoolworthsApplication) getActivity().getApplication(),
+		mTokenExpireDialog = new AlertDialogManager(getActivity(), (WoolworthsApplication) getActivity().getApplication(),
 				mContext);
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
 		initUI(view);

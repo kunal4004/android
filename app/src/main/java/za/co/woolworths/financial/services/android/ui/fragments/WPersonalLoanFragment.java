@@ -44,7 +44,7 @@ import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
+import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener, AlertDialogInterface {
@@ -72,7 +72,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
 	private boolean bolBroacastRegistred;
-	private WErrorDialog mTokenExpireDialog;
+	private AlertDialogManager mTokenExpireDialog;
 	private WPersonalLoanFragment mContext;
 
 	@Nullable
@@ -86,7 +86,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-		mTokenExpireDialog = new WErrorDialog(getActivity(), woolworthsApplication,
+		mTokenExpireDialog = new AlertDialogManager(getActivity(), woolworthsApplication,
 				mContext);
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);

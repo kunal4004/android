@@ -52,7 +52,7 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
+import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.binder.view.CLIBankAccountTypeBinder;
 
 public class CLIThirdStepFragment extends Fragment implements View.OnClickListener,
@@ -93,7 +93,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 	private boolean sendEmailButtonClicked = true;
 	private boolean updateBankDetailClicked = false;
 	private boolean getBankAccountClicked = true;
-	private WErrorDialog mTokenExpireDialog;
+	private AlertDialogManager mTokenExpireDialog;
 
 
 	public CLIThirdStepFragment() {
@@ -115,7 +115,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 		} catch (ClassCastException ignored) {
 		}
 
-		mTokenExpireDialog = new WErrorDialog(getActivity(), (WoolworthsApplication) getActivity().getApplication(),
+		mTokenExpireDialog = new AlertDialogManager(getActivity(), (WoolworthsApplication) getActivity().getApplication(),
 				mContext);
 
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);

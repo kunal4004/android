@@ -43,7 +43,7 @@ import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
+import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 
@@ -70,7 +70,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private NetworkChangeListener networkChangeListener;
 	private boolean bolBroacastRegistred;
 	private WStoreCardFragment mContext;
-	private WErrorDialog mTokenExpireDialog;
+	private AlertDialogManager mTokenExpireDialog;
 
 	@Nullable
 	@Override
@@ -84,7 +84,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		super.onViewCreated(view, savedInstanceState);
 
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-		mTokenExpireDialog = new WErrorDialog(getActivity(), woolworthsApplication,
+		mTokenExpireDialog = new AlertDialogManager(getActivity(), woolworthsApplication,
 				mContext);
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
 		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
