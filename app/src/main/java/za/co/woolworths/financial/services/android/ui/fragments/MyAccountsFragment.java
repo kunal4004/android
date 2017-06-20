@@ -187,7 +187,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		mImageView.setOnClickListener(this);
 		relFAQ.setOnClickListener(this);
 		mWObservableScrollView.setScrollViewCallbacks(this);
-
+		updateNavigationDrawer= (UpdateNavigationDrawer)getActivity();
 		adapter = new MyAccountOverViewPagerAdapter(getActivity());
 		viewPager.addOnPageChangeListener(this);
 		setUiPageViewController();
@@ -208,7 +208,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			}
 
 		});
-		updateNavigationDrawer= (UpdateNavigationDrawer)getActivity();
 		return view;
 	}
 
@@ -230,6 +229,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			this.loadAccounts();
 		} else {
 			this.configureView();
+			//Remove voucher count on Navigation drawer
+			updateNavigationDrawer.updateVoucherCount(0);
 		}
 	}
 
@@ -560,8 +561,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 										new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
 										new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_SEARCH).delete();
 										new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_LAST_LOCATION).delete();
-										//Remove voucher count on Navigation drawer
-										updateNavigationDrawer.updateVoucherCount(0);
 									} catch (Exception e) {
 										e.printStackTrace();
 									}
@@ -662,8 +661,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
 				sessionDao.value = "";
 				sessionDao.save();
-				//Remove voucher count on Navigation drawer
-				updateNavigationDrawer.updateVoucherCount(0);
 			} catch (Exception e) {
 				Log.e(TAG, e.getMessage());
 			}
