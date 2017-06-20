@@ -305,13 +305,8 @@ public class WObservableScrollView extends NestedScrollView implements Scrollabl
 		 */
 		private SavedState(Parcel in) {
 			super(in);
-			try {
-				prevScrollY = in.readInt();
-				scrollY = in.readInt();
-			} catch (Exception ex) {
-				prevScrollY = 0;
-				scrollY = 0;
-			}
+			prevScrollY = in.readInt();
+			scrollY = in.readInt();
 		}
 
 		@Override

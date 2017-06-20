@@ -60,8 +60,7 @@ public class SSOActivity extends WebViewActivity {
 		NONCE_MISMATCH(5),
 		SUCCESS(6),
 		EXPIRED(7),
-		SIGNED_OUT(8),
-		CHANGE_PASSWORD(9);
+		SIGNED_OUT(8);
 		private int result;
 
 		private SSOActivityResult(int i) {
@@ -313,6 +312,10 @@ public class SSOActivity extends WebViewActivity {
 			case REGISTER:
 				break;
 
+
+			case CHANGE_PASSWORD:
+				break;
+
 			default:
 				break;
 		}
@@ -365,6 +368,8 @@ public class SSOActivity extends WebViewActivity {
 						} else {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
 						}
+
+						Log.e("finish..", "finishActivity...");
 						finish();
 					}
 				});
@@ -377,9 +382,14 @@ public class SSOActivity extends WebViewActivity {
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 						finish();
+					} else {
 					}
 				}
+
+			} else {
+				Log.e("finish..", "finishActivity...");
 			}
+
 		}
 
 		@Override
@@ -390,11 +400,6 @@ public class SSOActivity extends WebViewActivity {
 			return true;
 		}
 
-		@Override
-		public void onLoadResource(WebView view, String url) {
-			super.onLoadResource(view, url);
-			mGoBack();
-		}
 
 		@Override
 		public void onPageFinished(WebView view, String url) {
@@ -562,5 +567,12 @@ public class SSOActivity extends WebViewActivity {
 		}
 		return true;
 
+	}
+
+	@Override
+	protected void onDestroy() {
+		if (this.webView != null)
+			this.webView.destroy();
+		super.onDestroy();
 	}
 }
