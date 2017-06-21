@@ -534,11 +534,13 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 							GsonBuilder builder = new GsonBuilder();
 							Gson gson = builder.create();
 							displayProductDetail(gson.toJson(mProductList), mSkuId, mProductList.get(0).otherSkus.size());
+							mBtnShopOnlineWoolies.setEnabled(true);
 							break;
 
 						default:
 							Utils.updateStatusBarBackground(ProductGridActivity.this);
 							Utils.alertErrorMessage(ProductGridActivity.this, wProduct.response.desc);
+							mBtnShopOnlineWoolies.setEnabled(false);
 							break;
 					}
 

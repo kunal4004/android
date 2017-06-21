@@ -793,6 +793,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 		mTextSelectSize.setAlpha(0.3f);
 		mTextProductSize.setAlpha(0.3f);
 		mBtnShopOnlineWoolies.setAlpha(0.55f);
+		mBtnShopOnlineWoolies.setEnabled(false);
 	}
 
 	public void hideProgressDetailLoad() {
