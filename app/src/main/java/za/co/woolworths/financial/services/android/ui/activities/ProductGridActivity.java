@@ -534,12 +534,10 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 							GsonBuilder builder = new GsonBuilder();
 							Gson gson = builder.create();
 							displayProductDetail(gson.toJson(mProductList), mSkuId, mProductList.get(0).otherSkus.size());
-							hideProgressDetailLoad();
 							break;
 
 						default:
 							Utils.updateStatusBarBackground(ProductGridActivity.this);
-							hideProgressDetailLoad();
 							Utils.alertErrorMessage(ProductGridActivity.this, wProduct.response.desc);
 							break;
 					}

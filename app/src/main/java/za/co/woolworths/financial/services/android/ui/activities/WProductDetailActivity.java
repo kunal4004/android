@@ -53,7 +53,6 @@ import za.co.woolworths.financial.services.android.ui.views.LoadingDots;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
-import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
@@ -793,6 +792,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 		mColorArrow.setAlpha(0.3f);
 		mTextSelectSize.setAlpha(0.3f);
 		mTextProductSize.setAlpha(0.3f);
+		mBtnShopOnlineWoolies.setAlpha(0.7f);
 	}
 
 	public void hideProgressDetailLoad() {
@@ -806,6 +806,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 		mColorArrow.setAlpha(1f);
 		mTextSelectSize.setAlpha(1f);
 		mTextProductSize.setAlpha(1f);
+		mBtnShopOnlineWoolies.setAlpha(1f);
 	}
 
 	public void resetLongDescription() {
