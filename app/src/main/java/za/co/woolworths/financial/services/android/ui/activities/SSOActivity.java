@@ -255,7 +255,7 @@ public class SSOActivity extends WebViewActivity {
 				.appendQueryParameter("client_id", "WWOneApp")
 				.appendQueryParameter("response_type", "id_token") // Identity token
 				.appendQueryParameter("response_mode", "form_post")
-				.appendQueryParameter("redirect_uri", this.redirectURIString)
+				//.appendQueryParameter("redirect_uri", this.redirectURIString)
 				.appendQueryParameter("state", this.state)
 				.appendQueryParameter("nonce", this.nonce)
 				.appendQueryParameter("scope", scope);
