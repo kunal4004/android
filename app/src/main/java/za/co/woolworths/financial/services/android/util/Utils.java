@@ -481,4 +481,8 @@ public class Utils {
 		context.startActivity(openNumericKeypad);
 		((Activity) context).overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
+
+	public static String getScope(String scope) {
+		return scope.replaceAll("scope=", "");
+	}
 }

@@ -14,4 +14,7 @@ public class BankAccountResponse {
     @SerializedName("desc")
     @Expose
     public String desc;
+    @SerializedName("stsParams")
+    @Expose
+    public String stsParams;
 }

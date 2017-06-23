@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 
 import com.awfs.coordination.R;
 
@@ -9,6 +10,7 @@ import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
@@ -22,7 +24,7 @@ public class ScreenManager {
 	public static void presentMain(Activity activity) {
 
 		Intent intent = new Intent(activity, WOneAppBaseActivity.class);
-		activity.startActivity(intent);
+		activity.startActivityForResult(intent, 0);
 		activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 		activity.finish();
 	}
@@ -35,6 +37,16 @@ public class ScreenManager {
 		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
 		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
 		intent.putExtra(SSOActivity.TAG_EXTRA_QUERYSTRING_PARAMS, params);
+		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
+		activity.overridePendingTransition(0, 0);
+	}
+
+	public static void presentExpiredTokenSSOSignIn(Activity activity, String newSTSParams) {
+		Intent intent = new Intent(activity, SSOActivity.class);
+		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
+		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
+		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
+		intent.putExtra(SSOActivity.TAG_SCOPE, newSTSParams);
 		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
 		activity.overridePendingTransition(0, 0);
 	}

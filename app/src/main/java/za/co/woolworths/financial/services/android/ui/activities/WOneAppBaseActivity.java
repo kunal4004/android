@@ -90,6 +90,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		} else {
 			displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 		}
+
 	}
 
 	@Override
