@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -35,8 +33,7 @@ public class WRewardsVoucherTermAndConditions extends AppCompatActivity {
 		viewGeneralTermsAndCondtions.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Utils.openExternalLink(WRewardsVoucherTermAndConditions.this, WoolworthsApplication
-						.getWrewardsTCLink());
+				Utils.openExternalLink(WRewardsVoucherTermAndConditions.this, WoolworthsApplication.getWrewardsTCLink());
 			}
 		});
 	}
@@ -46,6 +43,7 @@ public class WRewardsVoucherTermAndConditions extends AppCompatActivity {
 		switch (item.getItemId()) {
 			case android.R.id.home:
 				finish();
+				overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 				break;
 		}
 		return true;
