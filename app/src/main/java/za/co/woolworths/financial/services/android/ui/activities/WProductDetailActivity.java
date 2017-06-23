@@ -637,28 +637,28 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 			DrawImage drawImage = new DrawImage(this);
 			if (!TextUtils.isEmpty(wSave)) {
 				mImSave.setVisibility(View.VISIBLE);
-				drawImage.displayImage(mImSave, wSave);
+				drawImage.displaySmallImage(mImSave, wSave);
 			} else {
 				mImSave.setVisibility(View.GONE);
 			}
 
 			if (!TextUtils.isEmpty(wReward)) {
 				mImReward.setVisibility(View.VISIBLE);
-				drawImage.displayImage(mImReward, wReward);
+				drawImage.displaySmallImage(mImReward, wReward);
 			} else {
 				mImReward.setVisibility(View.GONE);
 			}
 
 			if (!TextUtils.isEmpty(wVitality)) {
 				mVitalityView.setVisibility(View.VISIBLE);
-				drawImage.displayImage(mVitalityView, wVitality);
+				drawImage.displaySmallImage(mVitalityView, wVitality);
 			} else {
 				mVitalityView.setVisibility(View.GONE);
 			}
 
 			if (!TextUtils.isEmpty(wNewImage)) {
 				mImNewImage.setVisibility(View.VISIBLE);
-				drawImage.displayImage(mImNewImage, wNewImage);
+				drawImage.displaySmallImage(mImNewImage, wNewImage);
 
 			} else {
 				mImNewImage.setVisibility(View.GONE);
