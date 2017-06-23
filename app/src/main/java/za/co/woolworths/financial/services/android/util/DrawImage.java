@@ -38,7 +38,7 @@ public class DrawImage {
 		}
 	}
 
-	public void dispImage(final SimpleDraweeView image, String imgUrl) {
+	public void displaySmallImage(final SimpleDraweeView image, String imgUrl) {
 		if (imgUrl != null) {
 			try {
 				GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(mContext.getResources());
