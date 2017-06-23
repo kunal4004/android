@@ -846,7 +846,6 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		}
 	}
 
-
 	private String updatePrice(String colour, String size) {
 		String price = "";
 		if (otherSkusList != null) {
