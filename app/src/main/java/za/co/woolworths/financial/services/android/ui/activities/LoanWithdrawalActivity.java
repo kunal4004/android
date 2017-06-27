@@ -106,7 +106,6 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 		}
 	}
 
-
 	private void initViews() {
 		mTextAvailableFund = (WTextView) findViewById(R.id.textAvailableFunds);
 		mTextCreditLimit = (WTextView) findViewById(R.id.textCreditLimit);
@@ -319,25 +318,27 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 			@Override
 			protected void onPostExecute(IssueLoanResponse issueLoanResponse) {
 				super.onPostExecute(issueLoanResponse);
-					try {
-				hideProgressBar();
-					if (issueLoanResponse.httpCode == 200) {
+				try {
+					hideProgressBar();
+					int result = issueLoanResponse.httpCode;
+					if (result == 200) {
 						loanWithdrawalClicked = false;
 						mSharePreferenceHelper.save(String.valueOf(issueLoanResponse.installmentAmount), "lw_installment_amount");
-				Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this, LoanWithdrawalConfirmActivity.class);
-				openConfirmWithdrawal.putExtra("drawnDownAmount", mDrawnDownAmount);
-				openConfirmWithdrawal.putExtra("availableFunds", mAvailableFunds);
-				openConfirmWithdrawal.putExtra("creditLimit", mCreditLimit);
-				openConfirmWithdrawal.putExtra("minDrawnDownAmount", wminDrawnDownAmount);
-				openConfirmWithdrawal.putExtra("repaymentPeriod", repaymentPeriod(getCreditAmount()));
-				startActivity(openConfirmWithdrawal);
-				finish();
+						Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this, LoanWithdrawalConfirmActivity.class);
+						openConfirmWithdrawal.putExtra("drawnDownAmount", mDrawnDownAmount);
+						openConfirmWithdrawal.putExtra("availableFunds", mAvailableFunds);
+						openConfirmWithdrawal.putExtra("creditLimit", mCreditLimit);
+						openConfirmWithdrawal.putExtra("minDrawnDownAmount", wminDrawnDownAmount);
+						openConfirmWithdrawal.putExtra("repaymentPeriod", repaymentPeriod(getCreditAmount()));
+						startActivity(openConfirmWithdrawal);
+						finish();
 					} else {
 						try {
 							hideKeyboard();
 							String responseDesc = issueLoanResponse.response.desc;
 							if (responseDesc != null) {
 								if (!TextUtils.isEmpty(responseDesc)) {
+									loanWithdrawalClicked = false;
 									Utils.displayValidationMessage(LoanWithdrawalActivity.this,
 											TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
 											responseDesc);
@@ -348,7 +349,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 						}
 					}
 				} catch (Exception ignored) {
-					}
+				}
 			}
 
 			@Override
@@ -373,7 +374,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 	}
 
 	private int repaymentPeriod(int amount) {
-		if (amount < 1000000) {
+		if (amount < 1005000) {
 			return 36;
 		} else {
 			return 60;
