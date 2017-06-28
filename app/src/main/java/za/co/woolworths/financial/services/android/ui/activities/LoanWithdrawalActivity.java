@@ -62,7 +62,6 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 	private ProgressBar mLoanWithdrawalProgress;
 	private boolean arrowIsVisible = false;
 	private AsyncTask<String, String, IssueLoanResponse> issueLoanRequest;
-	private RelativeLayout mLinLoanWithdrawalSuccess;
 	private boolean deleteKeyIsPressed = false;
 	private ErrorHandlerView mErrorHandlerView;
 	private NetworkChangeListener networkChangeListener;
@@ -114,9 +113,9 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 		mRelLoanWithdrawal = (RelativeLayout) findViewById(R.id.relLoanWithdrawal);
 		mLoanWithdrawalProgress = (ProgressBar) findViewById(R.id.mLoanWithdrawalProgress);
 		ScrollView mScrollLoanWithdrawal = (ScrollView) findViewById(R.id.scrollLoanWithdrawal);
-		mLinLoanWithdrawalSuccess = (RelativeLayout) findViewById(R.id.linLoanWithdrawalSuccess);
+		RelativeLayout linLoanWithdrawalSuccess = (RelativeLayout) findViewById(R.id.linLoanWithdrawalSuccess);
 		mScrollLoanWithdrawal.setVisibility(View.GONE);
-		mLinLoanWithdrawalSuccess.setVisibility(View.GONE);
+		linLoanWithdrawalSuccess.setVisibility(View.GONE);
 	}
 
 	private void setActionBar() {
@@ -319,19 +318,19 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 			@Override
 			protected void onPostExecute(IssueLoanResponse issueLoanResponse) {
 				super.onPostExecute(issueLoanResponse);
-					try {
-				hideProgressBar();
+				try {
+					hideProgressBar();
 					if (issueLoanResponse.httpCode == 200) {
 						loanWithdrawalClicked = false;
 						mSharePreferenceHelper.save(String.valueOf(issueLoanResponse.installmentAmount), "lw_installment_amount");
-				Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this, LoanWithdrawalConfirmActivity.class);
-				openConfirmWithdrawal.putExtra("drawnDownAmount", mDrawnDownAmount);
-				openConfirmWithdrawal.putExtra("availableFunds", mAvailableFunds);
-				openConfirmWithdrawal.putExtra("creditLimit", mCreditLimit);
-				openConfirmWithdrawal.putExtra("minDrawnDownAmount", wminDrawnDownAmount);
-				openConfirmWithdrawal.putExtra("repaymentPeriod", repaymentPeriod(getCreditAmount()));
-				startActivity(openConfirmWithdrawal);
-				finish();
+						Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this, LoanWithdrawalConfirmActivity.class);
+						openConfirmWithdrawal.putExtra("drawnDownAmount", mDrawnDownAmount);
+						openConfirmWithdrawal.putExtra("availableFunds", mAvailableFunds);
+						openConfirmWithdrawal.putExtra("creditLimit", mCreditLimit);
+						openConfirmWithdrawal.putExtra("minDrawnDownAmount", wminDrawnDownAmount);
+						openConfirmWithdrawal.putExtra("repaymentPeriod", repaymentPeriod(getCreditAmount()));
+						startActivity(openConfirmWithdrawal);
+						finish();
 					} else {
 						try {
 							hideKeyboard();
@@ -348,7 +347,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 						}
 					}
 				} catch (Exception ignored) {
-					}
+				}
 			}
 
 			@Override

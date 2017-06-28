@@ -134,8 +134,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 			//  decor.setSystemUiVisibility(0);
 		}
 
-		fragmentInterfaceListener(position);
-
 		pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			int currentPosition = 0;
 
@@ -174,6 +172,12 @@ public class MyAccountCardsActivity extends AppCompatActivity
 				}
 			}
 		});
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		fragmentInterfaceListener(position);
 	}
 
 	private void retryConnect() {
@@ -580,7 +584,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
 			FragmentLifecycle fragmentToHide = (FragmentLifecycle) fragmentsAdapter.getItem(position);
 			fragmentToHide.onPauseFragment();
-		} catch (ClassCastException ignore) {
+		} catch (Exception ignore) {
 
 		}
 

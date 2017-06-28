@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -24,8 +23,6 @@ import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import za.co.woolworths.financial.services.android.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -41,17 +38,14 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
-import za.co.woolworths.financial.services.android.util.NetworkChangeReceiver;
-import za.co.woolworths.financial.services.android.util.NetworkFailureInterface;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle,NetworkChangeListener {
+public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
-	//private NetworkFailureInterface mNetworkFailureInterface;
 
 	private PersonalLoanAmount personalLoanInfo;
 	public WTextView availableBalance;
@@ -88,11 +82,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		/*try {
-			mNetworkFailureInterface = (NetworkFailureInterface) getActivity();
-		} catch (ClassCastException ignored) {
-		}*/
-
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
@@ -108,12 +97,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		txtIncreseLimit.setOnClickListener(this);
 		transactions.setOnClickListener(this);
 		try {
-			networkChangeListener = (NetworkChangeListener) this;
+			networkChangeListener = this;
 		} catch (ClassCastException ignored) {
 		}
-		connectionBroadcast= Utils.connectionBroadCast(getActivity(),networkChangeListener);
-		bolBroacastRegistred=true;
-		getActivity().registerReceiver(connectionBroadcast,new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
+		bolBroacastRegistred = true;
+		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		disableIncreaseLimit();
 		hideProgressBar();
@@ -307,8 +296,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 	@Override
 	public void onResumeFragment() {
-		final Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
+		WPersonalLoanFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				if (!cardHasId) {
@@ -319,8 +307,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						disableIncreaseLimit();
 					}
 				}
+
 			}
-		}, 100);
+		});
 	}
 
 	public void networkFailureHandler() {
@@ -337,25 +326,20 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onPause() {
 		super.onPause();
-		if(bolBroacastRegistred) {
+		if (bolBroacastRegistred) {
 			getActivity().unregisterReceiver(connectionBroadcast);
-			bolBroacastRegistred=false;
+			bolBroacastRegistred = false;
 		}
 	}
+
 	@Override
 	public void onConnectionChanged() {
 		//connection changed
-		final Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				if (!cardHasId) {
-					if (new ConnectionDetector().isOnline(getActivity()))
-						getActiveOffer();
+		if (!cardHasId) {
+			if (new ConnectionDetector().isOnline(getActivity()))
+				getActiveOffer();
 
-				}
-			}
-		}, 100);
+		}
 	}
 }
 
