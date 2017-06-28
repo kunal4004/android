@@ -55,6 +55,7 @@ public class WoolworthsApplication extends Application {
 	private static String ssoRedirectURI;
 	private static String stsURI;
 	private static String ssoRedirectURILogout;
+	private static String ssoUpdateDetailsRedirectUri;
 	private static String wwTodayURI;
 	private static String creditCardType;
 	private boolean isDEABank = false;
@@ -389,4 +390,11 @@ public class WoolworthsApplication extends Application {
 		return mWGlobalState;
 	}
 
+	public static String getSsoUpdateDetailsRedirectUri() {
+		return ssoUpdateDetailsRedirectUri;
+	}
+
+	public static void setSsoUpdateDetailsRedirectUri(String pSsoUpdateDetailsRedirectUri) {
+		ssoUpdateDetailsRedirectUri = pSsoUpdateDetailsRedirectUri;
+	}
 }

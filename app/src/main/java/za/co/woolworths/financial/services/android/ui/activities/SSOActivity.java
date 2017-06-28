@@ -62,8 +62,8 @@ public class SSOActivity extends WebViewActivity {
 		NONCE_MISMATCH(5),
 		SUCCESS(6),
 		EXPIRED(7),
-		SIGNED_OUT(8);
-
+		SIGNED_OUT(8),
+		CHANGE_PASSWORD(9);
 		private int result;
 
 		private SSOActivityResult(int i) {
@@ -222,7 +222,8 @@ public class SSOActivity extends WebViewActivity {
 	public enum Path implements SSORequiredParameter {
 		SIGNIN("customerid/connect/authorize"),
 		REGISTER("customerid/register/step1"),
-		LOGOUT("customerid/connect/endsession");
+		LOGOUT("customerid/connect/endsession"),
+		CHANGE_PASSWORD("customerid/userdetails/password");
 
 		private String path;
 
@@ -257,11 +258,10 @@ public class SSOActivity extends WebViewActivity {
 				.appendQueryParameter("client_id", "WWOneApp")
 				.appendQueryParameter("response_type", "id_token") // Identity token
 				.appendQueryParameter("response_mode", "form_post")
-				.appendQueryParameter("redirect_uri", this.redirectURIString)
+				//.appendQueryParameter("redirect_uri", this.redirectURIString)
 				.appendQueryParameter("state", this.state)
 				.appendQueryParameter("nonce", this.nonce)
-				.appendQueryParameter("scope", scope)
-		;
+				.appendQueryParameter("scope", scope);
 
 		if (this.extraQueryStringParams != null) {
 			for (Map.Entry<String, String> param : this.extraQueryStringParams.entrySet()) {
@@ -315,6 +315,10 @@ public class SSOActivity extends WebViewActivity {
 			case REGISTER:
 				break;
 
+
+			case CHANGE_PASSWORD:
+				break;
+
 			default:
 				break;
 		}
@@ -330,11 +334,10 @@ public class SSOActivity extends WebViewActivity {
 
 	private final WebViewClient webviewClient = new WebViewClient() {
 		@Override
-		public void onPageStarted(WebView view, final String url, Bitmap favicon) {
+		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
 			showProgressBar();
 			Log.d(TAG, url);
-
 			if (url.equals(SSOActivity.this.redirectURIString)) {
 				//get state and scope from webview posted form
 				view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
@@ -367,21 +370,27 @@ public class SSOActivity extends WebViewActivity {
 						} else {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
 						}
-						finish();
+
+						closeActivity();
 					}
 				});
+			} else if (url.equalsIgnoreCase(WoolworthsApplication.getSsoUpdateDetailsRedirectUri())) {
+				setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue());
+				closeActivity();
 			} else if (extraQueryStringParams != null) {
 				int indexOfQuestionMark = url.indexOf("?");
 				if (indexOfQuestionMark > -1) {
 					String urlWithoutQueryString = url.substring(0, indexOfQuestionMark);
 
-					String redirectURI = extraQueryStringParams.get("post_logout_redirect_uri");
-					if (urlWithoutQueryString.equals(redirectURI)) {
+					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
-						finish();
+						closeActivity();
+					} else {
 					}
 				}
+
+			} else {
 			}
 		}
 
@@ -391,12 +400,6 @@ public class SSOActivity extends WebViewActivity {
 			Log.e("shouldOverr", url);
 			view.loadUrl(url);
 			return true;
-		}
-
-		@Override
-		public void onLoadResource(WebView view, String url) {
-			super.onLoadResource(view, url);
-			mGoBack();
 		}
 
 		@Override
@@ -571,4 +574,18 @@ public class SSOActivity extends WebViewActivity {
 		return true;
 
 	}
+
+	public void closeActivity() {
+		finish();
+		overridePendingTransition(0, 0);
+	}
+
+	@Override
+	protected void onDestroy() {
+		if (this.webView != null)
+			this.webView.destroy();
+		super.onDestroy();
+	}
+
+
 }

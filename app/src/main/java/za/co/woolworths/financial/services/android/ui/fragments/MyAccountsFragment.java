@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
@@ -48,7 +49,6 @@ import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsA
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WChangePasswordActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
@@ -56,23 +56,21 @@ import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
-import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseFragment;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
-import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
-public class MyAccountsFragment extends BaseFragment implements View.OnClickListener, ViewPager.OnPageChangeListener, ObservableScrollViewCallbacks, AlertDialogInterface {
+
+public class MyAccountsFragment extends BaseFragment implements View.OnClickListener, ViewPager.OnPageChangeListener, AlertDialogInterface {
 
 
 	private HideActionBar hideActionBar;
@@ -120,7 +118,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 	private int dotsCount;
 	private ImageView[] dots;
-	private WObservableScrollView mWObservableScrollView;
+	private NestedScrollView mWObservableScrollView;
 	private Toolbar mToolbar;
 	private RelativeLayout relFAQ;
 	private ErrorHandlerView mErrorHandlerView;
@@ -160,7 +158,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		linkedStoreCardView = (LinearLayout) view.findViewById(R.id.linkedStoreCard);
 		linkedPersonalCardView = (LinearLayout) view.findViewById(R.id.linkedPersonalLoan);
 		linkedAccountsLayout = (LinearLayout) view.findViewById(R.id.linkedLayout);
-		mWObservableScrollView = (WObservableScrollView) view.findViewById(R.id.nest_scrollview);
+		mWObservableScrollView = (NestedScrollView) view.findViewById(R.id.nest_scrollview);
 		applyNowAccountsLayout = (LinearLayout) view.findViewById(R.id.applyNowLayout);
 		loggedOutHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedOutHeaderLayout);
 		loggedInHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedInHeaderLayout);
@@ -169,6 +167,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		signOutBtn = (RelativeLayout) view.findViewById(R.id.signOutBtn);
 		changePasswordBtn = (RelativeLayout) view.findViewById(R.id.changePassword);
 		viewPager = (ViewPager) view.findViewById(R.id.pager);
+
 		pager_indicator = (LinearLayout) view.findViewById(R.id.viewPagerCountDots);
 		sc_available_funds = (WTextView) view.findViewById(R.id.sc_available_funds);
 		cc_available_funds = (WTextView) view.findViewById(R.id.cc_available_funds);
@@ -197,7 +196,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		changePasswordBtn.setOnClickListener(this);
 		mImageView.setOnClickListener(this);
 		relFAQ.setOnClickListener(this);
-		mWObservableScrollView.setScrollViewCallbacks(this);
+		//mWObservableScrollView.setScrollViewCallbacks(this);
 
 		adapter = new MyAccountOverViewPagerAdapter(getActivity());
 		viewPager.addOnPageChangeListener(this);
@@ -219,9 +218,17 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			}
 
 		});
-
-		mTokenExpireDialog = new AlertDialogManager(getActivity(), woolworthsApplication,
-				mContext);
+		mWObservableScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+			@Override
+			public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+				if (scrollY > oldScrollY) {
+					hideViews();
+				}
+				if (scrollY < oldScrollY) {
+					showViews();
+				}
+			}
+		});
 	}
 
 	private void initialize() {
@@ -545,8 +552,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				hideActionBar.onBurgerButtonPressed();
 				break;
 			case R.id.changePassword:
-				startActivity(new Intent(getActivity(), WChangePasswordActivity.class));
-				getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+				ScreenManager.presentSSOChangePassword(getActivity());
 				break;
 			default:
 				break;
@@ -639,9 +645,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 							configureView();
 							break;
 						case 440:
-//							new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).delete();
-//							new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_SEARCH).delete();
-//							new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_LAST_LOCATION).delete();
 							loadMessageCounter = false;
 							mTokenExpireDialog.showExpiredTokenDialog(accountsResponse.response.stsParams);
 							break;
@@ -722,14 +725,17 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 							loadMessageCounter = true;
 							mTokenExpireDialog.showExpiredTokenDialog(messageResponse.response.stsParams);
 							break;
-
 						default:
 							break;
 					}
-				} catch (NullPointerException ignored) {
+				} catch (
+						NullPointerException ignored)
+
+				{
 				}
 			}
 		}.execute();
+
 	}
 
 	@Override
@@ -785,26 +791,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		}
 	}
 
-	@Override
-	public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-
-	}
-
-	@Override
-	public void onDownMotionEvent() {
-
-	}
-
-	@Override
-	public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-		if (scrollState.UP == scrollState) {
-			hideViews();
-		} else if (scrollState == scrollState.DOWN) {
-			showViews();
-		} else {
-		}
-	}
-
 	private void hideViews() {
 		mToolbar.animate().translationY(-mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
 	}
@@ -840,11 +826,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		loggedInHeaderLayout.setVisibility(View.GONE);
 		changePasswordBtn.setVisibility(View.GONE);
 		signOutBtn.setVisibility(View.GONE);
-	}
-
-	public void showLogInScreen() {
-		loggedOutHeaderLayout.setVisibility(View.GONE);
-		loggedInHeaderLayout.setVisibility(View.VISIBLE);
 	}
 
 	@Override

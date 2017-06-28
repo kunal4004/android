@@ -57,7 +57,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+			super.onCreate(savedInstanceState);
 		setContentView(R.layout.one_app_base_activity);
 		Utils.updateStatusBarBackground(this);
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(this);
@@ -219,8 +219,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	public void switchToView(int position) {
 		displayView(position);
 	}
-
-
 }
 
 
