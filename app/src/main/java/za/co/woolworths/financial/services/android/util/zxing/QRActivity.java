@@ -354,11 +354,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
     public void onSurfaceDestroyed() {
         cameraManager.releaseCamera();
     }
-
-    public void setHook(boolean hook) {
-        cameraManager.setHook(hook);
-    }
-
+    
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         boolean allowed = true;
