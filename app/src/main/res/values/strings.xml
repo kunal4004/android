@@ -593,4 +593,8 @@
     <string name="get_started">get started</string>
     <string name="please_ensure_connection">Please ensure that you are connected \nto the internet.</string>
     <string name="sso_title_text_submit_this_form">SUBMIT THIS FORM</string>
+
+    <string name="token_timeout_authenticate">Re-authenticate</string>
+    <string name="token_timeout_message">For security reasons, you need to re-authenticate your session before you can continue.</string>
+
 </resources>

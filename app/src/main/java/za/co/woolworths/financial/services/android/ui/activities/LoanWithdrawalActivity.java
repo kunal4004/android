@@ -320,8 +320,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 				super.onPostExecute(issueLoanResponse);
 				try {
 					hideProgressBar();
-					int result = issueLoanResponse.httpCode;
-					if (result == 200) {
+					if (issueLoanResponse.httpCode == 200) {
 						loanWithdrawalClicked = false;
 						mSharePreferenceHelper.save(String.valueOf(issueLoanResponse.installmentAmount), "lw_installment_amount");
 						Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this, LoanWithdrawalConfirmActivity.class);

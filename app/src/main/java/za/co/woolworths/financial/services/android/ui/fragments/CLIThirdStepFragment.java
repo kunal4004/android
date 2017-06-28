@@ -4,6 +4,7 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -14,7 +15,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicato
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIBankAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIIncomeProofAdapter;
+import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -51,11 +52,12 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.binder.view.CLIBankAccountTypeBinder;
 
 public class CLIThirdStepFragment extends Fragment implements View.OnClickListener,
 		CLIBankAccountTypeBinder.OnCheckboxClickListener, CLIStepIndicatorActivity
-				.OnFragmentRefresh, NetworkChangeListener {
+				.OnFragmentRefresh, NetworkChangeListener, AlertDialogInterface {
 
 	private CLIFirstStepFragment.StepNavigatorCallback stepNavigatorCallback;
 
@@ -86,12 +88,12 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 	private final String SEND_EMAIL = "sendEmail";
 	private final String UPDATE_BANK_DETAIL = "updateBankDetailClicked";
 	private final String GET_BANK_ACCOUNT_TYPES = "getBankAccountTypes";
-	private RelativeLayout mRelConnectionLayout;
 	private NetworkChangeListener networkChangeListener;
 	private BroadcastReceiver connectionBroadcast;
 	private boolean sendEmailButtonClicked = true;
 	private boolean updateBankDetailClicked = false;
 	private boolean getBankAccountClicked = true;
+	private AlertDialogManager mTokenExpireDialog;
 
 
 	public CLIThirdStepFragment() {
@@ -109,9 +111,13 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 		super.onViewCreated(view, savedInstanceState);
 		this.view = view;
 		try {
-			networkChangeListener = (NetworkChangeListener) this;
+			networkChangeListener = this;
 		} catch (ClassCastException ignored) {
 		}
+
+		mTokenExpireDialog = new AlertDialogManager(getActivity(), (WoolworthsApplication) getActivity().getApplication(),
+				mContext);
+
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
 		mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 		SharePreferenceHelper mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
@@ -124,9 +130,9 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 		mLinBankLayout = (LinearLayout) view.findViewById(R.id.linBankLayout);
 		mProgressBar = (ProgressBar) view.findViewById(R.id.mWoolworthsProgressBar);
 		mEmailProgressBar = (ProgressBar) view.findViewById(R.id.mEmailWoolworthsProgressBar);
-		mRelConnectionLayout = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
-		mErrorHandlerView = new ErrorHandlerView(getActivity(), mRelConnectionLayout);
-		mErrorHandlerView.setMargin(mRelConnectionLayout, 0, 0, 0, 0);
+		RelativeLayout relConnectionLayout = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
+		mErrorHandlerView = new ErrorHandlerView(getActivity(), relConnectionLayout);
+		mErrorHandlerView.setMargin(relConnectionLayout, 0, 0, 0, 0);
 		initUI();
 		setListener();
 		setContent();
@@ -202,29 +208,37 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 				super.onPostExecute(bankAccountTypes);
 				try {
 					if (bankAccountTypes.bankAccountTypes != null) {
-						if (bankAccountTypes.httpCode == 200) {
-							mBankAccountType = bankAccountTypes.bankAccountTypes;
-							mCLIBankAccountAdapter = new CLIBankAccountTypeAdapter(mBankAccountType, mContext);
-							mLayoutManager = new LinearLayoutManager(getActivity());
-							mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-							mRecycleList.setLayoutManager(mLayoutManager);
-							mRecycleList.setNestedScrollingEnabled(false);
-							mRecycleList.setAdapter(mCLIBankAccountAdapter);
-							mCLIBankAccountAdapter.setCLIContent();
-						} else {
-							if (bankAccountTypes.response.desc != null &&
-									!TextUtils.isEmpty(bankAccountTypes.response.desc)) {
-								Utils.displayValidationMessage(getActivity(),
-										TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-										bankAccountTypes.response.desc);
-							}
+						switch (bankAccountTypes.httpCode) {
+							case 200:
+								getBankAccountClicked = false;
+								mBankAccountType = bankAccountTypes.bankAccountTypes;
+								mCLIBankAccountAdapter = new CLIBankAccountTypeAdapter(mBankAccountType, mContext);
+								mLayoutManager = new LinearLayoutManager(getActivity());
+								mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+								mRecycleList.setLayoutManager(mLayoutManager);
+								mRecycleList.setNestedScrollingEnabled(false);
+								mRecycleList.setAdapter(mCLIBankAccountAdapter);
+								mCLIBankAccountAdapter.setCLIContent();
+								break;
 
+							case 440:
+								mTokenExpireDialog.showExpiredTokenDialog(bankAccountTypes
+										.response.stsParams);
+								break;
+
+							default:
+								if (bankAccountTypes.response.desc != null &
+										!TextUtils.isEmpty(bankAccountTypes.response.desc)) {
+									getBankAccountClicked = false;
+									Utils.displayValidationMessage(getActivity(),
+											TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+											bankAccountTypes.response.desc);
+								}
+								break;
 						}
 					}
-				} catch (Exception ex) {
-
+				} catch (Exception ignored) {
 				}
-				getBankAccountClicked = false;
 			}
 		};
 	}
@@ -370,20 +384,29 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 			protected void onPostExecute(CLIEmailResponse cliEmailResponse) {
 				super.onPostExecute(cliEmailResponse);
 				stopProgressDialog();
+				stopEmailProgressDialog();
 				try {
-					int httpCode = cliEmailResponse.httpCode;
 					String desc = cliEmailResponse.response.desc;
-					if (httpCode == 200) {
-						Utils.displayValidationMessage(getActivity(),
-								TransientActivity.VALIDATION_MESSAGE_LIST.EMAIL, mEmail);
-					} else {
-						Utils.displayValidationMessage(getActivity(),
-								TransientActivity.VALIDATION_MESSAGE_LIST.ERROR, desc);
+					switch (cliEmailResponse.httpCode) {
+						case 200:
+							sendEmailButtonClicked = false;
+							Utils.displayValidationMessage(getActivity(),
+									TransientActivity.VALIDATION_MESSAGE_LIST.EMAIL, mEmail);
+							break;
+
+						case 440:
+							mTokenExpireDialog.showExpiredTokenDialog(cliEmailResponse.response.stsParams);
+							break;
+
+						default:
+							sendEmailButtonClicked = false;
+							Utils.displayValidationMessage(getActivity(),
+									TransientActivity.VALIDATION_MESSAGE_LIST.ERROR, desc);
+							break;
+
 					}
-					sendEmailButtonClicked = false;
 				} catch (NullPointerException ignored) {
 				}
-				stopEmailProgressDialog();
 			}
 		};
 	}
@@ -417,24 +440,34 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 			@Override
 			protected void onPostExecute(UpdateBankDetailResponse updateBankDetailResponse) {
 				super.onPostExecute(updateBankDetailResponse);
+				stopProgressDialog();
 				try {
 					if (updateBankDetailResponse != null) {
-						if (updateBankDetailResponse.httpCode == 200) {
-							stepNavigatorCallback.openNextFragment(3);
-						} else {
 
-							String desc = updateBankDetailResponse.response.desc;
-							if (!TextUtils.isEmpty(desc)) {
-								Utils.displayValidationMessage(getActivity(),
-										TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-										desc);
-							}
+						switch (updateBankDetailResponse.httpCode) {
+							case 200:
+								updateBankDetailClicked = false;
+								stepNavigatorCallback.openNextFragment(3);
+								break;
+
+							case 440:
+								mTokenExpireDialog.showExpiredTokenDialog
+										(updateBankDetailResponse.response.stsParams);
+								break;
+
+							default:
+								updateBankDetailClicked = false;
+								String desc = updateBankDetailResponse.response.desc;
+								if (!TextUtils.isEmpty(desc)) {
+									Utils.displayValidationMessage(getActivity(),
+											TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+											desc);
+								}
+								break;
 						}
 					}
 				} catch (Exception ignored) {
 				}
-				updateBankDetailClicked = true;
-				stopProgressDialog();
 			}
 		};
 	}
@@ -537,31 +570,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 
 	@Override
 	public void onConnectionChanged() {
-			if (new ConnectionDetector().isOnline(getActivity())) {
-				Log.e("BankAccountType", "retryBackgroundTask " + retryBackgroundTask);
-				switch (retryBackgroundTask) {
-					case SEND_EMAIL:
-						Log.e("BankAccountType", "sendEmailButtonClicked " + sendEmailButtonClicked);
-						if (sendEmailButtonClicked) {
-							sendEmail();
-						}
-						break;
-
-					case UPDATE_BANK_DETAIL:
-						Log.e("BankAccountType", "UPDATE_BANK_DETAIL " + updateBankDetailClicked + bankAccountIsValid());
-						if (updateBankDetailClicked && bankAccountIsValid())
-							updateBankDetail();
-						break;
-
-					case GET_BANK_ACCOUNT_TYPES:
-						Log.e("BankAccountType", "GET_BANK_ACCOUNT_TYPES " + getBankAccountClicked);
-						if (getBankAccountClicked)
-							getBankAccountTypes();
-						break;
-				}
-		} else {
-			mErrorHandlerView.showToast();
-		}
+		retryConnect();
 	}
 
 	private boolean bankAccountIsValid() {
@@ -571,9 +580,53 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 				String newAccount = accountNumber.replaceAll(" ", "");
 				mUpdateBankDetail.setAccountNumber(newAccount);
 				return true;
-				//If everything is ok then hide the keyboard
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public void onExpiredTokenCancel() {
+		mTokenExpireDialog.onCancel();
+	}
+
+	@Override
+	public void onExpiredTokenAuthentication() {
+		mTokenExpireDialog.reAuthenticate();
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (!mTokenExpireDialog.getAccountSignInState()) {
+			if (mTokenExpireDialog.getOnBackPressState()) {
+				mTokenExpireDialog.onCancel(); // go back on back press state
+			} else {
+				retryConnect();
+			}
+		}
+	}
+
+	public void retryConnect() {
+		if (new ConnectionDetector().isOnline(getActivity())) {
+			switch (retryBackgroundTask) {
+				case SEND_EMAIL:
+					if (sendEmailButtonClicked) {
+						sendEmail();
+					}
+					break;
+				case UPDATE_BANK_DETAIL:
+					if (updateBankDetailClicked && bankAccountIsValid())
+						updateBankDetail();
+					break;
+
+				case GET_BANK_ACCOUNT_TYPES:
+					if (getBankAccountClicked)
+						getBankAccountTypes();
+					break;
+			}
+		} else {
+			mErrorHandlerView.showToast();
+		}
 	}
 }

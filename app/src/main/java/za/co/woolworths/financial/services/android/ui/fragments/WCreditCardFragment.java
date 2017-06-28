@@ -24,8 +24,6 @@ import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import za.co.wigroup.logger.lib.WiGroupLogger;
 import za.co.woolworths.financial.services.android.FragmentLifecycle;
@@ -35,22 +33,22 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
-import za.co.woolworths.financial.services.android.util.NetworkFailureInterface;
-import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 
-public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle,NetworkChangeListener {
+public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener, AlertDialogInterface {
 
-	private NetworkFailureInterface mNetworkFailureInterface;
 	public WTextView availableBalance;
 	public WTextView creditLimit;
 	public WTextView dueDate;
@@ -63,31 +61,30 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private ProgressBar mProgressCreditLimit;
 	private boolean isOfferActive = false;
 	private ImageView mImageArrow;
-	private PopWindowValidationMessage mPopWindowValidationMessage;
 	private AsyncTask<String, String, OfferActive> asyncRequestCredit;
 	private boolean cardHasId = false;
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
 	private boolean bolBroacastRegistred;
+	private WCreditCardFragment mContext;
+	private AlertDialogManager mTokenExpireDialog;
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		mContext = this;
 		return inflater.inflate(R.layout.cards_common_fragment, container, false);
 	}
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		/*try {
-			mNetworkFailureInterface = (NetworkFailureInterface) getActivity();
-		} catch (ClassCastException ignored) {
-		}*/
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
+		mTokenExpireDialog = new AlertDialogManager(getActivity(), woolworthsApplication,
+				mContext);
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
 		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
-		mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
 		dueDate = (WTextView) view.findViewById(R.id.dueDate);
 		minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
 		currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
@@ -99,18 +96,18 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		transactions.setOnClickListener(this);
 		txtIncreseLimit.setOnClickListener(this);
 		try {
-			networkChangeListener = (NetworkChangeListener) this;
+			networkChangeListener = this;
 		} catch (ClassCastException ignored) {
 		}
-		connectionBroadcast= Utils.connectionBroadCast(getActivity(),networkChangeListener);
-		bolBroacastRegistred=true;
-		getActivity().registerReceiver(connectionBroadcast,new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
+		bolBroacastRegistred = true;
+		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		bindData(accountsResponse);
 		disableIncreaseLimit();
 		hideProgressBar();
 		view.setBackgroundColor(Color.WHITE);
-		mErrorHandlerView=new ErrorHandlerView(getActivity());
+		mErrorHandlerView = new ErrorHandlerView(getActivity());
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -210,10 +207,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 						} else {
 							enableIncreaseLimit();
 						}
+					} else if (httpCode == 440) {
+						mTokenExpireDialog.showExpiredTokenDialog(offerActive.response.stsParams);
 					} else {
 						disableIncreaseLimit();
-						mPopWindowValidationMessage.displayValidationMessage(httpDesc,
-								PopWindowValidationMessage.OVERLAY_TYPE.ERROR);
+						Utils.displayValidationMessage(getActivity(),
+								TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+								httpDesc);
 					}
 				} catch (NullPointerException ignored) {
 				}
@@ -286,7 +286,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			public void run() {
 				if (!cardHasId) {
 					if (new ConnectionDetector().isOnline(getActivity()))
-					getActiveOffer();
+						getActiveOffer();
 					else {
 						mErrorHandlerView.showToast();
 						disableIncreaseLimit();
@@ -311,11 +311,12 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onPause() {
 		super.onPause();
-		if(bolBroacastRegistred) {
+		if (bolBroacastRegistred) {
 			getActivity().unregisterReceiver(connectionBroadcast);
-			bolBroacastRegistred=false;
+			bolBroacastRegistred = false;
 		}
 	}
+
 	@Override
 	public void onConnectionChanged() {
 		//connection changed
@@ -323,12 +324,41 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		handler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				if (!cardHasId) {
-					if (new ConnectionDetector().isOnline(getActivity()))
-						getActiveOffer();
-
-				}
+				retryConnect();
 			}
 		}, 100);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (!mTokenExpireDialog.getAccountSignInState()) {
+			if (mTokenExpireDialog.getOnBackPressState()) {
+				mTokenExpireDialog.onCancel(); // go back on back press state
+			} else {
+				retryConnect();
+			}
+		}
+	}
+
+	private void retryConnect() {
+		if (!cardHasId) {
+			if (new ConnectionDetector().isOnline(getActivity()))
+				getActiveOffer();
+			else {
+				mErrorHandlerView.showToast();
+				disableIncreaseLimit();
+			}
+		}
+	}
+
+	@Override
+	public void onExpiredTokenCancel() {
+		mTokenExpireDialog.onCancel();
+	}
+
+	@Override
+	public void onExpiredTokenAuthentication() {
+		mTokenExpireDialog.reAuthenticate();
 	}
 }
