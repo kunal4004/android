@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -51,6 +52,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 public class SSOActivity extends WebViewActivity {
 
 	public ErrorHandlerView mErrorHandlerView;
+	private WGlobalState mGlobalState;
 
 	public enum SSOActivityResult {
 		LAUNCH(1),
@@ -101,6 +103,7 @@ public class SSOActivity extends WebViewActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.instantiateWebView();
+		mGlobalState = ((WoolworthsApplication) getApplication()).getWGlobalState();
 		mErrorHandlerView = new ErrorHandlerView(SSOActivity.this, (RelativeLayout) findViewById
 				(R.id.no_connection_layout));
 		Utils.updateStatusBarBackground(this, R.color.black);
@@ -512,7 +515,7 @@ public class SSOActivity extends WebViewActivity {
 		if (event.getAction() == KeyEvent.ACTION_DOWN) {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_BACK:
-					finishActivity();
+					finishCurrentActivity();
 					return true;
 			}
 		}
@@ -530,7 +533,7 @@ public class SSOActivity extends WebViewActivity {
 					mErrorHandlerView.hideErrorHandlerLayout();
 					webView.goBackOrForward(index);
 					url = history.getItemAtIndex(-index).getUrl();
-					Log.e("tag", "first non empty" + url);
+					webView.goBack();
 					break;
 				}
 				index--;
@@ -540,12 +543,17 @@ public class SSOActivity extends WebViewActivity {
 				if (canGoBack()) {
 					webView.goBack();
 				} else {
-					finishActivity();
+					finishCurrentActivity();
 				}
 			}
 		} else {
-			finishActivity();
+			finishCurrentActivity();
 		}
+	}
+
+	public void finishCurrentActivity() {
+		mGlobalState.setOnBackPressed(true);
+		finishActivity();
 	}
 
 	@Override
