@@ -297,6 +297,7 @@
                         android:background="@drawable/ic_caret_black"/>
                 </RelativeLayout>
             </LinearLayout>
+
         </android.support.v4.widget.NestedScrollView>
 
         <android.support.v7.widget.Toolbar
@@ -304,7 +305,6 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white">
-
 
             <ImageView
                 android:id="@+id/imgBurgerButton"
