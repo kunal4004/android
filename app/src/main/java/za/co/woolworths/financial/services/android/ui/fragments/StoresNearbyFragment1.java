@@ -251,15 +251,14 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			@Override
 			public void onClick(View v) {
 				if (new ConnectionDetector().isOnline(getActivity())) {
+					mErrorHandlerView.hideErrorHandlerLayout();
 					initLocationCheck();
 				}
 			}
 		});
 
 		getActivity().registerReceiver(broadcastCall, new IntentFilter("broadcastCall"));
-
 	}
-
 
 	public void initLocationCheck() {
 		boolean locationServiceIsEnabled = Utils.isLocationServiceEnabled(getActivity());
@@ -267,16 +266,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 		if (!locationServiceIsEnabled & lastKnownLocationIsNull) {
 			checkLocationServiceAndSetLayout(false);
-			Log.e(TAG, "!locationServiceIsEnabled & lastKnownLocationIsNull");
 		} else if (locationServiceIsEnabled && lastKnownLocationIsNull) {
-			Log.e(TAG, "locationServiceIsEnabled && lastKnownLocationIsNull");
 			checkLocationServiceAndSetLayout(true);
 			startLocationUpdates();
 		} else if (!locationServiceIsEnabled && !lastKnownLocationIsNull) {
 			updateMap(Utils.getLastSavedLocation(getActivity()));
-			Log.e(TAG, "!locationServiceIsEnabled && !lastKnownLocationIsNull");
 		} else {
-			Log.e(TAG, "else");
 			startLocationUpdates();
 		}
 	}
@@ -599,22 +594,20 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		//Disable until finding location
 		if (navigateMenuState) {
 			menu.findItem(R.id.action_locate).setVisible(true);
+			searchMenu.setEnabled(true);
 		} else {
 			menu.findItem(R.id.action_locate).setVisible(false);
+			searchMenu.setEnabled(false);
 		}
-
-		/*if (Utils.getLastSavedLocation(getActivity()) != null) {
-			searchMenu.setEnabled(true);
-			searchMenu.getIcon().setAlpha(255);
-		}*/
-
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.action_search:
-				startActivity(new Intent(getActivity(), SearchStoresActivity.class));
+				if (Utils.getLastSavedLocation(getActivity()) != null) {
+					startActivity(new Intent(getActivity(), SearchStoresActivity.class));
+				}
 				break;
 			case R.id.action_locate:
 				if (Utils.getLastSavedLocation(getActivity()) != null) {

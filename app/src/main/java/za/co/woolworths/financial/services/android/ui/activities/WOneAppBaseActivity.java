@@ -1,15 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -60,7 +57,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+			super.onCreate(savedInstanceState);
 		setContentView(R.layout.one_app_base_activity);
 		Utils.updateStatusBarBackground(this);
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(this);
@@ -93,6 +90,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		} else {
 			displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 		}
+
 	}
 
 	@Override
@@ -221,8 +219,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	public void switchToView(int position) {
 		displayView(position);
 	}
-
-
 }
 
 
