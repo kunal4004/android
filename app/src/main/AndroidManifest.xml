@@ -94,7 +94,6 @@
 
     <application
         android:name="za.co.woolworths.financial.services.android.models.WoolworthsApplication"
-        android:hardwareAccelerated="false"
         android:icon="@drawable/appicon"
         android:label="@string/app_label"
         android:largeHeap="true"
@@ -243,7 +242,6 @@
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity"
-            android:hardwareAccelerated="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
         <activity
