@@ -69,9 +69,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static com.google.android.gms.plus.PlusOneDummyView.TAG;
 
-
 public class MyAccountsFragment extends BaseFragment implements View.OnClickListener, ViewPager.OnPageChangeListener, AlertDialogInterface {
-
 
 	private HideActionBar hideActionBar;
 
@@ -118,7 +116,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 	private int dotsCount;
 	private ImageView[] dots;
-	private NestedScrollView mWObservableScrollView;
+	private NestedScrollView mScrollView;
 	private Toolbar mToolbar;
 	private RelativeLayout relFAQ;
 	private ErrorHandlerView mErrorHandlerView;
@@ -158,7 +156,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		linkedStoreCardView = (LinearLayout) view.findViewById(R.id.linkedStoreCard);
 		linkedPersonalCardView = (LinearLayout) view.findViewById(R.id.linkedPersonalLoan);
 		linkedAccountsLayout = (LinearLayout) view.findViewById(R.id.linkedLayout);
-		mWObservableScrollView = (NestedScrollView) view.findViewById(R.id.nest_scrollview);
+		mScrollView = (NestedScrollView) view.findViewById(R.id.nest_scrollview);
 		applyNowAccountsLayout = (LinearLayout) view.findViewById(R.id.applyNowLayout);
 		loggedOutHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedOutHeaderLayout);
 		loggedInHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedInHeaderLayout);
@@ -167,7 +165,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		signOutBtn = (RelativeLayout) view.findViewById(R.id.signOutBtn);
 		changePasswordBtn = (RelativeLayout) view.findViewById(R.id.changePassword);
 		viewPager = (ViewPager) view.findViewById(R.id.pager);
-
+		mTokenExpireDialog = new AlertDialogManager(getActivity(), woolworthsApplication,
+				mContext);
 		pager_indicator = (LinearLayout) view.findViewById(R.id.viewPagerCountDots);
 		sc_available_funds = (WTextView) view.findViewById(R.id.sc_available_funds);
 		cc_available_funds = (WTextView) view.findViewById(R.id.cc_available_funds);
@@ -196,7 +195,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		changePasswordBtn.setOnClickListener(this);
 		mImageView.setOnClickListener(this);
 		relFAQ.setOnClickListener(this);
-		//mWObservableScrollView.setScrollViewCallbacks(this);
 
 		adapter = new MyAccountOverViewPagerAdapter(getActivity());
 		viewPager.addOnPageChangeListener(this);
@@ -218,7 +216,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			}
 
 		});
-		mWObservableScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+
+		mScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
 			@Override
 			public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
 				if (scrollY > oldScrollY) {
@@ -601,7 +600,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			protected void onPreExecute() {
 				loadMessageCounter = false;
 				mErrorHandlerView.hideErrorHandlerLayout();
-				mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
+				mScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
+				relFAQ.setVisibility(View.GONE);
 				showViews();
 			}
 
@@ -756,7 +756,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	}
 
 	private void dismissProgress() {
-		mWObservableScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.white));
+		mScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.white));
+		relFAQ.setVisibility(View.VISIBLE);
 		if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
 			mGetAccountsProgressDialog.dismiss();
 		}

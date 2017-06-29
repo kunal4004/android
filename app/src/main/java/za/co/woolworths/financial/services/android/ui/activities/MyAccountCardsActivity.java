@@ -10,6 +10,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,7 +24,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
@@ -45,21 +45,15 @@ import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanFra
 import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardEmptyFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragment;
 import za.co.woolworths.financial.services.android.ui.views.WCustomPager;
-import za.co.woolworths.financial.services.android.ui.views.WObservableScrollView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WViewPager;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.NetworkFailureInterface;
-import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
-import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class MyAccountCardsActivity extends AppCompatActivity
 		implements View.OnClickListener,
-		ObservableScrollViewCallbacks,
 		PersonalLoanAmount {
 
 	WViewPager pager;
@@ -73,13 +67,12 @@ public class MyAccountCardsActivity extends AppCompatActivity
 	private Button mBtnApplyNow;
 
 	private boolean cardsHasAccount = false;
-	private WObservableScrollView mWObservableScrollView;
 	private boolean containsStoreCard = false, containsCreditCard = false, containsPersonalLoan = false;
 	private int position;
 	private int wMinDrawnDownAmount;
 	private LinearLayout llRootLayout;
-	//private ErrorHandlerView mErrorHandlerView;
 	private AccountsResponse accountsResponse;
+	private NestedScrollView mScrollAccountCard;
 
 
 	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -90,12 +83,9 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		setActionBar();
 		init();
 		mWoolworthsApplication = (WoolworthsApplication) MyAccountCardsActivity.this.getApplication();
-		/*mErrorHandlerView = new ErrorHandlerView(this, mWoolworthsApplication, (RelativeLayout) findViewById(R.id.no_connection_layout));
-		mErrorHandlerView.enableCardPageScrollGesture();*/
 		retryConnect();
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(MyAccountCardsActivity.this);
 		position = getIntent().getIntExtra("position", 0);
-		mWObservableScrollView.setScrollViewCallbacks(this);
 		fragmentPager = (WCustomPager) findViewById(R.id.fragmentpager);
 		llRootLayout = (LinearLayout) findViewById(R.id.llRootLayout);
 		fragmentPager.setViewPagerIsScrollable(false);
@@ -144,8 +134,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 			//  decor.setSystemUiVisibility(0);
 		}
 
-		fragmentInterfaceListener(position);
-
 		pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 			int currentPosition = 0;
 
@@ -172,6 +160,24 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		});
 		setStatusBarColor(position);
 		disableScrollPageGesture();
+
+		mScrollAccountCard.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+			@Override
+			public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+				if (scrollY > oldScrollY) {
+					hideViews();
+				}
+				if (scrollY < oldScrollY) {
+					showViews();
+				}
+			}
+		});
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		fragmentInterfaceListener(position);
 	}
 
 	private void retryConnect() {
@@ -195,12 +201,12 @@ public class MyAccountCardsActivity extends AppCompatActivity
 	}
 
 	private void disableScrollPageGesture() {
-		mWObservableScrollView.setOnTouchListener(new View.OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				return mWoolworthsApplication.getWGlobalState().cardGestureIsEnabled();
-			}
-		});
+//		mScrollAccountCard.setOnTouchListener(new View.OnTouchListener() {
+//			@Override
+//			public boolean onTouch(View v, MotionEvent event) {
+//				return mWoolworthsApplication.getWGlobalState().cardGestureIsEnabled();
+//			}
+//		});
 
 		pager.setOnTouchListener(new View.OnTouchListener() {
 			@Override
@@ -228,7 +234,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		pager = (WViewPager) findViewById(R.id.myAccountsCardPager);
 
 		mBtnApplyNow = (Button) findViewById(R.id.btnApplyNow);
-		mWObservableScrollView = (WObservableScrollView) findViewById(R.id.nest_scrollview);
+		mScrollAccountCard = (NestedScrollView) findViewById(R.id.nest_scrollview);
 		mBtnApplyNow.setOnClickListener(this);
 	}
 
@@ -448,15 +454,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
 	}
 
-	/*@Override
-	public void onNetworkFailure() {
-		if (mErrorHandlerView != null) {
-			mWObservableScrollView.scrollVerticallyTo(0);
-			mErrorHandlerView.networkFailureHandler("");
-			mErrorHandlerView.disableCardPageScrollGesture();
-		}
-	}*/
-
 	public static class MyAccountCardsFragment extends Fragment {
 
 		@Override
@@ -533,29 +530,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		mToolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
 	}
 
-	@Override
-	public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-	}
-
-	@Override
-	public void onDownMotionEvent() {
-	}
-
-	@Override
-	public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-		try {
-			switch (scrollState) {
-				case UP:
-					hideViews();
-					break;
-				case DOWN:
-					showViews();
-					break;
-			}
-		} catch (Exception ignored) {
-		}
-	}
-
 	public void updateStatusBarBackground(int color) {
 
 		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
@@ -610,7 +584,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
 			FragmentLifecycle fragmentToHide = (FragmentLifecycle) fragmentsAdapter.getItem(position);
 			fragmentToHide.onPauseFragment();
-		} catch (ClassCastException ignore) {
+		} catch (Exception ignore) {
 
 		}
 

@@ -62,7 +62,6 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 	private ProgressBar mLoanWithdrawalProgress;
 	private boolean arrowIsVisible = false;
 	private AsyncTask<String, String, IssueLoanResponse> issueLoanRequest;
-	private RelativeLayout mLinLoanWithdrawalSuccess;
 	private boolean deleteKeyIsPressed = false;
 	private ErrorHandlerView mErrorHandlerView;
 	private NetworkChangeListener networkChangeListener;
@@ -113,9 +112,9 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 		mRelLoanWithdrawal = (RelativeLayout) findViewById(R.id.relLoanWithdrawal);
 		mLoanWithdrawalProgress = (ProgressBar) findViewById(R.id.mLoanWithdrawalProgress);
 		ScrollView mScrollLoanWithdrawal = (ScrollView) findViewById(R.id.scrollLoanWithdrawal);
-		mLinLoanWithdrawalSuccess = (RelativeLayout) findViewById(R.id.linLoanWithdrawalSuccess);
+		RelativeLayout linLoanWithdrawalSuccess = (RelativeLayout) findViewById(R.id.linLoanWithdrawalSuccess);
 		mScrollLoanWithdrawal.setVisibility(View.GONE);
-		mLinLoanWithdrawalSuccess.setVisibility(View.GONE);
+		linLoanWithdrawalSuccess.setVisibility(View.GONE);
 	}
 
 	private void setActionBar() {

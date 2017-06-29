@@ -17,7 +17,7 @@
             android:layout_gravity="fill_vertical"
             android:clipToPadding="false">
 
-            <za.co.woolworths.financial.services.android.ui.views.WObservableScrollView
+            <android.support.v4.widget.NestedScrollView
                 android:id="@+id/nest_scrollview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -70,8 +70,7 @@
                         app:layout_collapseMode="pin"/>
 
                 </LinearLayout>
-
-            </za.co.woolworths.financial.services.android.ui.views.WObservableScrollView>
+            </android.support.v4.widget.NestedScrollView>
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
                 android:id="@+id/btnApplyNow"
@@ -84,5 +83,5 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <include layout="@layout/no_connection_handler" />
-    </FrameLayout>
+    <include layout="@layout/no_connection_handler"/>
+</FrameLayout>

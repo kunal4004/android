@@ -296,8 +296,6 @@
                         android:layout_centerVertical="true"
                         android:background="@drawable/ic_caret_black"/>
                 </RelativeLayout>
-
-
             </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>
