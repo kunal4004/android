@@ -106,7 +106,6 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 		}
 	}
 
-
 	private void initViews() {
 		mTextAvailableFund = (WTextView) findViewById(R.id.textAvailableFunds);
 		mTextCreditLimit = (WTextView) findViewById(R.id.textCreditLimit);
@@ -338,6 +337,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 							String responseDesc = issueLoanResponse.response.desc;
 							if (responseDesc != null) {
 								if (!TextUtils.isEmpty(responseDesc)) {
+									loanWithdrawalClicked = false;
 									Utils.displayValidationMessage(LoanWithdrawalActivity.this,
 											TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
 											responseDesc);
@@ -373,7 +373,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 	}
 
 	private int repaymentPeriod(int amount) {
-		if (amount < 1000000) {
+		if (amount < 1005000) {
 			return 36;
 		} else {
 			return 60;

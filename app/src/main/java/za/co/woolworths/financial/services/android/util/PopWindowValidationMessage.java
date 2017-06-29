@@ -208,26 +208,6 @@ public class PopWindowValidationMessage {
                         });
                 break;
 
-            case LOW_LOAN_AMOUNT:
-                mView = mLayoutInflater.inflate(R.layout.lw_too_high_error, null);
-                popupWindowSetting(mView);
-                WTextView wTextTitle = (WTextView) mView.findViewById(R.id.title);
-                WTextView wTextProofIncome = (WTextView) mView.findViewById(R.id.textProofIncome);
-                wTextTitle.setText(getString(R.string.loan_withdrawal_popup_low_error));
-                wTextProofIncome.setText(getString(R.string.loan_withdrawal_popup_low_error_detail).replace("1000", description));
-                setAnimation();
-                touchToDismiss(overlay_type);
-                mRelPopContainer.setAnimation(mFadeInAnimation);
-                mRelRootContainer.setAnimation(mPopEnterAnimation);
-                mView.findViewById(R.id.btnOk)
-                        .setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startExitAnimation(overlay_type);
-                            }
-                        });
-                break;
-
             case SIGN_OUT:
                 mView = mLayoutInflater.inflate(R.layout.sign_out, null);
                 popupWindowSetting(mView);
