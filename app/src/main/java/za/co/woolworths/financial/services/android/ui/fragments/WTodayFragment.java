@@ -28,7 +28,7 @@ public class WTodayFragment extends Fragment {
 
 	@Nullable
 	@Override
-	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
+	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.wtoday_fragment, container, false);
 	}
 
@@ -55,6 +55,11 @@ public class WTodayFragment extends Fragment {
 				super.onReceivedError(view, request, error);
 				mErrorHandlerView.webViewBlankPage(view);
 				mErrorHandlerView.networkFailureHandler(error.toString());
+			}
+
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				return super.shouldOverrideUrlLoading(view, url);
 			}
 
 			@SuppressWarnings("deprecation")

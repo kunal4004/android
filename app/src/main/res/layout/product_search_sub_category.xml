@@ -39,7 +39,7 @@
             android:layout_height="24dp"
             android:layout_centerInParent="true"/>
 
-        <za.co.woolworths.financial.services.android.ui.views.WObservableRecyclerView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/productSearchList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

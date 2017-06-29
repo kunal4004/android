@@ -62,7 +62,6 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 	private ProgressBar mLoanWithdrawalProgress;
 	private boolean arrowIsVisible = false;
 	private AsyncTask<String, String, IssueLoanResponse> issueLoanRequest;
-	private RelativeLayout mLinLoanWithdrawalSuccess;
 	private boolean deleteKeyIsPressed = false;
 	private ErrorHandlerView mErrorHandlerView;
 	private NetworkChangeListener networkChangeListener;
@@ -106,7 +105,6 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 		}
 	}
 
-
 	private void initViews() {
 		mTextAvailableFund = (WTextView) findViewById(R.id.textAvailableFunds);
 		mTextCreditLimit = (WTextView) findViewById(R.id.textCreditLimit);
@@ -114,9 +112,9 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 		mRelLoanWithdrawal = (RelativeLayout) findViewById(R.id.relLoanWithdrawal);
 		mLoanWithdrawalProgress = (ProgressBar) findViewById(R.id.mLoanWithdrawalProgress);
 		ScrollView mScrollLoanWithdrawal = (ScrollView) findViewById(R.id.scrollLoanWithdrawal);
-		mLinLoanWithdrawalSuccess = (RelativeLayout) findViewById(R.id.linLoanWithdrawalSuccess);
+		RelativeLayout linLoanWithdrawalSuccess = (RelativeLayout) findViewById(R.id.linLoanWithdrawalSuccess);
 		mScrollLoanWithdrawal.setVisibility(View.GONE);
-		mLinLoanWithdrawalSuccess.setVisibility(View.GONE);
+		linLoanWithdrawalSuccess.setVisibility(View.GONE);
 	}
 
 	private void setActionBar() {
@@ -338,6 +336,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 							String responseDesc = issueLoanResponse.response.desc;
 							if (responseDesc != null) {
 								if (!TextUtils.isEmpty(responseDesc)) {
+									loanWithdrawalClicked = false;
 									Utils.displayValidationMessage(LoanWithdrawalActivity.this,
 											TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
 											responseDesc);
@@ -373,7 +372,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 	}
 
 	private int repaymentPeriod(int amount) {
-		if (amount < 1000000) {
+		if (amount < 1005000) {
 			return 36;
 		} else {
 			return 60;

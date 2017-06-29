@@ -1,5 +1,3 @@
-package za.co.woolworths.financial.services.android.ui.views;
-
 /*
  * Copyright 2014 Soichiro Kashima
  *
@@ -16,13 +14,13 @@ package za.co.woolworths.financial.services.android.ui.views;
  * limitations under the License.
  */
 
+package za.co.woolworths.financial.services.android.util;
 
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,14 +28,10 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
-import za.co.woolworths.financial.services.android.util.ScrollState;
-import za.co.woolworths.financial.services.android.util.Scrollable;
-
 /**
  * ScrollView that its scroll position can be observed.
  */
-public class WObservableScrollView extends NestedScrollView implements Scrollable {
+public class ObservableScrollView extends NestedScrollView implements Scrollable {
 
 	// Fields that should be saved onSaveInstanceState
 	private int mPrevScrollY;
@@ -52,22 +46,17 @@ public class WObservableScrollView extends NestedScrollView implements Scrollabl
 	private boolean mIntercepted;
 	private MotionEvent mPrevMoveEvent;
 	private ViewGroup mTouchInterceptionViewGroup;
-	private GestureDetector mGestureDetector;
 
-	public WObservableScrollView(Context context) {
+	public ObservableScrollView(Context context) {
 		super(context);
 	}
 
-	public WObservableScrollView(Context context, AttributeSet attrs) {
+	public ObservableScrollView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		mGestureDetector = new GestureDetector(context, new WObservableScrollView.YScrollDetector());
-		setFadingEdgeLength(0);
 	}
 
-	public WObservableScrollView(Context context, AttributeSet attrs, int defStyle) {
+	public ObservableScrollView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		mGestureDetector = new GestureDetector(context, new WObservableScrollView.YScrollDetector());
-		setFadingEdgeLength(0);
 	}
 
 	@Override
@@ -117,7 +106,7 @@ public class WObservableScrollView extends NestedScrollView implements Scrollabl
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		if (hasNoCallbacks()) {
-			return super.onInterceptTouchEvent(ev) && mGestureDetector.onTouchEvent(ev);
+			return super.onInterceptTouchEvent(ev);
 		}
 		switch (ev.getActionMasked()) {
 			case MotionEvent.ACTION_DOWN:
@@ -131,7 +120,7 @@ public class WObservableScrollView extends NestedScrollView implements Scrollabl
 				dispatchOnDownMotionEvent();
 				break;
 		}
-		return super.onInterceptTouchEvent(ev) && mGestureDetector.onTouchEvent(ev);
+		return super.onInterceptTouchEvent(ev);
 	}
 
 	@Override
@@ -316,11 +305,10 @@ public class WObservableScrollView extends NestedScrollView implements Scrollabl
 			out.writeInt(scrollY);
 		}
 
-		public static final Parcelable.Creator<SavedState> CREATOR
-				= new Parcelable.Creator<SavedState>() {
+		public static final Creator<SavedState> CREATOR
+				= new Creator<SavedState>() {
 			@Override
 			public SavedState createFromParcel(Parcel in) {
-
 				return new SavedState(in);
 			}
 
@@ -329,14 +317,5 @@ public class WObservableScrollView extends NestedScrollView implements Scrollabl
 				return new SavedState[size];
 			}
 		};
-	}
-
-	// Return false if we're scrolling in the x direction
-	class YScrollDetector extends GestureDetector.SimpleOnGestureListener {
-		@Override
-		public boolean onScroll(MotionEvent e1, MotionEvent e2,
-		                        float distanceX, float distanceY) {
-			return (Math.abs(distanceY) > Math.abs(distanceX));
-		}
 	}
 }
