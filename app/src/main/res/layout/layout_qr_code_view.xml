@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:background="@color/black"
+        android:background="@color/black_50"
         android:minHeight="?attr/actionBarSize">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -17,12 +17,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:letterSpacing="0.1"
+            android:letterSpacing="0.17"
             android:text="Store card"
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="12sp"
-            app:WTextView_font="medium_bold" />
+            app:WTextView_font="medium_bold"/>
     </android.support.v7.widget.Toolbar>
 
     <RelativeLayout
@@ -30,7 +30,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/fl_box_view"
-        android:layout_marginBottom="37dp"
         android:gravity="bottom|center"
         android:visibility="visible">
 
@@ -40,8 +39,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="120dp"
             android:gravity="center"
-            android:letterSpacing="0.15"
-            android:lineSpacingExtra="1.6dp"
+            android:letterSpacing="0.17"
+            android:lineSpacingExtra="5sp"
             android:paddingLeft="@dimen/bank_spacing_width"
             android:paddingRight="@dimen/bank_spacing_width"
             android:text="@string/set_info_detail"
@@ -49,7 +48,7 @@
             android:textColor="@color/white"
             android:textSize="12sp"
             android:visibility="visible"
-            app:WTextView_font="medium" />
+            app:WTextView_font="medium"/>
 
         <ProgressBar
             android:id="@+id/ppBar"
@@ -57,7 +56,7 @@
             android:layout_height="30dp"
             android:layout_marginTop="120dp"
             android:gravity="center"
-            android:visibility="gone" />
+            android:visibility="gone"/>
     </RelativeLayout>
 
 
@@ -67,6 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
+        android:layout_marginTop="59dp"
         android:orientation="vertical">
 
         <ImageView
@@ -76,7 +76,7 @@
             android:layout_gravity="top|center_horizontal"
             android:layout_margin="2dip"
             android:contentDescription="@string/app_name"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"/>
     </FrameLayout>
 
     <RelativeLayout
@@ -84,55 +84,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/fl_box_view"
-        android:gravity="bottom">
+        android:layout_marginTop="80dp">
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnManual"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_alignParentEnd="true"
-            android:layout_marginBottom="@dimen/bank_spacing_width"
+            android:layout_marginBottom="19dp"
             android:layout_marginLeft="@dimen/bank_spacing_width"
             android:layout_marginRight="@dimen/bank_spacing_width"
-            android:background="@drawable/barcode_btn_border"
-            android:letterSpacing="0.1"
+            android:layout_marginTop="19dp"
+            android:background="@drawable/barcode_btn_bg"
+            android:letterSpacing="0.12"
             android:text="@string/set_manually_enter_barcode"
             android:textColor="@color/white"
             android:textSize="12sp"
-            app:WButton_font="medium" />
+            app:WButton_font="medium"/>
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_action_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="6dp"
-        android:visibility="gone">
-
-        <Button
-            android:id="@+id/btn_photo"
-            style="@style/style_qr_box_view_button"
-            android:drawableTop="@drawable/appbar_background"
-            android:text="@string/app_name"
-            android:visibility="gone" />
-
-
-        <CheckBox
-            android:id="@+id/btn_light"
-            style="@style/style_qr_box_view_button"
-            android:button="@null"
-            android:drawableTop="@drawable/rectangle"
-            android:text="@string/app_name" />
-
-        <Button
-            android:id="@+id/btn_produce"
-            style="@style/style_qr_box_view_button"
-            android:drawableTop="@drawable/rectangle"
-            android:text="@string/app_name" />
-    </LinearLayout>
-</merge>
+</RelativeLayout>
