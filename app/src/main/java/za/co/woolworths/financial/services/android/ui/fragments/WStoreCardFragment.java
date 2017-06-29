@@ -8,7 +8,6 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.util.Log;
@@ -82,7 +81,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 		mTokenExpireDialog = new AlertDialogManager(getActivity(), woolworthsApplication,
 				mContext);
@@ -286,11 +284,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		}
 	}
 
-
 	@Override
 	public void onResumeFragment() {
-		final Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
+
+		WStoreCardFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				if (!cardHasId) {
@@ -302,7 +299,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					}
 				}
 			}
-		}, 100);
+		});
 	}
 
 	public void networkFailureHandler() {
@@ -327,13 +324,11 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	@Override
 	public void onConnectionChanged() {
 		//connection changed
-		final Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				retryConnect();
-			}
-		}, 100);
+		if (!cardHasId) {
+			if (new ConnectionDetector().isOnline(getActivity()))
+				getActiveOffer();
+
+		}
 	}
 
 	@Override

@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -303,8 +302,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 	@Override
 	public void onResumeFragment() {
-		final Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
+		WPersonalLoanFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				if (!cardHasId) {
@@ -315,8 +313,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						disableIncreaseLimit();
 					}
 				}
+
 			}
-		}, 100);
+		});
 	}
 
 	public void networkFailureHandler() {
@@ -341,13 +340,11 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onConnectionChanged() {
 		//connection changed
-		final Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				retryConnect();
-			}
-		}, 100);
+		if (!cardHasId) {
+			if (new ConnectionDetector().isOnline(getActivity()))
+				getActiveOffer();
+
+		}
 	}
 
 	@Override

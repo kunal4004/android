@@ -8,7 +8,6 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.util.Log;
@@ -280,8 +279,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	@Override
 	public void onResumeFragment() {
-		final Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
+		WCreditCardFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				if (!cardHasId) {
@@ -293,7 +291,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 					}
 				}
 			}
-		}, 100);
+		});
 	}
 
 	public void networkFailureHandler() {
@@ -302,7 +300,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			public void run() {
 				isOfferActive = false;
 				hideProgressBar();
-				//mNetworkFailureInterface.onNetworkFailure();
 			}
 		});
 	}
@@ -320,13 +317,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onConnectionChanged() {
 		//connection changed
-		final Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				retryConnect();
-			}
-		}, 100);
+		if (!cardHasId) {
+			if (new ConnectionDetector().isOnline(getActivity()))
+				getActiveOffer();
+
+		}
 	}
 
 	@Override
