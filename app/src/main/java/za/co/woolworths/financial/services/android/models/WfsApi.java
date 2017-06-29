@@ -221,7 +221,7 @@ public class WfsApi {
 
     private String getNetworkCarrier() {
         String networkCarrier = Util.getNetworkCarrier(mContext);
-        return networkCarrier.isEmpty() ? "Unavailable" : networkCarrier;
+        return networkCarrier.isEmpty() ? "Unavailable" : networkCarrier.replace("\\u0394","");
     }
 
     private String getDeviceModel() {
