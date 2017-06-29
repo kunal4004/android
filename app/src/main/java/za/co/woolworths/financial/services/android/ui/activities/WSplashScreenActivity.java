@@ -143,6 +143,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 					WoolworthsApplication.setSsoRedirectURI(configResponse.enviroment.getSsoRedirectURI());
 					WoolworthsApplication.setStsURI(configResponse.enviroment.getStsURI());
 					WoolworthsApplication.setSsoRedirectURILogout(configResponse.enviroment.getSsoRedirectURILogout());
+					WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.enviroment.getSsoUpdateDetailsRedirectUri());
 					WoolworthsApplication.setWwTodayURI(configResponse.enviroment.getWwTodayURI());
 					WoolworthsApplication.setApplyNowLink(configResponse.defaults.getApplyNowLink());
 					WoolworthsApplication.setRegistrationTCLink(configResponse.defaults.getRegisterTCLink());
@@ -222,7 +223,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
 	private void showNonVideoViewWithErrorLayout() {
 		runOnUiThread(new Runnable() {
-			public void run(){
+			public void run() {
 				pBar.setVisibility(View.GONE);
 				videoViewLayout.setVisibility(View.GONE);
 				noVideoView.setVisibility(View.VISIBLE);

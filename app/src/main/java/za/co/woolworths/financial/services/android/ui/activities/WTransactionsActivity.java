@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,25 +14,25 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.WErrorDialog;
+import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 
-public class WTransactionsActivity extends AppCompatActivity {
+public class WTransactionsActivity extends AppCompatActivity implements AlertDialogInterface {
 
 	public Toolbar toolbar;
 	public ExpandableListView transactionListview;
 	public String productOfferingId;
 	private ProgressDialogFragment mGetTransactionProgressDialog;
 	private ErrorHandlerView mErrorHandlerView;
-	private WoolworthsApplication mWoolworthsApplication;
+	private AlertDialogManager mTokenExpireDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +41,17 @@ public class WTransactionsActivity extends AppCompatActivity {
 		Utils.updateStatusBarBackground(this);
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-		mWoolworthsApplication = (WoolworthsApplication) getApplication();
-		mErrorHandlerView = new ErrorHandlerView(this, mWoolworthsApplication,
+		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) WTransactionsActivity.this.getApplication();
+		mErrorHandlerView = new ErrorHandlerView(this, woolworthsApplication,
 				(RelativeLayout) findViewById(R.id.relEmptyStateHandler),
 				(ImageView) findViewById(R.id.imgEmpyStateIcon),
 				(WTextView) findViewById(R.id.txtEmptyStateTitle),
 				(WTextView) findViewById(R.id.txtEmptyStateDesc),
 				(RelativeLayout) findViewById(R.id.no_connection_layout));
+		mTokenExpireDialog = new AlertDialogManager(WTransactionsActivity.this, woolworthsApplication,
+				WTransactionsActivity
+						.this);
+
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(null);
 		getSupportActionBar().setElevation(0);
@@ -112,6 +115,8 @@ public class WTransactionsActivity extends AppCompatActivity {
 
 			@Override
 			protected void onPostExecute(TransactionHistoryResponse transactionHistoryResponse) {
+				super.onPostExecute(transactionHistoryResponse);
+				dismissProgress();
 				try {
 					switch (transactionHistoryResponse.httpCode) {
 						case 200:
@@ -120,29 +125,15 @@ public class WTransactionsActivity extends AppCompatActivity {
 								mErrorHandlerView.hideEmpyState();
 								transactionListview.setAdapter(new WTransactionsAdapter(WTransactionsActivity.this, Utils.getdata(transactionHistoryResponse.transactions)));
 							} else {
-								//transactionListview.setVisibility(View.GONE);
-								//mErrorHandlerView.showEmptyState(3);
+//								transactionListview.setVisibility(View.GONE);
+//								mErrorHandlerView.showEmptyState(3);
 							}
 							break;
 						case 440:
-							AlertDialog mError = WErrorDialog.getSimplyErrorDialog(WTransactionsActivity.this);
-							mError.setTitle("Authentication Error");
-							mError.setMessage("Your session expired. You've been signed out.");
-							mError.setOnDismissListener(new DialogInterface.OnDismissListener() {
-								@Override
-								public void onDismiss(DialogInterface dialog) {
-									setResult(SSOActivity.SSOActivityResult.EXPIRED.rawValue());
-									finish();
-								}
-							});
-							mError.show();
-
-							try {
-								new SessionDao(WTransactionsActivity.this, SessionDao.KEY.USER_TOKEN).delete();
-							} catch (Exception e) {
-								e.printStackTrace();
+							if (!(WTransactionsActivity.this.isFinishing())) {
+								mTokenExpireDialog.showExpiredTokenDialog
+										(transactionHistoryResponse.response.stsParams);
 							}
-
 							break;
 						default:
 							try {
@@ -154,7 +145,6 @@ public class WTransactionsActivity extends AppCompatActivity {
 					}
 				} catch (NullPointerException ignored) {
 				}
-				dismissProgress();
 			}
 		};
 	}
@@ -172,6 +162,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
+		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
 
 	private void dismissProgress() {
@@ -187,5 +178,28 @@ public class WTransactionsActivity extends AppCompatActivity {
 				mErrorHandlerView.networkFailureHandler(errorMessage);
 			}
 		});
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (!mTokenExpireDialog.getAccountSignInState()) {
+			if (mTokenExpireDialog.getOnBackPressState()) {
+				mTokenExpireDialog.onCancel(); // go back on back press state
+			} else {
+				loadTransactionHistory(productOfferingId); //reload transaction after successful
+				// login
+			}
+		}
+	}
+
+	@Override
+	public void onExpiredTokenCancel() {
+		mTokenExpireDialog.onCancel();
+	}
+
+	@Override
+	public void onExpiredTokenAuthentication() {
+		mTokenExpireDialog.reAuthenticate();
 	}
 }

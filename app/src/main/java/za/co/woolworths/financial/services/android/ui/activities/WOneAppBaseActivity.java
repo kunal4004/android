@@ -47,7 +47,7 @@ import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
 		, WProductFragment.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle,
-		WRewardsFragment.HideActionBarComponent, MenuNavigationInterface,UpdateNavigationDrawer {
+		WRewardsFragment.HideActionBarComponent, MenuNavigationInterface, UpdateNavigationDrawer {
 
 	public static Toolbar mToolbar;
 	private WFragmentDrawer drawerFragment;
@@ -225,14 +225,13 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		displayView(position);
 	}
 
-	public void initGetVouchersCall()
-	{
+	public void initGetVouchersCall() {
 		JWTDecodedModel jwtDecodedModel = getJWTDecoded();
-		if(jwtDecodedModel.AtgSession!=null && jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals(""))
-		{
+		if (jwtDecodedModel.AtgSession != null && jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
 			getVouchers().execute();
 		}
 	}
+
 	public HttpAsyncTask<String, String, VoucherResponse> getVouchers() {
 		return new HttpAsyncTask<String, String, VoucherResponse>() {
 			@Override
@@ -259,7 +258,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 			@Override
 			protected void onPostExecute(VoucherResponse voucherResponse) {
 				super.onPostExecute(voucherResponse);
-				if(voucherResponse.httpCode==200)
+				if (voucherResponse.httpCode == 200)
 					updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
 
 			}
