@@ -231,27 +231,27 @@
                 </LinearLayout>
 
                 <RelativeLayout
-                    android:id="@+id/changePassword"
+                    android:id="@+id/rlMyDetails"
                     style="@style/listStyle"
                     android:layout_marginTop="@dimen/default_margin"
                     android:background="@drawable/stores_details_background"
                     android:visibility="visible">
 
                     <ImageView
-                        android:id="@+id/imgChangePassword"
+                        android:id="@+id/imMyDetails"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/change_password"/>
+                        android:background="@drawable/signout_24_copy_3"/>
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="32dp"
-                        android:layout_toRightOf="@+id/imgChangePassword"
-                        android:text="@string/change_password"
+                        android:layout_toRightOf="@+id/imMyDetails"
+                        android:text="@string/acc_my_detail"
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         app:WTextView_font="myriadpro_regular"/>

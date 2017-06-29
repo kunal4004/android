@@ -223,7 +223,9 @@ public class SSOActivity extends WebViewActivity {
 		SIGNIN("customerid/connect/authorize"),
 		REGISTER("customerid/register/step1"),
 		LOGOUT("customerid/connect/endsession"),
-		CHANGE_PASSWORD("customerid/userdetails/password");
+		UPDATE_PASSWORD("customerid/userdetails/password"),
+		UPDATE_EMAIL("customerid/userdetails/email"),
+		UPDATE_PROFILE("customerid/userdetails");
 
 		private String path;
 
@@ -316,7 +318,7 @@ public class SSOActivity extends WebViewActivity {
 				break;
 
 
-			case CHANGE_PASSWORD:
+			case UPDATE_PASSWORD:
 				break;
 
 			default:
@@ -396,10 +398,7 @@ public class SSOActivity extends WebViewActivity {
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			super.shouldOverrideUrlLoading(view, url);
-			Log.e("shouldOverr", url);
-			view.loadUrl(url);
-			return true;
+			return super.shouldOverrideUrlLoading(view, url);
 		}
 
 		@Override
@@ -586,6 +585,4 @@ public class SSOActivity extends WebViewActivity {
 			this.webView.destroy();
 		super.onDestroy();
 	}
-
-
 }
