@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.FAQActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
@@ -63,11 +64,12 @@ import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-import static com.google.android.gms.plus.PlusOneDummyView.TAG;
+
 
 public class MyAccountsFragment extends BaseFragment implements View.OnClickListener, ViewPager.OnPageChangeListener, AlertDialogInterface {
 
@@ -120,10 +122,12 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	private Toolbar mToolbar;
 	private RelativeLayout relFAQ;
 	private ErrorHandlerView mErrorHandlerView;
+	private UpdateNavigationDrawer updateNavigationDrawer;
 	private WGlobalState wGlobalState;
 	private AlertDialogManager mTokenExpireDialog;
 	private MyAccountsFragment mContext;
 	private boolean loadMessageCounter = false;
+	private String TAG = "MyAccountsFragment";
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -149,6 +153,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		openMessageActivity = (ImageView) view.findViewById(R.id.openMessageActivity);
 		openShoppingList = (ImageView) view.findViewById(R.id.openShoppingList);
 		contactUs = (RelativeLayout) view.findViewById(R.id.contactUs);
+		mTokenExpireDialog = new AlertDialogManager(getActivity(), woolworthsApplication,
+				mContext);
 		applyStoreCardView = (LinearLayout) view.findViewById(R.id.applyStoreCard);
 		applyCreditCardView = (LinearLayout) view.findViewById(R.id.applyCrediCard);
 		applyPersonalCardView = (LinearLayout) view.findViewById(R.id.applyPersonalLoan);
@@ -196,6 +202,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		mImageView.setOnClickListener(this);
 		relFAQ.setOnClickListener(this);
 
+		updateNavigationDrawer = (UpdateNavigationDrawer) getActivity();
 		adapter = new MyAccountOverViewPagerAdapter(getActivity());
 		viewPager.addOnPageChangeListener(this);
 		setUiPageViewController();
@@ -252,6 +259,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			}
 		} else {
 			this.configureView();
+			//Remove voucher count on Navigation drawer
+			updateNavigationDrawer.updateVoucherCount(0);
 		}
 	}
 
@@ -588,7 +597,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			}
 
 			accountAsyncRequest().execute();
-
+			getVouchers().execute();
 		} catch (NullPointerException ignored) {
 		}
 	}
@@ -819,15 +828,40 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		});
 	}
 
-	public void showLogOutScreen() {
-		applyCreditCardView.setVisibility(View.VISIBLE);
-		applyStoreCardView.setVisibility(View.VISIBLE);
-		applyPersonalCardView.setVisibility(View.VISIBLE);
-		loggedOutHeaderLayout.setVisibility(View.VISIBLE);
-		loggedInHeaderLayout.setVisibility(View.GONE);
-		changePasswordBtn.setVisibility(View.GONE);
-		signOutBtn.setVisibility(View.GONE);
+	public HttpAsyncTask<String, String, VoucherResponse> getVouchers() {
+		return new HttpAsyncTask<String, String, VoucherResponse>() {
+			@Override
+			protected void onPreExecute() {
+				super.onPreExecute();
+
+			}
+
+			@Override
+			protected VoucherResponse httpDoInBackground(String... params) {
+				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getVouchers();
+			}
+
+			@Override
+
+			protected Class<VoucherResponse> httpDoInBackgroundReturnType() {
+				return VoucherResponse.class;
+			}
+
+			@Override
+			protected VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+				return new VoucherResponse();
+			}
+
+			@Override
+			protected void onPostExecute(VoucherResponse voucherResponse) {
+				super.onPostExecute(voucherResponse);
+				if (voucherResponse.httpCode == 200)
+					updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
+
+			}
+		};
 	}
+
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -897,4 +931,13 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		mTokenExpireDialog.reAuthenticate();
 	}
 
+	public void showLogOutScreen() {
+		applyCreditCardView.setVisibility(View.VISIBLE);
+		applyStoreCardView.setVisibility(View.VISIBLE);
+		applyPersonalCardView.setVisibility(View.VISIBLE);
+		loggedOutHeaderLayout.setVisibility(View.VISIBLE);
+		loggedInHeaderLayout.setVisibility(View.GONE);
+		changePasswordBtn.setVisibility(View.GONE);
+		signOutBtn.setVisibility(View.GONE);
+	}
 }

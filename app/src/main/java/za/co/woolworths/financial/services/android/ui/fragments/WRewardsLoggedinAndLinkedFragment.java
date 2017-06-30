@@ -28,6 +28,7 @@ import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 
@@ -45,6 +46,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 	private LinearLayout fragmentView;
 	private ErrorHandlerView mErrorHandlerView;
 	private RelativeLayout mRlConnect;
+	private UpdateNavigationDrawer updateNavigationDrawer;
 	private AlertDialogManager mTokenExpireDialog;
 	private WRewardsLoggedinAndLinkedFragment mContext;
 	private WGlobalState mWGlobalState;
@@ -81,6 +83,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 				}
 			}
 		});
+		updateNavigationDrawer = (UpdateNavigationDrawer) getActivity();
 	}
 
 	private void setupViewPager(ViewPager viewPager, VoucherResponse voucherResponse) {
@@ -169,6 +172,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 				case 200:
 					mWGlobalState.setRewardSignInState(true);
 					setupViewPager(viewPager, voucherResponse);
+					updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
 					break;
 				case 440:
 					mWGlobalState.setRewardSignInState(false);

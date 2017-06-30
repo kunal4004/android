@@ -68,8 +68,7 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 		Utils.updateStatusBarBackground(this);
 		WoolworthsApplication woolWorthsApplication = (WoolworthsApplication) MessagesActivity.this.getApplication();
 		mTokenExpireDialog = new AlertDialogManager(MessagesActivity.this, woolWorthsApplication,
-				MessagesActivity
-						.this);
+				MessagesActivity.this);
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
