@@ -7,6 +7,7 @@ package za.co.woolworths.financial.services.android.models.dto;
 public class NavListItem {
     String name;
     int Image;
+    int count;
 
     public String getName() {
         return name;
@@ -22,5 +23,13 @@ public class NavListItem {
 
     public void setImage(int image) {
         Image = image;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 }
