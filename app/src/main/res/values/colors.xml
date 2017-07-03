@@ -38,7 +38,8 @@
     <color name="black_desc_opacity">#75000000</color>
     <color name="mask_opacity">#80000000</color>
     <color name="black_desc_opacity_light">#85000000</color>
-    <color name="press_bg">#05000000</color>
+    <color name="press_bg">#727272</color>
+    <color name="press_bg_light">#80EFEFEF</color>
     <color name="charcoal_grey">#4F5051</color>
     <color name="bg_status_bar_pl">#2F2439</color>
     <color name="bg_charcoalGreyThree">#2E353B</color>

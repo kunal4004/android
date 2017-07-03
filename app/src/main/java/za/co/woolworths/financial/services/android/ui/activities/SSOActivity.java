@@ -164,6 +164,8 @@ public class SSOActivity extends WebViewActivity {
 		String scope = bundle.getString(SSOActivity.TAG_SCOPE);
 		String link = this.constructAndGetAuthorisationRequestURL(scope);
 
+		Log.e("SSOActivity.TAG", String.format("Authorization Link: %s", link));
+
 		Log.d(SSOActivity.TAG, String.format("Authorization Link: %s", link));
 
 		bundle.putString("title", "SIGN IN");
@@ -224,7 +226,6 @@ public class SSOActivity extends WebViewActivity {
 		REGISTER("customerid/register/step1"),
 		LOGOUT("customerid/connect/endsession"),
 		UPDATE_PASSWORD("customerid/userdetails/password"),
-		UPDATE_EMAIL("customerid/userdetails/email"),
 		UPDATE_PROFILE("customerid/userdetails");
 
 		private String path;
@@ -264,6 +265,7 @@ public class SSOActivity extends WebViewActivity {
 				.appendQueryParameter("state", this.state)
 				.appendQueryParameter("nonce", this.nonce)
 				.appendQueryParameter("scope", scope);
+
 
 		if (this.extraQueryStringParams != null) {
 			for (Map.Entry<String, String> param : this.extraQueryStringParams.entrySet()) {

@@ -81,7 +81,7 @@ public class UserDetailActivity extends AppCompatActivity implements UserDetailA
 	private List<String> getItem() {
 		List<String> mConstruct = new ArrayList<>();
 		mConstruct.add(getXmlString(R.string.acc_profile));
-		mConstruct.add(getXmlString(R.string.acc_update_email_address));
+		//mConstruct.add(getXmlString(R.string.acc_update_email_address));
 		mConstruct.add(getXmlString(R.string.acc_update_password));
 		return mConstruct;
 	}
@@ -98,10 +98,6 @@ public class UserDetailActivity extends AppCompatActivity implements UserDetailA
 				break;
 
 			case 1:
-				ScreenManager.presentSSOUpdateEmail(UserDetailActivity.this);
-				break;
-
-			case 2:
 				ScreenManager.presentSSOUpdatePassword(UserDetailActivity.this);
 				break;
 

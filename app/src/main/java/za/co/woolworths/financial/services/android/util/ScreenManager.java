@@ -119,19 +119,6 @@ public class ScreenManager {
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 
-	public static void presentSSOUpdateEmail(Activity activity) {
-		HashMap<String, String> params = new HashMap<>();
-		params.put("redirect_uri", WoolworthsApplication.getSsoUpdateDetailsRedirectUri());
-		Intent intent = new Intent(activity, SSOActivity.class);
-		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
-		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
-		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.UPDATE_EMAIL.rawValue());
-		Log.e("updateDetailEmail", SSOActivity.Path.UPDATE_EMAIL.rawValue());
-		intent.putExtra(SSOActivity.TAG_EXTRA_QUERYSTRING_PARAMS, params);
-		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
-		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-	}
-
 	public static void presentSSOUpdatePassword(Activity activity) {
 		HashMap<String, String> params = new HashMap<>();
 		params.put("redirect_uri", WoolworthsApplication.getSsoUpdateDetailsRedirectUri());

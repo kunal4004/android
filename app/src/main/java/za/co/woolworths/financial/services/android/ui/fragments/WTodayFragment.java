@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,13 +20,13 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.WebAppInterface;
 
 public class WTodayFragment extends Fragment {
 	WebView webView;
 	ErrorHandlerView mErrorHandlerView;
 	MenuNavigationInterface mMenuNavigationInterface;
+
 
 	@Nullable
 	@Override
@@ -48,6 +49,7 @@ public class WTodayFragment extends Fragment {
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
 		webView.addJavascriptInterface(new WebAppInterface(getActivity()), "Android");
+		Log.e("webInterface", WoolworthsApplication.getWwTodayURI());
 		webView.loadUrl(WoolworthsApplication.getWwTodayURI());
 		webView.setWebViewClient(new WebViewClient() {
 			@TargetApi(android.os.Build.VERSION_CODES.M)
