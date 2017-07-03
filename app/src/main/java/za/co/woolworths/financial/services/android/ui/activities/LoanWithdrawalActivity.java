@@ -372,7 +372,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 	}
 
 	private int repaymentPeriod(int amount) {
-		if (amount < 1005000) {
+		if (amount < 1000000) {
 			return 36;
 		} else {
 			return 60;

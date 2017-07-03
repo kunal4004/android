@@ -106,13 +106,26 @@ public class ScreenManager {
 		activity.overridePendingTransition(0, 0);
 	}
 
-	public static void presentSSOChangePassword(Activity activity) {
-		HashMap<String, String> params = new HashMap<String, String>();
+	public static void presentSSOUpdateProfile(Activity activity) {
+		HashMap<String, String> params = new HashMap<>();
 		params.put("redirect_uri", WoolworthsApplication.getSsoUpdateDetailsRedirectUri());
 		Intent intent = new Intent(activity, SSOActivity.class);
 		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
 		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
-		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.CHANGE_PASSWORD.rawValue());
+		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.UPDATE_PROFILE.rawValue());
+		intent.putExtra(SSOActivity.TAG_EXTRA_QUERYSTRING_PARAMS, params);
+		Log.e("updateDetail_PROFILE", SSOActivity.Path.UPDATE_PROFILE.rawValue());
+		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
+		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+	}
+
+	public static void presentSSOUpdatePassword(Activity activity) {
+		HashMap<String, String> params = new HashMap<>();
+		params.put("redirect_uri", WoolworthsApplication.getSsoUpdateDetailsRedirectUri());
+		Intent intent = new Intent(activity, SSOActivity.class);
+		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
+		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
+		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.UPDATE_PASSWORD.rawValue());
 		intent.putExtra(SSOActivity.TAG_EXTRA_QUERYSTRING_PARAMS, params);
 		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);

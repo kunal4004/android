@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ public class WTodayFragment extends Fragment {
 	WebView webView;
 	ErrorHandlerView mErrorHandlerView;
 	MenuNavigationInterface mMenuNavigationInterface;
+
 
 	@Nullable
 	@Override
@@ -47,6 +49,7 @@ public class WTodayFragment extends Fragment {
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
 		webView.addJavascriptInterface(new WebAppInterface(getActivity()), "Android");
+		Log.e("webInterface", WoolworthsApplication.getWwTodayURI());
 		webView.loadUrl(WoolworthsApplication.getWwTodayURI());
 		webView.setWebViewClient(new WebViewClient() {
 			@TargetApi(android.os.Build.VERSION_CODES.M)

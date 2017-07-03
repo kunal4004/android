@@ -50,6 +50,7 @@ import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsA
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
@@ -68,7 +69,6 @@ import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
-
 
 
 public class MyAccountsFragment extends BaseFragment implements View.OnClickListener, ViewPager.OnPageChangeListener, AlertDialogInterface {
@@ -92,7 +92,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	LinearLayout unlinkedLayout;
 	WButton linkAccountsBtn;
 	RelativeLayout signOutBtn;
-	RelativeLayout changePasswordBtn;
+	RelativeLayout myDetailBtn;
 	ViewPager viewPager;
 	MyAccountOverViewPagerAdapter adapter;
 	LinearLayout pager_indicator;
@@ -169,7 +169,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		unlinkedLayout = (LinearLayout) view.findViewById(R.id.llUnlinkedAccount);
 		linkAccountsBtn = (WButton) view.findViewById(R.id.linkAccountsBtn);
 		signOutBtn = (RelativeLayout) view.findViewById(R.id.signOutBtn);
-		changePasswordBtn = (RelativeLayout) view.findViewById(R.id.changePassword);
+		myDetailBtn = (RelativeLayout) view.findViewById(R.id.rlMyDetails);
 		viewPager = (ViewPager) view.findViewById(R.id.pager);
 		mTokenExpireDialog = new AlertDialogManager(getActivity(), woolworthsApplication,
 				mContext);
@@ -198,7 +198,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		linkedPersonalCardView.setOnClickListener(this);
 		openShoppingList.setOnClickListener(this);
 		signOutBtn.setOnClickListener(this);
-		changePasswordBtn.setOnClickListener(this);
+		myDetailBtn.setOnClickListener(this);
 		mImageView.setOnClickListener(this);
 		relFAQ.setOnClickListener(this);
 
@@ -433,7 +433,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				String initials = jwtDecodedModel.name.get(0).substring(0, 1).concat(" ").concat(jwtDecodedModel.family_name.get(0).substring(0, 1));
 				userInitials.setText(initials);
 				signOutBtn.setVisibility(View.VISIBLE);
-				changePasswordBtn.setVisibility(View.VISIBLE);
+				myDetailBtn.setVisibility(View.VISIBLE);
 				if (jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
 					//user is linked and signed in
 					linkedAccountsLayout.setVisibility(View.VISIBLE);
@@ -459,7 +459,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		loggedInHeaderLayout.setVisibility(View.GONE);
 		loggedOutHeaderLayout.setVisibility(View.GONE);
 		signOutBtn.setVisibility(View.GONE);
-		changePasswordBtn.setVisibility(View.GONE);
+		myDetailBtn.setVisibility(View.GONE);
 		linkedAccountsLayout.setVisibility(View.GONE);
 		applyNowAccountsLayout.setVisibility(View.GONE);
 		contactUs.setVisibility(View.GONE);
@@ -559,8 +559,10 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			case R.id.imgBurgerButton:
 				hideActionBar.onBurgerButtonPressed();
 				break;
-			case R.id.changePassword:
-				ScreenManager.presentSSOChangePassword(getActivity());
+			case R.id.rlMyDetails:
+				Intent openMyDetail = new Intent(getActivity(), UserDetailActivity.class);
+				startActivity(openMyDetail);
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 			default:
 				break;
@@ -713,38 +715,19 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			@Override
 			protected void onPostExecute(MessageResponse messageResponse) {
 				super.onPostExecute(messageResponse);
-				try {
-					int httpCode = messageResponse.httpCode;
-					switch (httpCode) {
-						case 200:
-							if (messageResponse.unreadCount > 0) {
-								messageCounter.setVisibility(View.VISIBLE);
-								int unreadCount = messageResponse.unreadCount;
-								if (TextUtils.isEmpty(String.valueOf(unreadCount)))
-									unreadCount = 0;
-								Utils.setBadgeCounter(getActivity(), unreadCount);
-								messageCounter.setText(String.valueOf(unreadCount));
-							} else {
-								Utils.removeBadgeCounter(getActivity());
-								messageCounter.setVisibility(View.GONE);
-							}
-							break;
-
-						case 440:
-							loadMessageCounter = true;
-							mTokenExpireDialog.showExpiredTokenDialog(messageResponse.response.stsParams);
-							break;
-						default:
-							break;
-					}
-				} catch (
-						NullPointerException ignored)
-
-				{
+				if (messageResponse.unreadCount > 0) {
+					messageCounter.setVisibility(View.VISIBLE);
+					int unreadCount = messageResponse.unreadCount;
+					if (TextUtils.isEmpty(String.valueOf(unreadCount)))
+						unreadCount = 0;
+					Utils.setBadgeCounter(getActivity(), unreadCount);
+					messageCounter.setText(String.valueOf(unreadCount));
+				} else {
+					Utils.removeBadgeCounter(getActivity());
+					messageCounter.setVisibility(View.GONE);
 				}
 			}
 		}.execute();
-
 	}
 
 	@Override
@@ -828,6 +811,16 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		});
 	}
 
+	public void showLogOutScreen() {
+		applyCreditCardView.setVisibility(View.VISIBLE);
+		applyStoreCardView.setVisibility(View.VISIBLE);
+		applyPersonalCardView.setVisibility(View.VISIBLE);
+		loggedOutHeaderLayout.setVisibility(View.VISIBLE);
+		loggedInHeaderLayout.setVisibility(View.GONE);
+		myDetailBtn.setVisibility(View.GONE);
+		signOutBtn.setVisibility(View.GONE);
+	}
+
 	public HttpAsyncTask<String, String, VoucherResponse> getVouchers() {
 		return new HttpAsyncTask<String, String, VoucherResponse>() {
 			@Override
@@ -861,7 +854,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			}
 		};
 	}
-
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -931,13 +923,4 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		mTokenExpireDialog.reAuthenticate();
 	}
 
-	public void showLogOutScreen() {
-		applyCreditCardView.setVisibility(View.VISIBLE);
-		applyStoreCardView.setVisibility(View.VISIBLE);
-		applyPersonalCardView.setVisibility(View.VISIBLE);
-		loggedOutHeaderLayout.setVisibility(View.VISIBLE);
-		loggedInHeaderLayout.setVisibility(View.GONE);
-		changePasswordBtn.setVisibility(View.GONE);
-		signOutBtn.setVisibility(View.GONE);
-	}
 }
