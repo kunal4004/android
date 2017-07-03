@@ -363,7 +363,7 @@
     <string name="loan_withdrawal_popup_low_error_detail">Unfortunately you do not meet the requirements for a loan of this amount. The minimum withdrawal amount is R1000</string>
 
     <string name="loan_request_low">Loan request too low</string>
-    <string name="loan_request_low_desc">Please enter an amount greater or equal to R1 050.00</string>
+    <string name="loan_request_low_desc">Please enter an amount greater or equal to R1 000.00</string>
 
     <string name="loan_request_high">Loan request too high</string>
     <string name="loan_request_high_desc">Unfortunately you do not meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>

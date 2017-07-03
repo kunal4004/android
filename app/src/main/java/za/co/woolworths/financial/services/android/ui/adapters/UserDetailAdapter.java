@@ -53,7 +53,7 @@ public class UserDetailAdapter extends RecyclerView.Adapter<UserDetailAdapter.Si
 		});
 
 		if (selectedIndex == position) {
-			backgroundDrawable(holder, R.drawable.pressed_bg_light);
+			backgroundDrawable(holder, R.drawable.pressed_bg);
 		} else {
 			backgroundDrawable(holder, R.drawable.stores_details_background);
 		}

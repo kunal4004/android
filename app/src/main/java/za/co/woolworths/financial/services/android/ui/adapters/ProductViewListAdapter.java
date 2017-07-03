@@ -69,7 +69,6 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 		if (productItem != null) {
 			String productName = productItem.productName;
 			String imgUrl = productItem.externalImageRef;
-			String productType = productItem.productType;
 			PromotionImages promo = productItem.promotionImages;
 			holder.productName.setText(Html.fromHtml(productName));
 
@@ -87,7 +86,7 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 
 			String fromPrice = String.valueOf(productItem.fromPrice);
 			productPriceList(holder.mTextAmount, holder.mTextWasPrice,
-					fromPrice, wasPrice, productType);
+					fromPrice, wasPrice);
 
 			productImage(holder.mSimpleDraweeView, imgUrl);
 			promoImages(holder, promo);
@@ -123,40 +122,19 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 	}
 
 	private void productPriceList(WTextView wPrice, WTextView WwasPrice,
-	                              String price, String wasPrice, String productType) {
-
-		switch (productType) {
-			case "clothingProducts":
-				if (TextUtils.isEmpty(wasPrice)) {
-					wPrice.setText(WFormatter.formatAmount(price));
-					WwasPrice.setText("");
-				} else {
-					if (wasPrice.equalsIgnoreCase(price)) {
-						wPrice.setText(WFormatter.formatAmount(price));
-						WwasPrice.setText("");
-						return;
-					}
-					wPrice.setText(WFormatter.formatAmount(wasPrice));
-					wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-					WwasPrice.setText(WFormatter.formatAmount(price));
-				}
-				break;
-
-			default:
-				if (TextUtils.isEmpty(wasPrice)) {
-					wPrice.setText(WFormatter.formatAmount(price));
-					WwasPrice.setText("");
-				} else {
-					if (wasPrice.equalsIgnoreCase(price)) { //wasPrice equals currentPrice
-						wPrice.setText(WFormatter.formatAmount(price));
-						WwasPrice.setText("");
-					} else {
-						wPrice.setText(WFormatter.formatAmount(wasPrice));
-						wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-						WwasPrice.setText(WFormatter.formatAmount(price));
-					}
-				}
-				break;
+	                              String price, String wasPrice) {
+		if (TextUtils.isEmpty(wasPrice)) {
+			wPrice.setText(WFormatter.formatAmount(price));
+			WwasPrice.setText("");
+		} else {
+			if (wasPrice.equalsIgnoreCase(price)) { //wasPrice equals currentPrice
+				wPrice.setText(WFormatter.formatAmount(price));
+				WwasPrice.setText("");
+			} else {
+				wPrice.setText(WFormatter.formatAmount(wasPrice));
+				wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+				WwasPrice.setText(WFormatter.formatAmount(price));
+			}
 		}
 	}
 
