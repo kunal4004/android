@@ -98,7 +98,6 @@ public class WfsApi {
 		return mApiInterface.getVouchers(getApiId().trim(), getSha1Password().trim(), getDeviceManufacturer().trim(), getDeviceModel().trim(), getNetworkCarrier().trim(), getOS().trim(), getOsVersion().trim(), "", "", getSessionToken().trim());
 	}
 
-
 	public ContactUsConfigResponse getContactUsConfig() {
 		return mApiInterface.getContactUsConfig(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "");
 	}
