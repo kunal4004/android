@@ -83,7 +83,7 @@ public class WfsApi {
 	}
 
 	public AccountsResponse getAccounts() {
-		return mApiInterface.getAccounts(getApiId().trim(), getSha1Password().trim(), getDeviceManufacturer().trim(), getDeviceModel().trim(), getNetworkCarrier().trim(), getOS().trim(), getOsVersion().trim(), "", "", getSessionToken().trim());
+		return mApiInterface.getAccounts(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken());
 	}
 
 	public AuthoriseLoanResponse authoriseLoan(AuthoriseLoanRequest authoriseLoanRequest) {
@@ -95,8 +95,9 @@ public class WfsApi {
 	}
 
 	public VoucherResponse getVouchers() {
-		return mApiInterface.getVouchers(getApiId().trim(), getSha1Password().trim(), getDeviceManufacturer().trim(), getDeviceModel().trim(), getNetworkCarrier().trim(), getOS().trim(), getOsVersion().trim(), "", "", getSessionToken().trim());
+		return mApiInterface.getVouchers(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken());
 	}
+
 
 	public ContactUsConfigResponse getContactUsConfig() {
 		return mApiInterface.getContactUsConfig(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "");
