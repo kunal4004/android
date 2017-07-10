@@ -48,10 +48,6 @@ public class WebViewActivity extends AppCompatActivity {
 		webView.loadUrl(url);
 	}
 
-	public String onReceivedTitle() {
-		return "";
-	}
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
