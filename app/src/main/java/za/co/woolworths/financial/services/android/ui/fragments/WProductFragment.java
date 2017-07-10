@@ -113,6 +113,8 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 					mMenuNavigationInterface.switchToView(1);
 			}
 		});
+
+
 	}
 
 	@Override

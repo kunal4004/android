@@ -235,6 +235,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				}
 			}
 		});
+
 	}
 
 	private void initialize() {

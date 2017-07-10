@@ -20,6 +20,8 @@ public class WGlobalState {
 
 	private boolean cardGestureIsEnabled;
 	private boolean onBackPressed;
+	private String stsParams;
+
 
 	public void setAccountSignInState(boolean accountSignInState) {
 		setPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE, accountSignInState);
@@ -66,4 +68,11 @@ public class WGlobalState {
 		return Boolean.valueOf(value);
 	}
 
+	public String getStsParams() {
+		return stsParams;
+	}
+
+	public void setStsParams(String pStsParams) {
+		stsParams = pStsParams;
+	}
 }
