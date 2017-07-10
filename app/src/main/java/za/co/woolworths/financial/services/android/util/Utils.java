@@ -485,4 +485,10 @@ public class Utils {
 	public static String getScope(String scope) {
 		return scope.replaceAll("scope=", "");
 	}
+
+	public static String removeUnicodesFromString(String value)
+	{
+		value=value.replaceAll("[^a-zA-Z0-9 &*|_!@#$%^.,\\[\\]:;\"~{}<>()\\-+?]+", "");
+		return value;
+	}
 }
