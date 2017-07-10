@@ -258,7 +258,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 			@Override
 			protected void onPostExecute(VoucherResponse voucherResponse) {
 				super.onPostExecute(voucherResponse);
-				if (voucherResponse.httpCode == 200)
+				if (voucherResponse.httpCode == 200 && voucherResponse.voucherCollection.vouchers!=null)
 					updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
 
 			}

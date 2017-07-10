@@ -419,7 +419,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		switch (item.getItemId()) {
 			// Respond to the action bar's Up/Home button
 			case android.R.id.home:
-				finish();
+				finishActivity();
 				return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -506,6 +506,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 			case R.id.btnManual:
 				Intent openManual = new Intent(QRActivity.this, EnterBarcodeActivity.class);
 				startActivity(openManual);
+				overridePendingTransition(R.anim.slide_up_anim,R.anim.stay);
 				break;
 		}
 	}
@@ -1359,5 +1360,16 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		openMultipleImage.putExtra("auxiliaryImages", mAuxiliaryImages);
 		startActivity(openMultipleImage);
 		overridePendingTransition(0, 0);
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		finishActivity();
+	}
+
+	private void finishActivity(){
+		finish();
+		overridePendingTransition(R.anim.stay,R.anim.slide_down_anim);
 	}
 }
