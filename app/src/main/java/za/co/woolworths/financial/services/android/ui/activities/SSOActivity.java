@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.telecom.Call;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -27,6 +28,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.iid.InstanceID;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -37,6 +39,10 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.http.GET;
+import retrofit.http.Query;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
@@ -50,6 +56,7 @@ import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static android.R.attr.path;
+import static android.R.attr.theme;
 
 public class SSOActivity extends WebViewActivity {
 
@@ -86,7 +93,7 @@ public class SSOActivity extends WebViewActivity {
 	public static final String TAG_SCOPE = "TAG_SCOPE";
 	public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
 	//Default redirect url used by LOGIN AND LINK CARDS
-	private String redirectURIString = WoolworthsApplication.getSsoRedirectURI();
+	private static String redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 	private Protocol protocol;
 	private Host host;
 	public Path path;
@@ -360,6 +367,17 @@ public class SSOActivity extends WebViewActivity {
 			Log.d(TAG, "Path value in WebViewClient.onPageStarted: " + SSOActivity.this.path.rawValue());
 			//check url
 			Log.d(TAG, url);
+
+		}
+
+		@Override
+		public boolean shouldOverrideUrlLoading(WebView view, String url) {
+			return super.shouldOverrideUrlLoading(view, url);
+		}
+
+		@Override
+		public void onPageFinished(WebView view, String url) {
+			super.onPageFinished(view, url);
 			if (url.equals(SSOActivity.this.redirectURIString)) {
 				//get state and scope from webview posted form
 				view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
@@ -406,6 +424,7 @@ public class SSOActivity extends WebViewActivity {
 						if (SSOActivity.this.path.rawValue().equals(Path.UPDATE_PROFILE.rawValue())||SSOActivity.this.path.rawValue().equals(Path.UPDATE_PASSWORD.rawValue())){
 							/*Intent intent = new Intent();
 							setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue(), intent);*/
+							//doUpdateProfileRequest();
 							closeActivity();
 						}else {
 
@@ -416,16 +435,6 @@ public class SSOActivity extends WebViewActivity {
 				});
 			} else {
 			}
-		}
-
-		@Override
-		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			return super.shouldOverrideUrlLoading(view, url);
-		}
-
-		@Override
-		public void onPageFinished(WebView view, String url) {
-			super.onPageFinished(view, url);
 			hideProgressBar();
 			if (canGoBack()) {
 				enableBackButton();
@@ -606,5 +615,20 @@ public class SSOActivity extends WebViewActivity {
 		if (this.webView != null)
 			this.webView.destroy();
 		super.onDestroy();
+	}
+
+	public void doUpdateProfileRequest()
+	{
+
+		UpdateProfile retrofit = new RestAdapter.Builder()
+				.setEndpoint(this.redirectURIString)
+				.build()
+				.create(UpdateProfile.class);
+		Callback<Object> call=retrofit.updateProfile();
+
+	}
+	public interface UpdateProfile {
+		@GET("/")
+		Callback<Object> updateProfile();
 	}
 }
