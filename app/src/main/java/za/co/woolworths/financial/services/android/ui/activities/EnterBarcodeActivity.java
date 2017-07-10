@@ -1,13 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
@@ -20,8 +18,8 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -55,10 +53,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 	private ProgressBar mProgressBar;
 	private WTextView mTextInfo;
 	private EnterBarcodeActivity mContext;
-	Handler handler = new Handler();
 
-	private final int DELAY_SOFT_KEYBOARD = 100;
-	private final int DELAY_POPUP = 200;
 	private WButton mBtnBarcodeConfirm;
 	private ErrorHandlerView mErrorHandlerView;
 
@@ -126,7 +121,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 				}
 			}
 		});
-
+		showSoftKeyboard();
 	}
 
 	private void initUI() {
@@ -151,6 +146,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 
 	@Override
 	public void onBackPressed() {
+		finishActivity();
 	}
 
 	@Override
@@ -163,21 +159,28 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				finish();
-				overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+				finishActivity();
 				return true;
 		}
 		return false;
 	}
 
+	private void finishActivity() {
+		finish();
+		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+	}
+
+	/**
+	 * Shows the soft keyboard
+	 */
 	public void showSoftKeyboard() {
-		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.showSoftInput(mEditBarcodeNumber, InputMethodManager.SHOW_IMPLICIT);
+		getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 	}
 
 	private void hideSoftKeyboard() {
-		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(mEditBarcodeNumber.getWindowToken(), 0);
+		getWindow().setSoftInputMode(
+				WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 	}
 
 	public HttpAsyncTask<String, String, ProductView> getProductRequest(final String query) {
@@ -211,21 +214,9 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 					if (mProduct.size() > 0) {
 						getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
 					} else {
+						hideSoftKeyboard();
 						hideProgressBar();
-						handler.postDelayed(new Runnable() {
-							@Override
-							public void run() {
-								//Do something after 100ms
-								hideSoftKeyboard();
-							}
-						}, DELAY_SOFT_KEYBOARD);
-						handler.postDelayed(new Runnable() {
-							@Override
-							public void run() {
-								//Do something after 100ms
-								errorScanCode();
-							}
-						}, DELAY_POPUP);
+						errorScanCode();
 					}
 				}
 			}
@@ -243,7 +234,6 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 			}
 		};
 	}
-
 
 	@Override
 	public void finish() {
@@ -284,6 +274,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 								if (wProduct != null) {
 									switch (wProduct.httpCode) {
 										case 200:
+											hideSoftKeyboard();
 											ArrayList<WProductDetail> mProductList;
 											WProductDetail productList = wProduct.product;
 											mProductList = new ArrayList<>();
@@ -315,25 +306,13 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 
 	private void handleError() {
 		hideProgressBar();
-		handler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				//Do something after 100ms
-				hideSoftKeyboard();
-			}
-		}, DELAY_SOFT_KEYBOARD);
-		handler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				//Do something after 100ms
-				errorScanCode();
-			}
-		}, DELAY_POPUP);
+		hideSoftKeyboard();
+		errorScanCode();
 	}
+
 
 	private void getProductDetail() {
 		if (mEditBarcodeNumber.getText().length() > 0) {
-			showSoftKeyboard();
 			getProductRequest(mEditBarcodeNumber.getText().toString()).execute();
 		}
 	}
