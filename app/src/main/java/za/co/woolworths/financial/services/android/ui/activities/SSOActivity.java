@@ -19,6 +19,7 @@ import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebBackForwardList;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -34,9 +35,13 @@ import com.google.gson.JsonParser;
 
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.http.GET;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
@@ -83,11 +88,11 @@ public class SSOActivity extends WebViewActivity {
 	public static final String TAG_JWT = "TAG_JWT";
 	public static final String TAG_SCOPE = "TAG_SCOPE";
 	public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
-
-	private String redirectURIString = WoolworthsApplication.getSsoRedirectURI();
+	//Default redirect url used by LOGIN AND LINK CARDS
+	private static String redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 	private Protocol protocol;
 	private Host host;
-	private Path path;
+	public Path path;
 	private Map<String, String> extraQueryStringParams;
 
 	private final String state;
@@ -124,6 +129,25 @@ public class SSOActivity extends WebViewActivity {
 		this.webView.setWebViewClient(this.webviewClient);
 		this.webView.getSettings().setUseWideViewPort(true);
 		this.webView.getSettings().setLoadWithOverviewMode(true);
+		this.webView.setWebChromeClient(new WebChromeClient(){
+			@Override
+			public void onReceivedTitle(WebView view, String title) {
+				super.onReceivedTitle(view, title);
+
+				ArrayList<String> invalidTitles = new ArrayList<String>(
+						Arrays.asList("about:blank".toLowerCase(),
+								getString(R.string .sso_title_text_submit_this_form).toLowerCase(),
+								SSOActivity.this.redirectURIString.toLowerCase(),
+								SSOActivity.this.redirectURIString.concat("?state=").concat(SSOActivity.this.state).toLowerCase())
+				);
+
+				if (invalidTitles.contains(title.toLowerCase())){
+					toolbarTextView.setText("");
+				}
+				else
+					toolbarTextView.setText(title);
+			}
+		});
 		retryConnect();
 	}
 
@@ -139,7 +163,7 @@ public class SSOActivity extends WebViewActivity {
 						if (!history.getItemAtIndex(history.getCurrentIndex() + index).getUrl().equals("about:blank")) {
 							webView.goBackOrForward(index);
 							url = history.getItemAtIndex(-index).getUrl();
-							Log.e("tag", "first non empty" + url);
+							Log.d("tag", "first non empty" + url);
 							break;
 						}
 						index--;
@@ -164,7 +188,7 @@ public class SSOActivity extends WebViewActivity {
 		String scope = bundle.getString(SSOActivity.TAG_SCOPE);
 		String link = this.constructAndGetAuthorisationRequestURL(scope);
 
-		Log.e("SSOActivity.TAG", String.format("Authorization Link: %s", link));
+		Log.d("SSOActivity.TAG", String.format("Authorization Link: %s", link));
 
 		Log.d(SSOActivity.TAG, String.format("Authorization Link: %s", link));
 
@@ -249,33 +273,12 @@ public class SSOActivity extends WebViewActivity {
 
 	private String constructAndGetAuthorisationRequestURL(String scope) {
 
-		if (scope == null) {
-			scope = "";
-		}
-		scope = scope.concat(" openid email profile");//default scope
 
-
-		Uri.Builder builder = new Uri.Builder();
-		builder.scheme(this.host.rawValue()) // moved host.rawValue() from authority to schema as MCS returns host with " https:// "
-				.appendEncodedPath(this.path.rawValue())
-				.appendQueryParameter("client_id", "WWOneApp")
-				.appendQueryParameter("response_type", "id_token") // Identity token
-				.appendQueryParameter("response_mode", "form_post")
-				//.appendQueryParameter("redirect_uri", this.redirectURIString)
-				.appendQueryParameter("state", this.state)
-				.appendQueryParameter("nonce", this.nonce)
-				.appendQueryParameter("scope", scope);
-
-
-		if (this.extraQueryStringParams != null) {
-			for (Map.Entry<String, String> param : this.extraQueryStringParams.entrySet()) {
-				builder.appendQueryParameter(param.getKey(), param.getValue());
-			}
-		}
 
 		switch (this.path) {
 
 			case SIGNIN:
+				this.redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 
                 /*
                 * // Check if sts params were supplied.
@@ -317,15 +320,50 @@ public class SSOActivity extends WebViewActivity {
                 * */
 				break;
 			case REGISTER:
+				this.redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 				break;
 
 
 			case UPDATE_PASSWORD:
+				this.redirectURIString = WoolworthsApplication.getSsoUpdateDetailsRedirectUri();
 				break;
+			case UPDATE_PROFILE:
+				this.redirectURIString = WoolworthsApplication.getSsoUpdateDetailsRedirectUri();
+				break;
+
+			case LOGOUT:
+				this.redirectURIString = WoolworthsApplication.getSsoRedirectURILogout();
+					break;
 
 			default:
 				break;
 		}
+
+
+		if (scope == null) {
+			scope = "";
+		}
+		scope = scope.concat(" openid email profile");//default scope
+
+
+		Uri.Builder builder = new Uri.Builder();
+		builder.scheme(this.host.rawValue()) // moved host.rawValue() from authority to schema as MCS returns host with " https:// "
+				.appendEncodedPath(this.path.rawValue())
+				.appendQueryParameter("client_id", "WWOneApp")
+				.appendQueryParameter("response_type", "id_token") // Identity token
+				.appendQueryParameter("response_mode", "form_post")
+				.appendQueryParameter("redirect_uri", this.redirectURIString)
+				.appendQueryParameter("state", this.state)
+				.appendQueryParameter("nonce", this.nonce)
+				.appendQueryParameter("scope", scope);
+
+
+		if (this.extraQueryStringParams != null) {
+			for (Map.Entry<String, String> param : this.extraQueryStringParams.entrySet()) {
+				builder.appendQueryParameter(param.getKey(), param.getValue());
+			}
+		}
+
 
 		String constructedURL = "";
 		try {
@@ -341,13 +379,14 @@ public class SSOActivity extends WebViewActivity {
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
 			showProgressBar();
-			Log.d(TAG, url);
-			if (url.equals(SSOActivity.this.redirectURIString)) {
-				//get state and scope from webview posted form
+
+			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER){
+
 				view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
 					@Override
 					public void onReceiveValue(String value) {
-						if (value == "null")
+						//this is sign in
+						if (value.equals("null"))
 							return;
 
 						JsonParser jsonParser = new JsonParser();
@@ -369,7 +408,7 @@ public class SSOActivity extends WebViewActivity {
 							} catch (Exception e) {
 								Log.e(TAG, e.getMessage());
 							}
-							sendRegistrationToServer();
+							sendRegistrationToServer();//TODO: this should be handled by a listener
 							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
 						} else {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
@@ -378,23 +417,6 @@ public class SSOActivity extends WebViewActivity {
 						closeActivity();
 					}
 				});
-			} else if (url.equalsIgnoreCase(WoolworthsApplication.getSsoUpdateDetailsRedirectUri())) {
-				setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue());
-				closeActivity();
-			} else if (extraQueryStringParams != null) {
-				int indexOfQuestionMark = url.indexOf("?");
-				if (indexOfQuestionMark > -1) {
-					String urlWithoutQueryString = url.substring(0, indexOfQuestionMark);
-
-					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
-						Intent intent = new Intent();
-						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
-						closeActivity();
-					} else {
-					}
-				}
-
-			} else {
 			}
 		}
 
@@ -406,12 +428,33 @@ public class SSOActivity extends WebViewActivity {
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			super.onPageFinished(view, url);
+			if (isNavigatingToRedirectURL(url)) {
+				//get state and scope from webview posted form
+				if (SSOActivity.this.path.rawValue().equals(Path.LOGOUT.rawValue())){
+					Intent intent = new Intent();
+					setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
+
+				}else
+				if (SSOActivity.this.path.rawValue().equals(Path.UPDATE_PROFILE.rawValue())||SSOActivity.this.path.rawValue().equals(Path.UPDATE_PASSWORD.rawValue())){
+							/*Intent intent = new Intent();
+							setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue(), intent);*/
+					//doUpdateProfileRequest();
+				}
+				closeActivity();
+			}
 			hideProgressBar();
 			if (canGoBack()) {
 				enableBackButton();
 			} else {
 				disableBackButton();
 			}
+		}
+
+		private boolean isNavigatingToRedirectURL(String url){
+
+			String redirectUriWithState = SSOActivity.this.redirectURIString.concat("?state=").concat(SSOActivity.this.state);
+
+			return url.equalsIgnoreCase(SSOActivity.this.redirectURIString) || url.equalsIgnoreCase(redirectUriWithState);
 		}
 
 		@TargetApi(android.os.Build.VERSION_CODES.M)
@@ -586,5 +629,20 @@ public class SSOActivity extends WebViewActivity {
 		if (this.webView != null)
 			this.webView.destroy();
 		super.onDestroy();
+	}
+
+	public void doUpdateProfileRequest()
+	{
+
+		UpdateProfile retrofit = new RestAdapter.Builder()
+				.setEndpoint(this.redirectURIString)
+				.build()
+				.create(UpdateProfile.class);
+		Callback<Object> call=retrofit.updateProfile();
+
+	}
+	public interface UpdateProfile {
+		@GET("/")
+		Callback<Object> updateProfile();
 	}
 }
