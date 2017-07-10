@@ -438,7 +438,6 @@ public class SSOActivity extends WebViewActivity {
 				if (SSOActivity.this.path.rawValue().equals(Path.UPDATE_PROFILE.rawValue())||SSOActivity.this.path.rawValue().equals(Path.UPDATE_PASSWORD.rawValue())){
 							/*Intent intent = new Intent();
 							setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue(), intent);*/
-					//doUpdateProfileRequest();
 				}
 				closeActivity();
 			}
@@ -631,18 +630,4 @@ public class SSOActivity extends WebViewActivity {
 		super.onDestroy();
 	}
 
-	public void doUpdateProfileRequest()
-	{
-
-		UpdateProfile retrofit = new RestAdapter.Builder()
-				.setEndpoint(this.redirectURIString)
-				.build()
-				.create(UpdateProfile.class);
-		Callback<Object> call=retrofit.updateProfile();
-
-	}
-	public interface UpdateProfile {
-		@GET("/")
-		Callback<Object> updateProfile();
-	}
 }
