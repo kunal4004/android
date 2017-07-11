@@ -125,6 +125,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	private MyAccountsFragment mContext;
 	private boolean loadMessageCounter = false;
 	private String TAG = "MyAccountsFragment";
+	private MenuNavigationInterface mNavigationInterface;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -147,6 +148,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		super.onViewCreated(view, savedInstanceState);
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 		wGlobalState = woolworthsApplication.getWGlobalState();
+		mNavigationInterface = (MenuNavigationInterface) getActivity();
 		openMessageActivity = (ImageView) view.findViewById(R.id.openMessageActivity);
 		openShoppingList = (ImageView) view.findViewById(R.id.openShoppingList);
 		contactUs = (RelativeLayout) view.findViewById(R.id.contactUs);
@@ -629,7 +631,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			@Override
 			protected void onPostExecute(AccountsResponse accountsResponse) {
 				try {
-					switch (accountsResponse.httpCode) {
+					int httpCode = accountsResponse.httpCode;
+					switch (httpCode) {
 						case 200:
 							loadMessageCounter = false;
 							MyAccountsFragment.this.accountsResponse = accountsResponse;
@@ -650,6 +653,14 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 							break;
 						case 440:
 							loadMessageCounter = false;
+							accounts.clear();
+							unavailableAccounts.clear();
+							unavailableAccounts.addAll(Arrays.asList("SC", "CC", "PL"));
+							wGlobalState.setAccountHasExpired(true);
+							configureView();
+							Utils.displayValidationMessage(getActivity(),
+									TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
+									accountsResponse.response.stsParams);
 							break;
 						default:
 							loadMessageCounter = false;
@@ -727,6 +738,11 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		super.onResume();
 		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("UpdateCounter"));
 		messageCounterRequest();
+
+		try {
+			onSessionExpired();
+		} catch (NullPointerException ex) {
+		}
 	}
 
 	@Override
@@ -840,7 +856,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			@Override
 			protected void onPostExecute(VoucherResponse voucherResponse) {
 				super.onPostExecute(voucherResponse);
-				if (voucherResponse.httpCode == 200 && voucherResponse.voucherCollection.vouchers!=null)
+				if (voucherResponse.httpCode == 200 && voucherResponse.voucherCollection.vouchers != null)
 					updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
 
 			}
@@ -903,5 +919,20 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				this.configureView();
 			}
 		}
+	}
+
+	private void onSessionExpired() {
+		if (wGlobalState.accountHasExpired()
+				&& (wGlobalState.getPressState().equalsIgnoreCase
+				(WGlobalState.ON_CANCEL))) {
+			configureView();
+		} else if (wGlobalState.accountHasExpired()
+				&& (wGlobalState.getPressState().equalsIgnoreCase
+				(WGlobalState.ON_SIGN_IN))) {
+			mNavigationInterface.switchToView(4);
+		} else {
+		}
+		wGlobalState.setAccountHasExpired(false);
+		wGlobalState.setPressState("");
 	}
 }

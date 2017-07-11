@@ -88,6 +88,7 @@ public class SSOActivity extends WebViewActivity {
 	public static final String TAG_JWT = "TAG_JWT";
 	public static final String TAG_SCOPE = "TAG_SCOPE";
 	public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
+	public static final String TAG_EXPIRED_TOKEN = "TAG_EXPIRED_TOKEN";
 	//Default redirect url used by LOGIN AND LINK CARDS
 	private static String redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 	private Protocol protocol;
@@ -129,22 +130,21 @@ public class SSOActivity extends WebViewActivity {
 		this.webView.setWebViewClient(this.webviewClient);
 		this.webView.getSettings().setUseWideViewPort(true);
 		this.webView.getSettings().setLoadWithOverviewMode(true);
-		this.webView.setWebChromeClient(new WebChromeClient(){
+		this.webView.setWebChromeClient(new WebChromeClient() {
 			@Override
 			public void onReceivedTitle(WebView view, String title) {
 				super.onReceivedTitle(view, title);
 
 				ArrayList<String> invalidTitles = new ArrayList<String>(
 						Arrays.asList("about:blank".toLowerCase(),
-								getString(R.string .sso_title_text_submit_this_form).toLowerCase(),
+								getString(R.string.sso_title_text_submit_this_form).toLowerCase(),
 								SSOActivity.this.redirectURIString.toLowerCase(),
 								SSOActivity.this.redirectURIString.concat("?state=").concat(SSOActivity.this.state).toLowerCase())
 				);
 
-				if (invalidTitles.contains(title.toLowerCase())){
+				if (invalidTitles.contains(title.toLowerCase())) {
 					toolbarTextView.setText("");
-				}
-				else
+				} else
 					toolbarTextView.setText(title);
 			}
 		});
@@ -274,7 +274,6 @@ public class SSOActivity extends WebViewActivity {
 	private String constructAndGetAuthorisationRequestURL(String scope) {
 
 
-
 		switch (this.path) {
 
 			case SIGNIN:
@@ -333,7 +332,7 @@ public class SSOActivity extends WebViewActivity {
 
 			case LOGOUT:
 				this.redirectURIString = WoolworthsApplication.getSsoRedirectURILogout();
-					break;
+				break;
 
 			default:
 				break;
@@ -380,7 +379,7 @@ public class SSOActivity extends WebViewActivity {
 			super.onPageStarted(view, url, favicon);
 			showProgressBar();
 
-			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER){
+			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) {
 
 				view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
 					@Override
@@ -414,7 +413,16 @@ public class SSOActivity extends WebViewActivity {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
 						}
 
-						closeActivity();
+						try {
+							if (extraQueryStringParams.containsKey(TAG_EXPIRED_TOKEN)) {
+								mGlobalState.setAccountSignInState(true);
+								clearHistory();
+							} else {
+								closeActivity();
+							}
+						} catch (NullPointerException ex) {
+							closeActivity();
+						}
 					}
 				});
 			}
@@ -430,16 +438,15 @@ public class SSOActivity extends WebViewActivity {
 			super.onPageFinished(view, url);
 			if (isNavigatingToRedirectURL(url)) {
 				//get state and scope from webview posted form
-				if (SSOActivity.this.path.rawValue().equals(Path.LOGOUT.rawValue())){
+				if (SSOActivity.this.path.rawValue().equals(Path.LOGOUT.rawValue())) {
 					Intent intent = new Intent();
 					setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 
-				}else
-				if (SSOActivity.this.path.rawValue().equals(Path.UPDATE_PROFILE.rawValue())||SSOActivity.this.path.rawValue().equals(Path.UPDATE_PASSWORD.rawValue())){
+				} else if (SSOActivity.this.path.rawValue().equals(Path.UPDATE_PROFILE.rawValue()) || SSOActivity.this.path.rawValue().equals(Path.UPDATE_PASSWORD.rawValue())) {
 							/*Intent intent = new Intent();
 							setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue(), intent);*/
+				} else {
 				}
-				closeActivity();
 			}
 			hideProgressBar();
 			if (canGoBack()) {
@@ -449,7 +456,7 @@ public class SSOActivity extends WebViewActivity {
 			}
 		}
 
-		private boolean isNavigatingToRedirectURL(String url){
+		private boolean isNavigatingToRedirectURL(String url) {
 
 			String redirectUriWithState = SSOActivity.this.redirectURIString.concat("?state=").concat(SSOActivity.this.state);
 
@@ -630,4 +637,13 @@ public class SSOActivity extends WebViewActivity {
 		super.onDestroy();
 	}
 
+	private void clearHistory() {
+		mGlobalState.setOnBackPressed(false);
+		Intent i = new Intent(SSOActivity.this, WOneAppBaseActivity.class);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		startActivity(i);
+		closeActivity();
+	}
 }

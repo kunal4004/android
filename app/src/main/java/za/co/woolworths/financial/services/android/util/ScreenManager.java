@@ -38,8 +38,8 @@ public class ScreenManager {
 	}
 
 	public static void presentExpiredTokenSSOSignIn(Activity activity, String newSTSParams) {
-		HashMap<String, String> params = new HashMap<String, String>();
-		params.put("redirect_uri", WoolworthsApplication.getSsoRedirectURI());
+		HashMap<String, String> params = new HashMap<>();
+		params.put(SSOActivity.TAG_EXPIRED_TOKEN, WoolworthsApplication.getSsoRedirectURI());
 		Intent intent = new Intent(activity, SSOActivity.class);
 		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
 		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
