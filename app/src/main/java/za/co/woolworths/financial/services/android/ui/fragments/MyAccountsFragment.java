@@ -651,8 +651,11 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 							configureView();
 							break;
 						case 440:
-							configureView();
 							wGlobalState.setAccountHasExpired(true);
+							accounts.clear();
+							unavailableAccounts.clear();
+							unavailableAccounts.addAll(Arrays.asList("SC", "CC", "PL"));
+							configureView();
 							Utils.displayValidationMessage(getActivity(),
 									TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
 									accountsResponse.response.stsParams);

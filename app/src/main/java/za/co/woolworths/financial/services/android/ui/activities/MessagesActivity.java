@@ -216,7 +216,6 @@ public class MessagesActivity extends AppCompatActivity {
 			protected void onPostExecute(MessageResponse messageResponse) {
 				super.onPostExecute(messageResponse);
 				int httpCode = messageResponse.httpCode;
-				httpCode = 440;
 				switch (httpCode) {
 					case 200:
 						mCurrentPage += 1;
@@ -345,7 +344,6 @@ public class MessagesActivity extends AppCompatActivity {
 		hideRefreshView();
 		try {
 			int httpCode = messageResponse.httpCode;
-			httpCode = 440;
 			switch (httpCode) {
 				case 200:
 					messageList = null;
