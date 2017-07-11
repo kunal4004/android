@@ -218,7 +218,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 			Intent intent = new Intent(getActivity(), clss);
 			intent.putExtra("SCAN_MODE", "ONE_D_MODE");
 			getActivity().startActivity(intent);
-			getActivity().overridePendingTransition(0, 0);
+			getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 		} else {
 			requestPerms();
 		}

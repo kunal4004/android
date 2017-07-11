@@ -47,6 +47,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 	private UpdateNavigationDrawer updateNavigationDrawer;
 	private WGlobalState mWGlobalState;
 	private HttpAsyncTask<String, String, VoucherResponse> asyncTaskReward;
+	public static final int DEFAULT_VOUCHER_COUNT=0;
 
 	@Nullable
 	@Override
@@ -91,8 +92,10 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 		adapter.notifyDataSetChanged();
 		tabLayout.setupWithViewPager(viewPager);
 		viewPager.invalidate();
-		setupTabIcons(voucherResponse.voucherCollection.vouchers.size());
-
+		if(voucherResponse.voucherCollection.vouchers!=null)
+			setupTabIcons(voucherResponse.voucherCollection.vouchers.size());
+		else
+			setupTabIcons(DEFAULT_VOUCHER_COUNT);
 	}
 
 
@@ -167,7 +170,8 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 				case 200:
 					mWGlobalState.setRewardSignInState(true);
 					setupViewPager(viewPager, voucherResponse);
-					updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
+					if (voucherResponse.voucherCollection.vouchers != null)
+						updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
 					break;
 				case 440:
 					mWGlobalState.setRewardHasExpired(true);

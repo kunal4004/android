@@ -46,19 +46,6 @@ public class WebViewActivity extends AppCompatActivity {
 		webView.clearHistory();
 		clearCookies(this);
 		webView.loadUrl(url);
-		webView.setWebChromeClient(new WebChromeClient() {
-			@Override
-			public void onReceivedTitle(WebView view, String title) {
-				super.onReceivedTitle(view, title);
-				if (title.equalsIgnoreCase("about:blank")) {
-					toolbarTextView.setText("");
-				} else if (title.equalsIgnoreCase(getString(R.string
-						.sso_title_text_submit_this_form)))
-					toolbarTextView.setText("");
-				else
-					toolbarTextView.setText(title);
-			}
-		});
 	}
 
 	@Override
