@@ -166,20 +166,31 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 				super.onPostExecute(authoriseLoanResponse);
 				try {
 					hideProgressBar();
-					if (authoriseLoanResponse.httpCode == 200) {
-						Intent intent = new Intent(LoanWithdrawalConfirmActivity.this, LoanWithdrawalSuccessActivity.class);
-						startActivity(intent);
-						finish();
-						setLoanWithdrawalClicked(false);
-					} else {
-						String desc = authoriseLoanResponse.response.desc;
-						if (desc != null && !TextUtils.isEmpty(desc)) {
-							Utils.displayValidationMessage(LoanWithdrawalConfirmActivity.this,
-									TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-									desc);
-						}
-					}
+					int httpCode = authoriseLoanResponse.httpCode;
 
+					switch (httpCode) {
+						case 200:
+							Intent intent = new Intent(LoanWithdrawalConfirmActivity.this, LoanWithdrawalSuccessActivity.class);
+							startActivity(intent);
+							finish();
+							setLoanWithdrawalClicked(false);
+							break;
+
+						case 440:
+							Utils.displayValidationMessage(LoanWithdrawalConfirmActivity.this,
+									TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
+									authoriseLoanResponse.response.stsParams);
+							break;
+
+						default:
+							String desc = authoriseLoanResponse.response.desc;
+							if (desc != null && !TextUtils.isEmpty(desc)) {
+								Utils.displayValidationMessage(LoanWithdrawalConfirmActivity.this,
+										TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+										desc);
+							}
+							break;
+					}
 				} catch (Exception ignored) {
 				}
 			}

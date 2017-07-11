@@ -214,6 +214,7 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 
 			case SESSION_EXPIRED:
 				mWGlobalState.setAccountSignInState(false);
+				mWGlobalState.setOnBackPressed(true);
 				setContentView(R.layout.session_expired);
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
@@ -222,7 +223,9 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 				WButton mBtnSignIn = (WButton) findViewById(R.id.btnSESignIn);
 				mBtnSessionExpiredCancel.setOnClickListener(this);
 				mBtnSignIn.setOnClickListener(this);
-				mRelPopContainer.setOnClickListener(this);
+				break;
+
+			default:
 				break;
 		}
 	}
@@ -246,6 +249,35 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 				@Override
 				public void onAnimationEnd(Animation animation) {
 					dismissLayout();
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
+		}
+	}
+
+	private void finishActivity() {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					if (mWGlobalState.getOnBackPressed()) {
+						clearHistory();
+					} else {
+						closeActivity();
+					}
 				}
 			});
 			mRelRootContainer.startAnimation(animation);
@@ -368,8 +400,7 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
-		overridePendingTransition(0, 0);
+		finishActivity();
 	}
 
 	private void setAnimation() {
@@ -414,6 +445,7 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 				break;
 
 			case R.id.btnSECancel:
+				mWGlobalState.setPressState(WGlobalState.ON_CANCEL);
 				mWGlobalState.setOnBackPressed(false);
 				Intent i = new Intent(TransientActivity.this, WOneAppBaseActivity.class);
 				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -425,15 +457,33 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 				break;
 
 			case R.id.btnSESignIn:
-				String mSTSParams = mWGlobalState.getStsParams();
+				mWGlobalState.setPressState(WGlobalState.ON_SIGN_IN);
+				String mSTSParams = description;
 				if (TextUtils.isEmpty(mSTSParams)) {
 					mSTSParams = "";
 				} else {
 					mSTSParams = Utils.getScope(mSTSParams);
 				}
 				ScreenManager.presentExpiredTokenSSOSignIn(TransientActivity.this, mSTSParams);
+				overridePendingTransition(0, 0);
+				finish();
 				break;
 
 		}
+	}
+
+	private void clearHistory() {
+		mWGlobalState.setOnBackPressed(false);
+		Intent i = new Intent(TransientActivity.this, WOneAppBaseActivity.class);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		startActivity(i);
+		startExitAnimation();
+	}
+
+	public void closeActivity() {
+		finish();
+		overridePendingTransition(0, 0);
 	}
 }

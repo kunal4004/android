@@ -83,6 +83,7 @@ public class SSOActivity extends WebViewActivity {
 	public static final String TAG_JWT = "TAG_JWT";
 	public static final String TAG_SCOPE = "TAG_SCOPE";
 	public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
+	public static final String TAG_EXPIRED_TOKEN = "TAG_EXPIRED_TOKEN";
 
 	private String redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 	private Protocol protocol;
@@ -375,7 +376,13 @@ public class SSOActivity extends WebViewActivity {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
 						}
 
-						closeActivity();
+						if (extraQueryStringParams.containsKey(TAG_EXPIRED_TOKEN)) {
+							mGlobalState.setAccountSignInState(true);
+							clearHistory();
+
+						} else {
+							closeActivity();
+						}
 					}
 				});
 			} else if (url.equalsIgnoreCase(WoolworthsApplication.getSsoUpdateDetailsRedirectUri())) {
@@ -452,6 +459,17 @@ public class SSOActivity extends WebViewActivity {
 			dialog.show();
 		}
 	};
+
+	private void clearHistory() {
+		mGlobalState.setOnBackPressed(false);
+		Intent i = new Intent(SSOActivity.this, WOneAppBaseActivity.class);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		startActivity(i);
+		closeActivity();
+		setResult(SSOActivityResult.SUCCESS.rawValue());
+	}
 
 	public void hideProgressBar() {
 		try {
@@ -556,8 +574,11 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	public void finishCurrentActivity() {
-		mGlobalState.setOnBackPressed(true);
-		finishActivity();
+		if (mGlobalState.getOnBackPressed()) {
+			clearHistory();
+		} else {
+			finishActivity();
+		}
 	}
 
 	@Override

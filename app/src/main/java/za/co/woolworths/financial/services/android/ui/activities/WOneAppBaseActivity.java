@@ -26,6 +26,7 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 
+import za.co.woolworths.financial.services.android.models.dto.Voucher;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.fragments.MenuNavigationInterface;
 
@@ -129,7 +130,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 				fragment = new MyAccountsFragment();
 				title = getString(R.string.nav_item_accounts);
 				break;
-
 		}
 
 		try {
@@ -258,9 +258,18 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 			@Override
 			protected void onPostExecute(VoucherResponse voucherResponse) {
 				super.onPostExecute(voucherResponse);
-				if (voucherResponse.httpCode == 200)
-					updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
-
+				//fixing attempt to invoke interface method 'int java.util.List.size()' on a null
+				// object reference
+				switch (voucherResponse.httpCode) {
+					case 200:
+						List<Voucher> vouchers = voucherResponse.voucherCollection.vouchers;
+						if (vouchers != null) {
+							updateVoucherCount(vouchers.size());
+						}
+						break;
+					default:
+						break;
+				}
 			}
 		};
 	}
