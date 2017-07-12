@@ -37,7 +37,6 @@
             android:id="@+id/textInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="120dp"
             android:gravity="center"
             android:letterSpacing="0.17"
             android:lineSpacingExtra="5sp"
@@ -88,6 +87,7 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnManual"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_alignParentEnd="true"
