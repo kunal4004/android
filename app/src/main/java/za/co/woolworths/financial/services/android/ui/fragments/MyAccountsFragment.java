@@ -632,8 +632,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			@Override
 			protected void onPostExecute(AccountsResponse accountsResponse) {
 				try {
-					int httpCode = accountsResponse.httpCode;
-					switch (httpCode) {
+					switch (accountsResponse.httpCode) {
 						case 200:
 							loadMessageCounter = false;
 							MyAccountsFragment.this.accountsResponse = accountsResponse;
