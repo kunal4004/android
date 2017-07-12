@@ -57,7 +57,7 @@
                     android:gravity="center|top"
                     android:letterSpacing="0.04"
                     android:lineSpacingExtra="1.3dp"
-                    android:text="@string/session_expired_desc"
+                    android:text="@string/session_expired_account_desc"
                     android:textColor="@color/black_desc_opacity"
                     android:textSize="15sp"
                     app:WTextView_font="myriadpro_regular"

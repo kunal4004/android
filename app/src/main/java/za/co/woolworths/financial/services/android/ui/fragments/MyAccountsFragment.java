@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.Voucher;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.FAQActivity;
@@ -858,6 +859,26 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				super.onPostExecute(voucherResponse);
 				if (voucherResponse.httpCode == 200 && voucherResponse.voucherCollection.vouchers != null)
 					updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
+
+				int httpCode = voucherResponse.httpCode;
+				switch (httpCode) {
+					case 200:
+						wGlobalState.setRewardSignInState(true);
+						List<Voucher> vouchers = voucherResponse.voucherCollection.vouchers;
+						if (vouchers != null) {
+							updateNavigationDrawer.updateVoucherCount(vouchers.size());
+						}
+						break;
+
+					case 440:
+						wGlobalState.setRewardHasExpired(true);
+						wGlobalState.setRewardSignInState(false);
+						break;
+
+					default:
+						wGlobalState.setRewardSignInState(false);
+						break;
+				}
 
 			}
 		};

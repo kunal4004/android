@@ -256,28 +256,6 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 	}
 
 	private void presentNextScreen() {
-	    /*
-	        * When creating a SessionDao with a key where the entry doesn't exist
-            * in SQL lite, return a new SessionDao where the key is equal to the
-            * key that's passed in the constructor e.g
-            *
-            * SessionDoa sessionDao = SessionDao(SessionDao.USER_TOKEN) //and the record doesn't exist
-            * print(sessionDao.value) //null or empty
-            * print(sessionDao.key) //SessionDao.USER_TOKEN
-            *
-            * sessionDoa.key = SessionDao.USER_TOKEN
-            * sessionDao.save()
-            *
-            *
-            * */
-		try {
-			SessionDao sessionDao = new SessionDao(WSplashScreenActivity.this, SessionDao.KEY.USER_TOKEN).get();
-			if (sessionDao.value != null && !sessionDao.value.equals("")) {
-				ScreenManager.presentMain(WSplashScreenActivity.this);
-			}
-		} catch (Exception e) {
-			Log.e(TAG, e.getMessage());
-		}
 		try {
 			String isFirstTime = Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
 			if (isFirstTime == null || isAppUpdated())
