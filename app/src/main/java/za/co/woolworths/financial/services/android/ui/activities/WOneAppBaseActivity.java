@@ -126,11 +126,13 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 				title = getString(R.string.screen_title_store);
 				break;
 			case 3:
+				mWGlobalState.setFragmentIsReward(true);
 				isRewardFragment = true;
 				fragment = new WRewardsFragment();
 				title = getString(R.string.wrewards);
 				break;
 			case 4:
+				mWGlobalState.setFragmentIsReward(false);
 				fragment = new MyAccountsFragment();
 				title = getString(R.string.nav_item_accounts);
 				break;

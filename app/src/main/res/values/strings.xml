@@ -604,7 +604,7 @@
     <string name="session_expired_title">SESSION EXPIRED</string>
     <string name="session_expired_account_desc">Your Accounts session expired. To continue please
         sign in or cancel to return to the rest of the app.</string>
-    <string name="session_expired_reward_desc">Your Rewards session expired. To continue please
+    <string name="session_expired_reward_desc">Your WRewards session expired. To continue please
         sign in or cancel to return to the rest of the app.</string>
     <string name="session_expired_sign_in">sign in</string>
 

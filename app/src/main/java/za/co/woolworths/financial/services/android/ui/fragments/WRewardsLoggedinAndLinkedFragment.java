@@ -166,6 +166,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 	public void handleVoucherResponse(VoucherResponse voucherResponse) {
 		try {
 			int httpCode = voucherResponse.httpCode;
+			httpCode = 440;
 			switch (httpCode) {
 				case 200:
 					mWGlobalState.setRewardSignInState(true);

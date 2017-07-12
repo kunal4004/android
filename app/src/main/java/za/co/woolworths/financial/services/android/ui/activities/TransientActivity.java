@@ -218,11 +218,11 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 				setContentView(R.layout.session_expired);
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WTextView wTvSessionExpiredTitle = (WTextView) findViewById(R.id.tvSessionExpiredTitle);
-				if (!mWGlobalState.getRewardSignInState()) {
-					wTvSessionExpiredTitle.setText(getString(R.string.session_expired_reward_desc));
+				WTextView tvSessionExpiredDesc = (WTextView) findViewById(R.id.tvSessionExpiredDesc);
+				if (mWGlobalState.fragmentIsReward()) {
+					tvSessionExpiredDesc.setText(getString(R.string.session_expired_reward_desc));
 				} else {
-					wTvSessionExpiredTitle.setText(getString(R.string.session_expired_account_desc));
+					tvSessionExpiredDesc.setText(getString(R.string.session_expired_account_desc));
 				}
 				setAnimation();
 				WButton mBtnSessionExpiredCancel = (WButton) findViewById(R.id.btnSECancel);

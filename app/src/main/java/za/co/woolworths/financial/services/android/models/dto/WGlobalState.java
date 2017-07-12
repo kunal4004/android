@@ -21,7 +21,8 @@ public class WGlobalState {
 	public static final String ON_CANCEL = "CANCEL";
 	public static final String ON_SIGN_IN = "SIGNIN";
 
-	private boolean cardGestureIsEnabled, onBackPressed, accountHasExpired,rewardHasExpired;
+	private boolean cardGestureIsEnabled, onBackPressed, accountHasExpired, rewardHasExpired,
+			FragmentIsReward;
 	private String pressState;
 
 	public void setAccountSignInState(boolean accountSignInState) {
@@ -91,5 +92,13 @@ public class WGlobalState {
 
 	public void setRewardHasExpired(boolean pRewardHasExpired) {
 		rewardHasExpired = pRewardHasExpired;
+	}
+
+	public boolean fragmentIsReward() {
+		return FragmentIsReward;
+	}
+
+	public void setFragmentIsReward(boolean pFragmentIsReward) {
+		FragmentIsReward = pFragmentIsReward;
 	}
 }
