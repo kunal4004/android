@@ -51,10 +51,6 @@ public class WRewardsFragment extends AbstractFragmentListener {
 		View view = inflater.inflate(R.layout.wrewards_fragment, container, false);
 		mBurgerButtonPressed = (ImageView) view.findViewById(R.id.imBurgerButtonPressed);
 		wRewarsToolbarTitle = (WTextView) view.findViewById(R.id.toolbarText);
-		/*FragmentManager childFragMan = getChildFragmentManager();
-		FragmentTransaction childFragTrans = childFragMan.beginTransaction();
-        childFragTrans.add(R.id.content_frame,new WRewardsLoggedinAndNotLinkedFragment());
-        childFragTrans.commit();*/
 		updateTitle = (UpdateNavDrawerTitle) getActivity();
 		mBurgerButtonPressed.setOnClickListener(new View.OnClickListener() {
 			@Override

@@ -307,32 +307,43 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 				super.onPostExecute(issueLoanResponse);
 				try {
 					hideProgressBar();
-					if (issueLoanResponse.httpCode == 200) {
-						setLoanWithdrawalClick(false);
-						mSharePreferenceHelper.save(String.valueOf(issueLoanResponse.installmentAmount), "lw_installment_amount");
-						Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this, LoanWithdrawalConfirmActivity.class);
-						openConfirmWithdrawal.putExtra("drawnDownAmount", mDrawnDownAmount);
-						openConfirmWithdrawal.putExtra("availableFunds", mAvailableFunds);
-						openConfirmWithdrawal.putExtra("creditLimit", mCreditLimit);
-						openConfirmWithdrawal.putExtra("minDrawnDownAmount", wminDrawnDownAmount);
-						openConfirmWithdrawal.putExtra("repaymentPeriod", repaymentPeriod(getCreditAmount()));
-						startActivity(openConfirmWithdrawal);
-						finish();
-					} else {
-						try {
-							hideKeyboard();
-							String responseDesc = issueLoanResponse.response.desc;
-							if (responseDesc != null) {
-								if (!TextUtils.isEmpty(responseDesc)) {
-									setLoanWithdrawalClick(false);
-									Utils.displayValidationMessage(LoanWithdrawalActivity.this,
-											TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-											responseDesc);
+					int httpCode = issueLoanResponse.httpCode;
+					switch (httpCode) {
+						case 200:
+							loanWithdrawalClicked = false;
+							mSharePreferenceHelper.save(String.valueOf(issueLoanResponse.installmentAmount), "lw_installment_amount");
+							Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this, LoanWithdrawalConfirmActivity.class);
+							openConfirmWithdrawal.putExtra("drawnDownAmount", mDrawnDownAmount);
+							openConfirmWithdrawal.putExtra("availableFunds", mAvailableFunds);
+							openConfirmWithdrawal.putExtra("creditLimit", mCreditLimit);
+							openConfirmWithdrawal.putExtra("minDrawnDownAmount", wminDrawnDownAmount);
+							openConfirmWithdrawal.putExtra("repaymentPeriod", repaymentPeriod(getCreditAmount()));
+							startActivity(openConfirmWithdrawal);
+							finish();
+							break;
+
+						case 440:
+							Utils.displayValidationMessage(LoanWithdrawalActivity.this,
+									TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
+									issueLoanResponse.response.stsParams);
+							break;
+
+						default:
+							try {
+								hideKeyboard();
+								String responseDesc = issueLoanResponse.response.desc;
+								if (responseDesc != null) {
+									if (!TextUtils.isEmpty(responseDesc)) {
+										loanWithdrawalClicked = false;
+										Utils.displayValidationMessage(LoanWithdrawalActivity.this,
+												TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+												responseDesc);
+									}
 								}
+							} catch (NullPointerException ignored) {
+								showSoftKeyboard();
 							}
-						} catch (NullPointerException ignored) {
-							showSoftKeyboard();
-						}
+							break;
 					}
 				} catch (Exception ignored) {
 				}

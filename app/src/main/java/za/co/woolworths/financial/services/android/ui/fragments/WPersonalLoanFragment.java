@@ -34,7 +34,6 @@ import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsA
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
@@ -43,10 +42,9 @@ import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener, AlertDialogInterface {
+public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
 	private PersonalLoanAmount personalLoanInfo;
 	public WTextView availableBalance;
@@ -71,13 +69,10 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
 	private boolean bolBroacastRegistred;
-	private AlertDialogManager mTokenExpireDialog;
-	private WPersonalLoanFragment mContext;
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		mContext = this;
 		return inflater.inflate(R.layout.cards_common_fragment, container, false);
 	}
 
@@ -85,8 +80,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-		mTokenExpireDialog = new AlertDialogManager(getActivity(), woolworthsApplication,
-				mContext);
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
 		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
@@ -173,12 +166,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						.stay);
 				break;
 			case R.id.txtIncreseLimit:
-				//if (!isOfferActive) {
-				((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
-				Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
-				startActivity(openCLIIncrease);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				//}
+				if (!isOfferActive) {
+					((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
+					Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
+					startActivity(openCLIIncrease);
+					getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				}
 				break;
 		}
 	}
@@ -226,7 +219,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 							enableIncreaseLimit();
 						}
 					} else if (httpCode == 440) {
-						mTokenExpireDialog.showExpiredTokenDialog(offerActive.response.stsParams);
+						Utils.displayValidationMessage(getActivity(),
+								TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
+								offerActive.response.stsParams);
 					} else {
 						disableIncreaseLimit();
 						Utils.displayValidationMessage(getActivity(),
@@ -348,25 +343,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	}
 
 	@Override
-	public void onExpiredTokenCancel() {
-		mTokenExpireDialog.onCancel();
-	}
-
-	@Override
-	public void onExpiredTokenAuthentication() {
-		mTokenExpireDialog.reAuthenticate();
-	}
-
-	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (!mTokenExpireDialog.getAccountSignInState()) {
-			if (mTokenExpireDialog.getOnBackPressState()) {
-				mTokenExpireDialog.onCancel(); // go back on back press state
-			} else {
-				retryConnect();
-			}
-		}
+		retryConnect();
 	}
 
 	private void retryConnect() {

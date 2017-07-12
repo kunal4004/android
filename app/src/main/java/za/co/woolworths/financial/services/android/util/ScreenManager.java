@@ -10,7 +10,6 @@ import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
@@ -39,11 +38,14 @@ public class ScreenManager {
 	}
 
 	public static void presentExpiredTokenSSOSignIn(Activity activity, String newSTSParams) {
+		HashMap<String, String> params = new HashMap<>();
+		params.put(SSOActivity.TAG_EXPIRED_TOKEN, WoolworthsApplication.getSsoRedirectURI());
 		Intent intent = new Intent(activity, SSOActivity.class);
 		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
 		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
 		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
 		intent.putExtra(SSOActivity.TAG_SCOPE, newSTSParams);
+		intent.putExtra(SSOActivity.TAG_EXTRA_QUERYSTRING_PARAMS, params);
 		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
 		activity.overridePendingTransition(0, 0);
 	}

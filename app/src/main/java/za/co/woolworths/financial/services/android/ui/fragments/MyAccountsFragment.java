@@ -54,7 +54,6 @@ import za.co.woolworths.financial.services.android.ui.activities.UserDetailActiv
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
-import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
@@ -67,11 +66,10 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 
-public class MyAccountsFragment extends BaseFragment implements View.OnClickListener, ViewPager.OnPageChangeListener, AlertDialogInterface {
+public class MyAccountsFragment extends BaseFragment implements View.OnClickListener, ViewPager.OnPageChangeListener {
 
 	private HideActionBar hideActionBar;
 
@@ -124,10 +122,10 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	private ErrorHandlerView mErrorHandlerView;
 	private UpdateNavigationDrawer updateNavigationDrawer;
 	private WGlobalState wGlobalState;
-	private AlertDialogManager mTokenExpireDialog;
 	private MyAccountsFragment mContext;
 	private boolean loadMessageCounter = false;
 	private String TAG = "MyAccountsFragment";
+	private MenuNavigationInterface mNavigationInterface;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -150,11 +148,10 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		super.onViewCreated(view, savedInstanceState);
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 		wGlobalState = woolworthsApplication.getWGlobalState();
+		mNavigationInterface = (MenuNavigationInterface) getActivity();
 		openMessageActivity = (ImageView) view.findViewById(R.id.openMessageActivity);
 		openShoppingList = (ImageView) view.findViewById(R.id.openShoppingList);
 		contactUs = (RelativeLayout) view.findViewById(R.id.contactUs);
-		mTokenExpireDialog = new AlertDialogManager(getActivity(), woolworthsApplication,
-				mContext);
 		applyStoreCardView = (LinearLayout) view.findViewById(R.id.applyStoreCard);
 		applyCreditCardView = (LinearLayout) view.findViewById(R.id.applyCrediCard);
 		applyPersonalCardView = (LinearLayout) view.findViewById(R.id.applyPersonalLoan);
@@ -171,8 +168,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		signOutBtn = (RelativeLayout) view.findViewById(R.id.signOutBtn);
 		myDetailBtn = (RelativeLayout) view.findViewById(R.id.rlMyDetails);
 		viewPager = (ViewPager) view.findViewById(R.id.pager);
-		mTokenExpireDialog = new AlertDialogManager(getActivity(), woolworthsApplication,
-				mContext);
 		pager_indicator = (LinearLayout) view.findViewById(R.id.viewPagerCountDots);
 		sc_available_funds = (WTextView) view.findViewById(R.id.sc_available_funds);
 		cc_available_funds = (WTextView) view.findViewById(R.id.cc_available_funds);
@@ -636,7 +631,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			@Override
 			protected void onPostExecute(AccountsResponse accountsResponse) {
 				try {
-					switch (accountsResponse.httpCode) {
+					int httpCode = accountsResponse.httpCode;
+					switch (httpCode) {
 						case 200:
 							loadMessageCounter = false;
 							MyAccountsFragment.this.accountsResponse = accountsResponse;
@@ -657,7 +653,14 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 							break;
 						case 440:
 							loadMessageCounter = false;
-							mTokenExpireDialog.showExpiredTokenDialog(accountsResponse.response.stsParams);
+							accounts.clear();
+							unavailableAccounts.clear();
+							unavailableAccounts.addAll(Arrays.asList("SC", "CC", "PL"));
+							wGlobalState.setAccountHasExpired(true);
+							configureView();
+							Utils.displayValidationMessage(getActivity(),
+									TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
+									accountsResponse.response.stsParams);
 							break;
 						default:
 							loadMessageCounter = false;
@@ -735,6 +738,11 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		super.onResume();
 		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("UpdateCounter"));
 		messageCounterRequest();
+
+		try {
+			onSessionExpired();
+		} catch (NullPointerException ex) {
+		}
 	}
 
 	@Override
@@ -848,7 +856,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			@Override
 			protected void onPostExecute(VoucherResponse voucherResponse) {
 				super.onPostExecute(voucherResponse);
-				if (voucherResponse.httpCode == 200 && voucherResponse.voucherCollection.vouchers!=null)
+				if (voucherResponse.httpCode == 200 && voucherResponse.voucherCollection.vouchers != null)
 					updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
 
 			}
@@ -913,14 +921,18 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		}
 	}
 
-	@Override
-	public void onExpiredTokenCancel() {
-		configureView();
+	private void onSessionExpired() {
+		if (wGlobalState.accountHasExpired()
+				&& (wGlobalState.getPressState().equalsIgnoreCase
+				(WGlobalState.ON_CANCEL))) {
+			configureView();
+		} else if (wGlobalState.accountHasExpired()
+				&& (wGlobalState.getPressState().equalsIgnoreCase
+				(WGlobalState.ON_SIGN_IN))) {
+			mNavigationInterface.switchToView(4);
+		} else {
+		}
+		wGlobalState.setAccountHasExpired(false);
+		wGlobalState.setPressState("");
 	}
-
-	@Override
-	public void onExpiredTokenAuthentication() {
-		mTokenExpireDialog.reAuthenticate();
-	}
-
 }

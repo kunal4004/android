@@ -13,8 +13,11 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
@@ -24,13 +27,14 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 	private Animation mPopEnterAnimation;
 	private RelativeLayout mRelPopContainer;
 	private boolean viewWasClicked = false;
-
 	private static final int ANIM_DOWN_DURATION = 700;
+	private WoolworthsApplication woolworthsApplication;
+	private WGlobalState mWGlobalState;
 
 	public enum VALIDATION_MESSAGE_LIST {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
-		SHOPPING_LIST_INFO
+		SHOPPING_LIST_INFO, SESSION_EXPIRED
 	}
 
 	VALIDATION_MESSAGE_LIST current_view;
@@ -42,6 +46,8 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 		Utils.updateStatusBarBackground(this, android.R.color.transparent);
 		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+		woolworthsApplication = (WoolworthsApplication) TransientActivity.this.getApplication();
+		mWGlobalState = woolworthsApplication.getWGlobalState();
 
 		Bundle mBundle = getIntent().getExtras();
 		if (mBundle != null) {
@@ -54,6 +60,8 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 		} else {
 			finish();
 		}
+
+		mWGlobalState = woolworthsApplication.getWGlobalState();
 	}
 
 	private void displayView(VALIDATION_MESSAGE_LIST current_view) {
@@ -202,7 +210,22 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 				WButton btnConfidentialOk = (WButton) findViewById(R.id.btnConfidentialOk);
 				setAnimation();
 				btnConfidentialOk.setOnClickListener(this);
-				//mRelPopContainer.setOnClickListener(this);
+				break;
+
+			case SESSION_EXPIRED:
+				mWGlobalState.setAccountSignInState(false);
+				mWGlobalState.setOnBackPressed(true);
+				setContentView(R.layout.session_expired);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				setAnimation();
+				WButton mBtnSessionExpiredCancel = (WButton) findViewById(R.id.btnSECancel);
+				WButton mBtnSignIn = (WButton) findViewById(R.id.btnSESignIn);
+				mBtnSessionExpiredCancel.setOnClickListener(this);
+				mBtnSignIn.setOnClickListener(this);
+				break;
+
+			default:
 				break;
 		}
 	}
@@ -226,6 +249,35 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 				@Override
 				public void onAnimationEnd(Animation animation) {
 					dismissLayout();
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
+		}
+	}
+
+	private void finishActivity() {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					if (mWGlobalState.getOnBackPressed()) {
+						clearHistory();
+					} else {
+						closeActivity();
+					}
 				}
 			});
 			mRelRootContainer.startAnimation(animation);
@@ -348,8 +400,7 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
-		overridePendingTransition(0, 0);
+		finishActivity();
 	}
 
 	private void setAnimation() {
@@ -393,6 +444,46 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 				confidentialAnimation();
 				break;
 
+			case R.id.btnSECancel:
+				mWGlobalState.setPressState(WGlobalState.ON_CANCEL);
+				mWGlobalState.setOnBackPressed(false);
+				Intent i = new Intent(TransientActivity.this, WOneAppBaseActivity.class);
+				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+				startActivity(i);
+				overridePendingTransition(0, 0);
+				finish();
+				break;
+
+			case R.id.btnSESignIn:
+				mWGlobalState.setPressState(WGlobalState.ON_SIGN_IN);
+				String mSTSParams = description;
+				if (TextUtils.isEmpty(mSTSParams)) {
+					mSTSParams = "";
+				} else {
+					mSTSParams = Utils.getScope(mSTSParams);
+				}
+				ScreenManager.presentExpiredTokenSSOSignIn(TransientActivity.this, mSTSParams);
+				overridePendingTransition(0, 0);
+				finish();
+				break;
+
 		}
+	}
+
+	private void clearHistory() {
+		mWGlobalState.setOnBackPressed(false);
+		Intent i = new Intent(TransientActivity.this, WOneAppBaseActivity.class);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		startActivity(i);
+		startExitAnimation();
+	}
+
+	public void closeActivity() {
+		finish();
+		overridePendingTransition(0, 0);
 	}
 }

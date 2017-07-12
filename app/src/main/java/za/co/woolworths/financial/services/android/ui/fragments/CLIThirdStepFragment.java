@@ -41,7 +41,6 @@ import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicato
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIBankAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIIncomeProofAdapter;
-import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -52,12 +51,11 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.binder.view.CLIBankAccountTypeBinder;
 
 public class CLIThirdStepFragment extends Fragment implements View.OnClickListener,
 		CLIBankAccountTypeBinder.OnCheckboxClickListener, CLIStepIndicatorActivity
-				.OnFragmentRefresh, NetworkChangeListener, AlertDialogInterface {
+				.OnFragmentRefresh, NetworkChangeListener {
 
 	private CLIFirstStepFragment.StepNavigatorCallback stepNavigatorCallback;
 
@@ -93,8 +91,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 	private boolean sendEmailButtonClicked = true;
 	private boolean updateBankDetailClicked = false;
 	private boolean getBankAccountClicked = true;
-	private AlertDialogManager mTokenExpireDialog;
-
 
 	public CLIThirdStepFragment() {
 	}
@@ -114,9 +110,6 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 			networkChangeListener = this;
 		} catch (ClassCastException ignored) {
 		}
-
-		mTokenExpireDialog = new AlertDialogManager(getActivity(), (WoolworthsApplication) getActivity().getApplication(),
-				mContext);
 
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
 		mWoolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
@@ -222,8 +215,9 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 								break;
 
 							case 440:
-								mTokenExpireDialog.showExpiredTokenDialog(bankAccountTypes
-										.response.stsParams);
+								Utils.displayValidationMessage(getActivity(),
+										TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
+										bankAccountTypes.response.stsParams);
 								break;
 
 							default:
@@ -395,7 +389,9 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 							break;
 
 						case 440:
-							mTokenExpireDialog.showExpiredTokenDialog(cliEmailResponse.response.stsParams);
+							Utils.displayValidationMessage(getActivity(),
+									TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
+									cliEmailResponse.response.stsParams);
 							break;
 
 						default:
@@ -451,8 +447,9 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 								break;
 
 							case 440:
-								mTokenExpireDialog.showExpiredTokenDialog
-										(updateBankDetailResponse.response.stsParams);
+								Utils.displayValidationMessage(getActivity(),
+										TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
+										updateBankDetailResponse.response.stsParams);
 								break;
 
 							default:
@@ -586,25 +583,9 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 	}
 
 	@Override
-	public void onExpiredTokenCancel() {
-		mTokenExpireDialog.onCancel();
-	}
-
-	@Override
-	public void onExpiredTokenAuthentication() {
-		mTokenExpireDialog.reAuthenticate();
-	}
-
-	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (!mTokenExpireDialog.getAccountSignInState()) {
-			if (mTokenExpireDialog.getOnBackPressState()) {
-				mTokenExpireDialog.onCancel(); // go back on back press state
-			} else {
-				retryConnect();
-			}
-		}
+		retryConnect();
 	}
 
 	public void retryConnect() {

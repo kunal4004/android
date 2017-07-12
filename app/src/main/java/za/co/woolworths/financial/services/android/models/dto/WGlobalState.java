@@ -18,8 +18,11 @@ public class WGlobalState {
 		this.mContext = context;
 	}
 
-	private boolean cardGestureIsEnabled;
-	private boolean onBackPressed;
+	public static final String ON_CANCEL = "CANCEL";
+	public static final String ON_SIGN_IN = "SIGNIN";
+
+	private boolean cardGestureIsEnabled, onBackPressed, accountHasExpired,rewardHasExpired;
+	private String pressState;
 
 	public void setAccountSignInState(boolean accountSignInState) {
 		setPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE, accountSignInState);
@@ -66,4 +69,27 @@ public class WGlobalState {
 		return Boolean.valueOf(value);
 	}
 
+	public boolean accountHasExpired() {
+		return accountHasExpired;
+	}
+
+	public void setAccountHasExpired(boolean pAccountHasExpired) {
+		accountHasExpired = pAccountHasExpired;
+	}
+
+	public String getPressState() {
+		return pressState;
+	}
+
+	public void setPressState(String pPressState) {
+		pressState = pPressState;
+	}
+
+	public boolean rewardHasExpired() {
+		return rewardHasExpired;
+	}
+
+	public void setRewardHasExpired(boolean pRewardHasExpired) {
+		rewardHasExpired = pRewardHasExpired;
+	}
 }
