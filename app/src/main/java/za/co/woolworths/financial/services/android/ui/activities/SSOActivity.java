@@ -438,6 +438,9 @@ public class SSOActivity extends WebViewActivity {
 					}
 				}
 
+			} else if (url.equalsIgnoreCase(WoolworthsApplication.getSsoUpdateDetailsRedirectUri())) {
+				setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue());
+				closeActivity();
 			} else {
 			}
 		}
