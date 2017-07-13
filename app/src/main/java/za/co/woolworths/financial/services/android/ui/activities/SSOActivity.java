@@ -425,6 +425,20 @@ public class SSOActivity extends WebViewActivity {
 						}
 					}
 				});
+			} else if (extraQueryStringParams != null) {
+				int indexOfQuestionMark = url.indexOf("?");
+				if (indexOfQuestionMark > -1) {
+					String urlWithoutQueryString = url.substring(0, indexOfQuestionMark);
+
+					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
+						Intent intent = new Intent();
+						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
+						closeActivity();
+					} else {
+					}
+				}
+
+			} else {
 			}
 		}
 
