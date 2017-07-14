@@ -33,7 +33,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -342,7 +344,11 @@ public class SSOActivity extends WebViewActivity {
 		if (scope == null) {
 			scope = "";
 		}
-		scope = scope.concat(" openid email profile");//default scope
+		try {
+			scope = scope.concat(URLEncoder.encode(" openid email profile", "UTF-8"));//default scope
+		} catch (UnsupportedEncodingException e) {
+			Log.e(TAG, e.toString());
+		}
 
 
 		Uri.Builder builder = new Uri.Builder();
