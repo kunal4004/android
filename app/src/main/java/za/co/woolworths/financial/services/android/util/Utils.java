@@ -483,7 +483,7 @@ public class Utils {
 	}
 
 	public static String getScope(String scope) {
-		return scope.replaceAll("scope=", "");
+		return scope.replaceAll("scope\\u003d", "");
 	}
 
 	public static String removeUnicodesFromString(String value)

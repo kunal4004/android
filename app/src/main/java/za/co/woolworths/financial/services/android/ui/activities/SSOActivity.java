@@ -196,7 +196,7 @@ public class SSOActivity extends WebViewActivity {
 		Log.d(SSOActivity.TAG, String.format("Authorization Link: %s", link));
 
 		bundle.putString("title", "SIGN IN");
-		bundle.putString("link", link);
+		bundle.putString("link", link.replace("&max_age=300","")); //temporary should be removed
 		intent.putExtra("Bundle", bundle);
 
 		return intent;

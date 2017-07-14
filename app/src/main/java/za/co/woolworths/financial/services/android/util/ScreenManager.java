@@ -47,6 +47,7 @@ public class ScreenManager {
 		intent.putExtra(SSOActivity.TAG_PROTOCOL, SSOActivity.Protocol.HTTPS.rawValue());
 		intent.putExtra(SSOActivity.TAG_HOST, SSOActivity.Host.STS.rawValue());
 		intent.putExtra(SSOActivity.TAG_PATH, SSOActivity.Path.SIGNIN.rawValue());
+		intent.putExtra(SSOActivity.TAG_SCOPE, newSTSParams);
 		activity.startActivityForResult(intent, SSOActivity.SSOActivityResult.LAUNCH.rawValue());
 		activity.overridePendingTransition(0, 0);
 	}
