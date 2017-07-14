@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -54,6 +55,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class SSOActivity extends WebViewActivity {
@@ -90,7 +92,6 @@ public class SSOActivity extends WebViewActivity {
 	public static final String TAG_JWT = "TAG_JWT";
 	public static final String TAG_SCOPE = "TAG_SCOPE";
 	public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
-	public static final String TAG_EXPIRED_TOKEN = "TAG_EXPIRED_TOKEN";
 	//Default redirect url used by LOGIN AND LINK CARDS
 	private static String redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 	private Protocol protocol;
@@ -344,12 +345,8 @@ public class SSOActivity extends WebViewActivity {
 		if (scope == null) {
 			scope = "";
 		}
-		try {
-			scope = scope.concat(URLEncoder.encode(" openid email profile", "UTF-8"));//default scope
-		} catch (UnsupportedEncodingException e) {
-			Log.e(TAG, e.toString());
-		}
 
+		scope = scope.concat(" openid email profile");//default scope
 
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme(this.host.rawValue()) // moved host.rawValue() from authority to schema as MCS returns host with " https:// "
@@ -420,9 +417,10 @@ public class SSOActivity extends WebViewActivity {
 						}
 
 						try {
-							if (extraQueryStringParams.containsKey(TAG_EXPIRED_TOKEN)) {
+							if (!TextUtils.isEmpty(mGlobalState.getNewSTSParams())) {
 								mGlobalState.setAccountSignInState(true);
 								clearHistory();
+								mGlobalState.setNewSTSParams("");
 							} else {
 								closeActivity();
 							}
