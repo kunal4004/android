@@ -196,7 +196,7 @@ public class SSOActivity extends WebViewActivity {
 		Log.d(SSOActivity.TAG, String.format("Authorization Link: %s", link));
 
 		bundle.putString("title", "SIGN IN");
-		bundle.putString("link", link.replace("&max_age=300","")); //temporary should be removed
+		bundle.putString("link", link);
 		intent.putExtra("Bundle", bundle);
 
 		return intent;
@@ -347,6 +347,11 @@ public class SSOActivity extends WebViewActivity {
 		}
 
 		scope = scope.concat(" openid email profile");//default scope
+
+		if (scope.contains("&max_age=300")) {
+			scope = scope.replace("&max_age=300", "");
+			scope = scope + "&max_age=300";
+		}
 
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme(this.host.rawValue()) // moved host.rawValue() from authority to schema as MCS returns host with " https:// "
