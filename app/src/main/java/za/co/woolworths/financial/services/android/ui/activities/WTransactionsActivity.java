@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WTransactionsActivity extends AppCompatActivity {
@@ -113,6 +114,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 				try {
 
 					int httpCode = transactionHistoryResponse.httpCode;
+					httpCode = 440;
 					switch (httpCode) {
 						case 200:
 							if (transactionHistoryResponse.transactions.size() > 0) {
@@ -126,9 +128,7 @@ public class WTransactionsActivity extends AppCompatActivity {
 							break;
 						case 440:
 							if (!(WTransactionsActivity.this.isFinishing())) {
-								Utils.displayValidationMessage(WTransactionsActivity.this,
-										TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
-										transactionHistoryResponse.response.stsParams);
+								SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(WTransactionsActivity.this, transactionHistoryResponse.response.stsParams);
 							}
 							break;
 						default:

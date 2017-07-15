@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -211,7 +212,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 	private void setAmount() {
 		if (getDrawnDownAmount() < wminDrawnDownAmount) {
 			Utils.displayValidationMessage(LoanWithdrawalActivity.this,
-					TransientActivity.VALIDATION_MESSAGE_LIST.LOW_LOAN_AMOUNT,
+					CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.LOW_LOAN_AMOUNT,
 					String.valueOf(wminDrawnDownAmount));
 		} else if (getDrawnDownAmount() >= wminDrawnDownAmount
 				&& getDrawnDownAmount() <= getAvailableFund()) {
@@ -226,7 +227,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 			}, 200);
 		} else {
 			Utils.displayValidationMessage(LoanWithdrawalActivity.this,
-					TransientActivity.VALIDATION_MESSAGE_LIST.HIGH_LOAN_AMOUNT, "");
+					CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.HIGH_LOAN_AMOUNT, "");
 		}
 	}
 
@@ -335,9 +336,9 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 							break;
 
 						case 440:
-							Utils.displayValidationMessage(LoanWithdrawalActivity.this,
-									TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
-									issueLoanResponse.response.stsParams);
+							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired
+									(LoanWithdrawalActivity.this, issueLoanResponse
+									.response.stsParams);
 							break;
 
 						default:
@@ -348,7 +349,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 									if (!TextUtils.isEmpty(responseDesc)) {
 										loanWithdrawalClicked = false;
 										Utils.displayValidationMessage(LoanWithdrawalActivity.this,
-												TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+												CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
 												responseDesc);
 									}
 								}

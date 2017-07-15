@@ -292,6 +292,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	public void updateVoucherCount(int count) {
 		drawerFragment.notifyNavigationDrawer(count);
 	}
+
 }
 
 

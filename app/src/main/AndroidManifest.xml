@@ -262,7 +262,7 @@
             android:value="GlideModule"/>
 
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.TransientActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
         <activity

@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -177,8 +178,8 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 							break;
 
 						case 440:
-							Utils.displayValidationMessage(LoanWithdrawalConfirmActivity.this,
-									TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
+							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired
+									(LoanWithdrawalConfirmActivity.this,
 									authoriseLoanResponse.response.stsParams);
 							break;
 
@@ -186,7 +187,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 							String desc = authoriseLoanResponse.response.desc;
 							if (desc != null && !TextUtils.isEmpty(desc)) {
 								Utils.displayValidationMessage(LoanWithdrawalConfirmActivity.this,
-										TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+										CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
 										desc);
 							}
 							break;

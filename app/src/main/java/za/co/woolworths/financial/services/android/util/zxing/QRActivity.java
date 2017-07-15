@@ -78,7 +78,7 @@ import za.co.woolworths.financial.services.android.ui.activities.MultipleImageAc
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
-import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
@@ -635,7 +635,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	}
 
 	private void errorScanCode() {
-		Utils.displayValidationMessage(this, TransientActivity.VALIDATION_MESSAGE_LIST.BARCODE_ERROR, "");
+		Utils.displayValidationMessage(this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.BARCODE_ERROR, "");
 	}
 
 	private void resumeScan() {

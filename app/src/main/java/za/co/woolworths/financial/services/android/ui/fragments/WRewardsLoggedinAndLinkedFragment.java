@@ -21,7 +21,7 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -177,7 +177,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 					mWGlobalState.setRewardHasExpired(true);
 					mWGlobalState.setRewardSignInState(false);
 					Utils.displayValidationMessage(getActivity(),
-							TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
+							CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
 							voucherResponse.response.stsParams);
 					break;
 				default:
