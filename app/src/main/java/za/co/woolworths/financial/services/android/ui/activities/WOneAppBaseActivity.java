@@ -26,7 +26,9 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 
+import za.co.woolworths.financial.services.android.models.dto.Voucher;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.fragments.MenuNavigationInterface;
 
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
@@ -58,6 +60,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 
 	private ActionBar mActionBar;
 	private DrawerLayout mDrawerLayout;
+	private WGlobalState mWGlobalState;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(this);
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
+
+		mWGlobalState = ((WoolworthsApplication) WOneAppBaseActivity.this.getApplication()).getWGlobalState();
 
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayShowHomeEnabled(false);
@@ -121,11 +126,13 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 				title = getString(R.string.screen_title_store);
 				break;
 			case 3:
+				mWGlobalState.setFragmentIsReward(true);
 				isRewardFragment = true;
 				fragment = new WRewardsFragment();
 				title = getString(R.string.wrewards);
 				break;
 			case 4:
+				mWGlobalState.setFragmentIsReward(false);
 				fragment = new MyAccountsFragment();
 				title = getString(R.string.nav_item_accounts);
 				break;
@@ -258,9 +265,25 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 			@Override
 			protected void onPostExecute(VoucherResponse voucherResponse) {
 				super.onPostExecute(voucherResponse);
-				if (voucherResponse.httpCode == 200 && voucherResponse.voucherCollection.vouchers!=null)
-					updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
+				int httpCode = voucherResponse.httpCode;
+				switch (httpCode) {
+					case 200:
+						mWGlobalState.setRewardSignInState(true);
+						List<Voucher> vouchers = voucherResponse.voucherCollection.vouchers;
+						if (vouchers != null) {
+							updateVoucherCount(vouchers.size());
+						}
+						break;
 
+					case 440:
+						mWGlobalState.setRewardHasExpired(true);
+						mWGlobalState.setRewardSignInState(false);
+						break;
+
+					default:
+						mWGlobalState.setRewardSignInState(false);
+						break;
+				}
 			}
 		};
 	}

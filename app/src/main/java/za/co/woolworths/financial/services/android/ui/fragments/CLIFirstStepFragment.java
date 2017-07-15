@@ -28,7 +28,6 @@ import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIDeaBankMapAdapter;
-import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
@@ -37,11 +36,10 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICbxContentBinder;
 
 
-public class CLIFirstStepFragment extends Fragment implements View.OnClickListener, CLICbxContentBinder.OnCheckboxClickListener, NetworkChangeListener, AlertDialogInterface {
+public class CLIFirstStepFragment extends Fragment implements View.OnClickListener, CLICbxContentBinder.OnCheckboxClickListener, NetworkChangeListener {
 
 	private StepNavigatorCallback stepNavigatorCallback;
 	private int mSelectedPosition = -1;
@@ -51,7 +49,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
-	private AlertDialogManager mTokenExpireDialog;
 
 	public interface StepNavigatorCallback {
 		void openNextFragment(int index);
@@ -91,8 +88,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 			networkChangeListener = this;
 		} catch (ClassCastException ignored) {
 		}
-		mTokenExpireDialog = new AlertDialogManager(getActivity(), (WoolworthsApplication) getActivity().getApplication(),
-				mContext);
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
 		initUI(view);
 		setListener();
@@ -199,7 +194,9 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 							relButtonCLIDeaBank.setVisibility(View.VISIBLE);
 							break;
 						case 440:
-							mTokenExpireDialog.showExpiredTokenDialog(deaBanks.response.stsParams);
+							Utils.displayValidationMessage(getActivity(),
+									TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
+									deaBanks.response.stsParams);
 							break;
 						default:
 							relButtonCLIDeaBank.setVisibility(View.GONE);
@@ -301,25 +298,9 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 	}
 
 	@Override
-	public void onExpiredTokenCancel() {
-		mTokenExpireDialog.onCancel();
-	}
-
-	@Override
-	public void onExpiredTokenAuthentication() {
-		mTokenExpireDialog.reAuthenticate();
-	}
-
-	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (!mTokenExpireDialog.getAccountSignInState()) {
-			if (mTokenExpireDialog.getOnBackPressState()) {
-				mTokenExpireDialog.onCancel(); // go back on back press state
-			} else {
-				retryConnect();
-			}
-		}
+		retryConnect();
 	}
 
 	private void retryConnect() {

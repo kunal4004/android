@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -33,7 +34,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -52,6 +55,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class SSOActivity extends WebViewActivity {
@@ -129,22 +133,21 @@ public class SSOActivity extends WebViewActivity {
 		this.webView.setWebViewClient(this.webviewClient);
 		this.webView.getSettings().setUseWideViewPort(true);
 		this.webView.getSettings().setLoadWithOverviewMode(true);
-		this.webView.setWebChromeClient(new WebChromeClient(){
+		this.webView.setWebChromeClient(new WebChromeClient() {
 			@Override
 			public void onReceivedTitle(WebView view, String title) {
 				super.onReceivedTitle(view, title);
 
 				ArrayList<String> invalidTitles = new ArrayList<String>(
 						Arrays.asList("about:blank".toLowerCase(),
-								getString(R.string .sso_title_text_submit_this_form).toLowerCase(),
+								getString(R.string.sso_title_text_submit_this_form).toLowerCase(),
 								SSOActivity.this.redirectURIString.toLowerCase(),
 								SSOActivity.this.redirectURIString.concat("?state=").concat(SSOActivity.this.state).toLowerCase())
 				);
 
-				if (invalidTitles.contains(title.toLowerCase())){
+				if (invalidTitles.contains(title.toLowerCase())) {
 					toolbarTextView.setText("");
-				}
-				else
+				} else
 					toolbarTextView.setText(title);
 			}
 		});
@@ -274,7 +277,6 @@ public class SSOActivity extends WebViewActivity {
 	private String constructAndGetAuthorisationRequestURL(String scope) {
 
 
-
 		switch (this.path) {
 
 			case SIGNIN:
@@ -333,7 +335,7 @@ public class SSOActivity extends WebViewActivity {
 
 			case LOGOUT:
 				this.redirectURIString = WoolworthsApplication.getSsoRedirectURILogout();
-					break;
+				break;
 
 			default:
 				break;
@@ -343,8 +345,13 @@ public class SSOActivity extends WebViewActivity {
 		if (scope == null) {
 			scope = "";
 		}
+
 		scope = scope.concat(" openid email profile");//default scope
 
+		if (scope.contains("&max_age=300")) {
+			scope = scope.replace("&max_age=300", "");
+			scope = scope + "&max_age=300";
+		}
 
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme(this.host.rawValue()) // moved host.rawValue() from authority to schema as MCS returns host with " https:// "
@@ -380,7 +387,7 @@ public class SSOActivity extends WebViewActivity {
 			super.onPageStarted(view, url, favicon);
 			showProgressBar();
 
-			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER){
+			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) {
 
 				view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
 					@Override
@@ -414,9 +421,36 @@ public class SSOActivity extends WebViewActivity {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
 						}
 
-						closeActivity();
+						try {
+							if (!TextUtils.isEmpty(mGlobalState.getNewSTSParams())) {
+								mGlobalState.setAccountSignInState(true);
+								clearHistory();
+								mGlobalState.setNewSTSParams("");
+							} else {
+								closeActivity();
+							}
+						} catch (NullPointerException ex) {
+							closeActivity();
+						}
 					}
 				});
+			} else if (extraQueryStringParams != null) {
+				int indexOfQuestionMark = url.indexOf("?");
+				if (indexOfQuestionMark > -1) {
+					String urlWithoutQueryString = url.substring(0, indexOfQuestionMark);
+
+					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
+						Intent intent = new Intent();
+						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
+						closeActivity();
+					} else {
+					}
+				}
+
+			} else if (url.equalsIgnoreCase(WoolworthsApplication.getSsoUpdateDetailsRedirectUri())) {
+				setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue());
+				closeActivity();
+			} else {
 			}
 		}
 
@@ -430,16 +464,15 @@ public class SSOActivity extends WebViewActivity {
 			super.onPageFinished(view, url);
 			if (isNavigatingToRedirectURL(url)) {
 				//get state and scope from webview posted form
-				if (SSOActivity.this.path.rawValue().equals(Path.LOGOUT.rawValue())){
+				if (SSOActivity.this.path.rawValue().equals(Path.LOGOUT.rawValue())) {
 					Intent intent = new Intent();
 					setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
 
-				}else
-				if (SSOActivity.this.path.rawValue().equals(Path.UPDATE_PROFILE.rawValue())||SSOActivity.this.path.rawValue().equals(Path.UPDATE_PASSWORD.rawValue())){
+				} else if (SSOActivity.this.path.rawValue().equals(Path.UPDATE_PROFILE.rawValue()) || SSOActivity.this.path.rawValue().equals(Path.UPDATE_PASSWORD.rawValue())) {
 							/*Intent intent = new Intent();
 							setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue(), intent);*/
+				} else {
 				}
-				closeActivity();
 			}
 			hideProgressBar();
 			if (canGoBack()) {
@@ -449,7 +482,7 @@ public class SSOActivity extends WebViewActivity {
 			}
 		}
 
-		private boolean isNavigatingToRedirectURL(String url){
+		private boolean isNavigatingToRedirectURL(String url) {
 
 			String redirectUriWithState = SSOActivity.this.redirectURIString.concat("?state=").concat(SSOActivity.this.state);
 
@@ -630,4 +663,13 @@ public class SSOActivity extends WebViewActivity {
 		super.onDestroy();
 	}
 
+	private void clearHistory() {
+		mGlobalState.setOnBackPressed(false);
+		Intent i = new Intent(SSOActivity.this, WOneAppBaseActivity.class);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		startActivity(i);
+		closeActivity();
+	}
 }

@@ -33,16 +33,14 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
-import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 
-public class MessagesActivity extends AppCompatActivity implements AlertDialogInterface {
+public class MessagesActivity extends AppCompatActivity {
 	public RecyclerView messsageListview;
 	public MesssagesListAdapter adapter = null;
 	public LinearLayoutManager mLayoutManager;
@@ -58,7 +56,6 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 	public List<MessageDetails> messageList;
 	private final ThreadLocal<FragmentManager> fm = new ThreadLocal<>();
 	private ErrorHandlerView mErrorHandlerView;
-	private AlertDialogManager mTokenExpireDialog;
 	private boolean paginationIsEnabled = false;
 
 	@Override
@@ -67,8 +64,6 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 		setContentView(R.layout.messages_activity);
 		Utils.updateStatusBarBackground(this);
 		WoolworthsApplication woolWorthsApplication = (WoolworthsApplication) MessagesActivity.this.getApplication();
-		mTokenExpireDialog = new AlertDialogManager(MessagesActivity.this, woolWorthsApplication,
-				MessagesActivity.this);
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -220,7 +215,8 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 			@Override
 			protected void onPostExecute(MessageResponse messageResponse) {
 				super.onPostExecute(messageResponse);
-				switch (messageResponse.httpCode) {
+				int httpCode = messageResponse.httpCode;
+				switch (httpCode) {
 					case 200:
 						mCurrentPage += 1;
 						mIsLoading = false;
@@ -236,8 +232,9 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 						}
 						break;
 					case 440:
-						paginationIsEnabled = true;
-						mTokenExpireDialog.showExpiredTokenDialog(messageResponse.response.stsParams);
+						Utils.displayValidationMessage(MessagesActivity.this,
+								TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
+								messageResponse.response.stsParams);
 						break;
 
 					default:
@@ -346,7 +343,8 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 	public void handleLoadMessagesResponse(MessageResponse messageResponse) {
 		hideRefreshView();
 		try {
-			switch (messageResponse.httpCode) {
+			int httpCode = messageResponse.httpCode;
+			switch (httpCode) {
 				case 200:
 					messageList = null;
 					messageList = new ArrayList<>();
@@ -376,8 +374,9 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 					}
 					break;
 				case 440:
-					paginationIsEnabled = false;
-					mTokenExpireDialog.showExpiredTokenDialog(messageResponse.response.stsParams);
+					Utils.displayValidationMessage(MessagesActivity.this,
+							TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
+							messageResponse.response.stsParams);
 					break;
 				default:
 					Utils.alertErrorMessage(MessagesActivity.this, messageResponse.response.desc);
@@ -402,28 +401,12 @@ public class MessagesActivity extends AppCompatActivity implements AlertDialogIn
 	}
 
 	@Override
-	public void onExpiredTokenCancel() {
-		mTokenExpireDialog.onCancelResult();
-	}
-
-	@Override
-	public void onExpiredTokenAuthentication() {
-		mTokenExpireDialog.reAuthenticate();
-	}
-
-	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (!mTokenExpireDialog.getAccountSignInState()) {
-			if (mTokenExpireDialog.getOnBackPressState()) {
-				mTokenExpireDialog.onCancelResult();
-			} else {
-				if (paginationIsEnabled) {
-					loadMoreMessages();
-				} else {
-					loadMessages();
-				}
-			}
+		if (paginationIsEnabled) {
+			loadMoreMessages();
+		} else {
+			loadMessages();
 		}
 	}
 }
