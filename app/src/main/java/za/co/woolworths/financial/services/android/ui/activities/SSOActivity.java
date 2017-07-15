@@ -475,11 +475,6 @@ public class SSOActivity extends WebViewActivity {
 				}
 			}
 			hideProgressBar();
-			if (canGoBack()) {
-				enableBackButton();
-			} else {
-				disableBackButton();
-			}
 		}
 
 		private boolean isNavigatingToRedirectURL(String url) {
@@ -594,57 +589,18 @@ public class SSOActivity extends WebViewActivity {
 		if (event.getAction() == KeyEvent.ACTION_DOWN) {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_BACK:
-					finishCurrentActivity();
+					finishActivity();
 					return true;
 			}
 		}
 		return false;
 	}
 
-	public void goBackInWebView() {
-		if (new ConnectionDetector().isOnline(SSOActivity.this)) {
-			WebBackForwardList history = webView.copyBackForwardList();
-			int index = -1;
-			String url = null;
-
-			while (webView.canGoBackOrForward(index)) {
-				if (!history.getItemAtIndex(history.getCurrentIndex() + index).getUrl().equals("about:blank")) {
-					mErrorHandlerView.hideErrorHandlerLayout();
-					webView.goBackOrForward(index);
-					url = history.getItemAtIndex(-index).getUrl();
-					webView.goBack();
-					break;
-				}
-				index--;
-			}
-			// no history found that is not empty
-			if (url == null) {
-				if (canGoBack()) {
-					webView.goBack();
-				} else {
-					finishCurrentActivity();
-				}
-			}
-		} else {
-			finishCurrentActivity();
-		}
-	}
-
-	public void finishCurrentActivity() {
-		mGlobalState.setOnBackPressed(true);
-		finishActivity();
-	}
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				if (canGoBack()) {
-					enableBackButton();
-					goBackInWebView();
-				} else {
-					disableBackButton();
-				}
+				finishActivity();
 				break;
 		}
 		return true;

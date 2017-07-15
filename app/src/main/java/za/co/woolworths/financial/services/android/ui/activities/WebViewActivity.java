@@ -48,21 +48,6 @@ public class WebViewActivity extends AppCompatActivity {
 		webView.loadUrl(url);
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				if (canGoBack()) {
-					enableBackButton();
-					this.webView.goBack();
-				} else {
-					finishActivity();
-					disableBackButton();
-				}
-				break;
-		}
-		return true;
-	}
 
 	protected class WebViewController extends WebViewClient {
 
@@ -104,41 +89,4 @@ public class WebViewActivity extends AppCompatActivity {
 		overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 	}
 
-
-	public boolean canGoBack() {
-		return (this.webView.canGoBack() && mGoBack());
-	}
-
-	public void enableBackButton() {
-		Drawable upArrow = ContextCompat.getDrawable(WebViewActivity.this, R.drawable.back24);
-		upArrow.setColorFilter(ContextCompat.getColor(WebViewActivity.this, R.color.transparent),
-				PorterDuff.Mode.SRC_ATOP);
-		getSupportActionBar().setHomeAsUpIndicator(upArrow);
-	}
-
-	public void disableBackButton() {
-		Drawable upArrow = ContextCompat.getDrawable(WebViewActivity.this, R.drawable.back24);
-		upArrow.setColorFilter(ContextCompat.getColor(WebViewActivity.this, R.color.greyish), PorterDuff.Mode.SRC_ATOP);
-		getSupportActionBar().setHomeAsUpIndicator(upArrow);
-	}
-
-	public boolean mGoBack() {
-		WebBackForwardList mWebBackForwardList = webView.copyBackForwardList();
-		if (mWebBackForwardList.getCurrentIndex() >= 1) {
-			if (getHistoryUrl(mWebBackForwardList, 0).equalsIgnoreCase(getHistoryUrl(mWebBackForwardList, 1))) {
-				disableBackButton();
-				return false;
-			} else {
-				enableBackButton();
-				return true;
-			}
-		} else {
-			disableBackButton();
-			return false;
-		}
-	}
-
-	public String getHistoryUrl(WebBackForwardList item, int position) {
-		return item.getItemAtIndex(item.getCurrentIndex() - position).getUrl().toString();
-	}
 }
