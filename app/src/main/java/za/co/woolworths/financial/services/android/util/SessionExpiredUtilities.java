@@ -43,7 +43,7 @@ public enum SessionExpiredUtilities {
 		getGlobalState(activity).setNewSTSParams(stsParams);
 	}
 
-	private WGlobalState getGlobalState(Activity activity) {
+	public WGlobalState getGlobalState(Activity activity) {
 		return ((WoolworthsApplication) activity.getApplication()).getWGlobalState();
 	}
 
