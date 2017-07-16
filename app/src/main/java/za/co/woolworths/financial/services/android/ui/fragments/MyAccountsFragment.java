@@ -865,6 +865,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 						List<Voucher> vouchers = voucherResponse.voucherCollection.vouchers;
 						if (vouchers != null) {
 							updateNavigationDrawer.updateVoucherCount(vouchers.size());
+						} else {
+							updateNavigationDrawer.updateVoucherCount(0);
 						}
 						break;
 
@@ -942,7 +944,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	}
 
 	private void onSessionExpired() {
-		if (!TextUtils.isEmpty(wGlobalState.getNewSTSParams()) && wGlobalState.accountHasExpired()) {
+		if (!TextUtils.isEmpty(wGlobalState.getNewSTSParams())) {
 			loadMessageCounter = false;
 			accounts.clear();
 			unavailableAccounts.clear();
