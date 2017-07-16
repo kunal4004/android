@@ -661,7 +661,9 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 							wGlobalState.setAccountHasExpired(true);
 							configureView();
 							showLogOutScreen();
-							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), accountsResponse.response.stsParams);
+							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), accountsResponse
+									.response.stsParams);
+							SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 							break;
 						default:
 							if (accountsResponse.response != null) {
