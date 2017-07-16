@@ -344,9 +344,11 @@ public class SSOActivity extends WebViewActivity {
 
 		scope = scope.concat(" openid email profile");//default scope
 
-		if (scope.contains("&max_age=300")) {
-			scope = scope.replace("&max_age=300", "");
-			scope = scope + "&max_age=300";
+		if (scope.contains("&max_age")) {
+			String[] scopeArray = scope.split("&");
+			String max_age = scopeArray[1].substring(0, scopeArray[1].indexOf(" "));
+			scope = scope.replace(max_age, "");
+			scope = scope + "&" + max_age;
 		}
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme(this.host.rawValue()) // moved host.rawValue() from authority to schema as MCS returns host with " https:// "
@@ -469,11 +471,6 @@ public class SSOActivity extends WebViewActivity {
 				}
 			}
 			hideProgressBar();
-			if (canGoBack()) {
-				enableBackButton();
-			} else {
-				disableBackButton();
-			}
 		}
 
 		private boolean isNavigatingToRedirectURL(String url) {
@@ -588,57 +585,18 @@ public class SSOActivity extends WebViewActivity {
 		if (event.getAction() == KeyEvent.ACTION_DOWN) {
 			switch (keyCode) {
 				case KeyEvent.KEYCODE_BACK:
-					finishCurrentActivity();
+					finishActivity();
 					return true;
 			}
 		}
 		return false;
 	}
 
-	public void goBackInWebView() {
-		if (new ConnectionDetector().isOnline(SSOActivity.this)) {
-			WebBackForwardList history = webView.copyBackForwardList();
-			int index = -1;
-			String url = null;
-
-			while (webView.canGoBackOrForward(index)) {
-				if (!history.getItemAtIndex(history.getCurrentIndex() + index).getUrl().equals("about:blank")) {
-					mErrorHandlerView.hideErrorHandlerLayout();
-					webView.goBackOrForward(index);
-					url = history.getItemAtIndex(-index).getUrl();
-					webView.goBack();
-					break;
-				}
-				index--;
-			}
-			// no history found that is not empty
-			if (url == null) {
-				if (canGoBack()) {
-					webView.goBack();
-				} else {
-					finishCurrentActivity();
-				}
-			}
-		} else {
-			finishCurrentActivity();
-		}
-	}
-
-	public void finishCurrentActivity() {
-		mGlobalState.setOnBackPressed(true);
-		finishActivity();
-	}
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				if (canGoBack()) {
-					enableBackButton();
-					goBackInWebView();
-				} else {
-					disableBackButton();
-				}
+				finishActivity();
 				break;
 		}
 		return true;

@@ -114,7 +114,6 @@ public class WTransactionsActivity extends AppCompatActivity {
 				try {
 
 					int httpCode = transactionHistoryResponse.httpCode;
-					httpCode = 440;
 					switch (httpCode) {
 						case 200:
 							if (transactionHistoryResponse.transactions.size() > 0) {

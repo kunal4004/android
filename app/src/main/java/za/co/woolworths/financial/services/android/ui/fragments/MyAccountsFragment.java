@@ -257,7 +257,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		} else {
 			this.configureView();
 			//Remove voucher count on Navigation drawer
-			updateNavigationDrawer.updateVoucherCount(0);
 		}
 	}
 

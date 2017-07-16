@@ -61,6 +61,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	private ActionBar mActionBar;
 	private DrawerLayout mDrawerLayout;
 	private WGlobalState mWGlobalState;
+	private int a, b;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -292,7 +293,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	public void updateVoucherCount(int count) {
 		drawerFragment.notifyNavigationDrawer(count);
 	}
-
 }
 
 
