@@ -262,6 +262,7 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 	}
 
 	private void finishActivity() {
+		mWGlobalState.setNewSTSParams("");
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
