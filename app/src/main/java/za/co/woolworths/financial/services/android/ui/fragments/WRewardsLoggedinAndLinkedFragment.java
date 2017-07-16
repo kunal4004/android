@@ -171,10 +171,10 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 	public void handleVoucherResponse(VoucherResponse voucherResponse) {
 		try {
 			int httpCode = voucherResponse.httpCode;
-			httpCode = 440;
 			switch (httpCode) {
 				case 200:
 					mWGlobalState.setRewardSignInState(true);
+					mWGlobalState.setRewardHasExpired(false);
 					setupViewPager(viewPager, voucherResponse);
 					if (voucherResponse.voucherCollection.vouchers != null)
 						updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
@@ -182,15 +182,14 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 				case 440:
 					mWGlobalState.setRewardHasExpired(true);
 					mWGlobalState.setRewardSignInState(false);
-					//SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(),
-						//voucherResponse.response.stsParams);
-					updateNavigationDrawer.updateVoucherCount(0);
-					int targetCode = getTargetRequestCode();
 					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(),
-							"scope=C2ID&max_age=300");
-//					Intent intent = new Intent();
-//					getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-//					getFragmentManager().popBackStack();
+							voucherResponse.response.stsParams);
+					updateNavigationDrawer.updateVoucherCount(0);
+					Intent intent = new Intent();
+					getTargetFragment().onActivityResult(WRewardsFragment.FRAGMENT_CODE_2, Activity.RESULT_OK,
+							intent);
+					getFragmentManager().popBackStack();
+					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 					break;
 				default:
 					mWGlobalState.setRewardSignInState(false);
@@ -225,7 +224,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 	}
 
 	private void onSessionExpired() {
-		if (!TextUtils.isEmpty(mWGlobalState.getNewSTSParams())) {
+		if (!TextUtils.isEmpty(mWGlobalState.getNewSTSParams()) && mWGlobalState.rewardHasExpired()) {
 			if (!asyncTaskReward.isCancelled()) {
 				asyncTaskReward.cancel(true);
 			}

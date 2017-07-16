@@ -636,6 +636,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 					switch (httpCode) {
 						case 200:
 							loadMessageCounter = false;
+							wGlobalState.setAccountHasExpired(false);
 							MyAccountsFragment.this.accountsResponse = accountsResponse;
 							List<Account> accountList = accountsResponse.accountList;
 							for (Account p : accountList) {
@@ -884,7 +885,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Log.e("onNewInte", "...onNew Intent");
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 			wGlobalState.setAccountSignInState(true);
 			if (loadMessageCounter) {
@@ -893,12 +893,12 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				initialize();
 			}
 		} else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()) {
-			Log.e("SessionExpired", "...SesisonExpired");
 			wGlobalState.setAccountSignInState(false);
 			initialize();
 			showLogOutScreen();
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
 			try {
+				updateNavigationDrawer.updateVoucherCount(0);
 				wGlobalState.setAccountSignInState(false);
 				SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
 				sessionDao.value = "";
@@ -942,7 +942,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	}
 
 	private void onSessionExpired() {
-		if (!TextUtils.isEmpty(wGlobalState.getNewSTSParams())) {
+		if (!TextUtils.isEmpty(wGlobalState.getNewSTSParams()) && wGlobalState.accountHasExpired()) {
 			loadMessageCounter = false;
 			accounts.clear();
 			unavailableAccounts.clear();

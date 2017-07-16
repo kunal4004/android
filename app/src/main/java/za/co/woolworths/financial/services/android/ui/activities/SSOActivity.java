@@ -347,7 +347,7 @@ public class SSOActivity extends WebViewActivity {
 		if (scope.contains("&max_age")) {
 			String[] scopeArray = scope.split("&");
 			String max_age = scopeArray[1].substring(0, scopeArray[1].indexOf(" "));
-			scope = scope.replace(max_age, "");
+			scope = scope.replace("&"+max_age, "");
 			scope = scope + "&" + max_age;
 		}
 		Uri.Builder builder = new Uri.Builder();

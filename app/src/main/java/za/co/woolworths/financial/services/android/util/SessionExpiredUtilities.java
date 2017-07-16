@@ -29,6 +29,7 @@ public enum SessionExpiredUtilities {
 	}
 
 	public void showSessionExpireDialog(Activity activity) {
+		getGlobalState(activity).setAccountHasExpired(true);
 		Intent openMsg = new Intent(activity, CustomPopUpDialogManager.class);
 		Bundle args = new Bundle();
 		args.putSerializable("key", CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED);
