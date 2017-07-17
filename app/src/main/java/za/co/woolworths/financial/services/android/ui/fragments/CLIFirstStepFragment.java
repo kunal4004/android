@@ -26,7 +26,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
-import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIDeaBankMapAdapter;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICbxContentBinder;
 
@@ -194,9 +195,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 							relButtonCLIDeaBank.setVisibility(View.VISIBLE);
 							break;
 						case 440:
-							Utils.displayValidationMessage(getActivity(),
-									TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
-									deaBanks.response.stsParams);
+							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), deaBanks.response.stsParams);
 							break;
 						default:
 							relButtonCLIDeaBank.setVisibility(View.GONE);
@@ -205,7 +204,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 				} else {
 					if (!TextUtils.isEmpty(deaBanks.response.desc)) {
 						Utils.displayValidationMessage(getActivity(),
-								TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+								CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
 								deaBanks.response.desc);
 					}
 				}
@@ -240,7 +239,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 					}
 				} else {
 					Utils.displayValidationMessage(getActivity(),
-							TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+							CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
 							getString(R.string.cli_select_bank_error));
 				}
 				break;

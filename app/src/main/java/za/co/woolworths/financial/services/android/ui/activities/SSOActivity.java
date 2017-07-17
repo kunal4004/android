@@ -34,17 +34,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 
-import retrofit.Callback;
-import retrofit.RestAdapter;
-import retrofit.http.GET;
+
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
@@ -341,17 +337,12 @@ public class SSOActivity extends WebViewActivity {
 				break;
 		}
 
-
 		if (scope == null) {
 			scope = "";
 		}
 
-		scope = scope.concat(" openid email profile");//default scope
-
-		if (scope.contains("&max_age=300")) {
-			scope = scope.replace("&max_age=300", "");
-			scope = scope + "&max_age=300";
-		}
+		scope = ("%20openid email profile") + " " + scope;//default scope
+		scope = scope.trim();
 
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme(this.host.rawValue()) // moved host.rawValue() from authority to schema as MCS returns host with " https:// "
@@ -370,7 +361,6 @@ public class SSOActivity extends WebViewActivity {
 				builder.appendQueryParameter(param.getKey(), param.getValue());
 			}
 		}
-
 
 		String constructedURL = "";
 		try {

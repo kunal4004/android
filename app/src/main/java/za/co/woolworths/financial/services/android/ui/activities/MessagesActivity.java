@@ -38,6 +38,7 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class MessagesActivity extends AppCompatActivity {
@@ -232,9 +233,7 @@ public class MessagesActivity extends AppCompatActivity {
 						}
 						break;
 					case 440:
-						Utils.displayValidationMessage(MessagesActivity.this,
-								TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
-								messageResponse.response.stsParams);
+						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(MessagesActivity.this, messageResponse.response.stsParams);
 						break;
 
 					default:
@@ -374,9 +373,7 @@ public class MessagesActivity extends AppCompatActivity {
 					}
 					break;
 				case 440:
-					Utils.displayValidationMessage(MessagesActivity.this,
-							TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
-							messageResponse.response.stsParams);
+					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(MessagesActivity.this, messageResponse.response.stsParams);
 					break;
 				default:
 					Utils.alertErrorMessage(MessagesActivity.this, messageResponse.response.desc);

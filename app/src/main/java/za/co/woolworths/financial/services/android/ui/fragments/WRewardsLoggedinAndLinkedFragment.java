@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -18,15 +20,18 @@ import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
+import java.util.Arrays;
+
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -169,6 +174,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 			switch (httpCode) {
 				case 200:
 					mWGlobalState.setRewardSignInState(true);
+					mWGlobalState.setRewardHasExpired(false);
 					setupViewPager(viewPager, voucherResponse);
 					if (voucherResponse.voucherCollection.vouchers != null)
 						updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
@@ -176,9 +182,14 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 				case 440:
 					mWGlobalState.setRewardHasExpired(true);
 					mWGlobalState.setRewardSignInState(false);
-					Utils.displayValidationMessage(getActivity(),
-							TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
+					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(),
 							voucherResponse.response.stsParams);
+					updateNavigationDrawer.updateVoucherCount(0);
+					Intent intent = new Intent();
+					getTargetFragment().onActivityResult(WRewardsFragment.FRAGMENT_CODE_2, Activity.RESULT_OK,
+							intent);
+					getFragmentManager().popBackStack();
+					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 					break;
 				default:
 					mWGlobalState.setRewardSignInState(false);
@@ -213,16 +224,26 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 	}
 
 	private void onSessionExpired() {
-		if (mWGlobalState.rewardHasExpired()
-				&& (!TextUtils.isEmpty(mWGlobalState.getPressState()))) {
+		if (!TextUtils.isEmpty(mWGlobalState.getNewSTSParams()) && mWGlobalState.rewardHasExpired()) {
 			if (!asyncTaskReward.isCancelled()) {
 				asyncTaskReward.cancel(true);
 			}
 			mWGlobalState.setRewardHasExpired(false);
 			mWGlobalState.setRewardSignInState(false);
 			mWGlobalState.setPressState("");
-			mNavigationInterface.switchToView(3);
+			SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 		} else {
+			if (mWGlobalState.rewardHasExpired()
+					&& (!TextUtils.isEmpty(mWGlobalState.getPressState()))) {
+				if (!asyncTaskReward.isCancelled()) {
+					asyncTaskReward.cancel(true);
+				}
+				mWGlobalState.setRewardHasExpired(false);
+				mWGlobalState.setRewardSignInState(false);
+				mWGlobalState.setPressState("");
+				mNavigationInterface.switchToView(3);
+			} else {
+			}
 		}
 	}
 }

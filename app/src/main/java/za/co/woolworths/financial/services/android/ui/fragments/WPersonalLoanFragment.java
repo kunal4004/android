@@ -31,7 +31,7 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
-import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -219,13 +220,11 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 							enableIncreaseLimit();
 						}
 					} else if (httpCode == 440) {
-						Utils.displayValidationMessage(getActivity(),
-								TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
-								offerActive.response.stsParams);
+						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), offerActive.response.stsParams);
 					} else {
 						disableIncreaseLimit();
 						Utils.displayValidationMessage(getActivity(),
-								TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+								CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
 								httpDesc);
 					}
 				} catch (NullPointerException ignored) {

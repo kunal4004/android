@@ -18,13 +18,13 @@ public class WGlobalState {
 		this.mContext = context;
 	}
 
+	public static final String EMPTY_FIELD = "";
 	public static final String ON_CANCEL = "CANCEL";
 	public static final String ON_SIGN_IN = "SIGNIN";
 
 	private boolean cardGestureIsEnabled, onBackPressed, accountHasExpired, rewardHasExpired,
 			FragmentIsReward;
-	private String pressState;
-	private String newSTSParams;
+	private String pressState,newSTSParams;
 
 	public void setAccountSignInState(boolean accountSignInState) {
 		setPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE, accountSignInState);

@@ -38,7 +38,7 @@ import za.co.woolworths.financial.services.android.models.dto.IncomeProof;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
-import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIBankAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIIncomeProofAdapter;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -49,6 +49,7 @@ import za.co.woolworths.financial.services.android.ui.views.WEmpyViewDialogFragm
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.CLIBankAccountTypeBinder;
@@ -215,9 +216,8 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 								break;
 
 							case 440:
-								Utils.displayValidationMessage(getActivity(),
-										TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
-										bankAccountTypes.response.stsParams);
+								SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), bankAccountTypes
+										.response.stsParams);
 								break;
 
 							default:
@@ -225,7 +225,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 										!TextUtils.isEmpty(bankAccountTypes.response.desc)) {
 									getBankAccountClicked = false;
 									Utils.displayValidationMessage(getActivity(),
-											TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+											CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
 											bankAccountTypes.response.desc);
 								}
 								break;
@@ -265,17 +265,17 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 							hideKeyboard(getContext());
 						} else {
 							Utils.displayValidationMessage(getActivity(),
-									TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+									CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
 									getString(R.string.cli_enter_acc_number_error));
 						}
 					} else {
 						Utils.displayValidationMessage(getActivity(),
-								TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+								CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
 								getString(R.string.cli_select_acc_type));
 					}
 				} else {
 					Utils.displayValidationMessage(getActivity(),
-							TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+							CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
 							getString(R.string.cli_select_acc_type));
 				}
 				break;
@@ -385,19 +385,18 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 						case 200:
 							sendEmailButtonClicked = false;
 							Utils.displayValidationMessage(getActivity(),
-									TransientActivity.VALIDATION_MESSAGE_LIST.EMAIL, mEmail);
+									CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.EMAIL, mEmail);
 							break;
 
 						case 440:
-							Utils.displayValidationMessage(getActivity(),
-									TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
-									cliEmailResponse.response.stsParams);
+							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), cliEmailResponse
+									.response.stsParams);
 							break;
 
 						default:
 							sendEmailButtonClicked = false;
 							Utils.displayValidationMessage(getActivity(),
-									TransientActivity.VALIDATION_MESSAGE_LIST.ERROR, desc);
+									CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR, desc);
 							break;
 
 					}
@@ -447,9 +446,8 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 								break;
 
 							case 440:
-								Utils.displayValidationMessage(getActivity(),
-										TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
-										updateBankDetailResponse.response.stsParams);
+								SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), updateBankDetailResponse
+										.response.stsParams);
 								break;
 
 							default:
@@ -457,7 +455,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 								String desc = updateBankDetailResponse.response.desc;
 								if (!TextUtils.isEmpty(desc)) {
 									Utils.displayValidationMessage(getActivity(),
-											TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+											CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
 											desc);
 								}
 								break;
