@@ -30,6 +30,7 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.iid.InstanceID;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -548,7 +549,7 @@ public class SSOActivity extends WebViewActivity {
 		// sending gcm token to server
 		final CreateUpdateDevice device = new CreateUpdateDevice();
 		device.appInstanceId = InstanceID.getInstance(getApplicationContext()).getId();
-		device.pushNotificationToken = getSharedPreferences(Utils.SHARED_PREF, 0).getString("regId", null);
+		device.pushNotificationToken = FirebaseInstanceId.getInstance().getToken();
 
 		//Sending Token and app instance Id to App server
 		//Need to be done after Login
