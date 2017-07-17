@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -32,6 +33,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -483,5 +485,29 @@ public class Utils {
 	public static String removeUnicodesFromString(String value) {
 		value = value.replaceAll("[^a-zA-Z0-9 &*|_!@#$%^.,\\[\\]:;\"~{}<>()\\-+?]+", "");
 		return value;
+	}
+
+	public static void clearSharedPreferences(final Context context)
+	{
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					File dir = new File(context.getFilesDir().getParent() + "/shared_prefs/");
+					String[] children = dir.list();
+					for (int i = 0; i < children.length; i++) {
+						context.getSharedPreferences(children[i].replace(".xml", ""), Context.MODE_PRIVATE).edit().clear().commit();
+					}
+					try { Thread.sleep(1000); } catch (InterruptedException e) {}
+					for (int i = 0; i < children.length; i++) {
+						new File(dir, children[i]).delete();
+					}
+				}
+				catch (Exception e)
+				{
+					Log.e("TAG", e.getMessage());
+				}
+			}
+		}).start();
 	}
 }
