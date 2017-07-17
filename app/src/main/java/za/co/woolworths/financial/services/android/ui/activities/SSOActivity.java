@@ -337,19 +337,13 @@ public class SSOActivity extends WebViewActivity {
 				break;
 		}
 
-
 		if (scope == null) {
 			scope = "";
 		}
 
-		scope = scope.concat(" openid email profile");//default scope
+		scope = ("%20openid email profile") + " " + scope;//default scope
+		scope = scope.trim();
 
-		if (scope.contains("&max_age")) {
-			String[] scopeArray = scope.split("&");
-			String max_age = scopeArray[1].substring(0, scopeArray[1].indexOf(" "));
-			scope = scope.replace("&"+max_age, "");
-			scope = scope + "&" + max_age;
-		}
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme(this.host.rawValue()) // moved host.rawValue() from authority to schema as MCS returns host with " https:// "
 				.appendEncodedPath(this.path.rawValue())
