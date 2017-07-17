@@ -174,6 +174,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 						updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
 					break;
 				case 440:
+					clearVoucherCounter();
 					mWGlobalState.setRewardHasExpired(true);
 					mWGlobalState.setRewardSignInState(false);
 					Utils.displayValidationMessage(getActivity(),
@@ -181,6 +182,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 							voucherResponse.response.stsParams);
 					break;
 				default:
+					clearVoucherCounter();
 					mWGlobalState.setRewardSignInState(false);
 					setupErrorViewPager(viewPager);
 					break;
@@ -224,5 +226,10 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 			mNavigationInterface.switchToView(3);
 		} else {
 		}
+	}
+
+	public void clearVoucherCounter()
+	{
+		updateNavigationDrawer.updateVoucherCount(0);
 	}
 }

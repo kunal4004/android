@@ -276,11 +276,13 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 						break;
 
 					case 440:
+						updateVoucherCount(0);
 						mWGlobalState.setRewardHasExpired(true);
 						mWGlobalState.setRewardSignInState(false);
 						break;
 
 					default:
+						updateVoucherCount(0);
 						mWGlobalState.setRewardSignInState(false);
 						break;
 				}

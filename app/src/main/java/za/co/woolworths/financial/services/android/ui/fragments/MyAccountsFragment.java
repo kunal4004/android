@@ -255,8 +255,10 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			}
 		} else {
 			this.configureView();
-			//Remove voucher count on Navigation drawer
-			updateNavigationDrawer.updateVoucherCount(0);
+			if(!wGlobalState.getRewardSignInState() || wGlobalState.rewardHasExpired()) {
+				//Remove voucher count on Navigation drawer
+				updateNavigationDrawer.updateVoucherCount(0);
+			}
 		}
 	}
 
@@ -900,6 +902,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
 			try {
 				wGlobalState.setAccountSignInState(false);
+				wGlobalState.setRewardSignInState(false);
 				SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
 				sessionDao.value = "";
 				sessionDao.save();
