@@ -876,11 +876,13 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 						break;
 
 					case 440:
+						updateNavigationDrawer.updateVoucherCount(0);
 						wGlobalState.setRewardHasExpired(true);
 						wGlobalState.setRewardSignInState(false);
 						break;
 
 					default:
+						updateNavigationDrawer.updateVoucherCount(0);
 						wGlobalState.setRewardSignInState(false);
 						break;
 				}
