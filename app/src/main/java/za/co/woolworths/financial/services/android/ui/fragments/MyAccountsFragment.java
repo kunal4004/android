@@ -597,7 +597,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			}
 
 			accountAsyncRequest().execute();
-			getVouchers().execute();
 		} catch (NullPointerException ignored) {
 		}
 	}
@@ -663,6 +662,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 							Utils.displayValidationMessage(getActivity(),
 									TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
 									accountsResponse.response.stsParams);
+							Utils.setBadgeCounter(getActivity(), 0);
 							break;
 						default:
 							loadMessageCounter = false;
@@ -868,6 +868,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 						List<Voucher> vouchers = voucherResponse.voucherCollection.vouchers;
 						if (vouchers != null) {
 							updateNavigationDrawer.updateVoucherCount(vouchers.size());
+						} else {
+							updateNavigationDrawer.updateVoucherCount(0);
 						}
 						break;
 
@@ -894,6 +896,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				messageCounterRequest();
 			} else {
 				initialize();
+				getVouchers().execute();
 			}
 		} else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()) {
 			wGlobalState.setAccountSignInState(false);

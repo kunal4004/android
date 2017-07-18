@@ -272,6 +272,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 						List<Voucher> vouchers = voucherResponse.voucherCollection.vouchers;
 						if (vouchers != null) {
 							updateVoucherCount(vouchers.size());
+						} else {
+							updateVoucherCount(0);
 						}
 						break;
 

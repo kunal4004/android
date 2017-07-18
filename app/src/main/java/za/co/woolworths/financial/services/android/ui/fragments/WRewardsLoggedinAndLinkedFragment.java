@@ -172,6 +172,9 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 					setupViewPager(viewPager, voucherResponse);
 					if (voucherResponse.voucherCollection.vouchers != null)
 						updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
+					else {
+						clearVoucherCounter();
+					}
 					break;
 				case 440:
 					clearVoucherCounter();
@@ -180,6 +183,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 					Utils.displayValidationMessage(getActivity(),
 							TransientActivity.VALIDATION_MESSAGE_LIST.SESSION_EXPIRED,
 							voucherResponse.response.stsParams);
+					Utils.setBadgeCounter(getActivity(), 0);
 					break;
 				default:
 					clearVoucherCounter();
