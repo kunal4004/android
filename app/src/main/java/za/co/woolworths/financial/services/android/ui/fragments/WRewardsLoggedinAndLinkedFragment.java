@@ -178,12 +178,17 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 					setupViewPager(viewPager, voucherResponse);
 					if (voucherResponse.voucherCollection.vouchers != null)
 						updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
+					else {
+						clearVoucherCounter();
+					}
 					break;
 				case 440:
+					clearVoucherCounter();
 					mWGlobalState.setRewardHasExpired(true);
 					mWGlobalState.setRewardSignInState(false);
 					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(),
 							voucherResponse.response.stsParams);
+					Utils.setBadgeCounter(getActivity(), 0);
 					updateNavigationDrawer.updateVoucherCount(0);
 					Intent intent = new Intent();
 					getTargetFragment().onActivityResult(WRewardsFragment.FRAGMENT_CODE_2, Activity.RESULT_OK,
@@ -192,6 +197,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 					break;
 				default:
+					clearVoucherCounter();
 					mWGlobalState.setRewardSignInState(false);
 					setupErrorViewPager(viewPager);
 					break;
@@ -245,5 +251,9 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 			} else {
 			}
 		}
+	}
+
+	public void clearVoucherCounter() {
+		updateNavigationDrawer.updateVoucherCount(0);
 	}
 }

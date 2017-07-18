@@ -256,7 +256,10 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			}
 		} else {
 			this.configureView();
-			//Remove voucher count on Navigation drawer
+			if(!wGlobalState.getRewardSignInState() || wGlobalState.rewardHasExpired()) {
+				//Remove voucher count on Navigation drawer
+				updateNavigationDrawer.updateVoucherCount(0);
+			}
 		}
 	}
 
@@ -595,7 +598,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			}
 
 			accountAsyncRequest().execute();
-			getVouchers().execute();
 		} catch (NullPointerException ignored) {
 		}
 	}
@@ -660,6 +662,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 							unavailableAccounts.addAll(Arrays.asList("SC", "CC", "PL"));
 							wGlobalState.setAccountHasExpired(true);
 							configureView();
+							Utils.setBadgeCounter(getActivity(), 0);
 							showLogOutScreen();
 							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), accountsResponse
 									.response.stsParams);
@@ -873,11 +876,13 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 						break;
 
 					case 440:
+						updateNavigationDrawer.updateVoucherCount(0);
 						wGlobalState.setRewardHasExpired(true);
 						wGlobalState.setRewardSignInState(false);
 						break;
 
 					default:
+						updateNavigationDrawer.updateVoucherCount(0);
 						wGlobalState.setRewardSignInState(false);
 						break;
 				}
@@ -895,6 +900,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				messageCounterRequest();
 			} else {
 				initialize();
+				getVouchers().execute();
 			}
 		} else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()) {
 			wGlobalState.setAccountSignInState(false);
@@ -904,6 +910,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			try {
 				updateNavigationDrawer.updateVoucherCount(0);
 				wGlobalState.setAccountSignInState(false);
+				wGlobalState.setRewardSignInState(false);
 				SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
 				sessionDao.value = "";
 				sessionDao.save();
