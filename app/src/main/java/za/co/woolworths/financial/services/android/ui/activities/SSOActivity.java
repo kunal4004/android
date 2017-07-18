@@ -129,6 +129,8 @@ public class SSOActivity extends WebViewActivity {
 		progressDialog.setCancelable(false);
 		this.webView.setWebViewClient(this.webviewClient);
 		this.webView.getSettings().setUseWideViewPort(true);
+		this.webView.clearFormData();
+		this.webView.getSettings().setSaveFormData(false);
 		this.webView.getSettings().setLoadWithOverviewMode(true);
 		this.webView.setWebChromeClient(new WebChromeClient() {
 			@Override
