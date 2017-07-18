@@ -79,6 +79,8 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 			}
 
 		});
+		//Remove old usage of SharedPreferences data.
+		Utils.clearSharedPreferences(WSplashScreenActivity.this);
 	}
 
 	private void executeConfigServer() {

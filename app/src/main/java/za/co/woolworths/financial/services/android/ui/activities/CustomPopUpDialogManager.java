@@ -21,7 +21,7 @@ import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class TransientActivity extends AppCompatActivity implements View.OnClickListener {
+public class CustomPopUpDialogManager extends AppCompatActivity implements View.OnClickListener {
 
 	private RelativeLayout mRelRootContainer;
 	private Animation mPopEnterAnimation;
@@ -46,7 +46,7 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 		Utils.updateStatusBarBackground(this, android.R.color.transparent);
 		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-		woolworthsApplication = (WoolworthsApplication) TransientActivity.this.getApplication();
+		woolworthsApplication = (WoolworthsApplication) CustomPopUpDialogManager.this.getApplication();
 		mWGlobalState = woolworthsApplication.getWGlobalState();
 
 		Bundle mBundle = getIntent().getExtras();
@@ -262,6 +262,7 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 	}
 
 	private void finishActivity() {
+		mWGlobalState.setNewSTSParams("");
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
@@ -451,15 +452,7 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 				break;
 
 			case R.id.btnSECancel:
-				mWGlobalState.setPressState(WGlobalState.ON_CANCEL);
-				mWGlobalState.setOnBackPressed(false);
-				Intent i = new Intent(TransientActivity.this, WOneAppBaseActivity.class);
-				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-				startActivity(i);
-				overridePendingTransition(0, 0);
-				finish();
+				exitSessionAnimation();
 				break;
 
 			case R.id.btnSESignIn:
@@ -470,7 +463,7 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 				} else {
 					mSTSParams = Utils.getScope(mSTSParams);
 				}
-				ScreenManager.presentExpiredTokenSSOSignIn(TransientActivity.this, mSTSParams);
+				ScreenManager.presentExpiredTokenSSOSignIn(CustomPopUpDialogManager.this, mSTSParams);
 				overridePendingTransition(0, 0);
 				finish();
 				break;
@@ -480,7 +473,7 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 
 	private void clearHistory() {
 		mWGlobalState.setOnBackPressed(false);
-		Intent i = new Intent(TransientActivity.this, WOneAppBaseActivity.class);
+		Intent i = new Intent(CustomPopUpDialogManager.this, WOneAppBaseActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -488,8 +481,38 @@ public class TransientActivity extends AppCompatActivity implements View.OnClick
 		startExitAnimation();
 	}
 
-	public void closeActivity() {
+	private void closeActivity() {
 		finish();
 		overridePendingTransition(0, 0);
 	}
+
+	private void exitSessionAnimation() {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					mWGlobalState.setNewSTSParams(WGlobalState.EMPTY_FIELD);
+					mWGlobalState.setPressState(WGlobalState.ON_CANCEL);
+					mWGlobalState.setOnBackPressed(false);
+					mWGlobalState.setNewSTSParams("");
+					dismissLayout();
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
+		}
+	}
+
 }

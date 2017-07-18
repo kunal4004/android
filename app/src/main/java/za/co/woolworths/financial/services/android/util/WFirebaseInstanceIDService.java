@@ -23,11 +23,6 @@ public class WFirebaseInstanceIDService extends FirebaseInstanceIdService {
     public void onTokenRefresh() {
         super.onTokenRefresh();
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        String iid = InstanceID.getInstance(getApplicationContext()).getId();
-        Log.e(TAG, "iid: " + iid);
-        // Saving reg id to shared preferences
-        storeRegIdInPref(refreshedToken);
-
         // sending reg id to your server
         sendRegistrationToServer(refreshedToken);
 
@@ -77,17 +72,5 @@ public class WFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
     }
 
-    private void storeRegIdInPref(String token) {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences(Utils.SHARED_PREF, 0);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("regId", token);
-        editor.commit();
-    }
-
-/*@Override
-    public void onCreate() {
-        super.onCreate();
-        android.os.Debug.waitForDebugger();
-    }*/
 }
 

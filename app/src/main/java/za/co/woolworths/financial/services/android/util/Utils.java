@@ -5,15 +5,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.Paint;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -21,11 +20,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -33,11 +29,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.google.zxing.common.StringUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -53,7 +49,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
-import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 
 import static android.Manifest.permission_group.STORAGE;
@@ -426,8 +422,8 @@ public class Utils {
 		return historyList;
 	}
 
-	public static void displayValidationMessage(Context context, TransientActivity.VALIDATION_MESSAGE_LIST key, String description) {
-		Intent openMsg = new Intent(context, TransientActivity.class);
+	public static void displayValidationMessage(Context context, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST key, String description) {
+		Intent openMsg = new Intent(context, CustomPopUpDialogManager.class);
 		Bundle args = new Bundle();
 		args.putSerializable("key", key);
 		args.putString("description", description);
@@ -486,9 +482,32 @@ public class Utils {
 		return scope.replaceAll("scope=", "");
 	}
 
-	public static String removeUnicodesFromString(String value)
-	{
-		value=value.replaceAll("[^a-zA-Z0-9 &*|_!@#$%^.,\\[\\]:;\"~{}<>()\\-+?]+", "");
+	public static String removeUnicodesFromString(String value) {
+		value = value.replaceAll("[^a-zA-Z0-9 &*|_!@#$%^.,\\[\\]:;\"~{}<>()\\-+?]+", "");
 		return value;
+	}
+
+	public static void clearSharedPreferences(final Context context)
+	{
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					File dir = new File(context.getFilesDir().getParent() + "/shared_prefs/");
+					String[] children = dir.list();
+					for (int i = 0; i < children.length; i++) {
+						context.getSharedPreferences(children[i].replace(".xml", ""), Context.MODE_PRIVATE).edit().clear().commit();
+					}
+					try { Thread.sleep(1000); } catch (InterruptedException e) {}
+					for (int i = 0; i < children.length; i++) {
+						new File(dir, children[i]).delete();
+					}
+				}
+				catch (Exception e)
+				{
+					Log.e("TAG", e.getMessage());
+				}
+			}
+		}).start();
 	}
 }

@@ -19,6 +19,7 @@ import android.webkit.WebViewClient;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 
 public class WebViewActivity extends AppCompatActivity {
 
@@ -85,6 +86,8 @@ public class WebViewActivity extends AppCompatActivity {
 	}
 
 	public void finishActivity() {
+		SessionExpiredUtilities.INSTANCE
+				.getGlobalState(WebViewActivity.this).setNewSTSParams("");
 		finish();
 		overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 	}
