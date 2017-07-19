@@ -45,7 +45,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 	private WTextView mTextAdditionalMonthAmount;
 	private WTextView mBtnConfirm;
 	private Integer installment_amount;
-	private String mDrawanDownAmount;
+	private String mAmount;
 	private int mRepaymentPeriod;
 	private ProgressBar mConfirmProgressBar;
 	private AsyncTask<String, String, AuthoriseLoanResponse> authoriseLoanRequest;
@@ -66,7 +66,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(LoanWithdrawalConfirmActivity.this);
 		Bundle intent = getIntent().getExtras();
 		if (intent != null) {
-			mDrawanDownAmount = intent.getString("drawnDownAmount");
+			mAmount = intent.getString("drawnDownAmount");
 			minDrawnDownAmount = intent.getInt("minDrawnDownAmount");
 			mRepaymentPeriod = intent.getInt("repaymentPeriod");
 		}
@@ -91,7 +91,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 
 	private void initViews() {
 		mScrollLoanWithdrawal = (ScrollView) findViewById(R.id.scrollLoanWithdrawal);
-		mTextDrawnAmount = (WTextView) findViewById(R.id.currencyType);
+		mTextDrawnAmount = (WTextView) findViewById(R.id.mCurrencyType);
 		mTextMonths = (WTextView) findViewById(R.id.textMonths);
 		mTextAdditionalMonthAmount = (WTextView) findViewById(R.id.textAdditionalMonthAmount);
 		mBtnConfirm = (WTextView) findViewById(R.id.btnConfirm);
@@ -116,9 +116,9 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 
 	private void setContent() {
 		mScrollLoanWithdrawal.setVisibility(View.VISIBLE);
-		mTextDrawnAmount.setText(mDrawanDownAmount);
 		mTextMonths.setText(String.valueOf(mRepaymentPeriod) + " months");
 		mTextAdditionalMonthAmount.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(installment_amount), 1, this)));
+		mTextDrawnAmount.setText("R " + mAmount);
 	}
 
 	@Override
@@ -180,7 +180,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 						case 440:
 							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired
 									(LoanWithdrawalConfirmActivity.this,
-									authoriseLoanResponse.response.stsParams);
+											authoriseLoanResponse.response.stsParams);
 							break;
 
 						default:
