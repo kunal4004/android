@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
+
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -38,6 +40,8 @@ public class WRewardsFragment extends AbstractFragmentListener {
 	ImageView mBurgerButtonPressed;
 	WTextView wRewarsToolbarTitle;
 	private WGlobalState wGlobalState;
+	private WGlobalState mWGlobalState;
+	private MenuNavigationInterface mNavigationInterface;
 
 	public interface HideActionBarComponent {
 		void onWRewardsDrawerPressed();
@@ -49,6 +53,10 @@ public class WRewardsFragment extends AbstractFragmentListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.wrewards_fragment, container, false);
+		mWGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
+		mNavigationInterface = (MenuNavigationInterface) getActivity();
+
+
 		mBurgerButtonPressed = (ImageView) view.findViewById(R.id.imBurgerButtonPressed);
 		wRewarsToolbarTitle = (WTextView) view.findViewById(R.id.toolbarText);
 		updateTitle = (UpdateNavDrawerTitle) getActivity();
@@ -184,6 +192,12 @@ public class WRewardsFragment extends AbstractFragmentListener {
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		onSessionExpired();
+	}
+
+	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == FRAGMENT_CODE_1 && resultCode == Activity.RESULT_OK) {
 			try {
@@ -205,6 +219,34 @@ public class WRewardsFragment extends AbstractFragmentListener {
 				signOut();
 			} catch (Exception ignored) {
 			}
+		}
+	}
+
+	private void onSessionExpired() {
+		try {
+			Log.e("OnSessionExpired", wGlobalState.getNewSTSParams() + " " + wGlobalState.rewardHasExpired());
+			if (!TextUtils.isEmpty(wGlobalState.getNewSTSParams()) && wGlobalState.rewardHasExpired()) {
+			} else {
+				if (wGlobalState.rewardHasExpired()
+						&& (wGlobalState.getPressState().equalsIgnoreCase
+						(WGlobalState.ON_CANCEL))) {
+				} else if (wGlobalState.getRewardSignInState()
+						&& (wGlobalState.getPressState().equalsIgnoreCase
+						(WGlobalState.ON_SIGN_IN))) {
+					mWGlobalState.setRewardHasExpired(false);
+					mWGlobalState.setRewardSignInState(true);
+					mWGlobalState.resetPressState();
+					try {
+						reloadFragment();
+					} catch (Exception ex) {
+					}
+				} else {
+				}
+			}
+			wGlobalState.setRewardHasExpired(false);
+			wGlobalState.resetPressState();
+		} catch (NullPointerException e) {
+			Log.e("OnSessionExpired", e.toString());
 		}
 	}
 }

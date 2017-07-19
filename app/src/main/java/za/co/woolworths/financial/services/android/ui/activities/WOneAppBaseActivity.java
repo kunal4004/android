@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -128,16 +129,17 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 				break;
 			case 3:
 				mWGlobalState.setFragmentIsReward(true);
+				mWGlobalState.resetStsParams();
 				isRewardFragment = true;
 				fragment = new WRewardsFragment();
 				title = getString(R.string.wrewards);
 				break;
 			case 4:
+				mWGlobalState.resetStsParams();
 				mWGlobalState.setFragmentIsReward(false);
 				fragment = new MyAccountsFragment();
 				title = getString(R.string.nav_item_accounts);
 				break;
-
 		}
 
 		try {
@@ -219,6 +221,10 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(logOutReceiver);
+		if (!TextUtils.isEmpty(mWGlobalState.getNewSTSParams())) {
+			mWGlobalState.setRewardSignInState(false);
+		}
+
 	}
 
 	BroadcastReceiver logOutReceiver = new BroadcastReceiver() {
@@ -297,6 +303,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	public void updateVoucherCount(int count) {
 		drawerFragment.notifyNavigationDrawer(count);
 	}
+
 }
 
 

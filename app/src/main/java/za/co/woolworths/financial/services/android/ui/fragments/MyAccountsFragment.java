@@ -256,7 +256,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			}
 		} else {
 			this.configureView();
-			if(!wGlobalState.getRewardSignInState() || wGlobalState.rewardHasExpired()) {
+			if (!wGlobalState.getRewardSignInState() || wGlobalState.rewardHasExpired()) {
 				//Remove voucher count on Navigation drawer
 				updateNavigationDrawer.updateVoucherCount(0);
 			}
@@ -664,8 +664,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 							configureView();
 							Utils.setBadgeCounter(getActivity(), 0);
 							showLogOutScreen();
-							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), accountsResponse
-									.response.stsParams);
+							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), accountsResponse.response.stsParams);
 							SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 							break;
 						default:
@@ -760,10 +759,12 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	}
 
 	private void dismissProgress() {
-		mScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.white));
-		relFAQ.setVisibility(View.VISIBLE);
-		if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
-			mGetAccountsProgressDialog.dismiss();
+		if (getActivity() != null) {
+			mScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.white));
+			relFAQ.setVisibility(View.VISIBLE);
+			if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
+				mGetAccountsProgressDialog.dismiss();
+			}
 		}
 	}
 

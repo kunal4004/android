@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -23,6 +24,7 @@ import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -132,7 +134,13 @@ public class SSOActivity extends WebViewActivity {
 		this.webView.clearFormData();
 		this.webView.getSettings().setSaveFormData(false);
 		this.webView.getSettings().setLoadWithOverviewMode(true);
+		this.webView.getSettings().setDomStorageEnabled(true);
+		this.webView.getSettings().setDomStorageEnabled(true);
+		if (Build.VERSION.SDK_INT >= 21) {
+			this.webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+		}
 		this.webView.setWebChromeClient(new WebChromeClient() {
+
 			@Override
 			public void onReceivedTitle(WebView view, String title) {
 				super.onReceivedTitle(view, title);
@@ -344,7 +352,7 @@ public class SSOActivity extends WebViewActivity {
 			scope = "";
 		}
 
-		scope = ("%20openid email profile") + " " + scope;//default scope
+		scope = ("openid email profile") + " " + scope;//default scope
 		scope = scope.trim();
 
 		Uri.Builder builder = new Uri.Builder();
@@ -417,8 +425,9 @@ public class SSOActivity extends WebViewActivity {
 						try {
 							if (!TextUtils.isEmpty(mGlobalState.getNewSTSParams())) {
 								mGlobalState.setAccountSignInState(true);
-								clearHistory();
+								mGlobalState.setRewardSignInState(true);
 								mGlobalState.setNewSTSParams("");
+								clearHistory();
 							} else {
 								closeActivity();
 							}
@@ -514,6 +523,7 @@ public class SSOActivity extends WebViewActivity {
 			final AlertDialog dialog = builder.create();
 			dialog.show();
 		}
+
 	};
 
 	public void hideProgressBar() {
