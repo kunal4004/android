@@ -24,7 +24,7 @@ public class WGlobalState {
 
 	private boolean cardGestureIsEnabled, onBackPressed, accountHasExpired, rewardHasExpired,
 			FragmentIsReward;
-	private String pressState,newSTSParams;
+	private String pressState, newSTSParams;
 
 	public void setAccountSignInState(boolean accountSignInState) {
 		setPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE, accountSignInState);
@@ -109,5 +109,9 @@ public class WGlobalState {
 
 	public void setNewSTSParams(String pNewSTSParams) {
 		newSTSParams = pNewSTSParams;
+	}
+
+	public void resetStsParams() {
+		setNewSTSParams("");
 	}
 }

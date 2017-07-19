@@ -128,6 +128,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 				break;
 			case 3:
 				mWGlobalState.setFragmentIsReward(true);
+				mWGlobalState.resetStsParams();
 				isRewardFragment = true;
 				fragment = new WRewardsFragment();
 				title = getString(R.string.wrewards);
