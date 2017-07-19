@@ -425,8 +425,9 @@ public class SSOActivity extends WebViewActivity {
 						try {
 							if (!TextUtils.isEmpty(mGlobalState.getNewSTSParams())) {
 								mGlobalState.setAccountSignInState(true);
-								clearHistory();
+								mGlobalState.setRewardSignInState(true);
 								mGlobalState.setNewSTSParams("");
+								clearHistory();
 							} else {
 								closeActivity();
 							}

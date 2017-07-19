@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +19,9 @@ import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
-import java.util.Arrays;
-
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -186,8 +182,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 					clearVoucherCounter();
 					mWGlobalState.setRewardHasExpired(true);
 					mWGlobalState.setRewardSignInState(false);
-					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(),
-							voucherResponse.response.stsParams);
+					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), voucherResponse.response.stsParams);
 					Utils.setBadgeCounter(getActivity(), 0);
 					updateNavigationDrawer.updateVoucherCount(0);
 					Intent intent = new Intent();
@@ -226,31 +221,6 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		onSessionExpired();
-	}
-
-	private void onSessionExpired() {
-		if (!TextUtils.isEmpty(mWGlobalState.getNewSTSParams()) && mWGlobalState.rewardHasExpired()) {
-			if (!asyncTaskReward.isCancelled()) {
-				asyncTaskReward.cancel(true);
-			}
-			mWGlobalState.setRewardHasExpired(false);
-			mWGlobalState.setRewardSignInState(false);
-			mWGlobalState.setPressState("");
-			SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
-		} else {
-			if (mWGlobalState.rewardHasExpired()
-					&& (!TextUtils.isEmpty(mWGlobalState.getPressState()))) {
-				if (!asyncTaskReward.isCancelled()) {
-					asyncTaskReward.cancel(true);
-				}
-				mWGlobalState.setRewardHasExpired(false);
-				mWGlobalState.setRewardSignInState(false);
-				mWGlobalState.setPressState("");
-				mNavigationInterface.switchToView(3);
-			} else {
-			}
-		}
 	}
 
 	public void clearVoucherCounter() {

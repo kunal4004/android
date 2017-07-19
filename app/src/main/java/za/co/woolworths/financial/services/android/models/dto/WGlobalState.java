@@ -112,6 +112,10 @@ public class WGlobalState {
 	}
 
 	public void resetStsParams() {
-		setNewSTSParams("");
+		setNewSTSParams(EMPTY_FIELD);
+	}
+
+	public void resetPressState() {
+		setPressState(EMPTY_FIELD);
 	}
 }

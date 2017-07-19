@@ -664,8 +664,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 							configureView();
 							Utils.setBadgeCounter(getActivity(), 0);
 							showLogOutScreen();
-							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), accountsResponse
-									.response.stsParams);
+							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), accountsResponse.response.stsParams);
 							SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 							break;
 						default:
