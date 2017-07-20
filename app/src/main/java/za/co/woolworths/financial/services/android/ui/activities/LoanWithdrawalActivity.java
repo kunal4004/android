@@ -15,6 +15,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -96,7 +97,8 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 		if (TextUtils.isEmpty(shareDrawDownAmount)) {
 			mEditWithdrawalAmount.setText("");
 		} else {
-			mEditWithdrawalAmount.setText(String.valueOf(Integer.valueOf(shareDrawDownAmount) / 100));
+			String drawnDownAmount = String.valueOf(Integer.valueOf(shareDrawDownAmount) / 100);
+			mEditWithdrawalAmount.setText(drawnDownAmount);
 			handler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
@@ -313,8 +315,9 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 						case 200:
 							loanWithdrawalClicked = false;
 							mSharePreferenceHelper.save(String.valueOf(issueLoanResponse.installmentAmount), "lw_installment_amount");
+							String mAmount = mEditWithdrawalAmount.getText().toString();
 							Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this, LoanWithdrawalConfirmActivity.class);
-							openConfirmWithdrawal.putExtra("drawnDownAmount", mDrawnDownAmount);
+							openConfirmWithdrawal.putExtra("drawnDownAmount", mAmount);
 							openConfirmWithdrawal.putExtra("availableFunds", mAvailableFunds);
 							openConfirmWithdrawal.putExtra("creditLimit", mCreditLimit);
 							openConfirmWithdrawal.putExtra("minDrawnDownAmount", wminDrawnDownAmount);
@@ -322,11 +325,10 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 							startActivity(openConfirmWithdrawal);
 							finish();
 							break;
-
 						case 440:
 							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired
 									(LoanWithdrawalActivity.this, issueLoanResponse
-									.response.stsParams);
+											.response.stsParams);
 							break;
 
 						default:
@@ -346,12 +348,16 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 							}
 							break;
 					}
-				} catch (Exception ignored) {
+				} catch (
+						Exception ignored)
+
+				{
 				}
 			}
 
 			@Override
-			protected IssueLoanResponse httpError(final String errorMessage, HttpErrorCode httpErrorCode) {
+			protected IssueLoanResponse httpError(final String errorMessage, HttpErrorCode
+					httpErrorCode) {
 				IssueLoanResponse issueLoanResponse = new IssueLoanResponse();
 				runOnUiThread(new Runnable() {
 					@Override
@@ -368,7 +374,9 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 			protected Class<IssueLoanResponse> httpDoInBackgroundReturnType() {
 				return IssueLoanResponse.class;
 			}
-		};
+		}
+
+				;
 	}
 
 	private int repaymentPeriod(int amount) {
@@ -481,11 +489,8 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 
 					endlen = et.getText().length();
 					int sel = (cp + (endlen - inilen));
-					if (sel > 0 && sel <= et.getText().length()) {
-						et.setSelection(sel);
-					} else {
-						// place cursor at the end?
-						et.setSelection(et.getText().length() - 1);
+					if (sel > 0) {
+						et.setSelection(endlen);
 					}
 				} catch (Exception ignored) {
 				}
@@ -536,6 +541,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 		}
+
 	}
 
 
