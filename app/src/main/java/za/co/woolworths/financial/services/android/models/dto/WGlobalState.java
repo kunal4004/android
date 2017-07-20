@@ -23,7 +23,7 @@ public class WGlobalState {
 	public static final String ON_SIGN_IN = "SIGNIN";
 
 	private boolean cardGestureIsEnabled, onBackPressed, accountHasExpired, rewardHasExpired,
-			FragmentIsReward;
+			FragmentIsReward, defaultPopupState;
 	private String pressState, newSTSParams;
 
 	public void setAccountSignInState(boolean accountSignInState) {
@@ -117,5 +117,13 @@ public class WGlobalState {
 
 	public void resetPressState() {
 		setPressState(EMPTY_FIELD);
+	}
+
+	public boolean getDefaultPopupState() {
+		return defaultPopupState;
+	}
+
+	public void setDefaultPopupState(boolean pDefaultPopupState) {
+		defaultPopupState = pDefaultPopupState;
 	}
 }

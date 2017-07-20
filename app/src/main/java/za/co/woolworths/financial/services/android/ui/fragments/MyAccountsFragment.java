@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -664,6 +665,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 							configureView();
 							Utils.setBadgeCounter(getActivity(), 0);
 							showLogOutScreen();
+							wGlobalState.setDefaultPopupState(true);
 							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), accountsResponse.response.stsParams);
 							SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 							break;
@@ -954,7 +956,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	}
 
 	private void onSessionExpired() {
-		if (!TextUtils.isEmpty(wGlobalState.getNewSTSParams())) {
+		if (!TextUtils.isEmpty(wGlobalState.getNewSTSParams())
+				&& !wGlobalState.getDefaultPopupState()) {
 			loadMessageCounter = false;
 			accounts.clear();
 			unavailableAccounts.clear();
@@ -967,15 +970,19 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			if (wGlobalState.accountHasExpired()
 					&& (wGlobalState.getPressState().equalsIgnoreCase
 					(WGlobalState.ON_CANCEL))) {
-				configureView();
+				accountExpiredState();
 			} else if (wGlobalState.accountHasExpired()
 					&& (wGlobalState.getPressState().equalsIgnoreCase
 					(WGlobalState.ON_SIGN_IN))) {
+				accountExpiredState();
 				mNavigationInterface.switchToView(4);
 			} else {
 			}
-			wGlobalState.setAccountHasExpired(false);
-			wGlobalState.setPressState("");
 		}
+	}
+
+	private void accountExpiredState() {
+		wGlobalState.setAccountHasExpired(false);
+		wGlobalState.setPressState("");
 	}
 }

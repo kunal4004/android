@@ -64,6 +64,24 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 		mWGlobalState = woolworthsApplication.getWGlobalState();
 	}
 
+	@Override
+	protected void onStart() {
+		super.onStart();
+		runningActivityState(true);
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		runningActivityState(false);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		runningActivityState(false);
+	}
+
 	private void displayView(VALIDATION_MESSAGE_LIST current_view) {
 		switch (current_view) {
 			case BARCODE_ERROR:
@@ -515,4 +533,9 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 		}
 	}
 
+	private void runningActivityState(boolean state) {
+		if (mWGlobalState != null) {
+			mWGlobalState.setDefaultPopupState(state);
+		}
+	}
 }
