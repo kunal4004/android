@@ -10,8 +10,6 @@ import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.Priority;
-import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
@@ -45,6 +43,9 @@ public class DrawImage {
 				builder.setActualImageScaleType(ScalingUtils.ScaleType.FIT_END);
 				GenericDraweeHierarchy hierarchy = builder
 						.build();
+
+				imgUrl = imgUrl.replaceAll(" ", "%20");
+
 				ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imgUrl))
 						.build();
 				DraweeController controller = Fresco.newDraweeControllerBuilder()
