@@ -231,7 +231,6 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				break;
 
 			case SESSION_EXPIRED:
-				mWGlobalState.setAccountSignInState(false);
 				mWGlobalState.setOnBackPressed(true);
 				setContentView(R.layout.session_expired);
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
@@ -240,6 +239,7 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				if (mWGlobalState.fragmentIsReward()) {
 					tvSessionExpiredDesc.setText(getString(R.string.session_expired_reward_desc));
 				} else {
+					mWGlobalState.setAccountSignInState(false);
 					tvSessionExpiredDesc.setText(getString(R.string.session_expired_account_desc));
 				}
 				setAnimation();
