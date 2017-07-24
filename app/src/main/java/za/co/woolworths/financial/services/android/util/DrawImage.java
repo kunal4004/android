@@ -14,6 +14,8 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
+import java.net.URLEncoder;
+
 public class DrawImage {
 
 	private Context mContext;
@@ -45,13 +47,7 @@ public class DrawImage {
 				GenericDraweeHierarchy hierarchy = builder
 						.build();
 
-				if (!TextUtils.isEmpty(imgUrl)) {
-					int lastIndex = imgUrl.lastIndexOf('/') + 1;
-					String path = imgUrl.substring(0, lastIndex);
-					String params = imgUrl.substring(lastIndex, imgUrl.length());
-					String encodedParams = android.net.Uri.encode(params, "UTF-8");
-					imgUrl = path + encodedParams;
-				}
+				imgUrl = android.net.Uri.encode(imgUrl, "@#&=*+-_.,:!?()/~'%");
 
 				ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imgUrl))
 						.build();
