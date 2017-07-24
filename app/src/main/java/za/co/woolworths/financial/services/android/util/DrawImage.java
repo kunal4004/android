@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.content.Context;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 
@@ -44,7 +45,13 @@ public class DrawImage {
 				GenericDraweeHierarchy hierarchy = builder
 						.build();
 
-				imgUrl = imgUrl.replaceAll(" ", "%20");
+				if (!TextUtils.isEmpty(imgUrl)) {
+					int lastIndex = imgUrl.lastIndexOf('/') + 1;
+					String path = imgUrl.substring(0, lastIndex);
+					String params = imgUrl.substring(lastIndex, imgUrl.length());
+					String encodedParams = android.net.Uri.encode(params, "UTF-8");
+					imgUrl = path + encodedParams;
+				}
 
 				ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imgUrl))
 						.build();
