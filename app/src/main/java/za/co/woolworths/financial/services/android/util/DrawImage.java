@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.content.Context;
 import android.net.Uri;
-import android.text.TextUtils;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 
@@ -13,8 +12,6 @@ import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
-
-import java.net.URLEncoder;
 
 public class DrawImage {
 
