@@ -51,6 +51,7 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionParentO
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity;
 
 import static android.Manifest.permission_group.STORAGE;
 
@@ -90,29 +91,16 @@ public class Utils {
 
 			locationJson.put("lat", loc.getLatitude());
 			locationJson.put("lon", loc.getLongitude());
-			SharedPreferences mPrefs = mContext.getSharedPreferences("lastLocation", mContext.MODE_PRIVATE);
-			SharedPreferences.Editor prefsEditor = mPrefs.edit();
-			prefsEditor.putString("location", locationJson.toString());
-			prefsEditor.commit();
+			sessionDaoSave(mContext, SessionDao.KEY.LAST_KNOWN_LOCATION,locationJson.toString());
 		} catch (JSONException e) {
 		}
-	   /* SharedPreferences mPrefs = mContext.getSharedPreferences("lastLocation", mContext.MODE_PRIVATE);
-	    SharedPreferences.Editor prefsEditor = mPrefs.edit();
-        prefsEditor.putString("lat",String.valueOf(loc.getLatitude()));
-        prefsEditor.putString("lon",String.valueOf(loc.getLongitude()));
-        prefsEditor.commit();*/
 
 	}
 
 	public static Location getLastSavedLocation(Context mContext) {
-		// Location location=new Location("");
-		SharedPreferences mPrefs = mContext.getSharedPreferences("lastLocation", mContext.MODE_PRIVATE);
-	  /*  location.setLatitude(Double.parseDouble(mPrefs.getString("lat","0")));
-	    location.setLongitude(Double.parseDouble(mPrefs.getString("lon","0")));*/
-		//  return  location;
 
 		try {
-			String json = mPrefs.getString("location", null);
+			String json = getSessionDaoValue(mContext, SessionDao.KEY.LAST_KNOWN_LOCATION);
 
 			if (json != null) {
 				JSONObject locationJson = new JSONObject(json);
