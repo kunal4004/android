@@ -53,7 +53,7 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
 
         Map<String, String> data = remoteMessage.getData();
         if (data.size() > 0 && NotificationUtils.isAppIsInBackground(getApplicationContext())) {// Check if message contains a data payload.
-            Intent myIntent = new Intent(this, WSplashScreenActivity.class);
+            /*Intent myIntent = new Intent(this, WSplashScreenActivity.class);
 
             myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             myIntent.setAction(Intent.ACTION_MAIN);
@@ -70,7 +70,9 @@ public class WFirebaseMessagingService extends FirebaseMessagingService {
             builder.setDefaults(Notification.DEFAULT_ALL);
             builder.setAutoCancel(true);
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.notify(id, builder.build());
+            mNotificationManager.notify(id, builder.build());*/
+            notificationUtils=NotificationUtils.newInstance(this);
+            notificationUtils.sendBundledNotification(data.get("title"),data.get("body"));
         } else if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
             Intent intent = new Intent("UpdateCounter");
             LocalBroadcastManager.
