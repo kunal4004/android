@@ -363,7 +363,7 @@
     <string name="loan_withdrawal_popup_low_error_detail">Unfortunately you do not meet the requirements for a loan of this amount. The minimum withdrawal amount is R1000</string>
 
     <string name="loan_request_low">Loan request too low</string>
-    <string name="loan_request_low_desc">Please enter an amount greater or equal to R1 000.00</string>
+    <string name="loan_request_low_desc">Please enter an amount greater\nor equal to R1 000.00</string>
 
     <string name="loan_request_high">Loan request too high</string>
     <string name="loan_request_high_desc">Unfortunately you do not meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>
@@ -478,7 +478,7 @@
     <string name="enter_product_brand_err">Please enter a product or a brand</string>
     <string name="scan_product">SCAN PRODUCT</string>
     <string name="set_manually_enter_barcode">Manually enter the barcode</string>
-    <string name="set_info_detail">Place the barcode within the \nguidelines &amp; remain steady</string>
+    <string name="set_info_detail">Place the barcode within the guidelines &amp; remain steady</string>
     <string name="enter_barcode">ENTER BARCODE</string>
     <string name="enter_barcode_desc">ENTER THE NUMBER BELOW THE BARCODE</string>
     <string name="no_messages_to_display">No messages to display</string>
@@ -600,4 +600,12 @@
     <string name="acc_profile">Profile</string>
     <string name="acc_update_email_address">Update email address</string>
     <string name="acc_update_password">Update password</string>
+
+    <string name="session_expired_title">SESSION EXPIRED</string>
+    <string name="session_expired_account_desc">Your Accounts session expired. To continue please
+        sign in or cancel to return to the rest of the app.</string>
+    <string name="session_expired_reward_desc">Your WRewards session expired. To continue please
+        sign in or cancel to return to the rest of the app.</string>
+    <string name="session_expired_sign_in">sign in</string>
+
 </resources>

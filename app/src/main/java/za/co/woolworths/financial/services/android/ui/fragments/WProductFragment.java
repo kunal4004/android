@@ -37,7 +37,7 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSubCategoryActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity;
-import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductCategoryAdapter;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -113,6 +113,8 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 					mMenuNavigationInterface.switchToView(1);
 			}
 		});
+
+
 	}
 
 	@Override
@@ -216,7 +218,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 			Intent intent = new Intent(getActivity(), clss);
 			intent.putExtra("SCAN_MODE", "ONE_D_MODE");
 			getActivity().startActivity(intent);
-			getActivity().overridePendingTransition(0, 0);
+			getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 		} else {
 			requestPerms();
 		}
@@ -347,7 +349,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 		try {
 			String firstTime = Utils.getSessionDaoValue(getActivity(), SessionDao.KEY.PRODUCTS_ONE_TIME_POPUP);
 			if (firstTime == null) {
-				Utils.displayValidationMessage(getActivity(), TransientActivity.VALIDATION_MESSAGE_LIST.INFO, getActivity().getResources().getString(R.string.products_onetime_popup_text));
+				Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INFO, getActivity().getResources().getString(R.string.products_onetime_popup_text));
 				Utils.sessionDaoSave(getActivity(), SessionDao.KEY.PRODUCTS_ONE_TIME_POPUP, "1");
 			}
 		} catch (NullPointerException ignored) {
@@ -398,7 +400,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 						default:
 							if (!TextUtils.isEmpty(rootCategories.response.desc)) {
 								Utils.displayValidationMessage(getActivity(),
-										TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+										CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
 										rootCategories.response.desc);
 							}
 							break;

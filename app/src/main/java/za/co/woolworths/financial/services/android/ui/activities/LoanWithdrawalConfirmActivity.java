@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -44,7 +45,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 	private WTextView mTextAdditionalMonthAmount;
 	private WTextView mBtnConfirm;
 	private Integer installment_amount;
-	private String mDrawanDownAmount;
+	private String mAmount;
 	private int mRepaymentPeriod;
 	private ProgressBar mConfirmProgressBar;
 	private AsyncTask<String, String, AuthoriseLoanResponse> authoriseLoanRequest;
@@ -65,7 +66,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(LoanWithdrawalConfirmActivity.this);
 		Bundle intent = getIntent().getExtras();
 		if (intent != null) {
-			mDrawanDownAmount = intent.getString("drawnDownAmount");
+			mAmount = intent.getString("drawnDownAmount");
 			minDrawnDownAmount = intent.getInt("minDrawnDownAmount");
 			mRepaymentPeriod = intent.getInt("repaymentPeriod");
 		}
@@ -90,7 +91,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 
 	private void initViews() {
 		mScrollLoanWithdrawal = (ScrollView) findViewById(R.id.scrollLoanWithdrawal);
-		mTextDrawnAmount = (WTextView) findViewById(R.id.currencyType);
+		mTextDrawnAmount = (WTextView) findViewById(R.id.mCurrencyType);
 		mTextMonths = (WTextView) findViewById(R.id.textMonths);
 		mTextAdditionalMonthAmount = (WTextView) findViewById(R.id.textAdditionalMonthAmount);
 		mBtnConfirm = (WTextView) findViewById(R.id.btnConfirm);
@@ -115,9 +116,9 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 
 	private void setContent() {
 		mScrollLoanWithdrawal.setVisibility(View.VISIBLE);
-		mTextDrawnAmount.setText(mDrawanDownAmount);
 		mTextMonths.setText(String.valueOf(mRepaymentPeriod) + " months");
 		mTextAdditionalMonthAmount.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(installment_amount), 1, this)));
+		mTextDrawnAmount.setText("R " + mAmount);
 	}
 
 	@Override
@@ -166,20 +167,31 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 				super.onPostExecute(authoriseLoanResponse);
 				try {
 					hideProgressBar();
-					if (authoriseLoanResponse.httpCode == 200) {
-						Intent intent = new Intent(LoanWithdrawalConfirmActivity.this, LoanWithdrawalSuccessActivity.class);
-						startActivity(intent);
-						finish();
-						setLoanWithdrawalClicked(false);
-					} else {
-						String desc = authoriseLoanResponse.response.desc;
-						if (desc != null && !TextUtils.isEmpty(desc)) {
-							Utils.displayValidationMessage(LoanWithdrawalConfirmActivity.this,
-									TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-									desc);
-						}
-					}
+					int httpCode = authoriseLoanResponse.httpCode;
 
+					switch (httpCode) {
+						case 200:
+							Intent intent = new Intent(LoanWithdrawalConfirmActivity.this, LoanWithdrawalSuccessActivity.class);
+							startActivity(intent);
+							finish();
+							setLoanWithdrawalClicked(false);
+							break;
+
+						case 440:
+							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired
+									(LoanWithdrawalConfirmActivity.this,
+											authoriseLoanResponse.response.stsParams);
+							break;
+
+						default:
+							String desc = authoriseLoanResponse.response.desc;
+							if (desc != null && !TextUtils.isEmpty(desc)) {
+								Utils.displayValidationMessage(LoanWithdrawalConfirmActivity.this,
+										CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
+										desc);
+							}
+							break;
+					}
 				} catch (Exception ignored) {
 				}
 			}

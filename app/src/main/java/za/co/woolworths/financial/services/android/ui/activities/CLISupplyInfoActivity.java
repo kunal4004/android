@@ -41,7 +41,6 @@ import za.co.woolworths.financial.services.android.models.dto.CreateOfferRespons
 import za.co.woolworths.financial.services.android.models.dto.CreditLimit;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.CLICreditLimitAdapter;
-import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
@@ -51,13 +50,13 @@ import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICreditLimitContentBinder;
 
 public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickListener,
 		CLICreditLimitContentBinder.OnClickListener, CompoundButton.OnCheckedChangeListener,
-		NetworkChangeListener, AlertDialogInterface {
+		NetworkChangeListener {
 
 	private WEditTextView mTextAmount;
 	private WButton mBtnContinue;
@@ -89,7 +88,6 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 	private BroadcastReceiver connectionBroadcast;
 	private ErrorHandlerView mErrorHandlerView;
 	private boolean continueButtonClicked = false;
-	private AlertDialogManager mTokenExpireDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +97,6 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 		fm = getSupportFragmentManager();
 		mErrorHandlerView = new ErrorHandlerView(CLISupplyInfoActivity.this);
 		mWoolworthsApplication = (WoolworthsApplication) getApplication();
-		mTokenExpireDialog = new AlertDialogManager(CLISupplyInfoActivity.this, mWoolworthsApplication,
-				CLISupplyInfoActivity
-						.this);
 		mUpdateBankDetail = mWoolworthsApplication.updateBankDetail;
 		mProgressBar = (ProgressBar) findViewById(R.id.mWoolworthsProgressBar);
 		mRdioGroupTypeFace = Typeface.createFromAsset(getAssets(), "fonts/WFutura-Medium.ttf");
@@ -239,7 +234,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 
 				if (!pageIsValid) {
 					Utils.displayValidationMessage(CLISupplyInfoActivity.this,
-							TransientActivity.VALIDATION_MESSAGE_LIST.MANDATORY_FIELD,
+							CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.MANDATORY_FIELD,
 							getString(R.string.cli_cancel_application));
 					return;
 				}
@@ -297,7 +292,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 	public void onClick(View v, int position) {
 		if (mArrCreditLimit != null) {
 			Utils.displayValidationMessage(CLISupplyInfoActivity.this,
-					TransientActivity.VALIDATION_MESSAGE_LIST.INFO,
+					CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INFO,
 					mArrCreditLimit.get(position).getDescription());
 		}
 	}
@@ -374,13 +369,14 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 								break;
 
 							case 440:
-								mTokenExpireDialog.showExpiredTokenDialog(createOfferResponse
+								SessionExpiredUtilities.INSTANCE.setAccountSessionExpired
+										(CLISupplyInfoActivity.this, createOfferResponse
 										.response.stsParams);
 								break;
 							default:
 								if (!TextUtils.isEmpty(createOfferResponse.response.desc)) {
 									Utils.displayValidationMessage(CLISupplyInfoActivity.this,
-											TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+											CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
 											createOfferResponse.response.desc);
 								}
 								break;
@@ -419,16 +415,6 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 			}
 		} catch (NullPointerException ignored) {
 		}
-	}
-
-	@Override
-	public void onExpiredTokenCancel() {
-		mTokenExpireDialog.onCancel();
-	}
-
-	@Override
-	public void onExpiredTokenAuthentication() {
-		mTokenExpireDialog.reAuthenticate();
 	}
 
 	private class NumberTextWatcher implements TextWatcher {
@@ -562,7 +548,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 					break;
 				case R.id.radioNoConfidentialCredit:
 					Utils.displayValidationMessage(CLISupplyInfoActivity.this,
-							TransientActivity.VALIDATION_MESSAGE_LIST.CONFIDENTIAL,
+							CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.CONFIDENTIAL,
 							"");
 					break;
 				default:
@@ -580,7 +566,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 					break;
 				case R.id.radioYesSolvency:
 					Utils.displayValidationMessage(CLISupplyInfoActivity.this,
-							TransientActivity.VALIDATION_MESSAGE_LIST.INSOLVENCY,
+							CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INSOLVENCY,
 							"");
 					break;
 				default:
@@ -687,12 +673,6 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (!mTokenExpireDialog.getAccountSignInState()) {
-			if (mTokenExpireDialog.getOnBackPressState()) {
-				mTokenExpireDialog.onCancel();
-			} else {
-				retryConnect();
-			}
-		}
+		retryConnect();
 	}
 }

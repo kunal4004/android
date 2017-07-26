@@ -294,7 +294,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 						mSelectedProduct.productId,
 						mSelectedProduct.productName, false));
 				Utils.displayValidationMessage(WProductDetailActivity.this,
-						TransientActivity.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
+						CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
 						"viewShoppingList");
 			}
 		});

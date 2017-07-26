@@ -95,7 +95,7 @@ public class ShoppingUnCheckedListAdapter extends RecyclerSwipeAdapter<ShoppingU
 
             @Override
             public void onOpen(SwipeLayout layout) {
-                Log.e("swiping", "swiping");
+                Log.d("swiping", "swiping");
                 wOnItemClickListener.onSwipeListener(0, layout);
             }
 

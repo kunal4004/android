@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,22 +16,20 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.ui.adapters.WTransactionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 
-public class WTransactionsActivity extends AppCompatActivity implements AlertDialogInterface {
+public class WTransactionsActivity extends AppCompatActivity {
 
 	public Toolbar toolbar;
 	public ExpandableListView transactionListview;
 	public String productOfferingId;
 	private ProgressDialogFragment mGetTransactionProgressDialog;
 	private ErrorHandlerView mErrorHandlerView;
-	private AlertDialogManager mTokenExpireDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +45,6 @@ public class WTransactionsActivity extends AppCompatActivity implements AlertDia
 				(WTextView) findViewById(R.id.txtEmptyStateTitle),
 				(WTextView) findViewById(R.id.txtEmptyStateDesc),
 				(RelativeLayout) findViewById(R.id.no_connection_layout));
-		mTokenExpireDialog = new AlertDialogManager(WTransactionsActivity.this, woolworthsApplication,
-				WTransactionsActivity
-						.this);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(null);
@@ -118,7 +112,9 @@ public class WTransactionsActivity extends AppCompatActivity implements AlertDia
 				super.onPostExecute(transactionHistoryResponse);
 				dismissProgress();
 				try {
-					switch (transactionHistoryResponse.httpCode) {
+
+					int httpCode = transactionHistoryResponse.httpCode;
+					switch (httpCode) {
 						case 200:
 							if (transactionHistoryResponse.transactions.size() > 0) {
 								transactionListview.setVisibility(View.VISIBLE);
@@ -131,8 +127,7 @@ public class WTransactionsActivity extends AppCompatActivity implements AlertDia
 							break;
 						case 440:
 							if (!(WTransactionsActivity.this.isFinishing())) {
-								mTokenExpireDialog.showExpiredTokenDialog
-										(transactionHistoryResponse.response.stsParams);
+								SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(WTransactionsActivity.this, transactionHistoryResponse.response.stsParams);
 							}
 							break;
 						default:
@@ -178,28 +173,5 @@ public class WTransactionsActivity extends AppCompatActivity implements AlertDia
 				mErrorHandlerView.networkFailureHandler(errorMessage);
 			}
 		});
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (!mTokenExpireDialog.getAccountSignInState()) {
-			if (mTokenExpireDialog.getOnBackPressState()) {
-				mTokenExpireDialog.onCancel(); // go back on back press state
-			} else {
-				loadTransactionHistory(productOfferingId); //reload transaction after successful
-				// login
-			}
-		}
-	}
-
-	@Override
-	public void onExpiredTokenCancel() {
-		mTokenExpireDialog.onCancel();
-	}
-
-	@Override
-	public void onExpiredTokenAuthentication() {
-		mTokenExpireDialog.reAuthenticate();
 	}
 }
