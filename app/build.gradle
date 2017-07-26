@@ -3,12 +3,12 @@ apply plugin: 'com.android.application'
 android {
 
     def major = "5"
-    def minor = "1"
-    def fix = "1"
+    def minor = "2"
+    def fix = "0"
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
-        job = "1";
+        job = "103";
     }
 
     def buildNumber = major + "." + minor + "." + fix
