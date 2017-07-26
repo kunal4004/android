@@ -4,11 +4,11 @@ android {
 
     def major = "5"
     def minor = "2"
-    def fix = "0"
+    def fix = "1"
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
-        job = "103";
+        job = "104";
     }
 
     def buildNumber = major + "." + minor + "." + fix
