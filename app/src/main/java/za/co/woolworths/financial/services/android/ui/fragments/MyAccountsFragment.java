@@ -141,7 +141,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	                         Bundle savedInstanceState) {
+							 Bundle savedInstanceState) {
 		mContext = this;
 		return inflater.inflate(R.layout.my_accounts_fragment, container, false);
 	}
@@ -746,7 +746,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		messageCounterRequest();
 		try {
 			onSessionExpired();
-		} catch (NullPointerException ex) {
+		} catch (Exception ignored) {
 		}
 	}
 
@@ -832,6 +832,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		applyPersonalCardView.setVisibility(View.VISIBLE);
 		loggedOutHeaderLayout.setVisibility(View.VISIBLE);
 		loggedInHeaderLayout.setVisibility(View.GONE);
+		linkedAccountsLayout.setVisibility(View.GONE);
 		myDetailBtn.setVisibility(View.GONE);
 		signOutBtn.setVisibility(View.GONE);
 	}
@@ -963,6 +964,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			unavailableAccounts.clear();
 			unavailableAccounts.addAll(Arrays.asList("SC", "CC", "PL"));
 			wGlobalState.setAccountHasExpired(true);
+
 			configureView();
 			showLogOutScreen();
 			SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());

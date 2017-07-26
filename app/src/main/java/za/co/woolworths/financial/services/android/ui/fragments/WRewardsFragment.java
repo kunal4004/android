@@ -224,7 +224,6 @@ public class WRewardsFragment extends AbstractFragmentListener {
 
 	private void onSessionExpired() {
 		try {
-			Log.e("OnSessionExpired", wGlobalState.getNewSTSParams() + " " + wGlobalState.rewardHasExpired());
 			if (!TextUtils.isEmpty(wGlobalState.getNewSTSParams()) && wGlobalState.rewardHasExpired()) {
 			} else {
 				if (wGlobalState.rewardHasExpired()
@@ -245,7 +244,7 @@ public class WRewardsFragment extends AbstractFragmentListener {
 			}
 			wGlobalState.setRewardHasExpired(false);
 			wGlobalState.resetPressState();
-		} catch (NullPointerException e) {
+		} catch (Exception e) {
 			Log.e("OnSessionExpired", e.toString());
 		}
 	}
