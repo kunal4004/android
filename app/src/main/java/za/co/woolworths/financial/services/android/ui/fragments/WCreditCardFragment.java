@@ -149,7 +149,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				break;
 
 			case R.id.txtIncreseLimit:
-				Log.e("productOfferIdStore", String.valueOf(productOfferingId));
+				Log.d("productOfferIdStore", String.valueOf(productOfferingId));
 				if (!isOfferActive) {
 					((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
 					Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
