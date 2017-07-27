@@ -78,7 +78,7 @@ import za.co.woolworths.financial.services.android.ui.activities.MultipleImageAc
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
-import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
@@ -419,7 +419,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		switch (item.getItemId()) {
 			// Respond to the action bar's Up/Home button
 			case android.R.id.home:
-				finish();
+				finishActivity();
 				return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -506,6 +506,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 			case R.id.btnManual:
 				Intent openManual = new Intent(QRActivity.this, EnterBarcodeActivity.class);
 				startActivity(openManual);
+				overridePendingTransition(R.anim.slide_up_anim,R.anim.stay);
 				break;
 		}
 	}
@@ -634,7 +635,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	}
 
 	private void errorScanCode() {
-		Utils.displayValidationMessage(this, TransientActivity.VALIDATION_MESSAGE_LIST.BARCODE_ERROR, "");
+		Utils.displayValidationMessage(this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.BARCODE_ERROR, "");
 	}
 
 	private void resumeScan() {
@@ -1359,5 +1360,16 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		openMultipleImage.putExtra("auxiliaryImages", mAuxiliaryImages);
 		startActivity(openMultipleImage);
 		overridePendingTransition(0, 0);
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		finishActivity();
+	}
+
+	private void finishActivity(){
+		finish();
+		overridePendingTransition(R.anim.stay,R.anim.slide_down_anim);
 	}
 }

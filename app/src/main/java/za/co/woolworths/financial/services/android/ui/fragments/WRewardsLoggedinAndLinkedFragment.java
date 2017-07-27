@@ -24,19 +24,18 @@ import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
-import za.co.woolworths.financial.services.android.util.AlertDialogInterface;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.AlertDialogManager;
 
 /**
  * Created by W7099877 on 05/01/2017.
  */
 
-public class WRewardsLoggedinAndLinkedFragment extends Fragment implements AlertDialogInterface {
+public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 
 	private MenuNavigationInterface mNavigationInterface;
 	private TabLayout tabLayout;
@@ -47,15 +46,13 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 	private ErrorHandlerView mErrorHandlerView;
 	private RelativeLayout mRlConnect;
 	private UpdateNavigationDrawer updateNavigationDrawer;
-	private AlertDialogManager mTokenExpireDialog;
-	private WRewardsLoggedinAndLinkedFragment mContext;
 	private WGlobalState mWGlobalState;
 	private HttpAsyncTask<String, String, VoucherResponse> asyncTaskReward;
+	public static final int DEFAULT_VOUCHER_COUNT = 0;
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		mContext = this;
 		return inflater.inflate(R.layout.wrewards_loggedin_and_linked_fragment, container, false);
 	}
 
@@ -73,7 +70,6 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 		mRlConnect = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), mRlConnect);
 		mErrorHandlerView.setMargin(mRlConnect, 0, 0, 0, 0);
-		mTokenExpireDialog = new AlertDialogManager(getActivity(), (WoolworthsApplication) getActivity().getApplication(), mContext);
 		loadReward();
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -97,8 +93,10 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 		adapter.notifyDataSetChanged();
 		tabLayout.setupWithViewPager(viewPager);
 		viewPager.invalidate();
-		setupTabIcons(voucherResponse.voucherCollection.vouchers.size());
-
+		if (voucherResponse.voucherCollection.vouchers != null)
+			setupTabIcons(voucherResponse.voucherCollection.vouchers.size());
+		else
+			setupTabIcons(DEFAULT_VOUCHER_COUNT);
 	}
 
 
@@ -159,8 +157,6 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 			@Override
 			protected void onPostExecute(VoucherResponse voucherResponse) {
 				super.onPostExecute(voucherResponse);
-				progressBar.setVisibility(View.GONE);
-				fragmentView.setVisibility(View.VISIBLE);
 				handleVoucherResponse(voucherResponse);
 			}
 		};
@@ -168,17 +164,34 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 
 	public void handleVoucherResponse(VoucherResponse voucherResponse) {
 		try {
+			progressBar.setVisibility(View.GONE);
+			fragmentView.setVisibility(View.VISIBLE);
 			switch (voucherResponse.httpCode) {
 				case 200:
 					mWGlobalState.setRewardSignInState(true);
+					mWGlobalState.setRewardHasExpired(false);
 					setupViewPager(viewPager, voucherResponse);
-					updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
+					if (voucherResponse.voucherCollection.vouchers != null)
+						updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
+					else {
+						clearVoucherCounter();
+					}
 					break;
 				case 440:
+					clearVoucherCounter();
+					mWGlobalState.setRewardHasExpired(true);
 					mWGlobalState.setRewardSignInState(false);
-					mTokenExpireDialog.showExpiredTokenDialog(voucherResponse.response.stsParams);
+					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), voucherResponse.response.stsParams);
+					Utils.setBadgeCounter(getActivity(), 0);
+					updateNavigationDrawer.updateVoucherCount(0);
+					Intent intent = new Intent();
+					getTargetFragment().onActivityResult(WRewardsFragment.FRAGMENT_CODE_2, Activity.RESULT_OK,
+							intent);
+					getFragmentManager().popBackStack();
+					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 					break;
 				default:
+					clearVoucherCounter();
 					mWGlobalState.setRewardSignInState(false);
 					setupErrorViewPager(viewPager);
 					break;
@@ -205,18 +218,11 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment implements Alert
 	}
 
 	@Override
-	public void onExpiredTokenCancel() {
-		if (!asyncTaskReward.isCancelled()) {
-			asyncTaskReward.cancel(true);
-		}
-		mWGlobalState.setRewardSignInState(false);
-		Intent intent = new Intent();
-		getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
-		getFragmentManager().popBackStack();
+	public void onResume() {
+		super.onResume();
 	}
 
-	@Override
-	public void onExpiredTokenAuthentication() {
-		mTokenExpireDialog.reAuthenticate();
+	public void clearVoucherCounter() {
+		updateNavigationDrawer.updateVoucherCount(0);
 	}
 }

@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -43,6 +44,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -62,12 +64,12 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 	private ProgressBar mLoanWithdrawalProgress;
 	private boolean arrowIsVisible = false;
 	private AsyncTask<String, String, IssueLoanResponse> issueLoanRequest;
-	private boolean deleteKeyIsPressed = false;
 	private ErrorHandlerView mErrorHandlerView;
 	private NetworkChangeListener networkChangeListener;
 	private BroadcastReceiver connectionBroadcast;
-
 	private boolean loanWithdrawalClicked = false;
+	private boolean mBackSpace;
+	private LinearLayout llDrawndownAmount;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +95,10 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 
 		String shareDrawDownAmount = mSharePreferenceHelper.getValue("lw_amount_drawn_cent");
 		if (TextUtils.isEmpty(shareDrawDownAmount)) {
-			mEditWithdrawalAmount.setText("R ");
+			mEditWithdrawalAmount.setText("");
 		} else {
-			mEditWithdrawalAmount.setText(String.valueOf(Integer.valueOf(shareDrawDownAmount) / 100));
+			String drawnDownAmount = String.valueOf(Integer.valueOf(shareDrawDownAmount) / 100);
+			mEditWithdrawalAmount.setText(drawnDownAmount);
 			handler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
@@ -109,6 +112,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 		mTextAvailableFund = (WTextView) findViewById(R.id.textAvailableFunds);
 		mTextCreditLimit = (WTextView) findViewById(R.id.textCreditLimit);
 		mEditWithdrawalAmount = (WLoanEditTextView) findViewById(R.id.editWithdrawAmount);
+		llDrawndownAmount = (LinearLayout) findViewById(R.id.llDrawndownAmount);
 		mRelLoanWithdrawal = (RelativeLayout) findViewById(R.id.relLoanWithdrawal);
 		mLoanWithdrawalProgress = (ProgressBar) findViewById(R.id.mLoanWithdrawalProgress);
 		ScrollView mScrollLoanWithdrawal = (ScrollView) findViewById(R.id.scrollLoanWithdrawal);
@@ -142,7 +146,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
 					handled = true;
 					if (arrowIsVisible) {
-						loanWithdrawalClicked = true;
+						setLoanWithdrawalClick(true);
 						setAmount();
 					}
 				}
@@ -150,22 +154,8 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 			}
 		});
 
-
-		mEditWithdrawalAmount.setOnKeyListener(new View.OnKeyListener() {
-
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if (keyCode == KeyEvent.KEYCODE_DEL) {
-					Log.e("deletekey", mEditWithdrawalAmount.getText().toString());
-					deleteKeyIsPressed = true;
-				} else {
-					deleteKeyIsPressed = false;
-				}
-				return false;
-			}
-		});
-
-		mEditWithdrawalAmount.addTextChangedListener(new NumberTextWatcher(mEditWithdrawalAmount));
+		mEditWithdrawalAmount.addTextChangedListener(new NumberTextWatcher
+				(mEditWithdrawalAmount));
 
 		WLoanEditTextView.OnKeyPreImeListener onKeyPreImeListener =
 				new WLoanEditTextView.OnKeyPreImeListener() {
@@ -174,6 +164,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 						LoanWithdrawalActivity.this.onBackPressed();
 					}
 				};
+
 		mEditWithdrawalAmount.setOnKeyPreImeListener(onKeyPreImeListener);
 	}
 
@@ -201,7 +192,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 				if (new ConnectionDetector().isOnline(this)) {
 					showSoftKeyboard();
 				}
-				loanWithdrawalClicked = true;
+				setLoanWithdrawalClick(true);
 				setAmount();
 				break;
 		}
@@ -211,7 +202,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 	private void setAmount() {
 		if (getDrawnDownAmount() < wminDrawnDownAmount) {
 			Utils.displayValidationMessage(LoanWithdrawalActivity.this,
-					TransientActivity.VALIDATION_MESSAGE_LIST.LOW_LOAN_AMOUNT,
+					CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.LOW_LOAN_AMOUNT,
 					String.valueOf(wminDrawnDownAmount));
 		} else if (getDrawnDownAmount() >= wminDrawnDownAmount
 				&& getDrawnDownAmount() <= getAvailableFund()) {
@@ -226,7 +217,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 			}, 200);
 		} else {
 			Utils.displayValidationMessage(LoanWithdrawalActivity.this,
-					TransientActivity.VALIDATION_MESSAGE_LIST.HIGH_LOAN_AMOUNT, "");
+					CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.HIGH_LOAN_AMOUNT, "");
 		}
 	}
 
@@ -319,44 +310,59 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 				super.onPostExecute(issueLoanResponse);
 				try {
 					hideProgressBar();
-					if (issueLoanResponse.httpCode == 200) {
-						loanWithdrawalClicked = false;
-						mSharePreferenceHelper.save(String.valueOf(issueLoanResponse.installmentAmount), "lw_installment_amount");
-						Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this, LoanWithdrawalConfirmActivity.class);
-						openConfirmWithdrawal.putExtra("drawnDownAmount", mDrawnDownAmount);
-						openConfirmWithdrawal.putExtra("availableFunds", mAvailableFunds);
-						openConfirmWithdrawal.putExtra("creditLimit", mCreditLimit);
-						openConfirmWithdrawal.putExtra("minDrawnDownAmount", wminDrawnDownAmount);
-						openConfirmWithdrawal.putExtra("repaymentPeriod", repaymentPeriod(getCreditAmount()));
-						startActivity(openConfirmWithdrawal);
-						finish();
-					} else {
-						try {
-							hideKeyboard();
-							String responseDesc = issueLoanResponse.response.desc;
-							if (responseDesc != null) {
-								if (!TextUtils.isEmpty(responseDesc)) {
-									loanWithdrawalClicked = false;
-									Utils.displayValidationMessage(LoanWithdrawalActivity.this,
-											TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
-											responseDesc);
+					int httpCode = issueLoanResponse.httpCode;
+					switch (httpCode) {
+						case 200:
+							loanWithdrawalClicked = false;
+							mSharePreferenceHelper.save(String.valueOf(issueLoanResponse.installmentAmount), "lw_installment_amount");
+							String mAmount = mEditWithdrawalAmount.getText().toString();
+							Intent openConfirmWithdrawal = new Intent(LoanWithdrawalActivity.this, LoanWithdrawalConfirmActivity.class);
+							openConfirmWithdrawal.putExtra("drawnDownAmount", mAmount);
+							openConfirmWithdrawal.putExtra("availableFunds", mAvailableFunds);
+							openConfirmWithdrawal.putExtra("creditLimit", mCreditLimit);
+							openConfirmWithdrawal.putExtra("minDrawnDownAmount", wminDrawnDownAmount);
+							openConfirmWithdrawal.putExtra("repaymentPeriod", repaymentPeriod(getCreditAmount()));
+							startActivity(openConfirmWithdrawal);
+							finish();
+							break;
+						case 440:
+							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired
+									(LoanWithdrawalActivity.this, issueLoanResponse
+											.response.stsParams);
+							break;
+
+						default:
+							try {
+								hideKeyboard();
+								String responseDesc = issueLoanResponse.response.desc;
+								if (responseDesc != null) {
+									if (!TextUtils.isEmpty(responseDesc)) {
+										loanWithdrawalClicked = false;
+										Utils.displayValidationMessage(LoanWithdrawalActivity.this,
+												CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
+												responseDesc);
+									}
 								}
+							} catch (NullPointerException ignored) {
+								showSoftKeyboard();
 							}
-						} catch (NullPointerException ignored) {
-							showSoftKeyboard();
-						}
+							break;
 					}
-				} catch (Exception ignored) {
+				} catch (
+						Exception ignored)
+
+				{
 				}
 			}
 
 			@Override
-			protected IssueLoanResponse httpError(final String errorMessage, HttpErrorCode httpErrorCode) {
+			protected IssueLoanResponse httpError(final String errorMessage, HttpErrorCode
+					httpErrorCode) {
 				IssueLoanResponse issueLoanResponse = new IssueLoanResponse();
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						loanWithdrawalClicked = true;
+						setLoanWithdrawalClick(true);
 						hideProgressBar();
 						showSoftKeyboard();
 					}
@@ -368,7 +374,9 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 			protected Class<IssueLoanResponse> httpDoInBackgroundReturnType() {
 				return IssueLoanResponse.class;
 			}
-		};
+		}
+
+				;
 	}
 
 	private int repaymentPeriod(int amount) {
@@ -419,6 +427,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 		mLoanWithdrawalProgress.setVisibility(View.VISIBLE);
 		mLoanWithdrawalProgress.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
 		mEditWithdrawalAmount.setVisibility(View.GONE);
+		llDrawndownAmount.setVisibility(View.GONE);
 		menuItemVisible(mMenu, false);
 	}
 
@@ -426,6 +435,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 		mLoanWithdrawalProgress.setVisibility(View.GONE);
 		mLoanWithdrawalProgress.getIndeterminateDrawable().setColorFilter(null);
 		mEditWithdrawalAmount.setVisibility(View.VISIBLE);
+		llDrawndownAmount.setVisibility(View.VISIBLE);
 		menuItemVisible(mMenu, true);
 	}
 
@@ -439,116 +449,101 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 		}
 	}
 
-	public class NumberTextWatcher implements TextWatcher {
+	private class NumberTextWatcher implements TextWatcher {
 
 		private DecimalFormat df;
 		private DecimalFormat dfnd;
-		private boolean hasFractionalPart;
 
 		private EditText et;
+		private int mPreviousLength;
 
-		NumberTextWatcher(EditText et) {
-			df = new DecimalFormat("#,###.##");
+		public NumberTextWatcher(EditText et) {
+			df = new DecimalFormat("##,###.##");
 			df.setDecimalSeparatorAlwaysShown(true);
 			dfnd = new DecimalFormat("#,###");
 			this.et = et;
-			hasFractionalPart = false;
 		}
 
-		@Override
+		@SuppressWarnings("unused")
+		private static final String TAG = "NumberTextWatcher";
+
 		public void afterTextChanged(Editable s) {
 			et.removeTextChangedListener(this);
-			try {
-				int inilen, endlen;
-				inilen = et.getText().length();
-				if (!deleteKeyIsPressed) {
-					String v = s.toString().replace(String.valueOf(df.getDecimalFormatSymbols()
-							.getGroupingSeparator()), "").replace(" .", ".")
-							.replace(" ", "").replace("R ", "")
-							.replace("R", "").replace(".00", "");
-					Number n = null;
+			mBackSpace = s.length() > mPreviousLength;
+			int inilen, endlen;
+			inilen = et.getText().length();
+			if (mBackSpace || TextUtils.isEmpty(et.getText().toString())) {
+				try {
+					String v = removeDecimal(s.toString()
+							.replace(String.valueOf(df.getDecimalFormatSymbols().getGroupingSeparator()), ""));
 					if (TextUtils.isEmpty(v)) {
-						et.setText("");
 						menuItemVisible(mMenu, false);
 					} else {
-						try {
-							n = df.parse(v);
-						} catch (ParseException ignored) {
-						}
-						int cp = et.getSelectionStart();
-						String finalAmount = null;
-						if (hasFractionalPart) {
-							finalAmount = "R " + df.format(n).replace(".", "").replace(",", " ") + ".00";
-						} else {
-							finalAmount = "R " + dfnd.format(n).replace(".", "").replace(",", " ") + ".00";
-						}
-
-						et.setText(finalAmount);
-						endlen = et.getText().length();
-						int sel = (cp + (endlen - inilen));
-						if (sel > 0 && sel <= et.getText().length()) {
-							et.setSelection(endlen);
-						} else {
-							// place cursor at the end?
-							et.setSelection(et.getText().length());
-						}
 						menuItemVisible(mMenu, true);
 					}
-				} else {
-					String withdrawalAmount = mEditWithdrawalAmount.getText().toString();
-					String intWithdrawalAmount = withdrawalAmount
-							.replace(String.valueOf(df.getDecimalFormatSymbols()
-									.getGroupingSeparator()), "").replace(" .", ".")
-							.replace(" ", "").replace("R ", "")
-							.replace("R", "").replace(".00", "").replace(".0", "");
-					intWithdrawalAmount = intWithdrawalAmount.substring(0, intWithdrawalAmount.length() - 1);
-					Number n = null;
-					if (TextUtils.isEmpty(intWithdrawalAmount)) {
-						et.setText("");
-						menuItemVisible(mMenu, false);
-					} else {
-						try {
-							n = df.parse(intWithdrawalAmount);
-						} catch (ParseException ignored) {
-						}
-						int cp = et.getSelectionStart();
-						String finalAmount = null;
 
-						if (hasFractionalPart) {
-							finalAmount = "R " + df.format(n).replace(".", "").replace(",", " ") + ".00";
-						} else {
-							finalAmount = "R " + dfnd.format(n).replace(".", "").replace(",", " ") + ".00";
-						}
+					Number n = df.parse(v);
+					int cp = et.getSelectionStart();
 
-						et.setText(finalAmount);
-						endlen = et.getText().length();
-						int sel = (cp + (endlen - inilen));
-						if (sel > 0 && sel <= et.getText().length()) {
-							et.setSelection(sel);
-						} else {
-							// place cursor at the end?
-							et.setSelection(et.getText().length());
-						}
-						menuItemVisible(mMenu, true);
+					et.setText(addDecimal(dfnd.format(n)));
+
+					endlen = et.getText().length();
+					int sel = (cp + (endlen - inilen));
+					if (sel > 0) {
+						et.setSelection(endlen);
 					}
+				} catch (Exception ignored) {
 				}
-			} catch (NumberFormatException ignored) {
+
+			} else {
+				String withdrawalAmount = mEditWithdrawalAmount.getText().toString();
+				String intWithdrawalAmount = withdrawalAmount
+						.replace(String.valueOf(df.getDecimalFormatSymbols()
+								.getGroupingSeparator()), "").replace(" .", ".")
+						.replace(" ", "")
+						.replace(".00", "").replace(".0", "");
+
+				try {
+					intWithdrawalAmount = intWithdrawalAmount.substring(0, intWithdrawalAmount.length() - 1);
+				} catch (Exception ex) {
+				}
+
+				Number n = null;
+				if (TextUtils.isEmpty(intWithdrawalAmount)) {
+					et.setText("");
+					menuItemVisible(mMenu, false);
+				} else {
+					try {
+						n = df.parse(intWithdrawalAmount);
+					} catch (ParseException ignored) {
+					}
+					int cp = et.getSelectionStart();
+					String finalAmount = dfnd.format(n).replace(".", "").replace(",", " ") + ".00";
+					et.setText(finalAmount);
+					endlen = et.getText().length();
+					int sel = (cp + (endlen - inilen));
+					if (sel > 0 && sel <= et.getText().length()) {
+						et.setSelection(sel);
+					} else {
+						// place cursor at the end?
+						et.setSelection(et.getText().length());
+					}
+					menuItemVisible(mMenu, true);
+				}
 			}
 			et.addTextChangedListener(this);
 		}
 
-		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			mPreviousLength = s.length();
+
 		}
 
-		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
-			if (before - count == 1) { // onDeleteButton pressed
-			} else if (s.subSequence(start, start + count).toString().equals("\n")) {
-				hasFractionalPart = s.toString().contains(String.valueOf(df.getDecimalFormatSymbols().getDecimalSeparator()));
-			}
 		}
+
 	}
+
 
 	@Override
 	public void onPause() {
@@ -570,9 +565,9 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 			public void run() {
 				if (new ConnectionDetector().isOnline(LoanWithdrawalActivity.this)) {
 					try {
-						if (loanAmount() && loanWithdrawalClicked) {
+						if (loanAmount() && getLoanWithdrawalClick()) {
 							setAmount();
-							loanWithdrawalClicked = false;
+							setLoanWithdrawalClick(false);
 						}
 					} catch (Exception ignored) {
 					}
@@ -596,5 +591,24 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 			setAmount = false;
 		}
 		return setAmount;
+	}
+
+	public boolean getLoanWithdrawalClick() {
+		return loanWithdrawalClicked;
+	}
+
+	public void setLoanWithdrawalClick(boolean pLoanWithdrawalClicked) {
+		loanWithdrawalClicked = pLoanWithdrawalClicked;
+	}
+
+	public String addDecimal(String value) {
+		return value.replace(".", "").replace(",", " ") + ".00";
+	}
+
+	public String removeDecimal(String value) {
+		return value.replace(" .", ".")
+				.replace(" ", "")
+				.replace(",", "")
+				.replace(".00", "");
 	}
 }

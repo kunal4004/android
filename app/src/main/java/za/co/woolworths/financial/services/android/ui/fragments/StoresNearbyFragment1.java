@@ -124,15 +124,13 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	private Location mLocation;
 	private StoresNearbyFragment1 mFragment;
 	MenuItem searchMenu;
+	private boolean isSearchMenuEnabled=true;
 	public boolean isLocationServiceButtonClicked = false;
-
-	public StoresNearbyFragment1() {
-		setHasOptionsMenu(true);
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
+		setHasOptionsMenu(true);
 		return inflater.inflate(R.layout.fragment_stores_nearby1, container, false);
 	}
 
@@ -561,7 +559,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Log.e("RequestSETTINGRESULT", String.valueOf(requestCode));
+		Log.d("RequestSETTINGRESULT", String.valueOf(requestCode));
 		switch (requestCode) {
 			// Check for the integer request code originally supplied to startResolutionForResult().
 			case REQUEST_CHECK_SETTINGS:
@@ -594,10 +592,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		//Disable until finding location
 		if (navigateMenuState) {
 			menu.findItem(R.id.action_locate).setVisible(true);
-			searchMenu.setEnabled(true);
 		} else {
 			menu.findItem(R.id.action_locate).setVisible(false);
-			searchMenu.setEnabled(false);
 		}
 	}
 
@@ -605,9 +601,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.action_search:
-				if (Utils.getLastSavedLocation(getActivity()) != null) {
+				if(isSearchMenuEnabled)
 					startActivity(new Intent(getActivity(), SearchStoresActivity.class));
-				}
 				break;
 			case R.id.action_locate:
 				if (Utils.getLastSavedLocation(getActivity()) != null) {
@@ -816,15 +811,17 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 	public void enableSearchMenu() {
 		if (searchMenu != null) {
-			searchMenu.setEnabled(true);
+			isSearchMenuEnabled=true;
 			searchMenu.getIcon().setAlpha(255);
+			getActivity().invalidateOptionsMenu();
 		}
 	}
 
 	public void disableSearchMenu() {
 		if (searchMenu != null) {
-			searchMenu.setEnabled(false);
+			isSearchMenuEnabled=false;
 			searchMenu.getIcon().setAlpha(130);
+			getActivity().invalidateOptionsMenu();
 		}
 	}
 }

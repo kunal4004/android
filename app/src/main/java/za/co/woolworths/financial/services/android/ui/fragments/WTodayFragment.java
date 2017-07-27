@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.WebAppInterface;
@@ -49,7 +50,6 @@ public class WTodayFragment extends Fragment {
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
 		webView.addJavascriptInterface(new WebAppInterface(getActivity()), "Android");
-		Log.e("webInterface", WoolworthsApplication.getWwTodayURI());
 		webView.loadUrl(WoolworthsApplication.getWwTodayURI());
 		webView.setWebViewClient(new WebViewClient() {
 			@TargetApi(android.os.Build.VERSION_CODES.M)
@@ -65,7 +65,7 @@ public class WTodayFragment extends Fragment {
 				return super.shouldOverrideUrlLoading(view, url);
 			}
 
-			@SuppressWarnings("deprecation")
+			@SuppressWarnings ("deprecation")
 			@Override
 			public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
 				mErrorHandlerView.webViewBlankPage(webView);
