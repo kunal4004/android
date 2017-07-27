@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.WebAppInterface;
@@ -26,9 +28,10 @@ public class WTodayFragment extends Fragment {
 	ErrorHandlerView mErrorHandlerView;
 	MenuNavigationInterface mMenuNavigationInterface;
 
+
 	@Nullable
 	@Override
-	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
+	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.wtoday_fragment, container, false);
 	}
 
@@ -57,7 +60,12 @@ public class WTodayFragment extends Fragment {
 				mErrorHandlerView.networkFailureHandler(error.toString());
 			}
 
-			@SuppressWarnings("deprecation")
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				return super.shouldOverrideUrlLoading(view, url);
+			}
+
+			@SuppressWarnings ("deprecation")
 			@Override
 			public void onReceivedError(WebView webView, int errorCode, String description, String failingUrl) {
 				mErrorHandlerView.webViewBlankPage(webView);

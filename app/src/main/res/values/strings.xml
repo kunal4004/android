@@ -362,10 +362,13 @@
     <string name="loan_withdrawal_popup_low_error">Loan request too low</string>
     <string name="loan_withdrawal_popup_low_error_detail">Unfortunately you do not meet the requirements for a loan of this amount. The minimum withdrawal amount is R1000</string>
 
+    <string name="loan_request_low">Loan request too low</string>
+    <string name="loan_request_low_desc">Please enter an amount greater\nor equal to R1 000.00</string>
 
-    <string name="loan_withdrawal_popup_desc_err">Unfortunately you do not meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>
+    <string name="loan_request_high">Loan request too high</string>
+    <string name="loan_request_high_desc">Unfortunately you do not meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>
+
     <string name="issueing_loan">Processing your loan...</string>
-
     <string name="wrewards_tag_line">|!b|W|!?|Rewards is our way of rewarding customers INSTANTLY.|!b|W|!?|Rewards members save millions every week.</string>
     <string name="wrewards_unlinked_tag_line">We see that your Woolies Card is not yet linked. To see how much you\'ve saved, track your tier status and access all your vouchers, please link your Woolies Card now.</string>
     <string name="link_account">LINK WOOLIES CARD</string>
@@ -475,7 +478,7 @@
     <string name="enter_product_brand_err">Please enter a product or a brand</string>
     <string name="scan_product">SCAN PRODUCT</string>
     <string name="set_manually_enter_barcode">Manually enter the barcode</string>
-    <string name="set_info_detail">Place the barcode within the \nguidelines &amp; remain steady</string>
+    <string name="set_info_detail">Place the barcode within the guidelines &amp; remain steady</string>
     <string name="enter_barcode">ENTER BARCODE</string>
     <string name="enter_barcode_desc">ENTER THE NUMBER BELOW THE BARCODE</string>
     <string name="no_messages_to_display">No messages to display</string>
@@ -546,7 +549,6 @@
 
     <string name="services_unavailable">Services Unavailable</string>
     <string name="please_check_back_later">Please check back later.</string>
-    <string name="change_password">Change password</string>
     <string name="change_password_url">https://www.woolworths.co.za/store/fragments/dashboard/dashboard-index.jsp?content=myaccount/user-details</string>
     <string name="products_onetime_popup_text">Browse or scan products here.\nTo shop, you’ll be linked to our online store.</string>
     <string name="connection_error">Please Ensure you\'re connected to the internet and then try
@@ -590,4 +592,20 @@
     <string name="get_started">get started</string>
     <string name="please_ensure_connection">Please ensure that you are connected \nto the internet.</string>
     <string name="sso_title_text_submit_this_form">SUBMIT THIS FORM</string>
+
+    <string name="token_timeout_authenticate">Re-authenticate</string>
+    <string name="token_timeout_message">For security reasons, you need to re-authenticate your session before you can continue.</string>
+
+    <string name="acc_my_detail">My details</string>
+    <string name="acc_profile">Profile</string>
+    <string name="acc_update_email_address">Update email address</string>
+    <string name="acc_update_password">Update password</string>
+
+    <string name="session_expired_title">SESSION EXPIRED</string>
+    <string name="session_expired_account_desc">Your Accounts session expired. To continue please
+        sign in or cancel to return to the rest of the app.</string>
+    <string name="session_expired_reward_desc">Your WRewards session expired. To continue please
+        sign in or cancel to return to the rest of the app.</string>
+    <string name="session_expired_sign_in">sign in</string>
+
 </resources>

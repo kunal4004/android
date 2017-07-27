@@ -102,7 +102,11 @@ public class WFragmentDrawer extends Fragment {
         }
         return data;
     }
-
+    public void notifyNavigationDrawer(int voucherCount)
+    {
+        mMenuList.get(3).setCount(voucherCount);
+        adapter.notifyDataSetChanged();
+    }
     public void setUp(int fragmentId, final DrawerLayout drawerLayout, final Toolbar toolbar) {
         containerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
@@ -153,6 +157,7 @@ public class WFragmentDrawer extends Fragment {
         });
 
     }
+
 
     public interface FragmentDrawerListener {
         void onDrawerItemSelected(View view, int position);

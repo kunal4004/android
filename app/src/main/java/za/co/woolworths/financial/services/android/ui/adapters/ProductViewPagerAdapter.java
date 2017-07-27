@@ -45,7 +45,7 @@ public class ProductViewPagerAdapter extends PagerAdapter {
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("imageSelector","rear");
+                Log.d("imageSelector","rear");
                 multipleImageInterface.SelectedImage(position,v);
             }
         });

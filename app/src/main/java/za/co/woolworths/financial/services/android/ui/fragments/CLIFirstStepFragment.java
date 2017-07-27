@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,7 +11,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +26,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
-import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIDeaBankMapAdapter;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.CLICbxContentBinder;
 
@@ -49,7 +50,6 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
-	private String TAG = "CLIFirstStepFragment";
 
 	public interface StepNavigatorCallback {
 		void openNextFragment(int index);
@@ -86,7 +86,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		try {
-			networkChangeListener = (NetworkChangeListener) this;
+			networkChangeListener = this;
 		} catch (ClassCastException ignored) {
 		}
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
@@ -180,25 +180,31 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 				super.onPostExecute(deaBanks);
 
 				if (deaBanks.banks != null) {
-					if (deaBanks.httpCode == 200) {
-						mBanks = deaBanks.banks;
-						otherChecked(deaBanks.banks);
-						mCLIDeaBankMapAdapter = new CLIDeaBankMapAdapter(deaBanks.banks, mContext);
-						mLayoutManager = new LinearLayoutManager(getActivity());
-						mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-						mRecycleList.setLayoutManager(mLayoutManager);
-						mRecycleList.setNestedScrollingEnabled(false);
-						mRecycleList.setAdapter(mCLIDeaBankMapAdapter);
-						mCLIDeaBankMapAdapter.setCLIContent();
-						relButtonCLIDeaBank.setVisibility(View.VISIBLE);
-					} else {
-						relButtonCLIDeaBank.setVisibility(View.GONE);
+					int httpCode = deaBanks.httpCode;
+					switch (httpCode) {
+						case 200:
+							mBanks = deaBanks.banks;
+							otherChecked(deaBanks.banks);
+							mCLIDeaBankMapAdapter = new CLIDeaBankMapAdapter(deaBanks.banks, mContext);
+							mLayoutManager = new LinearLayoutManager(getActivity());
+							mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+							mRecycleList.setLayoutManager(mLayoutManager);
+							mRecycleList.setNestedScrollingEnabled(false);
+							mRecycleList.setAdapter(mCLIDeaBankMapAdapter);
+							mCLIDeaBankMapAdapter.setCLIContent();
+							relButtonCLIDeaBank.setVisibility(View.VISIBLE);
+							break;
+						case 440:
+							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), deaBanks.response.stsParams);
+							break;
+						default:
+							relButtonCLIDeaBank.setVisibility(View.GONE);
+							break;
 					}
 				} else {
-
 					if (!TextUtils.isEmpty(deaBanks.response.desc)) {
 						Utils.displayValidationMessage(getActivity(),
-								TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+								CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
 								deaBanks.response.desc);
 					}
 				}
@@ -233,7 +239,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 					}
 				} else {
 					Utils.displayValidationMessage(getActivity(),
-							TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+							CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
 							getString(R.string.cli_select_bank_error));
 				}
 				break;
@@ -287,6 +293,16 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 	@Override
 	public void onConnectionChanged() {
 		//connection changed
+		retryConnect();
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		retryConnect();
+	}
+
+	private void retryConnect() {
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {

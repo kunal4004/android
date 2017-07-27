@@ -117,7 +117,7 @@ public class CLICreditLimitContentBinder extends DataBinder<CLICreditLimitConten
     }
 
     private String newAmount(String amount) {
-        Log.e("new_Amount_amount", amount);
+        Log.d("new_Amount_amount", amount);
         return amount.replaceAll("[^0-9.]", "");
     }
 

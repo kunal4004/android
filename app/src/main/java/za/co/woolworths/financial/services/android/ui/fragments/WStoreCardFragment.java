@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -9,7 +8,6 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.util.Log;
@@ -25,8 +23,6 @@ import com.google.gson.Gson;
 
 import java.text.ParseException;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import za.co.wigroup.logger.lib.WiGroupLogger;
 import za.co.woolworths.financial.services.android.FragmentLifecycle;
@@ -36,7 +32,7 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
-import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -44,14 +40,13 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
-import za.co.woolworths.financial.services.android.util.NetworkFailureInterface;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 
 public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
-	//private NetworkFailureInterface mNetworkFailureInterface;
 	public WTextView availableBalance;
 	public WTextView creditLimit;
 	public WTextView dueDate;
@@ -72,19 +67,18 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
 	private boolean bolBroacastRegistred;
+	private WStoreCardFragment mContext;
+
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		mContext = this;
 		return inflater.inflate(R.layout.cards_common_fragment, container, false);
 	}
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		/*try {
-			mNetworkFailureInterface = (NetworkFailureInterface) getActivity();
-		} catch (ClassCastException ignored) {
-		}*/
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
 		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
@@ -98,10 +92,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		txtIncreseLimit.setOnClickListener(this);
 		transactions.setOnClickListener(this);
 		try {
-			networkChangeListener = (NetworkChangeListener) this;
+			networkChangeListener = this;
 		} catch (ClassCastException ignored) {
 		}
-		bolBroacastRegistred=true;
+		bolBroacastRegistred = true;
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
 		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
@@ -204,6 +198,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			protected void onPostExecute(OfferActive offerActive) {
 				super.onPostExecute(offerActive);
 				int httpCode = offerActive.httpCode;
+				hideProgressBar();
+
 				try {
 					String httpDesc = offerActive.response.desc;
 					if (httpCode == 200) {
@@ -214,15 +210,17 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 						} else {
 							enableIncreaseLimit();
 						}
+					} else if (httpCode == 440) {
+						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), offerActive.response
+								.stsParams);
 					} else {
 						disableIncreaseLimit();
 						Utils.displayValidationMessage(getActivity(),
-								TransientActivity.VALIDATION_MESSAGE_LIST.ERROR,
+								CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
 								httpDesc);
 					}
 				} catch (NullPointerException ignored) {
 				}
-				hideProgressBar();
 			}
 
 			@Override
@@ -245,7 +243,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	}
 
 	public void disableIncreaseLimit() {
-
 		txtIncreseLimit.setEnabled(false);
 		txtIncreseLimit.setTextColor(Color.GRAY);
 		mImageArrow.setImageAlpha(75);
@@ -284,11 +281,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		}
 	}
 
-
 	@Override
 	public void onResumeFragment() {
-		final Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
+
+		WStoreCardFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				if (!cardHasId) {
@@ -300,7 +296,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					}
 				}
 			}
-		}, 100);
+		});
 	}
 
 	public void networkFailureHandler() {
@@ -316,25 +312,37 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	@Override
 	public void onPause() {
 		super.onPause();
-		if(bolBroacastRegistred) {
+		if (bolBroacastRegistred) {
 			getActivity().unregisterReceiver(connectionBroadcast);
-			bolBroacastRegistred=false;
+			bolBroacastRegistred = false;
 		}
 	}
 
 	@Override
 	public void onConnectionChanged() {
 		//connection changed
-		final Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				if (!cardHasId) {
-					if (new ConnectionDetector().isOnline(getActivity()))
-						getActiveOffer();
+		if (!cardHasId) {
+			if (new ConnectionDetector().isOnline(getActivity()))
+				getActiveOffer();
 
-				}
-			}
-		}, 100);
+		}
 	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		retryConnect();
+	}
+
+	private void retryConnect() {
+		if (!cardHasId) {
+			if (new ConnectionDetector().isOnline(getActivity()))
+				getActiveOffer();
+			else {
+				mErrorHandlerView.showToast();
+				disableIncreaseLimit();
+			}
+		}
+	}
+
 }

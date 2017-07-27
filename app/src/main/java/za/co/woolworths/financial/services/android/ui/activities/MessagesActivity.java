@@ -36,9 +36,9 @@ import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdap
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class MessagesActivity extends AppCompatActivity {
@@ -57,15 +57,14 @@ public class MessagesActivity extends AppCompatActivity {
 	public List<MessageDetails> messageList;
 	private final ThreadLocal<FragmentManager> fm = new ThreadLocal<>();
 	private ErrorHandlerView mErrorHandlerView;
-	private WoolworthsApplication mWoolWorthsApplication;
-
+	private boolean paginationIsEnabled = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.messages_activity);
 		Utils.updateStatusBarBackground(this);
-		mWoolWorthsApplication = (WoolworthsApplication) MessagesActivity.this.getApplication();
+		WoolworthsApplication woolWorthsApplication = (WoolworthsApplication) MessagesActivity.this.getApplication();
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -73,7 +72,7 @@ public class MessagesActivity extends AppCompatActivity {
 		mLayoutManager = new LinearLayoutManager(MessagesActivity.this);
 		messsageListview = (RecyclerView) findViewById(R.id.messsageListView);
 		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
-		mErrorHandlerView = new ErrorHandlerView(this, mWoolWorthsApplication,
+		mErrorHandlerView = new ErrorHandlerView(this, woolWorthsApplication,
 				(RelativeLayout) findViewById(R.id.relEmptyStateHandler),
 				(ImageView) findViewById(R.id.imgEmpyStateIcon),
 				(WTextView) findViewById(R.id.txtEmptyStateTitle),
@@ -217,17 +216,31 @@ public class MessagesActivity extends AppCompatActivity {
 			@Override
 			protected void onPostExecute(MessageResponse messageResponse) {
 				super.onPostExecute(messageResponse);
-				mCurrentPage += 1;
-				mIsLoading = false;
-				List<MessageDetails> moreMessageList;
-				moreMessageList = messageResponse.messagesList;
-				if (moreMessageList != null && moreMessageList.size() != 0) {
-					if (moreMessageList.size() < PAGE_SIZE) {
-						mIsLastPage = true;
-					}
-					messageList.addAll(moreMessageList);
-					adapter.notifyDataSetChanged();
-					setMeassagesAsRead(moreMessageList);
+				int httpCode = messageResponse.httpCode;
+				switch (httpCode) {
+					case 200:
+						mCurrentPage += 1;
+						mIsLoading = false;
+						List<MessageDetails> moreMessageList;
+						moreMessageList = messageResponse.messagesList;
+						if (moreMessageList != null && moreMessageList.size() != 0) {
+							if (moreMessageList.size() < PAGE_SIZE) {
+								mIsLastPage = true;
+							}
+							messageList.addAll(moreMessageList);
+							adapter.notifyDataSetChanged();
+							setMeassagesAsRead(moreMessageList);
+						}
+						break;
+					case 440:
+						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(MessagesActivity.this, messageResponse.response.stsParams);
+						break;
+
+					default:
+						if (messageResponse.response != null) {
+							Utils.alertErrorMessage(MessagesActivity.this, messageResponse.response.desc);
+						}
+						break;
 				}
 
 
@@ -269,23 +282,6 @@ public class MessagesActivity extends AppCompatActivity {
 		}.execute();
 	}
 
-	/*public JSONObject getJsonString(List<MessageDetails> readMessages) {
-		JSONObject jsonObject = new JSONObject();
-		JSONArray jsonArray = new JSONArray();
-		JSONObject obj = null;
-		try {
-			for (int i = 0; i < readMessages.size(); i++) {
-				obj = new JSONObject();
-				obj.put("id", Integer.parseInt(readMessages.get(i).id));
-				obj.put("isRead", true);
-				jsonArray.put(obj);
-			}
-			jsonObject.put("messages", jsonArray);
-
-		} catch (Exception e) {
-		}
-		return jsonObject;
-	}*/
 	public MessageReadRequest getJsonString(List<MessageDetails> readMessages) {
 		MessageReadRequest msgRequest = new MessageReadRequest();
 		List<MessageRead> msgList = new ArrayList<>();
@@ -323,7 +319,7 @@ public class MessagesActivity extends AppCompatActivity {
 		if (getIntent().hasExtra("fromNotification"))
 			fromNotification = getIntent().getExtras().getBoolean("fromNotification");
 		if (fromNotification) {
-			startActivity(new Intent(MessagesActivity.this, WOneAppBaseActivity.class));
+			startActivityForResult(new Intent(MessagesActivity.this, WOneAppBaseActivity.class), 0);
 			finish();
 			overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 		} else {
@@ -344,8 +340,10 @@ public class MessagesActivity extends AppCompatActivity {
 	}
 
 	public void handleLoadMessagesResponse(MessageResponse messageResponse) {
+		hideRefreshView();
 		try {
-			switch (messageResponse.httpCode) {
+			int httpCode = messageResponse.httpCode;
+			switch (httpCode) {
 				case 200:
 					messageList = null;
 					messageList = new ArrayList<>();
@@ -373,10 +371,11 @@ public class MessagesActivity extends AppCompatActivity {
 							mErrorHandlerView.textDescription(getString(R.string.no_messages_to_display));
 						}
 					}
-					hideRefreshView();
+					break;
+				case 440:
+					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(MessagesActivity.this, messageResponse.response.stsParams);
 					break;
 				default:
-					hideRefreshView();
 					Utils.alertErrorMessage(MessagesActivity.this, messageResponse.response.desc);
 					break;
 			}
@@ -393,11 +392,18 @@ public class MessagesActivity extends AppCompatActivity {
 				} else {
 					mIsLoading = false;
 				}
-
 				mErrorHandlerView.networkFailureHandler(errorMessage);
 			}
 		});
 	}
 
-
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (paginationIsEnabled) {
+			loadMoreMessages();
+		} else {
+			loadMessages();
+		}
+	}
 }
