@@ -10,8 +10,6 @@ import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.Priority;
-import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
@@ -38,13 +36,16 @@ public class DrawImage {
 		}
 	}
 
-	public void dispImage(final SimpleDraweeView image, String imgUrl) {
+	public void displaySmallImage(final SimpleDraweeView image, String imgUrl) {
 		if (imgUrl != null) {
 			try {
 				GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(mContext.getResources());
 				builder.setActualImageScaleType(ScalingUtils.ScaleType.FIT_END);
 				GenericDraweeHierarchy hierarchy = builder
 						.build();
+
+				imgUrl = android.net.Uri.encode(imgUrl, "@#&=*+-_.,:!?()/~'%");
+
 				ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imgUrl))
 						.build();
 				DraweeController controller = Fresco.newDraweeControllerBuilder()

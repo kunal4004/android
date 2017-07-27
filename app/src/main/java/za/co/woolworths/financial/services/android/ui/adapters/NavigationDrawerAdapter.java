@@ -53,6 +53,7 @@ public class NavigationDrawerAdapter extends BaseAdapter {
 
             mHolder.textInListView = (WTextView) convertView.findViewById(R.id.textView);
             mHolder.imageInListView = (ImageView) convertView.findViewById(R.id.imageView);
+            mHolder.textCounter=(WTextView)convertView.findViewById(R.id.menu_badge);
 
             convertView.setTag(mHolder);
         } else {
@@ -63,7 +64,12 @@ public class NavigationDrawerAdapter extends BaseAdapter {
 
             mHolder.textInListView.setText(navItem.getName());
             mHolder.imageInListView.setImageResource(navItem.getImage());
-
+            if (navItem.getCount() > 0) {
+                mHolder.textCounter.setText(String.valueOf(navItem.getCount()));
+                mHolder.textCounter.setVisibility(View.VISIBLE);
+            } else {
+                mHolder.textCounter.setVisibility(View.INVISIBLE);
+            }
 
         } catch (Exception ignored) {
         }
@@ -79,6 +85,7 @@ public class NavigationDrawerAdapter extends BaseAdapter {
     static class ViewHolder {
         WTextView textInListView;
         ImageView imageInListView;
+        WTextView textCounter;
     }
 
     public void setSelectedPosition(int position) {

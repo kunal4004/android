@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/relPopContainer"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#8c000000">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/relPopContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#8c000000">
 
     <RelativeLayout
         android:id="@+id/relContainerRootMessage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:letterSpacing="0.09"
-            android:gravity="center"
-            android:textAllCaps="true"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
             android:background="@color/white"
+            android:gravity="center"
+            android:letterSpacing="0.09"
             android:orientation="vertical"
             android:paddingLeft="@dimen/bank_spacing_width"
             android:paddingRight="@dimen/bank_spacing_width"
             android:paddingTop="@dimen/bank_spacing_width"
-            android:layout_alignParentBottom="true">
+            android:textAllCaps="true">
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/textSignOut"
@@ -39,7 +39,7 @@
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                app:WTextView_font="medium_bold" />
+                app:WTextView_font="medium_bold"/>
 
             <LinearLayout
                 android:id="@+id/linEmail"
@@ -49,18 +49,18 @@
                 android:orientation="vertical">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/overlayDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/overlayDescription"
-                    android:gravity="center|top"
-                    android:lineSpacingExtra="1.3dp"
-                    android:background="@color/white"
-                    android:textSize="15sp"
-                    android:letterSpacing="0.04"
                     android:layout_marginBottom="30dp"
+                    android:background="@color/white"
+                    android:gravity="center|top"
+                    android:letterSpacing="0.04"
+                    android:lineSpacingExtra="1.3dp"
                     android:text="@string/sign_out_desc"
-                    app:WTextView_font="myriadpro_regular"
                     android:textColor="@color/black_desc_opacity"
+                    android:textSize="15sp"
+                    app:WTextView_font="myriadpro_regular"
                     />
 
             </LinearLayout>
@@ -69,18 +69,18 @@
                 android:id="@+id/linYesNoContainer"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/cli_button_height_popup"
+                android:layout_marginBottom="@dimen/bank_spacing_width"
                 android:layout_marginTop="@dimen/default_margin"
                 android:background="@color/white"
-                android:textColor="@color/black"
-                android:layout_marginBottom="@dimen/bank_spacing_width"
                 android:orientation="horizontal"
+                android:textColor="@color/black"
                 android:weightSum="1">
 
                 <za.co.woolworths.financial.services.android.ui.views.WButton
                     android:id="@+id/btnSignOutCancel"
                     style="@style/whiteButtonStyle"
-                    android:layout_weight="0.5"
                     android:layout_marginRight="4dp"
+                    android:layout_weight="0.5"
                     android:text="@string/cancel"
                     android:textAllCaps="true"
                     app:WButton_font="medium_bold"
@@ -89,9 +89,9 @@
                 <za.co.woolworths.financial.services.android.ui.views.WButton
                     android:id="@+id/btnSignOut"
                     style="@style/whiteButtonStyle"
+                    android:layout_marginLeft="4dp"
                     android:layout_weight="0.5"
                     android:text="@string/ok"
-                    android:layout_marginLeft="4dp"
                     android:textAllCaps="true"
                     app:WButton_font="medium_bold"
                     />

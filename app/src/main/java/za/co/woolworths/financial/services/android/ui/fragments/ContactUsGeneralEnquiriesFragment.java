@@ -18,7 +18,7 @@ import com.awfs.coordination.R;
 
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.ui.activities.TransientActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.ContactUsFragmentChange;
 
@@ -99,7 +99,7 @@ public class ContactUsGeneralEnquiriesFragment extends Fragment implements View.
 			startActivity(emailIntent);
 		} else {
 			Utils.displayValidationMessage(getActivity(),
-					TransientActivity.VALIDATION_MESSAGE_LIST.INFO,
+					CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INFO,
 					getActivity().getResources().getString(R.string.contact_us_no_email_error)
 							.replace("email_address", emailId).replace("subject_line", subject));
 

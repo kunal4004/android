@@ -92,4 +92,6 @@
     <color name="qr_code_view_mask">#60000000</color>
     <color name="qr_code_view_corner">#FF2A7C3B</color>
     <color name="qr_code_view_border">#ffffffff</color>
+    <color name="barcode_btn_color">#66ffffff</color>
+
 </resources>

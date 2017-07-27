@@ -1,20 +1,18 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -26,8 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 
+import za.co.woolworths.financial.services.android.models.dto.Voucher;
+import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.fragments.MenuNavigationInterface;
 
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
@@ -38,15 +40,17 @@ import za.co.woolworths.financial.services.android.ui.fragments.WRewardsFragment
 import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
+import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
 		, WProductFragment.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle,
-		WRewardsFragment.HideActionBarComponent, MenuNavigationInterface {
+		WRewardsFragment.HideActionBarComponent, MenuNavigationInterface, UpdateNavigationDrawer {
 
 	public static Toolbar mToolbar;
 	private WFragmentDrawer drawerFragment;
@@ -57,6 +61,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 
 	private ActionBar mActionBar;
 	private DrawerLayout mDrawerLayout;
+	private WGlobalState mWGlobalState;
+	private int a, b;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +72,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(this);
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
+
+		mWGlobalState = ((WoolworthsApplication) WOneAppBaseActivity.this.getApplication()).getWGlobalState();
 
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayShowHomeEnabled(false);
@@ -93,6 +101,8 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		} else {
 			displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 		}
+
+		initGetVouchersCall();
 	}
 
 	@Override
@@ -118,15 +128,18 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 				title = getString(R.string.screen_title_store);
 				break;
 			case 3:
+				mWGlobalState.setFragmentIsReward(true);
+				mWGlobalState.resetStsParams();
 				isRewardFragment = true;
 				fragment = new WRewardsFragment();
 				title = getString(R.string.wrewards);
 				break;
 			case 4:
+				mWGlobalState.resetStsParams();
+				mWGlobalState.setFragmentIsReward(false);
 				fragment = new MyAccountsFragment();
 				title = getString(R.string.nav_item_accounts);
 				break;
-
 		}
 
 		try {
@@ -208,6 +221,10 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(logOutReceiver);
+		if (!TextUtils.isEmpty(mWGlobalState.getNewSTSParams())) {
+			mWGlobalState.setRewardSignInState(false);
+		}
+
 	}
 
 	BroadcastReceiver logOutReceiver = new BroadcastReceiver() {
@@ -222,6 +239,70 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		displayView(position);
 	}
 
+	public void initGetVouchersCall() {
+		JWTDecodedModel jwtDecodedModel = getJWTDecoded();
+		if (jwtDecodedModel.AtgSession != null && jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
+			getVouchers().execute();
+		}
+	}
+
+	public HttpAsyncTask<String, String, VoucherResponse> getVouchers() {
+		return new HttpAsyncTask<String, String, VoucherResponse>() {
+			@Override
+			protected void onPreExecute() {
+				super.onPreExecute();
+
+			}
+
+			@Override
+			protected VoucherResponse httpDoInBackground(String... params) {
+				return ((WoolworthsApplication) getApplication()).getApi().getVouchers();
+			}
+
+			@Override
+			protected Class<VoucherResponse> httpDoInBackgroundReturnType() {
+				return VoucherResponse.class;
+			}
+
+			@Override
+			protected VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+				return new VoucherResponse();
+			}
+
+			@Override
+			protected void onPostExecute(VoucherResponse voucherResponse) {
+				super.onPostExecute(voucherResponse);
+				int httpCode = voucherResponse.httpCode;
+				switch (httpCode) {
+					case 200:
+						mWGlobalState.setRewardSignInState(true);
+						List<Voucher> vouchers = voucherResponse.voucherCollection.vouchers;
+						if (vouchers != null) {
+							updateVoucherCount(vouchers.size());
+						} else {
+							updateVoucherCount(0);
+						}
+						break;
+
+					case 440:
+						updateVoucherCount(0);
+						mWGlobalState.setRewardHasExpired(true);
+						mWGlobalState.setRewardSignInState(false);
+						break;
+
+					default:
+						updateVoucherCount(0);
+						mWGlobalState.setRewardSignInState(false);
+						break;
+				}
+			}
+		};
+	}
+
+	@Override
+	public void updateVoucherCount(int count) {
+		drawerFragment.notifyNavigationDrawer(count);
+	}
 
 }
 

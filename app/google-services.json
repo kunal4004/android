@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
+          "client_id": "26127746311-lo6hbh0o49ev5tcp9kqkfnk8c3eps10m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.awfs.coordination.staging",
+            "certificate_hash": "4f4dac05423a9eaca436948a50596c573c1ab70a"
+          }
+        },
+        {
           "client_id": "26127746311-orasve6oq5ueavv7icu8lcln98r0nn7r.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.awfs.coordination.staging",
-            "certificate_hash": "4FEF70E6EB2BD859B72F534E492E2CB32043A80F"
+            "certificate_hash": "4fef70e6eb2bd859b72f534e492e2cb32043a80f"
           }
         },
         {
@@ -29,7 +37,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCo2QQskiRkqHiePe6TL-4v5-SC0ymmYPA"
+          "current_key": "AIzaSyC7zspB_GMuPeNkDMfvcHJxCUUQy27gF-g"
         }
       ],
       "services": {
@@ -40,16 +48,15 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "26127746311-2c9c4jtkoi5o638v1fnmnpcu2is2791i.apps.googleusercontent.com",
+              "client_id": "26127746311-aha84q54jq3rpc9vcb6mgcsj9s8utokl.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.virtualmobiletech.wfs",
-                "app_store_id": "472968645"
+                "bundle_id": "com.virtualmobiletech.wfsdev"
               }
+            },
+            {
+              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
+              "client_type": 3
             }
           ]
         },
@@ -67,19 +74,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "26127746311-9novt9lem36mi4lm2btupdcirp23e43o.apps.googleusercontent.com",
+          "client_id": "26127746311-mj3jjtegol6l3drpuhf84ugk0lup9vmd.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.awfs.coordination.qa",
-            "certificate_hash": "4FEF70E6EB2BD859B72F534E492E2CB32043A80F"
-          }
-        },
-        {
-          "client_id": "26127746311-7aot04t4psj88te3b4mv0j0ooscvk0ip.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.awfs.coordination.qa",
-            "certificate_hash": "F42C5551EC3C498FCA00ED988516C0D9DE11B3AC"
+            "certificate_hash": "3302c160772d64984b36e56bf4fc07c77c5bee1c"
           }
         },
         {
@@ -89,7 +88,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCo2QQskiRkqHiePe6TL-4v5-SC0ymmYPA"
+          "current_key": "AIzaSyC7zspB_GMuPeNkDMfvcHJxCUUQy27gF-g"
         }
       ],
       "services": {
@@ -100,16 +99,15 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "26127746311-2c9c4jtkoi5o638v1fnmnpcu2is2791i.apps.googleusercontent.com",
+              "client_id": "26127746311-aha84q54jq3rpc9vcb6mgcsj9s8utokl.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.virtualmobiletech.wfs",
-                "app_store_id": "472968645"
+                "bundle_id": "com.virtualmobiletech.wfsdev"
               }
+            },
+            {
+              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
+              "client_type": 3
             }
           ]
         },
@@ -127,19 +125,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "26127746311-iijjoj4nddadm89v7p150reairmbv127.apps.googleusercontent.com",
+          "client_id": "26127746311-0u08jj63kbp0eit67k2urrtuch54ahv3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.awfs.coordination.dev",
-            "certificate_hash": "4FEF70E6EB2BD859B72F534E492E2CB32043A80F"
-          }
-        },
-        {
-          "client_id": "26127746311-6u6g6sj9a08eqfan97v17si3m5vp3aak.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.awfs.coordination.dev",
-            "certificate_hash": "F42C5551EC3C498FCA00ED988516C0D9DE11B3AC"
+            "certificate_hash": "07ecfa8d3aed0050e9943cafcba96879e6e07e33"
           }
         },
         {
@@ -149,7 +139,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCo2QQskiRkqHiePe6TL-4v5-SC0ymmYPA"
+          "current_key": "AIzaSyC7zspB_GMuPeNkDMfvcHJxCUUQy27gF-g"
         }
       ],
       "services": {
@@ -160,16 +150,15 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "26127746311-2c9c4jtkoi5o638v1fnmnpcu2is2791i.apps.googleusercontent.com",
+              "client_id": "26127746311-aha84q54jq3rpc9vcb6mgcsj9s8utokl.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.virtualmobiletech.wfs",
-                "app_store_id": "472968645"
+                "bundle_id": "com.virtualmobiletech.wfsdev"
               }
+            },
+            {
+              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
+              "client_type": 3
             }
           ]
         },
@@ -187,19 +176,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "26127746311-cvs7bto6517p9743e46i1nukdpbnremq.apps.googleusercontent.com",
+          "client_id": "26127746311-ean6ftd7ovs7qedqdt0su9p54ucn7k5q.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.awfs.coordination",
-            "certificate_hash": "4FEF70E6EB2BD859B72F534E492E2CB32043A80F"
+            "certificate_hash": "f42c5551ec3c498fca00ed988516c0d9de11b3ac"
           }
         },
         {
-          "client_id": "26127746311-84si9msur6gqmpf2cd1susifsruhcl5j.apps.googleusercontent.com",
+          "client_id": "26127746311-kbls192j8ctpurcn8u1i2jc1qnt8qgj1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.awfs.coordination",
-            "certificate_hash": "F42C5551EC3C498FCA00ED988516C0D9DE11B3AC"
+            "certificate_hash": "2262feb0e616d98a40fa18cf034a6a7f193d4031"
           }
         },
         {
@@ -209,7 +198,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCo2QQskiRkqHiePe6TL-4v5-SC0ymmYPA"
+          "current_key": "AIzaSyC7zspB_GMuPeNkDMfvcHJxCUUQy27gF-g"
         }
       ],
       "services": {
@@ -220,16 +209,15 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "26127746311-2c9c4jtkoi5o638v1fnmnpcu2is2791i.apps.googleusercontent.com",
+              "client_id": "26127746311-aha84q54jq3rpc9vcb6mgcsj9s8utokl.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.virtualmobiletech.wfs",
-                "app_store_id": "472968645"
+                "bundle_id": "com.virtualmobiletech.wfsdev"
               }
+            },
+            {
+              "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
+              "client_type": 3
             }
           ]
         },
