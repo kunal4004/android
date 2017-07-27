@@ -79,6 +79,8 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 			}
 
 		});
+		//Remove old usage of SharedPreferences data.
+		Utils.clearSharedPreferences(WSplashScreenActivity.this);
 	}
 
 	private void executeConfigServer() {
@@ -117,6 +119,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 				String majorMinorVersion = appVersion.substring(0, 3);
 				final String mcsAppVersion = (appName + "-" + majorMinorVersion + (environment.equals("production") ? "" : ("-" + environment)));
 				Log.d("MCS", mcsAppVersion);
+
 				ApiInterface mApiInterface = new RestAdapter.Builder()
 						.setEndpoint(getString(R.string.config_endpoint))
 						.setLogLevel(Util.isDebug(WSplashScreenActivity.this) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
@@ -143,6 +146,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 					WoolworthsApplication.setSsoRedirectURI(configResponse.enviroment.getSsoRedirectURI());
 					WoolworthsApplication.setStsURI(configResponse.enviroment.getStsURI());
 					WoolworthsApplication.setSsoRedirectURILogout(configResponse.enviroment.getSsoRedirectURILogout());
+					WoolworthsApplication.setSsoUpdateDetailsRedirectUri(configResponse.enviroment.getSsoUpdateDetailsRedirectUri());
 					WoolworthsApplication.setWwTodayURI(configResponse.enviroment.getWwTodayURI());
 					WoolworthsApplication.setApplyNowLink(configResponse.defaults.getApplyNowLink());
 					WoolworthsApplication.setRegistrationTCLink(configResponse.defaults.getRegisterTCLink());
@@ -212,7 +216,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		noVideoView.setVisibility(View.GONE);
 		videoViewLayout.setVisibility(View.VISIBLE);
 		String randomVideo = getRandomVideos();
-		Log.e("randomVideo", randomVideo);
+		Log.d("randomVideo", randomVideo);
 		Uri videoUri = Uri.parse(randomVideo);
 
 		videoView.setVideoURI(videoUri);
@@ -222,7 +226,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 
 	private void showNonVideoViewWithErrorLayout() {
 		runOnUiThread(new Runnable() {
-			public void run(){
+			public void run() {
 				pBar.setVisibility(View.GONE);
 				videoViewLayout.setVisibility(View.GONE);
 				noVideoView.setVisibility(View.VISIBLE);
@@ -255,28 +259,6 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 	}
 
 	private void presentNextScreen() {
-	    /*
-	        * When creating a SessionDao with a key where the entry doesn't exist
-            * in SQL lite, return a new SessionDao where the key is equal to the
-            * key that's passed in the constructor e.g
-            *
-            * SessionDoa sessionDao = SessionDao(SessionDao.USER_TOKEN) //and the record doesn't exist
-            * print(sessionDao.value) //null or empty
-            * print(sessionDao.key) //SessionDao.USER_TOKEN
-            *
-            * sessionDoa.key = SessionDao.USER_TOKEN
-            * sessionDao.save()
-            *
-            *
-            * */
-		try {
-			SessionDao sessionDao = new SessionDao(WSplashScreenActivity.this, SessionDao.KEY.USER_TOKEN).get();
-			if (sessionDao.value != null && !sessionDao.value.equals("")) {
-				ScreenManager.presentMain(WSplashScreenActivity.this);
-			}
-		} catch (Exception e) {
-			Log.e(TAG, e.getMessage());
-		}
 		try {
 			String isFirstTime = Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
 			if (isFirstTime == null || isAppUpdated())

@@ -124,15 +124,13 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	private Location mLocation;
 	private StoresNearbyFragment1 mFragment;
 	MenuItem searchMenu;
+	private boolean isSearchMenuEnabled=true;
 	public boolean isLocationServiceButtonClicked = false;
-
-	public StoresNearbyFragment1() {
-		setHasOptionsMenu(true);
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
+		setHasOptionsMenu(true);
 		return inflater.inflate(R.layout.fragment_stores_nearby1, container, false);
 	}
 
@@ -251,15 +249,14 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			@Override
 			public void onClick(View v) {
 				if (new ConnectionDetector().isOnline(getActivity())) {
+					mErrorHandlerView.hideErrorHandlerLayout();
 					initLocationCheck();
 				}
 			}
 		});
 
 		getActivity().registerReceiver(broadcastCall, new IntentFilter("broadcastCall"));
-
 	}
-
 
 	public void initLocationCheck() {
 		boolean locationServiceIsEnabled = Utils.isLocationServiceEnabled(getActivity());
@@ -267,16 +264,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 		if (!locationServiceIsEnabled & lastKnownLocationIsNull) {
 			checkLocationServiceAndSetLayout(false);
-			Log.e(TAG, "!locationServiceIsEnabled & lastKnownLocationIsNull");
 		} else if (locationServiceIsEnabled && lastKnownLocationIsNull) {
-			Log.e(TAG, "locationServiceIsEnabled && lastKnownLocationIsNull");
 			checkLocationServiceAndSetLayout(true);
 			startLocationUpdates();
 		} else if (!locationServiceIsEnabled && !lastKnownLocationIsNull) {
 			updateMap(Utils.getLastSavedLocation(getActivity()));
-			Log.e(TAG, "!locationServiceIsEnabled && !lastKnownLocationIsNull");
 		} else {
-			Log.e(TAG, "else");
 			startLocationUpdates();
 		}
 	}
@@ -566,7 +559,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Log.e("RequestSETTINGRESULT", String.valueOf(requestCode));
+		Log.d("RequestSETTINGRESULT", String.valueOf(requestCode));
 		switch (requestCode) {
 			// Check for the integer request code originally supplied to startResolutionForResult().
 			case REQUEST_CHECK_SETTINGS:
@@ -602,19 +595,14 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		} else {
 			menu.findItem(R.id.action_locate).setVisible(false);
 		}
-
-		/*if (Utils.getLastSavedLocation(getActivity()) != null) {
-			searchMenu.setEnabled(true);
-			searchMenu.getIcon().setAlpha(255);
-		}*/
-
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.action_search:
-				startActivity(new Intent(getActivity(), SearchStoresActivity.class));
+				if(isSearchMenuEnabled)
+					startActivity(new Intent(getActivity(), SearchStoresActivity.class));
 				break;
 			case R.id.action_locate:
 				if (Utils.getLastSavedLocation(getActivity()) != null) {
@@ -823,15 +811,17 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 	public void enableSearchMenu() {
 		if (searchMenu != null) {
-			searchMenu.setEnabled(true);
+			isSearchMenuEnabled=true;
 			searchMenu.getIcon().setAlpha(255);
+			getActivity().invalidateOptionsMenu();
 		}
 	}
 
 	public void disableSearchMenu() {
 		if (searchMenu != null) {
-			searchMenu.setEnabled(false);
+			isSearchMenuEnabled=false;
 			searchMenu.getIcon().setAlpha(130);
+			getActivity().invalidateOptionsMenu();
 		}
 	}
 }

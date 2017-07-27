@@ -39,7 +39,6 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;
 import za.co.woolworths.financial.services.android.util.DrawImage;
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -661,28 +660,28 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 			DrawImage drawImage = new DrawImage(mContext);
 			if (!TextUtils.isEmpty(wSave)) {
 				mImSave.setVisibility(View.VISIBLE);
-				drawImage.displayImage(mImSave, wSave);
+				drawImage.displaySmallImage(mImSave, wSave);
 			} else {
 				mImSave.setVisibility(View.GONE);
 			}
 
 			if (!TextUtils.isEmpty(wReward)) {
 				mImReward.setVisibility(View.VISIBLE);
-				drawImage.displayImage(mImReward, wReward);
+				drawImage.displaySmallImage(mImReward, wReward);
 			} else {
 				mImReward.setVisibility(View.GONE);
 			}
 
 			if (!TextUtils.isEmpty(wVitality)) {
 				mVitalityView.setVisibility(View.VISIBLE);
-				drawImage.displayImage(mVitalityView, wVitality);
+				drawImage.displaySmallImage(mVitalityView, wVitality);
 			} else {
 				mVitalityView.setVisibility(View.GONE);
 			}
 
 			if (!TextUtils.isEmpty(wNewImage)) {
 				mImNewImage.setVisibility(View.VISIBLE);
-				drawImage.displayImage(mImNewImage, wNewImage);
+				drawImage.displaySmallImage(mImNewImage, wNewImage);
 
 			} else {
 				mImNewImage.setVisibility(View.GONE);
@@ -783,7 +782,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 	}
 
 	public void productDetailPriceList(WTextView wPrice, WTextView WwasPrice,
-	                                   String price, String wasPrice, String productType) {
+									   String price, String wasPrice, String productType) {
 		switch (productType) {
 			case "clothingProducts":
 				if (TextUtils.isEmpty(wasPrice)) {
@@ -845,7 +844,6 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				break;
 		}
 	}
-
 
 	private String updatePrice(String colour, String size) {
 		String price = "";

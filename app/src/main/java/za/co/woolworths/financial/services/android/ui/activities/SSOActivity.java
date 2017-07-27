@@ -9,8 +9,10 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -19,8 +21,10 @@ import android.view.WindowManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebBackForwardList;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -28,29 +32,35 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.iid.InstanceID;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
+
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class SSOActivity extends WebViewActivity {
 
 	public ErrorHandlerView mErrorHandlerView;
+	private WGlobalState mGlobalState;
 
 	public enum SSOActivityResult {
 		LAUNCH(1),
@@ -60,8 +70,8 @@ public class SSOActivity extends WebViewActivity {
 		NONCE_MISMATCH(5),
 		SUCCESS(6),
 		EXPIRED(7),
-		SIGNED_OUT(8);
-
+		SIGNED_OUT(8),
+		CHANGE_PASSWORD(9);
 		private int result;
 
 		private SSOActivityResult(int i) {
@@ -81,11 +91,11 @@ public class SSOActivity extends WebViewActivity {
 	public static final String TAG_JWT = "TAG_JWT";
 	public static final String TAG_SCOPE = "TAG_SCOPE";
 	public static final String TAG_EXTRA_QUERYSTRING_PARAMS = "TAG_EXTRA_QUERYSTRING_PARAMS";
-
-	private String redirectURIString = WoolworthsApplication.getSsoRedirectURI();
+	//Default redirect url used by LOGIN AND LINK CARDS
+	private static String redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 	private Protocol protocol;
 	private Host host;
-	private Path path;
+	public Path path;
 	private Map<String, String> extraQueryStringParams;
 
 	private final String state;
@@ -101,6 +111,7 @@ public class SSOActivity extends WebViewActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.instantiateWebView();
+		mGlobalState = ((WoolworthsApplication) getApplication()).getWGlobalState();
 		mErrorHandlerView = new ErrorHandlerView(SSOActivity.this, (RelativeLayout) findViewById
 				(R.id.no_connection_layout));
 		Utils.updateStatusBarBackground(this, R.color.black);
@@ -120,7 +131,33 @@ public class SSOActivity extends WebViewActivity {
 		progressDialog.setCancelable(false);
 		this.webView.setWebViewClient(this.webviewClient);
 		this.webView.getSettings().setUseWideViewPort(true);
+		this.webView.clearFormData();
+		this.webView.getSettings().setSaveFormData(false);
 		this.webView.getSettings().setLoadWithOverviewMode(true);
+		this.webView.getSettings().setDomStorageEnabled(true);
+		this.webView.getSettings().setDomStorageEnabled(true);
+		if (Build.VERSION.SDK_INT >= 21) {
+			this.webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+		}
+		this.webView.setWebChromeClient(new WebChromeClient() {
+
+			@Override
+			public void onReceivedTitle(WebView view, String title) {
+				super.onReceivedTitle(view, title);
+
+				ArrayList<String> invalidTitles = new ArrayList<String>(
+						Arrays.asList("about:blank".toLowerCase(),
+								getString(R.string.sso_title_text_submit_this_form).toLowerCase(),
+								SSOActivity.this.redirectURIString.toLowerCase(),
+								SSOActivity.this.redirectURIString.concat("?state=").concat(SSOActivity.this.state).toLowerCase())
+				);
+
+				if (invalidTitles.contains(title.toLowerCase())) {
+					toolbarTextView.setText("");
+				} else
+					toolbarTextView.setText(title);
+			}
+		});
 		retryConnect();
 	}
 
@@ -136,7 +173,7 @@ public class SSOActivity extends WebViewActivity {
 						if (!history.getItemAtIndex(history.getCurrentIndex() + index).getUrl().equals("about:blank")) {
 							webView.goBackOrForward(index);
 							url = history.getItemAtIndex(-index).getUrl();
-							Log.e("tag", "first non empty" + url);
+							Log.d("tag", "first non empty" + url);
 							break;
 						}
 						index--;
@@ -160,6 +197,8 @@ public class SSOActivity extends WebViewActivity {
 
 		String scope = bundle.getString(SSOActivity.TAG_SCOPE);
 		String link = this.constructAndGetAuthorisationRequestURL(scope);
+
+		Log.d("SSOActivity.TAG", String.format("Authorization Link: %s", link));
 
 		Log.d(SSOActivity.TAG, String.format("Authorization Link: %s", link));
 
@@ -219,7 +258,9 @@ public class SSOActivity extends WebViewActivity {
 	public enum Path implements SSORequiredParameter {
 		SIGNIN("customerid/connect/authorize"),
 		REGISTER("customerid/register/step1"),
-		LOGOUT("customerid/connect/endsession");
+		LOGOUT("customerid/connect/endsession"),
+		UPDATE_PASSWORD("customerid/userdetails/password"),
+		UPDATE_PROFILE("customerid/userdetails");
 
 		private String path;
 
@@ -242,33 +283,11 @@ public class SSOActivity extends WebViewActivity {
 
 	private String constructAndGetAuthorisationRequestURL(String scope) {
 
-		if (scope == null) {
-			scope = "";
-		}
-		scope = scope.concat(" openid email profile");//default scope
-
-
-		Uri.Builder builder = new Uri.Builder();
-		builder.scheme(this.host.rawValue()) // moved host.rawValue() from authority to schema as MCS returns host with " https:// "
-				.appendEncodedPath(this.path.rawValue())
-				.appendQueryParameter("client_id", "WWOneApp")
-				.appendQueryParameter("response_type", "id_token") // Identity token
-				.appendQueryParameter("response_mode", "form_post")
-				.appendQueryParameter("redirect_uri", this.redirectURIString)
-				.appendQueryParameter("state", this.state)
-				.appendQueryParameter("nonce", this.nonce)
-				.appendQueryParameter("scope", scope)
-		;
-
-		if (this.extraQueryStringParams != null) {
-			for (Map.Entry<String, String> param : this.extraQueryStringParams.entrySet()) {
-				builder.appendQueryParameter(param.getKey(), param.getValue());
-			}
-		}
 
 		switch (this.path) {
 
 			case SIGNIN:
+				this.redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 
                 /*
                 * // Check if sts params were supplied.
@@ -310,10 +329,48 @@ public class SSOActivity extends WebViewActivity {
                 * */
 				break;
 			case REGISTER:
+				this.redirectURIString = WoolworthsApplication.getSsoRedirectURI();
+				break;
+
+
+			case UPDATE_PASSWORD:
+				this.redirectURIString = WoolworthsApplication.getSsoUpdateDetailsRedirectUri();
+				break;
+			case UPDATE_PROFILE:
+				this.redirectURIString = WoolworthsApplication.getSsoUpdateDetailsRedirectUri();
+				break;
+
+			case LOGOUT:
+				this.redirectURIString = WoolworthsApplication.getSsoRedirectURILogout();
 				break;
 
 			default:
 				break;
+		}
+
+		if (scope == null) {
+			scope = "";
+		}
+
+		scope = ("openid email profile") + " " + scope;//default scope
+		scope = scope.trim();
+
+		Uri.Builder builder = new Uri.Builder();
+		builder.scheme(this.host.rawValue()) // moved host.rawValue() from authority to schema as MCS returns host with " https:// "
+				.appendEncodedPath(this.path.rawValue())
+				.appendQueryParameter("client_id", "WWOneApp")
+				.appendQueryParameter("response_type", "id_token") // Identity token
+				.appendQueryParameter("response_mode", "form_post")
+				.appendQueryParameter("redirect_uri", this.redirectURIString)
+				.appendQueryParameter("state", this.state)
+				.appendQueryParameter("nonce", this.nonce)
+				.appendQueryParameter("scope", scope);
+
+
+		if (this.extraQueryStringParams != null) {
+			for (Map.Entry<String, String> param : this.extraQueryStringParams.entrySet()) {
+				builder.appendQueryParameter(param.getKey(), param.getValue());
+			}
 		}
 
 		String constructedURL = "";
@@ -327,17 +384,17 @@ public class SSOActivity extends WebViewActivity {
 
 	private final WebViewClient webviewClient = new WebViewClient() {
 		@Override
-		public void onPageStarted(WebView view, final String url, Bitmap favicon) {
+		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
 			showProgressBar();
-			Log.d(TAG, url);
 
-			if (url.equals(SSOActivity.this.redirectURIString)) {
-				//get state and scope from webview posted form
+			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) {
+
 				view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
 					@Override
 					public void onReceiveValue(String value) {
-						if (value == "null")
+						//this is sign in
+						if (value.equals("null"))
 							return;
 
 						JsonParser jsonParser = new JsonParser();
@@ -359,12 +416,24 @@ public class SSOActivity extends WebViewActivity {
 							} catch (Exception e) {
 								Log.e(TAG, e.getMessage());
 							}
-							sendRegistrationToServer();
+							sendRegistrationToServer();//TODO: this should be handled by a listener
 							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
 						} else {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
 						}
-						finish();
+
+						try {
+							if (!TextUtils.isEmpty(mGlobalState.getNewSTSParams())) {
+								mGlobalState.setAccountSignInState(true);
+								mGlobalState.setRewardSignInState(true);
+								mGlobalState.setNewSTSParams("");
+								clearHistory();
+							} else {
+								closeActivity();
+							}
+						} catch (NullPointerException ex) {
+							closeActivity();
+						}
 					}
 				});
 			} else if (extraQueryStringParams != null) {
@@ -372,39 +441,49 @@ public class SSOActivity extends WebViewActivity {
 				if (indexOfQuestionMark > -1) {
 					String urlWithoutQueryString = url.substring(0, indexOfQuestionMark);
 
-					String redirectURI = extraQueryStringParams.get("post_logout_redirect_uri");
-					if (urlWithoutQueryString.equals(redirectURI)) {
+					if (urlWithoutQueryString.equals(extraQueryStringParams.get("post_logout_redirect_uri"))) {
 						Intent intent = new Intent();
 						setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
-						finish();
+						closeActivity();
+					} else {
 					}
 				}
+
+			} else if (url.equalsIgnoreCase(WoolworthsApplication.getSsoUpdateDetailsRedirectUri())) {
+				setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue());
+				closeActivity();
+			} else {
 			}
 		}
 
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			super.shouldOverrideUrlLoading(view, url);
-			Log.e("shouldOverr", url);
-			view.loadUrl(url);
-			return true;
-		}
-
-		@Override
-		public void onLoadResource(WebView view, String url) {
-			super.onLoadResource(view, url);
-			mGoBack();
+			return super.shouldOverrideUrlLoading(view, url);
 		}
 
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			super.onPageFinished(view, url);
-			hideProgressBar();
-			if (canGoBack()) {
-				enableBackButton();
-			} else {
-				disableBackButton();
+			if (isNavigatingToRedirectURL(url)) {
+				//get state and scope from webview posted form
+				if (SSOActivity.this.path.rawValue().equals(Path.LOGOUT.rawValue())) {
+					Intent intent = new Intent();
+					setResult(SSOActivityResult.SIGNED_OUT.rawValue(), intent);
+
+				} else if (SSOActivity.this.path.rawValue().equals(Path.UPDATE_PROFILE.rawValue()) || SSOActivity.this.path.rawValue().equals(Path.UPDATE_PASSWORD.rawValue())) {
+							/*Intent intent = new Intent();
+							setResult(SSOActivityResult.CHANGE_PASSWORD.rawValue(), intent);*/
+				} else {
+				}
 			}
+			hideProgressBar();
+		}
+
+		private boolean isNavigatingToRedirectURL(String url) {
+
+			String redirectUriWithState = SSOActivity.this.redirectURIString.concat("?state=").concat(SSOActivity.this.state);
+
+			return url.equalsIgnoreCase(SSOActivity.this.redirectURIString) || url.equalsIgnoreCase(redirectUriWithState);
 		}
 
 		@TargetApi(android.os.Build.VERSION_CODES.M)
@@ -444,6 +523,7 @@ public class SSOActivity extends WebViewActivity {
 			final AlertDialog dialog = builder.create();
 			dialog.show();
 		}
+
 	};
 
 	public void hideProgressBar() {
@@ -471,7 +551,7 @@ public class SSOActivity extends WebViewActivity {
 		// sending gcm token to server
 		final CreateUpdateDevice device = new CreateUpdateDevice();
 		device.appInstanceId = InstanceID.getInstance(getApplicationContext()).getId();
-		device.pushNotificationToken = getSharedPreferences(Utils.SHARED_PREF, 0).getString("regId", null);
+		device.pushNotificationToken = FirebaseInstanceId.getInstance().getToken();
 
 		//Sending Token and app instance Id to App server
 		//Need to be done after Login
@@ -519,48 +599,36 @@ public class SSOActivity extends WebViewActivity {
 		return false;
 	}
 
-	public void goBackInWebView() {
-		if (new ConnectionDetector().isOnline(SSOActivity.this)) {
-			WebBackForwardList history = webView.copyBackForwardList();
-			int index = -1;
-			String url = null;
-
-			while (webView.canGoBackOrForward(index)) {
-				if (!history.getItemAtIndex(history.getCurrentIndex() + index).getUrl().equals("about:blank")) {
-					mErrorHandlerView.hideErrorHandlerLayout();
-					webView.goBackOrForward(index);
-					url = history.getItemAtIndex(-index).getUrl();
-					Log.e("tag", "first non empty" + url);
-					break;
-				}
-				index--;
-			}
-			// no history found that is not empty
-			if (url == null) {
-				if (canGoBack()) {
-					webView.goBack();
-				} else {
-					finishActivity();
-				}
-			}
-		} else {
-			finishActivity();
-		}
-	}
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				if (canGoBack()) {
-					enableBackButton();
-					goBackInWebView();
-				} else {
-					disableBackButton();
-				}
+				finishActivity();
 				break;
 		}
 		return true;
 
+	}
+
+	public void closeActivity() {
+		finish();
+		overridePendingTransition(0, 0);
+	}
+
+	@Override
+	protected void onDestroy() {
+		if (this.webView != null)
+			this.webView.destroy();
+		super.onDestroy();
+	}
+
+	private void clearHistory() {
+		mGlobalState.setOnBackPressed(false);
+		Intent i = new Intent(SSOActivity.this, WOneAppBaseActivity.class);
+		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		startActivity(i);
+		closeActivity();
 	}
 }

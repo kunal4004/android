@@ -82,7 +82,8 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query, arguments);
 
         if(cursor.getCount() == 0){//consider this as a failure as no rows were updated
-            throw new SQLiteException("Updated row count was 0. This is considered as a failed ' SQL UPDATE' transaction.");
+            db.close();
+            throw new SQLiteException("Updated row count was 0. This is considered as a failed 'SQL UPDATE' transaction.");
         }
         db.close();
     }
@@ -96,10 +97,11 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         cursor.moveToFirst();
 
         if(cursor.getCount() == 0){//consider this as a failure as no rows were updated
-            throw new SQLiteException("Updated row count was 0. This is considered as a failed ' SQL UPDATE' transaction.");
+            db.close();
+            throw new SQLiteException("Updated row count was 0. This is considered as a failed 'SQL UPDATE' transaction.");
         }
 
-        Log.e(TAG, "" + cursor.getCount());
+        Log.d(TAG, "" + cursor.getCount());
 
         for(String columnName : cursor.getColumnNames()){
             int index = cursor.getColumnIndex(columnName);
@@ -119,9 +121,15 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         for(Map.Entry<String, String> entry : arguments.entrySet()){
             row.put(entry.getKey(), entry.getValue());
         }
-
-        long rowid = db.insert(tableName ,null, row);
-        db.close();
+        long rowid=-1;
+        try {
+             rowid = db.insert(tableName ,null, row);
+        }catch (SQLiteException e)
+        {
+            Log.e(TAG,e.getMessage());
+        }finally {
+            db.close();
+        }
         return rowid;
     }
 
