@@ -559,7 +559,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Log.e("RequestSETTINGRESULT", String.valueOf(requestCode));
+		Log.d("RequestSETTINGRESULT", String.valueOf(requestCode));
 		switch (requestCode) {
 			// Check for the integer request code originally supplied to startResolutionForResult().
 			case REQUEST_CHECK_SETTINGS:
