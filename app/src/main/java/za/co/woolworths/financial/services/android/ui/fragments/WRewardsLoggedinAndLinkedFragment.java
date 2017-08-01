@@ -157,8 +157,6 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 			@Override
 			protected void onPostExecute(VoucherResponse voucherResponse) {
 				super.onPostExecute(voucherResponse);
-				progressBar.setVisibility(View.GONE);
-				fragmentView.setVisibility(View.VISIBLE);
 				handleVoucherResponse(voucherResponse);
 			}
 		};
@@ -166,8 +164,9 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 
 	public void handleVoucherResponse(VoucherResponse voucherResponse) {
 		try {
-			int httpCode = voucherResponse.httpCode;
-			switch (httpCode) {
+			progressBar.setVisibility(View.GONE);
+			fragmentView.setVisibility(View.VISIBLE);
+			switch (voucherResponse.httpCode) {
 				case 200:
 					mWGlobalState.setRewardSignInState(true);
 					mWGlobalState.setRewardHasExpired(false);

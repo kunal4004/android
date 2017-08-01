@@ -119,6 +119,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 				String majorMinorVersion = appVersion.substring(0, 3);
 				final String mcsAppVersion = (appName + "-" + majorMinorVersion + (environment.equals("production") ? "" : ("-" + environment)));
 				Log.d("MCS", mcsAppVersion);
+
 				ApiInterface mApiInterface = new RestAdapter.Builder()
 						.setEndpoint(getString(R.string.config_endpoint))
 						.setLogLevel(Util.isDebug(WSplashScreenActivity.this) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
@@ -215,7 +216,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		noVideoView.setVisibility(View.GONE);
 		videoViewLayout.setVisibility(View.VISIBLE);
 		String randomVideo = getRandomVideos();
-		Log.e("randomVideo", randomVideo);
+		Log.d("randomVideo", randomVideo);
 		Uri videoUri = Uri.parse(randomVideo);
 
 		videoView.setVideoURI(videoUri);

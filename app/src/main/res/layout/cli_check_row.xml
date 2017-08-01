@@ -22,7 +22,7 @@
         android:src="@drawable/tick_cli_inactive"
         />
     <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:text="@string/accept"
+        android:text=""
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/imgSelectBank"
