@@ -4,13 +4,7 @@ android {
 
     def major = "5"
     def minor = "2"
-    def fix = "0"
-    /*def env = System.getenv()
-    def job = env['BUILD_NUMBER']
-    if (job == null) {
-        job = "103";
-    }*/
-
+    def fix = "1"
 
     signingConfigs {
         woneappDev {
@@ -69,7 +63,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 104
+            versionCode 105
         }
 
         staging {
