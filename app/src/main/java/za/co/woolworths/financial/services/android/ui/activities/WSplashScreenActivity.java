@@ -18,16 +18,21 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.jakewharton.retrofit.Ok3Client;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.OkHttpClient;
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.ApiInterface;
+import za.co.woolworths.financial.services.android.models.WfsApiInterceptor;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -44,6 +49,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 	private View noVideoView;
 	private RelativeLayout videoViewLayout;
 	private ProgressBar pBar;
+	private WGlobalState mWGlobalState;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +60,16 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		Toolbar toolbar = (Toolbar) findViewById(R.id.mToolbar);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().hide();
+
+		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) WSplashScreenActivity.this.getApplication();
+		mWGlobalState = woolworthsApplication.getWGlobalState();
+
 		videoView = (WVideoView) findViewById(R.id.activity_wsplash_screen_videoview);
 		errorLayout = (LinearLayout) findViewById(R.id.errorLayout);
 		noVideoView = (View) findViewById(R.id.splashNoVideoView);
 		videoViewLayout = (RelativeLayout) findViewById(R.id.videoViewLayout);
 		pBar = (ProgressBar) findViewById(R.id.progressBar);
+
 		pBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		//Mobile Config Server
 		if (new ConnectionDetector().isOnline(WSplashScreenActivity.this)) {
@@ -120,8 +131,14 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 				final String mcsAppVersion = (appName + "-" + majorMinorVersion + (environment.equals("production") ? "" : ("-" + environment)));
 				Log.d("MCS", mcsAppVersion);
 
+				OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder();
+				httpBuilder.addInterceptor(new WfsApiInterceptor(WSplashScreenActivity.this));
+				httpBuilder.readTimeout(45, TimeUnit.SECONDS);
+				httpBuilder.connectTimeout(45, TimeUnit.SECONDS);
+
 				ApiInterface mApiInterface = new RestAdapter.Builder()
 						.setEndpoint(getString(R.string.config_endpoint))
+						.setClient((new Ok3Client(httpBuilder.build())))
 						.setLogLevel(Util.isDebug(WSplashScreenActivity.this) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
 						.build()
 						.create(ApiInterface.class);
@@ -155,6 +172,12 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 					WoolworthsApplication.setRewardingLink(configResponse.defaults.getRewardingLink());
 					WoolworthsApplication.setHowToSaveLink(configResponse.defaults.getHowtosaveLink());
 					WoolworthsApplication.setWrewardsTCLink(configResponse.defaults.getWrewardsTCLink());
+
+					mWGlobalState.setStartRadius(0);
+					mWGlobalState.setEndRadius(100000);
+					mWGlobalState.setClothingProducts(true);
+					mWGlobalState.setFoodProducts(false);
+
 					if (!isFirstTime())
 						presentNextScreen();
 				} catch (NullPointerException ignored) {
@@ -283,5 +306,4 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 			return false;
 		}
 	}
-
 }

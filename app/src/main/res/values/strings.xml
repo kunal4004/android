@@ -494,7 +494,7 @@
     <string name="ssl_error">SSL certificate invalid</string>
     <string name="product_item_found">items found</string>
     <string name="product_size">Size</string>
-    <string name="shop_online_woolies">Shop Woolworths online</string>
+    <string name="shop_online_woolies">Shop online</string>
     <string name="add_to_shopping_list">Add to shopping list</string>
     <string name="product_description">Update your modern wardrobe with this crisp short sleeved stretch cotton shirt, designed with polka dots for a pop of urban cool. Wear it with jeans for easy casual flair, or with fitted chinos for a smarter update.</string>
     <string name="product_code">Product Code</string>
@@ -607,5 +607,16 @@
     <string name="session_expired_reward_desc">Your WRewards session expired. To continue please
         sign in or cancel to return to the rest of the app.</string>
     <string name="session_expired_sign_in">sign in</string>
+
+    <string name="stock_finder_map_view">map view</string>
+    <string name="stock_finder_list_view">list view</string>
+    <string name="stock_finder_btn_label">find in-store</string>
+    <string name="product_loading_color_size">Loading size &amp; colour</string>
+    <string name="find_in_store_info">Items based on last night’s stock record.</string>
+    <string name="confirm_color_desc">Please confirm your colour</string>
+    <string name="confirm_size_desc">Please confirm your size</string>
+    <string name="available">available</string>
+    <string name="sf_instore_availability_title">In-Store Availability</string>
+    <string name="sf_instore_availability_desc">These stores are most likely to have your item based on last night’s stock record.</string>
 
 </resources>

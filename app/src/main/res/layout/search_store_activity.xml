@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include layout="@layout/no_connection_handler"/>
+
     <LinearLayout
         android:id="@+id/search_store_activity"
         android:layout_width="match_parent"
@@ -79,6 +81,4 @@
             android:scrollbars="none"
             />
     </LinearLayout>
-
-    <include layout="@layout/no_connection_handler"/>
 </FrameLayout>

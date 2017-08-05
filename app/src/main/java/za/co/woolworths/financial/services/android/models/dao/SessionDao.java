@@ -13,132 +13,133 @@ import za.co.woolworths.financial.services.android.util.PersistenceLayer;
  */
 
 public class SessionDao extends BaseDao {
-    private final String TAG = "SessionDao";
-    public KEY key;
-    public String value;
+	private final String TAG = "SessionDao";
+	public KEY key;
+	public String value;
 
-    public enum KEY {
-        STORES_USER_LAST_LOCATION("STORES_USER_LAST_LOCATION"),
-        STORES_USER_SEARCH("STORES_USER_SEARCH"),
-        STORES_PRODUCT_SEARCH("STORES_PRODUCT_SEARCH"),
-        STORES_LATEST_PAYLOAD("STORES_LATEST_PAYLOAD"),
-        UNREAD_MESSAGE_COUNT("UNREAD_MESSAGE_COUNT"),
-        STORE_SHOPPING_LIST("STORE_SHOPPING_LIST"),
-        REWARD_IS_ACTIVE("REWARD_IS_ACTIVE"),
-        ACCOUNT_IS_ACTIVE("ACCOUNT_IS_ACTIVE"),
-        USER_TOKEN("USER_TOKEN"),
-        PRODUCTS_ONE_TIME_POPUP("PRODUCTS_ONE_TIME_POPUP"),
-        ON_BOARDING_SCREEN("ON_BOARDING_SCREEN"),
-        SPLASH_VIDEO("SPLASH_VIDEO"),
-        APP_VERSION("APP_VERSION"),
-        LAST_KNOWN_LOCATION("LAST_KNOWN_LOCATION");
+	public enum KEY {
+		STORES_USER_LAST_LOCATION("STORES_USER_LAST_LOCATION"),
+		STORES_USER_SEARCH("STORES_USER_SEARCH"),
+		STORES_PRODUCT_SEARCH("STORES_PRODUCT_SEARCH"),
+		STORES_LATEST_PAYLOAD("STORES_LATEST_PAYLOAD"),
+		UNREAD_MESSAGE_COUNT("UNREAD_MESSAGE_COUNT"),
+		STORE_SHOPPING_LIST("STORE_SHOPPING_LIST"),
+		REWARD_IS_ACTIVE("REWARD_IS_ACTIVE"),
+		ACCOUNT_IS_ACTIVE("ACCOUNT_IS_ACTIVE"),
+		USER_TOKEN("USER_TOKEN"),
+		PRODUCTS_ONE_TIME_POPUP("PRODUCTS_ONE_TIME_POPUP"),
+		STORE_FINDER_ONE_TIME_POPUP("STORE_FINDER_ONE_TIME_POPUP"),
+		ON_BOARDING_SCREEN("ON_BOARDING_SCREEN"),
+		SPLASH_VIDEO("SPLASH_VIDEO"),
+		APP_VERSION("APP_VERSION"),
+		LAST_KNOWN_LOCATION("LAST_KNOWN_LOCATION");
 
-        private final String text;
+		private final String text;
 
-        /**
-         * @param key
-         */
-        private KEY(final String key) {
-            this.text = key;
-        }
+		/**
+		 * @param key
+		 */
+		private KEY(final String key) {
+			this.text = key;
+		}
 
-        @Override
-        public String toString() {
-            return super.toString();
-        }
-    }
+		@Override
+		public String toString() {
+			return super.toString();
+		}
+	}
 
-    private SessionDao() {
-    }
+	private SessionDao() {
+	}
 
-    public SessionDao(Context mContext) {
-        super(mContext);
-    }
+	public SessionDao(Context mContext) {
+		super(mContext);
+	}
 
-    public SessionDao(Context mContext, KEY key) {
-        super(mContext);
-        this.key = key;
-    }
+	public SessionDao(Context mContext, KEY key) {
+		super(mContext);
+		this.key = key;
+	}
 
-    @Override
-    public String getTableName() {
-        return "Session";
-    }
+	@Override
+	public String getTableName() {
+		return "Session";
+	}
 
-    public void save() throws Exception {
-        try {
-            //perform update first. If update fails, perform insert
-            this.update();
-            return;
+	public void save() throws Exception {
+		try {
+			//perform update first. If update fails, perform insert
+			this.update();
+			return;
 
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage());
+		}
 
-        try {
-            //perform insert
-            this.insert();
-            return;
+		try {
+			//perform insert
+			this.insert();
+			return;
 
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage());
+		}
+	}
 
-    public SessionDao get() throws Exception {
-        String query = "SELECT * FROM Session WHERE [key] = ? ORDER BY id ASC LIMIT 1;";
-        Map<String, String> result = PersistenceLayer.getInstance(mContext).executeReturnableQuery(query, new String[]{
-                this.key.toString()
-        });
+	public SessionDao get() throws Exception {
+		String query = "SELECT * FROM Session WHERE [key] = ? ORDER BY id ASC LIMIT 1;";
+		Map<String, String> result = PersistenceLayer.getInstance(mContext).executeReturnableQuery(query, new String[]{
+				this.key.toString()
+		});
 
-        for (Map.Entry<String, String> entry : result.entrySet()) {
+		for (Map.Entry<String, String> entry : result.entrySet()) {
 
-            if (entry.getKey().equals("id")) {
-                this.id = entry.getValue();
-            } else if (entry.getKey().equals("key")) {
-                this.key = KEY.valueOf(entry.getValue());
-            } else if (entry.getKey().equals("value")) {
-                this.value = entry.getValue();
-            } else if (entry.getKey().equals("dateCreated")) {
-                this.dateCreated = entry.getValue();
-            } else if (entry.getKey().equals("dateUpdated")) {
-                this.dateUpdated = entry.getValue();
-            }
-        }
+			if (entry.getKey().equals("id")) {
+				this.id = entry.getValue();
+			} else if (entry.getKey().equals("key")) {
+				this.key = KEY.valueOf(entry.getValue());
+			} else if (entry.getKey().equals("value")) {
+				this.value = entry.getValue();
+			} else if (entry.getKey().equals("dateCreated")) {
+				this.dateCreated = entry.getValue();
+			} else if (entry.getKey().equals("dateUpdated")) {
+				this.dateUpdated = entry.getValue();
+			}
+		}
 
-        return this;
-    }
+		return this;
+	}
 
-    public void delete() throws Exception {
-        String query = "DELETE FROM Session" +
-                " WHERE [key] = ?";
+	public void delete() throws Exception {
+		String query = "DELETE FROM Session" +
+				" WHERE [key] = ?";
 
-        PersistenceLayer.getInstance(mContext).executeVoidQuery(query, new String[]{
-                this.key.toString()
-        });
-    }
+		PersistenceLayer.getInstance(mContext).executeVoidQuery(query, new String[]{
+				this.key.toString()
+		});
+	}
 
-    private void insert() throws Exception {
-        String query = "INSERT INTO Session ([key], value) VALUES (?, ?);";
+	private void insert() throws Exception {
+		String query = "INSERT INTO Session ([key], value) VALUES (?, ?);";
 
-        Map<String, String> arguments = new HashMap<>();
-        arguments.put("key", this.key.toString());
-        arguments.put("value", this.value);
+		Map<String, String> arguments = new HashMap<>();
+		arguments.put("key", this.key.toString());
+		arguments.put("value", this.value);
 
-        long rowid = PersistenceLayer.getInstance(mContext).executeInsertQuery(this.getTableName(), arguments);
-        if (rowid == 0 || rowid == -1) {
-            throw new RuntimeException("You Attempted to insert a new SessionDao record but not row id was returned. Insert failed!");
-        }
-    }
+		long rowid = PersistenceLayer.getInstance(mContext).executeInsertQuery(this.getTableName(), arguments);
+		if (rowid == 0 || rowid == -1) {
+			throw new RuntimeException("You Attempted to insert a new SessionDao record but not row id was returned. Insert failed!");
+		}
+	}
 
-    private void update() throws Exception {
-        String query = "UPDATE Session" +
-                " SET value = ?," +
-                " dateUpdated = datetime()" +
-                " WHERE [key] = ?";
+	private void update() throws Exception {
+		String query = "UPDATE Session" +
+				" SET value = ?," +
+				" dateUpdated = datetime()" +
+				" WHERE [key] = ?";
 
-        PersistenceLayer.getInstance(mContext).executeVoidQuery(query, new String[]{
-                this.value, this.key.toString()
-        });
-    }
+		PersistenceLayer.getInstance(mContext).executeVoidQuery(query, new String[]{
+				this.value, this.key.toString()
+		});
+	}
 }

@@ -6,9 +6,6 @@ import android.text.TextUtils;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-/**
- * Created by dimitrij on 04/06/2017.
- */
 
 public class WGlobalState {
 
@@ -22,9 +19,12 @@ public class WGlobalState {
 	public static final String ON_CANCEL = "CANCEL";
 	public static final String ON_SIGN_IN = "SIGNIN";
 
+	private boolean clothingProducts, foodProducts;
+	private int startRadius, endRadius;
+
 	private boolean cardGestureIsEnabled, onBackPressed, accountHasExpired, rewardHasExpired,
 			FragmentIsReward, defaultPopupState;
-	private String pressState, newSTSParams;
+	private String pressState, newSTSParams, storeLocatorJson;
 
 	public void setAccountSignInState(boolean accountSignInState) {
 		setPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE, accountSignInState);
@@ -125,5 +125,45 @@ public class WGlobalState {
 
 	public void setDefaultPopupState(boolean pDefaultPopupState) {
 		defaultPopupState = pDefaultPopupState;
+	}
+
+	public String getStoreLocatorJson() {
+		return storeLocatorJson;
+	}
+
+	public void setStoreLocatorJson(String storeLocatorJson) {
+		this.storeLocatorJson = storeLocatorJson;
+	}
+
+	public boolean clothingIsEnabled() {
+		return clothingProducts;
+	}
+
+	public void setClothingProducts(boolean clothingProducts) {
+		this.clothingProducts = clothingProducts;
+	}
+
+	public boolean isFoodProducts() {
+		return foodProducts;
+	}
+
+	public void setFoodProducts(boolean foodProducts) {
+		this.foodProducts = foodProducts;
+	}
+
+	public int getStartRadius() {
+		return startRadius;
+	}
+
+	public void setStartRadius(int startRadius) {
+		this.startRadius = startRadius;
+	}
+
+	public int getEndRadius() {
+		return endRadius;
+	}
+
+	public void setEndRadius(int endRadius) {
+		this.endRadius = endRadius;
 	}
 }
