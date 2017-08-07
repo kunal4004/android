@@ -18,17 +18,13 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.jakewharton.retrofit.Ok3Client;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.OkHttpClient;
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.ApiInterface;
-import za.co.woolworths.financial.services.android.models.WfsApiInterceptor;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
@@ -131,14 +127,8 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 				final String mcsAppVersion = (appName + "-" + majorMinorVersion + (environment.equals("production") ? "" : ("-" + environment)));
 				Log.d("MCS", mcsAppVersion);
 
-				OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder();
-				httpBuilder.addInterceptor(new WfsApiInterceptor(WSplashScreenActivity.this));
-				httpBuilder.readTimeout(45, TimeUnit.SECONDS);
-				httpBuilder.connectTimeout(45, TimeUnit.SECONDS);
-
 				ApiInterface mApiInterface = new RestAdapter.Builder()
 						.setEndpoint(getString(R.string.config_endpoint))
-						.setClient((new Ok3Client(httpBuilder.build())))
 						.setLogLevel(Util.isDebug(WSplashScreenActivity.this) ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
 						.build()
 						.create(ApiInterface.class);

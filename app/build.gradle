@@ -4,7 +4,7 @@ android {
 
     def major = "5"
     def minor = "2"
-    def fix = "0"
+    def fix = "1"
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
@@ -12,6 +12,7 @@ android {
     }
 
     def buildNumber = major + "." + minor + "." + fix
+
 
     signingConfigs {
         woneappDev {
@@ -44,8 +45,7 @@ android {
         minSdkVersion 19 //kitkat 4.4
         targetSdkVersion 24
         multiDexEnabled true
-        versionCode(job.toInteger())
-        versionName buildNumber
+        versionName(major + "." + minor + "." + fix)
     }
 
     compileSdkVersion 24
@@ -65,22 +65,25 @@ android {
         dev {
             applicationId "com.awfs.coordination.dev"
             signingConfig signingConfigs.woneappDev
+            versionCode 1
         }
 
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
+            versionCode 106
         }
 
         staging {
             applicationId "com.awfs.coordination.staging"
             signingConfig signingConfigs.woneappStaging
+            versionCode 11
         }
 
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
-            versionCode 46
+            versionCode 48
         }
         dexOptions {
             javaMaxHeapSize "2560M"

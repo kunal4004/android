@@ -203,6 +203,7 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.SSOActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SSOActivity"/>
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity"
             android:screenOrientation="portrait"
@@ -241,6 +242,7 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity"
             android:label="@string/app_name"
             android:theme="@style/MyAccountCards"/>
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity"
             android:screenOrientation="portrait"
