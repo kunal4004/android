@@ -12,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -53,7 +52,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerA
 import za.co.woolworths.financial.services.android.ui.views.LoadingDots;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.ui.views.WrapContentViewPager;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
@@ -120,10 +118,10 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	private ImageView mImColorArrow;
 	private ImageView mColorArrow;
 	private WTextView mTextProductSize;
-	private LoadingDots mLoadingDaot;
+	private LoadingDots mLoadingDot;
 	private int mOtherSkuSize;
 	private LinearLayout llLoadingColorSize;
-	private View loadingColorDivider;
+	public View loadingColorDivider;
 	private RelativeLayout mLinColor;
 
 	protected void initProductDetailUI() {
@@ -160,7 +158,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		mImSave = (SimpleDraweeView) findViewById(R.id.imSave);
 		mImReward = (SimpleDraweeView) findViewById(R.id.imReward);
 		mVitalityView = (SimpleDraweeView) findViewById(R.id.imVitality);
-		mLoadingDaot = (LoadingDots) findViewById(R.id.loadingDots);
+		mLoadingDot = (LoadingDots) findViewById(R.id.loadingDots);
 		mTextSelectColor.setOnClickListener(this);
 		mTextSelectSize.setOnClickListener(this);
 		mImColorArrow.setOnClickListener(this);
@@ -689,17 +687,26 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		mProductSizeAdapter.notifyDataSetChanged();
 	}
 
-	public void showSizeProgressBar() {
+	public void showSizeProgressBar(String productType) {
 		mProductCode.setText(getString(R.string.loading_product_info));
 		showProductCode();
 		mSizeProgressBar.getIndeterminateDrawable().setColorFilter(null);
 		mSizeProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		mSizeProgressBar.bringToFront();
 		mSizeProgressBar.setVisibility(View.VISIBLE);
-		mLoadingDaot.setVisibility(View.VISIBLE);
+		mLoadingDot.setVisibility(View.VISIBLE);
+
+		if (!TextUtils.isEmpty(productType)) {
+			if (productType.equalsIgnoreCase("foodProducts")) {
+				llLoadingColorSize.setVisibility(View.GONE);
+				loadingColorDivider.setVisibility(View.GONE);
+			} else {
+				loadingColorDivider.setVisibility(View.VISIBLE);
+				llLoadingColorSize.setVisibility(View.VISIBLE);
+			}
+		}
+
 		llColorSizeContainer.setVisibility(View.GONE);
-		loadingColorDivider.setVisibility(View.VISIBLE);
-		llLoadingColorSize.setVisibility(View.VISIBLE);
 		vColorSizeHorizontalLine.setVisibility(View.GONE);
 		mSizeProgressBar.setAlpha(0.3f);
 		mTextColour.setAlpha(0.3f);
@@ -715,7 +722,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 
 	public void hideProgressDetailLoad() {
 		mSizeProgressBar.setVisibility(View.GONE);
-		mLoadingDaot.setVisibility(View.GONE);
+		mLoadingDot.setVisibility(View.GONE);
 		loadingColorDivider.setVisibility(View.GONE);
 		llLoadingColorSize.setVisibility(View.GONE);
 		mSizeProgressBar.setAlpha(1f);

@@ -20,23 +20,16 @@ import java.util.Comparator;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderSizeColorAdapter;
+import za.co.woolworths.financial.services.android.util.ColorInterface;
 
-public class SizeFragmentDialog extends Fragment implements StockFinderSizeColorAdapter.RecyclerViewClickListener {
+public class SizeFragmentDialog extends Fragment implements StockFinderSizeColorAdapter.RecyclerViewClickListener, ColorInterface {
 
 	private WStockFinderActivity.RecyclerItemSelected mRecyclerItemSelected;
 	private StockFinderSizeColorAdapter mColorSizeAdapter;
 	private ArrayList<OtherSku> mOtherSKUList;
-	private String mFilterType;
-	private RecyclerView mRecyclerColorList;
-
-	public static SizeFragmentDialog newInstance(String text, String filter_type) {
-		SizeFragmentDialog f = new SizeFragmentDialog();
-		Bundle b = new Bundle();
-		b.putString("msg", text);
-		b.putString("filter_type", filter_type);
-		f.setArguments(b);
-		return f;
-	}
+	private RecyclerView mSizeRecycleView;
+	private boolean recycleViewContainItem;
+	private SizeFragmentDialog mContext;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,26 +39,16 @@ public class SizeFragmentDialog extends Fragment implements StockFinderSizeColor
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-
+		mContext = this;
 		try {
 			mRecyclerItemSelected = (WStockFinderActivity.RecyclerItemSelected) this.getActivity();
 		} catch (ClassCastException ignored) {
 		}
 
-		mRecyclerColorList = (RecyclerView) view.findViewById(R.id.recyclerColorList);
+		mSizeRecycleView = (RecyclerView) view.findViewById(R.id.recyclerColorList);
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(this.getActivity());
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-		mRecyclerColorList.setLayoutManager(mLayoutManager);
-
-		mFilterType = getArguments().getString("filter_type");
-		String mColorList = getArguments().getString("msg");
-		mOtherSKUList = getOtherSKUList(mColorList);
-		updateSizeAdapter(mOtherSKUList, "size");
-	}
-
-	private ArrayList<OtherSku> getOtherSKUList(String item) {
-		return new Gson().fromJson(item, new TypeToken<ArrayList<OtherSku>>() {
-		}.getType());
+		mSizeRecycleView.setLayoutManager(mLayoutManager);
 	}
 
 	@Override
@@ -91,12 +74,7 @@ public class SizeFragmentDialog extends Fragment implements StockFinderSizeColor
 		});
 
 		mColorSizeAdapter = new StockFinderSizeColorAdapter(commonSizeList, this, mFilterType);
-		mRecyclerColorList.setAdapter(mColorSizeAdapter);
-	}
-
-	public void resetIndex() {
-		if (mColorSizeAdapter != null)
-			mColorSizeAdapter.setIndex(-1);
+		mSizeRecycleView.setAdapter(mColorSizeAdapter);
 	}
 
 	private boolean sizeValueExist(ArrayList<OtherSku> list, String name) {
@@ -108,4 +86,17 @@ public class SizeFragmentDialog extends Fragment implements StockFinderSizeColor
 		return false;
 	}
 
+	@Override
+	public void onUpdate(final ArrayList<OtherSku> otherSkuList, final String viewType) {
+		SizeFragmentDialog.this.getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (!recycleViewContainItem) {
+					StockFinderSizeColorAdapter stockFinderSizeColorAdapter = new StockFinderSizeColorAdapter(otherSkuList, mContext, viewType);
+					mSizeRecycleView.setAdapter(stockFinderSizeColorAdapter);
+					recycleViewContainItem = true;
+				}
+			}
+		});
+	}
 }

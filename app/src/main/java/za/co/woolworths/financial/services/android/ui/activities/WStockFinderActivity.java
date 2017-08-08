@@ -11,15 +11,12 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
@@ -28,13 +25,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -44,12 +40,17 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragmentAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.StoreFinderListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.StoreFinderMapFragment;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
+import za.co.woolworths.financial.services.android.util.GoogleMapViewPager;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.UpdateStoreFinderFragment;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class WStockFinderActivity extends AppCompatActivity implements StoreFinderMapFragment.SlidePanelEvent {
+public class WStockFinderActivity extends AppCompatActivity implements StoreFinderMapFragment.SlidePanelEvent, View.OnClickListener {
 
 
 	private String mSkuID;
@@ -59,9 +60,14 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 	private WGlobalState mWGlobalState;
 	private String TAG = this.getClass().getSimpleName();
 	private boolean isLocationServiceButtonClicked;
-	private ViewPager mViewPager;
-	private StoreFinderListFragment mStoreFinderListFragment;
-	private StockFinderFragmentAdapter adapter;
+	public GoogleMapViewPager mViewPager;
+	public StockFinderFragmentAdapter mPagerAdapter;
+	private Location mLocation;
+	private int currentPosition = 0;
+	private LinearLayout layoutLocationServiceOff;
+	private boolean updateMap;
+	private ErrorHandlerView mErrorHandlerView;
+
 
 	public interface RecyclerItemSelected {
 		void onRecyclerItemClick(View v, int position, String filterType);
@@ -73,7 +79,6 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 	private WTextView tvMapView, tvListView;
 	private ImageView imListView, imMapView;
 	private TabLayout tabLayout;
-	private Location mLocation;
 	protected final int REQUEST_CHECK_SETTINGS = 99;
 
 	@Override
@@ -81,9 +86,7 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 		super.onCreate(savedInstanceState);
 		Utils.updateStatusBarBackground(WStockFinderActivity.this);
 		setContentView(R.layout.stock_finder_activity);
-
 		mWGlobalState = ((WoolworthsApplication) WStockFinderActivity.this.getApplication()).getWGlobalState();
-
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -97,64 +100,29 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 			mSkuID = mBundle.getString("SELECTED_SKU");
 		}
 
+		layoutLocationServiceOff = (LinearLayout) findViewById(R.id.layoutLocationServiceOff);
 		NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nest_scrollview);
 		scrollView.setFillViewport(true);
-		mViewPager = (ViewPager) findViewById(R.id.viewpager);
+		mViewPager = (GoogleMapViewPager) findViewById(R.id.viewpager);
 		WTextView toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
 		mAppBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
-
+		WButton btnOnLocationService = (WButton) findViewById(R.id.buttonLocationOn);
+		btnOnLocationService.setOnClickListener(this);
+		RelativeLayout mRelativeLayout = (RelativeLayout) findViewById(R.id.no_connection_layout);
+		mErrorHandlerView = new ErrorHandlerView(WStockFinderActivity.this
+				, mRelativeLayout);
+		mErrorHandlerView.setMargin(mRelativeLayout, 0, 0, 0, 0);
+		WButton btnRetry = (WButton) findViewById(R.id.btnRetry);
+		btnRetry.setOnClickListener(this);
 		toolbarTextView.setText(mProductName);
 		setupViewPager(mViewPager);
 		tabLayout = (TabLayout) findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(mViewPager);
 
-
-
-		mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-			public void onPageScrollStateChanged(int state) {
-			}
-
-			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-			}
-
-			public void onPageSelected(int position) {
-				Log.i("TAG", "position: " + position);
-				switch (position) {
-
-					case 1:
- 						break;
-					default:
-						break;
-
-				}
-			}
-		});
-
 		tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
 			@Override
 			public void onTabSelected(TabLayout.Tab tab) {
-				switch (tab.getPosition()) {
-					case 0:
-						break;
-
-					case 1:
-
-//						try {
-//
-//							if (storeDetailsList != null) {
-//								mStoreFinderListFragment = (StoreFinderListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
-//								mStoreFinderListFragment.update(storeDetailsList);
-//
-//							}
-//
-//						}catch(Exception ex){
-//							ex.printStackTrace();
-//						}
-
-						break;
-					default:
-						break;
-				}
+				mViewPager.setCurrentItem(tab.getPosition());
 			}
 
 			@Override
@@ -170,26 +138,17 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 
 		setupTabIcons();
 
-		try
-
-		{
-			TypedArray attrs = WStockFinderActivity.this.getTheme().obtainStyledAttributes(new int[]{android.R.attr.actionBarSize});
-			mActionBarSize = (int) attrs.getDimension(0, 0) * 2;
-		} catch (
-				Exception ex)
-
-		{
-		}
-
-		startLocationUpdates();
-
+		TypedArray attrs = WStockFinderActivity.this.getTheme().obtainStyledAttributes(new int[]{android.R.attr.actionBarSize});
+		mActionBarSize = (int) attrs.getDimension(0, 0) * 2;
+		initLocationCheck();
 	}
 
-	private void setupViewPager(ViewPager viewPager) {
-		adapter = new StockFinderFragmentAdapter(getSupportFragmentManager());
-		adapter.addFrag(new StoreFinderMapFragment(), getString(R.string.stock_finder_map_view));
-		adapter.addFrag(new StoreFinderListFragment(), getString(R.string.stock_finder_list_view));
-		viewPager.setAdapter(adapter);
+	private void setupViewPager(GoogleMapViewPager viewPager) {
+		mPagerAdapter = new StockFinderFragmentAdapter(getSupportFragmentManager());
+		mPagerAdapter.addFrag(new StoreFinderMapFragment(), getString(R.string.stock_finder_map_view));
+		mPagerAdapter.addFrag(new StoreFinderListFragment(), getString(R.string.stock_finder_list_view));
+		viewPager.setAdapter(mPagerAdapter);
+		viewPager.addOnPageChangeListener(pageChangeListener);
 	}
 
 	private void setupTabIcons() {
@@ -201,7 +160,6 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 
 		imMapView = (ImageView) mapView.findViewById(R.id.tabIcon);
 		tvMapView = (WTextView) mapView.findViewById(R.id.textIcon);
-
 		imListView = (ImageView) listView.findViewById(R.id.tabIcon);
 		tvListView = (WTextView) listView.findViewById(R.id.textIcon);
 
@@ -287,7 +245,7 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 	}
 
 
-	private void locationAPIRequest(Location location) {
+	private void locationAPIRequest() {
 		init().execute();
 	}
 
@@ -309,19 +267,21 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 			}
 
 			@Override
-			protected LocationResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+			protected LocationResponse httpError(final String errorMessage, HttpErrorCode httpErrorCode) {
+				WStockFinderActivity.this.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						mErrorHandlerView.networkFailureHandler(errorMessage);
+					}
+				});
 				return new LocationResponse();
 			}
 
 			@Override
 			protected void onPostExecute(LocationResponse locationResponse) {
 				super.onPostExecute(locationResponse);
-				String json = new Gson().toJson(locationResponse);
-				storeDetailsList = new ArrayList<>();
 				storeDetailsList = locationResponse.Locations;
-				if (storeDetailsList != null && storeDetailsList.size() != 0) {
-					mStoreFinderMapFragment.update(mLocation, storeDetailsList);
-				}
+				selectPage(currentPosition);
 				Utils.showOneTimePopup(WStockFinderActivity.this, SessionDao.KEY.STORE_FINDER_ONE_TIME_POPUP, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INSTORE_AVAILABILITY);
 			}
 		};
@@ -376,7 +336,6 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 		}
 	}
 
-	private StoreFinderMapFragment mStoreFinderMapFragment;
 	/**
 	 * handle new location
 	 */
@@ -387,14 +346,13 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 			try {
 				mLocation = intent.getParcelableExtra(FusedLocationSingleton.LBM_EVENT_LOCATION_UPDATE);
 				Utils.saveLastLocation(mLocation, WStockFinderActivity.this);
-				try {
-					mStoreFinderMapFragment = (StoreFinderMapFragment) mViewPager.getAdapter().instantiateItem(mViewPager, mViewPager.getCurrentItem());
-				} catch (Exception ex) {
-					Log.e("xxLocation", ex.toString());
+				locationAPIRequest();
+				if (Utils.isLocationServiceEnabled(WStockFinderActivity.this)) {
+					checkLocationServiceAndSetLayout(true);
+				} else {
+					checkLocationServiceAndSetLayout(false);
 				}
-				locationAPIRequest(mLocation);
 				stopLocationUpdate();
-				//updateMap(location);
 			} catch (Exception e) {
 				Log.e(TAG, e.toString());
 			}
@@ -442,5 +400,100 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 	protected void onDestroy() {
 		super.onDestroy();
 		stopLocationUpdate();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	}
+
+	private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
+
+
+		@Override
+		public void onPageSelected(int newPosition) {
+			switch (newPosition) {
+				case 0:
+					mViewPager.disableScroll(true);
+					break;
+				case 1:
+					mViewPager.disableScroll(false);
+					break;
+			}
+			selectPage(newPosition);
+		}
+
+		@Override
+		public void onPageScrolled(int arg0, float arg1, int arg2) {
+		}
+
+		public void onPageScrollStateChanged(int arg0) {
+		}
+	};
+
+	private void selectPage(int position) {
+		UpdateStoreFinderFragment fragmentToShow = (UpdateStoreFinderFragment) mPagerAdapter.getItem(position);
+		if (fragmentToShow != null) {
+			fragmentToShow.onFragmentUpdate(mLocation, storeDetailsList);
+		}
+		currentPosition = position;
+	}
+
+	public void initLocationCheck() {
+		if (Utils.isLocationServiceEnabled(WStockFinderActivity.this)) {
+			checkLocationServiceAndSetLayout(true);
+			startLocationUpdates();
+		} else {
+			checkLocationServiceAndSetLayout(false);
+		}
+	}
+
+	public void checkLocationServiceAndSetLayout(boolean locationServiceStatus) {
+		//Check for location service and Last location
+		if (!locationServiceStatus) {
+			mViewPager.setVisibility(View.GONE);
+			layoutLocationServiceOff.setVisibility(View.VISIBLE);
+		} else {
+			layoutLocationServiceOff.setVisibility(View.GONE);
+			mViewPager.setVisibility(View.VISIBLE);
+		}
+	}
+
+	@RequiresApi(api = Build.VERSION_CODES.M)
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.buttonLocationOn:
+				updateMap = true;
+				if (checkLocationPermission()) {
+					Intent locIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+					startActivity(locIntent);
+					overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				} else {
+					isLocationServiceButtonClicked = true;
+					checkLocationPermission();
+				}
+				break;
+
+			case R.id.btnRetry:
+				if (new ConnectionDetector().isOnline(WStockFinderActivity.this)) {
+					mErrorHandlerView.hideErrorHandlerLayout();
+					initLocationCheck();
+				}
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (updateMap) {
+			if (Utils.isLocationEnabled(WStockFinderActivity.this))
+				checkLocationServiceAndSetLayout(true);
+			startLocationUpdates();
+			updateMap = false;
+		}
 	}
 }

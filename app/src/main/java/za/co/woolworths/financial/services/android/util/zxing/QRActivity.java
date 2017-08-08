@@ -20,6 +20,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -70,11 +71,15 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
+import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
 
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
+import za.co.woolworths.financial.services.android.ui.views.LoadingDots;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
@@ -109,9 +114,9 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	private ArrayList<WProductDetail> mproductDetail;
 	private WTextView mTextTitle;
 	private WTextView mTextPrice;
-	private LinearLayout mRelContainer;
+	private LinearLayout llColorSizeContainer;
 	private WTextView mProductCode;
-	private List<OtherSku> otherSkusList;
+	private List<OtherSku> mOtherSKU;
 	private WTextView mTextSelectColor;
 	private PopupWindow mPColourWindow;
 	private PopupWindow mPSizeWindow;
@@ -158,6 +163,11 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	private String mProductId;
 	private String mSkuId;
 	public WoolworthsApplication mWoolworthsApplication;
+	private WButton mBtnShopOnlineWoolies;
+	private WGlobalState mGlobalState;
+	private WButton mBtnStoreFinder;
+	private LinearLayout llLoadingColorSize;
+	private View loadingColorDivider;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -165,6 +175,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		Utils.updateStatusBarBackground(this, R.color.black);
 		setContentView(R.layout.barcode_scanner_layout);
 		setupToolbar();
+
+		mGlobalState = ((WoolworthsApplication) QRActivity.this.getApplication()).getWGlobalState();
 		if (Build.VERSION_CODES.LOLLIPOP >= Build.VERSION.SDK_INT) {
 			cameraManager = new CameraManager(QRActivity.this.getApplication());
 		} else {
@@ -197,7 +209,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		initProductDetailUI();
 		slideUpPanel();
 
-
 		findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -214,6 +225,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 				}
 			}
 		});
+		disableStoreFinder();
 	}
 
 	private void slideUpPanel() {
@@ -234,7 +246,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
 			@Override
 			public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState,
-			                                SlidingUpPanelLayout.PanelState newState) {
+											SlidingUpPanelLayout.PanelState newState) {
 				switch (newState) {
 					case COLLAPSED:
 						runOnUiThread(new Runnable() {
@@ -269,6 +281,14 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		qRview = (QRCodeView) findViewById(R.id.qr_view);
 		mSlideUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
 		mTextInfo = (TextView) findViewById(R.id.textInfo);
+		mBtnStoreFinder = (WButton) findViewById(R.id.btnStoreFinder);
+		mBtnStoreFinder.setOnClickListener(this);
+		LoadingDots mLoadingDot = (LoadingDots) findViewById(R.id.loadingDots);
+		llLoadingColorSize = (LinearLayout) findViewById(R.id.llLoadingColorSize);
+		loadingColorDivider = findViewById(R.id.loadingColorDivider);
+		mLoadingDot.setVisibility(View.GONE);
+		llLoadingColorSize.setVisibility(View.GONE);
+		loadingColorDivider.setVisibility(View.GONE);
 		mProgressBar = (ProgressBar) findViewById(R.id.ppBar);
 		mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
 		mBtnManual = (WButton) findViewById(R.id.btnManual);
@@ -439,7 +459,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 						.getSystemService(LAYOUT_INFLATER_SERVICE);
 				View mPopWindow = mSlideUpPanelLayoutInflater.inflate(R.layout.product_size_row, null);
 				mColorRecycleSize = (RecyclerView) mPopWindow.findViewById(R.id.recyclerviewSize);
-				bindWithUI(otherSkusList, true);
+				bindWithUI(mOtherSKU, true);
 				mPColourWindow = new PopupWindow(
 						mPopWindow,
 						ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -470,7 +490,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 				mRecyclerviewSize = (RecyclerView) popupView.findViewById(R.id.recyclerviewSize);
 				LinearLayout mPopLinContainer = (LinearLayout) popupView.findViewById(R.id.linPopUpContainer);
 
-				bindWithUI(otherSkusList, false);
+				bindWithUI(mOtherSKU, false);
 
 				mPSizeWindow = new PopupWindow(
 						popupView,
@@ -506,7 +526,23 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 			case R.id.btnManual:
 				Intent openManual = new Intent(QRActivity.this, EnterBarcodeActivity.class);
 				startActivity(openManual);
-				overridePendingTransition(R.anim.slide_up_anim,R.anim.stay);
+				overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				break;
+
+			case R.id.btnStoreFinder:
+				boolean productHasColour = productHasColour();
+				boolean productHasSize = productHasSize();
+
+				mScrollProductDetail.scrollTo(0, 0);
+				if (productHasColour && productHasSize) {
+					colourIntent();
+				} else if (!productHasColour && productHasSize) {
+					sizeIntent();
+				} else if (productHasColour && !productHasSize) {
+					colourNoSizeIntent();
+				} else {
+					noSizeColorIntent();
+				}
 				break;
 		}
 	}
@@ -659,10 +695,10 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mTextPromo = (WTextView) findViewById(R.id.textPromo);
 		mTextSelectColor = (WTextView) findViewById(R.id.textSelectColour);
 		mProductCode = (WTextView) findViewById(R.id.product_code);
-		mRelContainer = (LinearLayout) findViewById(R.id.linProductContainer);
+		llColorSizeContainer = (LinearLayout) findViewById(R.id.linProductContainer);
 		RelativeLayout mLinColor = (RelativeLayout) findViewById(R.id.linColour);
 		mLinSize = (RelativeLayout) findViewById(R.id.linSize);
-		WButton mBtnShopOnlineWoolies = (WButton) findViewById(R.id.btnShopOnlineWoolies);
+		mBtnShopOnlineWoolies = (WButton) findViewById(R.id.btnShopOnlineWoolies);
 		ImageView mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
 		mImCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
 		mImSelectedColor = (SimpleDraweeView) findViewById(R.id.imSelectedColor);
@@ -703,8 +739,9 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mproductDetail = new Gson().fromJson(mProductList, token.getType());
 		assert mproductDetail != null;
 		WProductDetail mProduct = mproductDetail.get(0);
-		otherSkusList = mProduct.otherSkus;
-		getDefaultColor(otherSkusList, skuId);
+		productIsActive(mProduct);
+		mOtherSKU = mProduct.otherSkus;
+		getDefaultColor(mOtherSKU, skuId);
 		mCheckOutLink = mProduct.checkOutLink;
 		mDefaultImage = getImageByWidth(mProduct.externalImageRef);
 		getHtmlData();
@@ -720,12 +757,12 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 			mTextPromo.setText(mProduct.saveText);
 		}
 
-		if (otherSkusList.size() > 1) {
+		if (mOtherSKU.size() > 1) {
 			mColorView.setVisibility(View.VISIBLE);
-			mRelContainer.setVisibility(View.VISIBLE);
+			llColorSizeContainer.setVisibility(View.VISIBLE);
 		} else {
 			mColorView.setVisibility(View.GONE);
-			mRelContainer.setVisibility(View.GONE);
+			llColorSizeContainer.setVisibility(View.GONE);
 		}
 	}
 
@@ -779,7 +816,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	}
 
 	public void productDetailPriceList(WTextView wPrice, WTextView WwasPrice,
-	                                   String price, String wasPrice, String productType) {
+									   String price, String wasPrice, String productType) {
 		switch (productType) {
 			case "clothingProducts":
 				if (TextUtils.isEmpty(wasPrice)) {
@@ -900,9 +937,9 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
 
 	public String getSkuExternalImageRef(String colour) {
-		if (otherSkusList != null) {
-			if (otherSkusList.size() > 0) {
-				List<OtherSku> otherSku = otherSkusList;
+		if (mOtherSKU != null) {
+			if (mOtherSKU.size() > 0) {
+				List<OtherSku> otherSku = mOtherSKU;
 				for (OtherSku sku : otherSku) {
 					if (sku.colour.equalsIgnoreCase(colour)) {
 						return getImageByWidth(sku.externalImageRef);
@@ -914,9 +951,9 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	}
 
 	public void getSKUDefaultSize(String colour) {
-		if (otherSkusList != null) {
-			if (otherSkusList.size() > 0) {
-				List<OtherSku> otherSku = otherSkusList;
+		if (mOtherSKU != null) {
+			if (mOtherSKU.size() > 0) {
+				List<OtherSku> otherSku = mOtherSKU;
 				for (OtherSku sku : otherSku) {
 					if (sku.colour.equalsIgnoreCase(colour)) {
 						if (!TextUtils.isEmpty(sku.size))
@@ -1284,9 +1321,9 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
 	private String updatePrice(String colour, String size) {
 		String price = "";
-		if (otherSkusList != null) {
-			if (otherSkusList.size() > 0) {
-				for (OtherSku option : otherSkusList) {
+		if (mOtherSKU != null) {
+			if (mOtherSKU.size() > 0) {
+				for (OtherSku option : mOtherSKU) {
 					if (colour.equalsIgnoreCase(option.colour) &&
 							size.equalsIgnoreCase(option.size)) {
 						return option.price;
@@ -1299,9 +1336,9 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
 	private String updateWasPrice(String colour, String size) {
 		String wasPrice = "";
-		if (otherSkusList != null) {
-			if (otherSkusList.size() > 0) {
-				for (OtherSku option : otherSkusList) {
+		if (mOtherSKU != null) {
+			if (mOtherSKU.size() > 0) {
+				for (OtherSku option : mOtherSKU) {
 					if (colour.equalsIgnoreCase(option.colour) &&
 							size.equalsIgnoreCase(option.size)) {
 						return option.wasPrice;
@@ -1368,8 +1405,135 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		finishActivity();
 	}
 
-	private void finishActivity(){
+	private void finishActivity() {
 		finish();
-		overridePendingTransition(R.anim.stay,R.anim.slide_down_anim);
+		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
+
+
+	private boolean productHasColour() {
+		return getColorList().size() > 0 ? true : false;
+	}
+
+	private boolean productHasSize() {
+		return getSizeList().size() > 0 ? true : false;
+	}
+
+	public void colourIntent() {
+		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
+		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
+		mIntent.putExtra("OTHERSKU", toJson(mOtherSKU));
+		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
+		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
+		mIntent.putExtra("PRODUCT_NAME", mObjProductDetail.productName);
+		startActivity(mIntent);
+		overridePendingTransition(0,0);
+	}
+
+	public void sizeIntent() {
+		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
+		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
+		mIntent.putExtra("OTHERSKU", toJson(mOtherSKU));
+		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
+		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
+		mIntent.putExtra("PRODUCT_NAME", mObjProductDetail.productName);
+		startActivity(mIntent);
+		overridePendingTransition(0,0);
+	}
+
+	public void colourNoSizeIntent() {
+		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
+		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
+		mIntent.putExtra("OTHERSKU", toJson(mOtherSKU));
+		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
+		mIntent.putExtra("PRODUCT_HAS_SIZE", false);
+		mIntent.putExtra("PRODUCT_NAME", mObjProductDetail.productName);
+		startActivity(mIntent);
+		overridePendingTransition(0,0);
+	}
+
+	public void noSizeColorIntent() {
+		Intent mIntent = new Intent(this, WStockFinderActivity.class);
+		mIntent.putExtra("PRODUCT_NAME", mObjProductDetail.productName);
+		mIntent.putExtra("SELECTED_SKU", mSkuId);
+		startActivity(mIntent);
+		overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+	}
+
+	private void disableStoreFinder() {
+		setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
+		mBtnStoreFinder.setVisibility(View.GONE);
+	}
+
+	private void productIsActive(WProductDetail productList) {
+		String productType = productList.productType;
+		if (productType.equalsIgnoreCase("clothingProducts")) {
+			if (mGlobalState.clothingIsEnabled()) {
+				setLayoutWeight(mBtnShopOnlineWoolies, 0.5f);
+				setLayoutWeight(mBtnStoreFinder, 0.5f);
+				mBtnStoreFinder.setVisibility(View.VISIBLE);
+			} else {
+				setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
+				mBtnStoreFinder.setVisibility(View.GONE);
+			}
+		} else {
+			if (mGlobalState.isFoodProducts()) {
+				setLayoutWeight(mBtnShopOnlineWoolies, 0.5f);
+				setLayoutWeight(mBtnStoreFinder, 0.5f);
+				mBtnStoreFinder.setVisibility(View.VISIBLE);
+			} else {
+				setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
+				mBtnStoreFinder.setVisibility(View.GONE);
+			}
+		}
+	}
+
+	private String toJson(Object jsonObject) {
+		return new Gson().toJson(jsonObject);
+	}
+
+	private ArrayList<OtherSku> getColorList() {
+		Collections.sort(mOtherSKU, new Comparator<OtherSku>() {
+			@Override
+			public int compare(OtherSku lhs, OtherSku rhs) {
+				return lhs.colour.compareToIgnoreCase(rhs.colour);
+			}
+		});
+
+		ArrayList<OtherSku> commonColorSku = new ArrayList<>();
+		for (OtherSku sku : mOtherSKU) {
+			if (!colourValueExist(commonColorSku, sku.colour)) {
+				commonColorSku.add(sku);
+			}
+		}
+		return commonColorSku;
+	}
+
+	private ArrayList<OtherSku> getSizeList() {
+		Collections.sort(mOtherSKU, new Comparator<OtherSku>() {
+			@Override
+			public int compare(OtherSku lhs, OtherSku rhs) {
+				return lhs.size.compareToIgnoreCase(rhs.size);
+			}
+		});
+
+		ArrayList<OtherSku> commonColorSku = new ArrayList<>();
+		for (OtherSku sku : mOtherSKU) {
+			if (!colourValueExist(commonColorSku, sku.size)) {
+				commonColorSku.add(sku);
+			}
+		}
+		return commonColorSku;
+	}
+
+
+	public void setLayoutWeight(View v, float weight) {
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+				LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+		params.weight = weight;
+		params.setMarginStart((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
+		params.setMarginEnd((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
+		v.setLayoutParams(params);
+	}
+
 }

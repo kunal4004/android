@@ -719,7 +719,8 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		setIngredients("");
 		resetLongDescription();
 		setupPagerIndicatorDots();
-		showSizeProgressBar();
+
+		showSizeProgressBar(mSelectedProduct.productType);
 		CancelableCallback.cancelAll();
 		getProductDetail(productId, skuId, closeActivity);
 	}
@@ -858,6 +859,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
 		startActivity(mIntent);
+		overridePendingTransition(0,0);
 	}
 
 	public void sizeIntent() {
@@ -868,6 +870,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
 		startActivity(mIntent);
+		overridePendingTransition(0,0);
 	}
 
 	public void colourNoSizeIntent() {
@@ -878,6 +881,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_SIZE", false);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
 		startActivity(mIntent);
+		overridePendingTransition(0,0);
 	}
 
 	public void noSizeColorIntent() {

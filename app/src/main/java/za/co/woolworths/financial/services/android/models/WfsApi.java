@@ -6,7 +6,6 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 
-
 import com.jakewharton.retrofit.Ok3Client;
 
 import okhttp3.OkHttpClient;
@@ -196,8 +195,9 @@ public class WfsApi {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		if (Utils.isLocationEnabled(mContext)) {
-			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLongitude(), loc.getLatitude(), isBarcode, search_item, pageSize, pageNumber);
+
+		if (Utils.isLocationEnabled(mContext)) {// should we implement location update here ?
+			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), isBarcode, search_item, pageSize, pageNumber);
 		} else {
 			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), isBarcode, search_item, pageSize, pageNumber);
 		}
@@ -272,8 +272,16 @@ public class WfsApi {
 	private void getMyLocation() {
 		loc = Utils.getLastSavedLocation(mContext);
 		if (loc == null) {
-			loc.setLatitude(0.0d);
-			loc.setLongitude(0.0d);
+			loc = new Location("myLocation");
+		}
+		if (Utils.isLocationEnabled(mContext)) {
+			double latitude = loc.getLatitude();
+			double longitude = loc.getLongitude();
+			if (TextUtils.isEmpty(String.valueOf(latitude)))
+				loc.setLatitude(0);
+			if (TextUtils.isEmpty(String.valueOf(longitude)))
+				loc.setLongitude(0);
+
 		}
 	}
 }

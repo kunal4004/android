@@ -17,12 +17,10 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -43,36 +41,27 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
-import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderCardsOnMapAdapter;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
-import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
+import za.co.woolworths.financial.services.android.util.UpdateStoreFinderFragment;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WCustomViewPager;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-
-public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, GoogleMap.OnMarkerClickListener {
+public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, GoogleMap.OnMarkerClickListener, UpdateStoreFinderFragment {
 
 	public static StoreFinderListFragment newInstance(int myValue) {
 		// You can add as many values as you need to initialize your fragment
@@ -84,7 +73,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	}
 
 	public interface SlidePanelEvent {
-
 		void slidePanelAnchored();
 
 		void slidePanelCollapsed();
@@ -106,8 +94,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	int currentStorePostion = 0;
 	private SlidingUpPanelLayout mLayout;
 	public List<StoreDetails> storeDetailsList;
-	private String TAG = "StoresNearbyFragment1";
-	private boolean updateMap = false;
 
 	Intent callIntent;
 
@@ -125,14 +111,11 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	WTextView storeDistance;
 	WTextView storeNumber;
 
-	ProgressBar progressBar;
+	ProgressBar mStoreProgressBar;
 
-	//Location Service Layouts
-	LinearLayout layoutLocationServiceOff;
 	RelativeLayout layoutLocationServiceOn;
 	RelativeLayout relBrandLayout;
 
-	WButton btnOnLocationService;
 	protected static final int REQUEST_CHECK_SETTINGS = 99;
 	Marker myLocation;
 	public static final int PERMS_REQUEST_CODE = 123;
@@ -141,10 +124,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	private ErrorHandlerView mErrorHandlerView;
 	private Location mLocation;
 	private StoreFinderMapFragment mFragment;
-	MenuItem searchMenu;
 	public boolean isLocationServiceButtonClicked = false;
-	private String mSkuId;
-	private WGlobalState mWGlobalState;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -165,9 +145,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 			Log.e("initInterface", ex.toString());
 		}
 
-
-		mSkuId = getArguments().getString("skuId");
-		mWGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
 		mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
 		pager = (WCustomViewPager) v.findViewById(R.id.cardPager);
 		detailsLayout = (LinearLayout) v.findViewById(R.id.detailsView);
@@ -186,11 +163,9 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		relBrandLayout = (RelativeLayout) v.findViewById(R.id.relBrandLayout);
 		direction = (RelativeLayout) v.findViewById(R.id.direction);
 		makeCall = (RelativeLayout) v.findViewById(R.id.call);
-		layoutLocationServiceOff = (LinearLayout) v.findViewById(R.id.layoutLocationServiceOff);
 		layoutLocationServiceOn = (RelativeLayout) v.findViewById(R.id.layoutLocationServiceOn);
-		btnOnLocationService = (WButton) v.findViewById(R.id.buttonLocationOn);
-		progressBar = (ProgressBar) v.findViewById(R.id.storesProgressBar);
-		progressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+		mStoreProgressBar = (ProgressBar) v.findViewById(R.id.storesProgressBar);
+		mStoreProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		mErrorHandlerView = new ErrorHandlerView(getActivity()
 				, (RelativeLayout) v.findViewById(R.id.no_connection_layout));
 		try {
@@ -269,24 +244,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 
 		initLocationCheck();
 
-		/*
-		 init();
-         */
-		btnOnLocationService.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				updateMap = true;
-				if (checkLocationPermission()) {
-					Intent locIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-					getActivity().startActivity(locIntent);
-					getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				} else {
-					isLocationServiceButtonClicked = true;
-					checkLocationPermission();
-				}
-			}
-		});
-
 		v.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@RequiresApi(api = Build.VERSION_CODES.M)
 			@Override
@@ -299,6 +256,8 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		});
 
 		getActivity().registerReceiver(broadcastCall, new IntentFilter("broadcastCall"));
+
+		showProgressBar();
 	}
 
 	public void initLocationCheck() {
@@ -400,17 +359,9 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		return true;
 	}
 
-	private void locationAPIRequest(Location location) {
-		if (getActivity() != null) {
-			Utils.saveLastLocation(location, getActivity());
-			init().execute();
-			getActivity().invalidateOptionsMenu();
-		}
-	}
-
 	public void backToAllStoresPage(int position) {
 		googleMap.getUiSettings().setScrollGesturesEnabled(true);
-		googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markers.get(position).getPosition(), 13), 500, null);
+		//googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markers.get(position).getPosition(), 13), 500, null);
 		WOneAppBaseActivity.mToolbar.animate().translationY(WOneAppBaseActivity.mToolbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
 		showAllMarkers(markers);
 
@@ -529,57 +480,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		});
 	}
 
-
-	public HttpAsyncTask<String, String, LocationResponse> init() {
-		return new HttpAsyncTask<String, String, LocationResponse>() {
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				showProgressBar();
-				mErrorHandlerView.hideErrorHandlerLayout();
-			}
-
-			@Override
-			protected LocationResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getLocationsItem(mSkuId, String.valueOf(mWGlobalState.getStartRadius()), String.valueOf(mWGlobalState.getEndRadius()));
-			}
-
-			@Override
-			protected Class<LocationResponse> httpDoInBackgroundReturnType() {
-				return LocationResponse.class;
-			}
-
-			@Override
-			protected LocationResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				getActivity().runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						hideProgressBar();
-						Log.d(TAG, "mProgress");
-					}
-				});
-
-				mErrorHandlerView.networkFailureHandler(errorMessage);
-				return new LocationResponse();
-			}
-
-			@Override
-			protected void onPostExecute(LocationResponse locationResponse) {
-				super.onPostExecute(locationResponse);
-				String json = new Gson().toJson(locationResponse);
-				WGlobalState wGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
-				wGlobalState.setStoreLocatorJson(json);
-				hideProgressBar();
-				storeDetailsList = new ArrayList<>();
-				storeDetailsList = locationResponse.Locations;
-				if (storeDetailsList != null && storeDetailsList.size() != 0) {
-					bindDataWithUI(storeDetailsList);
-				}
-				Utils.showOneTimePopup(getActivity(), SessionDao.KEY.STORE_FINDER_ONE_TIME_POPUP, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INSTORE_AVAILABILITY);
-			}
-		};
-	}
-
 	public List<StoreOfferings> getOfferingByType(List<StoreOfferings> offerings, String type) {
 		List<StoreOfferings> list = new ArrayList<>();
 		list.clear();
@@ -594,10 +494,8 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		//Check for location service and Last location
 		if (!locationServiceStatus) {
 			layoutLocationServiceOn.setVisibility(View.GONE);
-			layoutLocationServiceOff.setVisibility(View.VISIBLE);
 			getActivity().invalidateOptionsMenu();
 		} else {
-			layoutLocationServiceOff.setVisibility(View.GONE);
 			layoutLocationServiceOn.setVisibility(View.VISIBLE);
 			getActivity().invalidateOptionsMenu();
 
@@ -640,60 +538,19 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 
 	public void showProgressBar() {
 		try {
-			progressBar.setVisibility(View.VISIBLE);
+			mStoreProgressBar.setVisibility(View.VISIBLE);
 		} catch (NullPointerException ignored) {
 		}
 	}
 
 	public void hideProgressBar() {
-		if (progressBar != null)
-			progressBar.setVisibility(View.GONE);
+		if (mStoreProgressBar != null)
+			mStoreProgressBar.setVisibility(View.GONE);
 	}
 
-	public void startLocationUpdates() {
-		if (checkLocationPermission()) {
-			if (ContextCompat.checkSelfPermission(getActivity(),
-					Manifest.permission.ACCESS_FINE_LOCATION)
-					== PackageManager.PERMISSION_GRANTED) {
-//				FusedLocationSingleton.getInstance().startLocationUpdates();
-//				// register observer for location updates
-//				LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mLocationUpdated,
-//						new IntentFilter(FusedLocationSingleton.INTENT_FILTER_LOCATION_UPDATE));
-			}
-		} else {
-			checkLocationPermission();
-		}
-
-	}
-
-	public void stopLocationUpdate() {
-
-		// stop location updates
-		FusedLocationSingleton.getInstance().stopLocationUpdates();
-		// unregister observer
-		LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mLocationUpdated);
-	}
-
-	/**
-	 * handle new location
-	 */
-	private BroadcastReceiver mLocationUpdated = new BroadcastReceiver() {
-		@RequiresApi(api = Build.VERSION_CODES.M)
-		@Override
-		public void onReceive(Context context, final Intent intent) {
-			try {
-				Location location = intent.getParcelableExtra(FusedLocationSingleton.LBM_EVENT_LOCATION_UPDATE);
-				mLocation = location;
-				updateMap(location);
-			} catch (Exception e) {
-				Log.e(TAG, e.toString());
-			}
-		}
-	};
 
 	private void updateMap(Location location) {
 		if (location != null) {
-			checkLocationServiceAndSetLayout(true);
 			initMap();
 			updateMyCurrentLocationOnMap(location);
 
@@ -705,7 +562,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	private void updateMap(Location location, List<StoreDetails> storeDetailsList) {
 		this.storeDetailsList = storeDetailsList;
 		if (location != null) {
-			checkLocationServiceAndSetLayout(true);
 			initMap();
 			updateMyCurrentLocationOnMap(location);
 		}
@@ -717,7 +573,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 				myLocation = googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude()))
 						.icon(BitmapDescriptorFactory.fromResource(R.drawable.mapcurrentlocation)));
 				googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13), CAMERA_ANIMATION_SPEED, null);
-				zoomToLocation(mLocation);
+				//	zoomToLocation(mLocation);
 			} else {
 				myLocation.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
 				googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13), CAMERA_ANIMATION_SPEED, null);
@@ -725,27 +581,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		} catch (Exception ex) {
 		}
 
-	}
-
-	public boolean checkLocationPermission() {
-		if (ContextCompat.checkSelfPermission(getActivity(),
-				Manifest.permission.ACCESS_FINE_LOCATION)
-				!= PackageManager.PERMISSION_GRANTED) {
-			if (shouldShowRequestPermissionRationale(
-					Manifest.permission.ACCESS_FINE_LOCATION)) {
-				requestPermissions(
-						new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-						PERMS_REQUEST_CODE);
-			} else {
-				//we can request the permission.
-				requestPermissions(
-						new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-						PERMS_REQUEST_CODE);
-			}
-			return false;
-		} else {
-			return true;
-		}
 	}
 
 	private void zoomToLocation(Location location) {
@@ -784,16 +619,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	public void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver();
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		if (updateMap) {
-			checkLocationServiceAndSetLayout(true);
-			initLocationCheck();
-			updateMap = false;
-		}
 	}
 
 	@Override
@@ -840,4 +665,25 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	public void update(Location location, List<StoreDetails> storeDetail) {
 		updateMap(location, storeDetail);
 	}
+
+	@Override
+	public void onFragmentUpdate(final Location location, final List<StoreDetails> storeDetails) {
+		try {
+			StoreFinderMapFragment.this.getActivity().runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if (storeDetails.size() > 0) {
+						updateMap(location, storeDetails);
+					} else {
+
+					}
+					hideProgressBar();
+				}
+			});
+		} catch (NullPointerException ex) {
+			Log.e("StoreFinderMap", ex.toString());
+		}
+	}
+
+
 }

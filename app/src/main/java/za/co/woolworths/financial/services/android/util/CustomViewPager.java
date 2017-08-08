@@ -18,11 +18,11 @@ public class CustomViewPager extends ViewPager {
 	}
 
 	@Override
-	protected boolean canScroll(View v, boolean checkV, int dx, int x, int y) {
-		if(v instanceof MapView){
+	protected boolean canScroll(View scrollingView, boolean checkV, int dx, int x, int y) {
+		if (scrollingView.getClass().getPackage().getName().startsWith("maps.")) {
 			return true;
 		}
-		return super.canScroll(v, checkV, dx, x, y);
+		return super.canScroll(scrollingView, checkV, dx, x, y);
 	}
 
 }

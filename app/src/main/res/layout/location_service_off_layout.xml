@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="100dp"
-        android:background="@drawable/locationservicesdisabled"
+        android:background="@drawable/emptylocation"
         />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView

@@ -1,9 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,10 +18,11 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
-import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragmentAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.ColorFragmentDialog;
 import za.co.woolworths.financial.services.android.ui.fragments.SizeFragmentDialog;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ColorInterface;
 import za.co.woolworths.financial.services.android.util.NonSwipeableViewPager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -34,11 +32,13 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private ImageView mImCloseIcon, mImBackIcon;
 	private String mColorList, mOtherSKU, mProductName;
 	private static final int ANIM_DOWN_DURATION = 700;
-	private NonSwipeableViewPager mPager;
+	private NonSwipeableViewPager mViewPager;
 	private WTextView tvTitle;
 	private String mSelectedColour;
 	private ArrayList<OtherSku> mOtherSizeSKU;
 	private boolean mProductHasColor, mProductHasSize, viewWasClicked;
+	private int currentPosition;
+	private StockFinderFragmentAdapter mPagerAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +63,22 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		setAnimation();
 
 		if (mProductHasColor) {
-			setPagerItem(0);
+			//setPagerItem(0);
+			mViewPager.post(new Runnable(){
+				@Override
+				public void run() {
+					pageChangeListener.onPageSelected(0);
+				}
+			});
+			//selectPage(0);
 		} else {
-			setPagerItem(1);
+			mViewPager.post(new Runnable(){
+				@Override
+				public void run() {
+					pageChangeListener.onPageSelected(1);
+				}
+			});
+			//setPagerItem(1);
 			mImBackIcon.setVisibility(View.GONE);
 		}
 	}
@@ -80,46 +93,15 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		mRelRootContainer = (LinearLayout) findViewById(R.id.relContainerRootMessage);
 		mRelPopContainer = (LinearLayout) findViewById(R.id.relPopContainer);
 		tvTitle = (WTextView) findViewById(R.id.title);
-		mPager = (NonSwipeableViewPager) findViewById(R.id.viewPager);
-		mPager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
-
-		mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-			@Override
-			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-			}
-
-			@Override
-			public void onPageSelected(int position) {
-				switch (position) {
-					case 0:
-						hideBackIcon();
-						tvTitle.setText(getString(R.string.confirm_color_desc));
-						break;
-					case 1:
-						showBackIcon();
-						tvTitle.setText(getString(R.string.confirm_size_desc));
-						mOtherSizeSKU = commonSizeList();
-						if (mProductHasColor) {
-							SizeFragmentDialog sizeFragmentDialog = (SizeFragmentDialog) mPager.getAdapter().instantiateItem(mPager, mPager.getCurrentItem());
-							sizeFragmentDialog.resetIndex();
-							sizeFragmentDialog.updateSizeAdapter(mOtherSizeSKU, "size");
-						}
-						break;
-					default:
-						break;
-				}
-			}
-
-			@Override
-			public void onPageScrollStateChanged(int state) {
-
-			}
-		});
+		mViewPager = (NonSwipeableViewPager) findViewById(R.id.viewPager);
+		mPagerAdapter = new StockFinderFragmentAdapter(getSupportFragmentManager());
+		mPagerAdapter.addFrag(new ColorFragmentDialog(), getString(R.string.color));
+		mPagerAdapter.addFrag(new SizeFragmentDialog(), getString(R.string.size));
+		mViewPager.setAdapter(mPagerAdapter);
+		mViewPager.addOnPageChangeListener(pageChangeListener);
 
 		mImCloseIcon = (ImageView) findViewById(R.id.imCloseIcon);
 		mImBackIcon = (ImageView) findViewById(R.id.imBackIcon);
-
 	}
 
 	private void setAnimation() {
@@ -137,7 +119,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 			case R.id.imBackIcon:
 				hideBackIcon();
-				mPager.setCurrentItem(0);
+				mViewPager.setCurrentItem(0);
 				break;
 
 			default:
@@ -211,10 +193,10 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 	@Override
 	public void onRecyclerItemClick(View v, int position, String filterType) {
-		if (filterType.equalsIgnoreCase("color")) {
+		if (filterType.equalsIgnoreCase(getString(R.string.color))) {
 			if (mProductHasSize) {
 				mSelectedColour = getOtherSKUList(mColorList).get(position).colour;
-				mPager.setCurrentItem(1);
+				mViewPager.setCurrentItem(1);
 			} else {
 				String selectedSKU = getOtherSKUList(mColorList).get(position).sku;
 				dismissSizeColorActivity(selectedSKU);
@@ -233,31 +215,6 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 
-	private class MyPagerAdapter extends FragmentPagerAdapter {
-
-		MyPagerAdapter(FragmentManager fragmentManager) {
-			super(fragmentManager);
-
-		}
-
-		@Override
-		public Fragment getItem(int position) {
-			switch (position) {
-				case 0:
-					return ColorFragmentDialog.newInstance(mColorList, "color");
-				case 1:
-					return SizeFragmentDialog.newInstance(mOtherSKU, "size");
-				default:
-					break;
-			}
-			return null;
-		}
-
-		@Override
-		public int getCount() {
-			return 2;
-		}
-	}
 
 	private boolean sizeValueExist(ArrayList<OtherSku> list, String name) {
 		for (OtherSku item : list) {
@@ -304,7 +261,48 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		return commonSizeList;
 	}
 
-	private void setPagerItem(int position) {
-		mPager.setCurrentItem(position);
+	private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
+
+		@Override
+		public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+		}
+
+		@Override
+		public void onPageSelected(int newPosition) {
+			currentPosition = newPosition;
+			selectPage(newPosition);
+		}
+
+		@Override
+		public void onPageScrollStateChanged(int state) {
+
+		}
+	};
+
+	private void selectPage(int position) {
+		ColorInterface fragmentToShow = (ColorInterface) mPagerAdapter.getItem(position);
+		switch (position) {
+			case 0:
+				ArrayList<OtherSku> mOtherSKUList = getOtherSKUList(mColorList);
+				hideBackIcon();
+				tvTitle.setText(getString(R.string.confirm_color_desc));
+				if (fragmentToShow != null) {
+					fragmentToShow.onUpdate(mOtherSKUList, getString(R.string.color));
+				}
+
+				break;
+
+			case 1:
+				showBackIcon();
+				tvTitle.setText(getString(R.string.confirm_size_desc));
+				mOtherSizeSKU = commonSizeList();
+				if (fragmentToShow != null) {
+					fragmentToShow.onUpdate(mOtherSizeSKU, getString(R.string.size));
+				}
+				break;
+		}
+
+		currentPosition = position;
 	}
 }

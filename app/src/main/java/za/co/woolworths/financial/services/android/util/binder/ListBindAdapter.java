@@ -44,7 +44,7 @@ public class ListBindAdapter extends DataBindAdapter {
     public int getPosition(DataBinder binder, int binderPosition) {
         int viewType = mBinderList.indexOf(binder);
         if (viewType < 0) {
-            throw new IllegalStateException("binder does not exist in adapter");
+            throw new IllegalStateException("binder does not exist in mPagerAdapter");
         }
 
         int position = binderPosition;

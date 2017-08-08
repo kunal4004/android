@@ -135,7 +135,7 @@
     <string name="faqs">FAQs</string>
     <string name="sign_out">Sign Out</string>
     <string name="brands">Brands</string>
-    <string name="why_we_need_location_services">Why we need Location Services</string>
+    <string name="why_we_need_location_services">Location Services</string>
     <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
     <string name="title_activity_wmain">WMainActivity</string>
@@ -483,6 +483,7 @@
     <string name="enter_barcode_desc">ENTER THE NUMBER BELOW THE BARCODE</string>
     <string name="no_messages_to_display">No messages to display</string>
     <string name="no_results_to_show">NO RESULTS TO SHOW</string>
+    <string name="no_result_found">NO RESULTS FOUND</string>
     <string name="search_error_message">Try searching a different area or turning Location Services on in Settings so we can find the store closest to your location.</string>
 
     <string name="no_faq_found">No FAQ to display</string>
@@ -618,5 +619,9 @@
     <string name="available">available</string>
     <string name="sf_instore_availability_title">In-Store Availability</string>
     <string name="sf_instore_availability_desc">These stores are most likely to have your item based on last night’s stock record.</string>
+
+    <string name="color">color</string>
+    <string name="size">size</string>
+
 
 </resources>

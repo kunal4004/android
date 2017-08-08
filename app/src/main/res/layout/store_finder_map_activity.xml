@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:sothree="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/tools">
 
     <za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
         android:id="@+id/sliding_layout"
@@ -21,11 +22,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <include
-                layout="@layout/location_service_off_layout"
-                android:visibility="gone"/>
-
             <RelativeLayout
                 android:id="@+id/layoutLocationServiceOn"
                 android:layout_width="match_parent"
@@ -55,7 +51,7 @@
                         android:textColor="@color/white"
                         android:textSize="15sp"
                         android:visibility="gone"
-                        sothree:WTextView_font="myriadpro_regular"/>
+                        app:WTextView_font="myriadpro_regular"/>
 
                 </RelativeLayout>
 
@@ -91,13 +87,7 @@
                         android:paddingBottom="2dp"
                         />
 
-                    <ProgressBar
-                        android:id="@+id/storesProgressBar"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:visibility="gone"
-                        />
+                    <include layout="@layout/progress_bar_view"/>
                 </FrameLayout>
             </RelativeLayout>
 

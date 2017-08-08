@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,7 +62,9 @@ public class StockFinderSizeColorAdapter extends RecyclerView.Adapter<StockFinde
 			item = mOtherSKu.get(position).size;
 		}
 
-		Log.e("items", item);
+		if (TextUtils.isEmpty(item))
+			item = "";
+
 		//skipping the filling of the view
 		holder.productName.setText(item);
 		holder.itemView.setOnClickListener(new View.OnClickListener()
