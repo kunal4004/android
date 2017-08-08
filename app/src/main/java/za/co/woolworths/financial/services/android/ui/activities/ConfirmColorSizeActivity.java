@@ -37,7 +37,6 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private String mSelectedColour;
 	private ArrayList<OtherSku> mOtherSizeSKU;
 	private boolean mProductHasColor, mProductHasSize, viewWasClicked;
-	private int currentPosition;
 	private StockFinderFragmentAdapter mPagerAdapter;
 
 	@Override
@@ -63,22 +62,9 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		setAnimation();
 
 		if (mProductHasColor) {
-			//setPagerItem(0);
-			mViewPager.post(new Runnable(){
-				@Override
-				public void run() {
-					pageChangeListener.onPageSelected(0);
-				}
-			});
-			//selectPage(0);
+			selectCurrentPage(0);
 		} else {
-			mViewPager.post(new Runnable(){
-				@Override
-				public void run() {
-					pageChangeListener.onPageSelected(1);
-				}
-			});
-			//setPagerItem(1);
+			selectCurrentPage(1);
 			mImBackIcon.setVisibility(View.GONE);
 		}
 	}
@@ -270,7 +256,6 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 		@Override
 		public void onPageSelected(int newPosition) {
-			currentPosition = newPosition;
 			selectPage(newPosition);
 		}
 
@@ -302,7 +287,15 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 				}
 				break;
 		}
+	}
 
-		currentPosition = position;
+
+	private void selectCurrentPage(final int position) {
+		mViewPager.post(new Runnable() {
+			@Override
+			public void run() {
+				pageChangeListener.onPageSelected(position);
+			}
+		});
 	}
 }
