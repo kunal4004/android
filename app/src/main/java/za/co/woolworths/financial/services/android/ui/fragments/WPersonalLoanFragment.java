@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -29,6 +30,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
@@ -48,19 +50,13 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
 	private PersonalLoanAmount personalLoanInfo;
-	public WTextView availableBalance;
-	public WTextView creditLimit;
-	public WTextView dueDate;
-	public WTextView minAmountDue;
-	public WTextView currentBalance;
-	public WTextView transactions;
-	public WTextView txtIncreseLimit;
 
+	public WTextView availableBalance, creditLimit, dueDate, minAmountDue, currentBalance, tvViewTransaction, tvIncreaseLimit;
 	String productOfferingId;
 	private WoolworthsApplication woolworthsApplication;
 	private ProgressBar mProgressCreditLimit;
 	private boolean isOfferActive = true;
-	private ImageView mImageArrow;
+	private ImageView iconIncreaseLimit;
 	private SharePreferenceHelper mSharePreferenceHelper;
 	private HttpAsyncTask<String, String, OfferActive> asyncRequestPersonalLoan;
 	private boolean cardHasId = false;
@@ -74,7 +70,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.cards_common_fragment, container, false);
+		return inflater.inflate(R.layout.card_common_fragment, container, false);
 	}
 
 	@Override
@@ -87,12 +83,16 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		dueDate = (WTextView) view.findViewById(R.id.dueDate);
 		minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
 		currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
-		transactions = (WTextView) view.findViewById(R.id.txtTransactions);
-		txtIncreseLimit = (WTextView) view.findViewById(R.id.txtIncreseLimit);
+		tvViewTransaction = (WTextView) view.findViewById(R.id.tvViewTransaction);
+		tvIncreaseLimit = (WTextView) view.findViewById(R.id.tvIncreaseLimit);
 		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
-		mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
-		txtIncreseLimit.setOnClickListener(this);
-		transactions.setOnClickListener(this);
+		iconIncreaseLimit = (ImageView) view.findViewById(R.id.iconIncreaseLimit);
+		RelativeLayout rlIncreaseLimit = (RelativeLayout) view.findViewById(R.id.rlIncreaseLimit);
+		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
+		rlIncreaseLimit.setOnClickListener(this);
+		tvViewTransaction.setOnClickListener(this);
+		tvIncreaseLimit.setOnClickListener(this);
+		relBalanceProtection.setOnClickListener(this);
 		try {
 			networkChangeListener = this;
 		} catch (ClassCastException ignored) {
@@ -166,13 +166,20 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim
 						.stay);
 				break;
-			case R.id.txtIncreseLimit:
+			case R.id.rlIncreaseLimit:
+			case R.id.tvIncreaseLimit:
 				if (!isOfferActive) {
 					((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
 					Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
 					startActivity(openCLIIncrease);
 					getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				}
+				break;
+
+			case R.id.relBalanceProtection:
+				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
+				startActivity(intBalanceProtection);
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 		}
 	}
@@ -199,8 +206,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			protected void onPreExecute() {
 				mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 				mProgressCreditLimit.setVisibility(View.VISIBLE);
-				mImageArrow.setVisibility(View.GONE);
-				txtIncreseLimit.setVisibility(View.GONE);
+				iconIncreaseLimit.setVisibility(View.GONE);
+				tvIncreaseLimit.setAlpha((float) 0.5);
+
 				super.onPreExecute();
 			}
 
@@ -241,20 +249,20 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	public void hideProgressBar() {
 		mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(null);
 		mProgressCreditLimit.setVisibility(View.GONE);
-		mImageArrow.setVisibility(View.VISIBLE);
-		txtIncreseLimit.setVisibility(View.VISIBLE);
+		iconIncreaseLimit.setVisibility(View.VISIBLE);
+		tvIncreaseLimit.setVisibility(View.VISIBLE);
 	}
 
 	public void enableIncreaseLimit() {
-		txtIncreseLimit.setEnabled(true);
-		txtIncreseLimit.setTextColor(Color.BLACK);
-		mImageArrow.setImageAlpha(255);
+		tvIncreaseLimit.setEnabled(true);
+		tvIncreaseLimit.setTextColor(Color.BLACK);
+		iconIncreaseLimit.setImageAlpha(255);
 	}
 
 	public void disableIncreaseLimit() {
-		txtIncreseLimit.setEnabled(false);
-		txtIncreseLimit.setTextColor(Color.GRAY);
-		mImageArrow.setImageAlpha(75);
+		tvIncreaseLimit.setEnabled(false);
+		tvIncreaseLimit.setTextColor(Color.GRAY);
+		iconIncreaseLimit.setImageAlpha(75);
 	}
 
 	private void setTextSize() {

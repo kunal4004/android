@@ -607,5 +607,14 @@
     <string name="session_expired_reward_desc">Your WRewards session expired. To continue please
         sign in or cancel to return to the rest of the app.</string>
     <string name="session_expired_sign_in">sign in</string>
+    <string name="increase_credit_limit">Increase Credit Limit</string>
+    <string name="view_transactions">View Transactions</string>
+    <string name="view_statements">View Statements</string>
+    <string name="balance_protection_insurance">Balance Protection Insurance</string>
+    <string name="balance_protection_insurance_overview">Balance Protection Insurance Overview</string>
+    <string name="balance_protection_insurance_overview_desc">Featured and Benefits</string>
+    <string name="submit_a_claim">Submit a Claim</string>
+    <string name="submit_a_claim_desc">Critical Illness/Death Cover/Retrenchment etc. Submit a Claim</string>
+
 
 </resources>
