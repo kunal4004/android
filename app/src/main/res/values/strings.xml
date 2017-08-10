@@ -616,5 +616,18 @@
     <string name="submit_a_claim">Submit a Claim</string>
     <string name="submit_a_claim_desc">Critical Illness/Death Cover/Retrenchment etc. Submit a Claim</string>
 
+    <string name="select_claim_reason">select your claim reason</string>
+    <string name="death_cover">Death Cover</string>
+    <string name="death_cover_desc">Pays the outstanding balance on your account</string>
+    <string name="retrenchment">Retrenchment</string>
+    <string name="retrenchment_desc">Pays up to 12 months of installments from first day of retrenchment.</string>
+    <string name="temporary_disability">Temporary Disability</string>
+    <string name="temporary_disability_desc">Pays up to 12 months of installments from the first day of disability</string>
+
+    <string name="permanent_disability">Permanent Disability</string>
+    <string name="permanent_disability_desc">Pays the outstanding balance on your account</string>
+
+    <string name="critical_illness">Critical Illness</string>
+    <string name="critical_illness_desc">Pays the outstanding balance on your account.</string>
 
 </resources>
