@@ -24,7 +24,6 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderListAdapter;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
 import za.co.woolworths.financial.services.android.util.UpdateStoreFinderFragment;
 
@@ -32,7 +31,6 @@ public class StoreFinderListFragment extends Fragment implements UpdateStoreFind
 
 	private RecyclerView mFinderInStoreList;
 	private List<StoreDetails> mStoreDetailList;
-	private WTextView tvNoResult;
 	private ProgressBar pStoreProgressBar;
 	private RelativeLayout rlProgressBar;
 
@@ -53,7 +51,6 @@ public class StoreFinderListFragment extends Fragment implements UpdateStoreFind
 	private void init(View view) {
 		mFinderInStoreList = (RecyclerView) view.findViewById(R.id.storeList);
 		mFinderInStoreList.setLayoutManager(new LinearLayoutManager(getActivity()));
-		tvNoResult = (WTextView) view.findViewById(R.id.tvNoResult);
 		pStoreProgressBar = (ProgressBar) view.findViewById(R.id.storesProgressBar);
 		rlProgressBar = (RelativeLayout) view.findViewById(R.id.rlProgressBar);
 		pStoreProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
@@ -101,20 +98,13 @@ public class StoreFinderListFragment extends Fragment implements UpdateStoreFind
 				public void run() {
 					hideProgressBar();
 					if (storeDetails.size() > 0) {
-						noResultFound(View.GONE);
 						getData(storeDetails);
-					} else {
-						noResultFound(View.VISIBLE);
 					}
 				}
 			});
 		} catch (NullPointerException ex) {
 			Log.e("StoreFinderList", ex.toString());
 		}
-	}
-
-	private void noResultFound(int state) {
-		tvNoResult.setVisibility(state);
 	}
 
 	private void showProgressBar() {

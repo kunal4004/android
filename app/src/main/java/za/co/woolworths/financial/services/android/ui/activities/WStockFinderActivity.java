@@ -52,7 +52,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WStockFinderActivity extends AppCompatActivity implements StoreFinderMapFragment.SlidePanelEvent, View.OnClickListener {
 
-
+	private LinearLayout layoutLocationServiceOff, layoutNoProductFound;
 	private String mSkuID;
 	private AppBarLayout mAppBarLayout;
 	private int mActionBarSize;
@@ -64,10 +64,8 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 	public StockFinderFragmentAdapter mPagerAdapter;
 	private Location mLocation;
 	private int currentPosition = 0;
-	private LinearLayout layoutLocationServiceOff;
 	private boolean updateMap;
 	private ErrorHandlerView mErrorHandlerView;
-
 
 	public interface RecyclerItemSelected {
 		void onRecyclerItemClick(View v, int position, String filterType);
@@ -101,12 +99,15 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 		}
 
 		layoutLocationServiceOff = (LinearLayout) findViewById(R.id.layoutLocationServiceOff);
+		layoutNoProductFound = (LinearLayout) findViewById(R.id.layoutNoProductFound);
 		NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nest_scrollview);
 		scrollView.setFillViewport(true);
 		mViewPager = (GoogleMapViewPager) findViewById(R.id.viewpager);
 		WTextView toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
 		mAppBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
 		WButton btnOnLocationService = (WButton) findViewById(R.id.buttonLocationOn);
+		WButton buttonBackToProducts = (WButton) findViewById(R.id.buttonBackToProducts);
+		buttonBackToProducts.setOnClickListener(this);
 		btnOnLocationService.setOnClickListener(this);
 		RelativeLayout mRelativeLayout = (RelativeLayout) findViewById(R.id.no_connection_layout);
 		mErrorHandlerView = new ErrorHandlerView(WStockFinderActivity.this
@@ -281,8 +282,14 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 			protected void onPostExecute(LocationResponse locationResponse) {
 				super.onPostExecute(locationResponse);
 				storeDetailsList = locationResponse.Locations;
-				selectPage(currentPosition);
-				Utils.showOneTimePopup(WStockFinderActivity.this, SessionDao.KEY.STORE_FINDER_ONE_TIME_POPUP, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INSTORE_AVAILABILITY);
+				if (storeDetailsList.size() > 0) {
+					layoutNoProductFound.setVisibility(View.GONE);
+					selectPage(currentPosition);
+					Utils.showOneTimePopup(WStockFinderActivity.this, SessionDao.KEY.STORE_FINDER_ONE_TIME_POPUP, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INSTORE_AVAILABILITY);
+				} else {
+					selectPage(currentPosition);
+					layoutNoProductFound.setVisibility(View.VISIBLE);
+				}
 			}
 		};
 	}
@@ -481,6 +488,10 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 				}
 				break;
 
+			case R.id.buttonBackToProducts:
+				finish();
+				overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+				break;
 			default:
 				break;
 		}

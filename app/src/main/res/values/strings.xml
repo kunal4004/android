@@ -622,6 +622,9 @@
 
     <string name="color">color</string>
     <string name="size">size</string>
+    <string name="not_found">Unfortunately not found</string>
+    <string name="stock_available_product">We have no stock available of this product at the moment.</string>
+    <string name="back_to_product">back to products</string>
 
 
 </resources>

@@ -76,12 +76,17 @@
                     layout="@layout/location_service_off_layout"
                     android:visibility="gone"/>
 
+                <include
+                    layout="@layout/no_product_found"
+                    android:visibility="gone"/>
+
                 <za.co.woolworths.financial.services.android.util.GoogleMapViewPager
                     android:id="@+id/viewpager"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     />
             </LinearLayout>
+
 
             <include layout="@layout/no_connection_handler"/>
 
