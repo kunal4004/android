@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +30,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
@@ -86,9 +86,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
 		mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		iconIncreaseLimit = (ImageView) view.findViewById(R.id.iconIncreaseLimit);
-
 		RelativeLayout rlIncreaseLimit = (RelativeLayout) view.findViewById(R.id.rlIncreaseLimit);
+		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
+		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
+
 		rlIncreaseLimit.setOnClickListener(this);
+		relBalanceProtection.setOnClickListener(this);
+		rlViewTransactions.setOnClickListener(this);
 	}
 
 	private void addListener() {
@@ -127,10 +131,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				if ("CC".equals(p.productGroupCode)) {
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
-					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.availableFunds), 1, getActivity())));
-					creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.creditLimit), 1, getActivity())));
-					minAmountDue.setText(removeNegativeSymbol(WFormatter.formatAmount(p.minimumAmountDue)));
-					currentBalance.setText(removeNegativeSymbol(WFormatter.formatAmount(p.currentBalance)));
+					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
+					creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
+					minAmountDue.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
+					currentBalance.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
 					WoolworthsApplication.setCreditCardType(p.accountNumberBin);
 					try {
 						dueDate.setText(WFormatter.formatDate(p.paymentDueDate));
@@ -147,13 +151,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:
 				Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
 				intent.putExtra("productOfferingId", productOfferingId);
 				startActivity(intent);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim
 						.stay);
-
 				break;
 
 			case R.id.rlIncreaseLimit:
@@ -165,6 +169,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 					getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				}
 				break;
+
+			case R.id.relBalanceProtection:
+				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
+				startActivity(intBalanceProtection);
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				break;
+
 		}
 	}
 

@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
+import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -51,7 +52,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 	private PersonalLoanAmount personalLoanInfo;
 
-	public WTextView availableBalance, creditLimit, dueDate, minAmountDue, currentBalance, tvViewTransaction, tvIncreaseLimit;
+	public WTextView availableBalance, creditLimit, dueDate, minAmountDue, currentBalance, tvViewTransaction, tvIncreaseLimit, tvProtectionInsurance;
 	String productOfferingId;
 	private WoolworthsApplication woolworthsApplication;
 	private ProgressBar mProgressCreditLimit;
@@ -66,6 +67,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
 	private boolean bolBroacastRegistred;
+	private ImageView iconBalanceProdtectionInsurance;
+	private int minDrawnAmount;
 
 	@Nullable
 	@Override
@@ -84,15 +87,25 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
 		currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
 		tvViewTransaction = (WTextView) view.findViewById(R.id.tvViewTransaction);
+		tvProtectionInsurance = (WTextView) view.findViewById(R.id.tvProtectionInsurance);
 		tvIncreaseLimit = (WTextView) view.findViewById(R.id.tvIncreaseLimit);
 		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
+		iconBalanceProdtectionInsurance = (ImageView) view.findViewById(R.id.iconBalanceProdtectionInsurance);
+		iconBalanceProdtectionInsurance.setImageResource(R.drawable.ic_caret_black);
 		iconIncreaseLimit = (ImageView) view.findViewById(R.id.iconIncreaseLimit);
+		ImageView logoProtectionInsurance = (ImageView) view.findViewById(R.id.logoProtectionInsurance);
+		logoProtectionInsurance.setImageResource(R.drawable.money);
 		RelativeLayout rlIncreaseLimit = (RelativeLayout) view.findViewById(R.id.rlIncreaseLimit);
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
+		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
+
 		rlIncreaseLimit.setOnClickListener(this);
 		tvViewTransaction.setOnClickListener(this);
 		tvIncreaseLimit.setOnClickListener(this);
 		relBalanceProtection.setOnClickListener(this);
+		rlViewTransactions.setOnClickListener(this);
+
+		tvProtectionInsurance.setText(getString(R.string.instore_withdraw_cash_now));
 		try {
 			networkChangeListener = this;
 		} catch (ClassCastException ignored) {
@@ -133,19 +146,17 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
 					mSharePreferenceHelper.save(String.valueOf(p.productOfferingId), "lw_product_offering_id");
-					int minDrawnAmount = p.minDrawDownAmount;
+					minDrawnAmount = p.minDrawDownAmount;
 					if (TextUtils.isEmpty(String.valueOf(minDrawnAmount))) {
 						minDrawnAmount = 0;
 					}
-
-					personalLoanInfo.minDrawnAmount(minDrawnAmount);
-					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.availableFunds), 1, getActivity())));
+					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
 					mSharePreferenceHelper.save(availableBalance.getText().toString(), "lw_available_fund");
-					creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.creditLimit), 1, getActivity())));
+					creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
 					mSharePreferenceHelper.save(creditLimit.getText().toString(), "lw_credit_limit");
 
-					minAmountDue.setText(removeNegativeSymbol(WFormatter.formatAmount(p.minimumAmountDue)));
-					currentBalance.setText(removeNegativeSymbol(WFormatter.formatAmount(p.currentBalance)));
+					minAmountDue.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
+					currentBalance.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
 					try {
 						dueDate.setText(WFormatter.formatDate(p.paymentDueDate));
 					} catch (ParseException ex) {
@@ -159,7 +170,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-			case R.id.txtTransactions:
+			case R.id.rlViewTransactions:
+			case R.id.tvViewTransaction:
 				Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
 				intent.putExtra("productOfferingId", productOfferingId);
 				startActivity(intent);
@@ -177,8 +189,10 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				break;
 
 			case R.id.relBalanceProtection:
-				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
-				startActivity(intBalanceProtection);
+				mSharePreferenceHelper.save("", "lw_amount_drawn_cent");
+				Intent openWithdrawCashNow = new Intent(getActivity(), LoanWithdrawalActivity.class);
+				openWithdrawCashNow.putExtra("minDrawnDownAmount", minDrawnAmount);
+				startActivity(openWithdrawCashNow);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 		}

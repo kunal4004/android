@@ -19,7 +19,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.BalanceInsuranceA
 
 public class BalanceInsuranceFragment extends Fragment implements BalanceInsuranceAdapter.OnItemClick {
 
-	private final String TAG = this.getClass().getSimpleName();
+	private BalanceInsuranceAdapter balanceInsuranceAdapter;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.balance_insurance_fragment, container, false);
@@ -29,7 +29,7 @@ public class BalanceInsuranceFragment extends Fragment implements BalanceInsuran
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		RecyclerView rvBalanceInsurance = (RecyclerView) view.findViewById(R.id.rvBalanceInsurance);
-		BalanceInsuranceAdapter balanceInsuranceAdapter = new BalanceInsuranceAdapter(getBalanceInsurance(), this);
+		balanceInsuranceAdapter = new BalanceInsuranceAdapter(getBalanceInsurance(), this);
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		rvBalanceInsurance.setLayoutManager(mLayoutManager);
@@ -48,14 +48,24 @@ public class BalanceInsuranceFragment extends Fragment implements BalanceInsuran
 		BalanceProtectionActivity balanceProtectionActivity = (BalanceProtectionActivity) BalanceInsuranceFragment.this.getActivity();
 		switch (position) {
 			case 0:
+				balanceProtectionActivity.currentFragment(new BalanceInsuranceOverviewFragment());
 				break;
 
 			case 1:
-				balanceProtectionActivity.selectFrag(1);
+				balanceProtectionActivity.currentFragment(new SubmitClaimFragment());
 				break;
 
 			default:
 				break;
 		}
+
+		if (balanceInsuranceAdapter != null)
+			balanceInsuranceAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		((BalanceProtectionActivity) getActivity()).setTitle(getActivity().getString(R.string.balance_protection_title));
 	}
 }
