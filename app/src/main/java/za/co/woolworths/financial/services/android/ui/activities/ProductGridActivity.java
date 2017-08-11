@@ -14,8 +14,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +22,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -719,7 +719,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		setIngredients("");
 		resetLongDescription();
 		setupPagerIndicatorDots();
-
+		setAlphaAnimation(mImCloseProduct);
 		showSizeProgressBar(mSelectedProduct.productType);
 		CancelableCallback.cancelAll();
 		getProductDetail(productId, skuId, closeActivity);
@@ -859,7 +859,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
 		startActivity(mIntent);
-		overridePendingTransition(0,0);
+		overridePendingTransition(0, 0);
 	}
 
 	public void sizeIntent() {
@@ -870,7 +870,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
 		startActivity(mIntent);
-		overridePendingTransition(0,0);
+		overridePendingTransition(0, 0);
 	}
 
 	public void colourNoSizeIntent() {
@@ -881,7 +881,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_SIZE", false);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
 		startActivity(mIntent);
-		overridePendingTransition(0,0);
+		overridePendingTransition(0, 0);
 	}
 
 	public void noSizeColorIntent() {
@@ -1004,7 +1004,11 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 				}
 				break;
 		}
+	}
 
+	public void setAlphaAnimation(View v) {
+		Animation myFadeInAnimation = AnimationUtils.loadAnimation(ProductGridActivity.this, R.anim.fade_in_anim);
+		v.startAnimation(myFadeInAnimation); //Set animation to your ImageView
 	}
 }
 
