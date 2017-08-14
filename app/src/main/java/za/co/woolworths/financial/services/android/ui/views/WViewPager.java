@@ -9,7 +9,8 @@ import android.view.View;
  * Created by dimitrij on 2017/01/18.
  */
 
-public class WViewPager extends ViewPager {
+public class
+WViewPager extends ViewPager {
 
     private static final int MATCH_PARENT = 1073742592;
 

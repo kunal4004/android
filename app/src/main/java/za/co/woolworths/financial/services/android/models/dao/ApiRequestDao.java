@@ -73,6 +73,14 @@ public class ApiRequestDao extends BaseDao {
     }
 
     public void save() {
+        //Delete expired Cache data
+        try {
+            PersistenceLayer.getInstance(mContext).executeDeleteQuery("delete from ApiResponse where apiRequestId in ( select id from apiRequest where dateExpires < CURRENT_TIMESTAMP)");
+            PersistenceLayer.getInstance(mContext).executeDeleteQuery("delete from ApiRequest where dateExpires < CURRENT_TIMESTAMP");
+        }catch (Exception e)
+        {
+            Log.e(TAG,e.getMessage());
+        }
         //ApiRequest will never be updated, only new records will be inserted.
         try {
             this.dateExpires = PersistenceLayer.getInstance(mContext).executeReturnableQuery("SELECT DATETIME(datetime(), '+" + this.cacheTime + " seconds') as cacheTime",

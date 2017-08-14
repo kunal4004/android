@@ -111,7 +111,8 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 		closePage.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				onBackPressed();
+				finish();
+				overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 			}
 		});
 
@@ -135,8 +136,8 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 				Log.i(TAG, "onPanelStateChanged " + newState);
 
 				if (newState != SlidingUpPanelLayout.PanelState.COLLAPSED) {
-		               /*
-                        * Previous result: Application would exit completely when back button is pressed
+					   /*
+						* Previous result: Application would exit completely when back button is pressed
                         * New result: Panel just returns to its previous position (Panel collapses)
                         */
 					mLayout.setFocusableInTouchMode(true);
@@ -182,12 +183,8 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 
 	@Override
 	public void onBackPressed() {
-		//Expected result: Switch to previous state
-		//Previous result: The app exits
-		//New Result: Switches back to previous state
-		super.onBackPressed();
-		overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
-		this.finish();
+		StoreDetailsActivity.this.finish();
+		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
 
 	public void initStoreDetailsView(final StoreDetails storeDetail) {

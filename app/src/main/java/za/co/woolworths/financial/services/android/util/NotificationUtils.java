@@ -5,172 +5,126 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
-import android.text.Html;
-import android.text.TextUtils;
-import android.util.Patterns;
-
-
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import com.awfs.coordination.R;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity;
 
-
-/**
- * Created by Ravi on 31/03/15.
- */
 public class NotificationUtils {
 
     private static String TAG = NotificationUtils.class.getSimpleName();
 
     private Context mContext;
 
-    public NotificationUtils(Context mContext) {
-        this.mContext = mContext;
+    private static final String GROUP_KEY = "Woolworths";
+    private static final int SUMMARY_ID = 0;
+    private final NotificationManagerCompat notificationManager;
+    private final PendingIntent contentIntent;
+
+    public static NotificationUtils newInstance(Context context) {
+        Context appContext = context.getApplicationContext();
+        Context safeContext = ContextCompat.createDeviceProtectedStorageContext(appContext);
+        if (safeContext == null) {
+            safeContext = appContext;
+        }
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(safeContext);
+
+        Intent myIntent = new Intent(safeContext, WSplashScreenActivity.class);
+        myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        myIntent.setAction(Intent.ACTION_MAIN);
+        myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        PendingIntent contentIntent=PendingIntent.getActivity(safeContext, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        return new NotificationUtils(safeContext, notificationManager,contentIntent);
     }
 
-    public void showNotificationMessage(String title, String message, String timeStamp, Intent intent) {
-        showNotificationMessage(title, message, timeStamp, intent, null);
+    private NotificationUtils(Context context,
+                                NotificationManagerCompat notificationManager,
+                                PendingIntent contentIntent) {
+        this.mContext = context.getApplicationContext();
+        this.notificationManager = notificationManager;
+        this.contentIntent=contentIntent;
     }
 
-    public void showNotificationMessage(final String title, final String message, final String timeStamp, Intent intent, String imageUrl) {
-        // Check for empty push message
-        if (TextUtils.isEmpty(message))
-            return;
+    public void sendBundledNotification(String title,String body) {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            Notification notification = buildKitKatNotification(title, body);
+            notificationManager.notify(getNotificationId(), notification);
+        }else {
+            Notification notification = buildNotification(title, body, GROUP_KEY);
+            notificationManager.notify(getNotificationId(), notification);
+        }
 
-
-        // notification icon
-        final int icon = R.drawable.appicon;
-
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        final PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(
-                        mContext,
-                        0,
-                        intent,
-                        PendingIntent.FLAG_CANCEL_CURRENT
-                );
-
-        final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-                mContext);
-
-        final Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
-                + "://" + mContext.getPackageName() + "/raw/notification");
-
-        if (!TextUtils.isEmpty(imageUrl)) {
-
-            if (imageUrl != null && imageUrl.length() > 4 && Patterns.WEB_URL.matcher(imageUrl).matches()) {
-
-                Bitmap bitmap = getBitmapFromURL(imageUrl);
-
-                if (bitmap != null) {
-                    showBigNotification(bitmap, mBuilder, icon, title, message, timeStamp, resultPendingIntent, alarmSound);
-                } else {
-                    showSmallNotification(mBuilder, icon, title, message, timeStamp, resultPendingIntent, alarmSound);
-                }
-            }
-        } else {
-            showSmallNotification(mBuilder, icon, title, message, timeStamp, resultPendingIntent, alarmSound);
-            playNotificationSound();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M)
+        {
+            Notification summary = buildSummary(GROUP_KEY);
+            notificationManager.notify(SUMMARY_ID, summary);
         }
     }
 
-
-    private void showSmallNotification(NotificationCompat.Builder mBuilder, int icon, String title, String message, String timeStamp, PendingIntent resultPendingIntent, Uri alarmSound) {
-
-        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-
-        inboxStyle.addLine(message);
-
-        Notification notification;
-        notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
-                .setAutoCancel(true)
+    private Notification buildKitKatNotification(String title,String body) {
+        return new NotificationCompat.Builder(mContext)
                 .setContentTitle(title)
-                .setContentIntent(resultPendingIntent)
-                .setSound(alarmSound)
-                .setStyle(inboxStyle)
-                .setWhen(getTimeMilliSec(timeStamp))
-                .setSmallIcon(R.drawable.appicon)
-                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))
-                .setContentText(message)
-                .build();
-
-        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(Utils.NOTIFICATION_ID, notification);
-    }
-
-    private void showBigNotification(Bitmap bitmap, NotificationCompat.Builder mBuilder, int icon, String title, String message, String timeStamp, PendingIntent resultPendingIntent, Uri alarmSound) {
-        NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
-        bigPictureStyle.setBigContentTitle(title);
-        bigPictureStyle.setSummaryText(Html.fromHtml(message).toString());
-        bigPictureStyle.bigPicture(bitmap);
-        Notification notification;
-        notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
+                .setContentText(body)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.ic_notification)
+                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.appicon))
+                .setContentIntent(contentIntent)
+                .setShowWhen(true)
                 .setAutoCancel(true)
-                .setContentTitle(title)
-                .setContentIntent(resultPendingIntent)
-                .setSound(alarmSound)
-                .setStyle(bigPictureStyle)
-                .setWhen(getTimeMilliSec(timeStamp))
-                .setSmallIcon(R.drawable.appicon)
-                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))
-                .setContentText(message)
+                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
                 .build();
-
-        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(Utils.NOTIFICATION_ID_BIG_IMAGE, notification);
     }
 
-    /**
-     * Downloading push notification image before displaying it in
-     * the notification tray
-     */
-    public Bitmap getBitmapFromURL(String strURL) {
-        try {
-            URL url = new URL(strURL);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+    private Notification buildNotification(String title,String body, String groupKey) {
+        return new NotificationCompat.Builder(mContext)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.ic_notification)
+                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.appicon))
+                .setContentIntent(contentIntent)
+                .setShowWhen(true)
+                .setAutoCancel(true)
+                .setGroup(groupKey)
+                .setPriority(Notification.PRIORITY_HIGH)
+                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
+                .build();
+    }
+
+    private Notification buildSummary( String groupKey) {
+        return new NotificationCompat.Builder(mContext)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.ic_notification)
+                .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.appicon))
+                .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
+                .setPriority(Notification.PRIORITY_HIGH)
+                .setContentIntent(contentIntent)
+                .setShowWhen(true)
+                .setGroup(groupKey)
+                .setAutoCancel(true)
+                .setGroupSummary(true)
+                .build();
+    }
+
+    private int getNotificationId() {
+
+        String bundleId=Utils.getSessionDaoValue(mContext, SessionDao.KEY.NOTIFICATION_ID);
+        int id = bundleId==null ? SUMMARY_ID+1 : Integer.parseInt(bundleId)+1;
+        while (id == SUMMARY_ID) {
+            id++;
         }
+        Utils.sessionDaoSave(mContext, SessionDao.KEY.NOTIFICATION_ID,String.valueOf(id));
+        return id;
     }
 
-    // Playing notification sound
-    public void playNotificationSound() {
-        try {
-            Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
-                    + "://" + mContext.getPackageName() + "/raw/notification");
-            Ringtone r = RingtoneManager.getRingtone(mContext, alarmSound);
-            r.play();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Method checks if the app is in background or not
-     */
     public static boolean isAppIsInBackground(Context context) {
         boolean isInBackground = true;
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -202,14 +156,4 @@ public class NotificationUtils {
         notificationManager.cancelAll();
     }
 
-    public static long getTimeMilliSec(String timeStamp) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            Date date = format.parse(timeStamp);
-            return date.getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
 }

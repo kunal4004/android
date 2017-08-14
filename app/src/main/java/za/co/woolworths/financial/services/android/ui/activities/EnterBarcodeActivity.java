@@ -211,7 +211,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 				super.onPostExecute(product);
 				List<ProductList> mProduct = product.products;
 				if (mProduct != null) {
-					if (mProduct.size() > 0) {
+					if (mProduct.size() > 0 && mProduct.get(0).productId != null) {
 						getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
 					} else {
 						hideSoftKeyboard();

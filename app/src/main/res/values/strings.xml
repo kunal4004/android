@@ -135,7 +135,7 @@
     <string name="faqs">FAQs</string>
     <string name="sign_out">Sign Out</string>
     <string name="brands">Brands</string>
-    <string name="why_we_need_location_services">Why we need Location Services</string>
+    <string name="why_we_need_location_services">Location Services</string>
     <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
     <string name="title_activity_wmain">WMainActivity</string>
@@ -482,6 +482,7 @@
     <string name="enter_barcode_desc">ENTER THE NUMBER BELOW THE BARCODE</string>
     <string name="no_messages_to_display">No messages to display</string>
     <string name="no_results_to_show">NO RESULTS TO SHOW</string>
+    <string name="no_result_found">NO RESULTS FOUND</string>
     <string name="search_error_message">Try searching a different area or turning Location Services on in Settings so we can find the store closest to your location.</string>
 
     <string name="no_faq_found">No FAQ to display</string>
@@ -493,7 +494,7 @@
     <string name="ssl_error">SSL certificate invalid</string>
     <string name="product_item_found">items found</string>
     <string name="product_size">Size</string>
-    <string name="shop_online_woolies">Shop Woolworths online</string>
+    <string name="shop_online_woolies">Shop online</string>
     <string name="add_to_shopping_list">Add to shopping list</string>
     <string name="product_description">Update your modern wardrobe with this crisp short sleeved stretch cotton shirt, designed with polka dots for a pop of urban cool. Wear it with jeans for easy casual flair, or with fitted chinos for a smarter update.</string>
     <string name="product_code">Product Code</string>
@@ -607,5 +608,80 @@
         sign in or cancel to return to the rest of the app.</string>
     <string name="session_expired_sign_in">sign in</string>
     <string name="cli_additional_credit_amount">What is the new credit limit requested?</string>
+    <string name="increase_credit_limit">Increase Credit Limit</string>
+    <string name="view_transactions">View Transactions</string>
+    <string name="view_statements">View Statements</string>
+    <string name="balance_protection_insurance">Balance Protection Insurance</string>
+    <string name="balance_protection_insurance_overview">Balance Protection Insurance Overview</string>
+    <string name="balance_protection_insurance_overview_desc">Featured and Benefits</string>
+    <string name="submit_a_claim">Submit a Claim</string>
+    <string name="submit_a_claim_desc">Critical Illness/Death Cover/Retrenchment etc. Submit a Claim</string>
+
+    <string name="select_claim_reason">select your claim reason</string>
+    <string name="death_cover">Death Cover</string>
+    <string name="death_cover_desc">Pays the outstanding balance on your account</string>
+    <string name="retrenchment">Retrenchment</string>
+    <string name="retrenchment_desc">Pays up to 12 months of installments from first day of retrenchment.</string>
+    <string name="temporary_disability">Temporary Disability</string>
+    <string name="temporary_disability_desc">Pays up to 12 months of installments from the first day of disability</string>
+
+    <string name="permanent_disability">Permanent Disability</string>
+    <string name="permanent_disability_desc">Pays the outstanding balance on your account</string>
+
+    <string name="critical_illness">Critical Illness</string>
+    <string name="critical_illness_desc">Pays the outstanding balance on your account.</string>
+    <string name="apply_loan_info">In order to process your claim we will need the following documents.</string>
+    <string name="required_form">required forms</string>
+    <string name="you_will_also_need">YOU WILL ALSO NEED TO SUBMIT</string>
+
+    <string name="balance_protection_claim_form">Balance Protection Claim Form</string>
+    <string name="new_disability_claim_form">New Disability Claim Form</string>
+    <string name="confidential_medical_specialist_report">Confidential Medical Specialist Report</string>
+    <string name="medical_reports_from_doctor">Medical Reports from Doctor</string>
+    <string name="certified_id">Certified ID</string>
+    <string name="investigation_results_from_doctor">Investigation Results from Doctor</string>
+    <string name="retrenchement_form">Retrenchment Form</string>
+    <string name="certified_id_copy">Certified id Copy</string>
+    <string name="UI19_form">UI19 Form</string>
+    <string name="certified_letter_of_retrenchment_from_employer">Certified Letter of Retrenchment from Employer</string>
+    <string name="employee_declaration_form">Employee Declaration Form</string>
+    <string name="sick_note_from_doctor">Sick Note from Doctor</string>
+    <string name="personal_medical_attendants_report">Personal Medical Attendants Report</string>
+    <string name="boarding_letter_from_employer">Boarding Letter from Employer</string>
+    <string name="balance_protection_title">balance insurance</string>
+    <string name="get_the_documents">Get the documents</string>
+    <string name="balance_insurance_overview">Balance Insurance Overview</string>
+
+    <string name="features_and_benefit">FEATURES AND BENEFITS</string>
+    <string name="features_and_benefit_desc">Your peace of mind is important to us, so we offer you comprehensive balance protection on your Woolies Store Card, Credit Card or Personal Loan.</string>
+
+    <string name="comprehensive_balance_protection">Comprehensive Balance Protection</string>
+    <string name="comprehensive_balance_protection_desc1">Your Comprehensive balance protection covers you in the event of death, retrenchment, critical illness, temporary and permanent disability.</string>
+    <string name="comprehensive_balance_protection_desc2">Pays the outstanding balance on your account (provided it is not in arrears) in the event of your death or permanent disability, or if you are diagnosed with a critical illness.</string>
+    <string name="comprehensive_balance_protection_desc3">Pays your instalments for up to 12 months if you are retrenched or temporary disabled.</string>
+
+    <string name="additional_death_cover">Additional Death Cover</string>
+    <string name="additional_death_cover_desc">For an extra monthly premium of only R13.70 per month, you can also take out additional death benefit, which pays R20 000 to your next of kin in the event of your death, to help them handle unforeseen expenses.</string>
+
+    <string name="partner_spouse">Partner / Spouse</string>
+    <string name="partner_spouse_desc">Balance protection insurance for your spouse or partner can also be arranged. An additional monthly premium will be charged.</string>
+
+    <string name="instore_withdraw_cash_now">Withdraw Cash Now</string>
+
+    <string name="stock_finder_map_view">map view</string>
+    <string name="stock_finder_list_view">list view</string>
+    <string name="stock_finder_btn_label">find in-store</string>
+    <string name="product_loading_color_size">Loading size &amp; colour</string>
+    <string name="find_in_store_info">Items based on last night’s stock record.</string>
+    <string name="confirm_color_desc">Please confirm your colour</string>
+    <string name="confirm_size_desc">Please confirm your size</string>
+    <string name="available">available</string>
+    <string name="sf_instore_availability_title">In-Store Availability</string>
+    <string name="sf_instore_availability_desc">These stores are most likely to have your item based on last night’s stock record.</string>
+    <string name="color">color</string>
+    <string name="size">size</string>
+    <string name="not_found">Unfortunately not found</string>
+    <string name="stock_available_product">We have no stock available of this product at the moment.</string>
+    <string name="back_to_product">back to products</string>
 
 </resources>

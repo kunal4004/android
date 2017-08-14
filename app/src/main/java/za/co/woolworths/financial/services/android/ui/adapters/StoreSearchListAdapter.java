@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -20,59 +19,68 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class StoreSearchListAdapter extends RecyclerView.Adapter<StoreSearchListAdapter.SearchViewHolder> {
 
-    Activity mContext;
-    List<StoreDetails> storeDetailsList;
+	Activity mContext;
+	List<StoreDetails> storeDetailsList;
 
 
-    public class SearchViewHolder extends RecyclerView.ViewHolder {
-        WTextView storeName;
-        WTextView storeOfferings;
-        WTextView storeDistance;
-        WTextView storeAddress;
-        WTextView storeTimeing;
+	public class SearchViewHolder extends RecyclerView.ViewHolder {
+		WTextView storeName;
+		WTextView storeOfferings;
+		WTextView storeDistance;
+		WTextView storeAddress;
+		WTextView storeTimeing;
 
+		public SearchViewHolder(View cView) {
+			super(cView);
+			storeName = (WTextView) cView.findViewById(R.id.storeName);
+			storeOfferings = (WTextView) cView.findViewById(R.id.offerings);
+			storeDistance = (WTextView) cView.findViewById(R.id.distance);
+			storeAddress = (WTextView) cView.findViewById(R.id.storeAddress);
+			storeTimeing = (WTextView) cView.findViewById(R.id.timeing);
+		}
+	}
 
-        public SearchViewHolder(View cView) {
-            super(cView);
-            storeName = (WTextView) cView.findViewById(R.id.storeName);
-            storeOfferings = (WTextView) cView.findViewById(R.id.offerings);
-            storeDistance = (WTextView) cView.findViewById(R.id.distance);
-            storeAddress = (WTextView) cView.findViewById(R.id.storeAddress);
-            storeTimeing = (WTextView) cView.findViewById(R.id.timeing);
+	public StoreSearchListAdapter(Activity context, List<StoreDetails> storeDetailsList) {
+		this.mContext = context;
+		this.storeDetailsList = storeDetailsList;
+	}
 
-        }
-    }
+	@Override
+	public void onBindViewHolder(SearchViewHolder holder, int position) {
+		holder.storeName.setText(storeDetailsList.get(position).name);
+		holder.storeAddress.setText(storeDetailsList.get(position).address);
+		holder.storeDistance.setText(WFormatter.formatMeter(storeDetailsList.get(position).distance));
+		if (getItemViewType(position) == 0) {
+			// Inflate padded layout
+			holder.itemView.setPadding(0, 45, 0, 0);
+		} else {
+			// Inflate standard layout
+			holder.itemView.setPadding(0, 0, 0, 0);
+		}
+		if (storeDetailsList.get(position).offerings != null)
+			holder.storeOfferings.setText(WFormatter.formatOfferingString(storeDetailsList.get(position).offerings));
+		if (storeDetailsList.get(position).times != null) {
+			try {
+				String mHour = WFormatter.formatOpenUntilTime(storeDetailsList.get(position).times.get(0).hours);
+				holder.storeTimeing.setText("Open until " + mHour);
+			} catch (ArrayIndexOutOfBoundsException ignored) {
+			}
+		}
+	}
 
-    public StoreSearchListAdapter(Activity context, List<StoreDetails> storeDetailsList) {
-        this.mContext = context;
-        this.storeDetailsList = storeDetailsList;
-    }
+	@Override
+	public int getItemCount() {
+		return storeDetailsList.size();
+	}
 
-    @Override
-    public void onBindViewHolder(SearchViewHolder holder, int position) {
-        holder.storeName.setText(storeDetailsList.get(position).name);
-        holder.storeAddress.setText(storeDetailsList.get(position).address);
-        holder.storeDistance.setText(WFormatter.formatMeter(storeDetailsList.get(position).distance));
-        if (storeDetailsList.get(position).offerings != null)
-            holder.storeOfferings.setText(WFormatter.formatOfferingString(storeDetailsList.get(position).offerings));
-        if (storeDetailsList.get(position).times != null) {
-            try {
-                String mHour = WFormatter.formatOpenUntilTime(storeDetailsList.get(position).times.get(0).hours);
-                holder.storeTimeing.setText("Open until " + mHour);
-            } catch (ArrayIndexOutOfBoundsException ignored) {
-            }
-        }
-    }
+	@Override
+	public int getItemViewType(int position) {
+		return (position == 0) ? 0 : position;
+	}
 
-    @Override
-    public int getItemCount() {
-        return storeDetailsList.size();
-    }
-
-    @Override
-    public SearchViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = mContext.getLayoutInflater()
-                .inflate(R.layout.search_store_nearby_item, parent, false);
-        return new SearchViewHolder(v);
-    }
+	@Override
+	public SearchViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+		View v = mContext.getLayoutInflater().inflate(R.layout.search_store_nearby_item, parent, false);
+		return new SearchViewHolder(v);
+	}
 }

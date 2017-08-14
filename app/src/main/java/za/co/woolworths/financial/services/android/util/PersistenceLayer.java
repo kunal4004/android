@@ -88,6 +88,13 @@ public class PersistenceLayer extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void executeDeleteQuery(String query)
+    {
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(pathToSaveDBFile, null, SQLiteDatabase.OPEN_READWRITE);
+        db.execSQL(query);
+        db.close();;
+    }
+
     public Map<String, String> executeReturnableQuery(String query, String[] arguments) throws Exception {
         HashMap<String, String> result = new HashMap<String, String>();
 

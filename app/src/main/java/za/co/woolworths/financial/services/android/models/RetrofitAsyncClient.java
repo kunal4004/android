@@ -86,18 +86,18 @@ public class RetrofitAsyncClient {
     }
 
     private void getMyLocation() {
-        boolean locationIsEnabled = Utils.isLocationEnabled(mContext);
-        if (locationIsEnabled) {
-            loc = Utils.getLastSavedLocation(mContext);
-            if (loc == null) {
-                loc = new Location("");//provider name is unecessary
-                loc.setLatitude(0.0d);//your coords of course
-                loc.setLongitude(0.0d);
-            }
-        } else {
-            loc = new Location("");//provider name is unecessary
-            loc.setLatitude(0.0d);//your coords of course
-            loc.setLongitude(0.0d);
+        loc = Utils.getLastSavedLocation(mContext);
+        if (loc == null) {
+            loc = new Location("myLocation");
+        }
+        if (Utils.isLocationEnabled(mContext)) {
+            double latitude = loc.getLatitude();
+            double longitude = loc.getLongitude();
+            if (TextUtils.isEmpty(String.valueOf(latitude)))
+                loc.setLatitude(0);
+            if (TextUtils.isEmpty(String.valueOf(longitude)))
+                loc.setLongitude(0);
+
         }
     }
 }
