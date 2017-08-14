@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.ui.views.WVideoView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -284,4 +285,9 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		}
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		NotificationUtils.clearNotifications(WSplashScreenActivity.this);
+	}
 }
