@@ -711,7 +711,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		setSelectedTextSize("");
 		setTextFromGrid();
 		showPrice();
-		setPromotionText("");
+		setPromotionText(mSelectedProduct.saveText);
 		resetColourField();
 		showPromotionalImages(new PromotionImages());
 		showPromotionalImages(mSelectedProduct.promotionImages);
@@ -722,6 +722,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		setAlphaAnimation(mImCloseProduct);
 		showSizeProgressBar(mSelectedProduct.productType);
 		CancelableCallback.cancelAll();
+
 		getProductDetail(productId, skuId, closeActivity);
 	}
 

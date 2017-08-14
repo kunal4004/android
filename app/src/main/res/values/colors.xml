@@ -94,5 +94,6 @@
     <color name="qr_code_view_border">#ffffffff</color>
     <color name="barcode_btn_color">#66ffffff</color>
     <color name="stock_finder_map_header_bg">#cc292929</color>
+    <color name="promo_text_color">#eb2e25</color>
 
 </resources>
