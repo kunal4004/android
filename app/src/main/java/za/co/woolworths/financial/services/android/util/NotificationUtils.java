@@ -23,7 +23,7 @@ public class NotificationUtils {
 
     private Context mContext;
 
-    private static final String GROUP_KEY = "Woolworhs";
+    private static final String GROUP_KEY = "Woolworths";
     private static final int SUMMARY_ID = 0;
     private final NotificationManagerCompat notificationManager;
     private final PendingIntent contentIntent;
