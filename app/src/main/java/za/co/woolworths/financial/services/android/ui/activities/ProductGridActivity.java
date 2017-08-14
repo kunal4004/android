@@ -162,7 +162,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
 			@Override
 			public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState,
-			                                SlidingUpPanelLayout.PanelState newState) {
+											SlidingUpPanelLayout.PanelState newState) {
 				switch (newState) {
 					case COLLAPSED:
 						panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
@@ -687,7 +687,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		setSelectedTextSize("");
 		setTextFromGrid();
 		showPrice();
-		setPromotionText("");
+		setPromotionText(mSelectedProduct.saveText);
 		resetColourField();
 		showPromotionalImages(new PromotionImages());
 		showPromotionalImages(mSelectedProduct.promotionImages);
@@ -697,6 +697,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		setupPagerIndicatorDots();
 		showSizeProgressBar();
 		CancelableCallback.cancelAll();
+
 		getProductDetail(productId, skuId, closeActivity);
 	}
 
