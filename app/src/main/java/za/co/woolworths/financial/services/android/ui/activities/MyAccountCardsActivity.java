@@ -509,9 +509,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 					break;
 				case 2:
 					if (containsPersonalLoan) {
-						mBtnApplyNow.setText(getString(R.string.withdraw_cash_now));
-						mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.purple));
-						mBtnApplyNow.setVisibility(View.VISIBLE);
+						mBtnApplyNow.setVisibility(View.GONE);
 					} else {
 						mBtnApplyNow.setText(getString(R.string.apply_now));
 						mBtnApplyNow.setBackgroundColor(ContextCompat.getColor(MyAccountCardsActivity.this, R.color.purple));
