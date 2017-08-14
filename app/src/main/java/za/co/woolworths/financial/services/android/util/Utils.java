@@ -5,14 +5,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -91,6 +89,7 @@ public class Utils {
 
 			locationJson.put("lat", loc.getLatitude());
 			locationJson.put("lon", loc.getLongitude());
+
 			sessionDaoSave(mContext, SessionDao.KEY.LAST_KNOWN_LOCATION,locationJson.toString());
 		} catch (JSONException e) {
 		}
@@ -475,8 +474,7 @@ public class Utils {
 		return value;
 	}
 
-	public static void clearSharedPreferences(final Context context)
-	{
+	public static void clearSharedPreferences(final Context context) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -486,16 +484,30 @@ public class Utils {
 					for (int i = 0; i < children.length; i++) {
 						context.getSharedPreferences(children[i].replace(".xml", ""), Context.MODE_PRIVATE).edit().clear().commit();
 					}
-					try { Thread.sleep(1000); } catch (InterruptedException e) {}
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+					}
 					for (int i = 0; i < children.length; i++) {
 						new File(dir, children[i]).delete();
 					}
-				}
-				catch (Exception e)
-				{
+				} catch (Exception e) {
 					Log.e("TAG", e.getMessage());
 				}
 			}
 		}).start();
+	}
+
+	public static void showOneTimePopup(Context context, SessionDao.KEY key, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST message_key) {
+		try {
+			String firstTime = Utils.getSessionDaoValue(context, key);
+			if (firstTime == null) {
+				Utils.displayValidationMessage(context,
+						message_key,
+						"");
+				Utils.sessionDaoSave(context, key, "1");
+			}
+		} catch (NullPointerException ignored) {
+		}
 	}
 }

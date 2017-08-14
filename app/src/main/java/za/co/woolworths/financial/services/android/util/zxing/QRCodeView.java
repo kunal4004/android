@@ -64,13 +64,13 @@ public class QRCodeView extends RelativeLayout {
 		Resources resources = getResources();
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
 			maskColor = typedArray.getColor(R.styleable.QRCodeView_maskColor, ContextCompat
-					.getColor(context, R.color.bg_color));
+					.getColor(context, R.color.black_30));
 			cornerColor = typedArray.getColor(R.styleable.QRCodeView_boxViewCornerColor,
 					ContextCompat.getColor(context, R.color.white));
 			borderColor = typedArray.getColor(R.styleable.QRCodeView_boxViewBorderColor, ContextCompat.getColor(context, R.color.transparent));
 		} else {
 			maskColor = typedArray.getColor(R.styleable.QRCodeView_boxViewCornerColor, resources
-					.getColor(R.color.bg_color, null));
+					.getColor(R.color.black_30, null));
 			cornerColor = typedArray.getColor(R.styleable.QRCodeView_boxViewCornerColor,
 					resources.getColor(R.color.white, null));
 			borderColor = typedArray.getColor(R.styleable.QRCodeView_boxViewBorderColor,

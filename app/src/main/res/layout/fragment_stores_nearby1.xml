@@ -31,12 +31,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <fragment
-                    android:id="@+id/map"
-                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                <RelativeLayout
+                    android:id="@+id/mapLayout"
                     android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
 
-                    android:layout_height="match_parent"/>
+                    <fragment
+                        android:id="@+id/map"
+                        android:name="com.google.android.gms.maps.SupportMapFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"/>
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/flStockFinderMapHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="46dp"
+                        android:visibility="gone"
+                        android:background="@color/stock_finder_map_header_bg"
+                        android:gravity="center"
+                        android:text="@string/find_in_store_info"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        sothree:WTextView_font="myriadpro_regular"/>
+
+                </RelativeLayout>
+
 
                 <RelativeLayout
                     android:layout_width="match_parent"
