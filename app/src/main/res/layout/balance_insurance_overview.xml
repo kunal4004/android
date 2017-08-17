@@ -33,10 +33,10 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView style="@style/account_logged_out_bullet"/>
+            <TextView style="@style/instore_bullet_circle"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/account_logged_out_list_bullet"
+                style="@style/instore_list_bullet_desc"
                 android:text="@string/comprehensive_balance_protection_desc1"/>
         </LinearLayout>
 
@@ -45,10 +45,10 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView style="@style/account_logged_out_bullet"/>
+            <TextView style="@style/instore_bullet_circle"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/account_logged_out_list_bullet"
+                style="@style/instore_list_bullet_desc"
                 android:text="@string/comprehensive_balance_protection_desc2"/>
         </LinearLayout>
 
@@ -58,10 +58,10 @@
             android:layout_marginBottom="24dp"
             android:orientation="horizontal">
 
-            <TextView style="@style/account_logged_out_bullet"/>
+            <TextView style="@style/instore_bullet_circle"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/account_logged_out_list_bullet"
+                style="@style/instore_list_bullet_desc"
                 android:text="@string/comprehensive_balance_protection_desc3"/>
         </LinearLayout>
 

@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -134,7 +133,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					minAmountDue.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
 					currentBalance.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
 					try {
-						dueDate.setText(WFormatter.formatDate(p.paymentDueDate));
+						dueDate.setText(WFormatter.newDateFormat(p.paymentDueDate));
 					} catch (ParseException e) {
 						dueDate.setText(p.paymentDueDate);
 						WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
@@ -205,6 +204,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 				iconIncreaseLimit.setVisibility(View.GONE);
 				tvIncreaseLimit.setVisibility(View.VISIBLE);
+				disableIncreaseLimit();
 				super.onPreExecute();
 			}
 
@@ -218,8 +218,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					String httpDesc = offerActive.response.desc;
 					if (httpCode == 200) {
 						isOfferActive = offerActive.offerActive;
+						cardHasId = true;
 						if (isOfferActive) {
-							cardHasId = true;
 							disableIncreaseLimit();
 						} else {
 							enableIncreaseLimit();
@@ -297,7 +297,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 	@Override
 	public void onResumeFragment() {
-
 		WStoreCardFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {

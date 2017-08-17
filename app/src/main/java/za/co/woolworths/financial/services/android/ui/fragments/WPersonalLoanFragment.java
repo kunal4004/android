@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -42,15 +41,12 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
-import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
-
-	private PersonalLoanAmount personalLoanInfo;
 
 	public WTextView availableBalance, creditLimit, dueDate, minAmountDue, currentBalance, tvViewTransaction, tvIncreaseLimit, tvProtectionInsurance;
 	String productOfferingId;
@@ -66,9 +62,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
-	private boolean bolBroacastRegistred;
-	private ImageView iconBalanceProdtectionInsurance;
+	private boolean boolBroadcastRegistered;
 	private int minDrawnAmount;
+	private RelativeLayout mRelDrawnDownAmount;
 
 	@Nullable
 	@Override
@@ -90,11 +86,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		tvProtectionInsurance = (WTextView) view.findViewById(R.id.tvProtectionInsurance);
 		tvIncreaseLimit = (WTextView) view.findViewById(R.id.tvIncreaseLimit);
 		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
-		iconBalanceProdtectionInsurance = (ImageView) view.findViewById(R.id.iconBalanceProdtectionInsurance);
-		iconBalanceProdtectionInsurance.setImageResource(R.drawable.ic_caret_black);
+		mRelDrawnDownAmount = (RelativeLayout) view.findViewById(R.id.relDrawnDownAmount);
+		mRelDrawnDownAmount.setVisibility(View.VISIBLE);
 		iconIncreaseLimit = (ImageView) view.findViewById(R.id.iconIncreaseLimit);
-		ImageView logoProtectionInsurance = (ImageView) view.findViewById(R.id.logoProtectionInsurance);
-		logoProtectionInsurance.setImageResource(R.drawable.money);
 		RelativeLayout rlIncreaseLimit = (RelativeLayout) view.findViewById(R.id.rlIncreaseLimit);
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
@@ -103,15 +97,15 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		tvViewTransaction.setOnClickListener(this);
 		tvIncreaseLimit.setOnClickListener(this);
 		relBalanceProtection.setOnClickListener(this);
+		mRelDrawnDownAmount.setOnClickListener(this);
 		rlViewTransactions.setOnClickListener(this);
 
-		tvProtectionInsurance.setText(getString(R.string.instore_withdraw_cash_now));
 		try {
 			networkChangeListener = this;
 		} catch (ClassCastException ignored) {
 		}
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
-		bolBroacastRegistred = true;
+		boolBroadcastRegistered = true;
 		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		disableIncreaseLimit();
@@ -158,7 +152,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 					minAmountDue.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
 					currentBalance.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
 					try {
-						dueDate.setText(WFormatter.formatDate(p.paymentDueDate));
+						dueDate.setText(WFormatter.newDateFormat(p.paymentDueDate));
 					} catch (ParseException ex) {
 						dueDate.setText(p.paymentDueDate);
 					}
@@ -189,6 +183,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				break;
 
 			case R.id.relBalanceProtection:
+				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
+				startActivity(intBalanceProtection);
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				break;
+
+			case R.id.relDrawnDownAmount:
 				mSharePreferenceHelper.save("", "lw_amount_drawn_cent");
 				Intent openWithdrawCashNow = new Intent(getActivity(), LoanWithdrawalActivity.class);
 				openWithdrawCashNow.putExtra("minDrawnDownAmount", minDrawnAmount);
@@ -221,8 +221,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 				mProgressCreditLimit.setVisibility(View.VISIBLE);
 				iconIncreaseLimit.setVisibility(View.GONE);
-				tvIncreaseLimit.setAlpha((float) 0.5);
-
+				disableIncreaseLimit();
 				super.onPreExecute();
 			}
 
@@ -304,12 +303,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	}
 
 	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-		personalLoanInfo = (PersonalLoanAmount) context;
-	}
-
-	@Override
 	public void onPauseFragment() {
 		if (asyncRequestPersonalLoan != null) {
 			asyncRequestPersonalLoan.isCancelled();
@@ -347,9 +340,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onPause() {
 		super.onPause();
-		if (bolBroacastRegistred) {
+		if (boolBroadcastRegistered) {
 			getActivity().unregisterReceiver(connectionBroadcast);
-			bolBroacastRegistred = false;
+			boolBroadcastRegistered = false;
 		}
 	}
 
