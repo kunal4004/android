@@ -21,7 +21,7 @@ public class BalanceInsuranceDetailFragment extends Fragment implements View.OnC
 	String[] mRequiredForm, mRequiredFormSubmit;
 	final String REQUIRED_FORM = "REQUIRED_FORM", REQUIRED_FORM_SUBMIT = "REQUIRED_FORM_SUBMIT", REQUIRED_TITLE = "REQUIRED_TITLE";
 	private String mTitle;
-	private String externalURL = "http://www.woolworths.co.za/store/recipe/_/A-cmp208540";
+	private String externalURL = "http://www.woolworths.co.za/store/fragments/corporate/corporate-index.jsp?content=corporate-content&contentId=cmp208540";
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mRequiredForm = getArguments().getStringArray(REQUIRED_FORM);
