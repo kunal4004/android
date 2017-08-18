@@ -259,11 +259,6 @@
                 android:layout_toEndOf="@+id/logoProtectionInsurance"
                 android:text="@string/balance_protection_insurance"/>
 
-            <ImageView
-                android:id="@+id/iconBalanceProdtectionInsurance"
-                style="@style/style_loan_img"
-                android:src="@drawable/coveredbadge"
-                />
 
         </RelativeLayout>
 
