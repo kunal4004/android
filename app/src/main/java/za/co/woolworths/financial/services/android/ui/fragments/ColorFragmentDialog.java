@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,7 +23,6 @@ public class ColorFragmentDialog extends Fragment implements StockFinderSizeColo
 
 	private WStockFinderActivity.RecyclerItemSelected mRecyclerItemSelected;
 	public RecyclerView mRecyclerColorList;
-	private boolean recycleViewContainItem;
 	private ColorFragmentDialog mContext;
 
 	@Override
@@ -57,11 +55,8 @@ public class ColorFragmentDialog extends Fragment implements StockFinderSizeColo
 		ColorFragmentDialog.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (!recycleViewContainItem) {
-					StockFinderSizeColorAdapter stockFinderSizeColorAdapter = new StockFinderSizeColorAdapter(otherSkuList, mContext, viewType);
-					mRecyclerColorList.setAdapter(stockFinderSizeColorAdapter);
-					recycleViewContainItem = true;
-				}
+				StockFinderSizeColorAdapter stockFinderSizeColorAdapter = new StockFinderSizeColorAdapter(otherSkuList, mContext, viewType);
+				mRecyclerColorList.setAdapter(stockFinderSizeColorAdapter);
 			}
 		});
 	}

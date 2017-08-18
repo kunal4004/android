@@ -328,8 +328,6 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		mWebDescription = (WrapContentWebView) findViewById(R.id.webDescription);
 		ingredientLine = findViewById(R.id.ingredientLine);
 		mLoadingDot = (LoadingDots) findViewById(R.id.loadingDots);
-		mBtnStoreFinder = (WButton) findViewById(R.id.btnStoreFinder);
-		mBtnStoreFinder.setOnClickListener(this);
 
 		mImNewImage = (SimpleDraweeView) findViewById(R.id.imNewImage);
 		mImSave = (SimpleDraweeView) findViewById(R.id.imSave);
@@ -643,7 +641,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				}
 				break;
 
-			case R.id.btnStoreFinder:
+			case R.id.llStoreFinder:
 				boolean productHasColour = productHasColour();
 				boolean productHasSize = productHasSize();
 

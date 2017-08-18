@@ -40,6 +40,7 @@ import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.gms.vision.text.Line;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -165,7 +166,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	public WoolworthsApplication mWoolworthsApplication;
 	private WButton mBtnShopOnlineWoolies;
 	private WGlobalState mGlobalState;
-	private WButton mBtnStoreFinder;
+	private LinearLayout llStoreFinder;
 	private LinearLayout llLoadingColorSize;
 	private View loadingColorDivider;
 
@@ -281,8 +282,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		qRview = (QRCodeView) findViewById(R.id.qr_view);
 		mSlideUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
 		mTextInfo = (TextView) findViewById(R.id.textInfo);
-		mBtnStoreFinder = (WButton) findViewById(R.id.btnStoreFinder);
-		mBtnStoreFinder.setOnClickListener(this);
+		llStoreFinder = (LinearLayout) findViewById(R.id.llStoreFinder);
+		llStoreFinder.setOnClickListener(this);
 		LoadingDots mLoadingDot = (LoadingDots) findViewById(R.id.loadingDots);
 		llLoadingColorSize = (LinearLayout) findViewById(R.id.llLoadingColorSize);
 		loadingColorDivider = findViewById(R.id.loadingColorDivider);
@@ -529,7 +530,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 				overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 
-			case R.id.btnStoreFinder:
+			case R.id.llStoreFinder:
 				boolean productHasColour = productHasColour();
 				boolean productHasSize = productHasSize();
 
@@ -1427,7 +1428,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mObjProductDetail.productName);
 		startActivity(mIntent);
-		overridePendingTransition(0,0);
+		overridePendingTransition(0, 0);
 	}
 
 	public void sizeIntent() {
@@ -1438,7 +1439,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mObjProductDetail.productName);
 		startActivity(mIntent);
-		overridePendingTransition(0,0);
+		overridePendingTransition(0, 0);
 	}
 
 	public void colourNoSizeIntent() {
@@ -1449,7 +1450,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mIntent.putExtra("PRODUCT_HAS_SIZE", false);
 		mIntent.putExtra("PRODUCT_NAME", mObjProductDetail.productName);
 		startActivity(mIntent);
-		overridePendingTransition(0,0);
+		overridePendingTransition(0, 0);
 	}
 
 	public void noSizeColorIntent() {
@@ -1462,7 +1463,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
 	private void disableStoreFinder() {
 		setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
-		mBtnStoreFinder.setVisibility(View.GONE);
+		llStoreFinder.setVisibility(View.GONE);
 	}
 
 	private void productIsActive(WProductDetail productList) {
@@ -1470,20 +1471,20 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		if (productType.equalsIgnoreCase("clothingProducts")) {
 			if (mGlobalState.clothingIsEnabled()) {
 				setLayoutWeight(mBtnShopOnlineWoolies, 0.5f);
-				setLayoutWeight(mBtnStoreFinder, 0.5f);
-				mBtnStoreFinder.setVisibility(View.VISIBLE);
+				setLayoutWeight(llStoreFinder, 0.5f);
+				llStoreFinder.setVisibility(View.VISIBLE);
 			} else {
 				setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
-				mBtnStoreFinder.setVisibility(View.GONE);
+				llStoreFinder.setVisibility(View.GONE);
 			}
 		} else {
 			if (mGlobalState.isFoodProducts()) {
 				setLayoutWeight(mBtnShopOnlineWoolies, 0.5f);
-				setLayoutWeight(mBtnStoreFinder, 0.5f);
-				mBtnStoreFinder.setVisibility(View.VISIBLE);
+				setLayoutWeight(llStoreFinder, 0.5f);
+				llStoreFinder.setVisibility(View.VISIBLE);
 			} else {
 				setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
-				mBtnStoreFinder.setVisibility(View.GONE);
+				llStoreFinder.setVisibility(View.GONE);
 			}
 		}
 	}

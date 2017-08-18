@@ -24,7 +24,7 @@ public class WGlobalState {
 
 	private boolean cardGestureIsEnabled, onBackPressed, accountHasExpired, rewardHasExpired,
 			FragmentIsReward, defaultPopupState;
-	private String pressState, newSTSParams, storeLocatorJson;
+	private String pressState, newSTSParams, storeLocatorJson,selectedSKUId;
 
 	public void setAccountSignInState(boolean accountSignInState) {
 		setPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE, accountSignInState);
@@ -165,5 +165,13 @@ public class WGlobalState {
 
 	public void setEndRadius(int endRadius) {
 		this.endRadius = endRadius;
+	}
+
+	public String getSelectedSKUId() {
+		return selectedSKUId;
+	}
+
+	public void setSelectedSKUId(String selectedSKUId) {
+		this.selectedSKUId = selectedSKUId;
 	}
 }

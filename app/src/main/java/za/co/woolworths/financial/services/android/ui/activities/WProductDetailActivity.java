@@ -59,7 +59,7 @@ import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecorat
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class WProductDetailActivity extends AppCompatActivity implements
+public class WProductDetailActivity extends LocateProductActivity implements
 		SelectedProductView,
 		ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener {
 

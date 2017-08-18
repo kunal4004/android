@@ -223,7 +223,6 @@ public interface ApiInterface {
 			@Header("osVersion") String osVersion,
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
-			@Header("sessionToken") String sessionToken,
 			@Header("latitude") String latitude,
 			@Header("longitude") String longitude,
 			@Path(value = "sku", encode = false) String sku,

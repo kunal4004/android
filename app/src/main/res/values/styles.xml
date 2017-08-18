@@ -849,4 +849,9 @@
         <item name="android:layout_marginBottom">@dimen/default_margin</item>
         <item name="android:lineSpacingMultiplier">1.3</item>
     </style>
+
+    <style name="circle_progressbar_white_style">
+        <item name="android:layout_width">35dp</item>
+        <item name="android:layout_height">35dp</item>
+    </style>
 </resources>

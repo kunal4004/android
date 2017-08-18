@@ -10,12 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
@@ -25,15 +21,15 @@ import za.co.woolworths.financial.services.android.util.ColorInterface;
 public class SizeFragmentDialog extends Fragment implements StockFinderSizeColorAdapter.RecyclerViewClickListener, ColorInterface {
 
 	private WStockFinderActivity.RecyclerItemSelected mRecyclerItemSelected;
-	private StockFinderSizeColorAdapter mColorSizeAdapter;
-	private ArrayList<OtherSku> mOtherSKUList;
 	private RecyclerView mSizeRecycleView;
-	private boolean recycleViewContainItem;
 	private SizeFragmentDialog mContext;
+	private StockFinderSizeColorAdapter stockFinderSizeColorAdapter;
+	private ArrayList<OtherSku> mOtherSKUList;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.color_fragment, container, false);
+		View rootView = inflater.inflate(R.layout.color_fragment, container, false);
+		return rootView;
 	}
 
 	@Override
@@ -44,6 +40,7 @@ public class SizeFragmentDialog extends Fragment implements StockFinderSizeColor
 			mRecyclerItemSelected = (WStockFinderActivity.RecyclerItemSelected) this.getActivity();
 		} catch (ClassCastException ignored) {
 		}
+
 
 		mSizeRecycleView = (RecyclerView) view.findViewById(R.id.recyclerColorList);
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(this.getActivity());
@@ -56,47 +53,10 @@ public class SizeFragmentDialog extends Fragment implements StockFinderSizeColor
 		mRecyclerItemSelected.onRecyclerItemClick(v, position, "size");
 	}
 
-	public void updateSizeAdapter(ArrayList<OtherSku> otherSkus, String mFilterType) {
-		mOtherSKUList = otherSkus;
-		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
-		//remove duplicates
-		for (OtherSku os : mOtherSKUList) {
-			if (!sizeValueExist(commonSizeList, os.size)) {
-				commonSizeList.add(os);
-			}
-		}
-		//sort ascending
-		Collections.sort(commonSizeList, new Comparator<OtherSku>() {
-			@Override
-			public int compare(OtherSku lhs, OtherSku rhs) {
-				return lhs.size.compareToIgnoreCase(rhs.size);
-			}
-		});
-
-		mColorSizeAdapter = new StockFinderSizeColorAdapter(commonSizeList, this, mFilterType);
-		mSizeRecycleView.setAdapter(mColorSizeAdapter);
-	}
-
-	private boolean sizeValueExist(ArrayList<OtherSku> list, String name) {
-		for (OtherSku item : list) {
-			if (item.size.equals(name)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	@Override
 	public void onUpdate(final ArrayList<OtherSku> otherSkuList, final String viewType) {
-		SizeFragmentDialog.this.getActivity().runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (!recycleViewContainItem) {
-					StockFinderSizeColorAdapter stockFinderSizeColorAdapter = new StockFinderSizeColorAdapter(otherSkuList, mContext, viewType);
-					mSizeRecycleView.setAdapter(stockFinderSizeColorAdapter);
-					recycleViewContainItem = true;
-				}
-			}
-		});
+		mOtherSKUList = otherSkuList;
+		stockFinderSizeColorAdapter = new StockFinderSizeColorAdapter(mOtherSKUList, mContext, viewType);
+		mSizeRecycleView.setAdapter(stockFinderSizeColorAdapter);
 	}
 }

@@ -46,8 +46,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderCardsOnMapAdapter;
@@ -274,6 +276,8 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		} else {
 			///startLocationUpdates();
 		}
+
+		Utils.showOneTimePopup(getActivity(), SessionDao.KEY.STORE_FINDER_ONE_TIME_POPUP, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INSTORE_AVAILABILITY);
 	}
 
 	public void initMap() {
@@ -351,7 +355,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 			if (previousmarker != null)
 				previousmarker.setIcon(unSelectedIcon);
 			marker.setIcon(selectedIcon);
-			//googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 13), CAMERA_ANIMATION_SPEED, null);
 			previousmarker = marker;
 			pager.setCurrentItem(id);
 		} catch (NullPointerException ignored) {
@@ -361,7 +364,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 
 	public void backToAllStoresPage(int position) {
 		googleMap.getUiSettings().setScrollGesturesEnabled(true);
-		//googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markers.get(position).getPosition(), 13), 500, null);
 		WOneAppBaseActivity.mToolbar.animate().translationY(WOneAppBaseActivity.mToolbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
 		showAllMarkers(markers);
 
