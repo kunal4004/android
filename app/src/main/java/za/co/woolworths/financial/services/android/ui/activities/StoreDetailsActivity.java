@@ -161,6 +161,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 	@Override
 	public void onMapReady(GoogleMap map) {
 		googleMap = map;
+		googleMap.getUiSettings().setScrollGesturesEnabled(false);
 		googleMap.setMyLocationEnabled(false);
 		centerCamera();
 	}
