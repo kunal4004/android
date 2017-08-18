@@ -272,6 +272,7 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 				WStockFinderActivity.this.runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
+						Log.e("errorHandlerMess", errorMessage);
 						mErrorHandlerView.networkFailureHandler(errorMessage);
 					}
 				});
@@ -282,13 +283,15 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 			protected void onPostExecute(LocationResponse locationResponse) {
 				super.onPostExecute(locationResponse);
 				storeDetailsList = locationResponse.Locations;
-				if (storeDetailsList.size() > 0) {
-					layoutNoProductFound.setVisibility(View.GONE);
-					selectPage(currentPosition);
-					Utils.showOneTimePopup(WStockFinderActivity.this, SessionDao.KEY.STORE_FINDER_ONE_TIME_POPUP, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INSTORE_AVAILABILITY);
-				} else {
-					selectPage(currentPosition);
-					layoutNoProductFound.setVisibility(View.VISIBLE);
+				if (storeDetailsList != null) {
+					if (storeDetailsList.size() > 0) {
+						layoutNoProductFound.setVisibility(View.GONE);
+						selectPage(currentPosition);
+						Utils.showOneTimePopup(WStockFinderActivity.this, SessionDao.KEY.STORE_FINDER_ONE_TIME_POPUP, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INSTORE_AVAILABILITY);
+					} else {
+						selectPage(currentPosition);
+						layoutNoProductFound.setVisibility(View.VISIBLE);
+					}
 				}
 			}
 		};
