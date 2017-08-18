@@ -23,12 +23,12 @@ public class BalanceInsuranceAdapter extends RecyclerView.Adapter<BalanceInsuran
 	private OnItemClick onItemClick;
 	private ArrayList<BalanceInsurance> balanceList;
 
-	public int selected_item_index = -1;
 
 	public class MyViewHolder extends RecyclerView.ViewHolder {
 		private View vEmptySpace;
 		private WTextView tvTitle, tvDescription;
 		private RelativeLayout rlBalanceInsurance;
+		private View vBottomLine;
 
 
 		public MyViewHolder(View view) {
@@ -36,6 +36,7 @@ public class BalanceInsuranceAdapter extends RecyclerView.Adapter<BalanceInsuran
 			tvTitle = (WTextView) view.findViewById(R.id.tvTitle);
 			tvDescription = (WTextView) view.findViewById(R.id.tvDescription);
 			rlBalanceInsurance = (RelativeLayout) view.findViewById(R.id.rlBalanceInsurance);
+			vBottomLine = view.findViewById(R.id.vBottomLine);
 			vEmptySpace = view.findViewById(R.id.vEmptySpace);
 		}
 	}
@@ -54,34 +55,22 @@ public class BalanceInsuranceAdapter extends RecyclerView.Adapter<BalanceInsuran
 
 	@Override
 	public void onBindViewHolder(final MyViewHolder holder, final int position) {
+		switch (position) {
+			case 0:
+				holder.vEmptySpace.setVisibility(View.VISIBLE);
+				holder.rlBalanceInsurance.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.top_divider_list));
+				break;
 
-		if (selected_item_index == position) {
-			switch (position) {
-				case 0:
-					holder.vEmptySpace.setVisibility(View.VISIBLE);
-					holder.rlBalanceInsurance.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.top_divider_active_list));
-					break;
-
-				default:
-					if (position == selected_item_index) {
-						holder.vEmptySpace.setVisibility(View.GONE);
-						holder.rlBalanceInsurance.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.bottom_divider_active_list));
-					}
-					break;
-			}
-		} else {
-			switch (position) {
-				case 0:
-					holder.vEmptySpace.setVisibility(View.VISIBLE);
-					holder.rlBalanceInsurance.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.top_divider_list));
-					break;
-
-				default:
-					holder.vEmptySpace.setVisibility(View.GONE);
-					holder.rlBalanceInsurance.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.bottom_divider_list));
-					break;
-			}
+			default:
+				holder.vEmptySpace.setVisibility(View.GONE);
+				holder.rlBalanceInsurance.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.bottom_divider_list));
+				break;
 		}
+
+		if (position == (getItemCount() - 1)) {
+			holder.vBottomLine.setVisibility(View.VISIBLE);
+		}
+
 		BalanceInsurance balanceInsurance = balanceList.get(position);
 		holder.tvTitle.setText(balanceInsurance.title);
 		holder.tvDescription.setText(balanceInsurance.description);
@@ -89,7 +78,6 @@ public class BalanceInsuranceAdapter extends RecyclerView.Adapter<BalanceInsuran
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				selected_item_index = holder.getAdapterPosition();
 				onItemClick.onItemClick(v, holder.getAdapterPosition());
 			}
 		});

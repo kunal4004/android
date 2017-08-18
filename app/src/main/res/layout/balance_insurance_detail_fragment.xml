@@ -2,7 +2,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             xmlns:tools="http://schemas.android.com/tools"
              android:background="@color/recent_search_bg"
     >
 
@@ -21,8 +20,8 @@
                 android:id="@+id/tvTitle"
                 style="@style/insurance_claim_detail_style"
                 android:layout_marginBottom="@dimen/default_margin"
-                android:textColor="@color/black_50"
-                android:text="@string/apply_loan_info"/>
+                android:text="@string/apply_loan_info"
+                android:textColor="@color/black_50"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/tvRequiredForm"
@@ -61,17 +60,22 @@
 
     </android.support.v4.widget.NestedScrollView>
 
-
-    <za.co.woolworths.financial.services.android.ui.views.WButton
-        android:id="@+id/btnGetDocument"
-        style="@style/blackButtonStyle"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="2dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginStart="2dp"
-        android:text="@string/get_the_documents"/>
 
+        android:background="@color/white">
 
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnGetDocument"
+            style="@style/blackButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginStart="2dp"
+            android:text="@string/get_the_documents"/>
+
+    </LinearLayout>
 </FrameLayout>
