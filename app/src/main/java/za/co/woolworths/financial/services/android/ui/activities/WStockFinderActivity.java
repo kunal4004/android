@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -24,6 +23,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -100,8 +100,6 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 
 		layoutLocationServiceOff = (LinearLayout) findViewById(R.id.layoutLocationServiceOff);
 		layoutNoProductFound = (LinearLayout) findViewById(R.id.layoutNoProductFound);
-		NestedScrollView scrollView = (NestedScrollView) findViewById(R.id.nest_scrollview);
-		scrollView.setFillViewport(true);
 		mViewPager = (GoogleMapViewPager) findViewById(R.id.viewpager);
 		WTextView toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
 		mAppBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
@@ -230,7 +228,7 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 	}
 
 	private void setLayoutParams(int paramsHeight) {
-		CoordinatorLayout.LayoutParams lsp = (CoordinatorLayout.LayoutParams) mAppBarLayout.getLayoutParams();
+		LinearLayout.LayoutParams lsp = (LinearLayout.LayoutParams) mAppBarLayout.getLayoutParams();
 		lsp.height = paramsHeight;
 		mAppBarLayout.setLayoutParams(lsp);
 	}
@@ -418,14 +416,6 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 
 		@Override
 		public void onPageSelected(int newPosition) {
-			switch (newPosition) {
-				case 0:
-					mViewPager.disableScroll(true);
-					break;
-				case 1:
-					mViewPager.disableScroll(false);
-					break;
-			}
 			selectPage(newPosition);
 		}
 

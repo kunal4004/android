@@ -8,37 +8,22 @@ import android.view.MotionEvent;
 import android.view.View;
 
 public class GoogleMapViewPager extends ViewPager {
-
-	private boolean disable;
-
+	private boolean canScroll = false;
 	public GoogleMapViewPager(Context context) {
 		super(context);
 	}
-
 	public GoogleMapViewPager(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
-
-	@Override
-	protected boolean canScroll(View scrollingView, boolean checkV, int dx, int x, int y) {
-		if (scrollingView.getClass().getPackage().getName().contains("maps.")) {
-			return true;
-		}
-		return super.canScroll(scrollingView, checkV, dx, x, y);
+	public void setCanScroll(boolean canScroll) {
+		this.canScroll = canScroll;
 	}
-
 	@Override
-	public boolean onInterceptTouchEvent(MotionEvent event) {
-		return disable ? false : super.onInterceptTouchEvent(event);
+	public boolean onTouchEvent(MotionEvent ev) {
+		return canScroll && super.onTouchEvent(ev);
 	}
-
 	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		return disable ? false : super.onTouchEvent(event);
-	}
-
-	public void disableScroll(Boolean disable) {
-		//When disable = true not work the scroll and when disble = false work the scroll
-		this.disable = disable;
+	public boolean onInterceptTouchEvent(MotionEvent ev) {
+		return canScroll && super.onInterceptTouchEvent(ev);
 	}
 }
