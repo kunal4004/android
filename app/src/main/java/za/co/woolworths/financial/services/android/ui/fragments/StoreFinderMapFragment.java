@@ -124,7 +124,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	private ErrorHandlerView mErrorHandlerView;
 	private Location mLocation;
 	private StoreFinderMapFragment mFragment;
-	public boolean isLocationServiceButtonClicked = false;
+	public boolean isLocationServiceButtonClicked = false, mapReceiveUpdate = false;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -673,15 +673,17 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 				@Override
 				public void run() {
 					if (storeDetails.size() > 0) {
-						updateMap(location, storeDetails);
+						if (!mapReceiveUpdate) {
+							updateMap(location, storeDetails);
+							mapReceiveUpdate = true;
+						}
 					} else {
 
 					}
 					hideProgressBar();
 				}
 			});
-		} catch (NullPointerException ex) {
-			Log.e("StoreFinderMap", ex.toString());
+		} catch (NullPointerException ignored) {
 		}
 	}
 
