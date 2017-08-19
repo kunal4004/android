@@ -417,13 +417,6 @@
                 android:orientation="horizontal"
                 android:weightSum="1">
 
-                <ProgressBar
-                    android:id="@+id/mButtonProgress"
-                    style="?android:attr/progressBarStyleLarge"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:visibility="gone"/>
-
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/tvBtnFinder"
                     android:layout_width="0dp"
@@ -439,6 +432,14 @@
                     android:textSize="12sp"
                     android:visibility="visible"
                     app:WTextView_font="medium_bold"/>
+
+                <ProgressBar
+                    android:id="@+id/mButtonProgress"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:visibility="gone"/>
+
 
             </LinearLayout>
         </LinearLayout>

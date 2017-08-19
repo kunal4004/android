@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -61,7 +62,7 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 		}
 
 		mViewPager = (GoogleMapViewPager) findViewById(R.id.viewpager);
-		WTextView toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
+		final WTextView toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
 		mAppBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
 		WButton btnOnLocationService = (WButton) findViewById(R.id.buttonLocationOn);
 		WButton buttonBackToProducts = (WButton) findViewById(R.id.buttonBackToProducts);
@@ -69,7 +70,23 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 		btnOnLocationService.setOnClickListener(this);
 		WButton btnRetry = (WButton) findViewById(R.id.btnRetry);
 		btnRetry.setOnClickListener(this);
-		toolbarTextView.setText("DODODODOFOOGOGJDJSDJDFIJDF DKODFDKDFKODKO  KOFKO FDKOD KOFDOKF KOFKO FKOFDOKFD");
+		toolbarTextView.setText(mProductName);
+
+		ViewTreeObserver viewTreeObserver = toolbarTextView.getViewTreeObserver();
+		viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				ViewTreeObserver viewTreeObserver = toolbarTextView.getViewTreeObserver();
+				viewTreeObserver.removeOnGlobalLayoutListener(this);
+
+				if (toolbarTextView.getLineCount() > 2) {
+					int endOfLastLine = toolbarTextView.getLayout().getLineEnd(2);
+					String newVal = toolbarTextView.getText().subSequence(0, endOfLastLine - 3) + "...";
+					toolbarTextView.setText(newVal);
+				}
+			}
+		});
+
 		setupViewPager(mViewPager);
 		tabLayout = (TabLayout) findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(mViewPager);

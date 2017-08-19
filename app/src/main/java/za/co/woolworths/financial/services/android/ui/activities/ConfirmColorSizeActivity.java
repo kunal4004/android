@@ -141,7 +141,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		}
 	}
 
-	private void dismissSizeColorActivity(final String sku) {
+	private void dismissSizeColorActivity() {
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
@@ -159,7 +159,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					openStockFinder(sku);
+					callInStoreFinder();
 					dismissLayout();
 				}
 			});
@@ -190,7 +190,8 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 				if (otherSkuList.size() > 0) {
 					if (otherSkuList.size() == 1) {
 						String selectedSKU = otherSkuList.get(0).sku;
-						dismissSizeColorActivity(selectedSKU);
+						mGlobalState.setSelectedSKUId(selectedSKU);
+						dismissSizeColorActivity();
 					} else {
 						String selectedSKU = getOtherSKUList(mColorList).get(position).sku;
 						mGlobalState.setSelectedSKUId(selectedSKU);
@@ -198,11 +199,13 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 					}
 				} else {
 					String selectedSKU = getOtherSKUList(mColorList).get(position).sku;
-					dismissSizeColorActivity(selectedSKU);
+					mGlobalState.setSelectedSKUId(selectedSKU);
+					dismissSizeColorActivity();
 				}
 			} else {
 				String selectedSKU = getOtherSKUList(mColorList).get(position).sku;
-				dismissSizeColorActivity(selectedSKU);
+				mGlobalState.setSelectedSKUId(selectedSKU);
+				dismissSizeColorActivity();
 			}
 		} else {
 			String selectedSKU = mOtherSizeSKU.get(position).sku;
@@ -212,20 +215,15 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	}
 
 	private void inStoreFinderUpdate() {
-		Intent intent = new Intent();
-		intent.setAction(ProductGridActivity.MyBroadcastReceiver.ACTION);
-		sendBroadcast(intent);
+		callInStoreFinder();
 		closeViewAnimation();
 	}
 
-	private void openStockFinder(String sku) {
-		Intent mIntent = new Intent(this, WStockFinderActivity.class);
-		mIntent.putExtra("PRODUCT_NAME", mProductName);
-		mIntent.putExtra("SELECTED_SKU", sku);
-		startActivity(mIntent);
-		overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+	private void callInStoreFinder() {
+		Intent intent = new Intent();
+		intent.setAction(ProductGridActivity.MyBroadcastReceiver.ACTION);
+		sendBroadcast(intent);
 	}
-
 
 	private boolean sizeValueExist(ArrayList<OtherSku> list, String name) {
 		for (OtherSku item : list) {

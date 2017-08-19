@@ -10,6 +10,7 @@ import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
@@ -123,6 +124,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	private String TAG = this.getClass().getSimpleName();
 	private LocationItemTask locationItemTask;
 	private MyBroadcastReceiver updateStoreFinderReceiver;
+	protected static final int REQUEST_CHECK_SETTINGS = 99;
 
 	private enum RUN_BACKGROUND_TASK {
 		SEARCH_PRODUCT, SEARCH_MORE_PRODUCT, LOAD_PRODUCT, LOAD_MORE_PRODUCT
@@ -908,6 +910,10 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		return getColorList().size() == 1;
 	}
 
+	private boolean productHasOneSize() {
+		return getSizeList().size() == 1;
+	}
+
 	private boolean productHasSize() {
 		return getSizeList().size() > 0 ? true : false;
 	}
@@ -961,11 +967,9 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	public void noSizeColorIntent() {
-		Intent mIntent = new Intent(this, WStockFinderActivity.class);
-		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-		mIntent.putExtra("SELECTED_SKU", mSkuId);
-		startActivity(mIntent);
-		overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+		mScrollProductDetail.scrollTo(0, 0);
+		mWGlobalState.setSelectedSKUId(mSkuId);
+		inStoreFinderUpdate();
 	}
 
 	private void disableStoreFinder() {
@@ -1084,50 +1088,55 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	@Override
 	public void PermissionGranted(int request_code) {
 		Log.i("PERMISSION", "GRANTED");
-		//showFindInStoreProgress();
-		boolean productHasColour = productHasColour();
-		boolean productHasSize = productHasSize();
-		boolean productHasOneColour = productHasOneColour();
-		boolean productHasOneSize = productHasSize();
-		mScrollProductDetail.scrollTo(0, 0);
-		if (productHasColour) {
-			if (productHasOneColour) {
-				// one colour only
-				String skuColour = getColorList().get(0).colour;
-				ArrayList<OtherSku> getSize;
-				if (!TextUtils.isEmpty(skuColour)) {
-					getSize = commonSizeList(skuColour);
+		if (Utils.isLocationEnabled(ProductGridActivity.this)) {
+			boolean productHasColour = productHasColour();
+			boolean productHasSize = productHasSize();
+			boolean productHasOneColour = productHasOneColour();
+			boolean productHasOneSize = productHasOneSize();
+			mScrollProductDetail.scrollTo(0, 0);
+			if (productHasColour) {
+				if (productHasOneColour) {
+					// one colour only
+					String skuColour = getColorList().get(0).colour;
+					ArrayList<OtherSku> getSize;
+					if (!TextUtils.isEmpty(skuColour)) {
+						getSize = commonSizeList(skuColour);
+					} else {
+						getSize = getSizeList();
+					}
+					if (getSize.size() > 0) {
+						if (getSize.size() == 1) {
+							mSkuId = getSize.get(0).sku;
+							noSizeColorIntent();
+						} else {
+							sizeOnlyIntent(skuColour);
+						}
+					} else {
+						mSkuId = mProduct.get(0).sku;
+						noSizeColorIntent();
+					}
 				} else {
-					getSize = getSizeList();
+					// contain several colours
+					colourIntent();
 				}
-				if (getSize.size() > 0) {
-					if (getSize.size() == 1) {
+			} else {
+				if (productHasSize) {
+					if (productHasOneSize) { //one size
+						ArrayList<OtherSku> getSize = getSizeList();
 						mSkuId = getSize.get(0).sku;
 						noSizeColorIntent();
-					} else {
-						sizeOnlyIntent(skuColour);
+					} else { // more sizes
+						sizeIntent();
 					}
 				} else {
 					mSkuId = mProduct.get(0).sku;
 					noSizeColorIntent();
 				}
-			} else {
-				// contain several colours
-				colourIntent();
 			}
 		} else {
-			if (productHasSize()) {
-				if (productHasOneSize) { //one size
-					ArrayList<OtherSku> getSize = getSizeList();
-					mSkuId = getSize.get(0).sku;
-					noSizeColorIntent();
-				} else { // more sizes
-					sizeIntent();
-				}
-			} else {
-				mSkuId = mProduct.get(0).sku;
-				noSizeColorIntent();
-			}
+			Intent locIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+			startActivityForResult(locIntent, REQUEST_CHECK_SETTINGS);
+			overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 		}
 	}
 
@@ -1159,7 +1168,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 						dismissFindInStoreProgress();
 						Log.e("callbackInStoreFinder", "error " + e);
 						if (e.contains("Connect")) {
-							mErrorHandlerView.showToast();
+							//mErrorHandlerView.showToast();
 						}
 					}
 				});
@@ -1214,15 +1223,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		Log.i("PERMISSION", "NEVER ASK AGAIN");
 	}
 
-//
-//	if (Utils.isLocationEnabled(ProductGridActivity.this)){
-//		layoutLocationServiceOff.setVisibility(View.GONE);
-//		llProductDetail.setVisibility(View.VISIBLE);
-//	}else{
-//		layoutLocationServiceOff.setVisibility(View.VISIBLE);
-//		llProductDetail.setVisibility(View.GONE);
-//	}
-
 	public void startLocationUpdates() {
 		showFindInStoreProgress();
 		FusedLocationSingleton.getInstance().startLocationUpdates();
@@ -1253,6 +1253,12 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		}
 	};
 
+	private void inStoreFinderUpdate() {
+		Intent intent = new Intent();
+		intent.setAction(ProductGridActivity.MyBroadcastReceiver.ACTION);
+		sendBroadcast(intent);
+	}
+
 	public class MyBroadcastReceiver extends BroadcastReceiver {
 		public static final String ACTION = "com.inStoreFinder.UPDATE";
 
@@ -1261,5 +1267,18 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 			startLocationUpdates();
 		}
 	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+			// Check for the integer request code originally supplied to startResolutionForResult(
+			case REQUEST_CHECK_SETTINGS:
+				//permissionUtils.check_permission(permissions, "Explain here why the app needs permissions", 1);
+				break;
+		}
+
+	}
 }
+
 

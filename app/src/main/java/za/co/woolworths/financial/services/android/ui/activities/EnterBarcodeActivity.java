@@ -287,7 +287,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 											openDetailView.putExtra("product_name", mProductList.get(0).productName);
 											openDetailView.putExtra("product_detail", gson.toJson(mProductList));
 											startActivity(openDetailView);
-											overridePendingTransition(0, R.anim.anim_slide_up);
+											overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 											break;
 
 										default:

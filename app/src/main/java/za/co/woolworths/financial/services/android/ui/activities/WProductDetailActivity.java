@@ -7,7 +7,6 @@ import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -745,7 +744,6 @@ public class WProductDetailActivity extends LocateProductActivity implements
 
 	public void resetLongDescription() {
 		mWebDescription.loadDataWithBaseURL("file:///android_res/drawable/", "", "text/html", "UTF-8", null);
-
 	}
 
 	public void showProductCode() {
@@ -1041,7 +1039,7 @@ public class WProductDetailActivity extends LocateProductActivity implements
 
 	public void setLayoutWeight(View v, float weight) {
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+				LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 		params.weight = weight;
 		params.setMarginStart((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
 		params.setMarginEnd((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
