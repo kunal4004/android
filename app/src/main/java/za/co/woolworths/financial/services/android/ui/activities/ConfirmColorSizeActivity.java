@@ -49,7 +49,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 		setContentView(R.layout.activity_confirm_color_size);
-		mGlobalState = ((WoolworthsApplication)ConfirmColorSizeActivity.this.getApplication()).getWGlobalState();
+		mGlobalState = ((WoolworthsApplication) ConfirmColorSizeActivity.this.getApplication()).getWGlobalState();
 		Bundle mBundle = getIntent().getExtras();
 		if (mBundle != null) {
 			mSelectedColour = mBundle.getString("SELECTED_COLOUR");
@@ -208,9 +208,6 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			String selectedSKU = mOtherSizeSKU.get(position).sku;
 			mGlobalState.setSelectedSKUId(selectedSKU);
 			inStoreFinderUpdate();
-
-//			String selectedSKU = mOtherSizeSKU.get(position).sku;
-//			dismissSizeColorActivity(selectedSKU);
 		}
 	}
 
@@ -320,7 +317,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		mViewPager.post(new Runnable() {
 			@Override
 			public void run() {
-				pageChangeListener.onPageSelected(position);
+				mViewPager.setCurrentItem(position);
 			}
 		});
 	}

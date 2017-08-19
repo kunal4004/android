@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,11 +32,11 @@ public class StockFinderSizeColorAdapter extends RecyclerView.Adapter<StockFinde
 
 	}
 
-	public static class SimpleViewHolder extends RecyclerView.ViewHolder {
+	 static class SimpleViewHolder extends RecyclerView.ViewHolder {
 
-		public WTextView productName;
+		 WTextView productName;
 
-		public SimpleViewHolder(View view) {
+		 SimpleViewHolder(View view) {
 			super(view);
 			productName = (WTextView) view.findViewById(R.id.name);
 		}
@@ -50,8 +51,11 @@ public class StockFinderSizeColorAdapter extends RecyclerView.Adapter<StockFinde
 			item = mOtherSKu.get(position).size;
 		}
 
-		if (TextUtils.isEmpty(item))
+		if (TextUtils.isEmpty(item)) {
 			item = "";
+		} else {
+			item = item.trim();
+		}
 
 		//skipping the filling of the view
 		holder.productName.setText(item);

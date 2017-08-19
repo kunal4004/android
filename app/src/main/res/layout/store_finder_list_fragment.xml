@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="46dp"
         android:scrollbars="none"
-        android:visibility="gone"
+        android:visibility="visible"
         />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -27,16 +27,6 @@
         android:textColor="@color/white"
         android:textSize="15sp"
         app:WTextView_font="myriadpro_regular"/>
-
-    <RelativeLayout
-        android:id="@+id/rlProgressBar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        >
-
-        <include layout="@layout/progress_bar_view"/>
-    </RelativeLayout>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvNoResult"

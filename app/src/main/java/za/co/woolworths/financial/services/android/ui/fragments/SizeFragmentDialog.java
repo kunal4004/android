@@ -28,8 +28,8 @@ public class SizeFragmentDialog extends Fragment implements StockFinderSizeColor
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.color_fragment, container, false);
-		return rootView;
+		View v =  inflater.inflate(R.layout.color_fragment, container, false);
+		return  v;
 	}
 
 	@Override
@@ -41,11 +41,7 @@ public class SizeFragmentDialog extends Fragment implements StockFinderSizeColor
 		} catch (ClassCastException ignored) {
 		}
 
-
 		mSizeRecycleView = (RecyclerView) view.findViewById(R.id.recyclerColorList);
-		LinearLayoutManager mLayoutManager = new LinearLayoutManager(this.getActivity());
-		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-		mSizeRecycleView.setLayoutManager(mLayoutManager);
 	}
 
 	@Override
@@ -55,8 +51,16 @@ public class SizeFragmentDialog extends Fragment implements StockFinderSizeColor
 
 	@Override
 	public void onUpdate(final ArrayList<OtherSku> otherSkuList, final String viewType) {
-		mOtherSKUList = otherSkuList;
-		stockFinderSizeColorAdapter = new StockFinderSizeColorAdapter(mOtherSKUList, mContext, viewType);
-		mSizeRecycleView.setAdapter(stockFinderSizeColorAdapter);
+		SizeFragmentDialog.this.getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				mOtherSKUList = otherSkuList;
+				mSizeRecycleView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+				stockFinderSizeColorAdapter = new StockFinderSizeColorAdapter(mOtherSKUList, mContext, viewType);
+				mSizeRecycleView.setAdapter(stockFinderSizeColorAdapter);
+				mSizeRecycleView.scrollToPosition(0);
+			}
+		});
 	}
+
 }

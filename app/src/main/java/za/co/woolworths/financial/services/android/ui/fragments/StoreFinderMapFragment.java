@@ -1,22 +1,16 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -26,7 +20,6 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
@@ -46,15 +39,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderCardsOnMapAdapter;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
@@ -65,15 +58,6 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallback, ViewPager.OnPageChangeListener, GoogleMap.OnMarkerClickListener, UpdateStoreFinderFragment {
 
-	public static StoreFinderListFragment newInstance(int myValue) {
-		// You can add as many values as you need to initialize your fragment
-		StoreFinderListFragment fragment = new StoreFinderListFragment();
-		Bundle args = new Bundle();
-		args.putInt("value_key", myValue);
-		fragment.setArguments(args);
-		return fragment;
-	}
-
 	public interface SlidePanelEvent {
 		void slidePanelAnchored();
 
@@ -81,8 +65,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	}
 
 	private SlidePanelEvent slidePanelEvent;
-
-	public static final int REQUEST_CALL = 1;
+	private WGlobalState wGlobalState;
 	WCustomViewPager pager;
 	GoogleMap googleMap;
 	static int CAMERA_ANIMATION_SPEED = 350;
@@ -113,20 +96,14 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 	WTextView storeDistance;
 	WTextView storeNumber;
 
-	ProgressBar mStoreProgressBar;
-
 	RelativeLayout layoutLocationServiceOn;
 	RelativeLayout relBrandLayout;
 
-	protected static final int REQUEST_CHECK_SETTINGS = 99;
 	Marker myLocation;
-	public static final int PERMS_REQUEST_CODE = 123;
 
 	private PopWindowValidationMessage mPopWindowValidationMessage;
-	private ErrorHandlerView mErrorHandlerView;
 	private Location mLocation;
 	private StoreFinderMapFragment mFragment;
-	public boolean isLocationServiceButtonClicked = false, mapReceiveUpdate = false;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -143,8 +120,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 
 		try {
 			slidePanelEvent = (SlidePanelEvent) getActivity();
-		} catch (ClassCastException ex) {
-			Log.e("initInterface", ex.toString());
+		} catch (ClassCastException ignored) {
 		}
 
 		mPopWindowValidationMessage = new PopWindowValidationMessage(getActivity());
@@ -153,6 +129,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		mLayout = (SlidingUpPanelLayout) v.findViewById(R.id.sliding_layout);
 		WTextView tvFlStockFinderMapHeader = (WTextView) v.findViewById(R.id.flStockFinderMapHeader);
 		tvFlStockFinderMapHeader.setVisibility(View.VISIBLE);
+		wGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
 		close = (ImageView) v.findViewById(R.id.close);
 		storeName = (WTextView) v.findViewById(R.id.storeName);
 		storeOfferings = (WTextView) v.findViewById(R.id.offerings);
@@ -166,10 +143,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		direction = (RelativeLayout) v.findViewById(R.id.direction);
 		makeCall = (RelativeLayout) v.findViewById(R.id.call);
 		layoutLocationServiceOn = (RelativeLayout) v.findViewById(R.id.layoutLocationServiceOn);
-		mStoreProgressBar = (ProgressBar) v.findViewById(R.id.storesProgressBar);
-		mStoreProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-		mErrorHandlerView = new ErrorHandlerView(getActivity()
-				, (RelativeLayout) v.findViewById(R.id.no_connection_layout));
 		try {
 			unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
 			selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
@@ -245,38 +218,11 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		});
 
 		initLocationCheck();
-
-		v.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-			@RequiresApi(api = Build.VERSION_CODES.M)
-			@Override
-			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(getActivity())) {
-					mErrorHandlerView.hideErrorHandlerLayout();
-					initLocationCheck();
-				}
-			}
-		});
-
 		getActivity().registerReceiver(broadcastCall, new IntentFilter("broadcastCall"));
-
-		showProgressBar();
 	}
 
 	public void initLocationCheck() {
-		boolean locationServiceIsEnabled = Utils.isLocationServiceEnabled(getActivity());
-		boolean lastKnownLocationIsNull = (Utils.getLastSavedLocation(getActivity()) == null);
-
-		if (!locationServiceIsEnabled & lastKnownLocationIsNull) {
-			checkLocationServiceAndSetLayout(false);
-		} else if (locationServiceIsEnabled && lastKnownLocationIsNull) {
-			checkLocationServiceAndSetLayout(true);
-			//	startLocationUpdates();
-		} else if (!locationServiceIsEnabled && !lastKnownLocationIsNull) {
-			updateMap(Utils.getLastSavedLocation(getActivity()));
-		} else {
-			///startLocationUpdates();
-		}
-
+		initMap();
 		Utils.showOneTimePopup(getActivity(), SessionDao.KEY.STORE_FINDER_ONE_TIME_POPUP, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INSTORE_AVAILABILITY);
 	}
 
@@ -299,6 +245,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 
 	private void onMapReady() {
 		try {
+			storeDetailsList = wGlobalState.getStoreDetailsArrayList();
 			if (storeDetailsList != null && storeDetailsList.size() != 0) {
 				bindDataWithUI(storeDetailsList);
 			}
@@ -366,15 +313,14 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		googleMap.getUiSettings().setScrollGesturesEnabled(true);
 		WOneAppBaseActivity.mToolbar.animate().translationY(WOneAppBaseActivity.mToolbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
 		showAllMarkers(markers);
-
 	}
 
 	public void showStoreDetails(int position) {
 		initStoreDetailsView(storeDetailsList.get(position));
 		hideMarkers(markers, position);
 		double center = googleMap.getCameraPosition().target.latitude;
-		double northmap = googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude;
-		double diff = (center - northmap);
+		double northMap = googleMap.getProjection().getVisibleRegion().latLngBounds.northeast.latitude;
+		double diff = (center - northMap);
 		double newLat = markers.get(position).getPosition().latitude + diff / 2.4;
 		CameraUpdate centerCam = CameraUpdateFactory.newLatLng(new LatLng(newLat, markers.get(position).getPosition().longitude));
 		googleMap.animateCamera(centerCam, CAMERA_ANIMATION_SPEED, null);
@@ -504,19 +450,6 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		}
 	}
 
-	@RequiresApi(api = Build.VERSION_CODES.M)
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		Log.d("RequestSETTINGRESULT", String.valueOf(requestCode));
-		switch (requestCode) {
-			// Check for the integer request code originally supplied to startResolutionForResult().
-			case REQUEST_CHECK_SETTINGS:
-				initLocationCheck();
-				break;
-		}
-	}
-
 	public void goToUser(CameraPosition mLocation) {
 		changeCamera(CameraUpdateFactory.newCameraPosition(mLocation), new GoogleMap.CancelableCallback() {
 			@Override
@@ -538,27 +471,11 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		googleMap.animateCamera(update, Math.max(2000, 1), callback);
 	}
 
-	public void showProgressBar() {
-		try {
-			mStoreProgressBar.setVisibility(View.VISIBLE);
-		} catch (NullPointerException ignored) {
-		}
-	}
-
-	public void hideProgressBar() {
-		if (mStoreProgressBar != null)
-			mStoreProgressBar.setVisibility(View.GONE);
-	}
-
-
 	private void updateMap(Location location) {
 		if (location != null) {
 			initMap();
 			updateMyCurrentLocationOnMap(location);
-
-			//locationAPIRequest(location);
 		}
-		///stopLocationUpdate();
 	}
 
 	private void updateMap(Location location, List<StoreDetails> storeDetailsList) {
@@ -575,25 +492,12 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 				myLocation = googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude()))
 						.icon(BitmapDescriptorFactory.fromResource(R.drawable.mapcurrentlocation)));
 				googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13), CAMERA_ANIMATION_SPEED, null);
-				//	zoomToLocation(mLocation);
 			} else {
 				myLocation.setPosition(new LatLng(location.getLatitude(), location.getLongitude()));
 				googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13), CAMERA_ANIMATION_SPEED, null);
 			}
 		} catch (Exception ex) {
 		}
-
-	}
-
-	private void zoomToLocation(Location location) {
-		CameraPosition mLocation =
-				new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location
-						.getLongitude()))
-						.zoom(13f)
-						.bearing(0)
-						.tilt(25)
-						.build();
-		goToUser(mLocation);
 	}
 
 	BroadcastReceiver broadcastCall = new BroadcastReceiver() {
@@ -623,71 +527,13 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		unregisterReceiver();
 	}
 
-	@Override
-	public void onRequestPermissionsResult(int requestCode,
-										   String permissions[], int[] grantResults) {
-		switch (requestCode) {
-			case PERMS_REQUEST_CODE: {
-				// If request is cancelled, the result arrays are empty.
-				if (grantResults.length > 0
-						&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-					// permission was granted. Do the
-					// contacts-related task you need to do.
-					if (ContextCompat.checkSelfPermission(getActivity(),
-							Manifest.permission.ACCESS_FINE_LOCATION)
-							== PackageManager.PERMISSION_GRANTED) {
-						if (isLocationServiceButtonClicked) {
-							Intent locIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-							startActivityForResult(locIntent, REQUEST_CHECK_SETTINGS);
-							getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-						} else {
-							//startLocationUpdates();
-							if (googleMap != null)
-								googleMap.setMyLocationEnabled(false);
-						}
-					}
-
-				} else {
-
-					// Permission denied, Disable the functionality that depends on this permission.
-				}
-				return;
-			}
-
-			case REQUEST_CALL:
-				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-					startActivity(callIntent);
-				break;
-			// other 'case' lines to check for other permissions this app might request.
-			// You can add here other case statements according to your requirement.
-		}
-	}
 
 	public void update(Location location, List<StoreDetails> storeDetail) {
 		updateMap(location, storeDetail);
 	}
 
 	@Override
-	public void onFragmentUpdate(final Location location, final List<StoreDetails> storeDetails) {
-		try {
-			StoreFinderMapFragment.this.getActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					if (storeDetails.size() > 0) {
-						if (!mapReceiveUpdate) {
-							updateMap(location, storeDetails);
-							mapReceiveUpdate = true;
-						}
-					} else {
+	public void onFragmentUpdate() {
 
-					}
-					hideProgressBar();
-				}
-			});
-		} catch (NullPointerException ignored) {
-		}
 	}
-
-
 }

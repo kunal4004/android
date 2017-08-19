@@ -13,7 +13,9 @@ import com.awfs.coordination.R;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderSizeColorAdapter;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
@@ -24,6 +26,8 @@ public class ColorFragmentDialog extends Fragment implements StockFinderSizeColo
 	private WStockFinderActivity.RecyclerItemSelected mRecyclerItemSelected;
 	public RecyclerView mRecyclerColorList;
 	private ColorFragmentDialog mContext;
+	private WGlobalState wGlobalState;
+	private ArrayList<OtherSku> colorSKUList;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,15 +38,17 @@ public class ColorFragmentDialog extends Fragment implements StockFinderSizeColo
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		mContext = this;
+		wGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
+		colorSKUList = wGlobalState.getColourSKUArrayList();
 		try {
 			mRecyclerItemSelected = (WStockFinderActivity.RecyclerItemSelected) this.getActivity();
 		} catch (ClassCastException ignored) {
 		}
 
 		mRecyclerColorList = (RecyclerView) view.findViewById(R.id.recyclerColorList);
-		LinearLayoutManager mLayoutManager = new LinearLayoutManager(this.getActivity());
-		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-		mRecyclerColorList.setLayoutManager(mLayoutManager);
+		mRecyclerColorList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+		StockFinderSizeColorAdapter stockFinderSizeColorAdapter = new StockFinderSizeColorAdapter(colorSKUList, mContext, "color");
+		mRecyclerColorList.setAdapter(stockFinderSizeColorAdapter);
 	}
 
 	@Override
@@ -52,12 +58,6 @@ public class ColorFragmentDialog extends Fragment implements StockFinderSizeColo
 
 	@Override
 	public void onUpdate(final ArrayList<OtherSku> otherSkuList, final String viewType) {
-		ColorFragmentDialog.this.getActivity().runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				StockFinderSizeColorAdapter stockFinderSizeColorAdapter = new StockFinderSizeColorAdapter(otherSkuList, mContext, viewType);
-				mRecyclerColorList.setAdapter(stockFinderSizeColorAdapter);
-			}
-		});
+
 	}
 }

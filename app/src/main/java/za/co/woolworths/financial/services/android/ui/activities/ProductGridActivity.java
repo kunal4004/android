@@ -103,7 +103,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	private boolean productCanClose = false;
 	private SlidingUpPanelLayout.PanelState panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
 	private Menu mMenu;
-	private String mSkuId, mProductId, mProductName;
+	public String mSkuId, mProductId, mProductName;
 	private ErrorHandlerView mErrorHandlerView;
 	private WoolworthsApplication mWoolWorthsApplication;
 	private ProductGridActivity networkChangeListener;
@@ -905,7 +905,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	private boolean productHasOneColour() {
-		return getColorList().size() == 1 ? true : false;
+		return getColorList().size() == 1;
 	}
 
 	private boolean productHasSize() {
@@ -913,6 +913,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	public void colourIntent() {
+		mWGlobalState.setColourSKUArrayList(getColorList());
 		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
 		mIntent.putExtra("OTHERSKU", toJson(mOtherSKU));
@@ -924,6 +925,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	public void sizeIntent() {
+		mGlobalState.setColourSKUArrayList(getColorList());
 		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
 		mIntent.putExtra("OTHERSKU", toJson(mOtherSKU));
@@ -935,6 +937,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	public void sizeOnlyIntent(String colour) {
+		mGlobalState.setColourSKUArrayList(getColorList());
 		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
 		mIntent.putExtra("SELECTED_COLOUR", colour);
 		mIntent.putExtra("OTHERSKU", toJson(mOtherSKU));
@@ -946,6 +949,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	public void colourNoSizeIntent() {
+		mGlobalState.setColourSKUArrayList(getColorList());
 		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
 		mIntent.putExtra("OTHERSKU", toJson(mOtherSKU));
@@ -991,7 +995,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 			}
 		}
 	}
-
 
 	@Override
 	public void onClick(View v) {
@@ -1133,24 +1136,33 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 			@Override
 			public void onSuccess(Object object) {
 				if (object != null) {
-					Response response = ((LocationResponse) object).response;
 					List<StoreDetails> location = ((LocationResponse) object).Locations;
 					if (location != null && location.size() > 0) {
-
+						mWGlobalState.setStoreDetailsArrayList(location);
+						Intent intentInStoreFinder = new Intent(ProductGridActivity.this, WStockFinderActivity.class);
+						intentInStoreFinder.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
+						startActivity(intentInStoreFinder);
+						overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 					} else {
-						//stock error message
+						//no stock error message
+						Utils.displayValidationMessage(ProductGridActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");
 					}
-					//Log.e("callbackInStoreFinder", object.toString());
-					//toJson(location);
 				}
 				dismissFindInStoreProgress();
 			}
 
 			@Override
-			public void onFailure(String e) {
-				dismissFindInStoreProgress();
-				Log.e("callbackInStoreFinder", e);
-
+			public void onFailure(final String e) {
+				ProductGridActivity.this.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						dismissFindInStoreProgress();
+						Log.e("callbackInStoreFinder", "error " + e);
+						if (e.contains("Connect")) {
+							mErrorHandlerView.showToast();
+						}
+					}
+				});
 			}
 		});
 		locationItemTask.execute();
@@ -1220,7 +1232,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	public void stopLocationUpdate() {
-		Log.e("callbackInStoreFinder", " stop loc update");
 		// stop location updates
 		FusedLocationSingleton.getInstance().stopLocationUpdates();
 		// unregister observer
@@ -1233,7 +1244,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		public void onReceive(Context context, final Intent intent) {
 			try {
 				mLocation = intent.getParcelableExtra(FusedLocationSingleton.LBM_EVENT_LOCATION_UPDATE);
-				Log.e("callbackInStoreFinder", " " + mLocation.getLongitude() + " " + mLocation.getLatitude());
 				Utils.saveLastLocation(mLocation, ProductGridActivity.this);
 				stopLocationUpdate();
 				callbackInStoreFinder();

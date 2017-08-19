@@ -14,33 +14,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-import java.util.List;
-
-import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragmentAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.StoreFinderListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.StoreFinderMapFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.GoogleMapViewPager;
 import za.co.woolworths.financial.services.android.util.UpdateStoreFinderFragment;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WStockFinderActivity extends AppCompatActivity implements StoreFinderMapFragment.SlidePanelEvent, View.OnClickListener {
 
-	private LinearLayout layoutLocationServiceOff, layoutNoProductFound;
 	private AppBarLayout mAppBarLayout;
 	private int mActionBarSize;
-	private List<StoreDetails> storeDetailsList;
 	public GoogleMapViewPager mViewPager;
 	public StockFinderFragmentAdapter mPagerAdapter;
 	private Location mLocation;
-	private int currentPosition = 0;
+	private String mProductName;
 
 	public interface RecyclerItemSelected {
 		void onRecyclerItemClick(View v, int position, String filterType);
@@ -62,14 +55,11 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 		getSupportActionBar().setTitle(null);
 		getSupportActionBar().setHomeAsUpIndicator(R.drawable.back24);
 
-		String mProductName = "";
 		Bundle mBundle = getIntent().getExtras();
 		if (mBundle != null) {
 			mProductName = mBundle.getString("PRODUCT_NAME");
 		}
 
-		layoutLocationServiceOff = (LinearLayout) findViewById(R.id.layoutLocationServiceOff);
-		layoutNoProductFound = (LinearLayout) findViewById(R.id.layoutNoProductFound);
 		mViewPager = (GoogleMapViewPager) findViewById(R.id.viewpager);
 		WTextView toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
 		mAppBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
@@ -77,10 +67,9 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 		WButton buttonBackToProducts = (WButton) findViewById(R.id.buttonBackToProducts);
 		buttonBackToProducts.setOnClickListener(this);
 		btnOnLocationService.setOnClickListener(this);
-		RelativeLayout mRelativeLayout = (RelativeLayout) findViewById(R.id.no_connection_layout);
 		WButton btnRetry = (WButton) findViewById(R.id.btnRetry);
 		btnRetry.setOnClickListener(this);
-		toolbarTextView.setText(mProductName);
+		toolbarTextView.setText("DODODODOFOOGOGJDJSDJDFIJDF DKODFDKDFKODKO  KOFKO FDKOD KOFDOKF KOFKO FKOFDOKFD");
 		setupViewPager(mViewPager);
 		tabLayout = (TabLayout) findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(mViewPager);
@@ -106,6 +95,8 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 
 		TypedArray attrs = WStockFinderActivity.this.getTheme().obtainStyledAttributes(new int[]{android.R.attr.actionBarSize});
 		mActionBarSize = (int) attrs.getDimension(0, 0) * 2;
+
+		mViewPager.addOnPageChangeListener(pageChangeListener);
 	}
 
 	private void setupViewPager(GoogleMapViewPager viewPager) {
@@ -113,7 +104,6 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 		mPagerAdapter.addFrag(new StoreFinderMapFragment(), getString(R.string.stock_finder_map_view));
 		mPagerAdapter.addFrag(new StoreFinderListFragment(), getString(R.string.stock_finder_list_view));
 		viewPager.setAdapter(mPagerAdapter);
-		viewPager.addOnPageChangeListener(pageChangeListener);
 	}
 
 	private void setupTabIcons() {
@@ -209,8 +199,21 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 		setLayoutParams(mActionBarSize);
 	}
 
-	private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
+	@RequiresApi(api = Build.VERSION_CODES.M)
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.buttonBackToProducts:
+				finish();
+				overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+				break;
+			default:
+				break;
+		}
+	}
 
+
+	private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
 
 		@Override
 		public void onPageSelected(int newPosition) {
@@ -228,21 +231,7 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 	private void selectPage(int position) {
 		UpdateStoreFinderFragment fragmentToShow = (UpdateStoreFinderFragment) mPagerAdapter.getItem(position);
 		if (fragmentToShow != null) {
-			fragmentToShow.onFragmentUpdate(mLocation, storeDetailsList);
-		}
-		currentPosition = position;
-	}
-
-	@RequiresApi(api = Build.VERSION_CODES.M)
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-			case R.id.buttonBackToProducts:
-				finish();
-				overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
-				break;
-			default:
-				break;
+			fragmentToShow.onFragmentUpdate();
 		}
 	}
 
