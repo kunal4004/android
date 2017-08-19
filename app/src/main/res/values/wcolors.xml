@@ -15,17 +15,19 @@
 -->
 
 <resources>
-	<color name="black_30">#4c000000</color>
-	<color name="black_50">#7f000000</color>
-	<color name="grey_bg">#efefef</color>
-	<!--<color name="black">#000000</color>-->
-	<color name="pink">#ce0f69</color>
-	<color name="blue">#0085ad</color>
-	<color name="purple">#7a4183</color>
-	<color name="bg_color">#e5e95959</color>
-	<!--<color name="black_off">#343434</color>-->
-	<color name="greyish">#ababab</color>
-	<color name="green">#bad110</color>
-	<color name="header_red">#CF0808</color>
-	<!--<color name="white">#ececec</color>-->
+    <color name="black_30">#4c000000</color>
+    <color name="black_50">#7f000000</color>
+    <color name="grey_bg">#efefef</color>
+    <!--<color name="black">#000000</color>-->
+    <color name="pink">#ce0f69</color>
+    <color name="blue">#0085ad</color>
+    <color name="purple">#7a4183</color>
+    <color name="bg_color">#e5e95959</color>
+    <!--<color name="black_off">#343434</color>-->
+    <color name="greyish">#ababab</color>
+    <color name="green">#bad110</color>
+    <color name="header_red">#CF0808</color>
+    <!--<color name="white">#ececec</color>-->
+    <color name="outside_border">#0c000000</color>
+    <color name="overview_color">#222222</color>
 </resources>

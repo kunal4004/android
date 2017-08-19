@@ -137,7 +137,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 					currentBalance.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
 					WoolworthsApplication.setCreditCardType(p.accountNumberBin);
 					try {
-						dueDate.setText(WFormatter.formatDate(p.paymentDueDate));
+						dueDate.setText(WFormatter.newDateFormat(p.paymentDueDate));
 					} catch (ParseException e) {
 						dueDate.setText(p.paymentDueDate);
 						WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
@@ -202,7 +202,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				mProgressCreditLimit.setVisibility(View.VISIBLE);
 				iconIncreaseLimit.setVisibility(View.GONE);
 				tvIncreaseLimit.setVisibility(View.VISIBLE);
-				tvIncreaseLimit.setAlpha((float) 0.5);
+				disableIncreaseLimit();
 				super.onPreExecute();
 			}
 
