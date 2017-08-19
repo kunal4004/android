@@ -919,7 +919,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	public void colourIntent() {
-		mWGlobalState.setColourSKUArrayList(getColorList());
+		mGlobalState.setColourSKUArrayList(getColorList());
 		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
 		mIntent.putExtra("OTHERSKU", toJson(mOtherSKU));
@@ -968,7 +968,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
 	public void noSizeColorIntent() {
 		mScrollProductDetail.scrollTo(0, 0);
-		mWGlobalState.setSelectedSKUId(mSkuId);
+		mGlobalState.setSelectedSKUId(mSkuId);
 		inStoreFinderUpdate();
 	}
 
@@ -1147,7 +1147,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 				if (object != null) {
 					List<StoreDetails> location = ((LocationResponse) object).Locations;
 					if (location != null && location.size() > 0) {
-						mWGlobalState.setStoreDetailsArrayList(location);
+						mGlobalState.setStoreDetailsArrayList(location);
 						Intent intentInStoreFinder = new Intent(ProductGridActivity.this, WStockFinderActivity.class);
 						intentInStoreFinder.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
 						startActivity(intentInStoreFinder);

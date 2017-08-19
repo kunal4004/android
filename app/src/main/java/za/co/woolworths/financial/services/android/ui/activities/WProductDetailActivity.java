@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -58,7 +59,7 @@ import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecorat
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class WProductDetailActivity extends LocateProductActivity implements
+public class WProductDetailActivity extends AppCompatActivity implements
 		SelectedProductView,
 		ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener {
 
