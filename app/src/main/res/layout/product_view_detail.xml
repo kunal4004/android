@@ -8,6 +8,7 @@
                 android:descendantFocusability="blocksDescendants">
 
     <LinearLayout
+        android:id="@+id/llProductDetail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
@@ -376,7 +377,6 @@
             android:contentDescription="@string/app_name"
             android:src="@drawable/closecircle"/>
 
-
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -401,8 +401,8 @@
                 android:layout_weight=".5"
                 android:text="@string/shop_online_woolies"/>
 
-            <za.co.woolworths.financial.services.android.ui.views.WButton
-                android:id="@+id/btnStoreFinder"
+            <LinearLayout
+                android:id="@+id/llStoreFinder"
                 style="@style/blackButtonStyle"
                 android:layout_width="0dp"
                 android:layout_marginBottom="2dp"
@@ -410,7 +410,34 @@
                 android:layout_marginStart="1dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight=".5"
-                android:text="@string/stock_finder_btn_label"/>
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/tvBtnFinder"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@+id/mWoolworthsProgressBar"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:letterSpacing="0.15"
+                    android:text="@string/stock_finder_btn_label"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:visibility="visible"
+                    app:WTextView_font="medium_bold"/>
+
+                <ProgressBar
+                    android:id="@+id/mButtonProgress"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:visibility="gone"/>
+
+
+            </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>

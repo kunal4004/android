@@ -14,6 +14,7 @@
         android:paddingBottom="31dp"
         android:paddingTop="31dp"
         android:textAllCaps="true"
+        android:textColor="@color/black"
         android:textSize="13sp"
         app:WTextView_font="medium"/>
 

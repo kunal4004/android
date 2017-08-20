@@ -17,7 +17,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragmentAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.ColorFragmentDialog;
 import za.co.woolworths.financial.services.android.ui.fragments.SizeFragmentDialog;
@@ -38,6 +40,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private ArrayList<OtherSku> mOtherSizeSKU;
 	private boolean mProductHasColor, mProductHasSize, viewWasClicked;
 	private StockFinderFragmentAdapter mPagerAdapter;
+	private WGlobalState mGlobalState;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +49,10 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 		setContentView(R.layout.activity_confirm_color_size);
-
+		mGlobalState = ((WoolworthsApplication) ConfirmColorSizeActivity.this.getApplication()).getWGlobalState();
 		Bundle mBundle = getIntent().getExtras();
 		if (mBundle != null) {
+			mSelectedColour = mBundle.getString("SELECTED_COLOUR");
 			mColorList = mBundle.getString("COLOR_LIST");
 			mOtherSKU = mBundle.getString("OTHERSKU");
 			mProductName = mBundle.getString("PRODUCT_NAME");
@@ -60,12 +64,11 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		addListener();
 		hideBackIcon();
 		setAnimation();
-
 		if (mProductHasColor) {
 			selectCurrentPage(0);
 		} else {
 			selectCurrentPage(1);
-			mImBackIcon.setVisibility(View.GONE);
+			hideBackIcon();
 		}
 	}
 
@@ -138,7 +141,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		}
 	}
 
-	private void dismissSizeColorActivity(final String sku) {
+	private void dismissSizeColorActivity() {
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
@@ -156,7 +159,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					openStockFinder(sku);
+					callInStoreFinder();
 					dismissLayout();
 				}
 			});
@@ -170,7 +173,8 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	}
 
 	private void showBackIcon() {
-		mImBackIcon.setVisibility(View.VISIBLE);
+		if (mProductHasColor)
+			mImBackIcon.setVisibility(View.VISIBLE);
 	}
 
 	private void hideBackIcon() {
@@ -182,25 +186,44 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		if (filterType.equalsIgnoreCase(getString(R.string.color))) {
 			if (mProductHasSize) {
 				mSelectedColour = getOtherSKUList(mColorList).get(position).colour;
-				mViewPager.setCurrentItem(1);
+				ArrayList<OtherSku> otherSkuList = commonSizeList(mSelectedColour);
+				if (otherSkuList.size() > 0) {
+					if (otherSkuList.size() == 1) {
+						String selectedSKU = otherSkuList.get(0).sku;
+						mGlobalState.setSelectedSKUId(selectedSKU);
+						dismissSizeColorActivity();
+					} else {
+						String selectedSKU = getOtherSKUList(mColorList).get(position).sku;
+						mGlobalState.setSelectedSKUId(selectedSKU);
+						mViewPager.setCurrentItem(1);
+					}
+				} else {
+					String selectedSKU = getOtherSKUList(mColorList).get(position).sku;
+					mGlobalState.setSelectedSKUId(selectedSKU);
+					dismissSizeColorActivity();
+				}
 			} else {
 				String selectedSKU = getOtherSKUList(mColorList).get(position).sku;
-				dismissSizeColorActivity(selectedSKU);
+				mGlobalState.setSelectedSKUId(selectedSKU);
+				dismissSizeColorActivity();
 			}
 		} else {
 			String selectedSKU = mOtherSizeSKU.get(position).sku;
-			dismissSizeColorActivity(selectedSKU);
+			mGlobalState.setSelectedSKUId(selectedSKU);
+			inStoreFinderUpdate();
 		}
 	}
 
-	private void openStockFinder(String sku) {
-		Intent mIntent = new Intent(this, WStockFinderActivity.class);
-		mIntent.putExtra("PRODUCT_NAME", mProductName);
-		mIntent.putExtra("SELECTED_SKU", sku);
-		startActivity(mIntent);
-		overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+	private void inStoreFinderUpdate() {
+		callInStoreFinder();
+		closeViewAnimation();
 	}
 
+	private void callInStoreFinder() {
+		Intent intent = new Intent();
+		intent.setAction(ProductGridActivity.MyBroadcastReceiver.ACTION);
+		sendBroadcast(intent);
+	}
 
 	private boolean sizeValueExist(ArrayList<OtherSku> list, String name) {
 		for (OtherSku item : list) {
@@ -217,15 +240,14 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 				}.getType());
 	}
 
-	private ArrayList<OtherSku> commonSizeList() {
+	private ArrayList<OtherSku> commonSizeList(String colour) {
 		ArrayList<OtherSku> otherSkus = getOtherSKUList(mOtherSKU);
 		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
-
 		if (mProductHasColor) { //product has color
 			// filter by colour
 			ArrayList<OtherSku> sizeList = new ArrayList<>();
 			for (OtherSku sku : otherSkus) {
-				if (sku.colour.equalsIgnoreCase(mSelectedColour)) {
+				if (sku.colour.equalsIgnoreCase(colour)) {
 					sizeList.add(sku);
 				}
 			}
@@ -275,13 +297,12 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 				if (fragmentToShow != null) {
 					fragmentToShow.onUpdate(mOtherSKUList, getString(R.string.color));
 				}
-
 				break;
 
 			case 1:
 				showBackIcon();
 				tvTitle.setText(getString(R.string.confirm_size_desc));
-				mOtherSizeSKU = commonSizeList();
+				mOtherSizeSKU = commonSizeList(mSelectedColour);
 				if (fragmentToShow != null) {
 					fragmentToShow.onUpdate(mOtherSizeSKU, getString(R.string.size));
 				}
@@ -294,7 +315,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		mViewPager.post(new Runnable() {
 			@Override
 			public void run() {
-				pageChangeListener.onPageSelected(position);
+				mViewPager.setCurrentItem(position);
 			}
 		});
 	}

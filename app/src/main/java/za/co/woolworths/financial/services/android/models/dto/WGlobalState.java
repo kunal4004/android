@@ -3,6 +3,9 @@ package za.co.woolworths.financial.services.android.models.dto;
 import android.content.Context;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -24,7 +27,9 @@ public class WGlobalState {
 
 	private boolean cardGestureIsEnabled, onBackPressed, accountHasExpired, rewardHasExpired,
 			FragmentIsReward, defaultPopupState;
-	private String pressState, newSTSParams, storeLocatorJson;
+	private String pressState, newSTSParams, storeLocatorJson, selectedSKUId;
+	private List<StoreDetails> storeDetailsArrayList;
+	private ArrayList<OtherSku> colourSKUArrayList;
 
 	public void setAccountSignInState(boolean accountSignInState) {
 		setPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE, accountSignInState);
@@ -165,5 +170,29 @@ public class WGlobalState {
 
 	public void setEndRadius(int endRadius) {
 		this.endRadius = endRadius;
+	}
+
+	public String getSelectedSKUId() {
+		return selectedSKUId;
+	}
+
+	public void setSelectedSKUId(String selectedSKUId) {
+		this.selectedSKUId = selectedSKUId;
+	}
+
+	public List<StoreDetails> getStoreDetailsArrayList() {
+		return storeDetailsArrayList;
+	}
+
+	public void setStoreDetailsArrayList(List<StoreDetails> storeDetailsArrayList) {
+		this.storeDetailsArrayList = storeDetailsArrayList;
+	}
+
+	public ArrayList<OtherSku> getColourSKUArrayList() {
+		return colourSKUArrayList;
+	}
+
+	public void setColourSKUArrayList(ArrayList<OtherSku> colourSKUArrayList) {
+		this.colourSKUArrayList = colourSKUArrayList;
 	}
 }

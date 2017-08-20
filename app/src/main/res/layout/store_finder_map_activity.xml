@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:sothree="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
         android:id="@+id/sliding_layout"
@@ -22,6 +22,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <RelativeLayout
                 android:id="@+id/layoutLocationServiceOn"
                 android:layout_width="match_parent"
@@ -87,7 +88,6 @@
                         android:paddingBottom="2dp"
                         />
 
-                    <include layout="@layout/progress_bar_view"/>
                 </FrameLayout>
             </RelativeLayout>
 

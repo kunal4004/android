@@ -1,19 +1,26 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,30 +48,36 @@ import java.util.List;
 
 import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
-import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
+import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
+import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductGridActivity extends WProductDetailActivity implements SelectedProductView,
-		View.OnClickListener, NetworkChangeListener {
+		View.OnClickListener, NetworkChangeListener, PermissionResultCallback {
 	private Toolbar mToolbar;
 	private WTextView mToolBarTitle;
 	private String productId;
@@ -90,7 +103,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	private boolean productCanClose = false;
 	private SlidingUpPanelLayout.PanelState panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
 	private Menu mMenu;
-	private String mSkuId, mProductId, mProductName;
+	public String mSkuId, mProductId, mProductName;
 	private ErrorHandlerView mErrorHandlerView;
 	private WoolworthsApplication mWoolWorthsApplication;
 	private ProductGridActivity networkChangeListener;
@@ -100,7 +113,17 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	private Button mBtnShopOnlineWoolies;
 	private List<OtherSku> mOtherSKU;
 	private WGlobalState mGlobalState;
-	private WButton mBtnStoreFinder;
+	private LinearLayout llStoreFinder;
+	ArrayList<String> permissions;
+	private PermissionUtils permissionUtils;
+	private ProgressBar mButtonProgress;
+	private WTextView tvBtnFinder;
+	private LinearLayout llProductDetail;
+	private Location mLocation;
+	private String TAG = this.getClass().getSimpleName();
+	private LocationItemTask locationItemTask;
+	private MyBroadcastReceiver updateStoreFinderReceiver;
+	protected static final int REQUEST_CHECK_SETTINGS = 99;
 
 	private enum RUN_BACKGROUND_TASK {
 		SEARCH_PRODUCT, SEARCH_MORE_PRODUCT, LOAD_PRODUCT, LOAD_MORE_PRODUCT
@@ -116,6 +139,10 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		setContentView(R.layout.product_layout);
 		Utils.updateStatusBarBackground(ProductGridActivity.this);
 
+		permissionUtils = new PermissionUtils(this, this);
+		permissions = new ArrayList<>();
+		permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+
 		try {
 			networkChangeListener = ProductGridActivity.this;
 		} catch (ClassCastException ignored) {
@@ -123,10 +150,11 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		connectionBroadcast = Utils.connectionBroadCast(ProductGridActivity.this, networkChangeListener);
 		mWoolWorthsApplication = ((WoolworthsApplication) ProductGridActivity.this.getApplication());
 		mGlobalState = mWoolWorthsApplication.getWGlobalState();
+		updateStoreFinderReceiver = new MyBroadcastReceiver();
+		this.registerReceiver(updateStoreFinderReceiver, new IntentFilter(MyBroadcastReceiver.ACTION));
+
 		initUI();
 		initProductDetailUI();
-
-
 		actionBar();
 		bundle();
 		slideUpPanelListener();
@@ -185,6 +213,8 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 					case COLLAPSED:
 						panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
 						dismissPopWindow();
+						dismissFindInStoreProgress();
+						cancelInStoreTask();
 						selectProductDetail = false;
 						if (productCanClose) { //close ProductView activity when maximum row 1
 							closeGridView();
@@ -209,6 +239,15 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 				}
 			}
 		});
+	}
+
+	private void cancelInStoreTask() {
+		if (locationItemTask != null) {
+			if (!locationItemTask.isCancelled()) {
+				locationItemTask.cancel(true);
+			}
+		}
+		dismissFindInStoreProgress();
 	}
 
 	private void productConfig(String productName) {
@@ -260,17 +299,20 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		mToolBarTitle = (WTextView) findViewById(R.id.toolbarText);
 		mNumberOfItem = (WTextView) findViewById(R.id.numberOfItem);
+		tvBtnFinder = (WTextView) findViewById(R.id.tvBtnFinder);
 		mProductList = (RecyclerView) findViewById(R.id.productList);
 		mProgressBar = (ProgressBar) findViewById(R.id.mProgressBar);
 		mProgressVBar = (ProgressBar) findViewById(R.id.mProgressB);
+		mButtonProgress = (ProgressBar) findViewById(R.id.mButtonProgress);
 		mRelProgressBar = (RelativeLayout) findViewById(R.id.relProgressBar);
 		mSlideUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
 		mLinProductList = (LinearLayout) findViewById(R.id.linProductList);
+		llProductDetail = (LinearLayout) findViewById(R.id.llProductDetail);
 		mRelViewProgressBar = (RelativeLayout) findViewById(R.id.relViewProgressBar);
 		mProductScroll = (NestedScrollView) findViewById(R.id.scrollProduct);
 		mBtnShopOnlineWoolies = (Button) findViewById(R.id.btnShopOnlineWoolies);
-		mBtnStoreFinder = (WButton) findViewById(R.id.btnStoreFinder);
-		mBtnStoreFinder.setOnClickListener(this);
+		llStoreFinder = (LinearLayout) findViewById(R.id.llStoreFinder);
+		llStoreFinder.setOnClickListener(this);
 
 		mProductScroll.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
 			@Override
@@ -385,6 +427,20 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 				PorterDuff.Mode.MULTIPLY);
 	}
 
+	private void showFindInStoreProgress() {
+		llStoreFinder.setEnabled(false);
+		tvBtnFinder.setVisibility(View.GONE);
+		mButtonProgress.getIndeterminateDrawable().setColorFilter(Color.WHITE,
+				PorterDuff.Mode.MULTIPLY);
+		mButtonProgress.setVisibility(View.VISIBLE);
+	}
+
+	private void dismissFindInStoreProgress() {
+		llStoreFinder.setEnabled(true);
+		tvBtnFinder.setVisibility(View.VISIBLE);
+		mButtonProgress.setVisibility(View.GONE);
+	}
+
 	public void hideProgressBar() {
 		mRelProgressBar.setVisibility(View.GONE);
 	}
@@ -414,7 +470,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 				pageNumber = 0;
 				mIsLastPage = false;
 				return mWoolWorthsApplication.getApi().productViewRequest(false, pageNumber, Utils.PAGE_SIZE, productId);
-
 			}
 
 			@Override
@@ -626,6 +681,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		super.onDestroy();
 		menuItemVisible(mMenu, true);
 		unregisterReceiver(broadcast_reciever);
+		this.unregisterReceiver(updateStoreFinderReceiver);
 	}
 
 	private void finishActivity() {
@@ -848,11 +904,20 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		return getColorList().size() > 0 ? true : false;
 	}
 
+	private boolean productHasOneColour() {
+		return getColorList().size() == 1;
+	}
+
+	private boolean productHasOneSize() {
+		return getSizeList().size() == 1;
+	}
+
 	private boolean productHasSize() {
 		return getSizeList().size() > 0 ? true : false;
 	}
 
 	public void colourIntent() {
+		mGlobalState.setColourSKUArrayList(getColorList());
 		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
 		mIntent.putExtra("OTHERSKU", toJson(mOtherSKU));
@@ -864,6 +929,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	public void sizeIntent() {
+		mGlobalState.setColourSKUArrayList(getColorList());
 		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
 		mIntent.putExtra("OTHERSKU", toJson(mOtherSKU));
@@ -874,7 +940,20 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		overridePendingTransition(0, 0);
 	}
 
+	public void sizeOnlyIntent(String colour) {
+		mGlobalState.setColourSKUArrayList(getColorList());
+		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
+		mIntent.putExtra("SELECTED_COLOUR", colour);
+		mIntent.putExtra("OTHERSKU", toJson(mOtherSKU));
+		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
+		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
+		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
+		startActivity(mIntent);
+		overridePendingTransition(0, 0);
+	}
+
 	public void colourNoSizeIntent() {
+		mGlobalState.setColourSKUArrayList(getColorList());
 		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
 		mIntent.putExtra("OTHERSKU", toJson(mOtherSKU));
@@ -886,16 +965,14 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	public void noSizeColorIntent() {
-		Intent mIntent = new Intent(this, WStockFinderActivity.class);
-		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-		mIntent.putExtra("SELECTED_SKU", mSkuId);
-		startActivity(mIntent);
-		overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+		mScrollProductDetail.scrollTo(0, 0);
+		mGlobalState.setSelectedSKUId(mSkuId);
+		inStoreFinderUpdate();
 	}
 
 	private void disableStoreFinder() {
 		setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
-		mBtnStoreFinder.setVisibility(View.GONE);
+		llStoreFinder.setVisibility(View.GONE);
 	}
 
 	private void clothingIsEnabled(WProductDetail productList) {
@@ -903,24 +980,23 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		if (productType.equalsIgnoreCase("clothingProducts")) {
 			if (mGlobalState.clothingIsEnabled()) {
 				setLayoutWeight(mBtnShopOnlineWoolies, 0.5f);
-				setLayoutWeight(mBtnStoreFinder, 0.5f);
-				mBtnStoreFinder.setVisibility(View.VISIBLE);
+				setLayoutWeight(llStoreFinder, 0.5f);
+				llStoreFinder.setVisibility(View.VISIBLE);
 			} else {
 				setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
-				mBtnStoreFinder.setVisibility(View.GONE);
+				llStoreFinder.setVisibility(View.GONE);
 			}
 		} else {
 			if (mGlobalState.isFoodProducts()) {
 				setLayoutWeight(mBtnShopOnlineWoolies, 0.5f);
-				setLayoutWeight(mBtnStoreFinder, 0.5f);
-				mBtnStoreFinder.setVisibility(View.VISIBLE);
+				setLayoutWeight(llStoreFinder, 0.5f);
+				llStoreFinder.setVisibility(View.VISIBLE);
 			} else {
 				setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
-				mBtnStoreFinder.setVisibility(View.GONE);
+				llStoreFinder.setVisibility(View.GONE);
 			}
 		}
 	}
-
 
 	@Override
 	public void onClick(View v) {
@@ -989,19 +1065,12 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 				onBackPressed();
 				break;
 
-			case R.id.btnStoreFinder:
-				boolean productHasColour = productHasColour();
-				boolean productHasSize = productHasSize();
-
+			case R.id.llStoreFinder:
 				mScrollProductDetail.scrollTo(0, 0);
-				if (productHasColour && productHasSize) {
-					colourIntent();
-				} else if (!productHasColour && productHasSize) {
-					sizeIntent();
-				} else if (productHasColour && !productHasSize) {
-					colourNoSizeIntent();
+				if (Utils.isLocationEnabled(ProductGridActivity.this)) {
+					permissionUtils.check_permission(permissions, "Explain here why the app needs permissions", 1);
 				} else {
-					noSizeColorIntent();
+					Utils.displayValidationMessage(ProductGridActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.LOCATION_OFF, "");
 				}
 				break;
 		}
@@ -1011,5 +1080,192 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		Animation myFadeInAnimation = AnimationUtils.loadAnimation(ProductGridActivity.this, R.anim.fade_in_anim);
 		v.startAnimation(myFadeInAnimation); //Set animation to your ImageView
 	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		// redirects to utils
+		permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
+	}
+
+	// Callback functions
+	@Override
+	public void PermissionGranted(int request_code) {
+		Log.i("PERMISSION", "GRANTED");
+		if (Utils.isLocationEnabled(ProductGridActivity.this)) {
+			boolean productHasColour = productHasColour();
+			boolean productHasSize = productHasSize();
+			boolean productHasOneColour = productHasOneColour();
+			boolean productHasOneSize = productHasOneSize();
+			mScrollProductDetail.scrollTo(0, 0);
+			if (productHasColour) {
+				if (productHasOneColour) {
+					// one colour only
+					String skuColour = getColorList().get(0).colour;
+					ArrayList<OtherSku> getSize;
+					if (!TextUtils.isEmpty(skuColour)) {
+						getSize = commonSizeList(skuColour);
+					} else {
+						getSize = getSizeList();
+					}
+					if (getSize.size() > 0) {
+						if (getSize.size() == 1) {
+							mSkuId = getSize.get(0).sku;
+							noSizeColorIntent();
+						} else {
+							sizeOnlyIntent(skuColour);
+						}
+					} else {
+						mSkuId = mProduct.get(0).sku;
+						noSizeColorIntent();
+					}
+				} else {
+					// contain several colours
+					colourIntent();
+				}
+			} else {
+				if (productHasSize) {
+					if (productHasOneSize) { //one size
+						ArrayList<OtherSku> getSize = getSizeList();
+						mSkuId = getSize.get(0).sku;
+						noSizeColorIntent();
+					} else { // more sizes
+						sizeIntent();
+					}
+				} else {
+					mSkuId = mProduct.get(0).sku;
+					noSizeColorIntent();
+				}
+			}
+		}
+	}
+
+	private void callbackInStoreFinder() {
+		locationItemTask = new LocationItemTask(ProductGridActivity.this, new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				if (object != null) {
+					List<StoreDetails> location = ((LocationResponse) object).Locations;
+					if (location != null && location.size() > 0) {
+						mGlobalState.setStoreDetailsArrayList(location);
+						Intent intentInStoreFinder = new Intent(ProductGridActivity.this, WStockFinderActivity.class);
+						intentInStoreFinder.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
+						startActivity(intentInStoreFinder);
+						overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+					} else {
+						//no stock error message
+						Utils.displayValidationMessage(ProductGridActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");
+					}
+				}
+				dismissFindInStoreProgress();
+			}
+
+			@Override
+			public void onFailure(final String e) {
+				ProductGridActivity.this.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						dismissFindInStoreProgress();
+						Log.e("callbackInStoreFinder", "error " + e);
+						if (e.contains("Connect")) {
+							//mErrorHandlerView.showToast();
+						}
+					}
+				});
+			}
+		});
+		locationItemTask.execute();
+	}
+
+	private ArrayList<OtherSku> commonSizeList(String colour) {
+		List<OtherSku> otherSkus = mOtherSKU;
+		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+
+		if (productHasColour()) { //product has color
+			// filter by colour
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : otherSkus) {
+				if (sku.colour.equalsIgnoreCase(colour)) {
+					sizeList.add(sku);
+				}
+			}
+
+			//remove duplicates
+			for (OtherSku os : sizeList) {
+				if (!sizeValueExist(commonSizeList, os.size)) {
+					commonSizeList.add(os);
+				}
+			}
+		} else { // no color found
+			//remove duplicates
+			for (OtherSku os : otherSkus) {
+				if (!sizeValueExist(commonSizeList, os.size)) {
+					commonSizeList.add(os);
+				}
+			}
+		}
+		return commonSizeList;
+	}
+
+
+	@Override
+	public void PartialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
+		Log.i("PERMISSION PARTIALLY", "GRANTED");
+	}
+
+	@Override
+	public void PermissionDenied(int request_code) {
+		Log.i("PERMISSION", "DENIED");
+	}
+
+	@Override
+	public void NeverAskAgain(int request_code) {
+		Log.i("PERMISSION", "NEVER ASK AGAIN");
+	}
+
+	public void startLocationUpdates() {
+		showFindInStoreProgress();
+		FusedLocationSingleton.getInstance().startLocationUpdates();
+		// register observer for location updates
+		LocalBroadcastManager.getInstance(ProductGridActivity.this).registerReceiver(mLocationUpdated,
+				new IntentFilter(FusedLocationSingleton.INTENT_FILTER_LOCATION_UPDATE));
+	}
+
+	public void stopLocationUpdate() {
+		// stop location updates
+		FusedLocationSingleton.getInstance().stopLocationUpdates();
+		// unregister observer
+		LocalBroadcastManager.getInstance(ProductGridActivity.this).unregisterReceiver(mLocationUpdated);
+	}
+
+	private BroadcastReceiver mLocationUpdated = new BroadcastReceiver() {
+		@RequiresApi(api = Build.VERSION_CODES.M)
+		@Override
+		public void onReceive(Context context, final Intent intent) {
+			try {
+				mLocation = intent.getParcelableExtra(FusedLocationSingleton.LBM_EVENT_LOCATION_UPDATE);
+				Utils.saveLastLocation(mLocation, ProductGridActivity.this);
+				stopLocationUpdate();
+				callbackInStoreFinder();
+			} catch (Exception e) {
+				Log.e(TAG, e.toString());
+			}
+		}
+	};
+
+	private void inStoreFinderUpdate() {
+		Intent intent = new Intent();
+		intent.setAction(ProductGridActivity.MyBroadcastReceiver.ACTION);
+		sendBroadcast(intent);
+	}
+
+	public class MyBroadcastReceiver extends BroadcastReceiver {
+		public static final String ACTION = "com.inStoreFinder.UPDATE";
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			startLocationUpdates();
+		}
+	}
 }
+
 

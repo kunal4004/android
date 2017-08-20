@@ -873,11 +873,15 @@
         <item name="WTextView_font">medium_bold</item>
     </style>
 
+    <style name="circle_progressbar_white_style">
+        <item name="android:layout_width">35dp</item>
+        <item name="android:layout_height">35dp</item>
+    </style>
+
     <style name="horizontal_divider_bold_style" parent="android:Theme">
         <item name="android:layout_height">0.6dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:background">@color/outside_border</item>
     </style>
-
 
 </resources>

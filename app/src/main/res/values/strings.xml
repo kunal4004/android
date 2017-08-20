@@ -677,13 +677,15 @@
     <string name="confirm_size_desc">Please confirm your size</string>
     <string name="available">available</string>
     <string name="sf_instore_availability_title">In-Store Availability</string>
-    <string name="sf_instore_availability_desc">These stores are most likely to have your item based on last night’s stock record.</string>
+    <string name="sf_instore_availability_desc">These stores are most likely to have your item based on last night\'s stock record</string>
 
     <string name="color">color</string>
     <string name="size">size</string>
     <string name="not_found">Unfortunately not found</string>
     <string name="stock_available_product">We have no stock available of this product at the moment.</string>
     <string name="back_to_product">back to products</string>
-
+    <string name="no_stock_title">no stock</string>
+    <string name="location_disable_title">Location Services</string>
+    <string name="location_disable_desc">This feature cannot be used without Location Services.</string>
 
 </resources>

@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
-import android.graphics.Color;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,8 +17,6 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 public class StockFinderSizeColorAdapter extends RecyclerView.Adapter<StockFinderSizeColorAdapter.SimpleViewHolder> {
 
 	private String mFilterType;
-	private int row_index = -1;
-	int weight = 1; //number of parts in the recycler view.
 
 	public interface RecyclerViewClickListener {
 		void recyclerViewListClicked(View v, int position);
@@ -36,11 +32,11 @@ public class StockFinderSizeColorAdapter extends RecyclerView.Adapter<StockFinde
 
 	}
 
-	class SimpleViewHolder extends RecyclerView.ViewHolder {
+	 static class SimpleViewHolder extends RecyclerView.ViewHolder {
 
-		WTextView productName;
+		 WTextView productName;
 
-		SimpleViewHolder(View view) {
+		 SimpleViewHolder(View view) {
 			super(view);
 			productName = (WTextView) view.findViewById(R.id.name);
 		}
@@ -48,13 +44,6 @@ public class StockFinderSizeColorAdapter extends RecyclerView.Adapter<StockFinde
 
 	@Override
 	public void onBindViewHolder(final SimpleViewHolder holder, final int position) {
-		if (row_index == position) {
-			holder.itemView.setBackground(ContextCompat.getDrawable(holder.productName.getContext(),
-					R.drawable.pressed_bg));
-		} else {
-			holder.itemView.setBackgroundColor(Color.WHITE);
-		}
-
 		String item;
 		if (mFilterType.equalsIgnoreCase("color")) {
 			item = mOtherSKu.get(position).colour;
@@ -62,18 +51,18 @@ public class StockFinderSizeColorAdapter extends RecyclerView.Adapter<StockFinde
 			item = mOtherSKu.get(position).size;
 		}
 
-		if (TextUtils.isEmpty(item))
+		if (TextUtils.isEmpty(item)) {
 			item = "";
+		} else {
+			item = item.trim();
+		}
 
 		//skipping the filling of the view
 		holder.productName.setText(item);
-		holder.itemView.setOnClickListener(new View.OnClickListener()
-
-		{
+		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				int position = holder.getAdapterPosition();
-				setIndex(position);
 				mRecyclerViewClickListener.recyclerViewListClicked(v, position);
 			}
 		});
@@ -81,17 +70,12 @@ public class StockFinderSizeColorAdapter extends RecyclerView.Adapter<StockFinde
 
 	@Override
 	public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.color_item, parent, false);
-		return new SimpleViewHolder(rowView);
+		View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.color_item, parent, false);
+		return new SimpleViewHolder(v);
 	}
 
 	@Override
 	public int getItemCount() {
 		return mOtherSKu.size();
-	}
-
-	public void setIndex(int index) {
-		row_index = index;
-		notifyDataSetChanged();
 	}
 }

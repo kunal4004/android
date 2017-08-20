@@ -1,27 +1,23 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderListAdapter;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
@@ -31,8 +27,8 @@ public class StoreFinderListFragment extends Fragment implements UpdateStoreFind
 
 	private RecyclerView mFinderInStoreList;
 	private List<StoreDetails> mStoreDetailList;
-	private ProgressBar pStoreProgressBar;
-	private RelativeLayout rlProgressBar;
+	private WGlobalState wGlobalState;
+	private boolean listReceiveUpdate = false;
 
 	@Nullable
 	@Override
@@ -45,22 +41,17 @@ public class StoreFinderListFragment extends Fragment implements UpdateStoreFind
 		super.onViewCreated(view, savedInstanceState);
 		init(view);
 		onItemSelected();
-		showProgressBar();
+		wGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
 	}
 
 	private void init(View view) {
 		mFinderInStoreList = (RecyclerView) view.findViewById(R.id.storeList);
-		mFinderInStoreList.setLayoutManager(new LinearLayoutManager(getActivity()));
-		pStoreProgressBar = (ProgressBar) view.findViewById(R.id.storesProgressBar);
-		rlProgressBar = (RelativeLayout) view.findViewById(R.id.rlProgressBar);
-		pStoreProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+		mFinderInStoreList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+
 	}
 
 	private void getData(List<StoreDetails> mStoreDetailList) {
-		this.mStoreDetailList = mStoreDetailList;
-		if (mStoreDetailList != null && mStoreDetailList.size() != 0) {
-			bindDataWithUI(mStoreDetailList);
-		}
+		bindDataWithUI(mStoreDetailList);
 	}
 
 	private void bindDataWithUI(List<StoreDetails> storeDetailsList) {
@@ -91,31 +82,18 @@ public class StoreFinderListFragment extends Fragment implements UpdateStoreFind
 	}
 
 	@Override
-	public void onFragmentUpdate(Location location, final List<StoreDetails> storeDetails) {
-		try {
-			StoreFinderListFragment.this.getActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					hideProgressBar();
-					if (storeDetails.size() > 0) {
-						getData(storeDetails);
+	public void onFragmentUpdate() {
+		StoreFinderListFragment.this.getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (!listReceiveUpdate) {
+					mStoreDetailList = wGlobalState.getStoreDetailsArrayList();
+					if (mStoreDetailList.size() > 0) {
+						getData(mStoreDetailList);
 					}
+					listReceiveUpdate = true;
 				}
-			});
-		} catch (NullPointerException ex) {
-			Log.e("StoreFinderList", ex.toString());
-		}
-	}
-
-	private void showProgressBar() {
-		rlProgressBar.setVisibility(View.VISIBLE);
-		mFinderInStoreList.setVisibility(View.GONE);
-		pStoreProgressBar.setVisibility(View.VISIBLE);
-	}
-
-	private void hideProgressBar() {
-		rlProgressBar.setVisibility(View.GONE);
-		pStoreProgressBar.setVisibility(View.GONE);
-		mFinderInStoreList.setVisibility(View.VISIBLE);
+			}
+		});
 	}
 }
