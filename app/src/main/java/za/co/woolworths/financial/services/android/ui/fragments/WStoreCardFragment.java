@@ -303,11 +303,13 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		WStoreCardFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (new ConnectionDetector().isOnline(getActivity())) {
-					getActiveOffer();
-				} else {
-					mErrorHandlerView.showToast();
-					disableIncreaseLimit();
+				if (!storeWasAlreadyRunOnce) {
+					if (new ConnectionDetector().isOnline(getActivity()))
+						getActiveOffer();
+					else {
+						mErrorHandlerView.showToast();
+						disableIncreaseLimit();
+					}
 				}
 			}
 		});
@@ -338,8 +340,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		if (!storeWasAlreadyRunOnce) {
 			if (new ConnectionDetector().isOnline(getActivity()))
 				getActiveOffer();
-
-
 		}
 	}
 

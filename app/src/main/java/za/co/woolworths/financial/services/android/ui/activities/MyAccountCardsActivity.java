@@ -96,10 +96,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
 		cardsHasAccount = getIntent().hasExtra("accounts");
 		if (cardsHasAccount) {
-			String accounts =getIntent().getExtras().getString("accounts");
-			Log.e("cardHasAccount",accounts);
-			accountsResponse = new Gson().fromJson(accounts, AccountsResponse.class);
-
+			accountsResponse = new Gson().fromJson(getIntent().getExtras().getString("accounts"), AccountsResponse.class);
 			handleAccountsResponse(accountsResponse);
 		} else {
 			fragmentsAdapter = new CardsFragmentPagerAdapter(getSupportFragmentManager()) {
@@ -116,6 +113,8 @@ public class MyAccountCardsActivity extends AppCompatActivity
 			fragmentsAdapter.addFrag(new WPersonalLoanEmptyFragment());
 			fragmentPager.setAdapter(fragmentsAdapter);
 			fragmentPager.setCurrentItem(getIntent().getIntExtra("position", 0));
+			fragmentPager.setOffscreenPageLimit(2);
+
 			cards.add(R.drawable.w_store_card);
 			cards.add(R.drawable.creditcardbenfits);
 			cards.add(R.drawable.w_personal_loan_card);

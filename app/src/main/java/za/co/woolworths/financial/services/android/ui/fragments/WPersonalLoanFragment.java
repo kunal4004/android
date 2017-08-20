@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,7 +58,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private HttpAsyncTask<String, String, OfferActive> asyncRequestPersonalLoan;
 	private boolean personalWasAlreadyRunOnce = false;
 
-	private AccountsResponse temp = null;
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
@@ -108,11 +106,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
 		boolBroadcastRegistered = true;
 		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-		temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
-		disableIncreaseLimit();
+		AccountsResponse temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+		if (!personalWasAlreadyRunOnce)
+			disableIncreaseLimit();
 		hideProgressBar();
 		setTextSize();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
+		if (temp != null)
+			bindData(temp);
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -235,7 +236,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 					String httpDesc = offerActive.response.desc;
 					if (httpCode == 200) {
 						personalWasAlreadyRunOnce = true;
-						Log.e("cardValue", "personalLoan " + offerActive.offerActive);
 						isOfferActive = offerActive.offerActive;
 						if (isOfferActive) {
 							disableIncreaseLimit();
@@ -301,8 +301,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mSharePreferenceHelper.removeValue("lw_product_offering_id");
 		mSharePreferenceHelper.removeValue("lw_amount_drawn_cent");
 
-		if (temp != null)
-			bindData(temp);
 		setTextSize();
 	}
 
@@ -318,11 +316,13 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		WPersonalLoanFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (new ConnectionDetector().isOnline(getActivity())) {
-					getActiveOffer();
-				} else {
-					mErrorHandlerView.showToast();
-					disableIncreaseLimit();
+				if (!personalWasAlreadyRunOnce) {
+					if (new ConnectionDetector().isOnline(getActivity()))
+						getActiveOffer();
+					else {
+						mErrorHandlerView.showToast();
+						disableIncreaseLimit();
+					}
 				}
 			}
 		});

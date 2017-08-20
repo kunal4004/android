@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,6 +64,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		setRetainInstance(true);
 		return inflater.inflate(R.layout.card_common_fragment, container, false);
 	}
 
@@ -75,6 +75,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		init(view);
 		addListener();
 		setAccountDetail();
+
 	}
 
 	private void init(View view) {
@@ -302,11 +303,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		WCreditCardFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (new ConnectionDetector().isOnline(getActivity()))
-					getActiveOffer();
-				else {
-					mErrorHandlerView.showToast();
-					disableIncreaseLimit();
+				if (!creditWasAlreadyRunOnce) {
+					if (new ConnectionDetector().isOnline(getActivity()))
+						getActiveOffer();
+					else {
+						mErrorHandlerView.showToast();
+						disableIncreaseLimit();
+					}
 				}
 			}
 		});
