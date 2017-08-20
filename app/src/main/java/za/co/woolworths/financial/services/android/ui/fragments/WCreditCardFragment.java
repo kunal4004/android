@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +50,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
 	public WTextView availableBalance, creditLimit, dueDate, minAmountDue, currentBalance, tvViewTransaction, tvIncreaseLimit;
-	private boolean bolBroacastRegistred, isOfferActive = false, cardHasId = false;
+	private boolean bolBroacastRegistred, isOfferActive = false, creditWasAlreadyRunOnce = false;
 
 	private String productOfferingId;
 	private WoolworthsApplication woolworthsApplication;
@@ -59,6 +60,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
+	private RelativeLayout rlIncreaseLimit;
 
 	@Nullable
 	@Override
@@ -86,7 +88,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
 		mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		iconIncreaseLimit = (ImageView) view.findViewById(R.id.iconIncreaseLimit);
-		RelativeLayout rlIncreaseLimit = (RelativeLayout) view.findViewById(R.id.rlIncreaseLimit);
+		rlIncreaseLimit = (RelativeLayout) view.findViewById(R.id.rlIncreaseLimit);
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
@@ -214,7 +216,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 					String httpDesc = offerActive.response.desc;
 					if (httpCode == 200) {
 						isOfferActive = offerActive.offerActive;
-						cardHasId = true;
+						creditWasAlreadyRunOnce = true;
 						if (isOfferActive) {
 							disableIncreaseLimit();
 						} else {
@@ -250,12 +252,14 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	public void enableIncreaseLimit() {
 		tvIncreaseLimit.setEnabled(true);
+		rlIncreaseLimit.setEnabled(true);
 		tvIncreaseLimit.setTextColor(Color.BLACK);
 		iconIncreaseLimit.setImageAlpha(255);
 	}
 
 	public void disableIncreaseLimit() {
 		tvIncreaseLimit.setEnabled(false);
+		rlIncreaseLimit.setEnabled(false);
 		tvIncreaseLimit.setTextColor(Color.GRAY);
 		iconIncreaseLimit.setImageAlpha(75);
 	}
@@ -298,13 +302,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		WCreditCardFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (!cardHasId) {
-					if (new ConnectionDetector().isOnline(getActivity()))
-						getActiveOffer();
-					else {
-						mErrorHandlerView.showToast();
-						disableIncreaseLimit();
-					}
+				if (new ConnectionDetector().isOnline(getActivity()))
+					getActiveOffer();
+				else {
+					mErrorHandlerView.showToast();
+					disableIncreaseLimit();
 				}
 			}
 		});
@@ -314,7 +316,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				isOfferActive = false;
+				creditWasAlreadyRunOnce = false;
 				hideProgressBar();
 			}
 		});
@@ -333,7 +335,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onConnectionChanged() {
 		//connection changed
-		if (!cardHasId) {
+		if (!creditWasAlreadyRunOnce) {
 			if (new ConnectionDetector().isOnline(getActivity()))
 				getActiveOffer();
 
@@ -347,7 +349,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	}
 
 	private void retryConnect() {
-		if (!cardHasId) {
+		if (!creditWasAlreadyRunOnce) {
 			if (new ConnectionDetector().isOnline(getActivity()))
 				getActiveOffer();
 			else {

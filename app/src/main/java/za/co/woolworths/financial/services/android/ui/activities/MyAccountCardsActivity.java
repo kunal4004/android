@@ -68,12 +68,11 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
 	private boolean cardsHasAccount = false;
 	private boolean containsStoreCard = false, containsCreditCard = false, containsPersonalLoan = false;
-	private int position;
 	private int wMinDrawnDownAmount;
 	private LinearLayout llRootLayout;
 	private AccountsResponse accountsResponse;
 	private NestedScrollView mScrollAccountCard;
-
+	int currentPosition = 0;
 
 	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 	@Override
@@ -85,19 +84,22 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		mWoolworthsApplication = (WoolworthsApplication) MyAccountCardsActivity.this.getApplication();
 		retryConnect();
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(MyAccountCardsActivity.this);
-		position = getIntent().getIntExtra("position", 0);
+		currentPosition = getIntent().getIntExtra("position", 0);
 		fragmentPager = (WCustomPager) findViewById(R.id.fragmentpager);
 		llRootLayout = (LinearLayout) findViewById(R.id.llRootLayout);
 		fragmentPager.setViewPagerIsScrollable(false);
 		cards = new ArrayList<>();
-		changeViewPagerAndActionBarBackground(position);
+		changeViewPagerAndActionBarBackground(currentPosition);
 		mBtnApplyNow.setVisibility(View.GONE);
-		changeButtonColor(position);
+		changeButtonColor(currentPosition);
 		getScreenResolution();
 
 		cardsHasAccount = getIntent().hasExtra("accounts");
 		if (cardsHasAccount) {
-			accountsResponse = new Gson().fromJson(getIntent().getExtras().getString("accounts"), AccountsResponse.class);
+			String accounts =getIntent().getExtras().getString("accounts");
+			Log.e("cardHasAccount",accounts);
+			accountsResponse = new Gson().fromJson(accounts, AccountsResponse.class);
+
 			handleAccountsResponse(accountsResponse);
 		} else {
 			fragmentsAdapter = new CardsFragmentPagerAdapter(getSupportFragmentManager()) {
@@ -135,7 +137,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		}
 
 		pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-			int currentPosition = 0;
 
 			@Override
 			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -143,7 +144,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 
 			@Override
 			public void onPageSelected(int newPosition) {
-				position = newPosition;
 				fragmentInterfaceListener(newPosition);
 				mWoolworthsApplication.setCliCardPosition(newPosition);
 				fragmentPager.setCurrentItem(newPosition);
@@ -152,13 +152,14 @@ public class MyAccountCardsActivity extends AppCompatActivity
 				setStatusBarColor(newPosition);
 
 				currentPosition = newPosition;
+
 			}
 
 			@Override
 			public void onPageScrollStateChanged(int state) {
 			}
 		});
-		setStatusBarColor(position);
+		setStatusBarColor(currentPosition);
 		disableScrollPageGesture();
 
 		mScrollAccountCard.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
@@ -177,7 +178,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
-		fragmentInterfaceListener(position);
+		fragmentInterfaceListener(currentPosition);
 	}
 
 	private void retryConnect() {
@@ -187,7 +188,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 				if (new ConnectionDetector().isOnline(MyAccountCardsActivity.this)) {
 					Intent openAccount = new Intent(MyAccountCardsActivity.this,
 							MyAccountCardsActivity.class);
-					openAccount.putExtra("position", position);
+					openAccount.putExtra("position", currentPosition);
 					if (accountsResponse != null) {
 						openAccount.putExtra("accounts", Utils.objectToJson(accountsResponse));
 					}
@@ -201,13 +202,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 	}
 
 	private void disableScrollPageGesture() {
-//		mScrollAccountCard.setOnTouchListener(new View.OnTouchListener() {
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				return mWoolworthsApplication.getWGlobalState().cardGestureIsEnabled();
-//			}
-//		});
-
 		pager.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -359,7 +353,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 				fragmentPager.setAdapter(fragmentsAdapter);
 				fragmentPager.setCurrentItem(getIntent().getIntExtra("position", 0));
 
-				changeButtonColor(position);
+				changeButtonColor(currentPosition);
 
 				break;
 			case 400:
