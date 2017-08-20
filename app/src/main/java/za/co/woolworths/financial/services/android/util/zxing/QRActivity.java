@@ -15,7 +15,6 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
@@ -61,7 +60,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -188,7 +186,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	private PermissionUtils permissionUtils;
 	private ArrayList<String> permissions;
 	private WProductDetail productList;
-	protected static final int REQUEST_CHECK_SETTINGS = 99;
 	private WProductDetail mProduct;
 	private WTextView tvBtnFinder;
 	private ProgressBar mButtonProgress;
@@ -386,8 +383,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 						});
 			}
 			cursor.close();
-		} else if (requestCode == REQUEST_CHECK_SETTINGS) {
-			//permissionUtils.check_permission(permissions, "Explain here why the app needs permissions", 1);
 		}
 	}
 
@@ -574,7 +569,12 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 				break;
 
 			case R.id.llStoreFinder:
-				permissionUtils.check_permission(permissions, "Explain here why the app needs permissions", 1);
+				mScrollProductDetail.scrollTo(0, 0);
+				if (Utils.isLocationEnabled(QRActivity.this)) {
+					permissionUtils.check_permission(permissions, "Explain here why the app needs permissions", 1);
+				} else {
+					Utils.displayValidationMessage(QRActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.LOCATION_OFF, "");
+				}
 				break;
 		}
 	}
@@ -1661,10 +1661,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 					noSizeColorIntent();
 				}
 			}
-		} else {
-			Intent locIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-			startActivityForResult(locIntent, REQUEST_CHECK_SETTINGS);
-			overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 		}
 	}
 

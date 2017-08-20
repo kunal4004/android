@@ -684,8 +684,8 @@
     <string name="not_found">Unfortunately not found</string>
     <string name="stock_available_product">We have no stock available of this product at the moment.</string>
     <string name="back_to_product">back to products</string>
-    <string name="no_stock_desc">We have no stock at the moment.</string>
     <string name="no_stock_title">no stock</string>
-
+    <string name="location_disable_title">Location Services</string>
+    <string name="location_disable_desc">This feature cannot be used without Location Services.</string>
 
 </resources>

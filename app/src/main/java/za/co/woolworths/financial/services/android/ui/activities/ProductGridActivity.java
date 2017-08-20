@@ -10,7 +10,6 @@ import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
@@ -119,7 +118,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	private PermissionUtils permissionUtils;
 	private ProgressBar mButtonProgress;
 	private WTextView tvBtnFinder;
-	private LinearLayout llProductDetail, layoutLocationServiceOff;
+	private LinearLayout llProductDetail;
 	private Location mLocation;
 	private String TAG = this.getClass().getSimpleName();
 	private LocationItemTask locationItemTask;
@@ -309,7 +308,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mSlideUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
 		mLinProductList = (LinearLayout) findViewById(R.id.linProductList);
 		llProductDetail = (LinearLayout) findViewById(R.id.llProductDetail);
-		layoutLocationServiceOff = (LinearLayout) findViewById(R.id.layoutLocationServiceOff);
 		mRelViewProgressBar = (RelativeLayout) findViewById(R.id.relViewProgressBar);
 		mProductScroll = (NestedScrollView) findViewById(R.id.scrollProduct);
 		mBtnShopOnlineWoolies = (Button) findViewById(R.id.btnShopOnlineWoolies);
@@ -1068,7 +1066,12 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 				break;
 
 			case R.id.llStoreFinder:
-				permissionUtils.check_permission(permissions, "Explain here why the app needs permissions", 1);
+				mScrollProductDetail.scrollTo(0, 0);
+				if (Utils.isLocationEnabled(ProductGridActivity.this)) {
+					permissionUtils.check_permission(permissions, "Explain here why the app needs permissions", 1);
+				} else {
+					Utils.displayValidationMessage(ProductGridActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.LOCATION_OFF, "");
+				}
 				break;
 		}
 	}
@@ -1133,10 +1136,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 					noSizeColorIntent();
 				}
 			}
-		} else {
-			Intent locIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-			startActivityForResult(locIntent, REQUEST_CHECK_SETTINGS);
-			overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 		}
 	}
 
@@ -1266,18 +1265,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		public void onReceive(Context context, Intent intent) {
 			startLocationUpdates();
 		}
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		switch (requestCode) {
-			// Check for the integer request code originally supplied to startResolutionForResult(
-			case REQUEST_CHECK_SETTINGS:
-				//permissionUtils.check_permission(permissions, "Explain here why the app needs permissions", 1);
-				break;
-		}
-
 	}
 }
 

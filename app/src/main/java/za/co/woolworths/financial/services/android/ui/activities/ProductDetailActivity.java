@@ -12,7 +12,6 @@ import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
@@ -692,10 +691,11 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				break;
 
 			case R.id.llStoreFinder:
-				if (new ConnectionDetector().isOnline(ProductDetailActivity.this)) {
+				mScrollProductDetail.scrollTo(0, 0);
+				if (Utils.isLocationEnabled(ProductDetailActivity.this)) {
 					permissionUtils.check_permission(permissions, "Explain here why the app needs permissions", 1);
 				} else {
-					mErrorHandlerView.showToast();
+					Utils.displayValidationMessage(ProductDetailActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.LOCATION_OFF, "");
 				}
 				break;
 		}
@@ -1345,10 +1345,6 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 					noSizeColorIntent();
 				}
 			}
-		} else {
-			Intent locIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-			startActivityForResult(locIntent, REQUEST_CHECK_SETTINGS);
-			overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 		}
 	}
 
@@ -1371,18 +1367,6 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		// redirects to utils
 		permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		switch (requestCode) {
-			// Check for the integer request code originally supplied to startResolutionForResult(
-			case REQUEST_CHECK_SETTINGS:
-				//permissionUtils.check_permission(permissions, "Explain here why the app needs permissions", 1);
-				break;
-		}
-
 	}
 
 	@Override
