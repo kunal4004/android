@@ -192,6 +192,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 			case R.id.relDrawnDownAmount:
 				mSharePreferenceHelper.save("", "lw_amount_drawn_cent");
+				mSharePreferenceHelper.save(String.valueOf(productOfferingId), "lw_product_offering_id");
 				Intent openWithdrawCashNow = new Intent(getActivity(), LoanWithdrawalActivity.class);
 				openWithdrawCashNow.putExtra("minDrawnDownAmount", minDrawnAmount);
 				startActivity(openWithdrawCashNow);
