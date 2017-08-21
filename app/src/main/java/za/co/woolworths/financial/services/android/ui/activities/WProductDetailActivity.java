@@ -12,8 +12,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,21 +59,21 @@ import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecorat
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class WProductDetailActivity extends AppCompatActivity implements View.OnClickListener,
+public class WProductDetailActivity extends AppCompatActivity implements
 		SelectedProductView,
-		ProductViewPagerAdapter.MultipleImageInterface {
+		ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener {
 
-	private WTextView mTextSelectSize;
-	private RecyclerView mRecyclerviewSize;
+	public WTextView mTextSelectSize;
+	public RecyclerView mRecyclerviewSize;
 	private ArrayList<WProductDetail> mProductDetail;
 	private WTextView mTextTitle;
 	private WTextView mTextPrice;
-	private LinearLayout mRelContainer;
+	private LinearLayout llColorSizeContainer;
 	private WTextView mProductCode;
-	private List<OtherSku> otherSkusList;
-	private WTextView mTextSelectColor;
-	private PopupWindow mPColourWindow;
-	private PopupWindow mPSizeWindow;
+	public List<OtherSku> otherSkusList;
+	public WTextView mTextSelectColor;
+	public PopupWindow mPColourWindow;
+	public PopupWindow mPSizeWindow;
 	private boolean productIsColored = true;
 	private ArrayList<OtherSku> uniqueColorList;
 	public RecyclerView mColorRecycleSize;
@@ -90,7 +90,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 	private LinearLayout mLlPagerDots;
 	private ImageView[] ivArrayDotsPager;
 	private SimpleDraweeView mImSelectedColor;
-	private View mColorView;
+	private View vColorSizeHorizontalLine;
 	private WTextView mTextPromo;
 	private WTextView mTextActualPrice;
 	private WTextView mTextColour;
@@ -118,12 +118,16 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 	private ImageView mImColorArrow;
 	private ImageView mColorArrow;
 	private WTextView mTextProductSize;
-	private LoadingDots mLoadingDaot;
+	private LoadingDots mLoadingDot;
+	private int mOtherSkuSize;
+	private LinearLayout llLoadingColorSize;
+	public View loadingColorDivider;
+	private RelativeLayout mLinColor;
 
 	protected void initProductDetailUI() {
 		mScrollProductDetail = (NestedScrollView) findViewById(R.id.scrollProductDetail);
 		mSizeProgressBar = (ProgressBar) findViewById(R.id.mWoolworthsProgressBar);
-		mColorView = findViewById(R.id.colorView);
+		vColorSizeHorizontalLine = findViewById(R.id.colorView);
 		mTextSelectSize = (WTextView) findViewById(R.id.textSelectSize);
 		mTextColour = (WTextView) findViewById(R.id.textColour);
 		mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
@@ -136,8 +140,8 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 		mTextPromo = (WTextView) findViewById(R.id.textPromo);
 		mTextSelectColor = (WTextView) findViewById(R.id.textSelectColour);
 		mProductCode = (WTextView) findViewById(R.id.product_code);
-		mRelContainer = (LinearLayout) findViewById(R.id.linProductContainer);
-		RelativeLayout mLinColor = (RelativeLayout) findViewById(R.id.linColour);
+		llColorSizeContainer = (LinearLayout) findViewById(R.id.linProductContainer);
+		mLinColor = (RelativeLayout) findViewById(R.id.linColour);
 		mLinSize = (RelativeLayout) findViewById(R.id.linSize);
 		mBtnAddShoppingList = (WButton) findViewById(R.id.btnAddShoppingList);
 		mBtnShopOnlineWoolies = (WButton) findViewById(R.id.btnShopOnlineWoolies);
@@ -145,6 +149,8 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 		mImCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
 		mImSelectedColor = (SimpleDraweeView) findViewById(R.id.imSelectedColor);
 		mLlPagerDots = (LinearLayout) findViewById(R.id.pager_dots);
+		llLoadingColorSize = (LinearLayout) findViewById(R.id.llLoadingColorSize);
+		loadingColorDivider = findViewById(R.id.loadingColorDivider);
 		mImColorArrow = (ImageView) findViewById(R.id.imColorArrow);
 		mWebDescription = (WrapContentWebView) findViewById(R.id.webDescription);
 		ingredientLine = findViewById(R.id.ingredientLine);
@@ -152,7 +158,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 		mImSave = (SimpleDraweeView) findViewById(R.id.imSave);
 		mImReward = (SimpleDraweeView) findViewById(R.id.imReward);
 		mVitalityView = (SimpleDraweeView) findViewById(R.id.imVitality);
-		mLoadingDaot = (LoadingDots) findViewById(R.id.loadingDots);
+		mLoadingDot = (LoadingDots) findViewById(R.id.loadingDots);
 		mTextSelectColor.setOnClickListener(this);
 		mTextSelectSize.setOnClickListener(this);
 		mImColorArrow.setOnClickListener(this);
@@ -166,6 +172,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 
 	protected void displayProductDetail(String mProductList, String skuId, int otherSkuSize) {
 		this.currentSKUId = skuId;
+		this.mOtherSkuSize = otherSkuSize;
 		try {
 			SessionDao sessionDao = new SessionDao(WProductDetailActivity.this,
 					SessionDao.KEY.STORES_LATEST_PAYLOAD).get();
@@ -186,13 +193,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 		mDefaultSKUModel = getDefaultSKUModel();
 		updateHeroImage();
 		updatePrice();
-		if (otherSkuSize > 1) {
-			mColorView.setVisibility(View.VISIBLE);
-			mRelContainer.setVisibility(View.VISIBLE);
-		} else {
-			mColorView.setVisibility(View.GONE);
-			mRelContainer.setVisibility(View.GONE);
-		}
 		mScrollProductDetail.scrollTo(0, 0);
 	}
 
@@ -235,11 +235,11 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 	}
 
 	public void productPriceList(WTextView wPrice, WTextView WwasPrice,
-	                             String price, String wasPrice, String productType) {
+								 String price, String wasPrice, String productType) {
 		switch (productType) {
 			case "clothingProducts":
-				mColorView.setVisibility(View.VISIBLE);
-				mRelContainer.setVisibility(View.VISIBLE);
+				vColorSizeHorizontalLine.setVisibility(View.VISIBLE);
+				llColorSizeContainer.setVisibility(View.VISIBLE);
 				if (TextUtils.isEmpty(wasPrice)) {
 					wPrice.setText(WFormatter.formatAmount(price));
 					wPrice.setPaintFlags(0);
@@ -258,8 +258,8 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 				}
 				break;
 			default:
-				mColorView.setVisibility(View.GONE);
-				mRelContainer.setVisibility(View.GONE);
+				vColorSizeHorizontalLine.setVisibility(View.GONE);
+				llColorSizeContainer.setVisibility(View.GONE);
 				if (TextUtils.isEmpty(wasPrice)) {
 					wPrice.setText(WFormatter.formatAmount(price));
 					wPrice.setPaintFlags(0);
@@ -558,76 +558,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 		return super.dispatchTouchEvent(ev);
 	}
 
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-			case R.id.textSelectColour:
-			case R.id.imSelectedColor:
-			case R.id.imColorArrow:
-			case R.id.linColour:
-
-				if (otherSkusList != null) {
-					if (otherSkusList.size() > 0) {
-						dismissSizeDialog();
-						LayoutInflater mSlideUpPanelLayoutInflater
-								= (LayoutInflater) getBaseContext()
-								.getSystemService(LAYOUT_INFLATER_SERVICE);
-						View mPopWindow = mSlideUpPanelLayoutInflater.inflate(R.layout.product_size_row, null);
-						mColorRecycleSize = (RecyclerView) mPopWindow.findViewById(R.id.recyclerviewSize);
-						bindWithUI(otherSkusList, true);
-						mPColourWindow = new PopupWindow(
-								mPopWindow,
-								ViewGroup.LayoutParams.WRAP_CONTENT,
-								ViewGroup.LayoutParams.WRAP_CONTENT);
-						mPopWindow.setOnTouchListener(new View.OnTouchListener() {
-
-							@Override
-							public boolean onTouch(View arg0, MotionEvent arg1) {
-								return true;
-							}
-						});
-						mPColourWindow.setTouchable(true);
-						mPColourWindow.showAsDropDown(mTextSelectColor, -50, -180);
-					}
-				}
-				break;
-
-			case R.id.textProductSize:
-			case R.id.mColorArrow:
-			case R.id.textSelectSize:
-			case R.id.linSize:
-				if (otherSkusList != null) {
-					if (otherSkusList.size() > 0) {
-						dismissColourDialog();
-						LayoutInflater layoutInflater
-								= (LayoutInflater) getBaseContext()
-								.getSystemService(LAYOUT_INFLATER_SERVICE);
-						View popupView = layoutInflater.inflate(R.layout.product_size_row, null);
-						mRecyclerviewSize = (RecyclerView) popupView.findViewById(R.id.recyclerviewSize);
-						LinearLayout mPopLinContainer = (LinearLayout) popupView.findViewById(R.id.linPopUpContainer);
-						bindWithUI(otherSkusList, false);
-						mPSizeWindow = new PopupWindow(
-								popupView,
-								ViewGroup.LayoutParams.WRAP_CONTENT,
-								ViewGroup.LayoutParams.WRAP_CONTENT);
-						mPopLinContainer.setOnClickListener(new View.OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								mPSizeWindow.dismiss();
-							}
-						});
-						mPSizeWindow.showAsDropDown(mTextSelectSize, -50, -180);
-					}
-				}
-				break;
-
-			case R.id.imCloseProduct:
-				onBackPressed();
-				break;
-
-		}
-	}
-
 	protected void showPromotionalImages(PromotionImages imPromo) {
 		if (imPromo != null) {
 			String wSave = imPromo.save;
@@ -666,7 +596,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 		}
 	}
 
-	private void dismissSizeDialog() {
+	public void dismissSizeDialog() {
 		if (mPSizeWindow != null) {
 			if (mPSizeWindow.isShowing()) {
 				mPSizeWindow.dismiss();
@@ -674,30 +604,12 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 		}
 	}
 
-	private void dismissColourDialog() {
+	public void dismissColourDialog() {
 		if (mPColourWindow != null) {
 			if (mPColourWindow.isShowing()) {
 				mPColourWindow.dismiss();
 			}
 		}
-	}
-
-	private boolean colourValueExist(ArrayList<OtherSku> list, String name) {
-		for (OtherSku item : list) {
-			if (item.colour.equals(name)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean sizeValueExist(ArrayList<OtherSku> list, String name) {
-		for (OtherSku item : list) {
-			if (item.size.equals(name)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public void dismissPopWindow() {
@@ -723,7 +635,6 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 
 	@Override
 	public void onSelectedProduct(View v, int position) {
-
 	}
 
 	@Override
@@ -776,14 +687,27 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 		mProductSizeAdapter.notifyDataSetChanged();
 	}
 
-	public void showSizeProgressBar() {
+	public void showSizeProgressBar(String productType) {
 		mProductCode.setText(getString(R.string.loading_product_info));
 		showProductCode();
 		mSizeProgressBar.getIndeterminateDrawable().setColorFilter(null);
 		mSizeProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		mSizeProgressBar.bringToFront();
 		mSizeProgressBar.setVisibility(View.VISIBLE);
-		mLoadingDaot.setVisibility(View.VISIBLE);
+		mLoadingDot.setVisibility(View.VISIBLE);
+
+		if (!TextUtils.isEmpty(productType)) {
+			if (productType.equalsIgnoreCase("foodProducts")) {
+				llLoadingColorSize.setVisibility(View.GONE);
+				loadingColorDivider.setVisibility(View.GONE);
+			} else {
+				loadingColorDivider.setVisibility(View.VISIBLE);
+				llLoadingColorSize.setVisibility(View.VISIBLE);
+			}
+		}
+
+		llColorSizeContainer.setVisibility(View.GONE);
+		vColorSizeHorizontalLine.setVisibility(View.GONE);
 		mSizeProgressBar.setAlpha(0.3f);
 		mTextColour.setAlpha(0.3f);
 		mImSelectedColor.setAlpha(0.3f);
@@ -798,7 +722,9 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 
 	public void hideProgressDetailLoad() {
 		mSizeProgressBar.setVisibility(View.GONE);
-		mLoadingDaot.setVisibility(View.GONE);
+		mLoadingDot.setVisibility(View.GONE);
+		loadingColorDivider.setVisibility(View.GONE);
+		llLoadingColorSize.setVisibility(View.GONE);
 		mSizeProgressBar.setAlpha(1f);
 		mTextColour.setAlpha(1f);
 		mImSelectedColor.setAlpha(1f);
@@ -808,11 +734,17 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 		mTextSelectSize.setAlpha(1f);
 		mTextProductSize.setAlpha(1f);
 		mBtnShopOnlineWoolies.setAlpha(1f);
+		if (mOtherSkuSize > 1) {
+			vColorSizeHorizontalLine.setVisibility(View.VISIBLE);
+			llColorSizeContainer.setVisibility(View.VISIBLE);
+		} else {
+			vColorSizeHorizontalLine.setVisibility(View.GONE);
+			llColorSizeContainer.setVisibility(View.GONE);
+		}
 	}
 
 	public void resetLongDescription() {
 		mWebDescription.loadDataWithBaseURL("file:///android_res/drawable/", "", "text/html", "UTF-8", null);
-
 	}
 
 	public void showProductCode() {
@@ -986,7 +918,7 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 	}
 
 	public void productDetailPriceList(WTextView wPrice, WTextView WwasPrice,
-	                                   String price, String wasPrice, String productType) {
+									   String price, String wasPrice, String productType) {
 		switch (productType) {
 			case "clothingProducts":
 				if (TextUtils.isEmpty(wasPrice)) {
@@ -1104,6 +1036,38 @@ public class WProductDetailActivity extends AppCompatActivity implements View.On
 		openMultipleImage.putExtra("auxiliaryImages", mAuxiliaryImages);
 		startActivity(openMultipleImage);
 		overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+	}
+
+	public void setLayoutWeight(View v, float weight) {
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+				LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+		params.weight = weight;
+		params.setMarginStart((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
+		params.setMarginEnd((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
+		v.setLayoutParams(params);
+	}
+
+	public boolean sizeValueExist(ArrayList<OtherSku> list, String name) {
+		for (OtherSku item : list) {
+			if (item.size.equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean colourValueExist(ArrayList<OtherSku> list, String name) {
+		for (OtherSku item : list) {
+			if (item.colour.equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void onClick(View v) {
+
 	}
 }
 

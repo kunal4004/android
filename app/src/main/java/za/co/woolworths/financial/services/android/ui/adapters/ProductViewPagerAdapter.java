@@ -37,6 +37,7 @@ public class ProductViewPagerAdapter extends PagerAdapter {
         ViewGroup v = (ViewGroup) inflater.inflate(R.layout.product_view,
                 collection, false);
         String image = mViewPager.get(position);
+        Log.e("imageSize",image);
         SimpleDraweeView mProductImage = (SimpleDraweeView) v.findViewById(R.id.imProductView);
         DrawImage drawImage = new DrawImage(mContext);
         drawImage.displayImage(mProductImage, image);

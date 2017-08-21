@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/recent_search_bg"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:paddingBottom="30dp"
+        android:paddingTop="36dp"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:orientation="vertical">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/availableFundLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/available_funds"
+                android:textColor="@color/black_50"
+                android:textSize="15sp"
+                app:WTextView_font="myriadpro_regular"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/available_funds"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginRight="10dp"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="22sp"
+                app:WTextView_font="medium_bold"/>
+
+        </LinearLayout>
+
+
+        <include layout="@layout/vertical_layout"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:orientation="vertical">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/credit_limit"
+                android:textColor="@color/black_50"
+                android:textSize="15sp"
+                app:WTextView_font="myriadpro_regular"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/creditLimit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_gravity="left"
+                android:gravity="center"
+                android:text="creditLimit"
+                android:textColor="@color/black"
+                android:textSize="22sp"
+                app:WTextView_font="medium"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/bottom_light_divider_list"/>
+
+    <RelativeLayout
+        style="@style/card_item_style">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/style_loan_label"
+            android:text="@string/current_balance"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/currentBalance"
+            style="@style/style_loan_amount"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        style="@style/card_item_style">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/style_loan_label"
+            android:text="@string/next_payment_date"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/dueDate"
+            style="@style/style_loan_amount"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        style="@style/card_item_style"
+        >
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/style_loan_label"
+            android:text="@string/minimum_payment"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/minAmountDue"
+            style="@style/style_loan_amount"
+            />
+
+
+    </RelativeLayout>
+
+    <View
+        style="@style/horizontal_divider_bold_style"
+        android:layout_marginBottom="@dimen/default_margin"/>
+
+    <View
+        style="@style/horizontal_divider_bold_style"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/rlIncreaseLimit"
+            style="@style/card_item_click_style"
+            android:background="@drawable/top_light_divider_list"
+            >
+
+            <ImageView
+                android:id="@+id/logoIncreaseLimit"
+                style="@style/style_loan_logo_img"
+                android:src="@drawable/cli"
+                />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvIncreaseLimit"
+                style="@style/style_loan_title"
+                android:layout_alignBottom="@+id/logoIncreaseLimit"
+                android:layout_alignTop="@+id/logoIncreaseLimit"
+                android:layout_toEndOf="@+id/logoIncreaseLimit"
+                android:text="@string/increase_credit_limit"/>
+
+
+            <LinearLayout
+                android:id="@+id/linContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:gravity="center|end"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/iconIncreaseLimit"
+                    style="@style/style_loan_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <ProgressBar
+                    android:id="@+id/progressCreditLimit"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginLeft="@dimen/bank_spacing_width"
+                    android:visibility="gone"/>
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlViewTransactions"
+            style="@style/card_item_click_style"
+            >
+
+            <ImageView
+                android:id="@+id/logoViewTransaction"
+                style="@style/style_loan_logo_img"
+                android:src="@drawable/transactions"
+                />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvViewTransaction"
+                style="@style/style_loan_title"
+                android:layout_alignBottom="@+id/logoViewTransaction"
+                android:layout_alignTop="@+id/logoViewTransaction"
+                android:layout_toEndOf="@+id/logoViewTransaction"
+                android:text="@string/view_transactions"/>
+
+
+            <ImageView
+                android:id="@+id/iconViewTransaction"
+                style="@style/style_loan_img"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            style="@style/card_item_click_style"
+            android:visibility="gone"
+            >
+
+            <ImageView
+                android:id="@+id/logoViewStatement"
+                style="@style/style_loan_logo_img"
+                android:src="@drawable/calender"
+                />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvViewStatement"
+                style="@style/style_loan_title"
+                android:layout_alignTop="@+id/logoViewStatement"
+                android:layout_toEndOf="@+id/logoViewStatement"
+                android:text="@string/view_statements"/>
+
+
+            <ImageView
+                android:id="@+id/iconViewStatement"
+                style="@style/style_loan_img"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relBalanceProtection"
+            style="@style/card_item_click_style"
+            >
+
+            <ImageView
+                android:id="@+id/logoProtectionInsurance"
+                style="@style/style_loan_logo_img"
+                android:src="@drawable/insurance"
+                />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvProtectionInsurance"
+                style="@style/style_loan_title"
+                android:layout_alignTop="@+id/logoProtectionInsurance"
+                android:layout_toEndOf="@+id/logoProtectionInsurance"
+                android:text="@string/balance_protection_insurance"/>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relDrawnDownAmount"
+            style="@style/card_item_click_style"
+            android:visibility="gone"
+            >
+
+            <ImageView
+                android:id="@+id/logoDrawnDownAmount"
+                style="@style/style_loan_logo_img"
+                android:src="@drawable/money"
+                />
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvDrawnDownAmount"
+                style="@style/style_loan_title"
+                android:layout_alignTop="@+id/logoDrawnDownAmount"
+                android:layout_toEndOf="@+id/logoDrawnDownAmount"
+                android:text="@string/instore_withdraw_cash_now"/>
+
+            <ImageView
+                android:id="@+id/iconDrawnDownAmount"
+                style="@style/style_loan_img"
+                android:src="@drawable/ic_caret_black"
+                />
+
+        </RelativeLayout>
+
+        <View
+            style="@style/horizontal_divider_bold_style"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="26dp"
+        android:background="@color/recent_search_bg"/>
+
+    <View
+        android:id="@+id/bottomSpace"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/recent_search_bg"
+        android:visibility="gone"/>
+
+</LinearLayout>

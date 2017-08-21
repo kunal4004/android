@@ -323,7 +323,7 @@ public class SwipeStack extends ViewGroup {
     }
 
     /**
-     * Returns the current adapter position.
+     * Returns the current mPagerAdapter position.
      *
      * @return The current position.
      */
@@ -332,9 +332,9 @@ public class SwipeStack extends ViewGroup {
     }
 
     /**
-     * Returns the adapter currently in use in this SwipeStack.
+     * Returns the mPagerAdapter currently in use in this SwipeStack.
      *
-     * @return The adapter currently used to display data in this SwipeStack.
+     * @return The mPagerAdapter currently used to display data in this SwipeStack.
      */
     public Adapter getAdapter() {
         return mAdapter;
@@ -419,7 +419,7 @@ public class SwipeStack extends ViewGroup {
     }
 
     /**
-     * Resets the current adapter position and repopulates the stack.
+     * Resets the current mPagerAdapter position and repopulates the stack.
      */
     public void resetStack() {
         mCurrentViewIndex = 0;
@@ -435,26 +435,26 @@ public class SwipeStack extends ViewGroup {
         /**
          * Called when a view has been dismissed to the left.
          *
-         * @param position The position of the view in the adapter currently in use.
+         * @param position The position of the view in the mPagerAdapter currently in use.
          */
         void onViewSwipedToLeft(int position);
 
         /**
          * Called when a view has been dismissed to the right.
          *
-         * @param position The position of the view in the adapter currently in use.
+         * @param position The position of the view in the mPagerAdapter currently in use.
          */
         void onViewSwipedToRight(int position);
         /**
          * Called when a view has been dismissed to the left.
          *
-         * @param position The position of the view in the adapter currently in use.
+         * @param position The position of the view in the mPagerAdapter currently in use.
          */
         void onViewSwipedToTop(int position);
         /**
          * Called when a view has been dismissed to the left.
          *
-         * @param position The position of the view in the adapter currently in use.
+         * @param position The position of the view in the mPagerAdapter currently in use.
          */
         void onViewSwipedToBottom(int position);
 
@@ -472,14 +472,14 @@ public class SwipeStack extends ViewGroup {
         /**
          * Called when the user starts interacting with the top view of the stack.
          *
-         * @param position The position of the view in the currently set adapter.
+         * @param position The position of the view in the currently set mPagerAdapter.
          */
         void onSwipeStart(int position);
 
         /**
          * Called when the user is dragging the top view of the stack.
          *
-         * @param position The position of the view in the currently set adapter.
+         * @param position The position of the view in the currently set mPagerAdapter.
          * @param progress Represents the horizontal dragging position in relation to
          *                 the start position of the drag.
          */
@@ -488,7 +488,7 @@ public class SwipeStack extends ViewGroup {
         /**
          * Called when the user has stopped interacting with the top view of the stack.
          *
-         * @param position The position of the view in the currently set adapter.
+         * @param position The position of the view in the currently set mPagerAdapter.
          */
         void onSwipeEnd(int position);
     }

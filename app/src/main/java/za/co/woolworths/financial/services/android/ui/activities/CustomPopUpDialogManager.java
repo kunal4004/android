@@ -34,7 +34,7 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 	public enum VALIDATION_MESSAGE_LIST {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
-		SHOPPING_LIST_INFO, SESSION_EXPIRED
+		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF
 	}
 
 	VALIDATION_MESSAGE_LIST current_view;
@@ -247,6 +247,48 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				WButton mBtnSignIn = (WButton) findViewById(R.id.btnSESignIn);
 				mBtnSessionExpiredCancel.setOnClickListener(this);
 				mBtnSignIn.setOnClickListener(this);
+				break;
+
+			case INSTORE_AVAILABILITY:
+				setContentView(R.layout.lw_too_high_error);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				mLowLoanAmount = (WButton) findViewById(R.id.btnLoanHighOk);
+				mTextTitle = (WTextView) findViewById(R.id.title);
+				mTextTitle.setText(getString(R.string.sf_instore_availability_title));
+				mTextProofIncome = (WTextView) findViewById(R.id.textProofIncome);
+				mTextProofIncome.setText(getString(R.string.sf_instore_availability_desc));
+				setAnimation();
+				mLowLoanAmount.setOnClickListener(this);
+				mRelPopContainer.setOnClickListener(this);
+				break;
+
+			case NO_STOCK:
+				setContentView(R.layout.lw_too_high_error);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				mLowLoanAmount = (WButton) findViewById(R.id.btnLoanHighOk);
+				mTextTitle = (WTextView) findViewById(R.id.title);
+				mTextTitle.setText(getString(R.string.no_stock_title));
+				mTextProofIncome = (WTextView) findViewById(R.id.textProofIncome);
+				mTextProofIncome.setText(getString(R.string.stock_available_product));
+				setAnimation();
+				mLowLoanAmount.setOnClickListener(this);
+				mRelPopContainer.setOnClickListener(this);
+				break;
+
+			case LOCATION_OFF:
+				setContentView(R.layout.lw_too_high_error);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				mLowLoanAmount = (WButton) findViewById(R.id.btnLoanHighOk);
+				mTextTitle = (WTextView) findViewById(R.id.title);
+				mTextTitle.setText(getString(R.string.location_disable_title));
+				mTextProofIncome = (WTextView) findViewById(R.id.textProofIncome);
+				mTextProofIncome.setText(getString(R.string.location_disable_desc));
+				setAnimation();
+				mLowLoanAmount.setOnClickListener(this);
+				mRelPopContainer.setOnClickListener(this);
 				break;
 
 			default:

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/linProductContainer"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:paddingLeft="@dimen/default_margin"
-    android:paddingRight="@dimen/default_margin"
-    android:visibility="gone"
-    android:weightSum="1">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:fresco="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/linProductContainer"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="horizontal"
+              android:paddingLeft="@dimen/default_margin"
+              android:paddingRight="@dimen/default_margin"
+              android:weightSum="1">
 
     <RelativeLayout
         android:id="@+id/linColour"
@@ -23,7 +22,7 @@
             style="@style/colorSizeStyle"
             android:text="medium"
             android:textColor="@color/white"
-            app:WTextView_font="medium" />
+            app:WTextView_font="medium"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/textColour"
@@ -31,7 +30,7 @@
             android:layout_alignParentStart="true"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:text="@string/product_colour" />
+            android:text="@string/product_colour"/>
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/imSelectedColor"
@@ -42,7 +41,7 @@
             android:layout_marginRight="@dimen/default_margin"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            fresco:roundedCornerRadius="15dp" />
+            fresco:roundedCornerRadius="15dp"/>
 
         <ImageView
             android:id="@+id/imColorArrow"
@@ -54,7 +53,7 @@
             android:layout_marginRight="@dimen/default_margin"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:src="@drawable/path_3" />
+            android:src="@drawable/path_3"/>
 
     </RelativeLayout>
 
@@ -67,7 +66,7 @@
         android:layout_marginTop="10dp"
         android:background="@color/divider"
         android:focusable="false"
-        android:focusableInTouchMode="false" />
+        android:focusableInTouchMode="false"/>
 
     <RelativeLayout
         android:id="@+id/linSize"
@@ -98,7 +97,7 @@
             android:layout_marginRight="@dimen/default_margin"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:src="@drawable/path_3" />
+            android:src="@drawable/path_3"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/textSelectSize"
@@ -109,7 +108,7 @@
             android:focusableInTouchMode="false"
             android:text="medium"
             android:textColor="@color/white"
-            app:WTextView_font="medium" />
+            app:WTextView_font="medium"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/textProductSize"
@@ -119,7 +118,7 @@
             android:layout_alignBottom="@+id/textSelectSize"
             android:layout_toEndOf="@+id/mWoolworthsProgressBar"
             android:layout_weight="0.71"
-            android:text="@string/product_size" />
+            android:text="@string/product_size"/>
 
         <ProgressBar
             android:id="@+id/mWoolworthsProgressBar"
@@ -129,7 +128,7 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/default_margin"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
     </RelativeLayout>
 
