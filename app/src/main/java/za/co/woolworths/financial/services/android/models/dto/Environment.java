@@ -12,6 +12,11 @@ public class Environment {
 	public String ssoRedirectURILogout;
 	public String ssoUpdateDetailsRedirectUri;
 	public String wwTodayURI;
+	public int storeStockLocatorConfigStartRadius;
+	public int storeStockLocatorConfigEndRadius;
+	public boolean storeStockLocatorConfigFoodProducts;
+	public boolean storeStockLocatorConfigClothingProducts;
+
 
 	public String getApiId() {
 		return apiKey;
@@ -71,5 +76,37 @@ public class Environment {
 
 	public String getSsoUpdateDetailsRedirectUri() {
 		return ssoUpdateDetailsRedirectUri;
+	}
+
+	public int getStoreStockLocatorConfigStartRadius() {
+		return storeStockLocatorConfigStartRadius;
+	}
+
+	public void setStoreStockLocatorConfigStartRadius(int storeStockLocatorConfigStartRadius) {
+		this.storeStockLocatorConfigStartRadius = storeStockLocatorConfigStartRadius;
+	}
+
+	public int getStoreStockLocatorConfigEndRadius() {
+		return storeStockLocatorConfigEndRadius;
+	}
+
+	public void setStoreStockLocatorConfigEndRadius(int storeStockLocatorConfigEndRadius) {
+		this.storeStockLocatorConfigEndRadius = storeStockLocatorConfigEndRadius;
+	}
+
+	public boolean storeStockLocatorConfigFoodProducts() {
+		return storeStockLocatorConfigFoodProducts;
+	}
+
+	public void setStoreStockLocatorConfigFoodProducts(boolean storeStockLocatorConfigFoodProducts) {
+		this.storeStockLocatorConfigFoodProducts = storeStockLocatorConfigFoodProducts;
+	}
+
+	public boolean storeStockLocatorConfigClothingProducts() {
+		return storeStockLocatorConfigClothingProducts;
+	}
+
+	public void setStoreStockLocatorConfigClothingProducts(boolean storeStockLocatorConfigClothingProducts) {
+		this.storeStockLocatorConfigClothingProducts = storeStockLocatorConfigClothingProducts;
 	}
 }
