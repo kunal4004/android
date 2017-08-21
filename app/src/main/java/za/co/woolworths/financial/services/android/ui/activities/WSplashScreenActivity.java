@@ -41,7 +41,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 	private boolean mVideoPlayerShouldPlay = true;
 	private boolean isMinimized = false;
 	private WVideoView videoView;
-	private String TAG = "WSplashScreen";
+	private String TAG = this.getClass().getSimpleName();
 	private LinearLayout errorLayout;
 	private View noVideoView;
 	private RelativeLayout videoViewLayout;
@@ -164,10 +164,10 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 					WoolworthsApplication.setHowToSaveLink(configResponse.defaults.getHowtosaveLink());
 					WoolworthsApplication.setWrewardsTCLink(configResponse.defaults.getWrewardsTCLink());
 
-					mWGlobalState.setStartRadius(0);
-					mWGlobalState.setEndRadius(100000);
-					mWGlobalState.setClothingProducts(true);
-					mWGlobalState.setFoodProducts(false);
+					mWGlobalState.setStartRadius(configResponse.enviroment.getStoreStockLocatorConfigStartRadius());
+					mWGlobalState.setEndRadius(configResponse.enviroment.getStoreStockLocatorConfigEndRadius());
+					mWGlobalState.setClothingProducts(configResponse.enviroment.storeStockLocatorConfigClothingProducts());
+					mWGlobalState.setFoodProducts(configResponse.enviroment.storeStockLocatorConfigFoodProducts());
 
 					if (!isFirstTime())
 						presentNextScreen();
