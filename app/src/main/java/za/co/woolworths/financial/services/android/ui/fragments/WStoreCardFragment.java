@@ -63,11 +63,12 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private boolean isOfferActive = true;
 	private ImageView iconIncreaseLimit;
 	private AsyncTask<String, String, OfferActive> asyncTaskStore;
-	private boolean cardHasId = false;
+	private boolean storeWasAlreadyRunOnce = false;
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
 	private boolean bolBroacastRegistred;
+	private RelativeLayout rlIncreaseLimit;
 
 	@Nullable
 	@Override
@@ -89,7 +90,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
 		iconIncreaseLimit = (ImageView) view.findViewById(R.id.iconIncreaseLimit);
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
-		RelativeLayout rlIncreaseLimit = (RelativeLayout) view.findViewById(R.id.rlIncreaseLimit);
+		rlIncreaseLimit = (RelativeLayout) view.findViewById(R.id.rlIncreaseLimit);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
 		relBalanceProtection.setOnClickListener(this);
@@ -218,7 +219,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					String httpDesc = offerActive.response.desc;
 					if (httpCode == 200) {
 						isOfferActive = offerActive.offerActive;
-						cardHasId = true;
+						storeWasAlreadyRunOnce = true;
 						if (isOfferActive) {
 							disableIncreaseLimit();
 						} else {
@@ -252,12 +253,14 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 	public void enableIncreaseLimit() {
 		tvIncreaseLimit.setEnabled(true);
+		rlIncreaseLimit.setEnabled(true);
 		tvIncreaseLimit.setTextColor(Color.BLACK);
 		iconIncreaseLimit.setImageAlpha(255);
 	}
 
 	public void disableIncreaseLimit() {
 		tvIncreaseLimit.setEnabled(false);
+		rlIncreaseLimit.setEnabled(false);
 		tvIncreaseLimit.setTextColor(Color.GRAY);
 		iconIncreaseLimit.setImageAlpha(75);
 	}
@@ -300,7 +303,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		WStoreCardFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (!cardHasId) {
+				if (!storeWasAlreadyRunOnce) {
 					if (new ConnectionDetector().isOnline(getActivity()))
 						getActiveOffer();
 					else {
@@ -316,7 +319,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				isOfferActive = false;
+				storeWasAlreadyRunOnce = false;
 				hideProgressBar();
 			}
 		});
@@ -334,10 +337,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	@Override
 	public void onConnectionChanged() {
 		//connection changed
-		if (!cardHasId) {
+		if (!storeWasAlreadyRunOnce) {
 			if (new ConnectionDetector().isOnline(getActivity()))
 				getActiveOffer();
-
 		}
 	}
 
@@ -348,7 +350,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	}
 
 	private void retryConnect() {
-		if (!cardHasId) {
+		if (!storeWasAlreadyRunOnce) {
 			if (new ConnectionDetector().isOnline(getActivity()))
 				getActiveOffer();
 			else {

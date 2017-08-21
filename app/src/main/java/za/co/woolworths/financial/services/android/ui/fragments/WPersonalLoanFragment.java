@@ -56,15 +56,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private ImageView iconIncreaseLimit;
 	private SharePreferenceHelper mSharePreferenceHelper;
 	private HttpAsyncTask<String, String, OfferActive> asyncRequestPersonalLoan;
-	private boolean cardHasId = false;
+	private boolean personalWasAlreadyRunOnce = false;
 
-	private AccountsResponse temp = null;
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
 	private boolean boolBroadcastRegistered;
 	private int minDrawnAmount;
-	private RelativeLayout mRelDrawnDownAmount;
+	public RelativeLayout mRelDrawnDownAmount, rlIncreaseLimit;
 
 	@Nullable
 	@Override
@@ -89,7 +88,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mRelDrawnDownAmount = (RelativeLayout) view.findViewById(R.id.relDrawnDownAmount);
 		mRelDrawnDownAmount.setVisibility(View.VISIBLE);
 		iconIncreaseLimit = (ImageView) view.findViewById(R.id.iconIncreaseLimit);
-		RelativeLayout rlIncreaseLimit = (RelativeLayout) view.findViewById(R.id.rlIncreaseLimit);
+		rlIncreaseLimit = (RelativeLayout) view.findViewById(R.id.rlIncreaseLimit);
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
@@ -107,11 +106,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
 		boolBroadcastRegistered = true;
 		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-		temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
-		disableIncreaseLimit();
+		AccountsResponse temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+		if (!personalWasAlreadyRunOnce)
+			disableIncreaseLimit();
 		hideProgressBar();
 		setTextSize();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
+		if (temp != null)
+			bindData(temp);
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -233,7 +235,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 					int httpCode = offerActive.httpCode;
 					String httpDesc = offerActive.response.desc;
 					if (httpCode == 200) {
-						cardHasId = true;
+						personalWasAlreadyRunOnce = true;
 						isOfferActive = offerActive.offerActive;
 						if (isOfferActive) {
 							disableIncreaseLimit();
@@ -268,12 +270,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 	public void enableIncreaseLimit() {
 		tvIncreaseLimit.setEnabled(true);
+		rlIncreaseLimit.setEnabled(true);
 		tvIncreaseLimit.setTextColor(Color.BLACK);
 		iconIncreaseLimit.setImageAlpha(255);
 	}
 
 	public void disableIncreaseLimit() {
 		tvIncreaseLimit.setEnabled(false);
+		rlIncreaseLimit.setEnabled(false);
 		tvIncreaseLimit.setTextColor(Color.GRAY);
 		iconIncreaseLimit.setImageAlpha(75);
 	}
@@ -297,8 +301,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mSharePreferenceHelper.removeValue("lw_product_offering_id");
 		mSharePreferenceHelper.removeValue("lw_amount_drawn_cent");
 
-		if (temp != null)
-			bindData(temp);
 		setTextSize();
 	}
 
@@ -314,7 +316,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		WPersonalLoanFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (!cardHasId) {
+				if (!personalWasAlreadyRunOnce) {
 					if (new ConnectionDetector().isOnline(getActivity()))
 						getActiveOffer();
 					else {
@@ -322,7 +324,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						disableIncreaseLimit();
 					}
 				}
-
 			}
 		});
 	}
@@ -331,7 +332,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				isOfferActive = false;
+				personalWasAlreadyRunOnce = false;
 				hideProgressBar();
 			}
 		});
@@ -349,7 +350,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onConnectionChanged() {
 		//connection changed
-		if (!cardHasId) {
+		if (!personalWasAlreadyRunOnce) {
 			if (new ConnectionDetector().isOnline(getActivity()))
 				getActiveOffer();
 
@@ -363,7 +364,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	}
 
 	private void retryConnect() {
-		if (!cardHasId) {
+		if (!personalWasAlreadyRunOnce) {
 			if (new ConnectionDetector().isOnline(getActivity()))
 				getActiveOffer();
 			else {
