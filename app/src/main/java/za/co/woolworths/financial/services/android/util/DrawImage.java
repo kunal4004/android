@@ -1,15 +1,19 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.content.Context;
+import android.graphics.drawable.Animatable;
 import android.net.Uri;
-
 import com.facebook.drawee.backends.pipeline.Fresco;
 
+import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
+import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.controller.ControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
@@ -75,20 +79,42 @@ public class DrawImage {
 		}
 	}
 
-	public void widthDisplayImage(final SimpleDraweeView simperDrawerView, Uri fileUri) {
-		GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(mContext.getResources());
-		GenericDraweeHierarchy hierarchy = builder
-				.build();
-		ImageRequest requestBuilder = ImageRequestBuilder.newBuilderWithSource(fileUri)
-				.setProgressiveRenderingEnabled(false)
-				.build();
 
-		DraweeController controller = Fresco.newDraweeControllerBuilder()
-				.setImageRequest(requestBuilder)
-				.build();
+	public void showCategoryImage(final SimpleDraweeView image, String imgUrl) {
+		if (imgUrl != null) {
+			try {
+				GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(mContext.getResources());
+				GenericDraweeHierarchy hierarchy = builder
+						.setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY)
+						.setDesiredAspectRatio((float) 1.33)
+						.build();
+				ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(imgUrl))
+						.build();
 
-		simperDrawerView.setHierarchy(hierarchy);
-		simperDrawerView.setController(controller);
+				ControllerListener<ImageInfo> controllerListener = new BaseControllerListener<ImageInfo>() {
+					public void onFinalImageSet(String id, ImageInfo imageinfo, Animatable animatable) {
+						if (imageinfo != null) {
+							updateViewSize(imageinfo, image);
+						}
+					}
+				};
 
+				PipelineDraweeController controller = (PipelineDraweeController)
+						Fresco.newDraweeControllerBuilder()
+								.setImageRequest(request)
+								.setOldController(image.getController())
+								.setControllerListener(controllerListener)
+								.build();
+
+				image.setHierarchy(hierarchy);
+				image.setController(controller);
+			} catch (IllegalArgumentException ignored) {
+			}
+		}
+	}
+
+	private void updateViewSize(ImageInfo imageinfo, SimpleDraweeView simpleDraweeView) {
+		simpleDraweeView.getLayoutParams().height = imageinfo.getHeight();
+		simpleDraweeView.requestLayout();
 	}
 }

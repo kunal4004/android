@@ -26,7 +26,7 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<ProductCategory
 	private SelectedProductView mSelectedProductView;
 
 	public ProductCategoryAdapter(List<RootCategory> mCategory,
-	                              SelectedProductView selectedProductView) {
+								  SelectedProductView selectedProductView) {
 		this.mCategory = mCategory;
 		this.mSelectedProductView = selectedProductView;
 	}
@@ -51,10 +51,10 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<ProductCategory
 
 		holder.mTextProduct.setText(rootCategory.categoryName);
 		String imageUrl = rootCategory.imgUrl;
-
+		Log.e("imageUrl", imageUrl);
 		if (imageUrl != null) {
 			DrawImage drawImage = new DrawImage(holder.mTextProduct.getContext());
-			drawImage.widthDisplayImage(holder.mImageProductCategory, Uri.parse(imageUrl));
+			drawImage.showCategoryImage(holder.mImageProductCategory, imageUrl);
 		}
 
 		holder.mFrameRootCategory.setOnClickListener(new View.OnClickListener() {

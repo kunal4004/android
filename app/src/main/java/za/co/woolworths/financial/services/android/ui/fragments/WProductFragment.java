@@ -61,6 +61,8 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 	private MenuNavigationInterface mMenuNavigationInterface;
 	private int mSearchRowHeight;
 	private int mScrollY;
+	private int mTopPaddingHeight;
+	private ProductCategoryAdapter myAdapter;
 
 	public interface HideActionBarComponent {
 		void onBurgerButtonPressed();
@@ -85,9 +87,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 
 	@Nullable
 	@Override
-	public View onCreateView(LayoutInflater inflater,
-	                         @Nullable ViewGroup container,
-	                         @Nullable Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.product_search_fragment, container, false);
 	}
 
@@ -104,7 +104,8 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 		setUIListener();
 		showAccountToolbar();
 		mNestedScrollview.getParent().requestChildFocus(mNestedScrollview, mNestedScrollview);
-		mSearchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight()));
+		mTopPaddingHeight = (int) getResources().getDimension(R.dimen.default_margin);
+		mSearchRowHeight = Math.round(mRelSearchRowLayout.getHeight()) - mTopPaddingHeight;
 		showOneTimePopup();
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -113,8 +114,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 					mMenuNavigationInterface.switchToView(1);
 			}
 		});
-
-
 	}
 
 	@Override
@@ -333,7 +332,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 
 	private void bindViewWithUI(List<RootCategory> rootCategories) {
 		mRootCategories = rootCategories;
-		ProductCategoryAdapter myAdapter = new ProductCategoryAdapter(rootCategories, mContext);
+		myAdapter = new ProductCategoryAdapter(rootCategories, mContext);
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		mRecycleProductSearch.setHasFixedSize(true);
@@ -341,8 +340,8 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 		mRecycleProductSearch.setNestedScrollingEnabled(false);
 		mRecycleProductSearch.setAdapter(myAdapter);
 		myAdapter.notifyDataSetChanged();
-		mSearchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight())
-				+ getToolBarHeight() / 2);
+		mSearchRowHeight = Math.round(mRelSearchRowLayout.getHeight() +
+				+getToolBarHeight() / 2) - mTopPaddingHeight;
 	}
 
 	public void showOneTimePopup() {
