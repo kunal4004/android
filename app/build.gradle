@@ -8,7 +8,7 @@ android {
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
-        job = "106";
+        job = "107";
     }
 
     def buildNumber = major + "." + minor + "." + fix
@@ -71,7 +71,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 106
+            versionCode 107
         }
 
         staging {
@@ -143,5 +143,6 @@ dependencies {
     compile 'com.github.thepacific:mvc:0.0.2'
     compile 'com.facebook.fresco:fresco:1.3.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.google.android.gms:play-services-tagmanager:11.0.2'
 }
 apply plugin: 'com.google.gms.google-services'

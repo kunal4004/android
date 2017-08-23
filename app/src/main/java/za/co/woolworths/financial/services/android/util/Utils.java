@@ -25,6 +25,7 @@ import com.awfs.coordination.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.VisibleRegion;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -38,10 +39,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 import me.leolin.shortcutbadger.ShortcutBadger;
+import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
@@ -49,9 +53,11 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionParentO
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity;
 
 import static android.Manifest.permission_group.STORAGE;
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 public class Utils {
 
@@ -509,5 +515,30 @@ public class Utils {
 			}
 		} catch (NullPointerException ignored) {
 		}
+	}
+
+	public static void triggerFireBaseEvents(Context mContext, String eventName,Map<String, String> arguments)
+	{
+		FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(mContext);
+
+		Bundle params = new Bundle();
+		for(Map.Entry<String, String> entry : arguments.entrySet()){
+			params.putString(entry.getKey(), entry.getValue());
+		}
+
+		mFirebaseAnalytics.logEvent(eventName,params);
+	}
+
+	public static JWTDecodedModel getJWTDecoded(Context mContext) {
+		JWTDecodedModel result = new JWTDecodedModel();
+		try {
+			SessionDao sessionDao = new SessionDao(mContext, SessionDao.KEY.USER_TOKEN).get();
+			if (sessionDao.value != null && !sessionDao.value.equals("")) {
+				result = JWTHelper.decode(sessionDao.value);
+			}
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage());
+		}
+		return result;
 	}
 }
