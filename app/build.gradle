@@ -77,7 +77,7 @@ android {
         staging {
             applicationId "com.awfs.coordination.staging"
             signingConfig signingConfigs.woneappStaging
-            versionCode 12
+            versionCode 13
         }
 
         production {
