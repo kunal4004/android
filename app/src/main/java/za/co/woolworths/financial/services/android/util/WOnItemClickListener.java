@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.util;
 
 
-import android.view.View;
-
 import com.daimajia.swipe.SwipeLayout;
 
 public interface WOnItemClickListener {

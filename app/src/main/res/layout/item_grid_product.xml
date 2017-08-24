@@ -31,7 +31,7 @@
             android:background="@color/horizontal_line"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/textTitle"
+            android:id="@+id/tvProductName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/default_margin"
@@ -46,6 +46,21 @@
             android:textColor="@color/black_desc_opacity_light"
             android:textSize="14sp"
             app:WTextView_font="medium"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvSaveText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/default_margin"
+            android:layout_marginRight="@dimen/default_margin"
+            android:ellipsize="end"
+            android:letterSpacing="0.08"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="@color/promo_text_color"
+            android:textSize="12sp"
+            app:WTextView_font="medium"
+            />
 
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/linPriceContainer"
@@ -69,7 +84,6 @@
                 android:gravity="bottom|start"
                 android:letterSpacing="0.03"
                 android:paddingRight="1dp"
-                android:text="R1200"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 app:WTextView_font="medium_bold"

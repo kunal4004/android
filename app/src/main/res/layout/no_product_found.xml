@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/layoutNoProductFound"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#efefef"
+              android:gravity="center"
+              android:orientation="vertical"
+              android:paddingLeft="24dp"
+              android:paddingRight="24dp">
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/emptylocation"/>
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="36dp"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.01"
+        android:text="@string/not_found"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:WTextView_font="medium_bold"
+
+        />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:alpha=".5"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="2sp"
+        android:text="@string/stock_available_product"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        app:WTextView_font="myriadpro_regular"
+
+        />
+
+    <za.co.woolworths.financial.services.android.ui.views.WButton
+        android:id="@+id/buttonBackToProducts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/register_button_bg"
+        android:gravity="center"
+        android:letterSpacing="0.2"
+        android:minHeight="48dp"
+        android:text="@string/back_to_product"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:WButton_font="medium_bold"
+        />
+
+
+</LinearLayout>

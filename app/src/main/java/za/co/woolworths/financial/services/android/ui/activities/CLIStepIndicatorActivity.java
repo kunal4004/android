@@ -75,7 +75,7 @@ public class CLIStepIndicatorActivity extends BaseActivity implements WOnboardin
 	}
 
 	private void setCLIContent() {
-		// Create the adapter that will return a fragment for each of the three
+		// Create the mPagerAdapter that will return a fragment for each of the three
 		mViewPStepIndicator.setPagingEnabled(false);
 		mViewPStepIndicator.setAdapter(mPagerFragmentAdapter);
 

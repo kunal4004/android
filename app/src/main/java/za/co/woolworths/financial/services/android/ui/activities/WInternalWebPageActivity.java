@@ -208,4 +208,9 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private void hideAppBar() {
 		mAppbar.setVisibility(View.GONE);
 	}
+
+	@Override
+	public void onBackPressed() {
+		finishActivity();
+	}
 }
