@@ -45,6 +45,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,6 +55,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter;
@@ -124,12 +126,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	private Location mLocation;
 	private StoresNearbyFragment1 mFragment;
 	MenuItem searchMenu;
-	private boolean isSearchMenuEnabled=true;
+	private boolean isSearchMenuEnabled = true;
 	public boolean isLocationServiceButtonClicked = false;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	                         Bundle savedInstanceState) {
+							 Bundle savedInstanceState) {
 		setHasOptionsMenu(true);
 		return inflater.inflate(R.layout.fragment_stores_nearby1, container, false);
 	}
@@ -204,8 +206,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 				Log.i(TAG, "onPanelStateChanged " + newState);
 
 				if (newState != SlidingUpPanelLayout.PanelState.COLLAPSED) {
-				    /*
-				     * Previous result: Application would exit completely when back button is pressed
+					/*
+					 * Previous result: Application would exit completely when back button is pressed
                      * New result: Panel just returns to its previous position (Panel collapses)
                      */
 					mLayout.setFocusableInTouchMode(true);
@@ -518,6 +520,9 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			@Override
 			protected void onPostExecute(LocationResponse locationResponse) {
 				super.onPostExecute(locationResponse);
+				String json = new Gson().toJson(locationResponse);
+				WGlobalState wGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
+				wGlobalState.setStoreLocatorJson(json);
 				enableSearchMenu();
 				hideProgressBar();
 				storeDetailsList = new ArrayList<>();
@@ -601,7 +606,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.action_search:
-				if(isSearchMenuEnabled)
+				if (isSearchMenuEnabled)
 					startActivity(new Intent(getActivity(), SearchStoresActivity.class));
 				break;
 			case R.id.action_locate:
@@ -770,7 +775,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode,
-	                                       String permissions[], int[] grantResults) {
+										   String permissions[], int[] grantResults) {
 		switch (requestCode) {
 			case PERMS_REQUEST_CODE: {
 				// If request is cancelled, the result arrays are empty.
@@ -811,7 +816,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 	public void enableSearchMenu() {
 		if (searchMenu != null) {
-			isSearchMenuEnabled=true;
+			isSearchMenuEnabled = true;
 			searchMenu.getIcon().setAlpha(255);
 			getActivity().invalidateOptionsMenu();
 		}
@@ -819,7 +824,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 	public void disableSearchMenu() {
 		if (searchMenu != null) {
-			isSearchMenuEnabled=false;
+			isSearchMenuEnabled = false;
 			searchMenu.getIcon().setAlpha(130);
 			getActivity().invalidateOptionsMenu();
 		}

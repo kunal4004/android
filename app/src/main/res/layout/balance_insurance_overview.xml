@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingEnd="32dp"
+        android:paddingStart="32dp"
+        android:paddingTop="32dp">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/balance_insurance_overview_title"
+            android:text="@string/features_and_benefit"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/balance_insurance_overview_desc"
+            android:text="@string/features_and_benefit_desc"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/balance_insurance_overview_title"
+            android:text="@string/comprehensive_balance_protection"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView style="@style/instore_bullet_circle"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/instore_list_bullet_desc"
+                android:text="@string/comprehensive_balance_protection_desc1"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView style="@style/instore_bullet_circle"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/instore_list_bullet_desc"
+                android:text="@string/comprehensive_balance_protection_desc2"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:orientation="horizontal">
+
+            <TextView style="@style/instore_bullet_circle"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/instore_list_bullet_desc"
+                android:text="@string/comprehensive_balance_protection_desc3"/>
+        </LinearLayout>
+
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/balance_insurance_overview_title"
+            android:text="@string/additional_death_cover"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/balance_insurance_overview_desc"
+            android:text="@string/additional_death_cover_desc"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/balance_insurance_overview_title"
+            android:text="@string/partner_spouse"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/balance_insurance_overview_desc"
+            android:text="@string/partner_spouse_desc"
+            />
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

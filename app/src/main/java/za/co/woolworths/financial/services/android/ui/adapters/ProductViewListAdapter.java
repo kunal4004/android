@@ -32,7 +32,7 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 	private SelectedProductView mSelectedProductView;
 
 	public ProductViewListAdapter(Activity mContext, List<ProductList> mProductList,
-	                              SelectedProductView selectedProductView) {
+								  SelectedProductView selectedProductView) {
 		this.mContext = mContext;
 		this.mProductList = mProductList;
 		this.mSelectedProductView = selectedProductView;
@@ -41,25 +41,27 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 
 	class SimpleViewHolder extends RecyclerView.ViewHolder {
 
-		WTextView productName;
-		WTextView mTextAmount;
-		WTextView mTextWasPrice;
-		SimpleDraweeView mSimpleDraweeView;
+		WTextView tvSaveText;
+		WTextView tvProductName;
+		WTextView tvAmount;
+		WTextView tvWasPrice;
+		SimpleDraweeView imProductImage;
 		SimpleDraweeView imNewImage;
-		SimpleDraweeView mImSave;
-		SimpleDraweeView mImReward;
-		SimpleDraweeView mVitalityView;
+		SimpleDraweeView imSave;
+		SimpleDraweeView imReward;
+		SimpleDraweeView imVitality;
 
 		SimpleViewHolder(View view) {
 			super(view);
-			productName = (WTextView) view.findViewById(R.id.textTitle);
-			mTextAmount = (WTextView) view.findViewById(R.id.textAmount);
-			mTextWasPrice = (WTextView) view.findViewById(R.id.textWasPrice);
-			mSimpleDraweeView = (SimpleDraweeView) view.findViewById(R.id.imProduct);
+			tvProductName = (WTextView) view.findViewById(R.id.tvProductName);
+			tvSaveText = (WTextView) view.findViewById(R.id.tvSaveText);
+			tvAmount = (WTextView) view.findViewById(R.id.textAmount);
+			tvWasPrice = (WTextView) view.findViewById(R.id.textWasPrice);
+			imProductImage = (SimpleDraweeView) view.findViewById(R.id.imProduct);
 			imNewImage = (SimpleDraweeView) view.findViewById(R.id.imNewImage);
-			mImSave = (SimpleDraweeView) view.findViewById(R.id.imSave);
-			mImReward = (SimpleDraweeView) view.findViewById(R.id.imReward);
-			mVitalityView = (SimpleDraweeView) view.findViewById(R.id.imVitality);
+			imSave = (SimpleDraweeView) view.findViewById(R.id.imSave);
+			imReward = (SimpleDraweeView) view.findViewById(R.id.imReward);
+			imVitality = (SimpleDraweeView) view.findViewById(R.id.imVitality);
 		}
 	}
 
@@ -68,9 +70,13 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 		ProductList productItem = mProductList.get(position);
 		if (productItem != null) {
 			String productName = productItem.productName;
-			String imgUrl = productItem.externalImageRef;
+			String externalImageRef = productItem.externalImageRef;
+			String saveText = productItem.saveText;
 			PromotionImages promo = productItem.promotionImages;
-			holder.productName.setText(Html.fromHtml(productName));
+			holder.tvProductName.setText(Html.fromHtml(productName));
+
+			if (!TextUtils.isEmpty(saveText))
+				holder.tvSaveText.setText(saveText);
 
 			ArrayList<Double> priceList = new ArrayList<>();
 			for (OtherSkus os : productItem.otherSkus) {
@@ -85,10 +91,10 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 			}
 
 			String fromPrice = String.valueOf(productItem.fromPrice);
-			productPriceList(holder.mTextAmount, holder.mTextWasPrice,
+			productPriceList(holder.tvAmount, holder.tvWasPrice,
 					fromPrice, wasPrice);
 
-			productImage(holder.mSimpleDraweeView, imgUrl);
+			productImage(holder.imProductImage, externalImageRef);
 			promoImages(holder, promo);
 		}
 
@@ -106,14 +112,11 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 				return false;
 			}
 		});
-
-
 	}
 
 	@Override
 	public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.wproduct_row, parent, false);
-		return new SimpleViewHolder(view);
+		return new SimpleViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_grid_product, parent, false));
 	}
 
 	@Override
@@ -122,7 +125,7 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 	}
 
 	private void productPriceList(WTextView wPrice, WTextView WwasPrice,
-	                              String price, String wasPrice) {
+								  String price, String wasPrice) {
 		if (TextUtils.isEmpty(wasPrice)) {
 			wPrice.setText(WFormatter.formatAmount(price));
 			WwasPrice.setText("");
@@ -158,24 +161,24 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 			String wNewImage = imPromo.newImage;
 
 			if (!TextUtils.isEmpty(wSave)) {
-				holder.mImSave.setVisibility(View.VISIBLE);
-				drawImage.displaySmallImage(holder.mImSave, wSave);
+				holder.imSave.setVisibility(View.VISIBLE);
+				drawImage.displaySmallImage(holder.imSave, wSave);
 			} else {
-				holder.mImSave.setVisibility(View.GONE);
+				holder.imSave.setVisibility(View.GONE);
 			}
 
 			if (!TextUtils.isEmpty(wReward)) {
-				holder.mImReward.setVisibility(View.VISIBLE);
-				drawImage.displaySmallImage(holder.mImReward, wReward);
+				holder.imReward.setVisibility(View.VISIBLE);
+				drawImage.displaySmallImage(holder.imReward, wReward);
 			} else {
-				holder.mImReward.setVisibility(View.GONE);
+				holder.imReward.setVisibility(View.GONE);
 			}
 
 			if (!TextUtils.isEmpty(wVitality)) {
-				holder.mVitalityView.setVisibility(View.VISIBLE);
-				drawImage.displaySmallImage(holder.mVitalityView, wVitality);
+				holder.imVitality.setVisibility(View.VISIBLE);
+				drawImage.displaySmallImage(holder.imVitality, wVitality);
 			} else {
-				holder.mVitalityView.setVisibility(View.GONE);
+				holder.imVitality.setVisibility(View.GONE);
 			}
 
 			if (!TextUtils.isEmpty(wNewImage)) {

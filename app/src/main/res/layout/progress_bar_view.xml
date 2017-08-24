@@ -1,0 +1,8 @@
+<ProgressBar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/storesProgressBar"
+    android:layout_width="24dp"
+    android:layout_height="24dp"
+    android:layout_gravity="center"
+    />
+

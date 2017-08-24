@@ -304,6 +304,15 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		drawerFragment.notifyNavigationDrawer(count);
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+	}
 }
 
 
