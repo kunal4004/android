@@ -10,13 +10,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -30,6 +30,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
@@ -47,59 +48,73 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
-	public WTextView availableBalance;
-	public WTextView creditLimit;
-	public WTextView dueDate;
-	public WTextView minAmountDue;
-	public WTextView currentBalance;
-	public WTextView transactions;
-	public WTextView txtIncreseLimit;
+	public WTextView availableBalance, creditLimit, dueDate, minAmountDue, currentBalance, tvViewTransaction, tvIncreaseLimit;
+	private boolean bolBroacastRegistred, isOfferActive = false, creditWasAlreadyRunOnce = false;
+
 	private String productOfferingId;
 	private WoolworthsApplication woolworthsApplication;
 	private ProgressBar mProgressCreditLimit;
-	private boolean isOfferActive = false;
-	private ImageView mImageArrow;
+	private ImageView iconIncreaseLimit;
 	private AsyncTask<String, String, OfferActive> asyncRequestCredit;
-	private boolean cardHasId = false;
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
-	private boolean bolBroacastRegistred;
+	private RelativeLayout rlIncreaseLimit;
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.cards_common_fragment, container, false);
+		setRetainInstance(true);
+		return inflater.inflate(R.layout.card_common_fragment, container, false);
 	}
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
+		init(view);
+		addListener();
+		setAccountDetail();
+
+	}
+
+	private void init(View view) {
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
 		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
 		dueDate = (WTextView) view.findViewById(R.id.dueDate);
 		minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
 		currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
-		transactions = (WTextView) view.findViewById(R.id.txtTransactions);
-		txtIncreseLimit = (WTextView) view.findViewById(R.id.txtIncreseLimit);
+		tvViewTransaction = (WTextView) view.findViewById(R.id.tvViewTransaction);
+		tvIncreaseLimit = (WTextView) view.findViewById(R.id.tvIncreaseLimit);
 		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
 		mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-		mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
-		transactions.setOnClickListener(this);
-		txtIncreseLimit.setOnClickListener(this);
+		iconIncreaseLimit = (ImageView) view.findViewById(R.id.iconIncreaseLimit);
+		rlIncreaseLimit = (RelativeLayout) view.findViewById(R.id.rlIncreaseLimit);
+		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
+		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
+
+		rlIncreaseLimit.setOnClickListener(this);
+		relBalanceProtection.setOnClickListener(this);
+		rlViewTransactions.setOnClickListener(this);
+	}
+
+	private void addListener() {
+		tvViewTransaction.setOnClickListener(this);
+		tvIncreaseLimit.setOnClickListener(this);
 		try {
 			networkChangeListener = this;
 		} catch (ClassCastException ignored) {
 		}
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
-		bolBroacastRegistred = true;
 		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+	}
+
+	private void setAccountDetail() {
+		bolBroacastRegistred = true;
 		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		bindData(accountsResponse);
 		disableIncreaseLimit();
 		hideProgressBar();
-		view.setBackgroundColor(Color.WHITE);
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
 	}
 
@@ -119,13 +134,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				if ("CC".equals(p.productGroupCode)) {
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
-					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.availableFunds), 1, getActivity())));
-					creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.creditLimit), 1, getActivity())));
-					minAmountDue.setText(removeNegativeSymbol(WFormatter.formatAmount(p.minimumAmountDue)));
-					currentBalance.setText(removeNegativeSymbol(WFormatter.formatAmount(p.currentBalance)));
+					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
+					creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
+					minAmountDue.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
+					currentBalance.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
 					WoolworthsApplication.setCreditCardType(p.accountNumberBin);
 					try {
-						dueDate.setText(WFormatter.formatDate(p.paymentDueDate));
+						dueDate.setText(WFormatter.newDateFormat(p.paymentDueDate));
 					} catch (ParseException e) {
 						dueDate.setText(p.paymentDueDate);
 						WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
@@ -139,17 +154,17 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-			case R.id.txtTransactions:
+			case R.id.rlViewTransactions:
+			case R.id.tvViewTransaction:
 				Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
 				intent.putExtra("productOfferingId", productOfferingId);
 				startActivity(intent);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim
 						.stay);
-
 				break;
 
-			case R.id.txtIncreseLimit:
-				Log.d("productOfferIdStore", String.valueOf(productOfferingId));
+			case R.id.rlIncreaseLimit:
+			case R.id.tvIncreaseLimit:
 				if (!isOfferActive) {
 					((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
 					Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
@@ -157,6 +172,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 					getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				}
 				break;
+
+			case R.id.relBalanceProtection:
+				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
+				startActivity(intBalanceProtection);
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				break;
+
 		}
 	}
 
@@ -181,8 +203,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			@Override
 			protected void onPreExecute() {
 				mProgressCreditLimit.setVisibility(View.VISIBLE);
-				mImageArrow.setVisibility(View.GONE);
-				txtIncreseLimit.setVisibility(View.GONE);
+				iconIncreaseLimit.setVisibility(View.GONE);
+				tvIncreaseLimit.setVisibility(View.VISIBLE);
+				disableIncreaseLimit();
 				super.onPreExecute();
 			}
 
@@ -194,7 +217,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 					String httpDesc = offerActive.response.desc;
 					if (httpCode == 200) {
 						isOfferActive = offerActive.offerActive;
-						cardHasId = true;
+						creditWasAlreadyRunOnce = true;
 						if (isOfferActive) {
 							disableIncreaseLimit();
 						} else {
@@ -223,20 +246,23 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	public void hideProgressBar() {
 		mProgressCreditLimit.setVisibility(View.GONE);
-		mImageArrow.setVisibility(View.VISIBLE);
-		txtIncreseLimit.setVisibility(View.VISIBLE);
+		iconIncreaseLimit.setVisibility(View.VISIBLE);
+		tvIncreaseLimit.setVisibility(View.VISIBLE);
+		tvIncreaseLimit.setAlpha(1);
 	}
 
 	public void enableIncreaseLimit() {
-		txtIncreseLimit.setEnabled(true);
-		txtIncreseLimit.setTextColor(Color.BLACK);
-		mImageArrow.setImageAlpha(255);
+		tvIncreaseLimit.setEnabled(true);
+		rlIncreaseLimit.setEnabled(true);
+		tvIncreaseLimit.setTextColor(Color.BLACK);
+		iconIncreaseLimit.setImageAlpha(255);
 	}
 
 	public void disableIncreaseLimit() {
-		txtIncreseLimit.setEnabled(false);
-		txtIncreseLimit.setTextColor(Color.GRAY);
-		mImageArrow.setImageAlpha(75);
+		tvIncreaseLimit.setEnabled(false);
+		rlIncreaseLimit.setEnabled(false);
+		tvIncreaseLimit.setTextColor(Color.GRAY);
+		iconIncreaseLimit.setImageAlpha(75);
 	}
 
 	private void setTextSize() {
@@ -277,7 +303,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		WCreditCardFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (!cardHasId) {
+				if (!creditWasAlreadyRunOnce) {
 					if (new ConnectionDetector().isOnline(getActivity()))
 						getActiveOffer();
 					else {
@@ -293,7 +319,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				isOfferActive = false;
+				creditWasAlreadyRunOnce = false;
 				hideProgressBar();
 			}
 		});
@@ -312,7 +338,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onConnectionChanged() {
 		//connection changed
-		if (!cardHasId) {
+		if (!creditWasAlreadyRunOnce) {
 			if (new ConnectionDetector().isOnline(getActivity()))
 				getActiveOffer();
 
@@ -326,7 +352,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	}
 
 	private void retryConnect() {
-		if (!cardHasId) {
+		if (!creditWasAlreadyRunOnce) {
 			if (new ConnectionDetector().isOnline(getActivity()))
 				getActiveOffer();
 			else {

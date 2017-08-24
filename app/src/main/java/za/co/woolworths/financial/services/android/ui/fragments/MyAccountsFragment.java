@@ -143,6 +143,13 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		mContext = this;
+
+		//Trigger Firebase Tag.
+		JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity) getActivity()).getJWTDecoded();
+		Map<String, String> arguments = new HashMap<>();
+		arguments.put("c2_id", (jwtDecodedModel.C2Id != null)? jwtDecodedModel.C2Id : "");
+		Utils.triggerFireBaseEvents(getActivity(),"accounts_event_appeared",arguments);
+
 		return inflater.inflate(R.layout.my_accounts_fragment, container, false);
 	}
 

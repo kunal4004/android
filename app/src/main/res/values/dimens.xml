@@ -69,9 +69,9 @@
     <dimen name="width_qr_box_view">240dp</dimen>
     <dimen name="height_qr_box_view">240dp</dimen>
     <dimen name="height_qr_box_view_desc">35dp</dimen>
-    <dimen name="LoadingDots_dots_size_default">12dp</dimen>
-    <dimen name="LoadingDots_dots_space_default">2dp</dimen>
-    <dimen name="LoadingDots_jump_height_default">12dp</dimen>
+    <dimen name="LoadingDots_dots_size_default">3dp</dimen>
+    <dimen name="LoadingDots_dots_space_default">6dp</dimen>
+    <dimen name="LoadingDots_jump_height_default">5dp</dimen>
     <dimen name="product_image_height">220dp</dimen>
 
     <!-- Default screen margins, per the Android Design guidelines. -->

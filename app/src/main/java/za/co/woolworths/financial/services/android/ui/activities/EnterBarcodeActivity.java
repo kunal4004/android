@@ -211,7 +211,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 				super.onPostExecute(product);
 				List<ProductList> mProduct = product.products;
 				if (mProduct != null) {
-					if (mProduct.size() > 0) {
+					if (mProduct.size() > 0 && mProduct.get(0).productId != null) {
 						getProductDetail(mProduct.get(0).productId, mProduct.get(0).sku);
 					} else {
 						hideSoftKeyboard();
@@ -287,7 +287,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 											openDetailView.putExtra("product_name", mProductList.get(0).productName);
 											openDetailView.putExtra("product_detail", gson.toJson(mProductList));
 											startActivity(openDetailView);
-											overridePendingTransition(0, R.anim.anim_slide_up);
+											overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 											break;
 
 										default:
