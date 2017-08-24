@@ -29,6 +29,20 @@ public class WFormatter {
         return String.format("R %s.%02d", stringBuilder.reverse().toString(), amount % 100);
     }
 
+    public static String newAmountFormat(int amount) {
+        String[] split = String.valueOf((amount / 100)).split("");
+        StringBuilder stringBuilder = new StringBuilder();
+        int counter = 0;
+        for (int i = split.length - 1; i > 0; i--) {
+            if (counter != 0 && counter % 3 == 0) {
+                stringBuilder.append(" ");
+            }
+            stringBuilder.append(split[i]);
+            counter++;
+        }
+        return String.format("R%s.%02d", stringBuilder.reverse().toString(), amount % 100);
+    }
+
 
     public static String formatAmount(double amount) {
         String sAmount = roundDouble(amount);
@@ -111,6 +125,14 @@ public class WFormatter {
         }
         DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         return new SimpleDateFormat("dd/MM/yyyy").format(m_ISO8601Local.parse(validFromDate));
+    }
+
+    public static String newDateFormat(String validFromDate) throws ParseException {
+        if (validFromDate == null) {
+            return "N/A";
+        }
+        DateFormat m_ISO8601Local = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        return new SimpleDateFormat("dd/MM/yy").format(m_ISO8601Local.parse(validFromDate));
     }
 
     public static String formatDateTOddMMMMYYYY(String validFromDate) throws ParseException {

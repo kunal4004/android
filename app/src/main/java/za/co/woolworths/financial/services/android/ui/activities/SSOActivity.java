@@ -32,6 +32,7 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.iid.InstanceID;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -40,10 +41,12 @@ import com.google.gson.JsonParser;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 
+import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
@@ -414,6 +417,12 @@ public class SSOActivity extends WebViewActivity {
 							} catch (Exception e) {
 								Log.e(TAG, e.getMessage());
 							}
+							//Trigger Firebase Tag.
+							JWTDecodedModel jwtDecodedModel = Utils.getJWTDecoded(getApplicationContext());
+							Map<String, String> arguments = new HashMap<>();
+							arguments.put("c2_id", (jwtDecodedModel.C2Id != null)? jwtDecodedModel.C2Id : "");
+							Utils.triggerFireBaseEvents(getApplicationContext(),FirebaseAnalytics.Event.LOGIN,arguments);
+
 							sendRegistrationToServer();//TODO: this should be handled by a listener
 							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
 						} else {

@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -17,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -29,7 +29,9 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
+import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -39,7 +41,6 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
-import za.co.woolworths.financial.services.android.util.PersonalLoanAmount;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -47,34 +48,27 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
-	private PersonalLoanAmount personalLoanInfo;
-	public WTextView availableBalance;
-	public WTextView creditLimit;
-	public WTextView dueDate;
-	public WTextView minAmountDue;
-	public WTextView currentBalance;
-	public WTextView transactions;
-	public WTextView txtIncreseLimit;
-
+	public WTextView availableBalance, creditLimit, dueDate, minAmountDue, currentBalance, tvViewTransaction, tvIncreaseLimit, tvProtectionInsurance;
 	String productOfferingId;
 	private WoolworthsApplication woolworthsApplication;
 	private ProgressBar mProgressCreditLimit;
 	private boolean isOfferActive = true;
-	private ImageView mImageArrow;
+	private ImageView iconIncreaseLimit;
 	private SharePreferenceHelper mSharePreferenceHelper;
 	private HttpAsyncTask<String, String, OfferActive> asyncRequestPersonalLoan;
-	private boolean cardHasId = false;
+	private boolean personalWasAlreadyRunOnce = false;
 
-	private AccountsResponse temp = null;
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
-	private boolean bolBroacastRegistred;
+	private boolean boolBroadcastRegistered;
+	private int minDrawnAmount;
+	public RelativeLayout mRelDrawnDownAmount, rlIncreaseLimit;
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.cards_common_fragment, container, false);
+		return inflater.inflate(R.layout.card_common_fragment, container, false);
 	}
 
 	@Override
@@ -87,24 +81,39 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		dueDate = (WTextView) view.findViewById(R.id.dueDate);
 		minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
 		currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
-		transactions = (WTextView) view.findViewById(R.id.txtTransactions);
-		txtIncreseLimit = (WTextView) view.findViewById(R.id.txtIncreseLimit);
+		tvViewTransaction = (WTextView) view.findViewById(R.id.tvViewTransaction);
+		tvProtectionInsurance = (WTextView) view.findViewById(R.id.tvProtectionInsurance);
+		tvIncreaseLimit = (WTextView) view.findViewById(R.id.tvIncreaseLimit);
 		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
-		mImageArrow = (ImageView) view.findViewById(R.id.imgArrow);
-		txtIncreseLimit.setOnClickListener(this);
-		transactions.setOnClickListener(this);
+		mRelDrawnDownAmount = (RelativeLayout) view.findViewById(R.id.relDrawnDownAmount);
+		mRelDrawnDownAmount.setVisibility(View.VISIBLE);
+		iconIncreaseLimit = (ImageView) view.findViewById(R.id.iconIncreaseLimit);
+		rlIncreaseLimit = (RelativeLayout) view.findViewById(R.id.rlIncreaseLimit);
+		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
+		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
+
+		rlIncreaseLimit.setOnClickListener(this);
+		tvViewTransaction.setOnClickListener(this);
+		tvIncreaseLimit.setOnClickListener(this);
+		relBalanceProtection.setOnClickListener(this);
+		mRelDrawnDownAmount.setOnClickListener(this);
+		rlViewTransactions.setOnClickListener(this);
+
 		try {
 			networkChangeListener = this;
 		} catch (ClassCastException ignored) {
 		}
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
-		bolBroacastRegistred = true;
+		boolBroadcastRegistered = true;
 		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-		temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
-		disableIncreaseLimit();
+		AccountsResponse temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+		if (!personalWasAlreadyRunOnce)
+			disableIncreaseLimit();
 		hideProgressBar();
 		setTextSize();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
+		if (temp != null)
+			bindData(temp);
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -133,21 +142,19 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 					productOfferingId = String.valueOf(p.productOfferingId);
 					woolworthsApplication.setProductOfferingId(p.productOfferingId);
 					mSharePreferenceHelper.save(String.valueOf(p.productOfferingId), "lw_product_offering_id");
-					int minDrawnAmount = p.minDrawDownAmount;
+					minDrawnAmount = p.minDrawDownAmount;
 					if (TextUtils.isEmpty(String.valueOf(minDrawnAmount))) {
 						minDrawnAmount = 0;
 					}
-
-					personalLoanInfo.minDrawnAmount(minDrawnAmount);
-					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.availableFunds), 1, getActivity())));
+					availableBalance.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.availableFunds), 1, getActivity())));
 					mSharePreferenceHelper.save(availableBalance.getText().toString(), "lw_available_fund");
-					creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(p.creditLimit), 1, getActivity())));
+					creditLimit.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.newAmountFormat(p.creditLimit), 1, getActivity())));
 					mSharePreferenceHelper.save(creditLimit.getText().toString(), "lw_credit_limit");
 
-					minAmountDue.setText(removeNegativeSymbol(WFormatter.formatAmount(p.minimumAmountDue)));
-					currentBalance.setText(removeNegativeSymbol(WFormatter.formatAmount(p.currentBalance)));
+					minAmountDue.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
+					currentBalance.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
 					try {
-						dueDate.setText(WFormatter.formatDate(p.paymentDueDate));
+						dueDate.setText(WFormatter.newDateFormat(p.paymentDueDate));
 					} catch (ParseException ex) {
 						dueDate.setText(p.paymentDueDate);
 					}
@@ -159,20 +166,37 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-			case R.id.txtTransactions:
+			case R.id.rlViewTransactions:
+			case R.id.tvViewTransaction:
 				Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
 				intent.putExtra("productOfferingId", productOfferingId);
 				startActivity(intent);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim
 						.stay);
 				break;
-			case R.id.txtIncreseLimit:
+			case R.id.rlIncreaseLimit:
+			case R.id.tvIncreaseLimit:
 				if (!isOfferActive) {
 					((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
 					Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
 					startActivity(openCLIIncrease);
 					getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				}
+				break;
+
+			case R.id.relBalanceProtection:
+				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
+				startActivity(intBalanceProtection);
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				break;
+
+			case R.id.relDrawnDownAmount:
+				mSharePreferenceHelper.save("", "lw_amount_drawn_cent");
+				mSharePreferenceHelper.save(String.valueOf(productOfferingId), "lw_product_offering_id");
+				Intent openWithdrawCashNow = new Intent(getActivity(), LoanWithdrawalActivity.class);
+				openWithdrawCashNow.putExtra("minDrawnDownAmount", minDrawnAmount);
+				startActivity(openWithdrawCashNow);
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 		}
 	}
@@ -199,8 +223,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			protected void onPreExecute() {
 				mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 				mProgressCreditLimit.setVisibility(View.VISIBLE);
-				mImageArrow.setVisibility(View.GONE);
-				txtIncreseLimit.setVisibility(View.GONE);
+				iconIncreaseLimit.setVisibility(View.GONE);
+				disableIncreaseLimit();
 				super.onPreExecute();
 			}
 
@@ -212,7 +236,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 					int httpCode = offerActive.httpCode;
 					String httpDesc = offerActive.response.desc;
 					if (httpCode == 200) {
-						cardHasId = true;
+						personalWasAlreadyRunOnce = true;
 						isOfferActive = offerActive.offerActive;
 						if (isOfferActive) {
 							disableIncreaseLimit();
@@ -241,20 +265,22 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	public void hideProgressBar() {
 		mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(null);
 		mProgressCreditLimit.setVisibility(View.GONE);
-		mImageArrow.setVisibility(View.VISIBLE);
-		txtIncreseLimit.setVisibility(View.VISIBLE);
+		iconIncreaseLimit.setVisibility(View.VISIBLE);
+		tvIncreaseLimit.setVisibility(View.VISIBLE);
 	}
 
 	public void enableIncreaseLimit() {
-		txtIncreseLimit.setEnabled(true);
-		txtIncreseLimit.setTextColor(Color.BLACK);
-		mImageArrow.setImageAlpha(255);
+		tvIncreaseLimit.setEnabled(true);
+		rlIncreaseLimit.setEnabled(true);
+		tvIncreaseLimit.setTextColor(Color.BLACK);
+		iconIncreaseLimit.setImageAlpha(255);
 	}
 
 	public void disableIncreaseLimit() {
-		txtIncreseLimit.setEnabled(false);
-		txtIncreseLimit.setTextColor(Color.GRAY);
-		mImageArrow.setImageAlpha(75);
+		tvIncreaseLimit.setEnabled(false);
+		rlIncreaseLimit.setEnabled(false);
+		tvIncreaseLimit.setTextColor(Color.GRAY);
+		iconIncreaseLimit.setImageAlpha(75);
 	}
 
 	private void setTextSize() {
@@ -276,15 +302,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mSharePreferenceHelper.removeValue("lw_product_offering_id");
 		mSharePreferenceHelper.removeValue("lw_amount_drawn_cent");
 
-		if (temp != null)
-			bindData(temp);
 		setTextSize();
-	}
-
-	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-		personalLoanInfo = (PersonalLoanAmount) context;
 	}
 
 	@Override
@@ -299,7 +317,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		WPersonalLoanFragment.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (!cardHasId) {
+				if (!personalWasAlreadyRunOnce) {
 					if (new ConnectionDetector().isOnline(getActivity()))
 						getActiveOffer();
 					else {
@@ -307,7 +325,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						disableIncreaseLimit();
 					}
 				}
-
 			}
 		});
 	}
@@ -316,7 +333,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				isOfferActive = false;
+				personalWasAlreadyRunOnce = false;
 				hideProgressBar();
 			}
 		});
@@ -325,16 +342,16 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onPause() {
 		super.onPause();
-		if (bolBroacastRegistred) {
+		if (boolBroadcastRegistered) {
 			getActivity().unregisterReceiver(connectionBroadcast);
-			bolBroacastRegistred = false;
+			boolBroadcastRegistered = false;
 		}
 	}
 
 	@Override
 	public void onConnectionChanged() {
 		//connection changed
-		if (!cardHasId) {
+		if (!personalWasAlreadyRunOnce) {
 			if (new ConnectionDetector().isOnline(getActivity()))
 				getActiveOffer();
 
@@ -348,7 +365,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	}
 
 	private void retryConnect() {
-		if (!cardHasId) {
+		if (!personalWasAlreadyRunOnce) {
 			if (new ConnectionDetector().isOnline(getActivity()))
 				getActiveOffer();
 			else {
