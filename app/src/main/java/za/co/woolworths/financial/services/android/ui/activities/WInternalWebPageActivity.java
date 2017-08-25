@@ -4,9 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
@@ -33,11 +31,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
 import com.awfs.coordination.R;
-
-import java.util.List;
-
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -281,10 +275,8 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 
 		request.setMimeType(mimeType);
 
-		//------------------------COOKIE!!------------------------
 		String cookies = CookieManager.getInstance().getCookie(url);
 		request.addRequestHeader("cookie", cookies);
-		//------------------------COOKIE!!------------------------
 		request.addRequestHeader("User-Agent", userAgent);
 		request.setDescription("Downloading file...");
 		request.setTitle(URLUtil.guessFileName(url, contentDisposition, mimeType));
@@ -293,7 +285,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 		request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, URLUtil.guessFileName(url, contentDisposition, mimeType));
 		DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
 		dm.enqueue(request);
-		Toast.makeText(getApplicationContext(), "Downloading File", Toast.LENGTH_LONG).show();
+		Toast.makeText(getApplicationContext(), R.string.downloaing_text, Toast.LENGTH_LONG).show();
 	}
 
 	public  boolean isStoragePermissionGranted() {
@@ -307,7 +299,7 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 				return false;
 			}
 		}
-		else { //permission is automatically granted on sdk<23 upon installation
+		else {
 			return true;
 		}
 	}
@@ -315,6 +307,13 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-		downloadFile(downLoadUrl,downLoadMimeType,downLoadUserAgent,downLoadConntentDisposition);
+		if(grantResults.length > 0
+				&& grantResults[0] == PackageManager.PERMISSION_GRANTED){
+			switch (requestCode){
+				case REQUEST_CODE:
+					downloadFile(downLoadUrl,downLoadMimeType,downLoadUserAgent,downLoadConntentDisposition);
+					break;
+			}
+		}
 	}
 }
