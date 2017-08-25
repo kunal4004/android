@@ -1,16 +1,29 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.DownloadManager;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.v13.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.DownloadListener;
+import android.webkit.URLUtil;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -19,8 +32,11 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.awfs.coordination.R;
+
+import java.util.List;
 
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -33,6 +49,12 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	private String mExternalLink;
 	private ProgressBar mWoolworthsProgressBar;
 	private AppBarLayout mAppbar;
+	private static final int REQUEST_CODE=123;
+	private String downLoadUrl;
+	private String downLoadMimeType;
+	private String downLoadUserAgent;
+	private String downLoadConntentDisposition;
+
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,8 +113,47 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 				super.onPageFinished(view, url);
 				hideProgressBar();
 			}
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				final Uri uri = Uri.parse(url);
+				handleUri(view, uri);
+				return true;
+			}
+
+			@TargetApi(Build.VERSION_CODES.N)
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+				final Uri uri = request.getUrl();
+				handleUri(view, uri);
+				return true;
+			}
 		});
 		webInternalPage.loadUrl(mExternalLink);
+
+		webInternalPage.setDownloadListener(new DownloadListener() {
+			@Override
+			public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimeType, long contentLength) {
+				downLoadUrl=url;
+				downLoadMimeType=mimeType;
+				downLoadUserAgent=userAgent;
+				downLoadConntentDisposition=contentDisposition;
+
+				if (isStoragePermissionGranted()) {
+					downloadFile(url,mimeType,userAgent,contentDisposition);
+				}
+			}
+		});
+	}
+
+	private void handleUri(WebView view, Uri uri) {
+		String url = uri.toString();
+		if (url.contains("mailto:")) {
+			Utils.sendEmail(url, "",getApplicationContext());
+		}else {
+			view.loadUrl(url);
+		}
 	}
 
 	private void retryConnect() {
@@ -212,5 +273,48 @@ public class WInternalWebPageActivity extends AppCompatActivity implements View.
 	@Override
 	public void onBackPressed() {
 		finishActivity();
+	}
+
+	public void downloadFile(String url,String mimeType,String userAgent,String contentDisposition)
+	{
+		DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+
+		request.setMimeType(mimeType);
+
+		//------------------------COOKIE!!------------------------
+		String cookies = CookieManager.getInstance().getCookie(url);
+		request.addRequestHeader("cookie", cookies);
+		//------------------------COOKIE!!------------------------
+		request.addRequestHeader("User-Agent", userAgent);
+		request.setDescription("Downloading file...");
+		request.setTitle(URLUtil.guessFileName(url, contentDisposition, mimeType));
+		request.allowScanningByMediaScanner();
+		request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+		request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, URLUtil.guessFileName(url, contentDisposition, mimeType));
+		DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+		dm.enqueue(request);
+		Toast.makeText(getApplicationContext(), "Downloading File", Toast.LENGTH_LONG).show();
+	}
+
+	public  boolean isStoragePermissionGranted() {
+		if (Build.VERSION.SDK_INT >= 23) {
+			if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+					== PackageManager.PERMISSION_GRANTED) {
+				return true;
+			} else {
+
+				ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
+				return false;
+			}
+		}
+		else { //permission is automatically granted on sdk<23 upon installation
+			return true;
+		}
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		downloadFile(downLoadUrl,downLoadMimeType,downLoadUserAgent,downLoadConntentDisposition);
 	}
 }

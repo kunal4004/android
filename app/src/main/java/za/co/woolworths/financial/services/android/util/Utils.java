@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.location.Location;
 import android.location.LocationManager;
@@ -540,5 +542,23 @@ public class Utils {
 			Log.e(TAG, e.getMessage());
 		}
 		return result;
+	}
+
+	public static void sendEmail(String emailId, String subject,Context mContext) {
+		Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+		emailIntent.setData(Uri.parse(emailId +
+				"?subject=" + Uri.encode(subject) +
+				"&body=" + Uri.encode("")));
+
+		PackageManager pm = mContext.getPackageManager();
+		List<ResolveInfo> listOfEmail = pm.queryIntentActivities(emailIntent, 0);
+		if (listOfEmail.size() > 0) {
+			mContext.startActivity(emailIntent);
+		} else {
+			Utils.displayValidationMessage(mContext,
+					CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INFO,
+					mContext.getResources().getString(R.string.contact_us_no_email_error)
+							.replace("email_address", emailId).replace("subject_line", subject));
+		}
 	}
 }
