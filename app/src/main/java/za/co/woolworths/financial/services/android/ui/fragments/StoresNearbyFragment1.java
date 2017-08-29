@@ -815,7 +815,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		if (searchMenu != null) {
 			isSearchMenuEnabled = true;
 			searchMenu.getIcon().setAlpha(255);
-			getActivity().invalidateOptionsMenu();
+			if (activityIsNull())
+				getActivity().invalidateOptionsMenu();
 		}
 	}
 
@@ -823,7 +824,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		if (searchMenu != null) {
 			isSearchMenuEnabled = false;
 			searchMenu.getIcon().setAlpha(130);
-			getActivity().invalidateOptionsMenu();
+			if (activityIsNull())
+				getActivity().invalidateOptionsMenu();
 		}
+	}
+
+	private boolean activityIsNull() {
+		return getActivity() != null;
 	}
 }
