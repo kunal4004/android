@@ -24,6 +24,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ import java.util.List;
 /**
  * ScrollView that its scroll position can be observed.
  */
-public class ObservableScrollView extends NestedScrollView implements Scrollable {
+public class ObservableScrollView extends ScrollView implements Scrollable {
 
 	// Fields that should be saved onSaveInstanceState
 	private int mPrevScrollY;
