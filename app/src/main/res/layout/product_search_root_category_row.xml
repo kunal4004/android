@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:gravity="center"
-        android:minHeight="180dp">
+        android:minHeight="@dimen/product_category_image_height">
 
         <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
             android:id="@+id/imProductCategory"
