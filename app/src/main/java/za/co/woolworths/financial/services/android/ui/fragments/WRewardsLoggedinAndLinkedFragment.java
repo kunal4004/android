@@ -185,8 +185,10 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 					Utils.setBadgeCounter(getActivity(), 0);
 					updateNavigationDrawer.updateVoucherCount(0);
 					Intent intent = new Intent();
-					getTargetFragment().onActivityResult(WRewardsFragment.FRAGMENT_CODE_2, Activity.RESULT_OK,
-							intent);
+					WRewardsFragment mParentFragment = (WRewardsFragment) getParentFragment();
+					if (mParentFragment != null) {
+						mParentFragment.onActivityResult(WRewardsFragment.FRAGMENT_CODE_2, Activity.RESULT_OK, intent);
+					}
 					getFragmentManager().popBackStack();
 					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 					break;

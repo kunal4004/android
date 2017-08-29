@@ -149,7 +149,6 @@ public class WRewardsFragment extends AbstractFragmentListener {
 		FragmentManager childFragMan = getChildFragmentManager();
 		FragmentTransaction childFragTrans = childFragMan.beginTransaction();
 		WRewardsLoggedinAndLinkedFragment fragmentChild = new WRewardsLoggedinAndLinkedFragment();
-		fragmentChild.setTargetFragment(this, FRAGMENT_CODE_1);
 		childFragTrans.add(R.id.content_frame, fragmentChild);
 		childFragTrans.commit();
 		wRewarsToolbarTitle.setText(getString(R.string.wrewards));
@@ -159,7 +158,6 @@ public class WRewardsFragment extends AbstractFragmentListener {
 		FragmentManager childFragMan = getChildFragmentManager();
 		FragmentTransaction childFragTrans = childFragMan.beginTransaction();
 		WRewardsLoggedinAndNotLinkedFragment fragmentChild = new WRewardsLoggedinAndNotLinkedFragment();
-		fragmentChild.setTargetFragment(this, FRAGMENT_CODE_3);
 		childFragTrans.add(R.id.content_frame, fragmentChild);
 		childFragTrans.commit();
 		wRewarsToolbarTitle.setText("");
@@ -169,7 +167,6 @@ public class WRewardsFragment extends AbstractFragmentListener {
 		FragmentManager childFragMan = getChildFragmentManager();
 		FragmentTransaction childFragTrans = childFragMan.beginTransaction();
 		WRewardsLoggedOutFragment fragmentChild = new WRewardsLoggedOutFragment();
-		fragmentChild.setTargetFragment(this, FRAGMENT_CODE_2);
 		childFragTrans.add(R.id.content_frame, fragmentChild);
 		childFragTrans.commit();
 		wRewarsToolbarTitle.setText("");
