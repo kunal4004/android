@@ -687,5 +687,6 @@
     <string name="no_stock_title">no stock</string>
     <string name="location_disable_title">Location Services</string>
     <string name="location_disable_desc">This feature cannot be used without Location Services.</string>
+    <string name="downloaing_text">Downloading File</string>
 
 </resources>
