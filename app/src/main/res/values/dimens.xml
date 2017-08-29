@@ -73,6 +73,7 @@
     <dimen name="LoadingDots_dots_space_default">6dp</dimen>
     <dimen name="LoadingDots_jump_height_default">5dp</dimen>
     <dimen name="product_image_height">220dp</dimen>
+    <dimen name="product_category_image_height">180dp</dimen>
 
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="alerter_activity_horizontal_margin">18dp</dimen>
