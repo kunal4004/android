@@ -58,8 +58,9 @@ public class StockFinderCardsOnMapAdapter extends PagerAdapter {
 		CharSequence mDistancekM = TextUtils.concat(ssDistance, "\n", mSpanKm);
 		storeDistance.setText(mDistancekM);
 
-		if (storeDetailsList.get(position).offerings != null)
-			storeOfferings.setText(mContext.getResources().getString(R.string.available).toUpperCase());
+		if (storeDetailsList.get(position).offerings != null) {
+			storeOfferings.setText(WFormatter.formatOfferingString(storeDetailsList.get(position).offerings));
+		}
 		if (storeDetailsList.get(position).times != null) {
 			try {
 				String mHour = WFormatter.formatOpenUntilTime(storeDetailsList.get(position).times.get(0).hours);
