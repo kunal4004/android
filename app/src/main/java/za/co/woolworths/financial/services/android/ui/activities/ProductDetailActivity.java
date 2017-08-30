@@ -142,7 +142,6 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 	private String mProductName, mSkuId;
 	private PermissionUtils permissionUtils;
 	private ArrayList<String> permissions;
-	protected static final int REQUEST_CHECK_SETTINGS = 99;
 	private WProductDetail mProduct;
 	private LinearLayout llStoreFinder;
 	private Location mLocation;
@@ -153,6 +152,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private ProductDetailActivity networkChangeListener;
+	private WoolworthsApplication mWoolWorthApp;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -162,7 +162,8 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.product_view_detail);
 		mContext = this;
-		mWGlobalState = ((WoolworthsApplication) ProductDetailActivity.this.getApplication()).getWGlobalState();
+		mWoolWorthApp = ((WoolworthsApplication) ProductDetailActivity.this.getApplication());
+		mWGlobalState = mWoolWorthApp.getWGlobalState();
 		permissionUtils = new PermissionUtils(this, this);
 		permissions = new ArrayList<>();
 		permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -333,7 +334,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 			promoImages(mProduct.promotionImages);
 			displayProduct(mProductName);
 			initColorParam(mDefaultColor);
-			productTypeActive(mProduct);
+			productIsActive(mProduct);
 			String saveText = mProduct.saveText;
 			if (TextUtils.isEmpty(saveText)) {
 
@@ -1029,26 +1030,16 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		v.setLayoutParams(params);
 	}
 
-	private void productTypeActive(WProductDetail productList) {
+	private void productIsActive(WProductDetail productList) {
 		String productType = productList.productType;
-		if (productType.equalsIgnoreCase("clothingProducts")) {
-			if (mWGlobalState.clothingIsEnabled()) {
-				setLayoutWeight(mBtnShopOnlineWoolies, 0.5f);
-				setLayoutWeight(llStoreFinder, 0.5f);
-				llStoreFinder.setVisibility(View.VISIBLE);
-			} else {
-				setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
-				llStoreFinder.setVisibility(View.GONE);
-			}
+		WGlobalState mcs = mWoolWorthApp.getWGlobalState();
+		if ((productType.equalsIgnoreCase("clothingProducts") & mcs.clothingIsEnabled()) || (productType.equalsIgnoreCase("foodProducts") & mcs.isFoodProducts())) {
+			setLayoutWeight(mBtnShopOnlineWoolies, 0.5f);
+			setLayoutWeight(llStoreFinder, 0.5f);
+			llStoreFinder.setVisibility(View.VISIBLE);
 		} else {
-			if (mWGlobalState.isFoodProducts()) {
-				setLayoutWeight(mBtnShopOnlineWoolies, 0.5f);
-				setLayoutWeight(llStoreFinder, 0.5f);
-				llStoreFinder.setVisibility(View.VISIBLE);
-			} else {
-				setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
-				llStoreFinder.setVisibility(View.GONE);
-			}
+			setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
+			llStoreFinder.setVisibility(View.GONE);
 		}
 	}
 

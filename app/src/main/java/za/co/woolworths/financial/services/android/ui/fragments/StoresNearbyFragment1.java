@@ -520,9 +520,6 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 			@Override
 			protected void onPostExecute(LocationResponse locationResponse) {
 				super.onPostExecute(locationResponse);
-				String json = new Gson().toJson(locationResponse);
-				WGlobalState wGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
-				wGlobalState.setStoreLocatorJson(json);
 				enableSearchMenu();
 				hideProgressBar();
 				storeDetailsList = new ArrayList<>();
@@ -818,7 +815,8 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		if (searchMenu != null) {
 			isSearchMenuEnabled = true;
 			searchMenu.getIcon().setAlpha(255);
-			getActivity().invalidateOptionsMenu();
+			if (activityIsNull())
+				getActivity().invalidateOptionsMenu();
 		}
 	}
 
@@ -826,7 +824,12 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		if (searchMenu != null) {
 			isSearchMenuEnabled = false;
 			searchMenu.getIcon().setAlpha(130);
-			getActivity().invalidateOptionsMenu();
+			if (activityIsNull())
+				getActivity().invalidateOptionsMenu();
 		}
+	}
+
+	private boolean activityIsNull() {
+		return getActivity() != null;
 	}
 }

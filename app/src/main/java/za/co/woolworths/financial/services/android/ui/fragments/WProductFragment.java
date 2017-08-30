@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,46 +14,50 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.awfs.coordination.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
+import za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSubCategoryActivity;
-import za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
-import za.co.woolworths.financial.services.android.ui.adapters.ProductCategoryAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ObservableScrollView;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.ScrollState;
-import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.view.RootCategoryBinder;
 import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 
 public class WProductFragment extends Fragment implements RootCategoryBinder.OnClickListener, View.OnClickListener,
-		AppBarLayout.OnOffsetChangedListener, SelectedProductView, ObservableScrollViewCallbacks {
+		AppBarLayout.OnOffsetChangedListener, ObservableScrollViewCallbacks {
+
+	public interface HideActionBarComponent {
+		void onBurgerButtonPressed();
+	}
 
 	private WTextView mToolbarText;
 	private boolean actionBarIsHidden = false;
@@ -61,10 +66,9 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 	private MenuNavigationInterface mMenuNavigationInterface;
 	private int mSearchRowHeight;
 	private int mScrollY;
-
-	public interface HideActionBarComponent {
-		void onBurgerButtonPressed();
-	}
+	private int mTopPaddingHeight;
+	public WProductFragment mContext;
+	private LinearLayout llCustomViews;
 
 	private HideActionBarComponent hideActionBarComponent;
 
@@ -75,19 +79,18 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 	private ImageView mImProductSearch;
 	private ImageView mImBarcodeScanner;
 	public WTextView mTextProductSearch;
-	private RecyclerView mRecycleProductSearch;
-	private WProductFragment mContext;
 	private List<RootCategory> mRootCategories;
 	private WTextView mTextTBProductSearch;
 	private RelativeLayout mRelSearchRowLayout;
 	private Toolbar mProductToolbar;
 	private ObservableScrollView mNestedScrollview;
+	private int tagPosition = 0;
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater,
-	                         @Nullable ViewGroup container,
-	                         @Nullable Bundle savedInstanceState) {
+							 @Nullable ViewGroup container,
+							 @Nullable Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.product_search_fragment, container, false);
 	}
 
@@ -95,6 +98,10 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		mContext = this;
+		try {
+			hideActionBarComponent = (HideActionBarComponent) getActivity();
+		} catch (ClassCastException ignored) {
+		}
 		mMenuNavigationInterface = (MenuNavigationInterface) getActivity();
 		mAppToolbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
 		mProductToolbar = (Toolbar) view.findViewById(R.id.productToolbar);
@@ -103,8 +110,11 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 				, (RelativeLayout) view.findViewById(R.id.no_connection_layout));
 		setUIListener();
 		showAccountToolbar();
+
+		mRootCategories = new ArrayList<>();
 		mNestedScrollview.getParent().requestChildFocus(mNestedScrollview, mNestedScrollview);
-		mSearchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight()));
+		mSearchRowHeight = Math.round(mRelSearchRowLayout.getHeight()) - mTopPaddingHeight;
+		mTopPaddingHeight = (int) getResources().getDimension(R.dimen.default_margin);
 		showOneTimePopup();
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -113,7 +123,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 					mMenuNavigationInterface.switchToView(1);
 			}
 		});
-
 
 	}
 
@@ -136,13 +145,14 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 		mNestedScrollview = (ObservableScrollView) v.findViewById(R.id.mNestedScrollview);
 		mImProductSearch = (ImageView) v.findViewById(R.id.imProductSearch);
 		mImBarcodeScanner = (ImageView) v.findViewById(R.id.imBarcodeScanner);
-		mRecycleProductSearch = (RecyclerView) v.findViewById(R.id.recycleProductSearch);
 		mRelSearchRowLayout = (RelativeLayout) v.findViewById(R.id.relSearchRowLayout);
 		mBurgerButtonPressed = (ImageView) v.findViewById(R.id.imBurgerButtonPressed);
 		mTBBarcodeScanner = (ImageView) v.findViewById(R.id.imTBBarcodeScanner);
 		mTextTBProductSearch = (WTextView) v.findViewById(R.id.textTBProductSearch);
 		mTextProductSearch = (WTextView) v.findViewById(R.id.textProductSearch);
 		mToolbarText = (WTextView) v.findViewById(R.id.toolbarText);
+
+		llCustomViews = (LinearLayout) v.findViewById(R.id.llCustomViews);
 	}
 
 	private void setUIListener() {
@@ -333,16 +343,60 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 
 	private void bindViewWithUI(List<RootCategory> rootCategories) {
 		mRootCategories = rootCategories;
-		ProductCategoryAdapter myAdapter = new ProductCategoryAdapter(rootCategories, mContext);
-		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-		mRecycleProductSearch.setHasFixedSize(true);
-		mRecycleProductSearch.setLayoutManager(mLayoutManager);
-		mRecycleProductSearch.setNestedScrollingEnabled(false);
-		mRecycleProductSearch.setAdapter(myAdapter);
-		myAdapter.notifyDataSetChanged();
-		mSearchRowHeight = Math.round(mRelSearchRowLayout.getHeight() + (getToolBarHeight())
-				+ getToolBarHeight() / 2);
+		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		while (tagPosition < mRootCategories.size()) {
+			RootCategory rootCategory = rootCategories.get(tagPosition);
+			View view = inflater.inflate(R.layout.product_search_root_category_row, null, false);
+			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+			Resources r = mContext.getResources();
+			int sixteenDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, r.getDisplayMetrics());
+			layoutParams.setMargins(sixteenDp, 0, sixteenDp, sixteenDp);
+			view.setLayoutParams(layoutParams);
+			view.setId(tagPosition);
+			view.setTag(tagPosition);
+			WTextView tv = (WTextView) view.findViewById(R.id.textProduct);
+			tv.setText(rootCategory.categoryName);
+			WrapContentDraweeView mImageProductCategory = (WrapContentDraweeView) view.findViewById(R.id.imProductCategory);
+			mImageProductCategory.setId(tagPosition);
+			mImageProductCategory.setTag(tagPosition);
+			mImageProductCategory.setImageURI(rootCategory.imgUrl, getActivity());
+			view.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					int position = v.getId();
+					onItemSelected(position);
+				}
+			});
+			mImageProductCategory.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					int position = v.getId();
+					onItemSelected(position);
+				}
+			});
+			tagPosition++;
+			llCustomViews.addView(view);
+		}
+
+		mSearchRowHeight = Math.round(mRelSearchRowLayout.getHeight() +
+				+getToolBarHeight() / 2) - mTopPaddingHeight;
+	}
+
+	private void onItemSelected(int position) {
+		RootCategory rootCategory = mRootCategories.get(position);
+		if (rootCategory.hasChildren) {
+			Intent openSubCategory = new Intent(getActivity(), ProductSubCategoryActivity.class);
+			openSubCategory.putExtra("root_category_id", rootCategory.categoryId);
+			openSubCategory.putExtra("root_category_name", rootCategory.categoryName);
+			openSubCategory.putExtra("catStep", 0);
+			startActivity(openSubCategory);
+			getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+		} else {
+			Intent openProductListIntent = new Intent(getActivity(), ProductGridActivity.class);
+			openProductListIntent.putExtra("sub_category_name", rootCategory.categoryName);
+			openProductListIntent.putExtra("sub_category_id", rootCategory.categoryId);
+			startActivity(openProductListIntent);
+			getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+		}
 	}
 
 	public void showOneTimePopup() {
@@ -409,33 +463,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 				}
 			}
 		};
-	}
-
-	@Override
-	public void onSelectedProduct(View v, int position) {
-		RootCategory rootCategory = mRootCategories.get(position);
-		if (rootCategory.hasChildren) {
-			Intent openSubCategory = new Intent(getActivity(), ProductSubCategoryActivity.class);
-			openSubCategory.putExtra("root_category_id", rootCategory.categoryId);
-			openSubCategory.putExtra("root_category_name", rootCategory.categoryName);
-			openSubCategory.putExtra("catStep", 0);
-			startActivity(openSubCategory);
-			getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-		} else {
-			Intent openProductListIntent = new Intent(getActivity(), ProductGridActivity.class);
-			openProductListIntent.putExtra("sub_category_name", rootCategory.categoryName);
-			openProductListIntent.putExtra("sub_category_id", rootCategory.categoryId);
-			startActivity(openProductListIntent);
-			getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-		}
-	}
-
-	@Override
-	public void onLongPressState(View v, int position) {
-	}
-
-	@Override
-	public void onSelectedColor(View v, int position) {
 	}
 
 	@Override
