@@ -85,7 +85,6 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
-
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.views.LoadingDots;
@@ -191,7 +190,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	private String TAG = this.getClass().getSimpleName();
 	private Location mLocation;
 	private LocationItemTask locationItemTask;
-	private BroadcastReceiver updateStoreFinderReceiver;
 	private boolean mProductHasColour;
 	private boolean mProductHasSize;
 	private boolean mProductHasOneColour;
@@ -212,8 +210,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		}
 		model = new QRModel(new QRView(this));
 		model.onCreate();
-		updateStoreFinderReceiver = new BarcodeReceiver();
-		this.registerReceiver(updateStoreFinderReceiver, new IntentFilter(QRActivity.BarcodeReceiver.ACTION));
 
 		permissionUtils = new PermissionUtils(this, this);
 		permissions = new ArrayList<>();
@@ -344,16 +340,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
-		model.onPause();
-		try {
-			this.unregisterReceiver(updateStoreFinderReceiver);
-		} catch (IllegalArgumentException ignored) {
-		}
-	}
-
-	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		cameraManager.releaseCamera();
@@ -387,6 +373,9 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 						});
 			}
 			cursor.close();
+		} else if (resultCode == WGlobalState.SYNC_FIND_IN_STORE) {
+			startLocationUpdates();
+		} else {
 		}
 	}
 
@@ -1469,7 +1458,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mObjProductDetail.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
@@ -1482,7 +1471,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mObjProductDetail.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
@@ -1494,7 +1483,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", false);
 		mIntent.putExtra("PRODUCT_NAME", mObjProductDetail.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
@@ -1506,7 +1495,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mObjProductDetail.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
@@ -1518,20 +1507,14 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mObjProductDetail.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
 	public void noSizeColorIntent() {
 		mScrollProductDetail.scrollTo(0, 0);
 		mGlobalState.setSelectedSKUId(mSkuId);
-		inStoreFinderUpdate();
-	}
-
-	private void inStoreFinderUpdate() {
-		Intent intent = new Intent();
-		intent.setAction(QRActivity.BarcodeReceiver.ACTION);
-		sendBroadcast(intent);
+		startLocationUpdates();
 	}
 
 	private void disableStoreFinder() {
@@ -1734,15 +1717,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
 	}
 
-	public class BarcodeReceiver extends BroadcastReceiver {
-		public static final String ACTION = "com.inStoreFinder.UPDATE.QR";
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			startLocationUpdates();
-		}
-	}
-
 	public void startLocationUpdates() {
 		showFindInStoreProgress();
 		FusedLocationSingleton.getInstance().startLocationUpdates();
@@ -1914,5 +1888,4 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mGlobalState.setColorWasPopup(false);
 		mGlobalState.setSizeWasPopup(false);
 	}
-
 }

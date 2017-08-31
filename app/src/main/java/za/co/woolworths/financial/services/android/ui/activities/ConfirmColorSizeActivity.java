@@ -220,9 +220,8 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	}
 
 	private void callInStoreFinder() {
-		Intent intent = new Intent();
-		intent.setAction(ProductGridActivity.MyBroadcastReceiver.ACTION);
-		sendBroadcast(intent);
+		Intent result = new Intent();
+		setResult(WGlobalState.SYNC_FIND_IN_STORE, result);
 	}
 
 	private boolean sizeValueExist(ArrayList<OtherSku> list, String name) {

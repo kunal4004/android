@@ -67,7 +67,6 @@ import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
-import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ProgressBar;
@@ -149,7 +148,6 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 	private WTextView tvBtnFinder;
 	private ProgressBar mButtonProgress;
 	private LocationItemTask locationItemTask;
-	private BroadcastReceiver updateStoreFinderReceiver;
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private ProductDetailActivity networkChangeListener;
@@ -174,8 +172,6 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		permissionUtils = new PermissionUtils(this, this);
 		permissions = new ArrayList<>();
 		permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
-		updateStoreFinderReceiver = new ProductDetailActivity.MyBroadcastReceiver();
-		this.registerReceiver(updateStoreFinderReceiver, new IntentFilter(ProductDetailActivity.MyBroadcastReceiver.ACTION));
 		mErrorHandlerView = new ErrorHandlerView(this);
 		try {
 			networkChangeListener = ProductDetailActivity.this;
@@ -1111,14 +1107,14 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mProductName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
 	public void noSizeColorIntent() {
 		mScrollProductDetail.scrollTo(0, 0);
 		mGlobalState.setSelectedSKUId(mSkuId);
-		inStoreFinderUpdate();
+		startLocationUpdates();
 	}
 
 	public void sizeOnlyIntent(String colour) {
@@ -1129,7 +1125,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mProductName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
@@ -1141,7 +1137,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mProductName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
@@ -1153,7 +1149,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", false);
 		mIntent.putExtra("PRODUCT_NAME", mProductName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
@@ -1165,7 +1161,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mProductName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
@@ -1207,12 +1203,6 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		return commonSizeList;
 	}
 
-	private void inStoreFinderUpdate() {
-		Intent intent = new Intent();
-		intent.setAction(ProductDetailActivity.MyBroadcastReceiver.ACTION);
-		sendBroadcast(intent);
-	}
-
 	@Override
 	public void onConnectionChanged() {
 		runOnUiThread(new Runnable() {
@@ -1226,14 +1216,6 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		});
 	}
 
-	public class MyBroadcastReceiver extends BroadcastReceiver {
-		public static final String ACTION = "com.inStoreFinder.UPDATE";
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			startLocationUpdates();
-		}
-	}
 
 	public void startLocationUpdates() {
 		showFindInStoreProgress();
@@ -1505,12 +1487,14 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 	}
 
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		try {
-			this.unregisterReceiver(updateStoreFinderReceiver);
-		} catch (Exception ex) {
-			Log.e("exception", ex.toString());
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+			case WGlobalState.SYNC_FIND_IN_STORE:
+				startLocationUpdates();
+				break;
+			default:
+				break;
 		}
 	}
 }

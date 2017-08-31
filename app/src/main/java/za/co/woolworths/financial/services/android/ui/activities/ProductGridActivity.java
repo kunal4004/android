@@ -120,7 +120,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	private WTextView tvBtnFinder;
 	private String TAG = this.getClass().getSimpleName();
 	private LocationItemTask locationItemTask;
-	private MyBroadcastReceiver updateStoreFinderReceiver;
 	private boolean mProductHasColour;
 	private boolean mProductHasSize;
 	private boolean mProductHasOneColour;
@@ -150,10 +149,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		}
 		connectionBroadcast = Utils.connectionBroadCast(ProductGridActivity.this, networkChangeListener);
 		mWoolWorthsApplication = ((WoolworthsApplication) ProductGridActivity.this.getApplication());
-		mGlobalState = mWoolWorthsApplication.getWGlobalState();
-		resetColorSizePopup();
-		updateStoreFinderReceiver = new MyBroadcastReceiver();
-		this.registerReceiver(updateStoreFinderReceiver, new IntentFilter(MyBroadcastReceiver.ACTION));
+		mGlobalState = ((WoolworthsApplication) ProductGridActivity.this.getApplication()).getWGlobalState();
 		initUI();
 		initProductDetailUI();
 		actionBar();
@@ -682,7 +678,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		super.onDestroy();
 		menuItemVisible(mMenu, true);
 		unregisterReceiver(broadcast_reciever);
-		this.unregisterReceiver(updateStoreFinderReceiver);
 	}
 
 	private void finishActivity() {
@@ -925,7 +920,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
@@ -937,7 +932,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
@@ -949,7 +944,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
@@ -961,14 +956,14 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", false);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
 	public void noSizeColorIntent() {
 		mScrollProductDetail.scrollTo(0, 0);
 		mGlobalState.setSelectedSKUId(mSkuId);
-		inStoreFinderUpdate();
+		startLocationUpdates();
 	}
 
 	private void disableStoreFinder() {
@@ -1342,18 +1337,15 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		}
 	};
 
-	private void inStoreFinderUpdate() {
-		Intent intent = new Intent();
-		intent.setAction(ProductGridActivity.MyBroadcastReceiver.ACTION);
-		sendBroadcast(intent);
-	}
-
-	public class MyBroadcastReceiver extends BroadcastReceiver {
-		public static final String ACTION = "com.inStoreFinder.UPDATE";
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			startLocationUpdates();
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+			case WGlobalState.SYNC_FIND_IN_STORE:
+				startLocationUpdates();
+				break;
+			default:
+				break;
 		}
 	}
 }

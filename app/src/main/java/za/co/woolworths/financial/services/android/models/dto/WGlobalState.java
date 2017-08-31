@@ -22,6 +22,8 @@ public class WGlobalState {
 	public static final String ON_CANCEL = "CANCEL";
 	public static final String ON_SIGN_IN = "SIGNIN";
 
+	public static final int SYNC_FIND_IN_STORE = 3401;
+
 	private boolean clothingProducts, foodProducts;
 	private int startRadius, endRadius;
 
