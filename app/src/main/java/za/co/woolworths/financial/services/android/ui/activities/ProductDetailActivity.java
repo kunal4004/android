@@ -67,6 +67,7 @@ import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ProgressBar;
@@ -137,7 +138,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 	private View loadingColorDivider;
 	private LoadingDots mLoadingDot;
 	private WButton mBtnShopOnlineWoolies;
-	private WGlobalState mWGlobalState;
+	private WGlobalState mGlobalState;
 	private NestedScrollView mScrollProductDetail;
 	private String mProductName, mSkuId;
 	private PermissionUtils permissionUtils;
@@ -153,6 +154,10 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 	private BroadcastReceiver connectionBroadcast;
 	private ProductDetailActivity networkChangeListener;
 	private WoolworthsApplication mWoolWorthApp;
+	private boolean mProductHasColour;
+	private boolean mProductHasSize;
+	private boolean mProductHasOneColour;
+	private boolean mProductHasOneSize;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -163,7 +168,9 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		setContentView(R.layout.product_view_detail);
 		mContext = this;
 		mWoolWorthApp = ((WoolworthsApplication) ProductDetailActivity.this.getApplication());
-		mWGlobalState = mWoolWorthApp.getWGlobalState();
+		mGlobalState = mWoolWorthApp.getWGlobalState();
+		mGlobalState.setColorWasPopup(false);
+		mGlobalState.setSizeWasPopup(false);
 		permissionUtils = new PermissionUtils(this, this);
 		permissions = new ArrayList<>();
 		permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -474,6 +481,8 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				}
 			}
 			colorParams(position);
+			mGlobalState.setColorWasPopup(true);
+
 
 		} else {
 			if (mPSizeWindow != null) {
@@ -482,8 +491,11 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				}
 			}
 			if (uniqueSizeList != null) {
-				String selectedSize = uniqueSizeList.get(position).size;
+				OtherSku otherSku = uniqueSizeList.get(position);
+				String selectedSize = otherSku.size;
 				setSelectedTextSize(selectedSize);
+				mGlobalState.setSizeWasPopup(true);
+				mGlobalState.setSizePopUpValue(otherSku);
 				String colour = mTextColour.getText().toString();
 				String price = updatePrice(colour, selectedSize);
 				String wasPrice = updateWasPrice(colour, selectedSize);
@@ -502,12 +514,14 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 
 
 	protected void colorParams(int position) {
-		String colour = uniqueColorList.get(position).colour;
-		String defaultUrl = uniqueColorList.get(position).externalColourRef;
+		OtherSku otherSku = uniqueColorList.get(position);
+		String colour = otherSku.colour;
+		String defaultUrl = otherSku.externalColourRef;
 		if (TextUtils.isEmpty(colour)) {
 			colour = "";
 		}
 		mTextColour.setText(colour);
+		mGlobalState.setColorPopUpValue(otherSku);
 		mAuxiliaryImages = null;
 		mAuxiliaryImages = new ArrayList<>();
 		mDefaultImage = getSkuExternalImageRef(colour);
@@ -1090,7 +1104,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 	}
 
 	public void colourIntent() {
-		mWGlobalState.setColourSKUArrayList(getColorList());
+		mGlobalState.setColourSKUArrayList(getColorList());
 		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
 		mIntent.putExtra("OTHERSKU", toJson(mOtherSKUList));
@@ -1103,12 +1117,12 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 
 	public void noSizeColorIntent() {
 		mScrollProductDetail.scrollTo(0, 0);
-		mWGlobalState.setSelectedSKUId(mSkuId);
+		mGlobalState.setSelectedSKUId(mSkuId);
 		inStoreFinderUpdate();
 	}
 
 	public void sizeOnlyIntent(String colour) {
-		mWGlobalState.setColourSKUArrayList(getColorList());
+		mGlobalState.setColourSKUArrayList(getColorList());
 		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
 		mIntent.putExtra("SELECTED_COLOUR", colour);
 		mIntent.putExtra("OTHERSKU", toJson(mOtherSKUList));
@@ -1120,7 +1134,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 	}
 
 	public void sizeIntent() {
-		mWGlobalState.setColourSKUArrayList(getColorList());
+		mGlobalState.setColourSKUArrayList(getColorList());
 		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
 		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
 		mIntent.putExtra("OTHERSKU", toJson(mOtherSKUList));
@@ -1131,6 +1145,29 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		overridePendingTransition(0, 0);
 	}
 
+	public void colorIntent(String size) {
+		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
+		mIntent.putExtra("SELECTED_COLOUR", size);
+		mIntent.putExtra("COLOR_LIST", toJson(mGlobalState.getColourSKUArrayList()));
+		mIntent.putExtra("OTHERSKU", toJson(mOtherSKUList));
+		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
+		mIntent.putExtra("PRODUCT_HAS_SIZE", false);
+		mIntent.putExtra("PRODUCT_NAME", mProductName);
+		startActivity(mIntent);
+		overridePendingTransition(0, 0);
+	}
+
+	public void sizeIntent(String colour) {
+		mGlobalState.setColourSKUArrayList(getColorList());
+		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
+		mIntent.putExtra("SELECTED_COLOUR", colour);
+		mIntent.putExtra("OTHERSKU", toJson(mOtherSKUList));
+		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
+		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
+		mIntent.putExtra("PRODUCT_NAME", mProductName);
+		startActivity(mIntent);
+		overridePendingTransition(0, 0);
+	}
 
 	private boolean productHasOneColour() {
 		return getColorList().size() == 1;
@@ -1249,7 +1286,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				if (object != null) {
 					List<StoreDetails> location = ((LocationResponse) object).Locations;
 					if (location != null && location.size() > 0) {
-						mWGlobalState.setStoreDetailsArrayList(location);
+						mGlobalState.setStoreDetailsArrayList(location);
 						Intent intentInStoreFinder = new Intent(ProductDetailActivity.this, WStockFinderActivity.class);
 						intentInStoreFinder.putExtra("PRODUCT_NAME", mProductName);
 						startActivity(intentInStoreFinder);
@@ -1288,53 +1325,159 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		unregisterReceiver(connectionBroadcast);
 	}
 
-	@Override
-	public void PermissionGranted(int request_code) {
-		Log.i("PERMISSION", "GRANTED");
-		if (Utils.isLocationEnabled(ProductDetailActivity.this)) {
-			boolean productHasColour = productHasColour();
-			boolean productHasSize = productHasSize();
-			boolean productHasOneColour = productHasOneColour();
-			boolean productHasOneSize = productHasOneSize();
-			mScrollProductDetail.scrollTo(0, 0);
-			if (productHasColour) {
-				if (productHasOneColour) {
-					// one colour only
-					String skuColour = getColorList().get(0).colour;
-					ArrayList<OtherSku> getSize;
-					if (!TextUtils.isEmpty(skuColour)) {
-						getSize = commonSizeList(skuColour);
-					} else {
-						getSize = getSizeList();
-					}
-					if (getSize.size() > 0) {
-						if (getSize.size() == 1) {
-							mSkuId = getSize.get(0).sku;
-							noSizeColorIntent();
-						} else {
-							sizeOnlyIntent(skuColour);
-						}
-					} else {
-						mSkuId = mProduct.sku;
-						noSizeColorIntent();
-					}
+	private void sizeColorSelector() {
+		mScrollProductDetail.scrollTo(0, 0);
+		if (mProductHasColour) {
+			if (mProductHasOneColour) {
+				// one colour only
+				String skuColour = getColorList().get(0).colour;
+				ArrayList<OtherSku> getSize;
+				if (!TextUtils.isEmpty(skuColour)) {
+					getSize = commonSizeList(skuColour);
 				} else {
-					// contain several colours
-					colourIntent();
+					getSize = getSizeList();
 				}
-			} else {
-				if (productHasSize) {
-					if (productHasOneSize) { //one size
-						ArrayList<OtherSku> getSize = getSizeList();
+				if (getSize.size() > 0) {
+					if (getSize.size() == 1) {
 						mSkuId = getSize.get(0).sku;
 						noSizeColorIntent();
-					} else { // more sizes
-						sizeIntent();
+					} else {
+						sizeOnlyIntent(skuColour);
 					}
 				} else {
 					mSkuId = mProduct.sku;
 					noSizeColorIntent();
 				}
+			} else {
+				// contain several colours
+				colourIntent();
+			}
+		} else {
+			if (mProductHasSize) {
+				if (mProductHasOneSize) { //one size
+					ArrayList<OtherSku> getSize = getSizeList();
+					mSkuId = getSize.get(0).sku;
+					noSizeColorIntent();
+				} else { // more sizes
+					sizeIntent();
+				}
+			} else {
+				mSkuId = mProduct.sku;
+				noSizeColorIntent();
+			}
+		}
+	}
+
+
+	private void displayColor(OtherSku otherSku) {
+		ArrayList<OtherSku> colorList = commonColorList(otherSku.size);
+		if (colorList != null) {
+			int colorListSize = colorList.size();
+			if (colorListSize > 0) {
+				if (colorListSize == 1) {
+					// one color only
+					mSkuId = colorList.get(0).sku;
+					noSizeColorIntent();
+				} else {
+					// color > 1
+					mGlobalState.setColourSKUArrayList(colorList);
+					colorIntent(otherSku.size);
+				}
+			} else {
+				// no color
+				mSkuId = otherSku.sku;
+				noSizeColorIntent();
+			}
+		} else {
+			mSkuId = otherSku.sku;
+			noSizeColorIntent();
+		}
+	}
+
+
+	private ArrayList<OtherSku> commonColorList(String size) {
+		List<OtherSku> otherSkus = mOtherSKUList;
+		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+
+		if (productHasColour()) { //product has color
+			// filter by colour
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : otherSkus) {
+				if (sku.size.equalsIgnoreCase(size)) {
+					sizeList.add(sku);
+				}
+			}
+
+			//remove duplicates
+			for (OtherSku os : sizeList) {
+				if (!sizeValueExist(commonSizeList, os.size)) {
+					commonSizeList.add(os);
+				}
+			}
+		} else { // no color found
+			//remove duplicates
+			for (OtherSku os : otherSkus) {
+				if (!sizeValueExist(commonSizeList, os.size)) {
+					commonSizeList.add(os);
+				}
+			}
+		}
+		return commonSizeList;
+	}
+
+
+	private void sizeOnlyIntent(OtherSku otherSku) {
+		ArrayList<OtherSku> sizeList = commonSizeList(otherSku.colour);
+		int sizeListSize = sizeList.size();
+		if (sizeListSize > 0) {
+			if (sizeListSize == 1) {
+				// one size only
+				mSkuId = sizeList.get(0).sku;
+				noSizeColorIntent();
+			} else {
+				// size > 1
+				sizeIntent(otherSku.colour);
+			}
+		} else {
+			// no size
+			mSkuId = otherSku.sku;
+			noSizeColorIntent();
+		}
+	}
+
+
+	@Override
+	public void PermissionGranted(int request_code) {
+		if (Utils.isLocationEnabled(ProductDetailActivity.this)) {
+			Log.i("PERMISSION", "GRANTED");
+			mProductHasColour = productHasColour();
+			mProductHasSize = productHasSize();
+			mProductHasOneColour = productHasOneColour();
+			mProductHasOneSize = productHasOneSize();
+
+			boolean colorWasPopUp = mGlobalState.colorWasPopup();
+			boolean sizeWasPopUp = mGlobalState.sizeWasPopup();
+
+			OtherSku popupColorSKu = mGlobalState.getColorPopUpValue();
+			OtherSku popupSizeSKu = mGlobalState.getSizePopUpValue();
+
+			/*
+			color | size
+			0 | 0 - > none selected
+			0 | 1 - > size was selected
+			1 | 0 - > color was selected
+			1 | 1 - color and size were selected
+			*/
+
+			if (!colorWasPopUp && !sizeWasPopUp) {
+				sizeColorSelector();
+			} else if (!colorWasPopUp && sizeWasPopUp) {
+				displayColor(popupSizeSKu);
+			} else if (colorWasPopUp && !sizeWasPopUp) {
+				sizeOnlyIntent(popupColorSKu);
+			} else {
+				mSkuId = mGlobalState.getSizePopUpValue().sku;
+				noSizeColorIntent();
 			}
 		}
 	}
@@ -1348,6 +1491,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 	public void PermissionDenied(int request_code) {
 
 	}
+
 
 	@Override
 	public void NeverAskAgain(int request_code) {

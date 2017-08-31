@@ -39,12 +39,14 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
@@ -123,8 +125,10 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	private LinearLayout llLoadingColorSize;
 	public View loadingColorDivider;
 	private RelativeLayout mLinColor;
+	private WGlobalState mGlobalState;
 
 	protected void initProductDetailUI() {
+		mGlobalState = ((WoolworthsApplication) WProductDetailActivity.this.getApplication()).getWGlobalState();
 		mScrollProductDetail = (NestedScrollView) findViewById(R.id.scrollProductDetail);
 		mSizeProgressBar = (ProgressBar) findViewById(R.id.mWoolworthsProgressBar);
 		vColorSizeHorizontalLine = findViewById(R.id.colorView);
@@ -322,11 +326,13 @@ public class WProductDetailActivity extends AppCompatActivity implements
 
 	protected void colorParams(int position) {
 		mPosition = position;
-		String colour = uniqueColorList.get(position).colour;
-		String defaultUrl = uniqueColorList.get(position).externalColourRef;
+		OtherSku otherSku = uniqueColorList.get(position);
+		String colour = otherSku.colour;
+		String defaultUrl = otherSku.externalColourRef;
 		if (TextUtils.isEmpty(colour)) {
 			colour = getString(R.string.product_colour);
 		}
+		mGlobalState.setColorPopUpValue(otherSku);
 		mTextColour.setText(colour);
 		mAuxiliaryImages = null;
 		mAuxiliaryImages = new ArrayList<>();
@@ -435,7 +441,6 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	}
 
 	protected void selectedProduct(int position) {
-		// clearAdapter();
 		if (productIsColored) {
 			if (mPColourWindow != null) {
 				if (mPColourWindow.isShowing()) {
@@ -443,6 +448,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 				}
 			}
 			colorParams(position);
+			mGlobalState.setColorWasPopup(true);
 		} else {
 			if (mPSizeWindow != null) {
 				if (mPSizeWindow.isShowing()) {
@@ -450,8 +456,11 @@ public class WProductDetailActivity extends AppCompatActivity implements
 				}
 			}
 			if (uniqueSizeList.size() > 0) {
-				String selectedSize = uniqueSizeList.get(position).size;
+				OtherSku otherSku = uniqueSizeList.get(position);
+				String selectedSize = otherSku.size;
 				mTextSelectSize.setText(selectedSize);
+				mGlobalState.setSizeWasPopup(true);
+				mGlobalState.setSizePopUpValue(otherSku);
 				mTextSelectSize.setTextColor(Color.BLACK);
 				String colour = mTextColour.getText().toString();
 				String price = updatePrice(colour, selectedSize);
@@ -1063,6 +1072,11 @@ public class WProductDetailActivity extends AppCompatActivity implements
 			}
 		}
 		return false;
+	}
+
+	public void resetColorSizePopup() {
+		mGlobalState.setColorWasPopup(false);
+		mGlobalState.setSizeWasPopup(false);
 	}
 
 	@Override
