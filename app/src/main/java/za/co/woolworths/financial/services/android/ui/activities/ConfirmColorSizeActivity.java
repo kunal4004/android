@@ -221,7 +221,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 	private void callInStoreFinder() {
 		Intent result = new Intent();
-		setResult(WGlobalState.SYNC_FIND_IN_STORE, result);
+		setResult(RESULT_OK, result);
 	}
 
 	private boolean sizeValueExist(ArrayList<OtherSku> list, String name) {

@@ -1491,7 +1491,9 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
 			case WGlobalState.SYNC_FIND_IN_STORE:
-				startLocationUpdates();
+				if (resultCode == RESULT_OK) {
+					startLocationUpdates();
+				}
 				break;
 			default:
 				break;

@@ -857,7 +857,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		});
 	}
 
-
 	private String toJson(Object jsonObject) {
 		return new Gson().toJson(jsonObject);
 	}
@@ -1342,7 +1341,9 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
 			case WGlobalState.SYNC_FIND_IN_STORE:
-				startLocationUpdates();
+				if (resultCode == RESULT_OK) {
+					startLocationUpdates();
+				}
 				break;
 			default:
 				break;

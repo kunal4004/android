@@ -340,6 +340,12 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	}
 
 	@Override
+	protected void onPause() {
+		super.onPause();
+		model.onPause();
+	}
+
+	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		cameraManager.releaseCamera();
@@ -373,8 +379,10 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 						});
 			}
 			cursor.close();
-		} else if (resultCode == WGlobalState.SYNC_FIND_IN_STORE) {
-			startLocationUpdates();
+		} else if (requestCode == WGlobalState.SYNC_FIND_IN_STORE) {
+			if (resultCode == RESULT_OK) {
+				startLocationUpdates();
+			}
 		} else {
 		}
 	}
