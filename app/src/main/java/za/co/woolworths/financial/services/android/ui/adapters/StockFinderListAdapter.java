@@ -25,7 +25,6 @@ public class StockFinderListAdapter extends RecyclerView.Adapter<StockFinderList
 
 	public class SearchViewHolder extends RecyclerView.ViewHolder {
 		WTextView storeName;
-		WTextView storeOfferings;
 		WTextView storeDistance;
 		WTextView storeAddress;
 		WTextView storeTimeing;
@@ -33,7 +32,6 @@ public class StockFinderListAdapter extends RecyclerView.Adapter<StockFinderList
 		public SearchViewHolder(View cView) {
 			super(cView);
 			storeName = (WTextView) cView.findViewById(R.id.storeName);
-			storeOfferings = (WTextView) cView.findViewById(R.id.offerings);
 			storeDistance = (WTextView) cView.findViewById(R.id.distance);
 			storeAddress = (WTextView) cView.findViewById(R.id.storeAddress);
 			storeTimeing = (WTextView) cView.findViewById(R.id.timeing);
@@ -58,8 +56,6 @@ public class StockFinderListAdapter extends RecyclerView.Adapter<StockFinderList
 			// Inflate standard layout
 			holder.itemView.setPadding(0, 0, 0, 0);
 		}
-		if (storeDetailsList.get(position).offerings != null)
-			holder.storeOfferings.setText(mContext.getResources().getString(R.string.available).toUpperCase());
 		if (storeDetailsList.get(position).times != null) {
 			try {
 				String mHour = WFormatter.formatOpenUntilTime(storeDetailsList.get(position).times.get(0).hours);
