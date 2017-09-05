@@ -675,7 +675,6 @@
     <string name="find_in_store_info">These stores are most likely to have your item \n based on last night’s stock record.</string>
     <string name="confirm_color_desc">Please confirm your colour</string>
     <string name="confirm_size_desc">Please confirm your size</string>
-    <string name="available">available</string>
     <string name="sf_instore_availability_title">In-Store Availability</string>
     <string name="sf_instore_availability_desc">These stores are most likely to have your item based on last night\'s stock record</string>
 
