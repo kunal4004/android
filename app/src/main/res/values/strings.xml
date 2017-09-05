@@ -672,7 +672,7 @@
     <string name="stock_finder_list_view">list view</string>
     <string name="stock_finder_btn_label">find in-store</string>
     <string name="product_loading_color_size">Loading size &amp; colour</string>
-    <string name="find_in_store_info">Items based on last night’s stock record.</string>
+    <string name="find_in_store_info">These stores are most likely to have your item \n based on last night’s stock record.</string>
     <string name="confirm_color_desc">Please confirm your colour</string>
     <string name="confirm_size_desc">Please confirm your size</string>
     <string name="available">available</string>
