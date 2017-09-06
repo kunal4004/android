@@ -9,17 +9,16 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/product_category_image_height"
         android:background="@color/white"
         android:gravity="center"
-        android:minHeight="@dimen/product_category_image_height">
+        >
 
         <za.co.woolworths.financial.services.android.ui.views.WrapContentDraweeView
             android:id="@+id/imProductCategory"
             android:layout_width="match_parent"
             android:clickable="false"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:layout_height="match_parent"
             />
     </LinearLayout>
 

@@ -120,7 +120,10 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	private WTextView tvBtnFinder;
 	private String TAG = this.getClass().getSimpleName();
 	private LocationItemTask locationItemTask;
-	private MyBroadcastReceiver updateStoreFinderReceiver;
+	private boolean mProductHasColour;
+	private boolean mProductHasSize;
+	private boolean mProductHasOneColour;
+	private boolean mProductHasOneSize;
 
 	private enum RUN_BACKGROUND_TASK {
 		SEARCH_PRODUCT, SEARCH_MORE_PRODUCT, LOAD_PRODUCT, LOAD_MORE_PRODUCT
@@ -146,10 +149,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		}
 		connectionBroadcast = Utils.connectionBroadCast(ProductGridActivity.this, networkChangeListener);
 		mWoolWorthsApplication = ((WoolworthsApplication) ProductGridActivity.this.getApplication());
-		mGlobalState = mWoolWorthsApplication.getWGlobalState();
-		updateStoreFinderReceiver = new MyBroadcastReceiver();
-		this.registerReceiver(updateStoreFinderReceiver, new IntentFilter(MyBroadcastReceiver.ACTION));
-
+		mGlobalState = ((WoolworthsApplication) ProductGridActivity.this.getApplication()).getWGlobalState();
 		initUI();
 		initProductDetailUI();
 		actionBar();
@@ -209,6 +209,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 				switch (newState) {
 					case COLLAPSED:
 						panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
+						resetColorSizePopup();
 						dismissPopWindow();
 						dismissFindInStoreProgress();
 						cancelInStoreTask();
@@ -677,7 +678,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		super.onDestroy();
 		menuItemVisible(mMenu, true);
 		unregisterReceiver(broadcast_reciever);
-		this.unregisterReceiver(updateStoreFinderReceiver);
 	}
 
 	private void finishActivity() {
@@ -857,7 +857,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		});
 	}
 
-
 	private String toJson(Object jsonObject) {
 		return new Gson().toJson(jsonObject);
 	}
@@ -920,7 +919,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
@@ -932,11 +931,11 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
-	public void sizeOnlyIntent(String colour) {
+	public void sizeIntent(String colour) {
 		mGlobalState.setColourSKUArrayList(getColorList());
 		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
 		mIntent.putExtra("SELECTED_COLOUR", colour);
@@ -944,14 +943,26 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
+		overridePendingTransition(0, 0);
+	}
+
+	public void colorIntent(String size) {
+		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
+		mIntent.putExtra("SELECTED_COLOUR", size);
+		mIntent.putExtra("COLOR_LIST", toJson(mGlobalState.getColourSKUArrayList()));
+		mIntent.putExtra("OTHERSKU", toJson(mOtherSKU));
+		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
+		mIntent.putExtra("PRODUCT_HAS_SIZE", false);
+		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
 	public void noSizeColorIntent() {
 		mScrollProductDetail.scrollTo(0, 0);
 		mGlobalState.setSelectedSKUId(mSkuId);
-		inStoreFinderUpdate();
+		startLocationUpdates();
 	}
 
 	private void disableStoreFinder() {
@@ -1065,51 +1076,124 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	@Override
 	public void PermissionGranted(int request_code) {
 		Log.i("PERMISSION", "GRANTED");
+		mScrollProductDetail.scrollTo(0, 0);
 		if (Utils.isLocationEnabled(ProductGridActivity.this)) {
-			boolean productHasColour = productHasColour();
-			boolean productHasSize = productHasSize();
-			boolean productHasOneColour = productHasOneColour();
-			boolean productHasOneSize = productHasOneSize();
-			mScrollProductDetail.scrollTo(0, 0);
-			if (productHasColour) {
-				if (productHasOneColour) {
-					// one colour only
-					String skuColour = getColorList().get(0).colour;
-					ArrayList<OtherSku> getSize;
-					if (!TextUtils.isEmpty(skuColour)) {
-						getSize = commonSizeList(skuColour);
-					} else {
-						getSize = getSizeList();
-					}
-					if (getSize.size() > 0) {
-						if (getSize.size() == 1) {
-							mSkuId = getSize.get(0).sku;
-							noSizeColorIntent();
-						} else {
-							sizeOnlyIntent(skuColour);
-						}
-					} else {
-						mSkuId = mProduct.get(0).sku;
-						noSizeColorIntent();
-					}
-				} else {
-					// contain several colours
-					colourIntent();
-				}
+
+			mProductHasColour = productHasColour();
+			mProductHasSize = productHasSize();
+			mProductHasOneColour = productHasOneColour();
+			mProductHasOneSize = productHasOneSize();
+
+			boolean colorWasPopUp = mGlobalState.colorWasPopup();
+			boolean sizeWasPopUp = mGlobalState.sizeWasPopup();
+
+			OtherSku popupColorSKu = mGlobalState.getColorPopUpValue();
+			OtherSku popupSizeSKu = mGlobalState.getSizePopUpValue();
+
+			/*
+			color | size
+			0 | 0 - > none selected
+			0 | 1 - > size was selected
+			1 | 0 - > color was selected
+			1 | 1 - color and size were selected
+			*/
+
+			if (!colorWasPopUp && !sizeWasPopUp) {
+				sizeColorSelector();
+			} else if (!colorWasPopUp && sizeWasPopUp) {
+				displayColor(popupSizeSKu);
+			} else if (colorWasPopUp && !sizeWasPopUp) {
+				sizeOnlyIntent(popupColorSKu);
 			} else {
-				if (productHasSize) {
-					if (productHasOneSize) { //one size
-						ArrayList<OtherSku> getSize = getSizeList();
+				mSkuId = mGlobalState.getSizePopUpValue().sku;
+				noSizeColorIntent();
+			}
+		}
+	}
+
+	private void sizeColorSelector() {
+		if (mProductHasColour) {
+			if (mProductHasOneColour) {
+				// one colour only
+				String skuColour = getColorList().get(0).colour;
+				ArrayList<OtherSku> getSize;
+				if (!TextUtils.isEmpty(skuColour)) {
+					getSize = commonSizeList(skuColour);
+				} else {
+					getSize = getSizeList();
+				}
+				if (getSize.size() > 0) {
+					if (getSize.size() == 1) {
 						mSkuId = getSize.get(0).sku;
 						noSizeColorIntent();
-					} else { // more sizes
-						sizeIntent();
+					} else {
+						sizeIntent(skuColour);
 					}
 				} else {
 					mSkuId = mProduct.get(0).sku;
 					noSizeColorIntent();
 				}
+			} else {
+				// contain several colours
+				colourIntent();
 			}
+		} else {
+			if (mProductHasSize) {
+				if (mProductHasOneSize) { //one size
+					ArrayList<OtherSku> getSize = getSizeList();
+					mSkuId = getSize.get(0).sku;
+					noSizeColorIntent();
+				} else { // more sizes
+					sizeIntent();
+				}
+			} else {
+				mSkuId = mProduct.get(0).sku;
+				noSizeColorIntent();
+			}
+		}
+	}
+
+	private void displayColor(OtherSku otherSku) {
+		ArrayList<OtherSku> colorList = commonColorList(otherSku.size);
+		if (colorList != null) {
+			int colorListSize = colorList.size();
+			if (colorListSize > 0) {
+				if (colorListSize == 1) {
+					// one color only
+					mSkuId = colorList.get(0).sku;
+					noSizeColorIntent();
+				} else {
+					// color > 1
+					mGlobalState.setColourSKUArrayList(colorList);
+					colorIntent(otherSku.size);
+				}
+			} else {
+				// no color
+				mSkuId = otherSku.sku;
+				noSizeColorIntent();
+			}
+		} else {
+			mSkuId = otherSku.sku;
+			noSizeColorIntent();
+		}
+	}
+
+	private void sizeOnlyIntent(OtherSku otherSku) {
+		ArrayList<OtherSku> sizeList = commonSizeList(otherSku.colour);
+		int sizeListSize = sizeList.size();
+		if (sizeListSize > 0) {
+			if (sizeListSize == 1) {
+				// one size only
+				mSkuId = sizeList.get(0).sku;
+				noSizeColorIntent();
+			} else {
+				// size > 1
+				sizeIntent(otherSku.colour);
+			}
+		} else {
+			// no size
+			mSkuId = otherSku.sku;
+			noSizeColorIntent();
 		}
 	}
 
@@ -1177,6 +1261,35 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		return commonSizeList;
 	}
 
+	private ArrayList<OtherSku> commonColorList(String size) {
+		List<OtherSku> otherSkus = mOtherSKU;
+		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+
+		if (productHasColour()) { //product has color
+			// filter by colour
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : otherSkus) {
+				if (sku.size.equalsIgnoreCase(size)) {
+					sizeList.add(sku);
+				}
+			}
+
+			//remove duplicates
+			for (OtherSku os : sizeList) {
+				if (!sizeValueExist(commonSizeList, os.size)) {
+					commonSizeList.add(os);
+				}
+			}
+		} else { // no color found
+			//remove duplicates
+			for (OtherSku os : otherSkus) {
+				if (!sizeValueExist(commonSizeList, os.size)) {
+					commonSizeList.add(os);
+				}
+			}
+		}
+		return commonSizeList;
+	}
 
 	@Override
 	public void PartialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
@@ -1223,18 +1336,17 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		}
 	};
 
-	private void inStoreFinderUpdate() {
-		Intent intent = new Intent();
-		intent.setAction(ProductGridActivity.MyBroadcastReceiver.ACTION);
-		sendBroadcast(intent);
-	}
-
-	public class MyBroadcastReceiver extends BroadcastReceiver {
-		public static final String ACTION = "com.inStoreFinder.UPDATE";
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			startLocationUpdates();
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+			case WGlobalState.SYNC_FIND_IN_STORE:
+				if (resultCode == RESULT_OK) {
+					startLocationUpdates();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 }
