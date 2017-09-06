@@ -44,7 +44,6 @@ public class StockFinderCardsOnMapAdapter extends PagerAdapter {
 
 		View cView = mContext.getLayoutInflater().inflate(R.layout.stock_finder_item, container, false);
 		WTextView storeName = (WTextView) cView.findViewById(R.id.storeName);
-		WTextView storeOfferings = (WTextView) cView.findViewById(R.id.offerings);
 		WTextView storeDistance = (WTextView) cView.findViewById(R.id.distance);
 		WTextView storeAddress = (WTextView) cView.findViewById(R.id.storeAddress);
 		WTextView storeTimeing = (WTextView) cView.findViewById(R.id.timeing);
@@ -58,9 +57,6 @@ public class StockFinderCardsOnMapAdapter extends PagerAdapter {
 		CharSequence mDistancekM = TextUtils.concat(ssDistance, "\n", mSpanKm);
 		storeDistance.setText(mDistancekM);
 
-		if (storeDetailsList.get(position).offerings != null) {
-			storeOfferings.setText(WFormatter.formatOfferingString(storeDetailsList.get(position).offerings));
-		}
 		if (storeDetailsList.get(position).times != null) {
 			try {
 				String mHour = WFormatter.formatOpenUntilTime(storeDetailsList.get(position).times.get(0).hours);
