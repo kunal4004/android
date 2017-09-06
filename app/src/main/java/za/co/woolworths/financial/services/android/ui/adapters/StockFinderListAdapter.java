@@ -58,8 +58,9 @@ public class StockFinderListAdapter extends RecyclerView.Adapter<StockFinderList
 			// Inflate standard layout
 			holder.itemView.setPadding(0, 0, 0, 0);
 		}
-		if (storeDetailsList.get(position).offerings != null)
-			holder.storeOfferings.setText(mContext.getResources().getString(R.string.available).toUpperCase());
+		if (storeDetailsList.get(position).offerings != null) {
+			holder.storeOfferings.setText(WFormatter.formatOfferingString(storeDetailsList.get(position).offerings));
+		}
 		if (storeDetailsList.get(position).times != null) {
 			try {
 				String mHour = WFormatter.formatOpenUntilTime(storeDetailsList.get(position).times.get(0).hours);
