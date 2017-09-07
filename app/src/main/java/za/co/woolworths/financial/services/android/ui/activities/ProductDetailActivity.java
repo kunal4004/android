@@ -1399,7 +1399,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 
 			//remove duplicates
 			for (OtherSku os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.size)) {
+				if (!sizeValueExist(commonSizeList, os.colour)) {
 					commonSizeList.add(os);
 				}
 			}

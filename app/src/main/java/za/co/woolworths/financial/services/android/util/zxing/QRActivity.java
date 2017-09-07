@@ -1882,7 +1882,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
 			//remove duplicates
 			for (OtherSku os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.size)) {
+				if (!sizeValueExist(commonSizeList, os.colour)) {
 					commonSizeList.add(os);
 				}
 			}
