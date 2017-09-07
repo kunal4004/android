@@ -71,6 +71,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 
 	Intent callIntent;
 	private PopWindowValidationMessage mPopWindowValidationMessage;
+	private boolean isFromStockLocator;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +107,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 		relBrandLayout = (RelativeLayout) findViewById(R.id.relBrandLayout);
 		Gson gson = new Gson();
 		storeDetails = gson.fromJson(getIntent().getStringExtra("store"), StoreDetails.class);
+		isFromStockLocator=getIntent().getBooleanExtra("FromStockLocator",false);
 		initStoreDetailsView(storeDetails);
 
 		closePage.setOnClickListener(new View.OnClickListener() {
@@ -197,6 +199,8 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 			storeNumber.setText(storeDetail.phoneNumber);
 		SpannableMenuOption spannableMenuOption = new SpannableMenuOption(this);
 		storeDistance.setText(WFormatter.formatMeter(storeDetail.distance) + getResources().getString(R.string.distance_in_km));
+		if(isFromStockLocator)
+			storeOfferings.setVisibility(View.INVISIBLE);
 		if (storeDetail.offerings != null) {
 			storeOfferings.setText(WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department")));
 			List<StoreOfferings> brandslist = getOfferingByType(storeDetail.offerings, "Brand");
