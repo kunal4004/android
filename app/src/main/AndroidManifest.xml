@@ -103,6 +103,9 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity"
@@ -112,6 +115,14 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter >
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "www.woolworths.co.za” -->
+                <data android:scheme="http"
+                    android:host="www.woolworths.co.za" />
             </intent-filter>
         </activity>
         <activity
@@ -286,10 +297,10 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/StockFinderStyle"/>
+            android:theme="@style/StockFinderStyle" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity"
             android:screenOrientation="portrait"
