@@ -223,6 +223,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 
 	public void initLocationCheck() {
 		initMap();
+		Utils.showOneTimePopup(getActivity(), SessionDao.KEY.STORE_FINDER_ONE_TIME_POPUP, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INSTORE_AVAILABILITY);
 	}
 
 	public void initMap() {
