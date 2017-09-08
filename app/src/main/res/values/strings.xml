@@ -672,18 +672,17 @@
     <string name="stock_finder_list_view">list view</string>
     <string name="stock_finder_btn_label">find in-store</string>
     <string name="product_loading_color_size">Loading size &amp; colour</string>
-    <string name="find_in_store_info">These stores are most likely to have your item \n based on last night’s stock record.</string>
+    <string name="find_in_store_info">Remember, this is based on last night\'s stock record.  Stock moves quickly, so items may have sold since then.</string>
     <string name="confirm_color_desc">Please confirm your colour</string>
     <string name="confirm_size_desc">Please confirm your size</string>
     <string name="sf_instore_availability_title">In-Store Availability</string>
-    <string name="sf_instore_availability_desc">These stores are most likely to have your item based on last night\'s stock record</string>
-
+    <string name="sf_instore_availability_desc">We are trialling this feature.  These stores are most likely to have stock based on last night\'s stock record.  Stock moves quickly and may have sold by the time you visit.</string>
     <string name="color">color</string>
     <string name="size">size</string>
     <string name="not_found">Unfortunately not found</string>
-    <string name="stock_available_product">We have no stock available of this product at the moment.</string>
+    <string name="stock_available_product">Stores in this area are out of your item (or have very little stock).  How about searching our online store ?</string>
     <string name="back_to_product">back to products</string>
-    <string name="no_stock_title">no stock</string>
+    <string name="no_stock_title">NO PRODUCT FOUND</string>
     <string name="location_disable_title">Location Services</string>
     <string name="location_disable_desc">This feature cannot be used without Location Services.</string>
     <string name="downloaing_text">Downloading File</string>

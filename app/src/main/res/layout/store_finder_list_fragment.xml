@@ -12,7 +12,7 @@
         android:id="@+id/storeList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="46dp"
+        android:layout_marginTop="?attr/actionBarSize"
         android:scrollbars="none"
         android:visibility="visible"
         />
@@ -23,6 +23,8 @@
         android:layout_height="67dp"
         android:background="@color/stock_finder_map_header_bg"
         android:gravity="center"
+        android:paddingEnd="@dimen/default_margin"
+        android:paddingStart="@dimen/default_margin"
         android:text="@string/find_in_store_info"
         android:textColor="@color/white"
         android:textSize="15sp"
