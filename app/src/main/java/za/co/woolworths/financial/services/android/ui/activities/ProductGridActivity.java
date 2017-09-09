@@ -1030,7 +1030,10 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 						View popupView = layoutInflater.inflate(R.layout.product_size_row, null);
 						mRecyclerviewSize = (RecyclerView) popupView.findViewById(R.id.recyclerviewSize);
 						LinearLayout mPopLinContainer = (LinearLayout) popupView.findViewById(R.id.linPopUpContainer);
-						bindWithUI(otherSkusList, false);
+
+						String selectedColor = mTextColour.getText().toString();
+						mSizePopUpList = sizePopUpList(selectedColor);
+						bindWithUI(mSizePopUpList, false);
 						mPSizeWindow = new PopupWindow(
 								popupView,
 								ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -1246,7 +1249,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
 			//remove duplicates
 			for (OtherSku os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.size)) {
+				if (!sizeValueExist(commonSizeList, os.colour)) {
 					commonSizeList.add(os);
 				}
 			}
@@ -1276,7 +1279,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
 			//remove duplicates
 			for (OtherSku os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.size)) {
+				if (!sizeValueExist(commonSizeList, os.colour)) {
 					commonSizeList.add(os);
 				}
 			}

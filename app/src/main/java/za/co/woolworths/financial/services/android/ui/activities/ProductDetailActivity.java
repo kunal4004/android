@@ -156,6 +156,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 	private boolean mProductHasSize;
 	private boolean mProductHasOneColour;
 	private boolean mProductHasOneSize;
+	private ArrayList<OtherSku> mSizePopUpList;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -487,7 +488,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				}
 			}
 			if (uniqueSizeList != null) {
-				OtherSku otherSku = uniqueSizeList.get(position);
+				OtherSku otherSku = mSizePopUpList.get(position);
 				String selectedSize = otherSku.size;
 				setSelectedTextSize(selectedSize);
 				mGlobalState.setSizeWasPopup(true);
@@ -673,7 +674,9 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				mRecyclerviewSize = (RecyclerView) popupView.findViewById(R.id.recyclerviewSize);
 				LinearLayout mPopLinContainer = (LinearLayout) popupView.findViewById(R.id.linPopUpContainer);
 
-				bindWithUI(mOtherSKUList, false);
+				String selectedColor = mTextColour.getText().toString();
+				mSizePopUpList = sizePopUpList(selectedColor);
+				bindWithUI(mSizePopUpList, false);
 
 				mPSizeWindow = new PopupWindow(
 						popupView,
@@ -1188,13 +1191,33 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 
 			//remove duplicates
 			for (OtherSku os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.size)) {
+				if (!sizeValueExist(commonSizeList, os.colour)) {
 					commonSizeList.add(os);
 				}
 			}
 		} else { // no color found
 			//remove duplicates
 			for (OtherSku os : otherSkus) {
+				if (!sizeValueExist(commonSizeList, os.size)) {
+					commonSizeList.add(os);
+				}
+			}
+		}
+		return commonSizeList;
+	}
+
+	public ArrayList<OtherSku> sizePopUpList(String colour) {
+		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+		if (mOtherSKUList != null) {
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : mOtherSKUList) {
+				if (sku.colour.equalsIgnoreCase(colour)) {
+					sizeList.add(sku);
+				}
+			}
+
+			//remove duplicates
+			for (OtherSku os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.size)) {
 					commonSizeList.add(os);
 				}
