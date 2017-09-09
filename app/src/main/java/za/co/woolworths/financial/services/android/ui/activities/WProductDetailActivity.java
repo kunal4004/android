@@ -203,7 +203,6 @@ public class WProductDetailActivity extends AppCompatActivity implements
 
 	protected void getHtmlData() {
 		mObjProductDetail = mProductDetail.get(0);
-
 		String head = "<head>" +
 				"<meta charset=\"UTF-8\">" +
 				"<style>" +
