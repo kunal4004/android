@@ -1597,7 +1597,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 					sizeList.add(sku);
 				}
 			}
-
 			//remove duplicates
 			for (OtherSku os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.colour)) {
@@ -1606,7 +1605,14 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 			}
 		} else { // no color found
 			//remove duplicates
-			for (OtherSku os : otherSkus) {
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : otherSkus) {
+				if (sku.colour.trim().contains(colour)) {
+					sizeList.add(sku);
+				}
+			}
+
+			for (OtherSku os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.size)) {
 					commonSizeList.add(os);
 				}
@@ -1862,7 +1868,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
 			//remove duplicates
 			for (OtherSku os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.size)) {
+				if (!sizeValueExist(commonSizeList, os.colour)) {
 					commonSizeList.add(os);
 				}
 			}

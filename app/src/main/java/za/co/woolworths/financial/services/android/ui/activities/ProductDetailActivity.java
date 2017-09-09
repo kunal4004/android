@@ -1196,8 +1196,15 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				}
 			}
 		} else { // no color found
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : otherSkus) {
+				if (sku.colour.trim().contains(colour)) {
+					sizeList.add(sku);
+				}
+			}
+
 			//remove duplicates
-			for (OtherSku os : otherSkus) {
+			for (OtherSku os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.size)) {
 					commonSizeList.add(os);
 				}
@@ -1415,7 +1422,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 
 			//remove duplicates
 			for (OtherSku os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.size)) {
+				if (!sizeValueExist(commonSizeList, os.colour)) {
 					commonSizeList.add(os);
 				}
 			}

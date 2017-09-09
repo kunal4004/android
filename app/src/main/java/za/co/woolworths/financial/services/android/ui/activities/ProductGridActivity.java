@@ -1235,13 +1235,12 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	private ArrayList<OtherSku> commonSizeList(String colour) {
-		List<OtherSku> otherSkus = mOtherSKU;
 		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
 
 		if (productHasColour()) { //product has color
 			// filter by colour
 			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : otherSkus) {
+			for (OtherSku sku : mOtherSKU) {
 				if (sku.colour.equalsIgnoreCase(colour)) {
 					sizeList.add(sku);
 				}
@@ -1254,8 +1253,14 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 				}
 			}
 		} else { // no color found
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : mOtherSKU) {
+				if (sku.colour.trim().contains(colour)) {
+					sizeList.add(sku);
+				}
+			}
 			//remove duplicates
-			for (OtherSku os : otherSkus) {
+			for (OtherSku os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.size)) {
 					commonSizeList.add(os);
 				}
