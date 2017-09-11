@@ -113,7 +113,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 			fragmentsAdapter.addFrag(new WPersonalLoanEmptyFragment());
 			fragmentPager.setAdapter(fragmentsAdapter);
 			fragmentPager.setCurrentItem(getIntent().getIntExtra("position", 0));
-			fragmentPager.setOffscreenPageLimit(2);
 
 			cards.add(R.drawable.w_store_card);
 			cards.add(R.drawable.creditcardbenfits);
