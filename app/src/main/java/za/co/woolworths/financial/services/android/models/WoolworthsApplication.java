@@ -201,7 +201,6 @@ public class WoolworthsApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		Fresco.initialize(this);
-		AppEventsLogger.activateApp(this);
 		mWGlobalState = new WGlobalState(WoolworthsApplication.this);
 		updateBankDetail = new UpdateBankDetail();
 		WoolworthsApplication.context = this.getApplicationContext();
