@@ -95,7 +95,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	private View vColorSizeHorizontalLine;
 	private WTextView mTextPromo;
 	private WTextView mTextActualPrice;
-	private WTextView mTextColour;
+	public WTextView mTextColour;
 	private WrapContentWebView mWebDescription;
 	private WButton mBtnAddShoppingList;
 	private WTextView mIngredientList;
@@ -126,6 +126,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	public View loadingColorDivider;
 	private RelativeLayout mLinColor;
 	private WGlobalState mGlobalState;
+	public ArrayList<OtherSku> mSizePopUpList;
 
 	protected void initProductDetailUI() {
 		mGlobalState = ((WoolworthsApplication) WProductDetailActivity.this.getApplication()).getWGlobalState();
@@ -202,7 +203,6 @@ public class WProductDetailActivity extends AppCompatActivity implements
 
 	protected void getHtmlData() {
 		mObjProductDetail = mProductDetail.get(0);
-
 		String head = "<head>" +
 				"<meta charset=\"UTF-8\">" +
 				"<style>" +
@@ -455,8 +455,8 @@ public class WProductDetailActivity extends AppCompatActivity implements
 					mPSizeWindow.dismiss();
 				}
 			}
-			if (uniqueSizeList.size() > 0) {
-				OtherSku otherSku = uniqueSizeList.get(position);
+			if (mSizePopUpList.size() > 0) {
+				OtherSku otherSku = mSizePopUpList.get(position);
 				String selectedSize = otherSku.size;
 				mTextSelectSize.setText(selectedSize);
 				mGlobalState.setSizeWasPopup(true);
@@ -915,6 +915,26 @@ public class WProductDetailActivity extends AppCompatActivity implements
 				}
 			}
 		}
+	}
+
+	public ArrayList<OtherSku> sizePopUpList(String colour) {
+		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+		if (otherSkusList != null) {
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : otherSkusList) {
+				if (sku.colour.equalsIgnoreCase(colour)) {
+					sizeList.add(sku);
+				}
+			}
+
+			//remove duplicates
+			for (OtherSku os : sizeList) {
+				if (!sizeValueExist(commonSizeList, os.size)) {
+					commonSizeList.add(os);
+				}
+			}
+		}
+		return commonSizeList;
 	}
 
 	public void setSelectedTextSize(String size) {

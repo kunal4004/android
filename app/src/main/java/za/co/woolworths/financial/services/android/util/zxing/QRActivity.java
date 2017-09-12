@@ -194,6 +194,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	private boolean mProductHasSize;
 	private boolean mProductHasOneColour;
 	private boolean mProductHasOneSize;
+	private ArrayList<OtherSku> mSizePopUpList;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -530,7 +531,9 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 				mRecyclerviewSize = (RecyclerView) popupView.findViewById(R.id.recyclerviewSize);
 				LinearLayout mPopLinContainer = (LinearLayout) popupView.findViewById(R.id.linPopUpContainer);
 
-				bindWithUI(mOtherSKU, false);
+				String selectedColor = mTextColour.getText().toString();
+				mSizePopUpList = sizePopUpList(selectedColor);
+				bindWithUI(mSizePopUpList, false);
 
 				mPSizeWindow = new PopupWindow(
 						popupView,
@@ -1113,8 +1116,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 					mPSizeWindow.dismiss();
 				}
 			}
-			if (uniqueSizeList != null) {
-				OtherSku otherSku = uniqueSizeList.get(position);
+			if (mSizePopUpList != null) {
+				OtherSku otherSku = mSizePopUpList.get(position);
 				String selectedSize = otherSku.size;
 				mTextSelectSize.setText(selectedSize);
 				mGlobalState.setSizeWasPopup(true);
@@ -1139,24 +1142,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		ProductColorAdapter productColorAdapter;
 		mSlideUpPanelLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		if (!productIsColored) {
-
-			//sort ascending
-			Collections.sort(otherSkus, new Comparator<OtherSku>() {
-				@Override
-				public int compare(OtherSku lhs, OtherSku rhs) {
-					return lhs.size.compareToIgnoreCase(rhs.size);
-				}
-			});
-
-			//remove duplicates
-			uniqueSizeList = new ArrayList<>();
-			for (OtherSku os : otherSkus) {
-				if (!sizeValueExist(uniqueSizeList, os.size)) {
-					uniqueSizeList.add(os);
-				}
-			}
-
-			productSizeAdapter = new ProductSizeAdapter(uniqueSizeList, this);
+			productSizeAdapter = new ProductSizeAdapter(mSizePopUpList, this);
 			mRecyclerviewSize.addItemDecoration(new SimpleDividerItemDecoration(this));
 			mRecyclerviewSize.setLayoutManager(mSlideUpPanelLayoutManager);
 			mRecyclerviewSize.setNestedScrollingEnabled(false);
@@ -1613,7 +1599,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 			}
 			//remove duplicates
 			for (OtherSku os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.size)) {
+				if (!sizeValueExist(commonSizeList, os.colour)) {
 					commonSizeList.add(os);
 				}
 			}
@@ -1902,4 +1888,25 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mGlobalState.setColorWasPopup(false);
 		mGlobalState.setSizeWasPopup(false);
 	}
+
+	public ArrayList<OtherSku> sizePopUpList(String colour) {
+		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+		if (mOtherSKU != null) {
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : mOtherSKU) {
+				if (sku.colour.equalsIgnoreCase(colour)) {
+					sizeList.add(sku);
+				}
+			}
+
+			//remove duplicates
+			for (OtherSku os : sizeList) {
+				if (!sizeValueExist(commonSizeList, os.size)) {
+					commonSizeList.add(os);
+				}
+			}
+		}
+		return commonSizeList;
+	}
+
 }
