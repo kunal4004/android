@@ -351,7 +351,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		//retryConnect();
+		retryConnect();
 	}
 
 	private void retryConnect() {
