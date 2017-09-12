@@ -195,6 +195,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	private boolean mProductHasOneColour;
 	private boolean mProductHasOneSize;
 	private ArrayList<OtherSku> mSizePopUpList;
+	private OtherSku mDefaultSKUModel;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -955,7 +956,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 			colour = "";
 		}
 		mTextColour.setText(colour);
-		mGlobalState.setColorPopUpValue(otherSku);
+		mGlobalState.setColorPickerSku(otherSku);
 		mAuxiliaryImages = null;
 		mAuxiliaryImages = new ArrayList<>();
 		mDefaultImage = getSkuExternalImageRef(colour);
@@ -971,6 +972,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 			productDetailPriceList(mTextPrice, mTextActualPrice,
 					price, wasPrice, mObjProductDetail.productType);
 		}
+		setSelectedTextSize(otherSku.size);
 	}
 
 
@@ -1118,10 +1120,11 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 			}
 			if (mSizePopUpList != null) {
 				OtherSku otherSku = mSizePopUpList.get(position);
+				mDefaultSKUModel = otherSku;
 				String selectedSize = otherSku.size;
 				mTextSelectSize.setText(selectedSize);
 				mGlobalState.setSizeWasPopup(true);
-				mGlobalState.setSizePopUpValue(otherSku);
+				mGlobalState.setSizePickerSku(otherSku);
 				mTextSelectSize.setTextColor(Color.BLACK);
 				String colour = mTextColour.getText().toString();
 				String price = updatePrice(colour, selectedSize);
@@ -1149,21 +1152,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 			mRecyclerviewSize.setAdapter(productSizeAdapter);
 		} else {
 
-			//sort ascending
-			Collections.sort(otherSkus, new Comparator<OtherSku>() {
-				@Override
-				public int compare(OtherSku lhs, OtherSku rhs) {
-					return lhs.colour.compareToIgnoreCase(rhs.colour);
-				}
-			});
+			uniqueColorList = commonColorList(mDefaultSKUModel);
 
-			//remove duplicates
-			uniqueColorList = new ArrayList<>();
-			for (OtherSku os : otherSkus) {
-				if (!colourValueExist(uniqueColorList, os.colour)) {
-					uniqueColorList.add(os);
-				}
-			}
 			productColorAdapter = new ProductColorAdapter(uniqueColorList, this);
 			mColorRecycleSize.addItemDecoration(new SimpleDividerItemDecoration(this));
 			mColorRecycleSize.setLayoutManager(mSlideUpPanelLayoutManager);
@@ -1322,6 +1312,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		for (OtherSku otherSku : otherSkus) {
 			if (skuId.equalsIgnoreCase(otherSku.sku)) {
 				mDefaultColor = otherSku.colour;
+				mDefaultSKUModel = otherSku;
 				mDefaultColorRef = otherSku.externalColourRef;
 				mDefaultSize = otherSku.size;
 			}
@@ -1677,8 +1668,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 			boolean colorWasPopUp = mGlobalState.colorWasPopup();
 			boolean sizeWasPopUp = mGlobalState.sizeWasPopup();
 
-			OtherSku popupColorSKu = mGlobalState.getColorPopUpValue();
-			OtherSku popupSizeSKu = mGlobalState.getSizePopUpValue();
+			OtherSku popupColorSKu = mGlobalState.getColorPickerSku();
+			OtherSku popupSizeSKu = mGlobalState.getSizePickerSku();
 
 			/*
 			color | size
@@ -1695,7 +1686,16 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 			} else if (colorWasPopUp && !sizeWasPopUp) {
 				sizeOnlyIntent(popupColorSKu);
 			} else {
-				mSkuId = mGlobalState.getSizePopUpValue().sku;
+				switch (mGlobalState.getLatestSelectedPicker()) {
+					case 1:
+						mSkuId = mGlobalState.getColorPickerSku().sku;
+						break;
+					case 2:
+						mSkuId = mGlobalState.getSizePickerSku().sku;
+						break;
+					default:
+						break;
+				}
 				noSizeColorIntent();
 			}
 
@@ -1909,4 +1909,24 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		return commonSizeList;
 	}
 
+	public ArrayList<OtherSku> commonColorList(OtherSku otherSku) {
+		List<OtherSku> otherSkus = mObjProductDetail.otherSkus;
+		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+
+		// filter by colour
+		ArrayList<OtherSku> sizeList = new ArrayList<>();
+		for (OtherSku sku : otherSkus) {
+			if (sku.size.equalsIgnoreCase(otherSku.size)) {
+				sizeList.add(sku);
+			}
+		}
+
+		//remove duplicates
+		for (OtherSku os : sizeList) {
+			if (!sizeValueExist(commonSizeList, os.colour)) {
+				commonSizeList.add(os);
+			}
+		}
+		return commonSizeList;
+	}
 }

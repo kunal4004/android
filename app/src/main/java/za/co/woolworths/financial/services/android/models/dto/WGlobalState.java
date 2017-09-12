@@ -25,7 +25,7 @@ public class WGlobalState {
 	public static final int SYNC_FIND_IN_STORE = 3401;
 
 	private boolean clothingProducts, foodProducts;
-	private int startRadius, endRadius;
+	private int startRadius, endRadius, mLatestSelectedPicker;
 
 	private boolean cardGestureIsEnabled, onBackPressed, accountHasExpired, rewardHasExpired,
 			FragmentIsReward, defaultPopupState, colorWasPopup, sizeWasPopup;
@@ -215,19 +215,25 @@ public class WGlobalState {
 		this.sizeWasPopup = sizeWasPopup;
 	}
 
-	public OtherSku getColorPopUpValue() {
+	public OtherSku getColorPickerSku() {
 		return colorPopUpValue;
 	}
 
-	public void setColorPopUpValue(OtherSku colorPopUpValue) {
+	public void setColorPickerSku(OtherSku colorPopUpValue) {
 		this.colorPopUpValue = colorPopUpValue;
+		this.mLatestSelectedPicker = 1;
 	}
 
-	public OtherSku getSizePopUpValue() {
+	public OtherSku getSizePickerSku() {
 		return sizePopUpValue;
 	}
 
-	public void setSizePopUpValue(OtherSku sizePopUpValue) {
+	public int getLatestSelectedPicker() {
+		return mLatestSelectedPicker;
+	}
+
+	public void setSizePickerSku(OtherSku sizePopUpValue) {
 		this.sizePopUpValue = sizePopUpValue;
+		this.mLatestSelectedPicker = 2;
 	}
 }

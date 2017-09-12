@@ -1090,8 +1090,8 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 			boolean colorWasPopUp = mGlobalState.colorWasPopup();
 			boolean sizeWasPopUp = mGlobalState.sizeWasPopup();
 
-			OtherSku popupColorSKu = mGlobalState.getColorPopUpValue();
-			OtherSku popupSizeSKu = mGlobalState.getSizePopUpValue();
+			OtherSku popupColorSKu = mGlobalState.getColorPickerSku();
+			OtherSku popupSizeSKu = mGlobalState.getSizePickerSku();
 
 			/*
 			color | size
@@ -1108,7 +1108,16 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 			} else if (colorWasPopUp && !sizeWasPopUp) {
 				sizeOnlyIntent(popupColorSKu);
 			} else {
-				mSkuId = mGlobalState.getSizePopUpValue().sku;
+				switch (mGlobalState.getLatestSelectedPicker()) {
+					case 1:
+						mSkuId = mGlobalState.getColorPickerSku().sku;
+						break;
+					case 2:
+						mSkuId = mGlobalState.getSizePickerSku().sku;
+						break;
+					default:
+						break;
+				}
 				noSizeColorIntent();
 			}
 		}
