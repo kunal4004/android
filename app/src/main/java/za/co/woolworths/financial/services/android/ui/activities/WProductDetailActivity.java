@@ -332,7 +332,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		if (TextUtils.isEmpty(colour)) {
 			colour = getString(R.string.product_colour);
 		}
-		mGlobalState.setColorPopUpValue(otherSku);
+		mGlobalState.setColorPickerSku(otherSku);
 		mTextColour.setText(colour);
 		mAuxiliaryImages = null;
 		mAuxiliaryImages = new ArrayList<>();
@@ -348,6 +348,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 			productDetailPriceList(mTextPrice, mTextActualPrice,
 					price, wasPrice, mObjProductDetail.productType);
 		}
+		setSelectedTextSize(otherSku.size);
 	}
 
 	protected void selectedColor(String url) {
@@ -457,10 +458,11 @@ public class WProductDetailActivity extends AppCompatActivity implements
 			}
 			if (mSizePopUpList.size() > 0) {
 				OtherSku otherSku = mSizePopUpList.get(position);
+				mDefaultSKUModel = otherSku;
 				String selectedSize = otherSku.size;
 				mTextSelectSize.setText(selectedSize);
 				mGlobalState.setSizeWasPopup(true);
-				mGlobalState.setSizePopUpValue(otherSku);
+				mGlobalState.setSizePickerSku(otherSku);
 				mTextSelectSize.setTextColor(Color.BLACK);
 				String colour = mTextColour.getText().toString();
 				String price = updatePrice(colour, selectedSize);
@@ -501,23 +503,9 @@ public class WProductDetailActivity extends AppCompatActivity implements
 			mProductSizeAdapter.notifyDataSetChanged();
 		} else {
 			if (otherSkus != null) {
-				//sort ascending
-				Collections.sort(otherSkus, new Comparator<OtherSku>() {
-					@Override
-					public int compare(OtherSku lhs, OtherSku rhs) {
-						return lhs.colour.compareToIgnoreCase(rhs.colour);
-					}
-				});
-				//remove duplicates
-				uniqueColorList = new ArrayList<>();
-				if (uniqueColorList.size() > 0) {
-					uniqueColorList.clear();
-				}
-				for (OtherSku os : otherSkus) {
-					if (!colourValueExist(uniqueColorList, os.colour)) {
-						uniqueColorList.add(os);
-					}
-				}
+
+				uniqueColorList = commonColorList(mDefaultSKUModel);
+
 				mProductColourAdapter = new ProductColorAdapter(uniqueColorList, this);
 				mColorRecycleSize.addItemDecoration(new SimpleDividerItemDecoration(this));
 				mColorRecycleSize.setLayoutManager(new LinearLayoutManager(this));
@@ -1103,6 +1091,29 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	public void onClick(View v) {
 
 	}
+
+	public ArrayList<OtherSku> commonColorList(OtherSku otherSku) {
+		List<OtherSku> otherSkus = mObjProductDetail.otherSkus;
+		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+
+		// filter by colour
+		ArrayList<OtherSku> sizeList = new ArrayList<>();
+		for (OtherSku sku : otherSkus) {
+			if (sku.size.equalsIgnoreCase(otherSku.size)) {
+				sizeList.add(sku);
+			}
+		}
+
+		//remove duplicates
+		for (OtherSku os : sizeList) {
+			if (!sizeValueExist(commonSizeList, os.colour)) {
+				commonSizeList.add(os);
+			}
+		}
+
+		return commonSizeList;
+	}
+
 }
 
 
