@@ -1030,7 +1030,10 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 						View popupView = layoutInflater.inflate(R.layout.product_size_row, null);
 						mRecyclerviewSize = (RecyclerView) popupView.findViewById(R.id.recyclerviewSize);
 						LinearLayout mPopLinContainer = (LinearLayout) popupView.findViewById(R.id.linPopUpContainer);
-						bindWithUI(otherSkusList, false);
+
+						String selectedColor = mTextColour.getText().toString();
+						mSizePopUpList = sizePopUpList(selectedColor);
+						bindWithUI(mSizePopUpList, false);
 						mPSizeWindow = new PopupWindow(
 								popupView,
 								ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -1087,8 +1090,8 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 			boolean colorWasPopUp = mGlobalState.colorWasPopup();
 			boolean sizeWasPopUp = mGlobalState.sizeWasPopup();
 
-			OtherSku popupColorSKu = mGlobalState.getColorPopUpValue();
-			OtherSku popupSizeSKu = mGlobalState.getSizePopUpValue();
+			OtherSku popupColorSKu = mGlobalState.getColorPickerSku();
+			OtherSku popupSizeSKu = mGlobalState.getSizePickerSku();
 
 			/*
 			color | size
@@ -1105,7 +1108,16 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 			} else if (colorWasPopUp && !sizeWasPopUp) {
 				sizeOnlyIntent(popupColorSKu);
 			} else {
-				mSkuId = mGlobalState.getSizePopUpValue().sku;
+				switch (mGlobalState.getLatestSelectedPicker()) {
+					case 1:
+						mSkuId = mGlobalState.getColorPickerSku().sku;
+						break;
+					case 2:
+						mSkuId = mGlobalState.getSizePickerSku().sku;
+						break;
+					default:
+						break;
+				}
 				noSizeColorIntent();
 			}
 		}
@@ -1245,7 +1257,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
 			//remove duplicates
 			for (OtherSku os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.size)) {
+				if (!sizeValueExist(commonSizeList, os.colour)) {
 					commonSizeList.add(os);
 				}
 			}

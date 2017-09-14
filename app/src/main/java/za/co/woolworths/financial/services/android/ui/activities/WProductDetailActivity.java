@@ -95,7 +95,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	private View vColorSizeHorizontalLine;
 	private WTextView mTextPromo;
 	private WTextView mTextActualPrice;
-	private WTextView mTextColour;
+	public WTextView mTextColour;
 	private WrapContentWebView mWebDescription;
 	private WButton mBtnAddShoppingList;
 	private WTextView mIngredientList;
@@ -126,6 +126,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	public View loadingColorDivider;
 	private RelativeLayout mLinColor;
 	private WGlobalState mGlobalState;
+	public ArrayList<OtherSku> mSizePopUpList;
 
 	protected void initProductDetailUI() {
 		mGlobalState = ((WoolworthsApplication) WProductDetailActivity.this.getApplication()).getWGlobalState();
@@ -202,7 +203,6 @@ public class WProductDetailActivity extends AppCompatActivity implements
 
 	protected void getHtmlData() {
 		mObjProductDetail = mProductDetail.get(0);
-
 		String head = "<head>" +
 				"<meta charset=\"UTF-8\">" +
 				"<style>" +
@@ -332,7 +332,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		if (TextUtils.isEmpty(colour)) {
 			colour = getString(R.string.product_colour);
 		}
-		mGlobalState.setColorPopUpValue(otherSku);
+		mGlobalState.setColorPickerSku(otherSku);
 		mTextColour.setText(colour);
 		mAuxiliaryImages = null;
 		mAuxiliaryImages = new ArrayList<>();
@@ -348,6 +348,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 			productDetailPriceList(mTextPrice, mTextActualPrice,
 					price, wasPrice, mObjProductDetail.productType);
 		}
+		setSelectedTextSize(otherSku.size);
 	}
 
 	protected void selectedColor(String url) {
@@ -455,12 +456,13 @@ public class WProductDetailActivity extends AppCompatActivity implements
 					mPSizeWindow.dismiss();
 				}
 			}
-			if (uniqueSizeList.size() > 0) {
-				OtherSku otherSku = uniqueSizeList.get(position);
+			if (mSizePopUpList.size() > 0) {
+				OtherSku otherSku = mSizePopUpList.get(position);
+				mDefaultSKUModel = otherSku;
 				String selectedSize = otherSku.size;
 				mTextSelectSize.setText(selectedSize);
 				mGlobalState.setSizeWasPopup(true);
-				mGlobalState.setSizePopUpValue(otherSku);
+				mGlobalState.setSizePickerSku(otherSku);
 				mTextSelectSize.setTextColor(Color.BLACK);
 				String colour = mTextColour.getText().toString();
 				String price = updatePrice(colour, selectedSize);
@@ -501,23 +503,9 @@ public class WProductDetailActivity extends AppCompatActivity implements
 			mProductSizeAdapter.notifyDataSetChanged();
 		} else {
 			if (otherSkus != null) {
-				//sort ascending
-				Collections.sort(otherSkus, new Comparator<OtherSku>() {
-					@Override
-					public int compare(OtherSku lhs, OtherSku rhs) {
-						return lhs.colour.compareToIgnoreCase(rhs.colour);
-					}
-				});
-				//remove duplicates
-				uniqueColorList = new ArrayList<>();
-				if (uniqueColorList.size() > 0) {
-					uniqueColorList.clear();
-				}
-				for (OtherSku os : otherSkus) {
-					if (!colourValueExist(uniqueColorList, os.colour)) {
-						uniqueColorList.add(os);
-					}
-				}
+
+				uniqueColorList = commonColorList(mDefaultSKUModel);
+
 				mProductColourAdapter = new ProductColorAdapter(uniqueColorList, this);
 				mColorRecycleSize.addItemDecoration(new SimpleDividerItemDecoration(this));
 				mColorRecycleSize.setLayoutManager(new LinearLayoutManager(this));
@@ -917,6 +905,26 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		}
 	}
 
+	public ArrayList<OtherSku> sizePopUpList(String colour) {
+		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+		if (otherSkusList != null) {
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : otherSkusList) {
+				if (sku.colour.equalsIgnoreCase(colour)) {
+					sizeList.add(sku);
+				}
+			}
+
+			//remove duplicates
+			for (OtherSku os : sizeList) {
+				if (!sizeValueExist(commonSizeList, os.size)) {
+					commonSizeList.add(os);
+				}
+			}
+		}
+		return commonSizeList;
+	}
+
 	public void setSelectedTextSize(String size) {
 		mTextSelectSize.setText(size);
 		mTextSelectSize.setTextColor(Color.BLACK);
@@ -1083,6 +1091,29 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	public void onClick(View v) {
 
 	}
+
+	public ArrayList<OtherSku> commonColorList(OtherSku otherSku) {
+		List<OtherSku> otherSkus = mObjProductDetail.otherSkus;
+		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+
+		// filter by colour
+		ArrayList<OtherSku> sizeList = new ArrayList<>();
+		for (OtherSku sku : otherSkus) {
+			if (sku.size.equalsIgnoreCase(otherSku.size)) {
+				sizeList.add(sku);
+			}
+		}
+
+		//remove duplicates
+		for (OtherSku os : sizeList) {
+			if (!sizeValueExist(commonSizeList, os.colour)) {
+				commonSizeList.add(os);
+			}
+		}
+
+		return commonSizeList;
+	}
+
 }
 
 

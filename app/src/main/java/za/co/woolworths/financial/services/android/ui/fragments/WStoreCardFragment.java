@@ -69,11 +69,15 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private NetworkChangeListener networkChangeListener;
 	private boolean bolBroacastRegistred;
 	private RelativeLayout rlIncreaseLimit;
+	private View view;
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.card_common_fragment, container, false);
+		if (view == null) {
+			view = inflater.inflate(R.layout.card_common_fragment, container, false);
+		}
+		return view;
 	}
 
 	@Override
@@ -108,7 +112,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		bindData(accountsResponse);
-		disableIncreaseLimit();
 		hideProgressBar();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
 	}
