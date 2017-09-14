@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.awfs.coordination.R;
 
@@ -15,17 +16,14 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE;
 
-/**
- * Created by W7099877 on 10/10/2016.
- */
-
 public class StockFinderCardsOnMapAdapter extends PagerAdapter {
-	public Activity mContext;
-	public List<StoreDetails> storeDetailsList;
+	private Activity mContext;
+	private List<StoreDetails> storeDetailsList;
 
 	public StockFinderCardsOnMapAdapter(Activity context, List<StoreDetails> storeDetailsList) {
 		this.mContext = context;
@@ -34,10 +32,8 @@ public class StockFinderCardsOnMapAdapter extends PagerAdapter {
 
 	@Override
 	public void destroyItem(ViewGroup container, int position, Object object) {
-
 		container.removeView((View) object);
 	}
-
 
 	@Override
 	public Object instantiateItem(ViewGroup container, final int position) {
@@ -47,9 +43,25 @@ public class StockFinderCardsOnMapAdapter extends PagerAdapter {
 		WTextView storeDistance = (WTextView) cView.findViewById(R.id.distance);
 		WTextView storeAddress = (WTextView) cView.findViewById(R.id.storeAddress);
 		WTextView storeTimeing = (WTextView) cView.findViewById(R.id.timeing);
-		storeName.setText(storeDetailsList.get(position).name);
-		storeAddress.setText(storeDetailsList.get(position).address);
+		WTextView offerings = (WTextView) cView.findViewById(R.id.offerings);
 
+		LinearLayout llKilometerContainer = (LinearLayout) cView.findViewById(R.id.llKilometerContainer);
+		StoreDetails storeDetails = storeDetailsList.get(position);
+		storeName.setText(storeDetails.name);
+		storeAddress.setText(storeDetails.address);
+		String status = storeDetails.status;
+		if (!TextUtils.isEmpty(status)) {
+			if (!TextUtils.isEmpty(status)) {
+				if (status.equalsIgnoreCase("RED")) {
+					Utils.setBackgroundColor(llKilometerContainer, offerings, R.color.status_red, R.string.status_red);
+				} else if (status.equalsIgnoreCase("AMBER")) {
+					Utils.setBackgroundColor(llKilometerContainer, offerings, R.color.status_amber, R.string.status_amber);
+
+				} else {
+					Utils.setBackgroundColor(llKilometerContainer, offerings, R.color.green, R.string.status_green);
+				}
+			}
+		}
 		int mKmDistance = mContext.getResources().getDimensionPixelSize(R.dimen.distance_km);
 		SpannableString ssDistance = new SpannableString(WFormatter.formatMeter(storeDetailsList.get(position).distance));
 		SpannableString mSpanKm = new SpannableString(mContext.getResources().getString(R.string.distance_in_km));

@@ -686,5 +686,8 @@
     <string name="location_disable_title">Location Services</string>
     <string name="location_disable_desc">This feature cannot be used without Location Services.</string>
     <string name="downloaing_text">Downloading File</string>
+    <string name="status_red">Unlikely to be available</string>
+    <string name="status_green">Most likely to be available</string>
+    <string name="status_amber">Likely to be available</string>
 
 </resources>

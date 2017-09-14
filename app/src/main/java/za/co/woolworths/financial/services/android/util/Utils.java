@@ -57,6 +57,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDial
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 import static android.Manifest.permission_group.STORAGE;
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
@@ -560,5 +561,10 @@ public class Utils {
 					mContext.getResources().getString(R.string.contact_us_no_email_error)
 							.replace("email_address", emailId).replace("subject_line", subject));
 		}
+	}
+
+	public static void setBackgroundColor(View v, WTextView textView, int colorId, int value) {
+		v.setBackgroundColor(ContextCompat.getColor(v.getContext(), colorId));
+		textView.setText(v.getContext().getResources().getString(value));
 	}
 }
