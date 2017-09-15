@@ -686,5 +686,7 @@
     <string name="location_disable_title">Location Services</string>
     <string name="location_disable_desc">This feature cannot be used without Location Services.</string>
     <string name="downloaing_text">Downloading File</string>
+    <!--FaceBook ID-->
+    <string name="facebook_app_id">790724074427665</string>
 
 </resources>
