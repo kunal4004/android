@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.text.SpannableString;
@@ -8,7 +9,6 @@ import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.awfs.coordination.R;
 
@@ -45,23 +45,11 @@ public class StockFinderCardsOnMapAdapter extends PagerAdapter {
 		WTextView storeTimeing = (WTextView) cView.findViewById(R.id.timeing);
 		WTextView offerings = (WTextView) cView.findViewById(R.id.offerings);
 
-		LinearLayout llKilometerContainer = (LinearLayout) cView.findViewById(R.id.llKilometerContainer);
 		StoreDetails storeDetails = storeDetailsList.get(position);
 		storeName.setText(storeDetails.name);
 		storeAddress.setText(storeDetails.address);
 		String status = storeDetails.status;
-		if (!TextUtils.isEmpty(status)) {
-			if (!TextUtils.isEmpty(status)) {
-				if (status.equalsIgnoreCase("RED")) {
-					Utils.setBackgroundColor(llKilometerContainer, offerings, R.color.status_red, R.string.status_red);
-				} else if (status.equalsIgnoreCase("AMBER")) {
-					Utils.setBackgroundColor(llKilometerContainer, offerings, R.color.status_amber, R.string.status_amber);
-
-				} else {
-					Utils.setBackgroundColor(llKilometerContainer, offerings, R.color.green, R.string.status_green);
-				}
-			}
-		}
+		Utils.setRagRating(storeDistance.getContext(), offerings, storeDetails.status);
 		int mKmDistance = mContext.getResources().getDimensionPixelSize(R.dimen.distance_km);
 		SpannableString ssDistance = new SpannableString(WFormatter.formatMeter(storeDetailsList.get(position).distance));
 		SpannableString mSpanKm = new SpannableString(mContext.getResources().getString(R.string.distance_in_km));

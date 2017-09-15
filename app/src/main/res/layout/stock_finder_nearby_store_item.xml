@@ -57,8 +57,8 @@
                     android:letterSpacing="0.08"
                     android:singleLine="true"
                     android:textAllCaps="true"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
+                    android:textColor="@color/white"
+                    android:textSize="8dp"
                     app:WTextView_font="medium"/>
 
             </LinearLayout>
@@ -73,7 +73,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/green"
                 android:orientation="vertical"
                 android:paddingTop="16dp">
 
@@ -83,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:gravity="center"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="20sp"
                     app:WTextView_font="medium"/>
 
@@ -93,11 +92,16 @@
                     android:layout_gravity="center_horizontal"
                     android:gravity="center"
                     android:text="@string/km"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textSize="12.5sp"
                     app:WTextView_font="myriadpro_regular"/>
             </LinearLayout>
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#EAEAEA"/>
 
         <RelativeLayout
             android:layout_width="match_parent"

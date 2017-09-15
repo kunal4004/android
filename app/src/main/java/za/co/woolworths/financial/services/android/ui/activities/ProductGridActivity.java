@@ -60,12 +60,12 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
@@ -1215,12 +1215,18 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 			public void onSuccess(Object object) {
 				if (object != null) {
 					List<StoreDetails> location = ((LocationResponse) object).Locations;
-					if (location != null && location.size() > 0) {
-						mGlobalState.setStoreDetailsArrayList(location);
-						Intent intentInStoreFinder = new Intent(ProductGridActivity.this, WStockFinderActivity.class);
-						intentInStoreFinder.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-						startActivity(intentInStoreFinder);
-						overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+					if ((location != null) && (location.size() > 0)) {
+						Utils.removeObjectFromArrayList(location);
+						if (location.size() > 0) {
+							mGlobalState.setStoreDetailsArrayList(location);
+							Intent intentInStoreFinder = new Intent(ProductGridActivity.this, WStockFinderActivity.class);
+							intentInStoreFinder.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
+							startActivity(intentInStoreFinder);
+							overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+						} else {
+							//no stock error message
+							Utils.displayValidationMessage(ProductGridActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");
+						}
 					} else {
 						//no stock error message
 						Utils.displayValidationMessage(ProductGridActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");

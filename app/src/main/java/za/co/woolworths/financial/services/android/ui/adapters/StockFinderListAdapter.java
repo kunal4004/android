@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -57,17 +56,7 @@ public class StockFinderListAdapter extends RecyclerView.Adapter<StockFinderList
 		holder.storeAddress.setText(storeDetails.address);
 		holder.storeDistance.setText(WFormatter.formatMeter(storeDetails.distance));
 
-		String status = storeDetails.status;
-
-		if (!TextUtils.isEmpty(status)) {
-			if (status.equalsIgnoreCase("RED")) {
-				Utils.setBackgroundColor(holder.llKilometerContainer, holder.offerings, R.color.status_red, R.string.status_red);
-			} else if (status.equalsIgnoreCase("AMBER")) {
-				Utils.setBackgroundColor(holder.llKilometerContainer, holder.offerings, R.color.status_amber, R.string.status_amber);
-			} else {
-				Utils.setBackgroundColor(holder.llKilometerContainer, holder.offerings, R.color.status_green, R.string.status_green);
-			}
-		}
+		Utils.setRagRating(holder.storeDistance.getContext(), holder.offerings, storeDetails.status);
 
 		if (getItemViewType(position) == 0) {
 			// Inflate padded layout

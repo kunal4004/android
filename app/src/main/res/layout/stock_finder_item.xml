@@ -55,9 +55,9 @@
                     android:letterSpacing="0.08"
                     android:singleLine="true"
                     android:textAllCaps="true"
-                    android:textColor="@color/black"
-                    android:textSize="13sp"
-                    app:WTextView_font="medium"
+                    android:textColor="@color/white"
+                    android:textSize="8sp"
+                    app:WTextView_font="medium_bold"
                     />
 
             </LinearLayout>
@@ -66,7 +66,6 @@
                 android:id="@+id/llKilometerContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@color/green"
                 android:minWidth="53dp"
                 android:orientation="vertical"
                 android:paddingLeft="5dp"
@@ -81,7 +80,7 @@
                     android:paddingEnd="5dp"
                     android:paddingStart="5dp"
                     android:text="12.3"
-                    android:textColor="#ffffff"
+                    android:textColor="@color/black"
                     android:textSize="20sp"
                     app:WTextView_font="medium"/>
 
