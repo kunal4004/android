@@ -50,6 +50,7 @@ import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.Product;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
@@ -1216,7 +1217,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 				if (object != null) {
 					List<StoreDetails> location = ((LocationResponse) object).Locations;
 					if ((location != null) && (location.size() > 0)) {
-						Utils.removeObjectFromArrayList(location);
+						Utils.removeObjectFromArrayList(ProductGridActivity.this,location);
 						if (location.size() > 0) {
 							mGlobalState.setStoreDetailsArrayList(location);
 							Intent intentInStoreFinder = new Intent(ProductGridActivity.this, WStockFinderActivity.class);

@@ -1768,7 +1768,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 				if (object != null) {
 					List<StoreDetails> location = ((LocationResponse) object).Locations;
 					if (location != null && location.size() > 0) {
-						Utils.removeObjectFromArrayList(location);
+						Utils.removeObjectFromArrayList(QRActivity.this, location);
 						if (location.size() > 0) {
 
 							mGlobalState.setStoreDetailsArrayList(location);

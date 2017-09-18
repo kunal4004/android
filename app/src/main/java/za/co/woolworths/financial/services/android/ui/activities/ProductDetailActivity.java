@@ -1289,7 +1289,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				if (object != null) {
 					List<StoreDetails> location = ((LocationResponse) object).Locations;
 					if (location != null && location.size() > 0) {
-						Utils.removeObjectFromArrayList(location);
+						Utils.removeObjectFromArrayList(ProductDetailActivity.this,location);
 						if (location.size() > 0) {
 							mGlobalState.setStoreDetailsArrayList(location);
 							Intent intentInStoreFinder = new Intent(ProductDetailActivity.this, WStockFinderActivity.class);

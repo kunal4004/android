@@ -114,7 +114,12 @@ public class WfsApi {
 
 	public LocationResponse getLocationsItem(String sku, String startRadius, String endRadius) {
 		getMyLocation();
-		return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", "-33.918861", "18.423300", sku, startRadius, endRadius, true);
+		if (startRadius != null && startRadius.equals("")) {
+			//This should never happen for now
+			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), sku, startRadius, endRadius,true);
+		} else {
+			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), sku, startRadius, endRadius,true);
+		}
 	}
 
 	public MessageResponse getMessagesResponse(int pageSize, int pageNumber) {

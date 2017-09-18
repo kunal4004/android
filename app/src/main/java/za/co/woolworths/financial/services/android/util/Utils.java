@@ -578,16 +578,24 @@ public class Utils {
 		textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(R.dimen.rag_rating_sp));
 	}
 
-	public static ListIterator removeObjectFromArrayList(List<StoreDetails> storeDetails) {
+	public static ListIterator removeObjectFromArrayList(Context context, List<StoreDetails> storeDetails) {
 		ListIterator listIterator = storeDetails.listIterator();
 		for (Iterator<StoreDetails> it = storeDetails.iterator(); it.hasNext(); ) {
 			StoreDetails itStoreDetails = it.next();
 			String status = itStoreDetails.status;
-			if (TextUtils.isEmpty(status)) {
+			if (!status.equalsIgnoreCase(getString(context, R.string.status_amber)) ||
+					!status.equalsIgnoreCase(getString(context, R.string.status_green)) ||
+					!status.equalsIgnoreCase(getString(context, R.string.status_red))) {
 				it.remove();
 			}
 		}
 		return listIterator;
+	}
+
+
+	public static String getString(Context context, int id) {
+		Resources resources = context.getResources();
+		return resources.getString(id);
 	}
 
 	public static void setRagRating(Context context, WTextView storeOfferings, String status) {
