@@ -91,7 +91,7 @@
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/rag_rating_text"
-                    android:text="@string/status_green_desc"
+                    android:text="@string/status_red_desc"
                     />
 
             </LinearLayout>

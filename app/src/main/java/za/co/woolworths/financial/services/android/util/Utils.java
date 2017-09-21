@@ -583,9 +583,9 @@ public class Utils {
 		for (Iterator<StoreDetails> it = storeDetails.iterator(); it.hasNext(); ) {
 			StoreDetails itStoreDetails = it.next();
 			String status = itStoreDetails.status;
-			if (!status.equalsIgnoreCase(getString(context, R.string.status_amber)) ||
-					!status.equalsIgnoreCase(getString(context, R.string.status_green)) ||
-					!status.equalsIgnoreCase(getString(context, R.string.status_red))) {
+			if (!(status.equalsIgnoreCase(getString(context, R.string.status_amber)) ||
+					status.equalsIgnoreCase(getString(context, R.string.status_green)) ||
+					status.equalsIgnoreCase(getString(context, R.string.status_red)))) {
 				it.remove();
 			}
 		}
