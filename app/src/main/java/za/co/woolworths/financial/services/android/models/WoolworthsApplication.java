@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
 
+import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
@@ -200,7 +201,7 @@ public class WoolworthsApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		Fresco.initialize(this);
-
+		AppEventsLogger.activateApp(this);
 		mWGlobalState = new WGlobalState(WoolworthsApplication.this);
 		updateBankDetail = new UpdateBankDetail();
 		WoolworthsApplication.context = this.getApplicationContext();

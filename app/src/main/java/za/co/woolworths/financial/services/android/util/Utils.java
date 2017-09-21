@@ -41,7 +41,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,14 +48,13 @@ import java.util.Map;
 import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity;
 
 import static android.Manifest.permission_group.STORAGE;
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
@@ -98,7 +96,7 @@ public class Utils {
 			locationJson.put("lat", loc.getLatitude());
 			locationJson.put("lon", loc.getLongitude());
 
-			sessionDaoSave(mContext, SessionDao.KEY.LAST_KNOWN_LOCATION,locationJson.toString());
+			sessionDaoSave(mContext, SessionDao.KEY.LAST_KNOWN_LOCATION, locationJson.toString());
 		} catch (JSONException e) {
 		}
 
@@ -519,16 +517,15 @@ public class Utils {
 		}
 	}
 
-	public static void triggerFireBaseEvents(Context mContext, String eventName,Map<String, String> arguments)
-	{
+	public static void triggerFireBaseEvents(Context mContext, String eventName, Map<String, String> arguments) {
 		FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(mContext);
 
 		Bundle params = new Bundle();
-		for(Map.Entry<String, String> entry : arguments.entrySet()){
+		for (Map.Entry<String, String> entry : arguments.entrySet()) {
 			params.putString(entry.getKey(), entry.getValue());
 		}
 
-		mFirebaseAnalytics.logEvent(eventName,params);
+		mFirebaseAnalytics.logEvent(eventName, params);
 	}
 
 	public static JWTDecodedModel getJWTDecoded(Context mContext) {
@@ -544,7 +541,7 @@ public class Utils {
 		return result;
 	}
 
-	public static void sendEmail(String emailId, String subject,Context mContext) {
+	public static void sendEmail(String emailId, String subject, Context mContext) {
 		Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
 		emailIntent.setData(Uri.parse(emailId +
 				"?subject=" + Uri.encode(subject) +
@@ -561,4 +558,49 @@ public class Utils {
 							.replace("email_address", emailId).replace("subject_line", subject));
 		}
 	}
+
+	public static ArrayList<OtherSku> commonSizeList(String colour, boolean productHasColor, List<OtherSku> mOtherSKU) {
+		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+		if (productHasColor) { //product has color
+			// filter by colour
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : mOtherSKU) {
+				if (sku.colour.equalsIgnoreCase(colour)) {
+					sizeList.add(sku);
+				}
+			}
+
+			//remove duplicates
+			for (OtherSku os : sizeList) {
+				if (!sizeValueExist(commonSizeList, os.colour)) {
+					commonSizeList.add(os);
+				}
+			}
+		} else { // no color found
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : mOtherSKU) {
+				if (sku.colour.contains(colour)) {
+					sizeList.add(sku);
+				}
+			}
+
+			//remove duplicates
+			for (OtherSku os : sizeList) {
+				if (!sizeValueExist(commonSizeList, os.size)) {
+					commonSizeList.add(os);
+				}
+			}
+		}
+		return commonSizeList;
+	}
+
+	public static boolean sizeValueExist(ArrayList<OtherSku> list, String name) {
+		for (OtherSku item : list) {
+			if (item.size.equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }
