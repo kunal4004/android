@@ -1167,43 +1167,6 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		return getSizeList().size() == 1;
 	}
 
-	private ArrayList<OtherSku> commonSizeList(String colour) {
-		List<OtherSku> otherSkus = mOtherSKUList;
-		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
-
-		if (productHasColour()) { //product has color
-			// filter by colour
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : otherSkus) {
-				if (sku.colour.equalsIgnoreCase(colour)) {
-					sizeList.add(sku);
-				}
-			}
-
-			//remove duplicates
-			for (OtherSku os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.colour)) {
-					commonSizeList.add(os);
-				}
-			}
-		} else { // no color found
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : otherSkus) {
-				if (sku.colour.trim().contains(colour)) {
-					sizeList.add(sku);
-				}
-			}
-
-			//remove duplicates
-			for (OtherSku os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.size)) {
-					commonSizeList.add(os);
-				}
-			}
-		}
-		return commonSizeList;
-	}
-
 	public ArrayList<OtherSku> sizePopUpList(String colour) {
 		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
 		if (mOtherSKUList != null) {
@@ -1336,7 +1299,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				String skuColour = getColorList().get(0).colour;
 				ArrayList<OtherSku> getSize;
 				if (!TextUtils.isEmpty(skuColour)) {
-					getSize = commonSizeList(skuColour);
+					getSize = Utils.commonSizeList(skuColour, productHasColour(), mOtherSKUList);
 				} else {
 					getSize = getSizeList();
 				}
@@ -1430,7 +1393,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 
 
 	private void sizeOnlyIntent(OtherSku otherSku) {
-		ArrayList<OtherSku> sizeList = commonSizeList(otherSku.colour);
+		ArrayList<OtherSku> sizeList = Utils.commonSizeList(otherSku.colour, productHasColour(), mOtherSKUList);
 		int sizeListSize = sizeList.size();
 		if (sizeListSize > 0) {
 			if (sizeListSize == 1) {

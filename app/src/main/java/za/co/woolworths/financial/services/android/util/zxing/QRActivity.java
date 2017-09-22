@@ -1576,41 +1576,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		return getSizeList().size() == 1;
 	}
 
-	private ArrayList<OtherSku> commonSizeList(String colour) {
-		List<OtherSku> otherSkus = mOtherSKU;
-		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
-
-		if (productHasColour()) { //product has color
-			// filter by colour
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : otherSkus) {
-				if (sku.colour.equalsIgnoreCase(colour)) {
-					sizeList.add(sku);
-				}
-			}
-			//remove duplicates
-			for (OtherSku os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.colour)) {
-					commonSizeList.add(os);
-				}
-			}
-		} else { // no color found
-			//remove duplicates
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : otherSkus) {
-				if (sku.colour.trim().contains(colour)) {
-					sizeList.add(sku);
-				}
-			}
-
-			for (OtherSku os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.size)) {
-					commonSizeList.add(os);
-				}
-			}
-		}
-		return commonSizeList;
-	}
 
 	private void sizeColorSelector() {
 		if (mProductHasColour) {
@@ -1619,7 +1584,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 				String skuColour = getColorList().get(0).colour;
 				ArrayList<OtherSku> getSize;
 				if (!TextUtils.isEmpty(skuColour)) {
-					getSize = commonSizeList(skuColour);
+					getSize = Utils.commonSizeList(skuColour, productHasColour(), mOtherSKU);
+
 				} else {
 					getSize = getSizeList();
 				}
@@ -1834,7 +1800,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	}
 
 	private void sizeOnlyIntent(OtherSku otherSku) {
-		ArrayList<OtherSku> sizeList = commonSizeList(otherSku.colour);
+		ArrayList<OtherSku> sizeList = Utils.commonSizeList(otherSku.colour, productHasColour(), mOtherSKU);
 		int sizeListSize = sizeList.size();
 		if (sizeListSize > 0) {
 			if (sizeListSize == 1) {
