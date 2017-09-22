@@ -1734,11 +1734,17 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 				if (object != null) {
 					List<StoreDetails> location = ((LocationResponse) object).Locations;
 					if (location != null && location.size() > 0) {
-						mGlobalState.setStoreDetailsArrayList(location);
-						Intent intentInStoreFinder = new Intent(QRActivity.this, WStockFinderActivity.class);
-						intentInStoreFinder.putExtra("PRODUCT_NAME", mObjProductDetail.productName);
-						startActivity(intentInStoreFinder);
-						overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+						Utils.removeObjectFromArrayList(QRActivity.this, location);
+						if (location.size() > 0) {
+
+							mGlobalState.setStoreDetailsArrayList(location);
+							Intent intentInStoreFinder = new Intent(QRActivity.this, WStockFinderActivity.class);
+							intentInStoreFinder.putExtra("PRODUCT_NAME", mObjProductDetail.productName);
+							startActivity(intentInStoreFinder);
+							overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+						} else {
+							Utils.displayValidationMessage(QRActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");
+						}
 					} else {
 						//no stock error message
 						Utils.displayValidationMessage(QRActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");

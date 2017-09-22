@@ -7,7 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -15,10 +18,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -41,7 +46,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 
@@ -50,11 +57,14 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
+import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 import static android.Manifest.permission_group.STORAGE;
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
@@ -559,6 +569,48 @@ public class Utils {
 		}
 	}
 
+	public static void setBackgroundColor(WTextView textView, int drawableId, int value) {
+		Context context = textView.getContext();
+		textView.setText(context.getResources().getString(value));
+		textView.setTextColor(Color.WHITE);
+		textView.setBackgroundResource(drawableId);
+		Typeface futuraFont = Typeface.createFromAsset(context.getAssets(), "fonts/WFutura-SemiBold.ttf");
+		textView.setTypeface(futuraFont);
+		textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(R.dimen.rag_rating_sp));
+	}
+
+	public static ListIterator removeObjectFromArrayList(Context context, List<StoreDetails> storeDetails) {
+		ListIterator listIterator = storeDetails.listIterator();
+		for (Iterator<StoreDetails> it = storeDetails.iterator(); it.hasNext(); ) {
+			StoreDetails itStoreDetails = it.next();
+			String status = itStoreDetails.status;
+			if (!(status.equalsIgnoreCase(getString(context, R.string.status_amber)) ||
+					status.equalsIgnoreCase(getString(context, R.string.status_green)) ||
+					status.equalsIgnoreCase(getString(context, R.string.status_red)))) {
+				it.remove();
+			}
+		}
+		return listIterator;
+	}
+
+
+	public static String getString(Context context, int id) {
+		Resources resources = context.getResources();
+		return resources.getString(id);
+	}
+
+	public static void setRagRating(Context context, WTextView storeOfferings, String status) {
+		Resources resources = context.getResources();
+		if (status.equalsIgnoreCase(resources.getString(R.string.status_red))) {
+			setBackgroundColor(storeOfferings, R.drawable.round_red_corner, R.string.status_red_desc);
+		} else if (status.equalsIgnoreCase(resources.getString(R.string.status_amber))) {
+			setBackgroundColor(storeOfferings, R.drawable.round_amber_corner, R.string.status_amber_desc);
+		} else if (status.equalsIgnoreCase(resources.getString(R.string.status_green))) {
+			setBackgroundColor(storeOfferings, R.drawable.round_green_corner, R.string.status_green_desc);
+		} else {
+		}
+	}
+
 	public static ArrayList<OtherSku> commonSizeList(String colour, boolean productHasColor, List<OtherSku> mOtherSKU) {
 		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
 		if (productHasColor) { //product has color
@@ -602,5 +654,4 @@ public class Utils {
 		}
 		return false;
 	}
-
 }

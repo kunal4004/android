@@ -95,5 +95,7 @@
     <color name="barcode_btn_color">#66ffffff</color>
     <color name="stock_finder_map_header_bg">#cc292929</color>
     <color name="promo_text_color">#eb2e25</color>
-
+    <color name="status_red">#e41f1f</color>
+    <color name="status_green">#bad110</color>
+    <color name="status_amber">#f4b421</color>
 </resources>

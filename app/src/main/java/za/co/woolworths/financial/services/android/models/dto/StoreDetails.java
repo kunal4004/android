@@ -8,14 +8,15 @@ import java.util.List;
 
 public class StoreDetails {
 
-    public int id;
-    public String name;
-    public double latitude;
-    public double longitude;
-    public double distance;
-    public String address;
-    public String phoneNumber;
-    public int isHeader;
-    public List<StoreOfferings> offerings;
-    public List<StoreTimeings> times;
+	public int id;
+	public String name;
+	public double latitude;
+	public double longitude;
+	public double distance;
+	public String address;
+	public String phoneNumber;
+	public String status;
+	public int isHeader;
+	public List<StoreOfferings> offerings;
+	public List<StoreTimeings> times;
 }

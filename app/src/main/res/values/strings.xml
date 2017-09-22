@@ -686,7 +686,12 @@
     <string name="location_disable_title">Location Services</string>
     <string name="location_disable_desc">This feature cannot be used without Location Services.</string>
     <string name="downloaing_text">Downloading File</string>
+    <string name="status_red_desc">Unlikely to have stock</string>
+    <string name="status_green_desc">Most likely to be available</string>
+    <string name="status_amber_desc">Low stock</string>
+    <string name="status_amber">AMBER</string>
+    <string name="status_red">RED</string>
+    <string name="status_green">GREEN</string>
     <!--FaceBook ID-->
     <string name="facebook_app_id">790724074427665</string>
-
 </resources>

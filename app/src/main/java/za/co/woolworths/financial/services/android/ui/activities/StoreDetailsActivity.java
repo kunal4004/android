@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -107,7 +108,7 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 		relBrandLayout = (RelativeLayout) findViewById(R.id.relBrandLayout);
 		Gson gson = new Gson();
 		storeDetails = gson.fromJson(getIntent().getStringExtra("store"), StoreDetails.class);
-		isFromStockLocator=getIntent().getBooleanExtra("FromStockLocator",false);
+		isFromStockLocator = getIntent().getBooleanExtra("FromStockLocator", false);
 		initStoreDetailsView(storeDetails);
 
 		closePage.setOnClickListener(new View.OnClickListener() {
@@ -199,10 +200,15 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 			storeNumber.setText(storeDetail.phoneNumber);
 		SpannableMenuOption spannableMenuOption = new SpannableMenuOption(this);
 		storeDistance.setText(WFormatter.formatMeter(storeDetail.distance) + getResources().getString(R.string.distance_in_km));
-		if(isFromStockLocator)
-			storeOfferings.setVisibility(View.INVISIBLE);
+		Resources resources = getResources();
+		if (isFromStockLocator) {
+			Utils.setRagRating(StoreDetailsActivity.this, storeOfferings, storeDetails.status);
+		} else {
+			if (storeDetail.offerings != null) {
+				storeOfferings.setText(WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department")));
+			}
+		}
 		if (storeDetail.offerings != null) {
-			storeOfferings.setText(WFormatter.formatOfferingString(getOfferingByType(storeDetail.offerings, "Department")));
 			List<StoreOfferings> brandslist = getOfferingByType(storeDetail.offerings, "Brand");
 			if (brandslist != null) {
 				if (brandslist.size() > 0) {
