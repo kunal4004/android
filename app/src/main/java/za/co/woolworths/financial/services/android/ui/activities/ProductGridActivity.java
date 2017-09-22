@@ -1271,7 +1271,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		} else { // no color found
 			ArrayList<OtherSku> sizeList = new ArrayList<>();
 			for (OtherSku sku : mOtherSKU) {
-				if (sku.colour.trim().contains(colour)) {
+				if (sku.colour.contains(colour)) {
 					sizeList.add(sku);
 				}
 			}

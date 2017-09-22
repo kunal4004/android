@@ -55,6 +55,7 @@ import java.util.Map;
 import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
@@ -608,5 +609,49 @@ public class Utils {
 			setBackgroundColor(storeOfferings, R.drawable.round_green_corner, R.string.status_green_desc);
 		} else {
 		}
+	}
+
+	public static ArrayList<OtherSku> commonSizeList(String colour, boolean productHasColor, List<OtherSku> mOtherSKU) {
+		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+		if (productHasColor) { //product has color
+			// filter by colour
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : mOtherSKU) {
+				if (sku.colour.equalsIgnoreCase(colour)) {
+					sizeList.add(sku);
+				}
+			}
+
+			//remove duplicates
+			for (OtherSku os : sizeList) {
+				if (!sizeValueExist(commonSizeList, os.colour)) {
+					commonSizeList.add(os);
+				}
+			}
+		} else { // no color found
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : mOtherSKU) {
+				if (sku.colour.contains(colour)) {
+					sizeList.add(sku);
+				}
+			}
+
+			//remove duplicates
+			for (OtherSku os : sizeList) {
+				if (!sizeValueExist(commonSizeList, os.size)) {
+					commonSizeList.add(os);
+				}
+			}
+		}
+		return commonSizeList;
+	}
+
+	public static boolean sizeValueExist(ArrayList<OtherSku> list, String name) {
+		for (OtherSku item : list) {
+			if (item.size.equals(name)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
