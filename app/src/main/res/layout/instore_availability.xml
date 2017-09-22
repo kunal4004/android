@@ -43,10 +43,20 @@
                 android:id="@+id/textProofIncome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center|start"
+                android:lineSpacingExtra="4dp"
+                android:text="@string/sf_instore_availability_desc_top"
+                android:textColor="@color/black_50"
+                android:textSize="15sp"
+                app:WTextView_font="myriadpro_regular"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 android:gravity="center|start"
                 android:lineSpacingExtra="4dp"
-                android:text="@string/sf_instore_availability_desc"
+                android:text="@string/sf_instore_availability_desc_bottom"
                 android:textColor="@color/black_50"
                 android:textSize="15sp"
                 app:WTextView_font="myriadpro_regular"/>

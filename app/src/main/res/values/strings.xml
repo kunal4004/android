@@ -676,7 +676,6 @@
     <string name="confirm_color_desc">Please confirm your colour</string>
     <string name="confirm_size_desc">Please confirm your size</string>
     <string name="sf_instore_availability_title">In-Store Availability</string>
-    <string name="sf_instore_availability_desc">We are trialling this feature.  These stores are most likely to have stock based on last night\'s stock record.  Stock moves quickly and may have sold by the time you visit.</string>
     <string name="color">color</string>
     <string name="size">size</string>
     <string name="not_found">Unfortunately not found</string>
@@ -687,11 +686,13 @@
     <string name="location_disable_desc">This feature cannot be used without Location Services.</string>
     <string name="downloaing_text">Downloading File</string>
     <string name="status_red_desc">Unlikely to have stock</string>
-    <string name="status_green_desc">Most likely to be available</string>
+    <string name="status_green_desc">Most likely to have stock</string>
     <string name="status_amber_desc">Low stock</string>
     <string name="status_amber">AMBER</string>
     <string name="status_red">RED</string>
     <string name="status_green">GREEN</string>
+    <string name="sf_instore_availability_desc_top">We are trialling this feature.</string>
+    <string name="sf_instore_availability_desc_bottom">Each store shows a colour indicator:</string>
     <!--FaceBook ID-->
     <string name="facebook_app_id">790724074427665</string>
 </resources>
