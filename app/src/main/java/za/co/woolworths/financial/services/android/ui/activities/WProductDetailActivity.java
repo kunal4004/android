@@ -56,6 +56,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
+import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -294,6 +295,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		mBtnAddShoppingList.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				MultiClickPreventer.preventMultiClick(v);
 				Utils.addToShoppingCart(WProductDetailActivity.this, new ShoppingList(
 						mSelectedProduct.productId,
 						mSelectedProduct.productName, false));
@@ -306,6 +308,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		mBtnShopOnlineWoolies.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				MultiClickPreventer.preventMultiClick(v);
 				if (!TextUtils.isEmpty(mCheckOutLink)) {
 					Utils.openExternalLink(WProductDetailActivity.this, Utils.addUTMCode(mCheckOutLink));
 				}
