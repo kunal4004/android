@@ -297,6 +297,13 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle" />
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.CLIIncreaseLimitInfoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FaqStyle" />
+        <activity android:name="za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity"
+            android:screenOrientation="portrait"
+            android:theme="@style/CLI" />
     </application>
 
 </manifest>

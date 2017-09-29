@@ -688,5 +688,11 @@
     <string name="downloaing_text">Downloading File</string>
     <!--FaceBook ID-->
     <string name="facebook_app_id">790724074427665</string>
+    <string name="cli_info_watch_video">WATCH VIDEO</string>
+    <string name="cli_activity_title">INCREASE MY LIMIT</string>
+    <string name="cli_eligibility_check_title">Do any of the following apply to you?</string>
+    <string name="cli_eligibility_check_description">• I’ve applied for insolvency debt counseling \n• I’ve applied for debt administration \n• I’m currently insolvent \n• I’m currently under debt review</string>
+    <string name="cli_permission_check_title">Permission to proceed</string>
+    <string name="cli_permission_check_description">I agree that Woolworths Financial Services may request and receive my confidential consumer credit information from any credit bureau or third party at any time, including obtaining a bureau score to determine my credit worthiness</string>
 
 </resources>
