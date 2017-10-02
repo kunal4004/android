@@ -97,5 +97,7 @@
     <color name="promo_text_color">#eb2e25</color>
     <color name="cli_button_border">#19000000</color>
     <color name="cli_yes_no_button_color">#212b36</color>
+    <color name="cli_step_indicator_done_text_color">#030303</color>
+    <color name="black30">#4c000000</color>
 
 </resources>

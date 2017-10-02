@@ -694,5 +694,9 @@
     <string name="cli_eligibility_check_description">• I’ve applied for insolvency debt counseling \n• I’ve applied for debt administration \n• I’m currently insolvent \n• I’m currently under debt review</string>
     <string name="cli_permission_check_title">Permission to proceed</string>
     <string name="cli_permission_check_description">I agree that Woolworths Financial Services may request and receive my confidential consumer credit information from any credit bureau or third party at any time, including obtaining a bureau score to determine my credit worthiness</string>
+    <string name="cli_step_indicator_income">Income</string>
+    <string name="cli_step_indicator_expense">Expense</string>
+    <string name="cli_step_indicator_offer">Offer</string>
+    <string name="cli_step_indicator_documents">Documents</string>
 
 </resources>

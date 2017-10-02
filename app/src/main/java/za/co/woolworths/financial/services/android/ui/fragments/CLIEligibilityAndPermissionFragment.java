@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,8 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 	private LinearLayout permissionView;
 	private WTextView eligibilityYes;
 	private WTextView eligibilityNo;
+	private WTextView permissionYes;
+	private WTextView permissionNo;
 	private ScrollView scrollView;
 	private boolean isEligible;
 	private boolean isPermitted;
@@ -45,9 +48,13 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 		permissionView=(LinearLayout)view.findViewById(R.id.permissionView);
 		eligibilityYes=(WTextView)view.findViewById(R.id.eligibilityYes);
 		eligibilityNo=(WTextView)view.findViewById(R.id.eligibilityNo);
+		permissionYes=(WTextView)view.findViewById(R.id.permissionYes);
+		permissionNo=(WTextView)view.findViewById(R.id.permissionNo);
 		scrollView=(ScrollView) view.findViewById(R.id.scrollView);
 		eligibilityNo.setOnClickListener(this);
 		eligibilityYes.setOnClickListener(this);
+		permissionYes.setOnClickListener(this);
+		permissionNo.setOnClickListener(this);
 
 		return view;
 	}
@@ -76,6 +83,14 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 						ObjectAnimator.ofInt(scrollView, "scrollY",  permissionView.getTop()).setDuration(300).start();
 					}
 				});
+				break;
+			case R.id.permissionYes:
+				FragmentManager fragmentManager=getActivity().getSupportFragmentManager();
+				fragmentManager.beginTransaction()
+						.setCustomAnimations(R.anim.fade_in,R.anim.fade_out,R.anim.fade_in,R.anim.fade_out)
+						.replace(R.id.cliMainFrame,new CLIAllStepsContainerFragment()).commit();
+				break;
+			case R.id.permissionNo:
 				break;
 			default:
 				break;

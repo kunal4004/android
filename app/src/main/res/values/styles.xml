@@ -920,4 +920,36 @@
         <item name="WTextView_font">medium_bold</item>
     </style>
 
+    <style name="cli_step_indicator_circle">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:background">@drawable/cli_step_indicator_background_current_screen</item>
+        <item name="android:layout_centerInParent">true</item>
+    </style>
+
+    <style name="cli_step_indicator_number_textview">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="WTextView_font">medium_bold</item>
+    </style>
+
+    <style name="cli_step_indicator_line">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/black30</item>
+        <item name="android:layout_centerInParent">true</item>
+    </style>
+
+    <style name="cli_step_indicator_text">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@color/cli_step_indicator_done_text_color</item>
+        <item name="android:textSize">12sp</item>
+        <item name="WTextView_font">medium</item>
+    </style>
+
 </resources>
