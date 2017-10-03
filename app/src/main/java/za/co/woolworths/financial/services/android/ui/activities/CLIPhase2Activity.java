@@ -28,11 +28,21 @@ public class CLIPhase2Activity extends AppCompatActivity {
 		loadFragment();
 
 	}
-	public void loadFragment()
-	{
-		fragment=new CLIEligibilityAndPermissionFragment();
+
+	public void loadFragment() {
+		fragment = new CLIEligibilityAndPermissionFragment();
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		fragmentManager.beginTransaction()
 				.replace(R.id.cliMainFrame, fragment).commit();
+	}
+
+	@Override
+	public void onBackPressed() {
+		if (getFragmentManager().getBackStackEntryCount() > 0) {
+			getFragmentManager().popBackStack();
+		} else {
+			super.onBackPressed();
+		}
+		overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 	}
 }

@@ -40,6 +40,10 @@ public class CreateOfferRequest {
     @Expose
     public int otherExpenseAmount;
 
+    public CreateOfferRequest() {
+
+    }
+
     public CreateOfferRequest(int productOfferingId, int creditLimitRequested, int grossMonthlyIncome, int nettMonthlyIncome, int additionalIncomeAmount, int mortgagePaymentAmount, int rentalPaymentAmount, int maintenanceExpenseAmount, int totalCreditExpenseAmount, int otherExpenseAmount) {
         this.productOfferingId = productOfferingId;
         this.creditLimitRequested = creditLimitRequested;

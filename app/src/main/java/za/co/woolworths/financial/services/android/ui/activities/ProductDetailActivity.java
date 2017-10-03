@@ -1241,6 +1241,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 	public void startLocationUpdates() {
 		showFindInStoreProgress();
 		FusedLocationSingleton.getInstance().startLocationUpdates();
+
 		// register observer for location updates
 		LocalBroadcastManager.getInstance(ProductDetailActivity.this).registerReceiver(mLocationUpdated,
 				new IntentFilter(FusedLocationSingleton.INTENT_FILTER_LOCATION_UPDATE));

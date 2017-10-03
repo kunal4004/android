@@ -59,7 +59,6 @@ import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActi
 import za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity;
 
 import static android.Manifest.permission_group.STORAGE;
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 public class Utils {
 
@@ -539,7 +538,7 @@ public class Utils {
 				result = JWTHelper.decode(sessionDao.value);
 			}
 		} catch (Exception e) {
-			Log.e(TAG, e.getMessage());
+			Log.e("TAG", e.getMessage());
 		}
 		return result;
 	}

@@ -3,6 +3,8 @@ package za.co.woolworths.financial.services.android.util;
 import android.content.Context;
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
+
+import com.awfs.coordination.R;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
 import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
@@ -16,6 +18,8 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+
+import java.io.IOException;
 
 public class DrawImage {
 
@@ -116,5 +120,14 @@ public class DrawImage {
 	private void updateViewSize(ImageInfo imageinfo, SimpleDraweeView simpleDraweeView) {
 		simpleDraweeView.getLayoutParams().height = imageinfo.getHeight();
 		simpleDraweeView.requestLayout();
+	}
+
+	public void handleGIFImage(SimpleDraweeView simpleDraweeView) throws IOException {
+		ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithResourceId(R.raw.pascals_triangle_example_showing_recursion).build();
+		DraweeController controller = Fresco.newDraweeControllerBuilder()
+				.setUri(imageRequest.getSourceUri())
+				.setAutoPlayAnimations(true)
+				.build();
+		simpleDraweeView.setController(controller);
 	}
 }

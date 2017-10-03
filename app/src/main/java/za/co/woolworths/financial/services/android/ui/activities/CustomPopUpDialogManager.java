@@ -1,10 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -12,6 +14,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
@@ -23,18 +31,18 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class CustomPopUpDialogManager extends AppCompatActivity implements View.OnClickListener {
 
-	private RelativeLayout mRelRootContainer;
-	private Animation mPopEnterAnimation;
-	private RelativeLayout mRelPopContainer;
-	private boolean viewWasClicked = false;
-	private static final int ANIM_DOWN_DURATION = 700;
-	private WoolworthsApplication woolworthsApplication;
-	private WGlobalState mWGlobalState;
+	public RelativeLayout mRelRootContainer;
+	public Animation mPopEnterAnimation;
+	public RelativeLayout mRelPopContainer;
+	public boolean viewWasClicked = false;
+	public static final int ANIM_DOWN_DURATION = 700;
+	public WoolworthsApplication woolworthsApplication;
+	public WGlobalState mWGlobalState;
 
 	public enum VALIDATION_MESSAGE_LIST {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
-		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF
+		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO
 	}
 
 	VALIDATION_MESSAGE_LIST current_view;
@@ -162,7 +170,6 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				setAnimation();
 				if (description != null)
 					mTextEmailAddress.setText(description);
-				//mRelPopContainer.setOnClickListener(this);
 				break;
 
 			case HIGH_LOAN_AMOUNT:
@@ -291,9 +298,45 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				mRelPopContainer.setOnClickListener(this);
 				break;
 
+			case SUPPLY_DETAIL_INFO:
+				setContentView(R.layout.supply_detail_info);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				LinearLayout llSupplyDetailContainer = (LinearLayout) findViewById(R.id.llSupplyDetailContainer);
+				LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+				ObjectMapper mapper = new ObjectMapper();
+				// convert JSON string to Map
+				LinkedHashMap<String, String> supplyDetailMap = null;
+				try {
+					ObjectMapper objectMapper = new ObjectMapper();
+					supplyDetailMap = objectMapper.readValue(description, new TypeReference<LinkedHashMap<String, String>>() {
+					});
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				for (Map.Entry<String, String> entry : supplyDetailMap.entrySet()) {
+					View view = inflater.inflate(R.layout.supply_detail_row, null, false);
+					LinearLayout.LayoutParams layoutParams =
+							new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+									LinearLayout.LayoutParams.WRAP_CONTENT);
+					view.setLayoutParams(layoutParams);
+					WTextView tvTitle = (WTextView) view.findViewById(R.id.title);
+					WTextView tvDescription = (WTextView) view.findViewById(R.id.description);
+					tvTitle.setText(String.valueOf(entry.getKey()));
+					tvDescription.setText(String.valueOf(entry.getValue()));
+					llSupplyDetailContainer.addView(view);
+				}
+				mLowLoanAmount = (WButton) findViewById(R.id.btnLoanHighOk);
+				setAnimation();
+				mLowLoanAmount.setOnClickListener(this);
+				mRelPopContainer.setOnClickListener(this);
+				break;
+
 			default:
 				break;
 		}
+
 	}
 
 	private void startExitAnimation() {

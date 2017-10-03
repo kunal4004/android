@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_background"
+    android:clickable="true">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout style="@style/increase_limit_relative_style">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/cli_supply_detail_text"
+                    android:text="@string/increase_limit_supply_detail"/>
+
+                <ImageView
+                    android:id="@+id/imInfo"
+                    style="@style/increase_limit_info_circle"
+                    android:contentDescription="@string/app_name"/>
+
+            </RelativeLayout>
+
+            <View style="@style/bottom_line"/>
+
+            <LinearLayout
+                android:id="@+id/llMortgagePayment"
+                style="@style/editTextLayoutContainerStyle">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/tvLabelMortgagePayments"
+                    style="@style/textViewLabelStyle"
+                    android:text="@string/expenses_mortgage_payment"/>
+
+                <LinearLayout
+                    android:id="@+id/llCurrencyContainer"
+                    style="@style/currencyStyleLayout">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/tvMortgagePayments"
+                        style="@style/editCurrencyStyle"/>
+
+                    <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                        android:id="@+id/etMortgagePayments"
+                        style="@style/editCurrencyValue"
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View style="@style/bottom_line"/>
+
+            <LinearLayout
+                android:id="@+id/llRentalPayment"
+                style="@style/editTextLayoutContainerStyle">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/textViewLabelStyle"
+                    android:text="@string/expenses_rental_payment"/>
+
+                <LinearLayout
+                    android:id="@+id/llNetMonthlyIncome"
+                    style="@style/currencyStyleLayout">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/tvRentalPayments"
+                        style="@style/editCurrencyStyle"/>
+
+                    <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                        android:id="@+id/etRentalPayments"
+                        style="@style/editCurrencyValue"
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View style="@style/bottom_line"/>
+
+            <LinearLayout
+                android:id="@+id/llMaintainanceExpenses"
+                style="@style/editTextLayoutContainerStyle">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/textViewLabelStyle"
+                    android:text="@string/expenses_maintenance_payment"/>
+
+                <LinearLayout
+                    android:id="@+id/llAdditionalMonthlyIncome"
+                    style="@style/currencyStyleLayout">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/tvMaintainanceExpenses"
+                        style="@style/editCurrencyStyle"/>
+
+                    <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                        android:id="@+id/etMaintainanceExpenses"
+                        style="@style/editCurrencyValue"
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View style="@style/bottom_line"/>
+
+            <LinearLayout
+                android:id="@+id/llMonthlyCreditPayments"
+                style="@style/editTextLayoutContainerStyle">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/textViewLabelStyle"
+                    android:text="@string/expense_monthly_credit_payment"/>
+
+                <LinearLayout
+                    android:id="@+id/llMonthlyCreditPaymentsContainer"
+                    style="@style/currencyStyleLayout">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/tvMonthlyCreditPayments"
+                        style="@style/editCurrencyStyle"/>
+
+                    <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                        android:id="@+id/etMonthlyCreditPayments"
+                        style="@style/editCurrencyValue"
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+    <include
+        layout="@layout/cli_next_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"/>
+
+</FrameLayout>

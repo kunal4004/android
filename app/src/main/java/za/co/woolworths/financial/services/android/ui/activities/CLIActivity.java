@@ -5,18 +5,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
@@ -181,10 +176,10 @@ public class CLIActivity extends BaseActivity implements View.OnClickListener,Ne
 		switch (view.getId()) {
 			case R.id.btnContinue:
 				mBtnContinue.startAnimation(buttonClick);
-				Intent openCLIStepIndicator = new Intent(CLIActivity.this, CLISupplyInfoActivity.class);
-				startActivity(openCLIStepIndicator);
-				finish();
-				overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+//				Intent openCLIStepIndicator = new Intent(CLIActivity.this, IncreaseMyLimitActivity.class);
+//				startActivity(openCLIStepIndicator);
+//				finish();
+//				overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 				break;
 		}
 	}

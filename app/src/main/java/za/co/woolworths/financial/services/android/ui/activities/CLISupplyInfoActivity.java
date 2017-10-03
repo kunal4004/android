@@ -244,7 +244,8 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 					mCreditLimitAmount = Integer.valueOf(creditAmount);
 				}
 
-				mCreateOfferRequest = new CreateOfferRequest(mWoolworthsApplication.getProductOfferingId(),
+				mCreateOfferRequest = new CreateOfferRequest(
+						mWoolworthsApplication.getProductOfferingId(),
 						mCreditLimitAmount,
 						Integer.valueOf(grossMonthlyIncome),
 						Integer.valueOf(netMonthlyIncome),
@@ -335,8 +336,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 			@Override
 			protected CreateOfferResponse httpDoInBackground(String... params) {
 				return ((WoolworthsApplication) CLISupplyInfoActivity.this.getApplication())
-						.getApi().createOfferRequest
-								(mCreateOfferRequest);
+						.getApi().createOfferRequest(mCreateOfferRequest);
 			}
 
 			@Override
@@ -371,7 +371,7 @@ public class CLISupplyInfoActivity extends BaseActivity implements View.OnClickL
 							case 440:
 								SessionExpiredUtilities.INSTANCE.setAccountSessionExpired
 										(CLISupplyInfoActivity.this, createOfferResponse
-										.response.stsParams);
+												.response.stsParams);
 								break;
 							default:
 								if (!TextUtils.isEmpty(createOfferResponse.response.desc)) {

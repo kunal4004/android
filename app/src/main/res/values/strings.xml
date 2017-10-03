@@ -281,13 +281,13 @@
     <string name="cli_proof_income">I agree that Woolworths Financial Services may request and receive three months of my bank statements from my bank or any third party at any time as proof of income.</string>
     <string name="cli_confirm_information">DO YOU CONFIRM THAT ALL INFORMATION SUPPLIED IS CORRECT?</string>
     <string name="cli_other_expenses">Other Expenses</string>
-    <string name="cli_monthly_credit_payment">Monthly Credit Payments</string>
-    <string name="cli_maintenance_expenses">Maintenance Expenses</string>
-    <string name="cli_rental_payments">Rental Payments</string>
-    <string name="cli_mortgage_payments">Mortgage Payments</string>
-    <string name="cli_additional_monthly_income">Additional Monthly Income</string>
-    <string name="cli_net_monthly_income">Net Monthly Income</string>
-    <string name="cli_monthly_income">Gross Monthly Income</string>
+    <string name="expense_monthly_credit_payment">Monthly Credit Payments</string>
+    <string name="expenses_maintenance_payment">Maintenance Expenses</string>
+    <string name="expenses_rental_payment">Rental Payments</string>
+    <string name="expenses_mortgage_payment">Mortgage Payments</string>
+    <string name="income_additional_monthly_title">Additional Monthly Income</string>
+    <string name="income_net_monthly_title">Net Monthly Income</string>
+    <string name="income_gross_monthly_title">Gross Monthly Income</string>
     <string name="cli_yes">YES</string>
     <string name="cli_no">No</string>
     <string name="cli_account_type">ACCOUNT TYPE</string>
@@ -310,13 +310,13 @@
     <string name="cli_cancel_application">UNFORTUNATELY WE CANNOT PROCEED</string>
     <string name="cli_lorem_ipsum">Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum </string>
     <string name="cli_got_it">GOT IT</string>
-    <string name="cli_overlay_monthly_income">Gross Monthly Income is your income before Tax/ Deductions.</string>
-    <string name="cli_overlay_gross_income">Your net monthly income refers to your income after tax and other deductions. You’ll find this amount on your payslip.</string>
-    <string name="cli_overlay_per_income">Monthly personal income earned over and above your salary, i.e: rental, maintenance and spousal allowances etc.</string>
-    <string name="cli_overlay_monthly_home">Your Monthly Home Loan Repayment.</string>
-    <string name="cli_overlay_rental_payment">Rental Payment — Cost of Renting Accommodation.</string>
-    <string name="cli_overlay_monthly_obliged">Monthly obligation to pay statutory child and/or spousal support etc.</string>
-    <string name="cli_overlay_monthly_installment">Monthly Instalment of creditor account i.e.: Credit Card, Personal Loan, Furniture Accounts etc.</string>
+    <string name="income_gross_monthly_desc">Gross monthly income refers to your income before deductions.</string>
+    <string name="income_net_monthly_desc">Net monthly income refers to your income before deductions.</string>
+    <string name="income_additional_monthly_desc">Additional income refers to any income you receive apart from your monthly salary.</string>
+    <string name="expenses_mortgage_payment_desc">Monthly mortgage or bond repayment refers to your home loan installments</string>
+    <string name="expenses_rental_payment_desc">Rental Payment is the cost of monthly accommodation.</string>
+    <string name="expenses_maintenance_payment_desc">Maintenance expenses refer to your monthly accommodation</string>
+    <string name="expense_monthly_credit_payment_desc">Monthly Instalment of creditor account i.e.: Credit Card, Personal Loan, Furniture Accounts etc.</string>
     <string name="cli_overlay_other_expenses">All Other Expenses, i.e.: groceries, transport, telephone/cellphone etc.</string>
     <string name="cli_overlay_all_expenses">All Other Expenses, i.e.: groceries,transport, telephone/cellphone etc.</string>
     <string name="cli_creating_offer">CREATING OFFER...</string>
@@ -698,5 +698,28 @@
     <string name="cli_step_indicator_expense">Expense</string>
     <string name="cli_step_indicator_offer">Offer</string>
     <string name="cli_step_indicator_documents">Documents</string>
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+    <string name="four">4</string>
+    <string name="indicator_income_label">Income</string>
+    <string name="indicator_expenses_label">Expenses</string>
+    <string name="indicator_offer_label">Offer</string>
+    <string name="indicator_documents_label">Documents</string>
+    <string name="increase_limit_supply_detail">please supply your income details</string>
+    <string name="currency">R</string>
+    <string name="increase_my_limit">increase my limit</string>
+    <string name="calculating_your_offer">Calculating your offer</string>
+    <string name="current_credit_limit">Current Credit Limit:</string>
+    <string name="additional_credit_limit">Additional Credit Limit:</string>
+    <string name="new_credit_limit">New Credit Limit:</string>
+
+    <string name="amount_of_time_info">This may take 2 minutes</string>
+
+    <string name="pre_approved_for_title">you have been pre-approved for:</string>
+    <string name="subject_to_proof_of_income">*Subject to proof of income</string>
+
+    <string name="accept_offer">accept offer</string>
+    <string name="slide_to_edit_amount">slide to edit amount</string>
 
 </resources>

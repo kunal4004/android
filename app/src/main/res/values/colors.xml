@@ -100,4 +100,8 @@
     <color name="cli_step_indicator_done_text_color">#030303</color>
     <color name="black30">#4c000000</color>
 
+    <color name="status_red">#e41f1f</color>
+    <color name="status_green">#bad110</color>
+    <color name="status_amber">#f4b421</color>
+    <color name="offer_title">#222222</color>
 </resources>
