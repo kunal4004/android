@@ -365,7 +365,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		brandsLayout.removeAllViews();
 		storeName.setText(storeDetail.name);
 		storeAddress.setText(storeDetail.address);
-		storeOfferings.setVisibility(View.INVISIBLE);
+		Utils.setRagRating(getActivity(), storeOfferings, storeDetail.status);
 		if (storeDetail.phoneNumber != null)
 			storeNumber.setText(storeDetail.phoneNumber);
 		storeDistance.setText(WFormatter.formatMeter(storeDetail.distance) + getActivity().getResources().getString(R.string.distance_in_km));

@@ -257,14 +257,10 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				break;
 
 			case INSTORE_AVAILABILITY:
-				setContentView(R.layout.lw_too_high_error);
+				setContentView(R.layout.instore_availability);
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
 				mLowLoanAmount = (WButton) findViewById(R.id.btnLoanHighOk);
-				mTextTitle = (WTextView) findViewById(R.id.title);
-				mTextTitle.setText(getString(R.string.sf_instore_availability_title));
-				mTextProofIncome = (WTextView) findViewById(R.id.textProofIncome);
-				mTextProofIncome.setText(getString(R.string.sf_instore_availability_desc));
 				setAnimation();
 				mLowLoanAmount.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);

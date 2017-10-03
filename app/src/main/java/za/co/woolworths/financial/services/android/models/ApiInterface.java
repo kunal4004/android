@@ -225,8 +225,8 @@ public interface ApiInterface {
 			@Header("longitude") String longitude,
 			@Path(value = "sku", encode = false) String sku,
 			@Query("startRadius") String startRadius,
-			@Query("endRadius") String endRadius
-	);
+			@Query("endRadius") String endRadius,
+			@Query("getStatus") boolean getStatus);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@GET("/user/messages")

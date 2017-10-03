@@ -59,6 +59,7 @@ import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
+import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
@@ -632,6 +633,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 
 	@Override
 	public void onClick(View v) {
+		MultiClickPreventer.preventMultiClick(v);
 		switch (v.getId()) {
 			case R.id.textSelectColour:
 			case R.id.imSelectedColor:
@@ -1167,43 +1169,6 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		return getSizeList().size() == 1;
 	}
 
-	private ArrayList<OtherSku> commonSizeList(String colour) {
-		List<OtherSku> otherSkus = mOtherSKUList;
-		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
-
-		if (productHasColour()) { //product has color
-			// filter by colour
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : otherSkus) {
-				if (sku.colour.equalsIgnoreCase(colour)) {
-					sizeList.add(sku);
-				}
-			}
-
-			//remove duplicates
-			for (OtherSku os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.colour)) {
-					commonSizeList.add(os);
-				}
-			}
-		} else { // no color found
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : otherSkus) {
-				if (sku.colour.trim().contains(colour)) {
-					sizeList.add(sku);
-				}
-			}
-
-			//remove duplicates
-			for (OtherSku os : sizeList) {
-				if (!sizeValueExist(commonSizeList, os.size)) {
-					commonSizeList.add(os);
-				}
-			}
-		}
-		return commonSizeList;
-	}
-
 	public ArrayList<OtherSku> sizePopUpList(String colour) {
 		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
 		if (mOtherSKUList != null) {
@@ -1290,11 +1255,17 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				if (object != null) {
 					List<StoreDetails> location = ((LocationResponse) object).Locations;
 					if (location != null && location.size() > 0) {
-						mGlobalState.setStoreDetailsArrayList(location);
-						Intent intentInStoreFinder = new Intent(ProductDetailActivity.this, WStockFinderActivity.class);
-						intentInStoreFinder.putExtra("PRODUCT_NAME", mProductName);
-						startActivity(intentInStoreFinder);
-						overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+						Utils.removeObjectFromArrayList(ProductDetailActivity.this, location);
+						if (location.size() > 0) {
+							mGlobalState.setStoreDetailsArrayList(location);
+							Intent intentInStoreFinder = new Intent(ProductDetailActivity.this, WStockFinderActivity.class);
+							intentInStoreFinder.putExtra("PRODUCT_NAME", mProductName);
+							startActivity(intentInStoreFinder);
+							overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+						} else {
+							//no stock error message
+							Utils.displayValidationMessage(ProductDetailActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");
+						}
 					} else {
 						//no stock error message
 						Utils.displayValidationMessage(ProductDetailActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");
@@ -1337,7 +1308,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				String skuColour = getColorList().get(0).colour;
 				ArrayList<OtherSku> getSize;
 				if (!TextUtils.isEmpty(skuColour)) {
-					getSize = commonSizeList(skuColour);
+					getSize = Utils.commonSizeList(skuColour, productHasColour(), mOtherSKUList);
 				} else {
 					getSize = getSizeList();
 				}
@@ -1431,7 +1402,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 
 
 	private void sizeOnlyIntent(OtherSku otherSku) {
-		ArrayList<OtherSku> sizeList = commonSizeList(otherSku.colour);
+		ArrayList<OtherSku> sizeList = Utils.commonSizeList(otherSku.colour, productHasColour(), mOtherSKUList);
 		int sizeListSize = sizeList.size();
 		if (sizeListSize > 0) {
 			if (sizeListSize == 1) {
