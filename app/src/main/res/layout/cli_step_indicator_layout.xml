@@ -111,23 +111,27 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/cli_step_indicator_text"
+            android:id="@+id/incomeText"
             android:text="@string/cli_step_indicator_income"
             android:paddingLeft="5dp"
             app:WTextView_font="medium" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/cli_step_indicator_text"
+            android:id="@+id/expenseText"
             android:gravity="left"
             android:paddingLeft="10dp"
             android:text="@string/cli_step_indicator_expense" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/cli_step_indicator_text"
+            android:id="@+id/offerText"
             android:gravity="center_horizontal"
             android:text="@string/cli_step_indicator_offer" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             style="@style/cli_step_indicator_text"
+            android:id="@+id/documentText"
             android:gravity="end"
             android:text="@string/cli_step_indicator_documents" />
     </LinearLayout>
