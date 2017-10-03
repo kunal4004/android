@@ -36,9 +36,10 @@ public class CLIAllStepsContainerFragment extends Fragment {
 	private Typeface mStepCurrent;
 	private Typeface mStepFinished;
 
-	private FrameLayout[] indicators={indicator1,indicator2,indicator3,indicator4};
-	private WTextView[]   indicatorNumbers={indicatorNumber1,indicatorNumber2,indicatorNumber3,indicatorNumber4};
-	private WTextView[]   stepNames={income,expense,offer,documents};
+	private FrameLayout[] indicators = {indicator1, indicator2, indicator3, indicator4};
+	private WTextView[] indicatorNumbers = {indicatorNumber1, indicatorNumber2, indicatorNumber3, indicatorNumber4};
+	private WTextView[] stepNames = {income, expense, offer, documents};
+	private FrameLayout cli_steps_container;
 
 	public CLIAllStepsContainerFragment() {
 		// Required empty public constructor
@@ -49,26 +50,29 @@ public class CLIAllStepsContainerFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-		View view=inflater.inflate(R.layout.cli_all_steps_container_fragment, container, false);
+		View view = inflater.inflate(R.layout.cli_all_steps_container_fragment, container, false);
 		initStepIndicatorViews(view);
-
+		initUI(view);
 		return view;
 	}
 
-	public void initStepIndicatorViews(View view)
-	{
-		indicators[0]=(FrameLayout)view.findViewById(R.id.indicator1);
-		indicators[1]=(FrameLayout)view.findViewById(R.id.indicator2);
-		indicators[2]=(FrameLayout)view.findViewById(R.id.indicator3);
-		indicators[3]=(FrameLayout)view.findViewById(R.id.indicator4);
-		indicatorNumbers[0]=(WTextView)view.findViewById(R.id.indicatorText1);
-		indicatorNumbers[1]=(WTextView)view.findViewById(R.id.indicatorText2);
-		indicatorNumbers[2]=(WTextView)view.findViewById(R.id.indicatorText3);
-		indicatorNumbers[3]=(WTextView)view.findViewById(R.id.indicatorText4);
-		stepNames[0]=(WTextView)view.findViewById(R.id.incomeText);
-		stepNames[1]=(WTextView)view.findViewById(R.id.expenseText);
-		stepNames[2]=(WTextView)view.findViewById(R.id.offerText);
-		stepNames[3]=(WTextView)view.findViewById(R.id.documentText);
+	private void initUI(View v) {
+		cli_steps_container = (FrameLayout) v.findViewById(R.id.cli_steps_container);
+	}
+
+	public void initStepIndicatorViews(View view) {
+		indicators[0] = (FrameLayout) view.findViewById(R.id.indicator1);
+		indicators[1] = (FrameLayout) view.findViewById(R.id.indicator2);
+		indicators[2] = (FrameLayout) view.findViewById(R.id.indicator3);
+		indicators[3] = (FrameLayout) view.findViewById(R.id.indicator4);
+		indicatorNumbers[0] = (WTextView) view.findViewById(R.id.indicatorText1);
+		indicatorNumbers[1] = (WTextView) view.findViewById(R.id.indicatorText2);
+		indicatorNumbers[2] = (WTextView) view.findViewById(R.id.indicatorText3);
+		indicatorNumbers[3] = (WTextView) view.findViewById(R.id.indicatorText4);
+		stepNames[0] = (WTextView) view.findViewById(R.id.incomeText);
+		stepNames[1] = (WTextView) view.findViewById(R.id.expenseText);
+		stepNames[2] = (WTextView) view.findViewById(R.id.offerText);
+		stepNames[3] = (WTextView) view.findViewById(R.id.documentText);
 		mStepDefault = Typeface.createFromAsset(getActivity().getAssets(), "fonts/WFutura-Medium.ttf");
 		mStepCurrent = Typeface.createFromAsset(getActivity().getAssets(), "fonts/WFutura-SemiBold.ttf");
 		mStepFinished = Typeface.createFromAsset(getActivity().getAssets(), "fonts/WFutura-Medium.ttf");
@@ -76,32 +80,28 @@ public class CLIAllStepsContainerFragment extends Fragment {
 
 	}
 
-	public void updateStepIndicator(int position)
-	{
-		int stepNumber=position-1;
+	public void updateStepIndicator(int position) {
+		int stepNumber = position - 1;
 
-		for (int i=0;i<=3;i++)
-		{
-			if (i<stepNumber) {
+		for (int i = 0; i <= 3; i++) {
+			if (i < stepNumber) {
 				indicators[i].setBackgroundResource(R.drawable.cli_step_indicator_active);
 				indicatorNumbers[i].setVisibility(View.INVISIBLE);
 				stepNames[i].setTypeface(mStepFinished);
-				stepNames[i].setTextColor(ContextCompat.getColor(getActivity(),R.color.cli_step_indicator_done_text_color));
-			}
-			else if(i==stepNumber) {
+				stepNames[i].setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_step_indicator_done_text_color));
+			} else if (i == stepNumber) {
 				indicators[i].setBackgroundResource(R.drawable.cli_step_indicator_background_current_screen);
 				indicatorNumbers[i].setVisibility(View.VISIBLE);
-				indicatorNumbers[i].setTextColor(ContextCompat.getColor(getActivity(),R.color.white));
+				indicatorNumbers[i].setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
 				stepNames[i].setTypeface(mStepCurrent);
-				stepNames[i].setTextColor(ContextCompat.getColor(getActivity(),R.color.black));
+				stepNames[i].setTextColor(ContextCompat.getColor(getActivity(), R.color.black));
 
-			}
-			else {
+			} else {
 				indicators[i].setBackgroundResource(R.drawable.cli_step_indicator_background_next_screen);
 				indicatorNumbers[i].setVisibility(View.VISIBLE);
-				indicatorNumbers[i].setTextColor(ContextCompat.getColor(getActivity(),R.color.mask_opacity));
+				indicatorNumbers[i].setTextColor(ContextCompat.getColor(getActivity(), R.color.mask_opacity));
 				stepNames[i].setTypeface(mStepDefault);
-				stepNames[i].setTextColor(ContextCompat.getColor(getActivity(),R.color.mask_opacity));
+				stepNames[i].setTextColor(ContextCompat.getColor(getActivity(), R.color.mask_opacity));
 			}
 		}
 	}

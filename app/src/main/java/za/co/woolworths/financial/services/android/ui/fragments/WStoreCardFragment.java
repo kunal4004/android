@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -163,7 +164,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			case R.id.tvIncreaseLimit:
 				if (!isOfferActive) {
 					((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
-					Intent openCLIIncrease = new Intent(getActivity(), CLIActivity.class);
+					Intent openCLIIncrease = new Intent(getActivity(), CLIPhase2Activity.class);
 					startActivity(openCLIIncrease);
 					getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				}
@@ -222,6 +223,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					String httpDesc = offerActive.response.desc;
 					if (httpCode == 200) {
 						isOfferActive = offerActive.offerActive;
+						isOfferActive = false;
 						storeWasAlreadyRunOnce = true;
 						if (isOfferActive) {
 							disableIncreaseLimit();
