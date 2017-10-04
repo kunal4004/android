@@ -110,5 +110,6 @@
     <dimen name="bubble_thumb_width">70dp</dimen>
     <dimen name="bubble_thumb_height">70dp</dimen>
     <dimen name="thirty_five_dp">35dp</dimen>
+    <dimen name="eleven_dp">11dp</dimen>
 </resources>
 

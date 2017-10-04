@@ -41,6 +41,7 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 	private LinearLayout llNextButtonLayout, llSlideToEditContainer;
 	private CircleProgressView mCircleView;
 	private FrameLayout flCircularProgressSpinner;
+	private WButton btnContinue;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.offer_calculation_fragment, container, false);
@@ -79,7 +80,7 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 		});
 		//getOfferAPITask.execute();
 
-		onLoadSuccess();
+		//onLoadSuccess();
 	}
 
 	private void init(View view) {
@@ -129,11 +130,10 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 		llNextButtonLayout = (LinearLayout) view.findViewById(R.id.llNextButtonLayout);
 		showView(llNextButtonLayout);
 
-		WButton btnContinue = (WButton) view.findViewById(R.id.btnContinue);
+		btnContinue = (WButton) view.findViewById(R.id.btnContinue);
 		btnContinue.setOnClickListener(this);
 		btnContinue.setText(getActivity().getResources().getString(R.string.accept_offer));
 		showView(btnContinue);
-		disableView(btnContinue);
 
 		try {
 			new DrawImage(getActivity()).handleGIFImage(imOfferTime);
@@ -182,6 +182,7 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 		progressColorFilter(cpAdditionalCreditLimit, Color.BLACK);
 		progressColorFilter(cpNewCreditAmount, Color.BLACK);
 		calculateOfferProgress();
+		disableView(btnContinue);
 	}
 
 	private void calculateOfferProgress() {
@@ -213,13 +214,10 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 
 	private void disableView(View v) {
 		v.setEnabled(false);
-		v.setAlpha(0.2f);
-		setBackgroundColor(llNextButtonLayout, R.color.white);
 	}
 
 	private void enableView(View v) {
 		v.setEnabled(true);
-		setBackgroundColor(llNextButtonLayout, R.color.outside_border);
 	}
 
 	private void hideView(View v) {

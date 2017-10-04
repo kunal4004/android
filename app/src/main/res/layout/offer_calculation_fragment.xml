@@ -4,7 +4,8 @@
     xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/default_background">
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -14,7 +15,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/ten_dp"
             android:background="@color/white"
             android:gravity="center_horizontal"
             android:orientation="vertical">

@@ -99,6 +99,7 @@
     <color name="cli_yes_no_button_color">#212b36</color>
     <color name="cli_step_indicator_done_text_color">#030303</color>
     <color name="black30">#4c000000</color>
+    <color name="black10">#10000000</color>
 
     <color name="status_red">#e41f1f</color>
     <color name="status_green">#bad110</color>
