@@ -14,8 +14,7 @@
     <string name="mint_id">87e1e034</string>
     <string name="crittercism_app_id">55dd92eecb114f1000e34bf6</string>
     <integer name="account_time_to_live">600000</integer>
-    <string name="config_endpoint">https://mobileconfig.wigroup.co/config-server/rest/mobile/android/</string>
+    <string name="config_endpoint">http://mobileconfig.wigroup.co:8080/config-server/rest/mobile/android/</string>
     <!--<string name="config_endpoint">https://admin.wigroup.co/server/api/v1/config-server/dev/config/</string>-->
     <string name="app_token">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJHVUlEIjoiOTkxNDhiZDQtYzA3NS00YTFmLTg1NmItYmM3MDRlMGZmMTIxIn0.-lU4OqRnnhDQZ2VKx9qWTFMro_XDv21wm2-23jmJPjE</string>
-
 </resources>
