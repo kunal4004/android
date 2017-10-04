@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import at.grabner.circleprogress.CircleProgressView;
-import retrofit.http.HEAD;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
 import za.co.woolworths.financial.services.android.models.rest.GetOfferAPITask;
@@ -243,7 +242,6 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 		progressBar.setIndeterminate(true);
 		progressBar.getIndeterminateDrawable().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 	}
-
 
 	@Override
 	public void onClick(View v) {

@@ -1524,6 +1524,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 
 		return commonSizeList;
 	}
+
 }
 
 
