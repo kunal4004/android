@@ -1,16 +1,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="za.co.woolworths.financial.services.android.ui.fragments.CLIAllStepsContainerFragment">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context="za.co.woolworths.financial.services.android.ui.fragments.CLIAllStepsContainerFragment">
+
     <include
         layout="@layout/cli_step_indicator_layout"
         />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/eleven_dp"
+        android:background="@color/default_background"/>
+
     <FrameLayout
+        android:id="@+id/cli_steps_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/cli_steps_container"
         />
 
 </LinearLayout>

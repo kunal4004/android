@@ -730,4 +730,6 @@
     <string name="slide_to_edit_amount">slide to edit amount</string>
     <string name="enter_account_number">enter account number</string>
 
+    <string name="select_your_bank_desc">As responsible lender and as proscribed by law, we need to verify the info you provided.</string>
+
 </resources>

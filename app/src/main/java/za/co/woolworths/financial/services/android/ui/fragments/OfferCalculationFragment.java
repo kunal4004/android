@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import at.grabner.circleprogress.CircleProgressView;
+import retrofit.http.HEAD;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
 import za.co.woolworths.financial.services.android.models.rest.GetOfferAPITask;
@@ -41,6 +42,7 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 	private LinearLayout llNextButtonLayout, llSlideToEditContainer;
 	private CircleProgressView mCircleView;
 	private FrameLayout flCircularProgressSpinner;
+	private WButton btnContinue;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.offer_calculation_fragment, container, false);
@@ -129,11 +131,11 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 		llNextButtonLayout = (LinearLayout) view.findViewById(R.id.llNextButtonLayout);
 		showView(llNextButtonLayout);
 
-		WButton btnContinue = (WButton) view.findViewById(R.id.btnContinue);
+		btnContinue = (WButton) view.findViewById(R.id.btnContinue);
 		btnContinue.setOnClickListener(this);
 		btnContinue.setText(getActivity().getResources().getString(R.string.accept_offer));
 		showView(btnContinue);
-		//disableView(btnContinue);
+
 
 		try {
 			new DrawImage(getActivity()).handleGIFImage(imOfferTime);
@@ -182,6 +184,7 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 		progressColorFilter(cpAdditionalCreditLimit, Color.BLACK);
 		progressColorFilter(cpNewCreditAmount, Color.BLACK);
 		calculateOfferProgress();
+		disableView(btnContinue);
 	}
 
 	private void calculateOfferProgress() {
@@ -205,6 +208,7 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 		hideView(cpNewCreditAmount);
 		hideView(flCircularProgressSpinner);
 		mCircleView.stopSpinning();
+		enableView(btnContinue);
 	}
 
 	private void getCLIText(WTextView wTextView, int id) {
@@ -213,13 +217,10 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 
 	private void disableView(View v) {
 		v.setEnabled(false);
-		v.setAlpha(0.2f);
-		setBackgroundColor(llNextButtonLayout, R.color.white);
 	}
 
 	private void enableView(View v) {
 		v.setEnabled(true);
-		setBackgroundColor(llNextButtonLayout, R.color.outside_border);
 	}
 
 	private void hideView(View v) {
@@ -243,15 +244,21 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 		progressBar.getIndeterminateDrawable().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 	}
 
+
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.btnContinue:
-				CLISupplyDocumentsFragment fragment=new CLISupplyDocumentsFragment();
+				/*CLISupplyDocumentsFragment fragment=new CLISupplyDocumentsFragment();
 				fragment.setStepIndicatorCallback(mStepIndicatorCallback);
 				getFragmentManager().beginTransaction()
 						.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
-						.replace(R.id.cli_steps_container, fragment).addToBackStack(null).commit();
+						.replace(R.id.cli_steps_container, fragment).addToBackStack(null).commit();*/
+				DocumentFragment documentFragment = new DocumentFragment();
+				documentFragment.setStepIndicatorCallback(mStepIndicatorCallback);
+				getFragmentManager().beginTransaction()
+						.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
+						.replace(R.id.cli_steps_container, documentFragment).addToBackStack(null).commit();
 				break;
 		}
 	}
