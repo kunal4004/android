@@ -728,5 +728,6 @@
 
     <string name="accept_offer">accept offer</string>
     <string name="slide_to_edit_amount">slide to edit amount</string>
+    <string name="enter_account_number">enter account number</string>
 
 </resources>
