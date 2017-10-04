@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -36,13 +37,20 @@ public class CLIPhase2Activity extends AppCompatActivity {
 				.replace(R.id.cliMainFrame, fragment).commit();
 	}
 
+
 	@Override
 	public void onBackPressed() {
-		if (getFragmentManager().getBackStackEntryCount() > 0) {
-			getFragmentManager().popBackStack();
-		} else {
-			super.onBackPressed();
-		}
-		overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+		// if there is a fragment and the back stack of this fragment is not empty,
+//		// then emulate 'onBackPressed' behaviour, because in default, it is not working
+//		for (Fragment frag : getC().getFragments()) {
+//			if (frag.isVisible()) {
+//				FragmentManager childFm = frag.getChildFragmentManager();
+//				if (childFm.getBackStackEntryCount() > 0) {
+//					childFm.popBackStack();
+//					return;
+//				}
+//			}
+//		}
+		super.onBackPressed();
 	}
 }

@@ -80,7 +80,7 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 		});
 		//getOfferAPITask.execute();
 
-		//onLoadSuccess();
+		onLoadSuccess();
 	}
 
 	private void init(View view) {
@@ -206,6 +206,7 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 		hideView(cpNewCreditAmount);
 		hideView(flCircularProgressSpinner);
 		mCircleView.stopSpinning();
+		enableView(btnContinue);
 	}
 
 	private void getCLIText(WTextView wTextView, int id) {
@@ -241,11 +242,16 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 		progressBar.getIndeterminateDrawable().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 	}
 
+
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.btnContinue:
-
+				DocumentFragment documentFragment = new DocumentFragment();
+				documentFragment.setmStepIndicatorCallback(mStepIndicatorCallback);
+				getFragmentManager().beginTransaction()
+						.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
+						.replace(R.id.cli_steps_container, documentFragment).addToBackStack(null).commit();
 				break;
 		}
 	}

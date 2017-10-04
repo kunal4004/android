@@ -1,7 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:background="@color/default_background"
+              android:orientation="vertical">
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvSelectYourBank"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/twenty_dp"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/nine_dp"
+        android:text="@string/select_your_bank_desc"
+        android:textSize="15sp"
+        app:WTextView_font="myriadpro_regular"/>
+
+    <RelativeLayout
+        style="@style/increase_limit_relative_style"
+        android:paddingEnd="@dimen/twenty_four_dp"
+        android:paddingStart="@dimen/twenty_four_dp">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/cli_supply_detail_text"
+            android:text="@string/cli_select_your_bank"/>
+
+    </RelativeLayout>
+
+    <View style="@style/bottom_line"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rclSelectYourBank"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"/>
 
 </LinearLayout>
