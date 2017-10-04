@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.fragments.CLIEligibilityAndPermissionFragment;
 import za.co.woolworths.financial.services.android.util.Utils;
-
 
 public class CLIPhase2Activity extends AppCompatActivity {
 
@@ -36,7 +34,6 @@ public class CLIPhase2Activity extends AppCompatActivity {
 		fragmentManager.beginTransaction()
 				.replace(R.id.cliMainFrame, fragment).commit();
 	}
-
 
 	@Override
 	public void onBackPressed() {

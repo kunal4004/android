@@ -248,7 +248,7 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 		switch (v.getId()) {
 			case R.id.btnContinue:
 				DocumentFragment documentFragment = new DocumentFragment();
-				documentFragment.setmStepIndicatorCallback(mStepIndicatorCallback);
+				documentFragment.setStepIndicatorCallback(mStepIndicatorCallback);
 				getFragmentManager().beginTransaction()
 						.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
 						.replace(R.id.cli_steps_container, documentFragment).addToBackStack(null).commit();
