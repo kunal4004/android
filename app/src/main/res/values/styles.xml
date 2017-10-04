@@ -989,11 +989,12 @@
     <style name="cli_supply_detail_text" parent="android:Theme">
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/offer_title</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:gravity">center|start</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="WTextView_font">medium_bold</item>
+        <item name="android:letterSpacing">0.01</item>
     </style>
 
     <style name="increase_limit_info_circle" parent="android:Theme">
@@ -1007,9 +1008,11 @@
     <style name="increase_limit_relative_style" parent="android:Theme">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">60dp</item>
-        <item name="android:padding">@dimen/default_margin</item>
         <item name="android:background">@color/white</item>
-        <item name="android:layout_marginTop">@dimen/default_margin</item>
+        <item name="android:paddingTop">17dp</item>
+        <item name="android:paddingBottom">13dp</item>
+        <item name="android:paddingStart">@dimen/default_margin</item>
+        <item name="android:paddingEnd">@dimen/default_margin</item>
     </style>
 
     <style name="bottom_line" parent="android:Theme">

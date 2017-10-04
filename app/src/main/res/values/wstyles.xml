@@ -181,7 +181,7 @@
     </style>
 
     <style name="editCurrencyStyle">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:gravity">start|center</item>
         <item name="android:textAllCaps">true</item>
@@ -190,13 +190,13 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:lineSpacingExtra">1.3dp</item>
         <item name="android:text">R</item>
-        <item name="WTextView_font">medium</item>
+        <item name="WTextView_font">medium_bold</item>
         <item name="android:visibility">gone</item>
     </style>
 
     <style name="editCurrencyValue">
         <item name="android:background">@android:color/transparent</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:gravity">end</item>
         <item name="android:layout_marginEnd">4dp</item>
@@ -204,7 +204,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:inputType">number</item>
         <item name="android:minWidth">1dp</item>
-        <item name="WTextView_font">medium</item>
+        <item name="WEditTextView_font">medium_bold</item>
         <item name="android:textCursorDrawable">@drawable/cursor_custom_color</item>
     </style>
 
@@ -231,10 +231,10 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:weightSum">1</item>
         <item name="android:orientation">horizontal</item>
-        <item name="android:paddingBottom">@dimen/bank_spacing_width</item>
-        <item name="android:paddingLeft">@dimen/bank_spacing_width</item>
+        <item name="android:paddingBottom">31dp</item>
+        <item name="android:paddingLeft">@dimen/default_margin</item>
         <item name="android:paddingRight">@dimen/default_margin</item>
-        <item name="android:paddingTop">@dimen/bank_spacing_width</item>
+        <item name="android:paddingTop">37dp</item>
         <item name="android:background">@color/white</item>
     </style>
 
@@ -249,7 +249,7 @@
         <item name="android:letterSpacing">0.05</item>
         <item name="android:layout_centerVertical">true</item>
         <item name="android:textColor">@color/black_desc_opacity</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="WTextView_font">medium</item>
     </style>
 
