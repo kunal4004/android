@@ -14,13 +14,12 @@ import android.widget.FrameLayout;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.StepIndicatorCallback;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CLIAllStepsContainerFragment extends Fragment implements StepIndicatorCallback {
+public class CLIAllStepsContainerFragment extends Fragment {
 
 	private FrameLayout indicator1;
 	private FrameLayout indicator2;
@@ -64,7 +63,6 @@ public class CLIAllStepsContainerFragment extends Fragment implements StepIndica
 
 	private void initUI(View v) {
 		SupplyIncomeDetailFragment supplyIncomeDetailFragment = new SupplyIncomeDetailFragment();
-		supplyIncomeDetailFragment.setStepIndicatorCallback(this);
 		getChildFragmentManager().beginTransaction().replace(R.id.cli_steps_container, supplyIncomeDetailFragment).commit();
 
 	}
@@ -113,8 +111,4 @@ public class CLIAllStepsContainerFragment extends Fragment implements StepIndica
 		}
 	}
 
-	@Override
-	public void onCurrentStep(int step) {
-		updateStepIndicator(step);
-	}
 }

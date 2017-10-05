@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
@@ -64,6 +65,8 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
+import za.co.woolworths.financial.services.android.ui.fragments.CLIAllStepsContainerFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.CLISupplyDocumentsFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 import static android.Manifest.permission_group.STORAGE;
@@ -652,5 +655,11 @@ public class Utils {
 			}
 		}
 		return false;
+	}
+
+	public static void updateCLIStepIndicator(int stepNumber,Fragment fragment)
+	{
+		CLIAllStepsContainerFragment stepsContainerFragment= (CLIAllStepsContainerFragment) fragment.getParentFragment();
+		stepsContainerFragment.updateStepIndicator(stepNumber);
 	}
 }

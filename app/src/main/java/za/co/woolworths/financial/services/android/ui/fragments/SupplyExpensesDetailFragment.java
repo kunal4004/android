@@ -25,14 +25,11 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CurrencyTextWatcher;
-import za.co.woolworths.financial.services.android.util.StepIndicatorCallback;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
 
 public class SupplyExpensesDetailFragment extends Fragment implements View.OnClickListener {
-
-	private StepIndicatorCallback mStepIndicatorCallback;
 	private View rootView;
 	private HashMap<String, String> mHashIncomeDetail, mHashExpenseDetail;
 	private WTextView tvMortgagePayments, tvRentalPayments, tvMaintainanceExpenses, tvMonthlyCreditPayments;
@@ -58,7 +55,7 @@ public class SupplyExpensesDetailFragment extends Fragment implements View.OnCli
 		}
 		init(view);
 		nextFocusEditText();
-		mStepIndicatorCallback.onCurrentStep(2);
+		Utils.updateCLIStepIndicator(2,SupplyExpensesDetailFragment.this);
 	}
 
 	private void init(View view) {
@@ -152,7 +149,6 @@ public class SupplyExpensesDetailFragment extends Fragment implements View.OnCli
 				bundle.putSerializable("INCOME_DETAILS", mHashIncomeDetail);
 				bundle.putSerializable("EXPENSE_DETAILS", mHashExpenseDetail);
 				OfferCalculationFragment ocFragment = new OfferCalculationFragment();
-				ocFragment.setStepIndicatorCallback(mStepIndicatorCallback);
 				ocFragment.setArguments(bundle);
 				getFragmentManager().beginTransaction()
 						.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
@@ -247,7 +243,4 @@ public class SupplyExpensesDetailFragment extends Fragment implements View.OnCli
 		}
 	}
 
-	public void setStepIndicatorCallback(StepIndicatorCallback mStepIndicatorCallback) {
-		this.mStepIndicatorCallback = mStepIndicatorCallback;
-	}
 }

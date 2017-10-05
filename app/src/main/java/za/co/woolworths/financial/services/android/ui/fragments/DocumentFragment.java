@@ -21,19 +21,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Bank;
+import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
+import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
+import za.co.woolworths.financial.services.android.models.rest.CLIGetBankAccountTypes;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetDeaBank;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentAdapter;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
-import za.co.woolworths.financial.services.android.util.StepIndicatorCallback;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class DocumentFragment extends Fragment implements DocumentAdapter.OnItemClick, NetworkChangeListener {
 
-	private StepIndicatorCallback mStepIndicatorCallback;
 	private RecyclerView rclSelectYourBank;
 	private List<Bank> deaBankList;
 	private ProgressBar pbDeaBank;
@@ -41,6 +42,7 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 	private BroadcastReceiver connectionBroadcast;
 	private ErrorHandlerView mErrorHandlerView;
 	private boolean backgroundTaskLoaded;
+	private List<BankAccountType> bankAccountTypes;
 
 	public DocumentFragment() {
 		// Required empty public constructor
@@ -52,7 +54,7 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 		// Inflate the layout for this fragment
 		View view = inflater.inflate(R.layout.document_fragment, container, false);
 		deaBankList = new ArrayList<>();
-		mStepIndicatorCallback.onCurrentStep(4);
+		Utils.updateCLIStepIndicator(4,DocumentFragment.this);
 		return view;
 	}
 
@@ -108,6 +110,23 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 		cliGetDeaBank.execute();
 	}
 
+	private void cliBankAccountTypeRequest()
+	{
+		CLIGetBankAccountTypes cliGetBankAccountTypes=new CLIGetBankAccountTypes(getActivity(), new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				bankAccountTypes = ((BankAccountTypes) object).bankAccountTypes;
+
+			}
+
+			@Override
+			public void onFailure(String e) {
+
+			}
+		});
+		cliGetBankAccountTypes.execute();
+	}
+
 	private void init(View view) {
 		rclSelectYourBank = (RecyclerView) view.findViewById(R.id.rclSelectYourBank);
 		pbDeaBank = (ProgressBar) view.findViewById(R.id.pbDeaBank);
@@ -121,9 +140,9 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 		rclSelectYourBank.setLayoutManager(mLayoutManager);
 		rclSelectYourBank.setAdapter(documentAdapter);
 	}
+	private void loadBankAccountTypesView()
+	{
 
-	public void setStepIndicatorCallback(StepIndicatorCallback mStepIndicatorCallback) {
-		this.mStepIndicatorCallback = mStepIndicatorCallback;
 	}
 
 	@Override

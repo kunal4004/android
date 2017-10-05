@@ -29,12 +29,11 @@ import za.co.woolworths.financial.services.android.ui.views.seekbar.CrystalSeekb
 import za.co.woolworths.financial.services.android.ui.views.seekbar.OnSeekbarChangeListener;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
-import za.co.woolworths.financial.services.android.util.StepIndicatorCallback;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class OfferCalculationFragment extends Fragment implements View.OnClickListener {
 
-	private StepIndicatorCallback mStepIndicatorCallback;
 	private HashMap<String, String> mHashIncomeDetail, mHashExpenseDetail;
 	private WTextView tvCurrentCreditLimitAmount, tvNewCreditLimitAmount, tvAdditionalCreditLimitAmount, tvCalculatingYourOffer, tvLoadTime;
 	private ProgressBar cpCurrentCreditLimit, cpAdditionalCreditLimit, cpNewCreditAmount;
@@ -50,7 +49,7 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		mStepIndicatorCallback.onCurrentStep(3);
+		Utils.updateCLIStepIndicator(3,OfferCalculationFragment.this);
 		Bundle b = this.getArguments();
 		if (b.getSerializable("INCOME_DETAILS") != null) {
 			mHashIncomeDetail = (HashMap<String, String>) b.getSerializable("INCOME_DETAILS");
@@ -247,21 +246,16 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.btnContinue:
-				CLISupplyDocumentsFragment fragment=new CLISupplyDocumentsFragment();
-				//fragment.setStepIndicatorCallback(mStepIndicatorCallback);
+				/*CLISupplyDocumentsFragment fragment=new CLISupplyDocumentsFragment();
 				getFragmentManager().beginTransaction()
 						.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
-						.replace(R.id.cli_steps_container, fragment).addToBackStack(null).commit();
-				/*DocumentFragment documentFragment = new DocumentFragment();
-				documentFragment.setStepIndicatorCallback(mStepIndicatorCallback);
+						.replace(R.id.cli_steps_container, fragment).addToBackStack(null).commit();*/
+				DocumentFragment documentFragment = new DocumentFragment();
 				getFragmentManager().beginTransaction()
 						.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
-						.replace(R.id.cli_steps_container, documentFragment).addToBackStack(null).commit();*/
+						.replace(R.id.cli_steps_container, documentFragment).addToBackStack(null).commit();
 				break;
 		}
 	}
 
-	public void setStepIndicatorCallback(StepIndicatorCallback mStepIndicatorCallback) {
-		this.mStepIndicatorCallback = mStepIndicatorCallback;
-	}
 }

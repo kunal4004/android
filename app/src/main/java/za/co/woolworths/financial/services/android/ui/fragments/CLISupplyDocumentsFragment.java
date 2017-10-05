@@ -10,15 +10,13 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.util.StepIndicatorCallback;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 /**
  * Created by W7099877 on 2017/10/04.
  */
 
 public class CLISupplyDocumentsFragment extends Fragment {
-	private StepIndicatorCallback mStepIndicatorCallback;
-
 
 	@Nullable
 	@Override
@@ -29,16 +27,12 @@ public class CLISupplyDocumentsFragment extends Fragment {
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		//mStepIndicatorCallback.onCurrentStep(4);
-		CLIAllStepsContainerFragment stepsContainerFragment= (CLIAllStepsContainerFragment) CLISupplyDocumentsFragment.this.getParentFragment();
-		stepsContainerFragment.updateStepIndicator(4);
+		Utils.updateCLIStepIndicator(4,CLISupplyDocumentsFragment.this);
 		FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 		fragmentManager.beginTransaction()
 				.replace(R.id.cliDocumentsFragmentContainer, new CLIRequsetAccountNumberFragment()).commit();
 
 	}
 
-	public void setStepIndicatorCallback(StepIndicatorCallback mStepIndicatorCallback) {
-		this.mStepIndicatorCallback = mStepIndicatorCallback;
-	}
+
 }

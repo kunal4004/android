@@ -26,7 +26,6 @@ import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CurrencyTextWatcher;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
-import za.co.woolworths.financial.services.android.util.StepIndicatorCallback;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
@@ -39,7 +38,6 @@ public class SupplyIncomeDetailFragment extends Fragment implements View.OnClick
 	private LinearLayout llNextButtonLayout, llGrossMonthlyIncomeLayout, llNetMonthlyIncomeLayout, llAdditionalMonthlyIncomeLayout;
 	private WButton btnContinue;
 	private View rootView;
-	private StepIndicatorCallback mStepIndicatorCallback;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (rootView == null) {
@@ -54,7 +52,7 @@ public class SupplyIncomeDetailFragment extends Fragment implements View.OnClick
 		mHmSupplyIncomeDetail = new HashMap<>();
 		init(view);
 		nextFocusEditText();
-		mStepIndicatorCallback.onCurrentStep(1);
+		Utils.updateCLIStepIndicator(1,SupplyIncomeDetailFragment.this);
 	}
 
 	private void init(View view) {
@@ -173,7 +171,6 @@ public class SupplyIncomeDetailFragment extends Fragment implements View.OnClick
 				bundle.putSerializable("INCOME_DETAILS", mHmSupplyIncomeDetail);
 				SupplyExpensesDetailFragment supplyExpensesDetailFragment = new SupplyExpensesDetailFragment();
 				supplyExpensesDetailFragment.setArguments(bundle);
-				supplyExpensesDetailFragment.setStepIndicatorCallback(mStepIndicatorCallback);
 				getFragmentManager().beginTransaction()
 						.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
 						.replace(R.id.cli_steps_container, supplyExpensesDetailFragment).addToBackStack(null).commit();
@@ -206,7 +203,4 @@ public class SupplyIncomeDetailFragment extends Fragment implements View.OnClick
 		});
 	}
 
-	public void setStepIndicatorCallback(StepIndicatorCallback mStepIndicatorCallback) {
-		this.mStepIndicatorCallback = mStepIndicatorCallback;
-	}
 }
