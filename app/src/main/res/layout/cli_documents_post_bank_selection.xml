@@ -214,6 +214,6 @@
         android:textSize="12sp"
         app:WTextView_font="medium_bold"
         android:id="@+id/submit"
-        android:visibility="invisible"
+        android:visibility="gone"
         />
 </RelativeLayout>

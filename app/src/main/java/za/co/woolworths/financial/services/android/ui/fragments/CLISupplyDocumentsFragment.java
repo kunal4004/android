@@ -29,7 +29,9 @@ public class CLISupplyDocumentsFragment extends Fragment {
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		mStepIndicatorCallback.onCurrentStep(4);
+		//mStepIndicatorCallback.onCurrentStep(4);
+		CLIAllStepsContainerFragment stepsContainerFragment= (CLIAllStepsContainerFragment) CLISupplyDocumentsFragment.this.getParentFragment();
+		stepsContainerFragment.updateStepIndicator(4);
 		FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 		fragmentManager.beginTransaction()
 				.replace(R.id.cliDocumentsFragmentContainer, new CLIRequsetAccountNumberFragment()).commit();
