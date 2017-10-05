@@ -66,7 +66,6 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDial
 import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIAllStepsContainerFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.CLISupplyDocumentsFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 import static android.Manifest.permission_group.STORAGE;

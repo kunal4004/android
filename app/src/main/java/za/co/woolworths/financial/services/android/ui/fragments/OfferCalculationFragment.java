@@ -246,10 +246,6 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.btnContinue:
-				/*CLISupplyDocumentsFragment fragment=new CLISupplyDocumentsFragment();
-				getFragmentManager().beginTransaction()
-						.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
-						.replace(R.id.cli_steps_container, fragment).addToBackStack(null).commit();*/
 				DocumentFragment documentFragment = new DocumentFragment();
 				getFragmentManager().beginTransaction()
 						.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)

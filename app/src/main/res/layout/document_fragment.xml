@@ -9,12 +9,13 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="70dp"
+        android:id="@+id/nested_scrollview"
         >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="70dp"
         android:orientation="vertical">
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -24,7 +25,7 @@
             android:layout_marginBottom="@dimen/twenty_dp"
             android:layout_marginEnd="@dimen/twenty_four_dp"
             android:layout_marginStart="@dimen/twenty_four_dp"
-            android:layout_marginTop="@dimen/nine_dp"
+            android:layout_marginTop="@dimen/twelve_dp"
             android:text="@string/select_your_bank_desc"
             android:textColor="@color/black_50"
             android:textSize="15sp"
@@ -64,16 +65,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:id="@+id/bankTypeConfirmationLayout"
             android:background="@color/default_background"
             android:orientation="vertical"
             android:paddingTop="16dp"
+            android:visibility="gone"
             >
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/cli_permission_title_text"
                 android:text="ABSA ACCOUNT TYPE" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -106,7 +107,7 @@
                     android:background="@drawable/cli_yes_no_button_background">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/yesForPOIFromBank"
+                        android:id="@+id/yesPOIFromBank"
                         style="@style/cli_yes_no_button"
                         android:text="@string/cli_yes" />
 
@@ -116,14 +117,85 @@
                         android:background="#19000000" />
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:id="@+id/noForPOIFromBank"
+                        android:id="@+id/noPOIFromBank"
                         style="@style/cli_yes_no_button"
                         android:text="@string/cli_no" />
                 </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/poiDocumentSubmitTypeLayout"
+            android:background="@color/default_background"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:visibility="gone"
+            >
 
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                style="@style/cli_permission_title_text"
+                android:text="proof of income documents" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/cli_permission_description_text"
+                    android:text="In order to complete your application, we require your latest 3 months’ bank statements or last 3 months payslips."
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="24dp"
+                    />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rclPOIDocuments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="24dp"
+                    android:paddingRight="24dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@color/white"
+                    android:nestedScrollingEnabled="false"/>
+                <!--<View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginTop="24dp"
+                    android:background="@color/cli_button_border" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/cli_permission_description_text"
+                    android:text="@string/cli_eligibility_check_description" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_margin="30dp"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/cli_yes_no_button_background">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/yesPOIFromBank"
+                        style="@style/cli_yes_no_button"
+                        android:text="@string/cli_yes" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#19000000" />
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/noPOIFromBank"
+                        style="@style/cli_yes_no_button"
+                        android:text="@string/cli_no" />
+                </LinearLayout>-->
+            </LinearLayout>
+
+        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -131,13 +203,23 @@
             android:background="@color/default_background"
             android:orientation="vertical"
             android:id="@+id/accountTypeLayout"
+            android:visibility="gone"
+            android:paddingTop="10dp"
             >
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/cli_permission_title_text"
                 android:text="@string/cli_account_type" />
-
-            <LinearLayout
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rclSelectAccountType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:layout_marginTop="1dp"
+                android:background="@color/white"
+                android:nestedScrollingEnabled="false"/>
+            <!--<LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
@@ -195,7 +277,7 @@
                         android:layout_centerVertical="true" />
                 </RelativeLayout>
 
-            </LinearLayout>
+            </LinearLayout>-->
         </LinearLayout>
 
         <LinearLayout
@@ -205,6 +287,7 @@
             android:background="@color/default_background"
             android:orientation="vertical"
             android:id="@+id/accountNumberLayout"
+            android:visibility="gone"
             >
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -254,6 +337,6 @@
         android:textSize="12sp"
         app:WTextView_font="medium_bold"
         android:id="@+id/submit"
-        android:visibility="visible"
+        android:visibility="gone"
         />
 </RelativeLayout>

@@ -1,17 +1,21 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -27,13 +31,16 @@ import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetBankAccountTypes;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetDeaBank;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.DocumentsAccountTypeAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.POIDocumentSubmitTypeAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class DocumentFragment extends Fragment implements DocumentAdapter.OnItemClick, NetworkChangeListener {
+public class DocumentFragment extends Fragment implements DocumentAdapter.OnItemClick, NetworkChangeListener,DocumentsAccountTypeAdapter.OnAccountTypeClick ,View.OnClickListener,POIDocumentSubmitTypeAdapter.OnSubmitType{
 
 	private RecyclerView rclSelectYourBank;
 	private List<Bank> deaBankList;
@@ -43,6 +50,16 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 	private ErrorHandlerView mErrorHandlerView;
 	private boolean backgroundTaskLoaded;
 	private List<BankAccountType> bankAccountTypes;
+	private RecyclerView rclAccountType;
+	private LinearLayout bankTypeConfirmationLayout;
+	private LinearLayout accountTypeLayout;
+	private LinearLayout accountNumberLayout;
+	private LinearLayout poiDocumentSubmitTypeLayout;
+	private WTextView btnSubmit;
+	private NestedScrollView nestedScrollView;
+	private WTextView yesPOIFromBank;
+	private WTextView noPOIFromBank;
+	private RecyclerView rclPOIDocuments;
 
 	public DocumentFragment() {
 		// Required empty public constructor
@@ -65,6 +82,8 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 		init(view);
 		onLoad();
 		cliDeaBankRequest();
+		cliBankAccountTypeRequest();
+		loadPOIDocumentsSubmitTypeView();
 	}
 
 	private void connectionBroadcast() {
@@ -116,7 +135,7 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 			@Override
 			public void onSuccess(Object object) {
 				bankAccountTypes = ((BankAccountTypes) object).bankAccountTypes;
-
+				loadBankAccountTypesView(bankAccountTypes);
 			}
 
 			@Override
@@ -129,8 +148,19 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 
 	private void init(View view) {
 		rclSelectYourBank = (RecyclerView) view.findViewById(R.id.rclSelectYourBank);
+		rclAccountType = (RecyclerView) view.findViewById(R.id.rclSelectAccountType);
+		rclPOIDocuments = (RecyclerView) view.findViewById(R.id.rclPOIDocuments);
 		pbDeaBank = (ProgressBar) view.findViewById(R.id.pbDeaBank);
+		nestedScrollView=(NestedScrollView)view.findViewById(R.id.nested_scrollview);
+		bankTypeConfirmationLayout=(LinearLayout)view.findViewById(R.id.bankTypeConfirmationLayout);
+		accountTypeLayout=(LinearLayout)view.findViewById(R.id.accountTypeLayout);
+		accountNumberLayout=(LinearLayout)view.findViewById(R.id.accountNumberLayout);
+		poiDocumentSubmitTypeLayout=(LinearLayout) view.findViewById(R.id.poiDocumentSubmitTypeLayout);
+		yesPOIFromBank = (WTextView) view.findViewById(R.id.yesPOIFromBank);
+		noPOIFromBank = (WTextView) view.findViewById(R.id.noPOIFromBank);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
+		yesPOIFromBank.setOnClickListener(this);
+		noPOIFromBank.setOnClickListener(this);
 	}
 
 	private void selectBankLayoutManager(List<Bank> deaBankList) {
@@ -140,15 +170,53 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 		rclSelectYourBank.setLayoutManager(mLayoutManager);
 		rclSelectYourBank.setAdapter(documentAdapter);
 	}
-	private void loadBankAccountTypesView()
-	{
 
+	private void loadBankAccountTypesView(List<BankAccountType> accountTypes)
+	{
+		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+		DocumentsAccountTypeAdapter adapter=new DocumentsAccountTypeAdapter(accountTypes,this);
+		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+		rclAccountType.setLayoutManager(mLayoutManager);
+		rclAccountType.setAdapter(adapter);
+
+	}
+
+	private void loadPOIDocumentsSubmitTypeView(){
+		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+		POIDocumentSubmitTypeAdapter adapter=new POIDocumentSubmitTypeAdapter(this);
+		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+		rclPOIDocuments.setLayoutManager(mLayoutManager);
+		rclPOIDocuments.setAdapter(adapter);
 	}
 
 	@Override
 	public void onItemClick(View view, int position) {
 		Bank selectedBank = deaBankList.get(position);
 		Log.e("selectedBank", selectedBank.bankName);
+		bankTypeConfirmationLayout.setVisibility(View.VISIBLE);
+		nestedScrollView.post(new Runnable() {
+			@Override
+			public void run() {
+				ObjectAnimator.ofInt(nestedScrollView, "scrollY", bankTypeConfirmationLayout.getTop()).setDuration(300).start();
+			}
+		});
+	}
+	@Override
+	public void onAccountTypeClick(View view, int position) {
+		accountNumberLayout.setVisibility(View.VISIBLE);
+		nestedScrollView.post(new Runnable() {
+			@Override
+			public void run() {
+				//scrollView.smoothScrollTo(0,permissionView.getTop());
+				ObjectAnimator.ofInt(nestedScrollView, "scrollY", accountNumberLayout.getTop()).setDuration(300).start();
+			}
+		});
+	}
+
+	@Override
+	public void onSubmitTypeSelected(View view, int position) {
+
+
 	}
 
 	@Override
@@ -203,4 +271,39 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 	private boolean getBackgroundTaskStatus() {
 		return this.backgroundTaskLoaded;
 	}
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.yesPOIFromBank:
+				noPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
+				noPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
+				yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
+				yesPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+				accountTypeLayout.setVisibility(View.VISIBLE);
+				nestedScrollView.post(new Runnable() {
+					@Override
+					public void run() {
+						ObjectAnimator.ofInt(nestedScrollView, "scrollY", accountTypeLayout.getTop()).setDuration(300).start();
+					}
+				});
+				break;
+			case R.id.noPOIFromBank:
+				yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
+				yesPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
+				noPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
+				noPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+				poiDocumentSubmitTypeLayout.setVisibility(View.VISIBLE);
+				nestedScrollView.post(new Runnable() {
+					@Override
+					public void run() {
+						ObjectAnimator.ofInt(nestedScrollView, "scrollY", poiDocumentSubmitTypeLayout.getTop()).setDuration(300).start();
+					}
+				});
+				break;
+
+		}
+	}
+
+
 }

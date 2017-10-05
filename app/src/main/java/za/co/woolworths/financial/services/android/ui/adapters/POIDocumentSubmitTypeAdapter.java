@@ -17,23 +17,25 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
+import static android.R.attr.accountType;
+
 /**
  * Created by W7099877 on 2017/10/05.
  */
 
-public class DocumentsAccountTypeAdapter extends RecyclerView.Adapter<DocumentsAccountTypeAdapter.MyViewHolder> {
+public class POIDocumentSubmitTypeAdapter extends RecyclerView.Adapter<POIDocumentSubmitTypeAdapter.MyViewHolder> {
 
-	public interface OnAccountTypeClick {
-		void onAccountTypeClick(View view, int position);
+	public interface OnSubmitType {
+		void onSubmitTypeSelected(View view, int position);
 	}
 
-	private OnAccountTypeClick onAccountTypeClick;
-	private List<BankAccountType> bankAccountTypes;
+	private OnSubmitType onSubmitType;
 	private int selectedPosition = -1;
+	private String[] submitTypes={"Submit Documents Now","Submit at a Later Date"};
+	private int[] icons={R.drawable.listview,R.drawable.listview};
 
-	public DocumentsAccountTypeAdapter(List<BankAccountType> bankAccountTypes, OnAccountTypeClick onAccountTypeClick) {
-		this.bankAccountTypes = bankAccountTypes;
-		this.onAccountTypeClick = onAccountTypeClick;
+	public POIDocumentSubmitTypeAdapter(OnSubmitType onSubmitType) {
+		this.onSubmitType = onSubmitType;
 	}
 
 	public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -50,10 +52,10 @@ public class DocumentsAccountTypeAdapter extends RecyclerView.Adapter<DocumentsA
 		}
 
 		public void bindUI(int position, final MyViewHolder holder) {
-			BankAccountType bankAccountType = bankAccountTypes.get(position);
+			holder.imBankLogo.setBackgroundResource(icons[position]);
 			rowTypeBorder(holder, position);
 			onItemClick(holder);
-			setText(holder, bankAccountType);
+			setText(holder, submitTypes[position]);
 			onItemSelected(holder, position);
 		}
 
@@ -70,9 +72,9 @@ public class DocumentsAccountTypeAdapter extends RecyclerView.Adapter<DocumentsA
 			}
 		}
 
-		private void setText(MyViewHolder holder, BankAccountType accountType) {
+		private void setText(MyViewHolder holder, String submitType) {
 			holder.tvAccountType.setAllCaps(false);
-			holder.tvAccountType.setText(accountType.accountType);
+			holder.tvAccountType.setText(submitType);
 		}
 
 		private void rowTypeBorder(MyViewHolder holder, int position) {
@@ -95,7 +97,7 @@ public class DocumentsAccountTypeAdapter extends RecyclerView.Adapter<DocumentsA
 				public void onClick(View v) {
 					int position = holder.getAdapterPosition();
 					selectedPosition = position;
-					onAccountTypeClick.onAccountTypeClick(v, position);
+					onSubmitType.onSubmitTypeSelected(v, position);
 					notifyDataSetChanged();
 				}
 			});
@@ -124,6 +126,6 @@ public class DocumentsAccountTypeAdapter extends RecyclerView.Adapter<DocumentsA
 
 	@Override
 	public int getItemCount() {
-		return bankAccountTypes.size();
+		return submitTypes.length;
 	}
 }
