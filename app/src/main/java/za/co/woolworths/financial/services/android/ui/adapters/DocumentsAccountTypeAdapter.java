@@ -126,4 +126,10 @@ public class DocumentsAccountTypeAdapter extends RecyclerView.Adapter<DocumentsA
 	public int getItemCount() {
 		return bankAccountTypes.size();
 	}
+
+	public void clearSelection()
+	{
+		selectedPosition=-1;
+		notifyDataSetChanged();
+	}
 }

@@ -60,6 +60,9 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 	private WTextView yesPOIFromBank;
 	private WTextView noPOIFromBank;
 	private RecyclerView rclPOIDocuments;
+	private String otherBank="Other";
+	private DocumentsAccountTypeAdapter accountTypeAdapter;
+	private POIDocumentSubmitTypeAdapter documentSubmitTypeAdapter;
 
 	public DocumentFragment() {
 		// Required empty public constructor
@@ -116,7 +119,7 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 				backgroundTaskLoaded(false);
 				onLoadComplete();
 				deaBankList = ((DeaBanks) object).banks;
-				deaBankList.add(new Bank("Other"));
+				deaBankList.add(new Bank(otherBank));
 				selectBankLayoutManager(deaBankList);
 			}
 
@@ -158,6 +161,7 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 		poiDocumentSubmitTypeLayout=(LinearLayout) view.findViewById(R.id.poiDocumentSubmitTypeLayout);
 		yesPOIFromBank = (WTextView) view.findViewById(R.id.yesPOIFromBank);
 		noPOIFromBank = (WTextView) view.findViewById(R.id.noPOIFromBank);
+		btnSubmit=(WTextView)view.findViewById(R.id.submitCLI);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
 		yesPOIFromBank.setOnClickListener(this);
 		noPOIFromBank.setOnClickListener(this);
@@ -174,43 +178,39 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 	private void loadBankAccountTypesView(List<BankAccountType> accountTypes)
 	{
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-		DocumentsAccountTypeAdapter adapter=new DocumentsAccountTypeAdapter(accountTypes,this);
+		accountTypeAdapter =new DocumentsAccountTypeAdapter(accountTypes,this);
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		rclAccountType.setLayoutManager(mLayoutManager);
-		rclAccountType.setAdapter(adapter);
+		rclAccountType.setAdapter(accountTypeAdapter);
 
 	}
 
 	private void loadPOIDocumentsSubmitTypeView(){
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-		POIDocumentSubmitTypeAdapter adapter=new POIDocumentSubmitTypeAdapter(this);
+		documentSubmitTypeAdapter=new POIDocumentSubmitTypeAdapter(this);
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		rclPOIDocuments.setLayoutManager(mLayoutManager);
-		rclPOIDocuments.setAdapter(adapter);
+		rclPOIDocuments.setAdapter(documentSubmitTypeAdapter);
 	}
 
 	@Override
 	public void onItemClick(View view, int position) {
 		Bank selectedBank = deaBankList.get(position);
 		Log.e("selectedBank", selectedBank.bankName);
-		bankTypeConfirmationLayout.setVisibility(View.VISIBLE);
-		nestedScrollView.post(new Runnable() {
-			@Override
-			public void run() {
-				ObjectAnimator.ofInt(nestedScrollView, "scrollY", bankTypeConfirmationLayout.getTop()).setDuration(300).start();
-			}
-		});
+		if (selectedBank.bankName.equalsIgnoreCase(otherBank)) {
+			hideView(bankTypeConfirmationLayout);
+			invalidateBankTypeSelection();
+			scrollUpDocumentSubmitTypeLayout();
+		} else {
+			hideView(poiDocumentSubmitTypeLayout);
+			invalidateBankTypeSelection();
+			scrollUpConfirmationFroPOIFromBankLayout();
+		}
+
 	}
 	@Override
 	public void onAccountTypeClick(View view, int position) {
-		accountNumberLayout.setVisibility(View.VISIBLE);
-		nestedScrollView.post(new Runnable() {
-			@Override
-			public void run() {
-				//scrollView.smoothScrollTo(0,permissionView.getTop());
-				ObjectAnimator.ofInt(nestedScrollView, "scrollY", accountNumberLayout.getTop()).setDuration(300).start();
-			}
-		});
+		scrollUpAccountNumberLayout();
 	}
 
 	@Override
@@ -257,7 +257,8 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 	}
 
 	private void hideView(View v) {
-		v.setVisibility(View.GONE);
+		if(v.getVisibility()==View.VISIBLE)
+			v.setVisibility(View.GONE);
 	}
 
 	private void showView(View v) {
@@ -280,30 +281,78 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 				noPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
 				yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
 				yesPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
-				accountTypeLayout.setVisibility(View.VISIBLE);
-				nestedScrollView.post(new Runnable() {
-					@Override
-					public void run() {
-						ObjectAnimator.ofInt(nestedScrollView, "scrollY", accountTypeLayout.getTop()).setDuration(300).start();
-					}
-				});
+				hideView(poiDocumentSubmitTypeLayout);
+				if(documentSubmitTypeAdapter!=null)
+					documentSubmitTypeAdapter.clearSelection();
+				scrollUpAccountTypeSelectionLayout();
 				break;
 			case R.id.noPOIFromBank:
 				yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
 				yesPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
 				noPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
 				noPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
-				poiDocumentSubmitTypeLayout.setVisibility(View.VISIBLE);
-				nestedScrollView.post(new Runnable() {
-					@Override
-					public void run() {
-						ObjectAnimator.ofInt(nestedScrollView, "scrollY", poiDocumentSubmitTypeLayout.getTop()).setDuration(300).start();
-					}
-				});
+				hideView(accountTypeLayout);
+				hideView(accountNumberLayout);
+				if(accountTypeAdapter!=null)
+					accountTypeAdapter.clearSelection();
+				scrollUpDocumentSubmitTypeLayout();
 				break;
 
 		}
 	}
 
+	public void scrollUpAccountTypeSelectionLayout(){
+		accountTypeLayout.setVisibility(View.VISIBLE);
+		nestedScrollView.post(new Runnable() {
+			@Override
+			public void run() {
+				ObjectAnimator.ofInt(nestedScrollView, "scrollY", accountTypeLayout.getTop()).setDuration(300).start();
+			}
+		});
+	}
+
+	public void scrollUpConfirmationFroPOIFromBankLayout(){
+		bankTypeConfirmationLayout.setVisibility(View.VISIBLE);
+		nestedScrollView.post(new Runnable() {
+			@Override
+			public void run() {
+				ObjectAnimator.ofInt(nestedScrollView, "scrollY", bankTypeConfirmationLayout.getTop()).setDuration(300).start();
+			}
+		});
+	}
+	public void scrollUpDocumentSubmitTypeLayout(){
+		poiDocumentSubmitTypeLayout.setVisibility(View.VISIBLE);
+		nestedScrollView.post(new Runnable() {
+			@Override
+			public void run() {
+				ObjectAnimator.ofInt(nestedScrollView, "scrollY", poiDocumentSubmitTypeLayout.getTop()).setDuration(300).start();
+			}
+		});
+	}
+
+	public void scrollUpAccountNumberLayout(){
+		accountNumberLayout.setVisibility(View.VISIBLE);
+		nestedScrollView.post(new Runnable() {
+			@Override
+			public void run() {
+				ObjectAnimator.ofInt(nestedScrollView, "scrollY", accountNumberLayout.getTop()).setDuration(300).start();
+			}
+		});
+	}
+
+	public void invalidateBankTypeSelection()
+	{
+		yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
+		yesPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
+		noPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
+		noPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
+		hideView(accountTypeLayout);
+		hideView(accountNumberLayout);
+		hideView(btnSubmit);
+		if(accountTypeAdapter !=null)
+			accountTypeAdapter.clearSelection();
+		if(documentSubmitTypeAdapter !=null)
+			documentSubmitTypeAdapter.clearSelection();
+	}
 
 }
