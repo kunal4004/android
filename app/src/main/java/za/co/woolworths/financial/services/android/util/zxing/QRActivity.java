@@ -103,6 +103,7 @@ import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
+import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
@@ -489,7 +490,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
 	@Override
 	public void onClick(View v) {
-
+		MultiClickPreventer.preventMultiClick(v);
 		switch (v.getId()) {
 			case R.id.textSelectColour:
 			case R.id.imSelectedColor:

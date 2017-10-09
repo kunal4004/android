@@ -59,6 +59,7 @@ import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
+import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
@@ -632,6 +633,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 
 	@Override
 	public void onClick(View v) {
+		MultiClickPreventer.preventMultiClick(v);
 		switch (v.getId()) {
 			case R.id.textSelectColour:
 			case R.id.imSelectedColor:
@@ -1252,7 +1254,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				if (object != null) {
 					List<StoreDetails> location = ((LocationResponse) object).Locations;
 					if (location != null && location.size() > 0) {
-						Utils.removeObjectFromArrayList(ProductDetailActivity.this,location);
+						Utils.removeObjectFromArrayList(ProductDetailActivity.this, location);
 						if (location.size() > 0) {
 							mGlobalState.setStoreDetailsArrayList(location);
 							Intent intentInStoreFinder = new Intent(ProductDetailActivity.this, WStockFinderActivity.class);
