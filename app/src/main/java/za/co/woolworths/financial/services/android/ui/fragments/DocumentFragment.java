@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
 
@@ -215,8 +216,7 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 
 	@Override
 	public void onSubmitTypeSelected(View view, int position) {
-
-
+		showSubmitButton();
 	}
 
 	@Override
@@ -355,4 +355,16 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 			documentSubmitTypeAdapter.clearSelection();
 	}
 
+	public void showSubmitButton()
+	{
+		btnSubmit.setVisibility(View.VISIBLE);
+		nestedScrollView.post(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				nestedScrollView.fullScroll(NestedScrollView.FOCUS_DOWN);
+			}
+		});
+	}
 }
