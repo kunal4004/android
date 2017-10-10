@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
@@ -35,6 +36,11 @@ import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,6 +52,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -67,6 +74,8 @@ import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPag
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 import static android.Manifest.permission_group.STORAGE;
+import static android.graphics.Color.BLACK;
+import static android.graphics.Color.WHITE;
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 public class Utils {
@@ -572,7 +581,7 @@ public class Utils {
 	public static void setBackgroundColor(WTextView textView, int drawableId, int value) {
 		Context context = textView.getContext();
 		textView.setText(context.getResources().getString(value));
-		textView.setTextColor(Color.WHITE);
+		textView.setTextColor(WHITE);
 		textView.setBackgroundResource(drawableId);
 		Typeface futuraFont = Typeface.createFromAsset(context.getAssets(), "fonts/WFutura-SemiBold.ttf");
 		textView.setTypeface(futuraFont);
@@ -653,5 +662,51 @@ public class Utils {
 			}
 		}
 		return false;
+	}
+
+	public static Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int img_width, int img_height) throws WriterException {
+
+		String contentsToEncode = contents;
+		if (contentsToEncode == null) {
+			return null;
+		}
+		Map<EncodeHintType, Object> hints = null;
+		String encoding = guessAppropriateEncoding(contentsToEncode);
+		if (encoding != null) {
+			hints = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
+			hints.put(EncodeHintType.CHARACTER_SET, encoding);
+		}
+		MultiFormatWriter writer = new MultiFormatWriter();
+		BitMatrix result;
+		try {
+			result = writer.encode(contentsToEncode, format, img_width, img_height, hints);
+		} catch (IllegalArgumentException iae) {
+			// Unsupported format
+			return null;
+		}
+		int width = result.getWidth();
+		int height = result.getHeight();
+		int[] pixels = new int[width * height];
+		for (int y = 0; y < height; y++) {
+			int offset = y * width;
+			for (int x = 0; x < width; x++) {
+				pixels[offset + x] = result.get(x, y) ? BLACK : WHITE;
+			}
+		}
+
+		Bitmap bitmap = Bitmap.createBitmap(width, height,
+				Bitmap.Config.ARGB_8888);
+		bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+		return bitmap;
+	}
+
+	private static String guessAppropriateEncoding(CharSequence contents) {
+		// Very crude at the moment
+		for (int i = 0; i < contents.length(); i++) {
+			if (contents.charAt(i) > 0xFF) {
+				return "UTF-8";
+			}
+		}
+		return null;
 	}
 }
