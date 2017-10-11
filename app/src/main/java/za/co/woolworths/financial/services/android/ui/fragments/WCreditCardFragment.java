@@ -67,6 +67,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private RelativeLayout mRelDrawnDownAmount, mRelFindOutMore, mRelIncreaseMyLimit;
 	private LinearLayout llCommonLayer;
 	private ImageView logoIncreaseLimit, iconDrawnDownAmount;
+	private IncreaseLimitController mIncreaseLimitController;
+	private OfferActive offerActive;
 
 	@Nullable
 	@Override
@@ -81,6 +83,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
+		mIncreaseLimitController = new IncreaseLimitController(getActivity());
 		init(view);
 		addListener();
 		setAccountDetail();
@@ -104,10 +107,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
 		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
 		iconDrawnDownAmount = (ImageView) view.findViewById(R.id.iconDrawnDownAmount);
-
-		IncreaseLimitController increaseLimitController = new IncreaseLimitController(getActivity());
-		increaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, logoIncreaseLimit, OfferStatus.IN_PROGRESS);
-		increaseLimitController.showView(mRelDrawnDownAmount);
 
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
@@ -175,8 +174,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				Intent intent = new Intent(getActivity(), WTransactionsActivity.class);
 				intent.putExtra("productOfferingId", productOfferingId);
 				startActivity(intent);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim
-						.stay);
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 
 			case R.id.tvApplyNowIncreaseLimit:
@@ -189,12 +187,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				break;
 
 			case R.id.relIncreaseMyLimit:
-				if (!isOfferActive) {
-					((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
-					Intent openCLIIncrease = new Intent(getActivity(), CLIPhase2Activity.class);
-					startActivity(openCLIIncrease);
-					getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				}
+				mIncreaseLimitController.moveToCLIPhase(offerActive, productOfferingId);
 				break;
 		}
 	}
@@ -204,7 +197,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		CLIGetOfferActive cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				OfferActive offerActive = ((OfferActive) object);
+				offerActive = ((OfferActive) object);
+				mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit,
+						tvApplyNowIncreaseLimit, logoIncreaseLimit, OfferStatus.APPLY_NOW, offerActive);
 				bindUI(offerActive);
 			}
 

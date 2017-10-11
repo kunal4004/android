@@ -73,6 +73,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private LinearLayout llCommonLayer;
 	private ImageView logoIncreaseLimit, iconDrawnDownAmount;
 	private OfferActive offerActive;
+	private IncreaseLimitController mIncreaseLimitController;
 
 	@Nullable
 	@Override
@@ -131,9 +132,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		if (temp != null)
 			bindData(temp);
 
-		IncreaseLimitController increaseLimitController = new IncreaseLimitController(getActivity());
-		increaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, logoIncreaseLimit, OfferStatus.APPLY_NOW);
-		increaseLimitController.showView(mRelDrawnDownAmount);
+		mIncreaseLimitController = new IncreaseLimitController(getActivity());
+		mIncreaseLimitController.showView(mRelDrawnDownAmount);
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -219,7 +219,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				break;
 
 			case R.id.relIncreaseMyLimit:
-
+				mIncreaseLimitController.moveToCLIPhase(offerActive, productOfferingId);
 				break;
 
 			default:
@@ -233,6 +233,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			@Override
 			public void onSuccess(Object object) {
 				offerActive = ((OfferActive) object);
+				mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, logoIncreaseLimit, OfferStatus.APPLY_NOW, offerActive);
 				bindUI(offerActive);
 			}
 
