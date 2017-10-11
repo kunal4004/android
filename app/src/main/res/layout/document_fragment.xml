@@ -319,7 +319,7 @@
                     android:text="ABSA savings ACCOUNt"/>
 
                 <LinearLayout
-                    android:id="@+id/llNetMonthlyIncomeLayout"
+                    android:id="@+id/llAccountNumberLayout"
                     style="@style/editTextLayoutContainerStyle"
                     android:layout_marginTop="1dp"
                     >
@@ -332,12 +332,8 @@
                         android:id="@+id/llNetMonthlyIncome"
                         style="@style/currencyStyleLayout">
 
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
-                            android:id="@+id/tvNetMonthlyIncome"
-                            style="@style/editCurrencyStyle"/>
-
                         <za.co.woolworths.financial.services.android.ui.views.WEditTextView
-                            android:id="@+id/etNetMonthlyIncome"
+                            android:id="@+id/etAccountNumber"
                             style="@style/editCurrencyValue"
                             />
                     </LinearLayout>

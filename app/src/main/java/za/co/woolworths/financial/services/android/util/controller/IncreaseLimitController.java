@@ -149,4 +149,9 @@ public class IncreaseLimitController {
 			activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 		}
 	}
+
+	public static void focusEditView(WEditTextView wEditText,Context context) {
+		wEditText.requestFocus();
+		IncreaseLimitController.showKeyboard(wEditText, context);
+	}
 }
