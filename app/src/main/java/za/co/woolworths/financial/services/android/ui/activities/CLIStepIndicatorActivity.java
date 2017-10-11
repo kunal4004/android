@@ -214,10 +214,10 @@ public class CLIStepIndicatorActivity extends BaseActivity implements WOnboardin
 		int currentPosition = mViewPStepIndicator.getCurrentItem();
 		switch (currentPosition) {
 			case 0:
-				Intent openCLIStepIndicatorActivity = new Intent(CLIStepIndicatorActivity.this, CLISupplyInfoActivity.class);
-				startActivity(openCLIStepIndicatorActivity);
-				finish();
-				overridePendingTransition(0, 0);
+//				Intent openCLIStepIndicatorActivity = new Intent(CLIStepIndicatorActivity.this, CLISupplyInfoActivity.class);
+//				startActivity(openCLIStepIndicatorActivity);
+//				finish();
+//				overridePendingTransition(0, 0);
 				break;
 			case 1:
 				moveToPage(0);

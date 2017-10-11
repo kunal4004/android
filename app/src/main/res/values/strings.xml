@@ -151,7 +151,7 @@
     <string name="screen_title_store">STORES NEARBY</string>
     <string name="nav_item_wrewards">WREWARDS</string>
     <string name="nav_item_accounts">MY ACCOUNTS</string>
-    <string name="increase_limit">INCREASE LIMIT</string>
+    <string name="increase_limit">Increase Limit</string>
     <string name="transactions">transactions</string>
     <string name="apply_now">APPLY NOW</string>
     <string name="woolworths_financial_services">Woolworths financial services</string>
@@ -255,7 +255,7 @@
     <string name="skip">SKIP</string>
 
     <string name="cli_continue">continue</string>
-    <string name="cli_credit_limit_increase">credit limit increase</string>
+    <string name="cli_credit_limit_increase">CREDIT LIMIT INCREASE</string>
     <string name="cli_before_we_get_started">before we get started</string>
     <string name="cli_store_card_content">To help us calculate how much additional credit you can qualify for, please answer a few quick and easy questions.  Once you have completed this, you will need to submit proof of income in order for us to proceed with your application.</string>
     <string name="cli_gold_crd_credit_limit_increase">credit limit increase</string>
@@ -714,8 +714,9 @@
     <string name="indicator_offer_label">Offer</string>
     <string name="indicator_documents_label">Documents</string>
     <string name="increase_limit_supply_detail">please supply your income details</string>
+    <string name="increase_supply_supply_detail">please supply your expense details</string>
     <string name="currency">R</string>
-    <string name="increase_my_limit">increase my limit</string>
+    <string name="increase_my_limit">Increase My Limit</string>
     <string name="calculating_your_offer">Calculating your offer</string>
     <string name="current_credit_limit">Current Credit Limit:</string>
     <string name="additional_credit_limit">Additional Credit Limit:</string>
@@ -731,5 +732,19 @@
     <string name="enter_account_number">enter account number</string>
 
     <string name="select_your_bank_desc">As responsible lender and as proscribed by law, we need to verify the info you provided.</string>
+    <string name="increase_limit_desc">You can apply for a limit increase whenever you need to xxxxx xxxx</string>
+
+    <string name="status_in_progress">InProgress</string>
+    <string name="status_in_progress_text">in progress</string>
+    <string name="status_poi_problem_text">poi problem</string>
+    <string name="status_offer_available">offer available</string>
+    <string name="status_please_try_again">please try again</string>
+    <string name="status_poi_required">poi required</string>
+    <string name="status_poi_problem">poi problem</string>
+    <string name="decline">decline</string>
+    <string name="decline_desc">decline offer desc</string>
+    <string name="find_out_more">Find Out More</string>
+    <string name="offer_available">offer available</string>
+    <string name="status_unavailable">unavailable</string>
 
 </resources>

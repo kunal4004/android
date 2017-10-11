@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -25,6 +26,7 @@ import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CurrencyTextWatcher;
+import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
@@ -52,7 +54,7 @@ public class SupplyIncomeDetailFragment extends Fragment implements View.OnClick
 		mHmSupplyIncomeDetail = new HashMap<>();
 		init(view);
 		nextFocusEditText();
-		Utils.updateCLIStepIndicator(1,SupplyIncomeDetailFragment.this);
+		Utils.updateCLIStepIndicator(1, SupplyIncomeDetailFragment.this);
 	}
 
 	private void init(View view) {
@@ -171,9 +173,8 @@ public class SupplyIncomeDetailFragment extends Fragment implements View.OnClick
 				bundle.putSerializable("INCOME_DETAILS", mHmSupplyIncomeDetail);
 				SupplyExpensesDetailFragment supplyExpensesDetailFragment = new SupplyExpensesDetailFragment();
 				supplyExpensesDetailFragment.setArguments(bundle);
-				getFragmentManager().beginTransaction()
-						.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
-						.replace(R.id.cli_steps_container, supplyExpensesDetailFragment).addToBackStack(null).commit();
+				FragmentUtils fragmentUtils = new FragmentUtils();
+				fragmentUtils.nextFragment((AppCompatActivity) SupplyIncomeDetailFragment.this.getActivity(), getFragmentManager(), supplyExpensesDetailFragment, R.id.cli_steps_container);
 				break;
 		}
 	}
@@ -192,7 +193,6 @@ public class SupplyIncomeDetailFragment extends Fragment implements View.OnClick
 		});
 		etNetMonthlyIncome.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			public boolean onEditorAction(TextView exampleView, int actionId, KeyEvent event) {
-
 				if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_GO || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
 					llAdditionalMonthlyIncomeLayout.performClick();
 					return true;

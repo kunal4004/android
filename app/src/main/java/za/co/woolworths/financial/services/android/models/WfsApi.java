@@ -8,11 +8,14 @@ import android.util.Log;
 
 import com.jakewharton.retrofit.Ok3Client;
 
+import org.json.JSONObject;
+
 import okhttp3.OkHttpClient;
 import retrofit.RestAdapter;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import za.co.wigroup.androidutils.Util;
@@ -24,6 +27,7 @@ import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRespo
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
+import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
@@ -116,9 +120,9 @@ public class WfsApi {
 		getMyLocation();
 		if (startRadius != null && startRadius.equals("")) {
 			//This should never happen for now
-			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), sku, startRadius, endRadius,true);
+			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), sku, startRadius, endRadius, true);
 		} else {
-			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), sku, startRadius, endRadius,true);
+			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), sku, startRadius, endRadius, true);
 		}
 	}
 
@@ -128,6 +132,10 @@ public class WfsApi {
 
 	public CreateOfferResponse createOfferRequest(CreateOfferRequest offerRequest) {
 		return mApiInterface.createOfferRequest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), offerRequest);
+	}
+
+	public CreateOfferResponse createOfferDecision(CreateOfferDecision createOfferDecision) {
+		return mApiInterface.createOfferDecision(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), createOfferDecision.getCliOfferId(), createOfferDecision);
 	}
 
 	public DeaBanks getDeaBanks() {

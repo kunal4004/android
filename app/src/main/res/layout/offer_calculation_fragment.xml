@@ -10,6 +10,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/ten_dp"
         android:scrollbars="none">
 
         <LinearLayout
@@ -37,7 +38,6 @@
                 android:id="@+id/tvLoadTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/thirty_dp"
                 android:gravity="center"
                 android:lineSpacingExtra="0.8sp"
                 android:text="@string/amount_of_time_info"
@@ -55,9 +55,10 @@
                     android:id="@+id/tvSlideToEditAmount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
                     android:background="@android:color/transparent"
                     android:gravity="center"
-                    android:letterSpacing="-0.1"
+                    android:letterSpacing="0.0"
                     android:text="45 000"
                     android:textColor="@color/overview_color"
                     android:textSize="55dp"
@@ -87,22 +88,18 @@
                         app:WTextView_font="medium"/>
                 </RelativeLayout>
 
-                <za.co.woolworths.financial.services.android.ui.views.seekbar.CrystalSeekbar
+                <SeekBar
                     android:id="@+id/sbSlideAmount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="23dp"
-                    android:layout_marginEnd="@dimen/bank_spacing_width"
-                    android:layout_marginStart="@dimen/bank_spacing_width"
-                    app:bar_color="@color/outside_border"
-                    app:bar_highlight_color="@color/green"
-                    app:corner_radius="10"
-                    app:data_type="_integer"
-                    app:left_thumb_image="@drawable/thumb"
-                    app:left_thumb_image_pressed="@drawable/thumb"
-                    app:max_value="100"
-                    app:min_value="0"
-                    app:steps="1000"/>
+                    android:layout_marginBottom="@dimen/twenty_three_dp"
+                    android:layout_marginTop="@dimen/seventeen_dp"
+                    android:maxHeight="6dip"
+                    android:minHeight="6dip"
+                    android:paddingEnd="@dimen/bank_spacing_width"
+                    android:paddingStart="@dimen/bank_spacing_width"
+                    android:progressDrawable="@drawable/seekbar_style"
+                    android:thumb="@drawable/custom_thumb"/>
 
             </LinearLayout>
 
@@ -110,31 +107,22 @@
                 android:id="@+id/flCircularProgressSpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/fourty_dp">
+                android:layout_marginBottom="@dimen/fourty_dp"
+                android:layout_marginTop="@dimen/thirty_dp">
 
-                <at.grabner.circleprogress.CircleProgressView
+                <za.co.woolworths.financial.services.android.ui.views.CircleProgressBar
                     android:id="@+id/circleView"
                     android:layout_width="131dp"
                     android:layout_height="131dp"
                     android:layout_gravity="center"
-                    CircleProgressView:cpv_autoTextSize="true"
-                    CircleProgressView:cpv_barColor="@color/green"
-                    CircleProgressView:cpv_barWidth="6dp"
-                    CircleProgressView:cpv_innerContourSize="0dp"
-                    CircleProgressView:cpv_maxValue="100"
-                    CircleProgressView:cpv_outerContourSize="0dp"
-                    CircleProgressView:cpv_rimColor="@color/grey_bg"
-                    CircleProgressView:cpv_rimWidth="6dp"
-                    CircleProgressView:cpv_seekMode="true"
-                    CircleProgressView:cpv_showUnit="true"
-                    CircleProgressView:cpv_spinColor="@color/status_green"
-                    CircleProgressView:cpv_textColor="@android:color/transparent"
-                    CircleProgressView:cpv_textScale="1"
-                    CircleProgressView:cpv_unit=""
-                    CircleProgressView:cpv_unitColor="@color/grey_bg"
-                    CircleProgressView:cpv_unitPosition="right_top"
-                    CircleProgressView:cpv_unitScale="1"
-                    CircleProgressView:cpv_value="10"/>
+                    app:circleColor="@color/product_divider"
+                    app:circleWidth="4dp"
+                    app:initProgress="5"
+                    app:progressColor="@color/status_green"
+                    app:startAngle="0"
+                    app:textColor="@android:color/transparent"
+                    app:textProgressEnable="false"
+                    app:textSize="16sp"/>
 
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/imOfferTime"
@@ -232,10 +220,6 @@
                 </LinearLayout>
             </RelativeLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="100dp"/>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

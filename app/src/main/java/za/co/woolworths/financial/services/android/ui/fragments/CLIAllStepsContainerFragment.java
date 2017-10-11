@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,7 @@ import android.widget.FrameLayout;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-
+import za.co.woolworths.financial.services.android.util.FragmentUtils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,8 +64,8 @@ public class CLIAllStepsContainerFragment extends Fragment {
 
 	private void initUI(View v) {
 		SupplyIncomeDetailFragment supplyIncomeDetailFragment = new SupplyIncomeDetailFragment();
-		getChildFragmentManager().beginTransaction().replace(R.id.cli_steps_container, supplyIncomeDetailFragment).commit();
-
+		FragmentUtils fragmentUtils = new FragmentUtils();
+		fragmentUtils.currentFragment((AppCompatActivity) CLIAllStepsContainerFragment.this.getActivity(), getChildFragmentManager(), supplyIncomeDetailFragment, R.id.cli_steps_container);
 	}
 
 	public void initStepIndicatorViews(View view) {
@@ -110,5 +111,4 @@ public class CLIAllStepsContainerFragment extends Fragment {
 			}
 		}
 	}
-
 }

@@ -19,7 +19,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -35,6 +34,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
@@ -47,6 +47,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -56,14 +57,15 @@ import java.util.Map;
 import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
-import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIAllStepsContainerFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -580,6 +582,13 @@ public class Utils {
 		textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(R.dimen.rag_rating_sp));
 	}
 
+	public static void setBackground(WTextView textView, int drawableId, int value) {
+		Context context = textView.getContext();
+		textView.setText(context.getResources().getString(value));
+		textView.setTextColor(Color.WHITE);
+		textView.setBackgroundResource(drawableId);
+	}
+
 	public static ListIterator removeObjectFromArrayList(Context context, List<StoreDetails> storeDetails) {
 		ListIterator listIterator = storeDetails.listIterator();
 		for (Iterator<StoreDetails> it = storeDetails.iterator(); it.hasNext(); ) {
@@ -610,6 +619,46 @@ public class Utils {
 			setBackgroundColor(storeOfferings, R.drawable.round_green_corner, R.string.status_green_desc);
 		} else {
 		}
+	}
+
+	public static void setOvalTagDrawable(Context context, WTextView tvApplyNow, WTextView tvDescription, HashMap<String, String> hMIncreaseCreditLimit) {
+		Resources resources = context.getResources();
+
+		String nextStep = hMIncreaseCreditLimit.get("NEXT_STEP");
+		String messageSummary = hMIncreaseCreditLimit.get("MESSAGE_SUMMARY");
+		String messageDetail = hMIncreaseCreditLimit.get("MESSAGE_DETAIL");
+
+		//If the ‘nextStep’ field value is null/empty
+		if (TextUtils.isEmpty(nextStep)) {
+			setBackground(tvApplyNow, R.drawable.cli_round_red_corner, R.string.status_poi_problem_text);
+			hideView(tvDescription);
+			return;
+		}
+
+		//or InProgress
+		if (nextStep.equalsIgnoreCase(resources.getString(R.string.status_in_progress))) {
+			setBackground(tvApplyNow, R.drawable.cli_round_inprogress_tag, R.string.status_in_progress_text);
+			hideView(tvDescription);
+			return;
+		}
+
+		//To do: cases for offer available,please try again, unavailable, poi_required
+
+		//else
+		if (!TextUtils.isEmpty(nextStep)) {
+			setBackground(tvApplyNow, R.drawable.cli_round_apply_now_tag, R.string.apply_now);
+			showView(tvDescription, messageSummary);
+			return;
+		}
+	}
+
+	public static void showView(WTextView view, String messageSummary) {
+		view.setVisibility(View.VISIBLE);
+		view.setText(messageSummary);
+	}
+
+	public static void hideView(View view) {
+		view.setVisibility(View.GONE);
 	}
 
 	public static ArrayList<OtherSku> commonSizeList(String colour, boolean productHasColor, List<OtherSku> mOtherSKU) {
@@ -656,9 +705,16 @@ public class Utils {
 		return false;
 	}
 
-	public static void updateCLIStepIndicator(int stepNumber,Fragment fragment)
-	{
-		CLIAllStepsContainerFragment stepsContainerFragment= (CLIAllStepsContainerFragment) fragment.getParentFragment();
-		stepsContainerFragment.updateStepIndicator(stepNumber);
+	public static void updateCLIStepIndicator(int stepNumber, Fragment fragment) {
+		CLIAllStepsContainerFragment cliAllStepsContainerFragment = (CLIAllStepsContainerFragment) fragment.getParentFragment();
+		cliAllStepsContainerFragment.updateStepIndicator(stepNumber);
+	}
+
+	public static int numericFieldOnly(String text) {
+		return Integer.valueOf(text.replaceAll("[\\D.]", ""));
+	}
+
+	public static Object strToJson(String jsonString, Class<?> className) {
+		return new Gson().fromJson(jsonString, className);
 	}
 }

@@ -23,6 +23,7 @@ import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.ui.fragments.OfferCalculationFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
@@ -42,7 +43,8 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 	public enum VALIDATION_MESSAGE_LIST {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
-		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO
+		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
+		CLI_DANGER_ACTION_MESSAGE_VALIDATION
 	}
 
 	VALIDATION_MESSAGE_LIST current_view;
@@ -57,13 +59,15 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 		woolworthsApplication = (WoolworthsApplication) CustomPopUpDialogManager.this.getApplication();
 		mWGlobalState = woolworthsApplication.getWGlobalState();
 
-		Bundle mBundle = getIntent().getExtras();
+		Intent intent = getIntent();
+		Bundle mBundle = intent.getExtras();
 		if (mBundle != null) {
 			current_view = (VALIDATION_MESSAGE_LIST) mBundle.getSerializable("key");
 			description = mBundle.getString("description");
 			if (TextUtils.isEmpty(description)) { //avoid nullpointerexception
 				description = "";
 			}
+
 			displayView(current_view);
 		} else {
 			finish();
@@ -329,6 +333,23 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				mRelPopContainer.setOnClickListener(this);
 				break;
 
+			case CLI_DANGER_ACTION_MESSAGE_VALIDATION:
+				setContentView(R.layout.cli_dangerous_message_validation);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				setAnimation();
+				WTextView tvDeclineOffer = (WTextView) findViewById(R.id.tvDeclineOffer);
+				WTextView tvDeclineOfferDesc = (WTextView) findViewById(R.id.tvDeclineOfferDesc);
+				WButton btnCancelDecline = (WButton) findViewById(R.id.btnCancelDecline);
+				WButton btnConfirmDecline = (WButton) findViewById(R.id.btnConfirmDecline);
+				btnConfirmDecline.setText(getString(R.string.confirm));
+				tvDeclineOffer.setText(getString(R.string.decline));
+				tvDeclineOfferDesc.setText(getString(R.string.decline_desc));
+				btnCancelDecline.setOnClickListener(this);
+				btnConfirmDecline.setOnClickListener(this);
+				mRelPopContainer.setOnClickListener(this);
+				break;
+
 			default:
 				break;
 		}
@@ -354,6 +375,33 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				@Override
 				public void onAnimationEnd(Animation animation) {
 					dismissLayout();
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
+		}
+	}
+
+	private void cliExitAnimation() {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					dismissLayout();
+					Intent intent = new Intent(OfferCalculationFragment.DECLINE_OFFER_APPROVED_CALL);
+					sendBroadcast(intent);
 				}
 			});
 			mRelRootContainer.startAnimation(animation);
@@ -517,6 +565,7 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+			case R.id.btnCancelDecline:
 			case R.id.btnLoanHighOk:
 			case R.id.btnOverlay:
 			case R.id.btnSignOutCancel:
@@ -554,6 +603,10 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				exitSessionAnimation();
 				break;
 
+			case R.id.btnConfirmDecline:
+				cliExitAnimation();
+				break;
+
 			case R.id.btnSESignIn:
 				mWGlobalState.setPressState(WGlobalState.ON_SIGN_IN);
 				String mSTSParams = description;
@@ -566,7 +619,6 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				overridePendingTransition(0, 0);
 				finish();
 				break;
-
 		}
 	}
 

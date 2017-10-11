@@ -9,6 +9,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/ten_dp"
         android:scrollbars="none">
 
         <LinearLayout
@@ -20,7 +21,7 @@
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     style="@style/cli_supply_detail_text"
-                    android:text="@string/increase_limit_supply_detail"/>
+                    android:text="@string/increase_supply_supply_detail"/>
 
                 <ImageView
                     android:id="@+id/imInfo"
@@ -133,6 +134,36 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+            <View style="@style/bottom_line"/>
+
+            <LinearLayout
+                android:id="@+id/llOtherExpensesContainer"
+                style="@style/editTextLayoutContainerStyle">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/textViewLabelStyle"
+                    android:text="@string/cli_other_expenses"/>
+
+                <LinearLayout
+                    android:id="@+id/llOtherExpenses"
+                    style="@style/currencyStyleLayout">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/tvOtherExpenses"
+                        style="@style/editCurrencyStyle"/>
+
+                    <za.co.woolworths.financial.services.android.ui.views.WEditTextView
+                        android:id="@+id/etOtherExpenses"
+                        style="@style/editCurrencyValue"
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"/>
 
         </LinearLayout>
 

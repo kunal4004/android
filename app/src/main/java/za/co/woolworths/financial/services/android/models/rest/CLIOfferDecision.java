@@ -5,32 +5,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
+import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferResponse;
-import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 
-public class GetOfferAPITask extends HttpAsyncTask<String, String, CreateOfferResponse> {
+public class CLIOfferDecision extends HttpAsyncTask<String, String, CreateOfferResponse> {
 
-	private final WGlobalState mWGlobalState;
-	private CreateOfferRequest mCreateOfferRequest;
+	private CreateOfferDecision createOfferDecision;
 	private WoolworthsApplication mWoolworthsApp;
 	private OnEventListener<CreateOfferResponse> mCallBack;
 	private Context mContext;
 	public String mException;
 
-	public GetOfferAPITask(Context context, CreateOfferRequest createOfferRequest, OnEventListener callback) {
-		mCallBack = callback;
-		mContext = context;
-		mWoolworthsApp = ((WoolworthsApplication) ((AppCompatActivity) mContext).getApplication());
-		mWGlobalState = mWoolworthsApp.getWGlobalState();
-		this.mCreateOfferRequest = createOfferRequest;
+	public CLIOfferDecision(Context context, CreateOfferDecision createOfferDecision, OnEventListener callback) {
+		this.mCallBack = callback;
+		this.mContext = context;
+		this.mWoolworthsApp = ((WoolworthsApplication) ((AppCompatActivity) mContext).getApplication());
+		this.createOfferDecision = createOfferDecision;
 	}
 
 	@Override
 	protected CreateOfferResponse httpDoInBackground(String... params) {
-		return mWoolworthsApp.getApi().createOfferRequest(mCreateOfferRequest);
+		return mWoolworthsApp.getApi().createOfferDecision(createOfferDecision);
 	}
 
 	@Override

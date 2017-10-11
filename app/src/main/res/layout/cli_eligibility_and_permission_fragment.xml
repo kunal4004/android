@@ -77,8 +77,8 @@
             android:background="@color/default_background"
             android:orientation="vertical"
             android:paddingBottom="250dp"
-            android:visibility="gone"
             android:paddingTop="16dp"
+            android:visibility="gone"
             >
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView

@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 
 import android.animation.ObjectAnimator;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,9 +15,7 @@ import android.widget.ScrollView;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-
-import static android.R.attr.duration;
-
+import za.co.woolworths.financial.services.android.util.FragmentUtils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -85,9 +82,9 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 				break;
 			case R.id.permissionYes:
 				FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-				fragmentManager.beginTransaction()
-						.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
-						.replace(R.id.cliMainFrame, new CLIAllStepsContainerFragment()).commit();
+				FragmentUtils fragmentUtils = new FragmentUtils();
+				fragmentUtils.nextFragment(fragmentManager,
+						new CLIAllStepsContainerFragment(), R.id.cliMainFrame);
 				break;
 			case R.id.permissionNo:
 				break;

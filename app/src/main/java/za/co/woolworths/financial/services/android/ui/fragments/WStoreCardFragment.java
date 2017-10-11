@@ -14,7 +14,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -22,6 +21,7 @@ import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 
 import za.co.wigroup.logger.lib.WiGroupLogger;
@@ -29,9 +29,10 @@ import za.co.woolworths.financial.services.android.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
+import za.co.woolworths.financial.services.android.models.dto.Cli;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CLIActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
@@ -40,8 +41,8 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -56,20 +57,20 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	public WTextView currentBalance;
 	public WTextView tvViewTransaction;
 	public WTextView tvIncreaseLimit;
+	public WTextView tvIncreaseLimitDescription;
 
 	String productOfferingId;
 	WoolworthsApplication woolworthsApplication;
 	private ProgressBar mProgressCreditLimit;
 
 	private boolean isOfferActive = true;
-	private ImageView iconIncreaseLimit;
+	private WTextView tvApplyNowIncreaseLimit;
 	private AsyncTask<String, String, OfferActive> asyncTaskStore;
 	private boolean storeWasAlreadyRunOnce = false;
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
 	private boolean bolBroacastRegistred;
-	private RelativeLayout rlIncreaseLimit;
 	private View view;
 
 	@Nullable
@@ -93,15 +94,14 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		tvViewTransaction = (WTextView) view.findViewById(R.id.tvViewTransaction);
 		tvIncreaseLimit = (WTextView) view.findViewById(R.id.tvIncreaseLimit);
 		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
-		iconIncreaseLimit = (ImageView) view.findViewById(R.id.iconIncreaseLimit);
+		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
+		tvIncreaseLimitDescription = (WTextView) view.findViewById(R.id.tvIncreaseLimitDescription);
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
-		rlIncreaseLimit = (RelativeLayout) view.findViewById(R.id.rlIncreaseLimit);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
 		relBalanceProtection.setOnClickListener(this);
 		tvIncreaseLimit.setOnClickListener(this);
 		tvViewTransaction.setOnClickListener(this);
-		rlIncreaseLimit.setOnClickListener(this);
 		rlViewTransactions.setOnClickListener(this);
 
 		try {
@@ -113,7 +113,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		bindData(accountsResponse);
-		hideProgressBar();
+		onLoadComplete();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
 	}
 
@@ -160,8 +160,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 						.stay);
 				break;
 
-			case R.id.rlIncreaseLimit:
-			case R.id.tvIncreaseLimit:
+			case R.id.tvApplyNowIncreaseLimit:
 				if (!isOfferActive) {
 					((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
 					Intent openCLIIncrease = new Intent(getActivity(), CLIPhase2Activity.class);
@@ -179,95 +178,88 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		}
 	}
 
-	private void getActiveOffer() {
-		asyncTaskStore = activeOfferAsyncAPI();
-		asyncTaskStore.execute();
-	}
 
-	private HttpAsyncTask<String, String, OfferActive> activeOfferAsyncAPI() {
-		return new HttpAsyncTask<String, String, OfferActive>() {
+	private void getActiveOffer() {
+		onLoad();
+		CLIGetOfferActive cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
 			@Override
-			protected OfferActive httpDoInBackground(String... params) {
-				return (woolworthsApplication.getApi().getActiveOfferRequest(productOfferingId));
+			public void onSuccess(Object object) {
+				OfferActive offerActive = ((OfferActive) object);
+				bindUI(offerActive);
 			}
 
 			@Override
-			protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+			public void onFailure(String e) {
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						//mNetworkFailureInterface.onNetworkFailure();
 						networkFailureHandler();
 					}
 				});
-				return new OfferActive();
 			}
-
-			@Override
-			protected void onPreExecute() {
-				mProgressCreditLimit.setVisibility(View.VISIBLE);
-				mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-				iconIncreaseLimit.setVisibility(View.GONE);
-				tvIncreaseLimit.setVisibility(View.VISIBLE);
-				disableIncreaseLimit();
-				super.onPreExecute();
-			}
-
-			@Override
-			protected void onPostExecute(OfferActive offerActive) {
-				super.onPostExecute(offerActive);
-				int httpCode = offerActive.httpCode;
-				hideProgressBar();
-
-				try {
-					String httpDesc = offerActive.response.desc;
-					if (httpCode == 200) {
-						isOfferActive = offerActive.offerActive;
-						isOfferActive = false;
-						storeWasAlreadyRunOnce = true;
-						if (isOfferActive) {
-							disableIncreaseLimit();
-						} else {
-							enableIncreaseLimit();
-						}
-					} else if (httpCode == 440) {
-						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), offerActive.response
-								.stsParams);
-					} else {
-						disableIncreaseLimit();
-						Utils.displayValidationMessage(getActivity(),
-								CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
-								httpDesc);
-					}
-				} catch (NullPointerException ignored) {
-				}
-			}
-
-			@Override
-			protected Class<OfferActive> httpDoInBackgroundReturnType() {
-				return OfferActive.class;
-			}
-		};
+		});
+		asyncTaskStore = cliGetOfferActive.execute();
 	}
 
-	public void hideProgressBar() {
+	private void bindUI(OfferActive offerActive) {
+		try {
+			int httpCode = offerActive.httpCode;
+			String httpDesc = offerActive.response.desc;
+			if (httpCode == 200) {
+				isOfferActive = offerActive.offerActive;
+				storeWasAlreadyRunOnce = true;
+				Cli cli = offerActive.cli;
+				String nextStep = cli.nextStep;
+				String messageSummary = cli.messageSummary;
+				String messageDetail = cli.messageDetail;
+
+				HashMap<String, String> hMIncreaseCreditLimit = new HashMap<>();
+				hMIncreaseCreditLimit.put("NEXT_STEP", nextStep);
+				hMIncreaseCreditLimit.put("MESSAGE_SUMMARY", messageSummary);
+				hMIncreaseCreditLimit.put("MESSAGE_DETAIL", messageDetail);
+
+				Utils.setOvalTagDrawable(getActivity(), tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, hMIncreaseCreditLimit);
+
+			} else if (httpCode == 440) {
+				SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), offerActive.response
+						.stsParams);
+			} else {
+				disableIncreaseLimit();
+				Utils.displayValidationMessage(getActivity(),
+						CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
+						httpDesc);
+			}
+		} catch (NullPointerException ignored) {
+		}
+		onLoadComplete();
+	}
+
+	private void onLoad() {
+		mProgressCreditLimit.setVisibility(View.VISIBLE);
+		mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+		tvApplyNowIncreaseLimit.setVisibility(View.GONE);
+		tvIncreaseLimit.setVisibility(View.VISIBLE);
+		disableIncreaseLimit();
+	}
+
+	public void onLoadComplete() {
 		mProgressCreditLimit.setVisibility(View.GONE);
-		iconIncreaseLimit.setVisibility(View.VISIBLE);
+		tvApplyNowIncreaseLimit.setVisibility(View.VISIBLE);
 		tvIncreaseLimit.setVisibility(View.VISIBLE);
 	}
 
 	public void enableIncreaseLimit() {
 		tvIncreaseLimit.setEnabled(true);
-		rlIncreaseLimit.setEnabled(true);
+		tvApplyNowIncreaseLimit.setEnabled(true);
 		tvIncreaseLimit.setTextColor(Color.BLACK);
-		iconIncreaseLimit.setImageAlpha(255);
+		tvApplyNowIncreaseLimit.setAlpha(1);
 	}
 
 	public void disableIncreaseLimit() {
 		tvIncreaseLimit.setEnabled(false);
-		rlIncreaseLimit.setEnabled(false);
+		tvApplyNowIncreaseLimit.setEnabled(false);
 		tvIncreaseLimit.setTextColor(Color.GRAY);
-		iconIncreaseLimit.setImageAlpha(75);
+		tvApplyNowIncreaseLimit.setAlpha(0.5f);
 	}
 
 	private void setTextSize() {
@@ -325,7 +317,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			@Override
 			public void run() {
 				storeWasAlreadyRunOnce = false;
-				hideProgressBar();
+				onLoadComplete();
 			}
 		});
 	}

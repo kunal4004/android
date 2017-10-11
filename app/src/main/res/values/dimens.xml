@@ -119,6 +119,13 @@
     <dimen name="nine_dp">9dp</dimen>
     <dimen name="twenty_one_dp">21dp</dimen>
     <dimen name="twenty_five_dp">25dp</dimen>
+    <dimen name="twenty_seven_dp">27dp</dimen>
+    <dimen name="eighteen_dp">18dp</dimen>
+    <dimen name="thirty_one_dp">31dp</dimen>
+    <dimen name="cli_tag_corner_radius">12dp</dimen>
+    <dimen name="twenty_three_dp">23dp</dimen>
+    <dimen name="sixteen_dp">16dp</dimen>
+    <dimen name="twenty_six_dp">26dp</dimen>
 
 </resources>
 

@@ -1,32 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical"
-    tools:context="za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical"
+              tools:context="za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/mToolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:background="@android:color/transparent"
-        android:minHeight="?attr/actionBarSize">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        android:contentInsetStart="0dp"
+        app:contentInsetEnd="0dp"
+        app:contentInsetStart="0dp">
 
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/toolbarText"
+        <RelativeLayout
+            android:id="@+id/relToolbarContainer"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:letterSpacing="0.2"
-            android:text="@string/cli_activity_title"
-            android:textAllCaps="true"
-            android:textColor="@color/black"
-            android:textSize="12sp"
-            app:WTextView_font="medium_bold" />
+            android:layout_height="match_parent"
+            android:layout_weight="1.17"
+            android:gravity="center">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/toolbarText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:letterSpacing="0.2"
+                android:text="@string/cli_activity_title"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:WTextView_font="medium_bold"/>
+
+            <FrameLayout
+                android:id="@+id/frameLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center_vertical|center_horizontal|end"
+                >
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/tvDeclineOffer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/default_margin"
+                    android:gravity="center"
+                    android:letterSpacing="0.1"
+                    android:text="@string/decline"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="10sp"
+                    app:WTextView_font="medium"/>
+
+                <ProgressBar
+                    android:id="@+id/pbDecline"
+                    style="@style/circle_progressbar_white_style"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone"/>
+            </FrameLayout>
+
+        </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>
 

@@ -105,5 +105,7 @@
     <color name="status_green">#bad110</color>
     <color name="status_amber">#f4b421</color>
     <color name="offer_title">#222222</color>
+    <color name="offer_active_desc">#7f030303</color>
+    <color name="status_in_progress">#74afda</color>
 
 </resources>
