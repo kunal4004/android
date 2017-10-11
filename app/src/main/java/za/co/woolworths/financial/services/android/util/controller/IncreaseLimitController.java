@@ -71,7 +71,7 @@ public class IncreaseLimitController {
 				hideView(logoIncreaseLimit);
 				showView(llCommonLayer);
 				setCLITag(messageSummary, R.drawable.cli_round_apply_now_tag, tvApplyNowIncreaseLimit);
-				tvIncreaseLimit.setText(getString(R.string.cli_crd_credit_limit_increase));
+				tvIncreaseLimit.setText(getString(R.string.cli_credit_limit_increase));
 				break;
 
 			case OFFER_AVAILABLE:
