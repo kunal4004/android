@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -15,7 +16,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.CLIIncreaseLimitI
 import za.co.woolworths.financial.services.android.util.Utils;
 
 
-public class CLIIncreaseLimitInfoActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener{
+public class CLIIncreaseLimitInfoActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
 	private Toolbar mToolbar;
 	private LinearLayout pager_indicator;
@@ -39,6 +40,7 @@ public class CLIIncreaseLimitInfoActivity extends AppCompatActivity implements V
 		pager.addOnPageChangeListener(this);
 		setUiPageViewController();
 	}
+
 	private void setUiPageViewController() {
 		try {
 			pager_indicator.removeAllViews();
@@ -61,13 +63,12 @@ public class CLIIncreaseLimitInfoActivity extends AppCompatActivity implements V
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.search_item,menu);
+		getMenuInflater().inflate(R.menu.search_item, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
 	}
 
 	@Override
@@ -76,11 +77,31 @@ public class CLIIncreaseLimitInfoActivity extends AppCompatActivity implements V
 			dots[i].setImageDrawable(ContextCompat.getDrawable(CLIIncreaseLimitInfoActivity.this, R.drawable.page_control_inactive));
 		}
 		dots[position].setImageDrawable(ContextCompat.getDrawable(CLIIncreaseLimitInfoActivity.this, R.drawable.page_control_active));
-
 	}
 
 	@Override
 	public void onPageScrollStateChanged(int state) {
 
+	}
+
+	@Override
+	public void onBackPressed() {
+		goBack();
+	}
+
+	private void goBack() {
+		this.finish();
+		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.action_search:
+				goBack();
+				break;
+		}
+		return false;
 	}
 }

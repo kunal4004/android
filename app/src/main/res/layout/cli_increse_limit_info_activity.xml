@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/on_boarding_activity"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical"
-    tools:context="za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/on_boarding_activity"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical"
+              tools:context="za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/mToolbar"
@@ -27,7 +27,7 @@
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="12sp"
-            app:WTextView_font="medium_bold" />
+            app:WTextView_font="medium_bold"/>
 
     </android.support.v7.widget.Toolbar>
 
@@ -39,7 +39,7 @@
             android:id="@+id/cliInfoPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/viewPagerCountDots" />
+            android:layout_above="@+id/viewPagerCountDots"/>
 
         <LinearLayout
             android:id="@+id/viewPagerCountDots"
@@ -48,7 +48,7 @@
             android:layout_above="@+id/increaseLimitButton"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/increaseLimitButton"
@@ -60,7 +60,7 @@
             android:gravity="center"
             android:text="Increase my limit"
             android:textAllCaps="true"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"/>
     </RelativeLayout>
 
 </LinearLayout>

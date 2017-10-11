@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CLIIncreaseLimitInfoActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -66,7 +67,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private NetworkChangeListener networkChangeListener;
 	private boolean boolBroadcastRegistered;
 	private int minDrawnAmount;
-	public RelativeLayout mRelDrawnDownAmount;
+	public RelativeLayout mRelDrawnDownAmount, mRelFindOutMore;
 	private View view;
 	private LinearLayout llCommonLayer;
 	private ImageView logoIncreaseLimit, iconDrawnDownAmount;
@@ -121,6 +122,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		tvIncreaseLimit = (WTextView) view.findViewById(R.id.tvIncreaseLimit);
 		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
 		mRelDrawnDownAmount = (RelativeLayout) view.findViewById(R.id.relDrawnDownAmount);
+		mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
 		showView(mRelDrawnDownAmount);
 		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
 		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
@@ -128,14 +130,15 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		iconDrawnDownAmount = (ImageView) view.findViewById(R.id.iconDrawnDownAmount);
 
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
-		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
+		RelativeLayout relViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
 		tvApplyNowIncreaseLimit.setOnClickListener(this);
 		tvViewTransaction.setOnClickListener(this);
 		tvIncreaseLimit.setOnClickListener(this);
 		relBalanceProtection.setOnClickListener(this);
 		mRelDrawnDownAmount.setOnClickListener(this);
-		rlViewTransactions.setOnClickListener(this);
+		relViewTransactions.setOnClickListener(this);
+		mRelFindOutMore.setOnClickListener(this);
 
 		try {
 			networkChangeListener = this;
@@ -234,6 +237,12 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				Intent openWithdrawCashNow = new Intent(getActivity(), LoanWithdrawalActivity.class);
 				openWithdrawCashNow.putExtra("minDrawnDownAmount", minDrawnAmount);
 				startActivity(openWithdrawCashNow);
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				break;
+
+			case R.id.relFindOutMore:
+				Intent openFindOutMore = new Intent(getActivity(), CLIIncreaseLimitInfoActivity.class);
+				getActivity().startActivity(openFindOutMore);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 		}
@@ -477,6 +486,5 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private void setStatusBackground(int drawable) {
 		tvApplyNowIncreaseLimit.setBackgroundResource(drawable);
 	}
-
 }
 
