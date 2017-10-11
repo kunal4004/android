@@ -14,6 +14,8 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -46,6 +48,8 @@ import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
+import za.co.woolworths.financial.services.android.util.controller.OfferStatus;
 
 
 public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
@@ -72,6 +76,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private NetworkChangeListener networkChangeListener;
 	private boolean bolBroacastRegistred;
 	private View view;
+	private RelativeLayout mRelFindOutMore, mRelIncreaseMyLimit;
+	private LinearLayout llCommonLayer;
+	private ImageView logoIncreaseLimit, iconDrawnDownAmount;
 
 	@Nullable
 	@Override
@@ -99,6 +106,15 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
+		mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
+		mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
+		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
+		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
+		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
+		iconDrawnDownAmount = (ImageView) view.findViewById(R.id.iconDrawnDownAmount);
+
+		IncreaseLimitController increaseLimitController = new IncreaseLimitController(getActivity());
+		increaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, logoIncreaseLimit, OfferStatus.PLEASE_TRY_AGAIN);
 		relBalanceProtection.setOnClickListener(this);
 		tvIncreaseLimit.setOnClickListener(this);
 		tvViewTransaction.setOnClickListener(this);

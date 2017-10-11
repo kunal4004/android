@@ -14,6 +14,8 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -44,6 +46,8 @@ import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
+import za.co.woolworths.financial.services.android.util.controller.OfferStatus;
 
 public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
@@ -60,6 +64,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
 	private View view;
+	private RelativeLayout mRelDrawnDownAmount, mRelFindOutMore, mRelIncreaseMyLimit;
+	private LinearLayout llCommonLayer;
+	private ImageView logoIncreaseLimit, iconDrawnDownAmount;
 
 	@Nullable
 	@Override
@@ -77,7 +84,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		init(view);
 		addListener();
 		setAccountDetail();
-
 	}
 
 	private void init(View view) {
@@ -91,6 +97,18 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
 		mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
+		mRelDrawnDownAmount = (RelativeLayout) view.findViewById(R.id.relDrawnDownAmount);
+		mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
+		mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
+		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
+		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
+		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
+		iconDrawnDownAmount = (ImageView) view.findViewById(R.id.iconDrawnDownAmount);
+
+		IncreaseLimitController increaseLimitController = new IncreaseLimitController(getActivity());
+		increaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, logoIncreaseLimit, OfferStatus.IN_PROGRESS);
+		increaseLimitController.showView(mRelDrawnDownAmount);
+
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
@@ -162,18 +180,21 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				break;
 
 			case R.id.tvApplyNowIncreaseLimit:
-				if (!isOfferActive) {
-					((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
-					Intent openCLIIncrease = new Intent(getActivity(), CLIPhase2Activity.class);
-					startActivity(openCLIIncrease);
-					getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				}
 				break;
 
 			case R.id.relBalanceProtection:
 				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
 				startActivity(intBalanceProtection);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				break;
+
+			case R.id.relIncreaseMyLimit:
+				if (!isOfferActive) {
+					((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
+					Intent openCLIIncrease = new Intent(getActivity(), CLIPhase2Activity.class);
+					startActivity(openCLIIncrease);
+					getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				}
 				break;
 		}
 	}

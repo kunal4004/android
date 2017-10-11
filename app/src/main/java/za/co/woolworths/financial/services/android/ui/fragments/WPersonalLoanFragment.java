@@ -34,7 +34,6 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CLIIncreaseLimitInfoActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
@@ -49,6 +48,8 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
+import za.co.woolworths.financial.services.android.util.controller.OfferStatus;
 
 public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
@@ -67,36 +68,11 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private NetworkChangeListener networkChangeListener;
 	private boolean boolBroadcastRegistered;
 	private int minDrawnAmount;
-	public RelativeLayout mRelDrawnDownAmount, mRelFindOutMore;
+	public RelativeLayout mRelDrawnDownAmount, mRelFindOutMore, mRelIncreaseMyLimit;
 	private View view;
 	private LinearLayout llCommonLayer;
 	private ImageView logoIncreaseLimit, iconDrawnDownAmount;
 	private OfferActive offerActive;
-
-	public enum OFFER_STATUS {
-		APPLY_NOW("apply_now"),
-		OFFER_AVAILABLE("offer_available"),
-		IN_PROGRESS("InProgress"),
-		PLEASE_TRY_AGAIN("please_try_again"),
-		POI_PROBLEM("poi_problem"),
-		POI_REQUIRED("poi_required"),
-		UNAVAILABLE("unavailable");
-
-		private final String name;
-
-		private OFFER_STATUS(String s) {
-			name = s;
-		}
-
-		public boolean equalsName(String otherName) {
-			// (otherName == null) check is not needed because name.equals(null) returns false
-			return name.equals(otherName);
-		}
-
-		public String toString() {
-			return this.name;
-		}
-	}
 
 	@Nullable
 	@Override
@@ -123,7 +99,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
 		mRelDrawnDownAmount = (RelativeLayout) view.findViewById(R.id.relDrawnDownAmount);
 		mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
-		showView(mRelDrawnDownAmount);
+		mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
 		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
 		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
 		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
@@ -139,6 +115,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mRelDrawnDownAmount.setOnClickListener(this);
 		relViewTransactions.setOnClickListener(this);
 		mRelFindOutMore.setOnClickListener(this);
+		mRelIncreaseMyLimit.setOnClickListener(this);
 
 		try {
 			networkChangeListener = this;
@@ -154,7 +131,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		if (temp != null)
 			bindData(temp);
 
-		offerActiveUIState(tvIncreaseLimit, logoIncreaseLimit, OFFER_STATUS.APPLY_NOW);
+		IncreaseLimitController increaseLimitController = new IncreaseLimitController(getActivity());
+		increaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, logoIncreaseLimit, OfferStatus.APPLY_NOW);
+		increaseLimitController.showView(mRelDrawnDownAmount);
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -216,13 +195,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						.stay);
 				break;
 			case R.id.tvApplyNowIncreaseLimit:
-				if (!isOfferActive) {
-					((WoolworthsApplication) getActivity().getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
-					Intent openCLIIncrease = new Intent(getActivity(), CLIPhase2Activity.class);
-					openCLIIncrease.putExtra("jsonOfferActive", Utils.objectToJson(offerActive));
-					startActivity(openCLIIncrease);
-					getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-				}
 				break;
 
 			case R.id.relBalanceProtection:
@@ -244,6 +216,13 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				Intent openFindOutMore = new Intent(getActivity(), CLIIncreaseLimitInfoActivity.class);
 				getActivity().startActivity(openFindOutMore);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				break;
+
+			case R.id.relIncreaseMyLimit:
+
+				break;
+
+			default:
 				break;
 		}
 	}
@@ -413,78 +392,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				disableIncreaseLimit();
 			}
 		}
-	}
-
-	private void offerActiveUIState(WTextView tvIncreaseLimit, ImageView logoIncreaseLimit, OFFER_STATUS status) {
-		switch (status) {
-			case APPLY_NOW:
-				tvIncreaseLimit.setText(getString(R.string.cli_credit_limit_increase));
-				hideView(logoIncreaseLimit);
-				showView(llCommonLayer);
-				setStatusText(R.string.apply_now);
-				setStatusBackground(R.drawable.cli_round_apply_now_tag);
-				break;
-
-			case OFFER_AVAILABLE:
-				showView(logoIncreaseLimit);
-				hideView(llCommonLayer);
-				setStatusText(R.string.offer_available);
-				setStatusBackground(R.drawable.cli_round_offer_available);
-				break;
-
-			case IN_PROGRESS:
-				showView(logoIncreaseLimit);
-				hideView(llCommonLayer);
-				setStatusText(R.string.status_in_progress);
-				setStatusBackground(R.drawable.cli_round_inprogress_tag);
-				break;
-
-			case PLEASE_TRY_AGAIN:
-				showView(logoIncreaseLimit);
-				hideView(llCommonLayer);
-				setStatusText(R.string.status_please_try_again);
-				setStatusBackground(R.drawable.cli_round_inprogress_tag);
-				break;
-
-			case POI_REQUIRED:
-				showView(logoIncreaseLimit);
-				hideView(llCommonLayer);
-				setStatusText(R.string.status_poi_required);
-				setStatusBackground(R.drawable.cli_round_inprogress_tag);
-				break;
-
-			case POI_PROBLEM:
-				showView(logoIncreaseLimit);
-				hideView(llCommonLayer);
-				setStatusText(R.string.status_poi_problem);
-				setStatusBackground(R.drawable.cli_round_offer_poi_problem);
-				break;
-
-			case UNAVAILABLE:
-				showView(logoIncreaseLimit);
-				hideView(llCommonLayer);
-				setStatusText(R.string.status_unavailable);
-				setStatusBackground(R.drawable.cli_round_offer_unavailable);
-				break;
-			default:
-				break;
-		}
-	}
-
-	private void hideView(View view) {
-		view.setVisibility(View.GONE);
-	}
-
-	private void showView(View view) {
-		view.setVisibility(View.VISIBLE);
-	}
-
-	private void setStatusText(int id) {
-		tvApplyNowIncreaseLimit.setText(getString(id));
-	}
-
-	private void setStatusBackground(int drawable) {
-		tvApplyNowIncreaseLimit.setBackgroundResource(drawable);
 	}
 }
 
