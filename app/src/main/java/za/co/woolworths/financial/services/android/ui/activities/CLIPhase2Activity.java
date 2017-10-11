@@ -21,6 +21,7 @@ public class CLIPhase2Activity extends AppCompatActivity {
 	private WTextView tvDeclineOffer;
 	private ProgressBar pbDecline;
 	private boolean offerActive;
+	private String strOfferActive;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +29,7 @@ public class CLIPhase2Activity extends AppCompatActivity {
 		setContentView(R.layout.cli_phase2_activity);
 		Utils.updateStatusBarBackground(this);
 		Bundle mBundle = getIntent().getExtras();
-		String strOfferActive = mBundle.getString("jsonOfferActive");
-		Utils.strToJson(strOfferActive, OfferActive.class);
+		strOfferActive = mBundle.getString("jsonOfferActive");
 		init();
 		actionBar();
 		loadFragment("Consents");
@@ -117,5 +117,9 @@ public class CLIPhase2Activity extends AppCompatActivity {
 
 	public WTextView getTVDeclineOffer() {
 		return tvDeclineOffer;
+	}
+
+	public Object offerActiveObject() {
+		return Utils.strToJson(strOfferActive, OfferActive.class);
 	}
 }
