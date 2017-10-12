@@ -747,5 +747,11 @@
     <string name="status_unavailable">unavailable</string>
     <string name="status_retry">Retry</string>
     <string name="status_poi">POI</string>
+    <string name="status_i_n_e">I &amp; E</string>
+    <string name="status_offer">Offer</string>
+    <string name="status_consents">Consents</string>
+    <string name="status_decline">Decline</string>
+    <string name="status_contact_us">contactUs</string>
+
 
 </resources>

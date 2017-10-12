@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -29,12 +28,12 @@ import za.co.woolworths.financial.services.android.util.CurrencyTextWatcher;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class SupplyIncomeDetailFragment extends Fragment implements View.OnClickListener {
+public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnClickListener {
 
 	private boolean grossMonthlyIncomeWasEdited, netMonthlyIncomeWasEdited, additionalMonthlyIncomeWasEdited;
-	private HashMap<String, String> mHmSupplyIncomeDetail;
 	private WEditTextView etGrossMonthlyIncome, etNetMonthlyIncome, etAdditionalMonthlyIncome;
 	private WTextView tvGrossMonthlyIncome, tvNetMonthlyIncome, tvAdditionalMonthlyIncome;
 	private LinearLayout llNextButtonLayout, llGrossMonthlyIncomeLayout, llNetMonthlyIncomeLayout, llAdditionalMonthlyIncomeLayout;
@@ -51,10 +50,9 @@ public class SupplyIncomeDetailFragment extends Fragment implements View.OnClick
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		mHmSupplyIncomeDetail = new HashMap<>();
 		init(view);
 		nextFocusEditText();
-		Utils.updateCLIStepIndicator(1, SupplyIncomeDetailFragment.this);
+		cliStepIndicatorListener.onStepSelected(1);
 	}
 
 	private void init(View view) {
@@ -166,11 +164,10 @@ public class SupplyIncomeDetailFragment extends Fragment implements View.OnClick
 
 			case R.id.btnContinue:
 			case R.id.llNextButtonLayout:
-				mHmSupplyIncomeDetail.put("GROSS_MONTHLY_INCOME", IncreaseLimitController.removeNonDigit(etGrossMonthlyIncome));
-				mHmSupplyIncomeDetail.put("NET_MONTHLY_INCOME", IncreaseLimitController.removeNonDigit(etNetMonthlyIncome));
-				mHmSupplyIncomeDetail.put("ADDITIONAL_MONTHLY_INCOME", IncreaseLimitController.removeNonDigit(etAdditionalMonthlyIncome));
+				IncreaseLimitController increaseLimitController = new IncreaseLimitController(getActivity());
+				HashMap<String, String> hmExpenseMap = increaseLimitController.incomeHashMap(etGrossMonthlyIncome, etNetMonthlyIncome, etAdditionalMonthlyIncome);
 				Bundle bundle = new Bundle();
-				bundle.putSerializable("INCOME_DETAILS", mHmSupplyIncomeDetail);
+				bundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, hmExpenseMap);
 				SupplyExpensesDetailFragment supplyExpensesDetailFragment = new SupplyExpensesDetailFragment();
 				supplyExpensesDetailFragment.setArguments(bundle);
 				FragmentUtils fragmentUtils = new FragmentUtils();

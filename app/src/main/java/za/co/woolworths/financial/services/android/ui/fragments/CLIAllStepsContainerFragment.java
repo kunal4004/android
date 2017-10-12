@@ -1,12 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +12,14 @@ import android.widget.FrameLayout;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.FragmentUtils;
+import za.co.woolworths.financial.services.android.util.controller.CLIStepIndicatorListener;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CLIAllStepsContainerFragment extends Fragment {
+public class CLIAllStepsContainerFragment extends Fragment implements CLIStepIndicatorListener {
 
 	private FrameLayout indicator1;
 	private FrameLayout indicator2;
@@ -52,7 +51,7 @@ public class CLIAllStepsContainerFragment extends Fragment {
 		// Inflate the layout for this fragment
 		View view = inflater.inflate(R.layout.cli_all_steps_container_fragment, container, false);
 		initStepIndicatorViews(view);
-		initUI(view);
+		initUI();
 		return view;
 	}
 
@@ -62,10 +61,9 @@ public class CLIAllStepsContainerFragment extends Fragment {
 
 	}
 
-	private void initUI(View v) {
-		SupplyIncomeDetailFragment supplyIncomeDetailFragment = new SupplyIncomeDetailFragment();
-		FragmentUtils fragmentUtils = new FragmentUtils();
-		fragmentUtils.currentFragment((AppCompatActivity) CLIAllStepsContainerFragment.this.getActivity(), getChildFragmentManager(), supplyIncomeDetailFragment, R.id.cli_steps_container);
+	private void initUI() {
+		CLIPhase2Activity cliPhase2Activity = (CLIPhase2Activity) getActivity();
+		cliPhase2Activity.initFragment(this);
 	}
 
 	public void initStepIndicatorViews(View view) {
@@ -110,5 +108,10 @@ public class CLIAllStepsContainerFragment extends Fragment {
 				stepNames[i].setTextColor(ContextCompat.getColor(getActivity(), R.color.mask_opacity));
 			}
 		}
+	}
+
+	@Override
+	public void onStepSelected(int step) {
+		updateStepIndicator(step);
 	}
 }

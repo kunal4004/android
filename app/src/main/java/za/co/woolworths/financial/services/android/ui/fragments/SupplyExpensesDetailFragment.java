@@ -29,11 +29,12 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CurrencyTextWatcher;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class SupplyExpensesDetailFragment extends Fragment implements View.OnClickListener {
+public class SupplyExpensesDetailFragment extends CLIFragment implements View.OnClickListener {
 	private View rootView;
-	private HashMap<String, String> mHashIncomeDetail, mHashExpenseDetail;
+	private HashMap<String, String> mHashIncomeDetail;
 	private WTextView tvMortgagePayments, tvRentalPayments, tvMaintainanceExpenses, tvMonthlyCreditPayments, tvOtherExpenses;
 	private WEditTextView etMortgagePayments, etRentalPayments, etMaintainanceExpenses, etMonthlyCreditPayments, etOtherExpenses;
 	private boolean etMortgagePaymentsWasEdited, etRentalPaymentsWasEdited, etMaintainanceExpensesWasEdited, etMonthlyCreditPaymentsWasEdited, etOtherExpensesWasEdited;
@@ -49,14 +50,13 @@ public class SupplyExpensesDetailFragment extends Fragment implements View.OnCli
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		mHashExpenseDetail = new HashMap<>();
 		Bundle b = this.getArguments();
-		if (b.getSerializable("INCOME_DETAILS") != null) {
-			mHashIncomeDetail = (HashMap<String, String>) b.getSerializable("INCOME_DETAILS");
+		if (b.getSerializable(IncreaseLimitController.INCOME_DETAILS) != null) {
+			mHashIncomeDetail = (HashMap<String, String>) b.getSerializable(IncreaseLimitController.INCOME_DETAILS);
 		}
 		init(view);
 		nextFocusEditText();
-		Utils.updateCLIStepIndicator(2, SupplyExpensesDetailFragment.this);
+		cliStepIndicatorListener.onStepSelected(2);
 	}
 
 	private void init(View view) {
@@ -154,15 +154,11 @@ public class SupplyExpensesDetailFragment extends Fragment implements View.OnCli
 
 			case R.id.llNextButtonLayout:
 			case R.id.btnContinue:
-				mHashExpenseDetail.put("MORTGAGE_PAYMENTS", IncreaseLimitController.removeNonDigit(etMortgagePayments));
-				mHashExpenseDetail.put("RENTAL_PAYMENTS", IncreaseLimitController.removeNonDigit(etRentalPayments));
-				mHashExpenseDetail.put("MAINTENANCE_EXPENSES", IncreaseLimitController.removeNonDigit(etMaintainanceExpenses));
-				mHashExpenseDetail.put("MONTHLY_CREDIT_EXPENSES", IncreaseLimitController.removeNonDigit(etMonthlyCreditPayments));
-				mHashExpenseDetail.put("OTHER_EXPENSES", IncreaseLimitController.removeNonDigit(etOtherExpenses));
-
+				IncreaseLimitController increaseLimitController = new IncreaseLimitController(getActivity());
+				HashMap<String, String> hmExpenseMap = increaseLimitController.expenseHashMap(etMortgagePayments, etRentalPayments, etMaintainanceExpenses, etMonthlyCreditPayments, etOtherExpenses);
 				Bundle bundle = new Bundle();
-				bundle.putSerializable("INCOME_DETAILS", mHashIncomeDetail);
-				bundle.putSerializable("EXPENSE_DETAILS", mHashExpenseDetail);
+				bundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, mHashIncomeDetail);
+				bundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, hmExpenseMap);
 				OfferCalculationFragment ocFragment = new OfferCalculationFragment();
 				ocFragment.setArguments(bundle);
 				FragmentUtils fragmentUtils = new FragmentUtils();

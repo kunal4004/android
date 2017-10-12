@@ -14,7 +14,6 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.app.Fragment;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -47,8 +46,10 @@ import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
+import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class OfferCalculationFragment extends Fragment implements View.OnClickListener {
+public class OfferCalculationFragment extends CLIFragment implements View.OnClickListener {
 
 	private HashMap<String, String> mHashIncomeDetail, mHashExpenseDetail;
 	private WTextView tvCurrentCreditLimitAmount, tvNewCreditLimitAmount, tvAdditionalCreditLimitAmount, tvCalculatingYourOffer, tvLoadTime, tvSlideToEditSeekInfo, tvSlideToEditAmount, tvDeclineOffer;
@@ -72,10 +73,9 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		Utils.updateCLIStepIndicator(3, OfferCalculationFragment.this);
 		Bundle b = this.getArguments();
-		Serializable incomeDetail = b.getSerializable("INCOME_DETAILS");
-		Serializable expenseDetail = b.getSerializable("EXPENSE_DETAILS");
+		Serializable incomeDetail = b.getSerializable(IncreaseLimitController.INCOME_DETAILS);
+		Serializable expenseDetail = b.getSerializable(IncreaseLimitController.EXPENSE_DETAILS);
 		if (incomeDetail != null) {
 			mHashIncomeDetail = (HashMap<String, String>) incomeDetail;
 		}
@@ -88,6 +88,7 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 		seekBar();
 		fadeOutAndHideTooltip(tvSlideToEditSeekInfo);
 		listener();
+		cliStepIndicatorListener.onStepSelected(3);
 	}
 
 	private void listener() {
@@ -126,19 +127,28 @@ public class OfferCalculationFragment extends Fragment implements View.OnClickLi
 			@Override
 			public void onSuccess(Object object) {
 				mObjOffer = ((CreateOfferResponse) object);
-				Offer offer = mObjOffer.cli.offer;
-				mCurrentCredit = offer.currCredit;
-				mCreditReqestMin = offer.creditReqestMin;
-				int creditRequestMax = offer.creditRequestMax;
-				mDifferenceCreditLimit = (creditRequestMax - mCreditReqestMin);
+				int httpCode = mObjOffer.httpCode;
+				switch (httpCode) {
+					case 200:
+						Offer offer = mObjOffer.cli.offer;
+						mCurrentCredit = offer.currCredit;
+						mCreditReqestMin = offer.creditReqestMin;
+						int creditRequestMax = offer.creditRequestMax;
+						mDifferenceCreditLimit = (creditRequestMax - mCreditReqestMin);
 
-				sbSlideAmount.setMax(mDifferenceCreditLimit);
-				sbSlideAmount.incrementProgressBy(100);
-				sbSlideAmount.setProgress(mDifferenceCreditLimit);
+						sbSlideAmount.setMax(mDifferenceCreditLimit);
+						sbSlideAmount.incrementProgressBy(100);
+						sbSlideAmount.setProgress(mDifferenceCreditLimit);
 
-				tvCurrentCreditLimitAmount.setText(formatAmount(mCurrentCredit));
-				tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
-				tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
+						tvCurrentCreditLimitAmount.setText(formatAmount(mCurrentCredit));
+						tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
+						tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
+						break;
+
+
+					default:
+						break;
+				}
 				onLoadComplete();
 			}
 

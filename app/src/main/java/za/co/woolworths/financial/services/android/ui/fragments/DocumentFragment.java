@@ -6,7 +6,6 @@ import android.content.IntentFilter;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
 
@@ -41,9 +39,10 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class DocumentFragment extends Fragment implements DocumentAdapter.OnItemClick, NetworkChangeListener,DocumentsAccountTypeAdapter.OnAccountTypeClick ,View.OnClickListener,POIDocumentSubmitTypeAdapter.OnSubmitType{
+public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener,DocumentsAccountTypeAdapter.OnAccountTypeClick ,View.OnClickListener,POIDocumentSubmitTypeAdapter.OnSubmitType{
 
 	private RecyclerView rclSelectYourBank;
 	private List<Bank> deaBankList;
@@ -79,7 +78,7 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 		// Inflate the layout for this fragment
 		View view = inflater.inflate(R.layout.document_fragment, container, false);
 		deaBankList = new ArrayList<>();
-		Utils.updateCLIStepIndicator(4,DocumentFragment.this);
+		cliStepIndicatorListener.onStepSelected(4);
 		return view;
 	}
 
