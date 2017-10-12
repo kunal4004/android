@@ -621,37 +621,6 @@ public class Utils {
 		}
 	}
 
-	public static void setOvalTagDrawable(Context context, WTextView tvApplyNow, WTextView tvDescription, HashMap<String, String> hMIncreaseCreditLimit) {
-		Resources resources = context.getResources();
-
-		String nextStep = hMIncreaseCreditLimit.get("NEXT_STEP");
-		String messageSummary = hMIncreaseCreditLimit.get("MESSAGE_SUMMARY");
-		String messageDetail = hMIncreaseCreditLimit.get("MESSAGE_DETAIL");
-
-		//If the ‘nextStep’ field value is null/empty
-		if (TextUtils.isEmpty(nextStep)) {
-			setBackground(tvApplyNow, R.drawable.cli_round_red_corner, R.string.status_poi_problem_text);
-			hideView(tvDescription);
-			return;
-		}
-
-		//or InProgress
-		if (nextStep.equalsIgnoreCase(resources.getString(R.string.status_in_progress))) {
-			setBackground(tvApplyNow, R.drawable.cli_round_inprogress_tag, R.string.status_in_progress_text);
-			hideView(tvDescription);
-			return;
-		}
-
-		//To do: cases for offer available,please try again, unavailable, poi_required
-
-		//else
-		if (!TextUtils.isEmpty(nextStep)) {
-			setBackground(tvApplyNow, R.drawable.cli_round_apply_now_tag, R.string.apply_now);
-			showView(tvDescription, messageSummary);
-			return;
-		}
-	}
-
 	public static void showView(WTextView view, String messageSummary) {
 		view.setVisibility(View.VISIBLE);
 		view.setText(messageSummary);

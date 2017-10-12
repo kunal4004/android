@@ -49,7 +49,6 @@ import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
-import za.co.woolworths.financial.services.android.util.controller.OfferStatus;
 
 public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
@@ -233,7 +232,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			@Override
 			public void onSuccess(Object object) {
 				offerActive = ((OfferActive) object);
-				mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, logoIncreaseLimit, OfferStatus.APPLY_NOW, offerActive);
+				mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, logoIncreaseLimit, offerActive);
 				bindUI(offerActive);
 			}
 
@@ -257,12 +256,13 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			if (httpCode == 200) {
 				isOfferActive = offerActive.offerActive;
 				personalWasAlreadyRunOnce = true;
-				isOfferActive = false;
-				if (isOfferActive) {
-					disableIncreaseLimit();
-				} else {
-					enableIncreaseLimit();
-				}
+				enableIncreaseLimit();
+				//isOfferActive = false;
+//				if (isOfferActive) {
+//					disableIncreaseLimit();
+//				} else {
+//					enableIncreaseLimit();
+//				}
 			} else if (httpCode == 440) {
 				SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), offerActive.response.stsParams);
 			} else {

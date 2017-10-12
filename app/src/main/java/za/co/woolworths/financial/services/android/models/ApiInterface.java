@@ -1,8 +1,6 @@
 package za.co.woolworths.financial.services.android.models;
 
 
-import org.json.JSONObject;
-
 import retrofit.Callback;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
@@ -13,6 +11,7 @@ import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Path;
 import retrofit.http.Query;
+import retrofit.mime.MultipartTypedOutput;
 import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRequest;
@@ -362,6 +361,22 @@ public interface ApiInterface {
 			@Header("sessionToken") String sessionToken,
 			@Path("cliId") String cliId,
 			@Body CreateOfferDecision createOfferDecision);
+
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@POST("/user/cli/offer/{cliId}/POI")
+	CreateOfferResponse cliSubmitPOI(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("userAgent") String userAgent,
+			@Header("userAgentVersion") String userAgentVersion,
+			@Header("sessionToken") String sessionToken,
+			@Body MultipartTypedOutput attachments, Callback<CreateOfferResponse> response);
 
 	//WOP-650 Set cacheTime to zero to allow correct status of CLI getOfferActive
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:0"})

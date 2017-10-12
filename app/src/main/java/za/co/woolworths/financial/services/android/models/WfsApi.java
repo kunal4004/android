@@ -8,14 +8,11 @@ import android.util.Log;
 
 import com.jakewharton.retrofit.Ok3Client;
 
-import org.json.JSONObject;
-
 import okhttp3.OkHttpClient;
 import retrofit.RestAdapter;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import za.co.wigroup.androidutils.Util;

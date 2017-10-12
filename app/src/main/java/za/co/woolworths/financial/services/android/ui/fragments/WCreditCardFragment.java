@@ -199,7 +199,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			public void onSuccess(Object object) {
 				offerActive = ((OfferActive) object);
 				mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit,
-						tvApplyNowIncreaseLimit, logoIncreaseLimit, OfferStatus.APPLY_NOW, offerActive);
+						tvApplyNowIncreaseLimit, logoIncreaseLimit, offerActive);
 				bindUI(offerActive);
 			}
 
@@ -230,11 +230,12 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			if (httpCode == 200) {
 				isOfferActive = offerActive.offerActive;
 				creditWasAlreadyRunOnce = true;
-				if (isOfferActive) {
-					disableIncreaseLimit();
-				} else {
-					enableIncreaseLimit();
-				}
+				enableIncreaseLimit();
+//				if (isOfferActive) {
+//					disableIncreaseLimit();
+//				} else {
+//					enableIncreaseLimit();
+//				}
 			} else if (httpCode == 440) {
 				SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), offerActive.response
 						.stsParams);

@@ -48,7 +48,6 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
-import za.co.woolworths.financial.services.android.util.controller.OfferStatus;
 
 
 public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
@@ -93,6 +92,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 		mIncreaseLimitController = new IncreaseLimitController(getActivity());
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
@@ -188,10 +188,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			case R.id.relIncreaseMyLimit:
 				mIncreaseLimitController.moveToCLIPhase(offerActive, productOfferingId);
 				break;
-
 		}
 	}
-
 
 	private void getActiveOffer() {
 		onLoad();
@@ -199,7 +197,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			@Override
 			public void onSuccess(Object object) {
 				offerActive = ((OfferActive) object);
-				mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, logoIncreaseLimit, OfferStatus.APPLY_NOW, offerActive);
+				mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, logoIncreaseLimit, offerActive);
 				bindUI(offerActive);
 			}
 
@@ -228,12 +226,12 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				String messageSummary = cli.messageSummary;
 				String messageDetail = cli.messageDetail;
 
+				enableIncreaseLimit();
+
 				HashMap<String, String> hMIncreaseCreditLimit = new HashMap<>();
 				hMIncreaseCreditLimit.put("NEXT_STEP", nextStep);
 				hMIncreaseCreditLimit.put("MESSAGE_SUMMARY", messageSummary);
 				hMIncreaseCreditLimit.put("MESSAGE_DETAIL", messageDetail);
-
-				Utils.setOvalTagDrawable(getActivity(), tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, hMIncreaseCreditLimit);
 
 			} else if (httpCode == 440) {
 				SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), offerActive.response

@@ -737,14 +737,15 @@
     <string name="status_in_progress">InProgress</string>
     <string name="status_in_progress_text">in progress</string>
     <string name="status_poi_problem_text">poi problem</string>
-    <string name="status_offer_available">offer available</string>
+    <string name="status_offer_available">Offer Available</string>
     <string name="status_please_try_again">please try again</string>
-    <string name="status_poi_required">poi required</string>
+    <string name="status_poi_required">POI Required</string>
     <string name="status_poi_problem">poi problem</string>
     <string name="decline">decline</string>
     <string name="decline_desc">decline offer desc</string>
     <string name="find_out_more">Find Out More</string>
-    <string name="offer_available">offer available</string>
     <string name="status_unavailable">unavailable</string>
+    <string name="status_retry">Retry</string>
+    <string name="status_poi">POI</string>
 
 </resources>

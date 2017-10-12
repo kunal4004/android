@@ -730,6 +730,13 @@
         <item name="android:background">@drawable/bottom_light_divider_list</item>
     </style>
 
+    <style name="last_card_style">
+        <item name="android:paddingTop">9dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:paddingBottom">20dp</item>
+    </style>
+
     <style name="card_item_rel_style">
         <item name="android:paddingTop">9dp</item>
         <item name="android:layout_width">match_parent</item>
