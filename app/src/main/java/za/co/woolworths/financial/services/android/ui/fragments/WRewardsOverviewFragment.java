@@ -163,9 +163,9 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 	}
 
 	public void handleTireHistoryView(TierInfo tireInfo) {
-		barCodeNumber.setText("1235 5678 8735 5678");
+		barCodeNumber.setText("6007 8525 6157 1473");
 		try {
-			bardCodeImage.setImageBitmap(Utils.encodeAsBitmap("1235567887355678", BarcodeFormat.CODE_128, bardCodeImage.getWidth(), 60));
+			bardCodeImage.setImageBitmap(Utils.encodeAsBitmap("6007852561571473", BarcodeFormat.CODE_128, bardCodeImage.getWidth(), 60));
 		} catch (WriterException e) {
 			e.printStackTrace();
 		}
@@ -175,6 +175,8 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		tireStatus.setText(tireInfo.currentTier);
 		savings.setText(WFormatter.formatAmount(tireInfo.earned));
 		infoImage.setOnClickListener(this);
+		flipCardFrontLayout.setOnClickListener(this);
+		flipCardBackLayout.setOnClickListener(this);
 		if (currentStatus.equals(getString(R.string.valued)) || currentStatus.equals(getString(R.string.loyal))) {
 			toNextTireLayout.setVisibility(View.VISIBLE);
 			toNextTire.setText(WFormatter.formatAmount(tireInfo.toSpend));
@@ -202,6 +204,10 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 			} else if (currentStatus.equals(getString(R.string.vip))) {
 				redirectToWRewardsMemberActivity(2);
 			}
+		}
+		else if(v.getId() == R.id.flipCardBackLayout || v.getId()==R.id.flipCardFrontLayout)
+		{
+			flipCard();
 		}
 	}
 
