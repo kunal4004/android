@@ -68,40 +68,42 @@ public class IncreaseLimitController {
 		if (messageSummary.equalsIgnoreCase(getString(R.string.status_offer_available))) {
 			showView(logoIncreaseLimit);
 			hideView(llCommonLayer);
-			setCLITag(R.string.status_offer_available, R.drawable.cli_round_offer_available, tvApplyNowIncreaseLimit);
+			setCLITag(messageSummary, R.drawable.cli_round_offer_available, tvApplyNowIncreaseLimit);
 		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_retry))) {
 			showView(logoIncreaseLimit);
 			hideView(llCommonLayer);
-			setCLITag(R.string.status_please_try_again, R.drawable.cli_round_inprogress_tag, tvApplyNowIncreaseLimit);
+			messageSummary = getString(R.string.status_please_try_again);
+			setCLITag(messageSummary, R.drawable.cli_round_inprogress_tag, tvApplyNowIncreaseLimit);
 		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_poi_required))) {
 			showView(logoIncreaseLimit);
 			hideView(llCommonLayer);
-			setCLITag(R.string.status_poi_required, R.drawable.cli_round_inprogress_tag, tvApplyNowIncreaseLimit);
+			setCLITag(messageSummary, R.drawable.cli_round_inprogress_tag, tvApplyNowIncreaseLimit);
 		} else {
 			showView(logoIncreaseLimit);
 			hideView(llCommonLayer);
-			setCLITag(R.string.status_unavailable, R.drawable.cli_round_offer_unavailable, tvApplyNowIncreaseLimit);
+			messageSummary = getString(R.string.status_unavailable);
+			setCLITag(messageSummary, R.drawable.cli_round_offer_unavailable, tvApplyNowIncreaseLimit);
 		}
 
 		switch (status) {
 			case APPLY_NOW:
 				hideView(logoIncreaseLimit);
 				showView(llCommonLayer);
-				setCLITag(R.string.apply_now, R.drawable.cli_round_apply_now_tag, tvApplyNowIncreaseLimit);
+				setCLITag(messageSummary, R.drawable.cli_round_apply_now_tag, tvApplyNowIncreaseLimit);
 				tvIncreaseLimit.setText(getString(R.string.cli_credit_limit_increase));
 				break;
 
 			case IN_PROGRESS:
 				showView(logoIncreaseLimit);
 				hideView(llCommonLayer);
-				setCLITag(R.string.status_in_progress, R.drawable.cli_round_inprogress_tag, tvApplyNowIncreaseLimit);
+				setCLITag(messageSummary, R.drawable.cli_round_inprogress_tag, tvApplyNowIncreaseLimit);
 				break;
 
 
 			case POI_PROBLEM:
 				showView(logoIncreaseLimit);
 				hideView(llCommonLayer);
-				setCLITag(R.string.status_poi_problem, R.drawable.cli_round_offer_poi_problem, tvApplyNowIncreaseLimit);
+				setCLITag(messageSummary, R.drawable.cli_round_offer_poi_problem, tvApplyNowIncreaseLimit);
 				break;
 
 			case UNAVAILABLE:
@@ -132,8 +134,7 @@ public class IncreaseLimitController {
 		return mContext.getResources().getString(stringId);
 	}
 
-	private void setCLITag(int messageSummaryId, int drawableId, WTextView tvApplyNowIncreaseLimit) {
-		String messageSummary = getString(messageSummaryId);
+	private void setCLITag(String messageSummary, int drawableId, WTextView tvApplyNowIncreaseLimit) {
 		setStatusText(messageSummary, tvApplyNowIncreaseLimit);
 		setStatusBackground(drawableId, tvApplyNowIncreaseLimit, messageSummary);
 	}
@@ -159,5 +160,10 @@ public class IncreaseLimitController {
 
 	private Cli getCLI(OfferActive active) {
 		return active.cli;
+	}
+
+	public static void focusEditView(WEditTextView wEditText, Context context) {
+		wEditText.requestFocus();
+		IncreaseLimitController.showKeyboard(wEditText, context);
 	}
 }

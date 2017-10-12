@@ -34,12 +34,14 @@ import za.co.woolworths.financial.services.android.models.rest.CLIGetDeaBank;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentsAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.POIDocumentSubmitTypeAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
 public class DocumentFragment extends Fragment implements DocumentAdapter.OnItemClick, NetworkChangeListener,DocumentsAccountTypeAdapter.OnAccountTypeClick ,View.OnClickListener,POIDocumentSubmitTypeAdapter.OnSubmitType{
 
@@ -64,6 +66,8 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 	private String otherBank="Other";
 	private DocumentsAccountTypeAdapter accountTypeAdapter;
 	private POIDocumentSubmitTypeAdapter documentSubmitTypeAdapter;
+	private WEditTextView etAccountNumber;
+	private LinearLayout llAccountNumberLayout;
 
 	public DocumentFragment() {
 		// Required empty public constructor
@@ -163,9 +167,12 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 		yesPOIFromBank = (WTextView) view.findViewById(R.id.yesPOIFromBank);
 		noPOIFromBank = (WTextView) view.findViewById(R.id.noPOIFromBank);
 		btnSubmit=(WTextView)view.findViewById(R.id.submitCLI);
+		etAccountNumber=(WEditTextView)view.findViewById(R.id.etAccountNumber);
+		llAccountNumberLayout=(LinearLayout)view.findViewById(R.id.llAccountNumberLayout);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
 		yesPOIFromBank.setOnClickListener(this);
 		noPOIFromBank.setOnClickListener(this);
+		llAccountNumberLayout.setOnClickListener(this);
 	}
 
 	private void selectBankLayoutManager(List<Bank> deaBankList) {
@@ -296,6 +303,9 @@ public class DocumentFragment extends Fragment implements DocumentAdapter.OnItem
 				if(accountTypeAdapter!=null)
 					accountTypeAdapter.clearSelection();
 				scrollUpDocumentSubmitTypeLayout();
+				break;
+			case R.id.llAccountNumberLayout:
+				IncreaseLimitController.focusEditView(etAccountNumber,getActivity());
 				break;
 
 		}
