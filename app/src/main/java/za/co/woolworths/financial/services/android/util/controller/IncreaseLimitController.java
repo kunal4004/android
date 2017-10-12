@@ -84,33 +84,33 @@ public class IncreaseLimitController {
 			messageSummary = getString(R.string.status_unavailable);
 			setCLITag(messageSummary, R.drawable.cli_round_offer_unavailable, tvApplyNowIncreaseLimit);
 		}
-
-		switch (status) {
-			case APPLY_NOW:
-				hideView(logoIncreaseLimit);
-				showView(llCommonLayer);
-				setCLITag(messageSummary, R.drawable.cli_round_apply_now_tag, tvApplyNowIncreaseLimit);
-				tvIncreaseLimit.setText(getString(R.string.cli_credit_limit_increase));
-				break;
-
-			case IN_PROGRESS:
-				showView(logoIncreaseLimit);
-				hideView(llCommonLayer);
-				setCLITag(messageSummary, R.drawable.cli_round_inprogress_tag, tvApplyNowIncreaseLimit);
-				break;
-
-
-			case POI_PROBLEM:
-				showView(logoIncreaseLimit);
-				hideView(llCommonLayer);
-				setCLITag(messageSummary, R.drawable.cli_round_offer_poi_problem, tvApplyNowIncreaseLimit);
-				break;
-
-			case UNAVAILABLE:
-				break;
-			default:
-				break;
-		}
+//
+//		switch (status) {
+//			case APPLY_NOW:
+//				hideView(logoIncreaseLimit);
+//				showView(llCommonLayer);
+//				setCLITag(messageSummary, R.drawable.cli_round_apply_now_tag, tvApplyNowIncreaseLimit);
+//				tvIncreaseLimit.setText(getString(R.string.cli_credit_limit_increase));
+//				break;
+//
+//			case IN_PROGRESS:
+//				showView(logoIncreaseLimit);
+//				hideView(llCommonLayer);
+//				setCLITag(messageSummary, R.drawable.cli_round_inprogress_tag, tvApplyNowIncreaseLimit);
+//				break;
+//
+//
+//			case POI_PROBLEM:
+//				showView(logoIncreaseLimit);
+//				hideView(llCommonLayer);
+//				setCLITag(messageSummary, R.drawable.cli_round_offer_poi_problem, tvApplyNowIncreaseLimit);
+//				break;
+//
+//			case UNAVAILABLE:
+//				break;
+//			default:
+//				break;
+//		}
 	}
 
 	private void hideView(View view) {

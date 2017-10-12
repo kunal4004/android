@@ -97,6 +97,7 @@
     <dimen name="left_right_padding">6dp</dimen>
     <dimen name="offering_radius">8dp</dimen>
     <dimen name="rag_rating_sp">10sp</dimen>
+    <dimen name="cli_left_right_padding">10dp</dimen>
 
     <dimen name="balloon_size">40dp</dimen>
     <dimen name="two_dp">2dp</dimen>
