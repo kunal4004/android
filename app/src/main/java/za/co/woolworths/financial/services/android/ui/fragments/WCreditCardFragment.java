@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
+import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
@@ -170,6 +171,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	@Override
 	public void onClick(View v) {
+		MultiClickPreventer.preventMultiClick(v);
 		switch (v.getId()) {
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:

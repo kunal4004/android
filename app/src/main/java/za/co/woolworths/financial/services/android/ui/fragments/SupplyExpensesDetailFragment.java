@@ -160,6 +160,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 				bundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, mHashIncomeDetail);
 				bundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, hmExpenseMap);
 				OfferCalculationFragment ocFragment = new OfferCalculationFragment();
+				ocFragment.setStepIndicatorListener(cliStepIndicatorListener);
 				ocFragment.setArguments(bundle);
 				FragmentUtils fragmentUtils = new FragmentUtils();
 				fragmentUtils.nextBottomUpFragment((AppCompatActivity) SupplyExpensesDetailFragment.this.getActivity()

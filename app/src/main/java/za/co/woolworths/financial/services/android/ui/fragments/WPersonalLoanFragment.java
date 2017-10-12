@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CLIIncreaseLimitInfoActivity;
 import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
+import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -42,6 +43,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
+import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
@@ -187,6 +189,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 	@Override
 	public void onClick(View v) {
+		MultiClickPreventer.preventMultiClick(v);
 		switch (v.getId()) {
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:
@@ -219,7 +222,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				getActivity().startActivity(openFindOutMore);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
-
 			case R.id.relIncreaseMyLimit:
 			case R.id.llIncreaseLimitContainer:
 				mIncreaseLimitController.nextStep(offerActive, productOfferingId);

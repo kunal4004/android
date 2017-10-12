@@ -147,7 +147,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
 						break;
 
-
 					default:
 						break;
 				}
@@ -301,6 +300,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		switch (v.getId()) {
 			case R.id.btnContinue:
 				DocumentFragment documentFragment = new DocumentFragment();
+				documentFragment.setStepIndicatorListener(cliStepIndicatorListener);
 				FragmentUtils fragmentUtils = new FragmentUtils();
 				fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), documentFragment, R.id.cli_steps_container);
 

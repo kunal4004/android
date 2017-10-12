@@ -170,6 +170,7 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 				bundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, hmExpenseMap);
 				SupplyExpensesDetailFragment supplyExpensesDetailFragment = new SupplyExpensesDetailFragment();
 				supplyExpensesDetailFragment.setArguments(bundle);
+				supplyExpensesDetailFragment.setStepIndicatorListener(cliStepIndicatorListener);
 				FragmentUtils fragmentUtils = new FragmentUtils();
 				fragmentUtils.nextFragment((AppCompatActivity) SupplyIncomeDetailFragment.this.getActivity(), getFragmentManager(), supplyExpensesDetailFragment, R.id.cli_steps_container);
 				break;
