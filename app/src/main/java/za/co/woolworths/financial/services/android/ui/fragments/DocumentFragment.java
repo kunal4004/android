@@ -10,6 +10,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener,DocumentsAccountTypeAdapter.OnAccountTypeClick ,View.OnClickListener,POIDocumentSubmitTypeAdapter.OnSubmitType{
+public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener,DocumentsAccountTypeAdapter.OnAccountTypeClick ,View.OnClickListener,POIDocumentSubmitTypeAdapter.OnSubmitType,TextWatcher{
 
 	private RecyclerView rclSelectYourBank;
 	private List<Bank> deaBankList;
@@ -172,6 +173,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		yesPOIFromBank.setOnClickListener(this);
 		noPOIFromBank.setOnClickListener(this);
 		llAccountNumberLayout.setOnClickListener(this);
+		etAccountNumber.addTextChangedListener(this);
 	}
 
 	private void selectBankLayoutManager(List<Bank> deaBankList) {
@@ -288,6 +290,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
 				yesPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
 				hideView(poiDocumentSubmitTypeLayout);
+				hideView(btnSubmit);
 				if(documentSubmitTypeAdapter!=null)
 					documentSubmitTypeAdapter.clearSelection();
 				scrollUpAccountTypeSelectionLayout();
@@ -297,6 +300,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				yesPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
 				noPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
 				noPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+				resetAccountNumberView();
 				hideView(accountTypeLayout);
 				hideView(accountNumberLayout);
 				if(accountTypeAdapter!=null)
@@ -340,6 +344,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	public void scrollUpAccountNumberLayout(){
+		resetAccountNumberView();
 		accountNumberLayout.setVisibility(View.VISIBLE);
 		nestedScrollView.post(new Runnable() {
 			@Override
@@ -358,6 +363,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		hideView(accountTypeLayout);
 		hideView(accountNumberLayout);
 		hideView(btnSubmit);
+		resetAccountNumberView();
 		if(accountTypeAdapter !=null)
 			accountTypeAdapter.clearSelection();
 		if(documentSubmitTypeAdapter !=null)
@@ -375,5 +381,30 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				nestedScrollView.fullScroll(NestedScrollView.FOCUS_DOWN);
 			}
 		});
+	}
+
+	public void resetAccountNumberView()
+	{
+		etAccountNumber.getText().clear();
+		hideView(btnSubmit);
+	}
+
+
+	@Override
+	public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+	}
+
+	@Override
+	public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+	}
+
+	@Override
+	public void afterTextChanged(Editable editable) {
+		if (IncreaseLimitController.editTextLength(etAccountNumber.getText().toString()) && btnSubmit.getVisibility()==View.GONE)
+			showSubmitButton();
+		else if (!IncreaseLimitController.editTextLength(etAccountNumber.getText().toString()))
+			hideView(btnSubmit);
 	}
 }

@@ -11,6 +11,7 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ import za.co.woolworths.financial.services.android.ui.views.CircleProgressBar;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
+import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -298,11 +300,11 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.btnContinue:
-//				DocumentFragment documentFragment = new DocumentFragment();
-//				FragmentUtils fragmentUtils = new FragmentUtils();
-//				fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), documentFragment, R.id.cli_steps_container);
+				DocumentFragment documentFragment = new DocumentFragment();
+				FragmentUtils fragmentUtils = new FragmentUtils();
+				fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), documentFragment, R.id.cli_steps_container);
 
-				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
+				/*int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
 				CreateOfferDecision createOfferDecision = new CreateOfferDecision(String.valueOf(mObjOffer.cliOfferId), "Accept", String.valueOf(newCreditLimitAmount));
 				CLIOfferDecision cliOfferDecision =
 						new CLIOfferDecision(getActivity(), createOfferDecision, new OnEventListener() {
@@ -318,7 +320,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 							}
 						});
 
-				cliOfferDecision.execute();
+				cliOfferDecision.execute();*/
 				break;
 		}
 	}

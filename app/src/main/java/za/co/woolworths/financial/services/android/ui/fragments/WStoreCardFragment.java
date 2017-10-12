@@ -75,7 +75,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private boolean bolBroacastRegistred;
 	private View view;
 	private RelativeLayout mRelFindOutMore, mRelIncreaseMyLimit;
-	private LinearLayout llCommonLayer, llIncreaseLimitContainer;
+	private LinearLayout llCommonLayer;
 	private ImageView logoIncreaseLimit, iconDrawnDownAmount;
 	private OfferActive offerActive;
 	private IncreaseLimitController mIncreaseLimitController;
@@ -112,17 +112,14 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
 		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
 		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
-		llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
 		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
 		iconDrawnDownAmount = (ImageView) view.findViewById(R.id.iconDrawnDownAmount);
-
-		mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
 
 		relBalanceProtection.setOnClickListener(this);
 		tvIncreaseLimit.setOnClickListener(this);
 		tvViewTransaction.setOnClickListener(this);
 		rlViewTransactions.setOnClickListener(this);
-		llIncreaseLimitContainer.setOnClickListener(this);
+		tvApplyNowIncreaseLimit.setOnClickListener(this);
 
 		try {
 			networkChangeListener = this;
@@ -181,6 +178,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				break;
 
 			case R.id.tvApplyNowIncreaseLimit:
+				mIncreaseLimitController.moveToCLIPhase(offerActive, productOfferingId);
 				break;
 
 			case R.id.relBalanceProtection:
@@ -190,8 +188,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				break;
 
 			case R.id.relIncreaseMyLimit:
-			case R.id.llIncreaseLimitContainer:
-				mIncreaseLimitController.nextStep(offerActive, productOfferingId);
+				mIncreaseLimitController.moveToCLIPhase(offerActive, productOfferingId);
 				break;
 		}
 	}

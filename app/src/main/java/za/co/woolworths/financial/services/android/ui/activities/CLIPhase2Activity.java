@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,28 +10,18 @@ import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
-import java.util.HashMap;
-
-import za.co.woolworths.financial.services.android.models.dto.CreateOfferResponse;
-import za.co.woolworths.financial.services.android.ui.fragments.CLIAllStepsContainerFragment;
+import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIEligibilityAndPermissionFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.DocumentFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.OfferCalculationFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.SupplyIncomeDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.controller.CLIStepIndicatorListener;
-import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
 public class CLIPhase2Activity extends AppCompatActivity {
 
 	private WTextView tvDeclineOffer;
 	private ProgressBar pbDecline;
-	private CreateOfferResponse createOfferResponse;
-	private String mOfferActivePayload;
-	private boolean mOfferActive;
-	private String mNextStep;
+	private boolean offerActive;
+	private String strOfferActive;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,16 +29,11 @@ public class CLIPhase2Activity extends AppCompatActivity {
 		setContentView(R.layout.cli_phase2_activity);
 		Utils.updateStatusBarBackground(this);
 		Bundle mBundle = getIntent().getExtras();
+		strOfferActive = mBundle.getString("jsonOfferActive");
 		init();
-		hideDeclineOffer();
 		actionBar();
-		if (mBundle != null) {
-			mOfferActivePayload = mBundle.getString("OFFER_ACTIVE_PAYLOAD");
-			mOfferActive = mBundle.getBoolean("OFFER_IS_ACTIVE");
-			createOfferResponse = offerActiveObject();
-			mNextStep = createOfferResponse.cli.nextStep;
-			loadFragment(mNextStep);
-		}
+		loadFragment("Consents");
+		hideDeclineOffer();
 	}
 
 	private void init() {
@@ -65,57 +49,39 @@ public class CLIPhase2Activity extends AppCompatActivity {
 	}
 
 	public void loadFragment(String nextStep) {
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
+		FragmentUtils fragmentUtils = new FragmentUtils();
+		if (nextStep.equalsIgnoreCase("Consents")) {
 			CLIEligibilityAndPermissionFragment cLIEligibilityAndPermissionFragment = new CLIEligibilityAndPermissionFragment();
-			openNextFragment(cLIEligibilityAndPermissionFragment);
-		} else {
-			moveToCLIAllStepsContainerFragment();
+			fragmentUtils.currentFragment(CLIPhase2Activity.this, cLIEligibilityAndPermissionFragment, R.id.cliMainFrame);
+			return;
 		}
-	}
 
-	public void initFragment(CLIStepIndicatorListener cliStepIndicatorListener) {
-		String nextStep = mNextStep;
-		boolean offerActive = mOfferActive;
-		IncreaseLimitController increaseLimitController = new IncreaseLimitController(CLIPhase2Activity.this);
-		Bundle offerBundle = new Bundle();
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
+		if (nextStep.equalsIgnoreCase("I&E") && offerActive) {
+			return;
+		}
+
+		if (nextStep.equalsIgnoreCase("I&E") && !offerActive) {
+			return;
+		}
+
+		if (nextStep.equalsIgnoreCase("Offer")) {
 			CLIEligibilityAndPermissionFragment cLIEligibilityAndPermissionFragment = new CLIEligibilityAndPermissionFragment();
-			openFragment(cLIEligibilityAndPermissionFragment);
+			fragmentUtils.currentFragment(CLIPhase2Activity.this, cLIEligibilityAndPermissionFragment, R.id.cliMainFrame);
 			return;
 		}
 
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_i_n_e)) && offerActive) {
-			SupplyIncomeDetailFragment supplyIncomeDetailFragment = new SupplyIncomeDetailFragment();
-			supplyIncomeDetailFragment.setStepIndicatorListener(cliStepIndicatorListener);
-			openFragment(supplyIncomeDetailFragment);
+		if (nextStep.equalsIgnoreCase("POI")) {
 			return;
 		}
 
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_i_n_e)) && !offerActive) {
-			SupplyIncomeDetailFragment supplyIncomeDetailFragment = new SupplyIncomeDetailFragment();
-			supplyIncomeDetailFragment.setStepIndicatorListener(cliStepIndicatorListener);
-			openFragment(supplyIncomeDetailFragment);
+		if (nextStep.equalsIgnoreCase("Decline")) {
 			return;
 		}
 
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_offer))) {
-			HashMap<String, String> icomeHashMap = increaseLimitController.incomeHashMap(createOfferResponse);
-			HashMap<String, String> expenseHashMap = increaseLimitController.expenseHashMap(createOfferResponse);
-			offerBundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, icomeHashMap);
-			offerBundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, expenseHashMap);
-			OfferCalculationFragment offerCalculationFragment = new OfferCalculationFragment();
-			offerCalculationFragment.setStepIndicatorListener(cliStepIndicatorListener);
-			offerCalculationFragment.setArguments(offerBundle);
-			openFragment(offerCalculationFragment);
+		if (nextStep.equalsIgnoreCase("contactUs")) {
 			return;
 		}
 
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_poi))) {
-			DocumentFragment documentFragment = new DocumentFragment();
-			documentFragment.setStepIndicatorListener(cliStepIndicatorListener);
-			openFragment(documentFragment);
-			return;
-		}
 	}
 
 	@Override
@@ -155,22 +121,7 @@ public class CLIPhase2Activity extends AppCompatActivity {
 		return tvDeclineOffer;
 	}
 
-	public CreateOfferResponse offerActiveObject() {
-		return (CreateOfferResponse) Utils.strToJson(mOfferActivePayload, CreateOfferResponse.class);
-	}
-
-	private void openNextFragment(Fragment fragment) {
-		FragmentUtils fragmentUtils = new FragmentUtils();
-		fragmentUtils.currentFragment(CLIPhase2Activity.this, fragment, R.id.cliMainFrame);
-	}
-
-	private void openFragment(Fragment fragment) {
-		FragmentUtils fragmentUtils = new FragmentUtils();
-		fragmentUtils.currentFragment(CLIPhase2Activity.this, getSupportFragmentManager(), fragment, R.id.cli_steps_container);
-	}
-
-	private void moveToCLIAllStepsContainerFragment() {
-		CLIAllStepsContainerFragment cliAllStepsContainerFragment = new CLIAllStepsContainerFragment();
-		openNextFragment(cliAllStepsContainerFragment);
+	public Object offerActiveObject() {
+		return Utils.strToJson(strOfferActive, OfferActive.class);
 	}
 }
