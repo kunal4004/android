@@ -86,12 +86,14 @@ public class CLIPhase2Activity extends AppCompatActivity {
 
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_i_n_e)) && offerActive) {
 			SupplyIncomeDetailFragment supplyIncomeDetailFragment = new SupplyIncomeDetailFragment();
+			supplyIncomeDetailFragment.setStepIndicatorListener(cliStepIndicatorListener);
 			openFragment(supplyIncomeDetailFragment);
 			return;
 		}
 
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_i_n_e)) && !offerActive) {
 			SupplyIncomeDetailFragment supplyIncomeDetailFragment = new SupplyIncomeDetailFragment();
+			supplyIncomeDetailFragment.setStepIndicatorListener(cliStepIndicatorListener);
 			openFragment(supplyIncomeDetailFragment);
 			return;
 		}
@@ -109,8 +111,9 @@ public class CLIPhase2Activity extends AppCompatActivity {
 		}
 
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_poi))) {
-			DocumentFragment supplyIncomeDetailFragment = new DocumentFragment();
-			openFragment(supplyIncomeDetailFragment);
+			DocumentFragment documentFragment = new DocumentFragment();
+			documentFragment.setStepIndicatorListener(cliStepIndicatorListener);
+			openFragment(documentFragment);
 			return;
 		}
 	}
