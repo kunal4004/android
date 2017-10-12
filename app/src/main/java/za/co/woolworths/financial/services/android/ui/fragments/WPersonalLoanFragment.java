@@ -69,7 +69,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private int minDrawnAmount;
 	public RelativeLayout mRelDrawnDownAmount, mRelFindOutMore, mRelIncreaseMyLimit;
 	private View view;
-	private LinearLayout llCommonLayer;
+	private LinearLayout llCommonLayer, llIncreaseLimitContainer;
 	private ImageView logoIncreaseLimit, iconDrawnDownAmount;
 	private OfferActive offerActive;
 	private IncreaseLimitController mIncreaseLimitController;
@@ -104,6 +104,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
 		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
 		iconDrawnDownAmount = (ImageView) view.findViewById(R.id.iconDrawnDownAmount);
+		llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
 
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout relViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
@@ -116,6 +117,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		relViewTransactions.setOnClickListener(this);
 		mRelFindOutMore.setOnClickListener(this);
 		mRelIncreaseMyLimit.setOnClickListener(this);
+		llIncreaseLimitContainer.setOnClickListener(this);
 
 		try {
 			networkChangeListener = this;
@@ -133,6 +135,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 		mIncreaseLimitController = new IncreaseLimitController(getActivity());
 		mIncreaseLimitController.showView(mRelDrawnDownAmount);
+		mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -218,7 +221,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				break;
 
 			case R.id.relIncreaseMyLimit:
-				mIncreaseLimitController.moveToCLIPhase(offerActive, productOfferingId);
+			case R.id.llIncreaseLimitContainer:
+				mIncreaseLimitController.nextStep(offerActive, productOfferingId);
 				break;
 
 			default:

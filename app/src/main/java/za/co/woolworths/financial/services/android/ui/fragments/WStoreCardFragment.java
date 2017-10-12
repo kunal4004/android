@@ -115,6 +115,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
 		iconDrawnDownAmount = (ImageView) view.findViewById(R.id.iconDrawnDownAmount);
 
+		mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
+
 		relBalanceProtection.setOnClickListener(this);
 		tvIncreaseLimit.setOnClickListener(this);
 		tvViewTransaction.setOnClickListener(this);
@@ -186,7 +188,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				break;
 
 			case R.id.relIncreaseMyLimit:
-				mIncreaseLimitController.moveToCLIPhase(offerActive, productOfferingId);
+			case R.id.llIncreaseLimitContainer:
+				mIncreaseLimitController.nextStep(offerActive, productOfferingId);
 				break;
 		}
 	}

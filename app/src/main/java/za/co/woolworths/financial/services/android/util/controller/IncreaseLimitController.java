@@ -22,6 +22,8 @@ import za.co.woolworths.financial.services.android.util.Utils;
 public class IncreaseLimitController {
 
 	private Context mContext;
+	private String nextStep;
+	private boolean offerActive;
 
 	public IncreaseLimitController() {
 	}
@@ -63,8 +65,8 @@ public class IncreaseLimitController {
 		String nextStep = cli.nextStep;
 		String messageSummary = cli.messageSummary;
 		String messageDetail = cli.messageDetail;
-
-		OfferStatus status = OfferStatus.UNAVAILABLE;
+		setNextStep(nextStep);
+		setOfferActive(offerActive.offerActive);
 		if (messageSummary.equalsIgnoreCase(getString(R.string.status_offer_available))) {
 			showView(logoIncreaseLimit);
 			hideView(llCommonLayer);
@@ -141,13 +143,11 @@ public class IncreaseLimitController {
 
 	public void moveToCLIPhase(OfferActive offerActive, String productOfferingId) {
 		AppCompatActivity activity = (AppCompatActivity) mContext;
-		if (!offerActive.offerActive) {
-			((WoolworthsApplication) activity.getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
-			Intent openCLIIncrease = new Intent(activity, CLIPhase2Activity.class);
-			openCLIIncrease.putExtra("jsonOfferActive", Utils.objectToJson(offerActive));
-			activity.startActivity(openCLIIncrease);
-			activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-		}
+		((WoolworthsApplication) activity.getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
+		Intent openCLIIncrease = new Intent(activity, CLIPhase2Activity.class);
+		openCLIIncrease.putExtra("jsonOfferActive", Utils.objectToJson(offerActive));
+		activity.startActivity(openCLIIncrease);
+		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 
 	private Offer getOffer(OfferActive offerActive) {
@@ -165,5 +165,67 @@ public class IncreaseLimitController {
 	public static void focusEditView(WEditTextView wEditText, Context context) {
 		wEditText.requestFocus();
 		IncreaseLimitController.showKeyboard(wEditText, context);
+	}
+
+	private String getNextStep() {
+		return nextStep;
+	}
+
+	private void setNextStep(String nextStep) {
+		this.nextStep = nextStep;
+	}
+
+	public boolean offerIsActive() {
+		return offerActive;
+	}
+
+	public void setOfferActive(boolean offerActive) {
+		this.offerActive = offerActive;
+	}
+
+	public void nextStep(OfferActive offerActive, String productOfferingId) {
+		String nextStep = getNextStep();
+		String messageSummary = offerActive.cli.messageSummary;
+		if (nextStep.equalsIgnoreCase("I&E") && offerIsActive()) {
+			moveToCLIPhase(offerActive, productOfferingId);
+			return;
+		}
+
+		if (nextStep.equalsIgnoreCase("I&E") && !offerIsActive()) {
+			moveToCLIPhase(offerActive, productOfferingId);
+			return;
+		}
+
+		if (nextStep.equalsIgnoreCase("Offer")) {
+			moveToCLIPhase(offerActive, productOfferingId);
+			return;
+		}
+
+		if (nextStep.equalsIgnoreCase("POI")
+				&& messageSummary.equalsIgnoreCase(getString(R.string.status_poi_required))) {
+			moveToCLIPhase(offerActive, productOfferingId);
+			return;
+		}
+
+		if (nextStep.equalsIgnoreCase("POI")
+				&& messageSummary.equalsIgnoreCase(getString(R.string.status_poi_problem))) {
+			moveToCLIPhase(offerActive, productOfferingId);
+			return;
+		}
+
+		if (nextStep.equalsIgnoreCase("Decline")) {
+			return;
+		}
+
+		if (nextStep.equalsIgnoreCase("contactUs")) {
+			return;
+		}
+	}
+
+	public void defaultIncreaseLimitView(ImageView logoIncreaseLimit, LinearLayout llCommonLayer, WTextView tvIncreaseLimit) {
+		showView(logoIncreaseLimit);
+		hideView(llCommonLayer);
+		String messageSummary = getString(R.string.increase_limit);
+		tvIncreaseLimit.setText(messageSummary);
 	}
 }
