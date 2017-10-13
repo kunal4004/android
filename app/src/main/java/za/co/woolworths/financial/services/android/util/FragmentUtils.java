@@ -45,7 +45,7 @@ public class FragmentUtils {
 	public void nextBottomUpFragment(AppCompatActivity activity, FragmentTransaction fragmentTransaction, Fragment fragment, int fragmentId) {
 		FragmentManager fragmentManager = activity.getSupportFragmentManager();
 		fragmentTransaction
-				.setCustomAnimations(R.anim.stay, R.anim.slide_up_anim)
+				.setCustomAnimations(R.anim.stay, R.anim.slide_up, 0, 0)
 				.replace(fragmentId, fragment).addToBackStack(fragment.getClass().getSimpleName()).commit();
 		fragmentManager.executePendingTransactions();
 	}

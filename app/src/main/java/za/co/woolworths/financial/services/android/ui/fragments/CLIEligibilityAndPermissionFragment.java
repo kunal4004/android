@@ -14,8 +14,10 @@ import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,11 +33,9 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 	private boolean isEligible;
 	private boolean isPermitted;
 
-
 	public CLIEligibilityAndPermissionFragment() {
 		// Required empty public constructor
 	}
-
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,6 +65,7 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 				eligibilityYes.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
 				eligibilityYes.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
 				permissionView.setVisibility(View.GONE);
+				Utils.displayValidationMessage(CLIEligibilityAndPermissionFragment.this.getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.CONFIDENTIAL, "");
 				break;
 			case R.id.eligibilityNo:
 				eligibilityYes.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
@@ -87,6 +88,9 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 						new CLIAllStepsContainerFragment(), R.id.cliMainFrame);
 				break;
 			case R.id.permissionNo:
+				permissionNo.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
+				permissionNo.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+				Utils.displayValidationMessage(CLIEligibilityAndPermissionFragment.this.getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.CONFIDENTIAL, "");
 				break;
 			default:
 				break;
