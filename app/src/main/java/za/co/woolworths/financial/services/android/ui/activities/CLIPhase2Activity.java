@@ -49,7 +49,7 @@ public class CLIPhase2Activity extends AppCompatActivity {
 			mOfferActive = mBundle.getBoolean("OFFER_IS_ACTIVE");
 			createOfferResponse = offerActiveObject();
 			mNextStep = createOfferResponse.cli.nextStep;
-			//mNextStep = "Consents";
+			mNextStep = "Consents";
 			loadFragment(mNextStep);
 		}
 	}
@@ -81,7 +81,8 @@ public class CLIPhase2Activity extends AppCompatActivity {
 		IncreaseLimitController increaseLimitController = new IncreaseLimitController(CLIPhase2Activity.this);
 		Bundle offerBundle = new Bundle();
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
-			CLIEligibilityAndPermissionFragment cLIEligibilityAndPermissionFragment = new CLIEligibilityAndPermissionFragment();
+			SupplyIncomeDetailFragment cLIEligibilityAndPermissionFragment = new SupplyIncomeDetailFragment();
+			cLIEligibilityAndPermissionFragment.setStepIndicatorListener(cliStepIndicatorListener);
 			openFragment(cLIEligibilityAndPermissionFragment);
 			return;
 		}
