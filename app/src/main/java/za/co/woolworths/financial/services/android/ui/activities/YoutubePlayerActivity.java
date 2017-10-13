@@ -13,7 +13,7 @@ import com.google.android.youtube.player.YouTubePlayerView;
 
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class YoutubePlayer extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
+public class YoutubePlayerActivity extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
 
 	private static final int RECOVERY_REQUEST = 1;
 	private YouTubePlayerView youTubeView;
