@@ -399,8 +399,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			public void onSuccess(Object object) {
 				mObjOffer = ((CreateOfferResponse) object);
 				onDeclineComplete();
-				getActivity().finish();
-				getActivity().overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+				finishActivity();
 			}
 
 			@Override
@@ -444,5 +443,10 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		super.onDetach();
 		if (mDeclineOfferBroadCast != null)
 			OfferCalculationFragment.this.getActivity().unregisterReceiver(mDeclineOfferBroadCast);
+	}
+
+	public void finishActivity() {
+		getActivity().finish();
+		getActivity().overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
 }

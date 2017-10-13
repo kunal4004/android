@@ -2,14 +2,16 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,13 +34,15 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class SupplyExpensesDetailFragment extends CLIFragment implements View.OnClickListener {
+public class SupplyExpensesDetailFragment extends CLIFragment implements View.OnClickListener, View.OnFocusChangeListener {
 	private View rootView;
-	private HashMap<String, String> mHashIncomeDetail;
+	private HashMap<String, String> mHashIncomeDetail, mHashExpenseDetail;
 	private WTextView tvMortgagePayments, tvRentalPayments, tvMaintainanceExpenses, tvMonthlyCreditPayments, tvOtherExpenses;
 	private WEditTextView etMortgagePayments, etRentalPayments, etMaintainanceExpenses, etMonthlyCreditPayments, etOtherExpenses;
 	private boolean etMortgagePaymentsWasEdited, etRentalPaymentsWasEdited, etMaintainanceExpensesWasEdited, etMonthlyCreditPaymentsWasEdited, etOtherExpensesWasEdited;
 	private LinearLayout llNextButtonLayout, llMortgagePayment, llRentalPayment, llMaintainanceExpenses, llMonthlyCreditPayments, llOtherExpensesContainer;
+	private CLIPhase2Activity mCliPhase2Activity;
+	private NestedScrollView nsSupplyExpense;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (rootView == null) {
@@ -53,10 +57,29 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 		Bundle b = this.getArguments();
 		if (b.getSerializable(IncreaseLimitController.INCOME_DETAILS) != null) {
 			mHashIncomeDetail = (HashMap<String, String>) b.getSerializable(IncreaseLimitController.INCOME_DETAILS);
+			mHashExpenseDetail = (HashMap<String, String>) b.getSerializable(IncreaseLimitController.EXPENSE_DETAILS);
 		}
 		init(view);
 		nextFocusEditText();
 		cliStepIndicatorListener.onStepSelected(2);
+		if (mHashExpenseDetail != null) {
+			etMortgagePayments.setText(mHashExpenseDetail.get("MORTGAGE_PAYMENTS"));
+			etRentalPayments.setText(mHashExpenseDetail.get("RENTAL_PAYMENTS"));
+			etMaintainanceExpenses.setText(mHashExpenseDetail.get("MAINTENANCE_EXPENSES"));
+			etMonthlyCreditPayments.setText(mHashExpenseDetail.get("MONTHLY_CREDIT_EXPENSES"));
+			etOtherExpenses.setText(mHashExpenseDetail.get("OTHER_EXPENSES"));
+			llMortgagePayment.performClick();
+			llRentalPayment.performClick();
+			llMaintainanceExpenses.performClick();
+			llMonthlyCreditPayments.performClick();
+			llOtherExpensesContainer.performClick();
+			etMortgagePayments.clearFocus();
+			etRentalPayments.clearFocus();
+			etMaintainanceExpenses.clearFocus();
+			etMonthlyCreditPayments.clearFocus();
+			etOtherExpenses.clearFocus();
+			getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		}
 	}
 
 	private void init(View view) {
@@ -70,6 +93,8 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 		llMonthlyCreditPayments = (LinearLayout) view.findViewById(R.id.llMonthlyCreditPayments);
 		llNextButtonLayout = (LinearLayout) view.findViewById(R.id.llNextButtonLayout);
 		llOtherExpensesContainer = (LinearLayout) view.findViewById(R.id.llOtherExpensesContainer);
+
+		nsSupplyExpense = (NestedScrollView) view.findViewById(R.id.nsSupplyExpense);
 
 		llMortgagePayment.setOnClickListener(this);
 		llRentalPayment.setOnClickListener(this);
@@ -95,6 +120,13 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 		etMaintainanceExpenses.addTextChangedListener(new GenericTextWatcher(etMaintainanceExpenses));
 		etMonthlyCreditPayments.addTextChangedListener(new GenericTextWatcher(etMonthlyCreditPayments));
 		etOtherExpenses.addTextChangedListener(new GenericTextWatcher(etOtherExpenses));
+
+		etMortgagePayments.setOnFocusChangeListener(this);
+		etRentalPayments.setOnFocusChangeListener(this);
+		etMaintainanceExpenses.setOnFocusChangeListener(this);
+		etMonthlyCreditPayments.setOnFocusChangeListener(this);
+		etOtherExpenses.setOnFocusChangeListener(this);
+
 
 		tvMortgagePayments = (WTextView) view.findViewById(R.id.tvMortgagePayments);
 		tvRentalPayments = (WTextView) view.findViewById(R.id.tvRentalPayments);
@@ -166,6 +198,20 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 				fragmentUtils.nextBottomUpFragment((AppCompatActivity) SupplyExpensesDetailFragment.this.getActivity()
 						, getFragmentManager().beginTransaction(), ocFragment, R.id.cli_steps_container);
 				break;
+		}
+	}
+
+	@Override
+	public void onFocusChange(View v, boolean hasFocus) {
+		if (hasFocus) {
+			if (etOtherExpenses.hasFocus()) {
+				Log.e("otherExpense", "etOtherExpenses");
+				nsSupplyExpense.post(new Runnable() {
+					@Override
+					public void run() {
+					}
+				});
+			}
 		}
 	}
 

@@ -23,9 +23,9 @@ public class FragmentUtils {
 
 	public void currentFragment(AppCompatActivity activity, FragmentManager fm, Fragment newFragment, int fragmentId) {
 		FragmentManager fragmentManager = activity.getSupportFragmentManager();
-		fm.beginTransaction().replace(fragmentId, newFragment).commit();
-		fragmentManager.beginTransaction();
+		fragmentManager.beginTransaction().replace(fragmentId, newFragment).commit();
 	}
+
 
 	public void nextFragment(AppCompatActivity activity, FragmentTransaction fragmentTransaction, Fragment fragment, int fragmentId) {
 		FragmentManager fragmentManager = activity.getSupportFragmentManager();

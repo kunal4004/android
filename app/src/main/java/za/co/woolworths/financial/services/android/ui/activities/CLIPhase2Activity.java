@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -31,7 +32,7 @@ public class CLIPhase2Activity extends AppCompatActivity {
 	private ProgressBar pbDecline;
 	private CreateOfferResponse createOfferResponse;
 	private String mOfferActivePayload;
-	private boolean mOfferActive;
+	private boolean mOfferActive, mCloseButtonEnabled;
 	private String mNextStep;
 
 	@Override
@@ -85,8 +86,13 @@ public class CLIPhase2Activity extends AppCompatActivity {
 		}
 
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_i_n_e)) && offerActive) {
+			HashMap<String, String> incomeHashMap = increaseLimitController.incomeHashMap(createOfferResponse);
+			HashMap<String, String> expenseHashMap = increaseLimitController.expenseHashMap(createOfferResponse);
 			SupplyIncomeDetailFragment supplyIncomeDetailFragment = new SupplyIncomeDetailFragment();
+			offerBundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, incomeHashMap);
+			offerBundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, expenseHashMap);
 			supplyIncomeDetailFragment.setStepIndicatorListener(cliStepIndicatorListener);
+			supplyIncomeDetailFragment.setArguments(offerBundle);
 			openFragment(supplyIncomeDetailFragment);
 			return;
 		}
@@ -120,19 +126,29 @@ public class CLIPhase2Activity extends AppCompatActivity {
 
 	@Override
 	public void onBackPressed() {
-		if (getFragmentManager().getBackStackEntryCount() > 0) {
-			getFragmentManager().popBackStack();
+		onBack();
+	}
+
+	private void onBack() {
+		if (closeButtonEnabled()) {
+			finishActivity();
 		} else {
-			super.onBackPressed();
+			if (getFragmentManager().getBackStackEntryCount() > 0) {
+				getFragmentManager().popBackStack();
+				overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+			} else {
+				finishActivity();
+			}
 		}
-		overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 	}
 
 	public void actionBarCloseIcon() {
+		setCloseButtonEnabled(true);
 		getSupportActionBar().setHomeAsUpIndicator(R.drawable.close_24);
 	}
 
 	public void actionBarBackIcon() {
+		setCloseButtonEnabled(false);
 		getSupportActionBar().setHomeAsUpIndicator(R.drawable.back24);
 	}
 
@@ -173,4 +189,28 @@ public class CLIPhase2Activity extends AppCompatActivity {
 		CLIAllStepsContainerFragment cliAllStepsContainerFragment = new CLIAllStepsContainerFragment();
 		openNextFragment(cliAllStepsContainerFragment);
 	}
+
+	public boolean closeButtonEnabled() {
+		return mCloseButtonEnabled;
+	}
+
+	public void setCloseButtonEnabled(boolean mCloseButtonEnabled) {
+		this.mCloseButtonEnabled = mCloseButtonEnabled;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case android.R.id.home:
+				onBack();
+				return true;
+		}
+		return false;
+	}
+
+	public void finishActivity() {
+		finish();
+		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+	}
+
 }

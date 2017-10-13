@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,6 +21,7 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
@@ -39,6 +41,8 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 	private LinearLayout llNextButtonLayout, llGrossMonthlyIncomeLayout, llNetMonthlyIncomeLayout, llAdditionalMonthlyIncomeLayout;
 	private WButton btnContinue;
 	private View rootView;
+	private CLIPhase2Activity mCliPhase2Activity;
+	private HashMap<String, String> hmExpenseDetail;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (rootView == null) {
@@ -53,9 +57,28 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 		init(view);
 		nextFocusEditText();
 		cliStepIndicatorListener.onStepSelected(1);
+		Bundle b = this.getArguments();
+		if (b != null) {
+			HashMap<String, String> mHashIncomeDetail = (HashMap<String, String>) b.getSerializable(IncreaseLimitController.INCOME_DETAILS);
+			hmExpenseDetail = (HashMap<String, String>) b.getSerializable(IncreaseLimitController.EXPENSE_DETAILS);
+
+			etGrossMonthlyIncome.setText(mHashIncomeDetail.get("GROSS_MONTHLY_INCOME"));
+			etNetMonthlyIncome.setText(mHashIncomeDetail.get("NET_MONTHLY_INCOME"));
+			etAdditionalMonthlyIncome.setText(mHashIncomeDetail.get("ADDITIONAL_MONTHLY_INCOME"));
+			llGrossMonthlyIncomeLayout.performClick();
+			llNetMonthlyIncomeLayout.performClick();
+			llAdditionalMonthlyIncomeLayout.performClick();
+			etGrossMonthlyIncome.clearFocus();
+			etNetMonthlyIncome.clearFocus();
+			etAdditionalMonthlyIncome.clearFocus();
+		}
+		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
 
 	private void init(View view) {
+
+		mCliPhase2Activity = (CLIPhase2Activity) getActivity();
+		mCliPhase2Activity.actionBarBackIcon();
 
 		llGrossMonthlyIncomeLayout = (LinearLayout) view.findViewById(R.id.llGrossMonthlyIncomeLayout);
 		llNetMonthlyIncomeLayout = (LinearLayout) view.findViewById(R.id.llNetMonthlyIncomeLayout);
@@ -165,9 +188,10 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 			case R.id.btnContinue:
 			case R.id.llNextButtonLayout:
 				IncreaseLimitController increaseLimitController = new IncreaseLimitController(getActivity());
-				HashMap<String, String> hmExpenseMap = increaseLimitController.incomeHashMap(etGrossMonthlyIncome, etNetMonthlyIncome, etAdditionalMonthlyIncome);
+				HashMap<String, String> hmIncomeDetail = increaseLimitController.incomeHashMap(etGrossMonthlyIncome, etNetMonthlyIncome, etAdditionalMonthlyIncome);
 				Bundle bundle = new Bundle();
-				bundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, hmExpenseMap);
+				bundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, hmIncomeDetail);
+				bundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, hmExpenseDetail);
 				SupplyExpensesDetailFragment supplyExpensesDetailFragment = new SupplyExpensesDetailFragment();
 				supplyExpensesDetailFragment.setArguments(bundle);
 				supplyExpensesDetailFragment.setStepIndicatorListener(cliStepIndicatorListener);

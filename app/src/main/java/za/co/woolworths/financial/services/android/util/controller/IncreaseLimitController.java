@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.util.controller;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -54,6 +55,15 @@ public class IncreaseLimitController {
 				context.getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(
 				wEditTextView.getWindowToken(), 0);
+	}
+
+	public static void hideSoftKeyboard(Activity activity) {
+		// Check if no view has focus:
+		View view = activity.getCurrentFocus();
+		if (view != null) {
+			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+		}
 	}
 
 	public static String removeNonDigit(WEditTextView view) {
@@ -193,40 +203,10 @@ public class IncreaseLimitController {
 
 	public void nextStep(OfferActive offerActive, String productOfferingId) {
 		String nextStep = getNextStep();
-		String messageSummary = offerActive.cli.messageSummary;
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_i_n_e)) && offerIsActive()) {
+		if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
 			moveToCLIPhase(offerActive, productOfferingId);
-			return;
-		}
-
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_i_n_e)) && !offerIsActive()) {
+		} else {
 			moveToCLIPhase(offerActive, productOfferingId);
-			return;
-		}
-
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_offer))) {
-			moveToCLIPhase(offerActive, productOfferingId);
-			return;
-		}
-
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_poi))
-				&& messageSummary.equalsIgnoreCase(getString(R.string.status_poi_required))) {
-			moveToCLIPhase(offerActive, productOfferingId);
-			return;
-		}
-
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_poi))
-				&& messageSummary.equalsIgnoreCase(getString(R.string.status_poi_problem))) {
-			moveToCLIPhase(offerActive, productOfferingId);
-			return;
-		}
-
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_decline))) {
-			return;
-		}
-
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_contact_us))) {
-			return;
 		}
 	}
 

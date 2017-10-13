@@ -13,25 +13,29 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/white"
+        android:contentInsetEnd="0dp"
+        android:contentInsetLeft="0dp"
+        android:contentInsetRight="0dp"
         android:contentInsetStart="0dp"
         app:contentInsetEnd="0dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetRight="0dp"
         app:contentInsetStart="0dp">
 
         <RelativeLayout
-            android:id="@+id/relToolbarContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1.17"
-            android:gravity="center">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/toolbarText"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_toStartOf="@+id/flDecline"
+                android:gravity="center|center_vertical"
                 android:letterSpacing="0.2"
+                android:paddingEnd="@dimen/bank_spacing_width"
                 android:text="@string/cli_activity_title"
                 android:textAllCaps="true"
                 android:textColor="@color/black"
@@ -39,18 +43,17 @@
                 app:WTextView_font="medium_bold"/>
 
             <FrameLayout
-                android:id="@+id/frameLayout"
+                android:id="@+id/flDecline"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
-                android:layout_gravity="center_vertical|center_horizontal|end"
+                android:layout_marginEnd="@dimen/default_margin"
                 >
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/tvDeclineOffer"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginEnd="@dimen/default_margin"
                     android:gravity="center"
                     android:letterSpacing="0.1"
                     android:text="@string/decline"
@@ -69,7 +72,6 @@
             </FrameLayout>
 
         </RelativeLayout>
-
     </android.support.v7.widget.Toolbar>
 
     <FrameLayout

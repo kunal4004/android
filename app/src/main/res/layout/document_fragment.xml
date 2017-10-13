@@ -41,28 +41,20 @@
                     style="@style/cli_supply_detail_text"
                     android:text="@string/cli_select_your_bank"/>
 
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/relSelectYourBankSpin"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rclSelectYourBank"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:nestedScrollingEnabled="false"/>
-
                 <ProgressBar
                     android:id="@+id/pbDeaBank"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_alignParentEnd="true"
                     />
 
             </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rclSelectYourBank"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="false"/>
 
             <LinearLayout
                 android:id="@+id/bankTypeConfirmationLayout"

@@ -35,7 +35,6 @@ import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CLIIncreaseLimitInfoActivity;
 import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
-import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -81,6 +80,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		if (view == null) {
 			view = inflater.inflate(R.layout.card_common_fragment, container, false);
+			mIncreaseLimitController = new IncreaseLimitController(getActivity());
 		}
 		return view;
 	}
@@ -135,7 +135,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		if (temp != null)
 			bindData(temp);
 
-		mIncreaseLimitController = new IncreaseLimitController(getActivity());
 		mIncreaseLimitController.showView(mRelDrawnDownAmount);
 		mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
 	}

@@ -86,6 +86,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		if (view == null) {
 			view = inflater.inflate(R.layout.card_common_fragment, container, false);
+			mIncreaseLimitController = new IncreaseLimitController(getActivity());
 		}
 		return view;
 	}
@@ -95,7 +96,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		super.onViewCreated(view, savedInstanceState);
 
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-		mIncreaseLimitController = new IncreaseLimitController(getActivity());
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
 		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
 		dueDate = (WTextView) view.findViewById(R.id.dueDate);

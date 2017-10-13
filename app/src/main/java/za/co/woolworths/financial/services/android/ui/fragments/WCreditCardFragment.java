@@ -74,6 +74,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		if (view == null) {
 			view = inflater.inflate(R.layout.card_common_fragment, container, false);
+			mIncreaseLimitController = new IncreaseLimitController(getActivity());
 		}
 		return view;
 	}
@@ -82,7 +83,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-		mIncreaseLimitController = new IncreaseLimitController(getActivity());
 		init(view);
 		addListener();
 		setAccountDetail();

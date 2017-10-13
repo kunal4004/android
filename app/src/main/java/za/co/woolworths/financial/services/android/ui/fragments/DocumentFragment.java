@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetBankAccountTypes;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetDeaBank;
+import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentsAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.POIDocumentSubmitTypeAdapter;
@@ -43,7 +45,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener,DocumentsAccountTypeAdapter.OnAccountTypeClick ,View.OnClickListener,POIDocumentSubmitTypeAdapter.OnSubmitType,TextWatcher{
+public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener, DocumentsAccountTypeAdapter.OnAccountTypeClick, View.OnClickListener, POIDocumentSubmitTypeAdapter.OnSubmitType, TextWatcher {
 
 	private RecyclerView rclSelectYourBank;
 	private List<Bank> deaBankList;
@@ -63,11 +65,12 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private WTextView yesPOIFromBank;
 	private WTextView noPOIFromBank;
 	private RecyclerView rclPOIDocuments;
-	private String otherBank="Other";
+	private String otherBank = "Other";
 	private DocumentsAccountTypeAdapter accountTypeAdapter;
 	private POIDocumentSubmitTypeAdapter documentSubmitTypeAdapter;
 	private WEditTextView etAccountNumber;
 	private LinearLayout llAccountNumberLayout;
+	private CLIPhase2Activity mCliPhase2Activity;
 
 	public DocumentFragment() {
 		// Required empty public constructor
@@ -87,6 +90,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		connectionBroadcast();
+		mCliPhase2Activity = (CLIPhase2Activity) getActivity();
+		mCliPhase2Activity.actionBarCloseIcon();
 		init(view);
 		onLoad();
 		cliDeaBankRequest();
@@ -137,9 +142,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		cliGetDeaBank.execute();
 	}
 
-	private void cliBankAccountTypeRequest()
-	{
-		CLIGetBankAccountTypes cliGetBankAccountTypes=new CLIGetBankAccountTypes(getActivity(), new OnEventListener() {
+	private void cliBankAccountTypeRequest() {
+		CLIGetBankAccountTypes cliGetBankAccountTypes = new CLIGetBankAccountTypes(getActivity(), new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				bankAccountTypes = ((BankAccountTypes) object).bankAccountTypes;
@@ -159,16 +163,16 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		rclAccountType = (RecyclerView) view.findViewById(R.id.rclSelectAccountType);
 		rclPOIDocuments = (RecyclerView) view.findViewById(R.id.rclPOIDocuments);
 		pbDeaBank = (ProgressBar) view.findViewById(R.id.pbDeaBank);
-		nestedScrollView=(NestedScrollView)view.findViewById(R.id.nested_scrollview);
-		bankTypeConfirmationLayout=(LinearLayout)view.findViewById(R.id.bankTypeConfirmationLayout);
-		accountTypeLayout=(LinearLayout)view.findViewById(R.id.accountTypeLayout);
-		accountNumberLayout=(LinearLayout)view.findViewById(R.id.accountNumberLayout);
-		poiDocumentSubmitTypeLayout=(LinearLayout) view.findViewById(R.id.poiDocumentSubmitTypeLayout);
+		nestedScrollView = (NestedScrollView) view.findViewById(R.id.nested_scrollview);
+		bankTypeConfirmationLayout = (LinearLayout) view.findViewById(R.id.bankTypeConfirmationLayout);
+		accountTypeLayout = (LinearLayout) view.findViewById(R.id.accountTypeLayout);
+		accountNumberLayout = (LinearLayout) view.findViewById(R.id.accountNumberLayout);
+		poiDocumentSubmitTypeLayout = (LinearLayout) view.findViewById(R.id.poiDocumentSubmitTypeLayout);
 		yesPOIFromBank = (WTextView) view.findViewById(R.id.yesPOIFromBank);
 		noPOIFromBank = (WTextView) view.findViewById(R.id.noPOIFromBank);
-		btnSubmit=(WTextView)view.findViewById(R.id.submitCLI);
-		etAccountNumber=(WEditTextView)view.findViewById(R.id.etAccountNumber);
-		llAccountNumberLayout=(LinearLayout)view.findViewById(R.id.llAccountNumberLayout);
+		btnSubmit = (WTextView) view.findViewById(R.id.submitCLI);
+		etAccountNumber = (WEditTextView) view.findViewById(R.id.etAccountNumber);
+		llAccountNumberLayout = (LinearLayout) view.findViewById(R.id.llAccountNumberLayout);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
 		yesPOIFromBank.setOnClickListener(this);
 		noPOIFromBank.setOnClickListener(this);
@@ -184,19 +188,18 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		rclSelectYourBank.setAdapter(documentAdapter);
 	}
 
-	private void loadBankAccountTypesView(List<BankAccountType> accountTypes)
-	{
+	private void loadBankAccountTypesView(List<BankAccountType> accountTypes) {
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-		accountTypeAdapter =new DocumentsAccountTypeAdapter(accountTypes,this);
+		accountTypeAdapter = new DocumentsAccountTypeAdapter(accountTypes, this);
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		rclAccountType.setLayoutManager(mLayoutManager);
 		rclAccountType.setAdapter(accountTypeAdapter);
 
 	}
 
-	private void loadPOIDocumentsSubmitTypeView(){
+	private void loadPOIDocumentsSubmitTypeView() {
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-		documentSubmitTypeAdapter=new POIDocumentSubmitTypeAdapter(this);
+		documentSubmitTypeAdapter = new POIDocumentSubmitTypeAdapter(this);
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		rclPOIDocuments.setLayoutManager(mLayoutManager);
 		rclPOIDocuments.setAdapter(documentSubmitTypeAdapter);
@@ -217,6 +220,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		}
 
 	}
+
 	@Override
 	public void onAccountTypeClick(View view, int position) {
 		scrollUpAccountNumberLayout();
@@ -260,12 +264,11 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	private void progressColorFilter(ProgressBar progressBar, int color) {
-		progressBar.setIndeterminate(true);
 		progressBar.getIndeterminateDrawable().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 	}
 
 	private void hideView(View v) {
-		if(v.getVisibility()==View.VISIBLE)
+		if (v.getVisibility() == View.VISIBLE)
 			v.setVisibility(View.GONE);
 	}
 
@@ -291,7 +294,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				yesPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
 				hideView(poiDocumentSubmitTypeLayout);
 				hideView(btnSubmit);
-				if(documentSubmitTypeAdapter!=null)
+				if (documentSubmitTypeAdapter != null)
 					documentSubmitTypeAdapter.clearSelection();
 				scrollUpAccountTypeSelectionLayout();
 				break;
@@ -303,18 +306,18 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				resetAccountNumberView();
 				hideView(accountTypeLayout);
 				hideView(accountNumberLayout);
-				if(accountTypeAdapter!=null)
+				if (accountTypeAdapter != null)
 					accountTypeAdapter.clearSelection();
 				scrollUpDocumentSubmitTypeLayout();
 				break;
 			case R.id.llAccountNumberLayout:
-				IncreaseLimitController.focusEditView(etAccountNumber,getActivity());
+				IncreaseLimitController.focusEditView(etAccountNumber, getActivity());
 				break;
 
 		}
 	}
 
-	public void scrollUpAccountTypeSelectionLayout(){
+	public void scrollUpAccountTypeSelectionLayout() {
 		accountTypeLayout.setVisibility(View.VISIBLE);
 		nestedScrollView.post(new Runnable() {
 			@Override
@@ -324,7 +327,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		});
 	}
 
-	public void scrollUpConfirmationFroPOIFromBankLayout(){
+	public void scrollUpConfirmationFroPOIFromBankLayout() {
 		bankTypeConfirmationLayout.setVisibility(View.VISIBLE);
 		nestedScrollView.post(new Runnable() {
 			@Override
@@ -333,7 +336,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			}
 		});
 	}
-	public void scrollUpDocumentSubmitTypeLayout(){
+
+	public void scrollUpDocumentSubmitTypeLayout() {
 		poiDocumentSubmitTypeLayout.setVisibility(View.VISIBLE);
 		nestedScrollView.post(new Runnable() {
 			@Override
@@ -343,7 +347,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		});
 	}
 
-	public void scrollUpAccountNumberLayout(){
+	public void scrollUpAccountNumberLayout() {
 		resetAccountNumberView();
 		accountNumberLayout.setVisibility(View.VISIBLE);
 		nestedScrollView.post(new Runnable() {
@@ -354,8 +358,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		});
 	}
 
-	public void invalidateBankTypeSelection()
-	{
+	public void invalidateBankTypeSelection() {
 		yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
 		yesPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
 		noPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
@@ -364,14 +367,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		hideView(accountNumberLayout);
 		hideView(btnSubmit);
 		resetAccountNumberView();
-		if(accountTypeAdapter !=null)
+		if (accountTypeAdapter != null)
 			accountTypeAdapter.clearSelection();
-		if(documentSubmitTypeAdapter !=null)
+		if (documentSubmitTypeAdapter != null)
 			documentSubmitTypeAdapter.clearSelection();
 	}
 
-	public void showSubmitButton()
-	{
+	public void showSubmitButton() {
 		btnSubmit.setVisibility(View.VISIBLE);
 		nestedScrollView.post(new Runnable() {
 
@@ -383,8 +385,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		});
 	}
 
-	public void resetAccountNumberView()
-	{
+	public void resetAccountNumberView() {
 		etAccountNumber.getText().clear();
 		hideView(btnSubmit);
 	}
@@ -402,7 +403,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	@Override
 	public void afterTextChanged(Editable editable) {
-		if (IncreaseLimitController.editTextLength(etAccountNumber.getText().toString()) && btnSubmit.getVisibility()==View.GONE)
+		if (IncreaseLimitController.editTextLength(etAccountNumber.getText().toString()) && btnSubmit.getVisibility() == View.GONE)
 			showSubmitButton();
 		else if (!IncreaseLimitController.editTextLength(etAccountNumber.getText().toString()))
 			hideView(btnSubmit);

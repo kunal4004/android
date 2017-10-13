@@ -7,9 +7,11 @@
     android:clickable="true">
 
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nsSupplyExpense"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/ten_dp"
+        android:descendantFocusability="beforeDescendants"
         android:scrollbars="none">
 
         <LinearLayout
@@ -26,6 +28,7 @@
                 <ImageView
                     android:id="@+id/imInfo"
                     style="@style/increase_limit_info_circle"
+                    android:alpha="0.4"
                     android:contentDescription="@string/app_name"/>
 
             </RelativeLayout>
