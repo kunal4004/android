@@ -49,7 +49,7 @@ public class CLIPhase2Activity extends AppCompatActivity {
 			mOfferActive = mBundle.getBoolean("OFFER_IS_ACTIVE");
 			createOfferResponse = offerActiveObject();
 			mNextStep = createOfferResponse.cli.nextStep;
-			mNextStep = "Consents";
+//			mNextStep = "Consents";
 			loadFragment(mNextStep);
 		}
 	}

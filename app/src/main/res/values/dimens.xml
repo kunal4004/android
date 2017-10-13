@@ -127,6 +127,7 @@
     <dimen name="twenty_three_dp">23dp</dimen>
     <dimen name="sixteen_dp">16dp</dimen>
     <dimen name="twenty_six_dp">26dp</dimen>
+    <dimen name="twenty_eight_dp">28dp</dimen>
 
 </resources>
 

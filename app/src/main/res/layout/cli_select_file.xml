@@ -29,19 +29,41 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"/>
 
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvSelectFromGallery"
+                style="@style/select_from_drive_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.05"
+                android:text="@string/select_from_gallery"
+                />
+
+            <View style="@style/bottom_line"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvSelectFromDrive"
+                style="@style/select_from_drive_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.08"
+                android:text="@string/select_from_drive"
+                />
+
             <View style="@style/bottom_line"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
                 android:id="@+id/btnLoanHighOk"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/twenty_seven_dp"
+                android:layout_marginTop="@dimen/twenty_eight_dp"
                 android:background="@color/white"
                 android:gravity="center"
                 android:letterSpacing="0.2"
-                android:text="@string/cli_got_it"
+                android:text="@string/cancel"
                 android:textSize="12sp"
-                app:WButton_font="medium_bold"/>
+                app:WButton_font="medium"/>
 
         </LinearLayout>
     </RelativeLayout>

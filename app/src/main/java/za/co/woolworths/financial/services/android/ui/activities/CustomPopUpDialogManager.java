@@ -44,7 +44,7 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
 		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
-		CLI_DANGER_ACTION_MESSAGE_VALIDATION
+		CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE
 	}
 
 	VALIDATION_MESSAGE_LIST current_view;
@@ -214,8 +214,6 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				if (description != null && TextUtils.isEmpty(description)) {
 					mTextProofIncome.setText(getString(R.string.loan_request_low_desc).replace
 							("R1 500.00", WFormatter.formatAmount(description)));
-
-
 				}
 				setAnimation();
 				mLowLoanAmount.setOnClickListener(this);
@@ -349,6 +347,15 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				btnConfirmDecline.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
+
+			case SELECT_FROM_DRIVE:
+				setContentView(R.layout.cli_select_file);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				setAnimation();
+				mRelPopContainer.setOnClickListener(this);
+				break;
+
 
 			default:
 				break;

@@ -752,6 +752,8 @@
     <string name="status_consents">Consents</string>
     <string name="status_decline">Decline</string>
     <string name="status_contact_us">contactUs</string>
+    <string name="select_from_gallery">select from gallery</string>
+    <string name="select_from_drive">import file from drive</string>
 
 
 </resources>

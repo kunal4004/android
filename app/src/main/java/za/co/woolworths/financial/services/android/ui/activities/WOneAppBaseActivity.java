@@ -102,7 +102,9 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 			displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 		}
 
-		initGetVouchersCall();
+//		Intent openSelectDrive = new Intent(this, SelectFromDriveActivity.class);
+//		startActivity(openSelectDrive);
+//		overridePendingTransition(0, 0);
 	}
 
 	@Override

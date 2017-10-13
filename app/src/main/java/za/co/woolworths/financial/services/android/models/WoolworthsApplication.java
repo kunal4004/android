@@ -24,6 +24,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.ui.activities.YoutubePlayerActivity;
 
 
 public class WoolworthsApplication extends Application {
@@ -214,11 +215,13 @@ public class WoolworthsApplication extends Application {
 
 			@Override
 			public void onActivityCreated(Activity activity,
-			                              Bundle savedInstanceState) {
+										  Bundle savedInstanceState) {
 
 				// new activity created; force its orientation to portrait
-				activity.setRequestedOrientation(
-						ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				if (!(activity instanceof YoutubePlayerActivity)) {
+					activity.setRequestedOrientation(
+							ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				}
 
 			}
 

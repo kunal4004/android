@@ -28,6 +28,7 @@ public class IncreaseLimitController {
 
 	public static final String INCOME_DETAILS = "INCOME_DETAILS";
 	public static final String EXPENSE_DETAILS = "EXPENSE_DETAILS";
+	public static final String YOUTUBE_API_KEY = "AIzaSyB2o1ArKC7pf8lixwPNG98obPsdp5-UZZM";
 
 	private Context mContext;
 	private String nextStep;
