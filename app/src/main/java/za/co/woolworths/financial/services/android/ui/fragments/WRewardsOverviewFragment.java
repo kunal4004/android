@@ -61,6 +61,8 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 	private AnimatorSet mSetRightOut;
 	private AnimatorSet mSetLeftIn;
 	private boolean mIsBackVisible = false;
+	private boolean isStarted=false;
+
 
 	@Nullable
 	@Override
@@ -237,5 +239,23 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 			mSetLeftIn.start();
 			mIsBackVisible = false;
 		}
+	}
+
+	@Override
+	public void setUserVisibleHint(boolean isVisibleToUser) {
+		super.setUserVisibleHint(isVisibleToUser);
+		if (isStarted) {
+			if(isVisibleToUser && voucherResponse.tierInfo!=null && !mIsBackVisible )
+			{
+				flipCard();
+			}
+		}
+
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		isStarted=true;
 	}
 }
