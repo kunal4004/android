@@ -13,7 +13,7 @@ import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 
-public class WLoanEditTextView extends EditText {
+public class WLoanEditTextView extends WEditTextView {
 
     public interface OnKeyPreImeListener {
         void onBackPressed();

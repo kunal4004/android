@@ -61,7 +61,6 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 		if (b != null) {
 			HashMap<String, String> mHashIncomeDetail = (HashMap<String, String>) b.getSerializable(IncreaseLimitController.INCOME_DETAILS);
 			hmExpenseDetail = (HashMap<String, String>) b.getSerializable(IncreaseLimitController.EXPENSE_DETAILS);
-
 			etGrossMonthlyIncome.setText(mHashIncomeDetail.get("GROSS_MONTHLY_INCOME"));
 			etNetMonthlyIncome.setText(mHashIncomeDetail.get("NET_MONTHLY_INCOME"));
 			etAdditionalMonthlyIncome.setText(mHashIncomeDetail.get("ADDITIONAL_MONTHLY_INCOME"));

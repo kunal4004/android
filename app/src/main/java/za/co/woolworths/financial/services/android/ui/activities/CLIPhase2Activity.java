@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.v4.app.Fragment;
@@ -14,7 +15,11 @@ import com.awfs.coordination.R;
 
 import java.util.HashMap;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferResponse;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIAllStepsContainerFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIEligibilityAndPermissionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.DocumentFragment;
@@ -22,11 +27,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.OfferCalculation
 import za.co.woolworths.financial.services.android.ui.fragments.SupplyIncomeDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
+import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.CLIStepIndicatorListener;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class CLIPhase2Activity extends AppCompatActivity {
+public class CLIPhase2Activity extends AppCompatActivity implements View.OnClickListener {
 
 	private WTextView tvDeclineOffer;
 	private ProgressBar pbDecline;
@@ -34,6 +41,10 @@ public class CLIPhase2Activity extends AppCompatActivity {
 	private String mOfferActivePayload;
 	private boolean mOfferActive, mCloseButtonEnabled;
 	private String mNextStep;
+	private final int DECLINE_OFFER_CODE = 123;
+	WoolworthsApplication woolworthsApplication;
+	private WGlobalState wGlobalState;
+	private int editNumberValue;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,17 +55,24 @@ public class CLIPhase2Activity extends AppCompatActivity {
 		init();
 		hideDeclineOffer();
 		actionBar();
+		listener();
 		if (mBundle != null) {
 			mOfferActivePayload = mBundle.getString("OFFER_ACTIVE_PAYLOAD");
 			mOfferActive = mBundle.getBoolean("OFFER_IS_ACTIVE");
 			createOfferResponse = offerActiveObject();
 			mNextStep = createOfferResponse.cli.nextStep;
-//			mNextStep = "Consents";
 			loadFragment(mNextStep);
 		}
 	}
 
+	private void listener() {
+		tvDeclineOffer.setOnClickListener(this);
+	}
+
 	private void init() {
+		woolworthsApplication = (WoolworthsApplication) CLIPhase2Activity.this.getApplication();
+		wGlobalState = woolworthsApplication.getWGlobalState();
+
 		tvDeclineOffer = (WTextView) findViewById(R.id.tvDeclineOffer);
 		pbDecline = (ProgressBar) findViewById(R.id.pbDecline);
 	}
@@ -135,8 +153,8 @@ public class CLIPhase2Activity extends AppCompatActivity {
 		if (closeButtonEnabled()) {
 			finishActivity();
 		} else {
-			if (getFragmentManager().getBackStackEntryCount() > 0) {
-				getFragmentManager().popBackStack();
+			if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+				getSupportFragmentManager().popBackStack();
 				overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 			} else {
 				finishActivity();
@@ -161,16 +179,13 @@ public class CLIPhase2Activity extends AppCompatActivity {
 
 	public void hideDeclineOffer() {
 		tvDeclineOffer.setVisibility(View.GONE);
+		pbDecline.setVisibility(View.GONE);
 	}
 
 	public void showDeclineProgressBar() {
 		pbDecline.setVisibility(View.VISIBLE);
-		tvDeclineOffer.setVisibility(View.GONE);
+		tvDeclineOffer.setVisibility(View.INVISIBLE);
 		pbDecline.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-	}
-
-	public WTextView getTVDeclineOffer() {
-		return tvDeclineOffer;
 	}
 
 	public CreateOfferResponse offerActiveObject() {
@@ -215,4 +230,87 @@ public class CLIPhase2Activity extends AppCompatActivity {
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
 
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.tvDeclineOffer:
+				Utils.displayValidationMessage(CLIPhase2Activity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.CLI_DANGER_ACTION_MESSAGE_VALIDATION, DECLINE_OFFER_CODE);
+				break;
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		switch (resultCode) {
+			case RESULT_OK:
+				switch (requestCode) {
+					case DECLINE_OFFER_CODE:
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								cliDelcineOfferRequest(wGlobalState.getDeclineDecision());
+							}
+						});
+						break;
+					default:
+						break;
+				}
+				break;
+			default:
+				break;
+		}
+	}
+
+	private void cliDelcineOfferRequest(CreateOfferDecision createOfferDecision) {
+		onDeclineLoad();
+		CLIOfferDecision cliOfferDecision = new CLIOfferDecision(CLIPhase2Activity.this, createOfferDecision, new OnEventListener() {
+
+			@Override
+			public void onSuccess(Object object) {
+				CreateOfferResponse mObjOffer = ((CreateOfferResponse) object);
+				switch (mObjOffer.httpCode) {
+					case 200:
+						finishActivity();
+						break;
+					case 440:
+						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(CLIPhase2Activity.this, mObjOffer.response.stsParams);
+						break;
+					default:
+						Utils.displayValidationMessage(CLIPhase2Activity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR, mObjOffer.response.desc);
+						break;
+				}
+				onDeclineComplete();
+			}
+
+			@Override
+			public void onFailure(String e) {
+				onDeclineComplete();
+			}
+		});
+
+		cliOfferDecision.execute();
+	}
+
+	private void onDeclineLoad() {
+		showDeclineProgressBar();
+	}
+
+	private void onDeclineComplete() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				showDeclineOffer();
+			}
+		});
+	}
+
+	public int getEditNumberValue() {
+		return editNumberValue;
+	}
+
+	public void setEditNumberValue(int editNumberValue) {
+		this.editNumberValue = editNumberValue;
+	}
 }

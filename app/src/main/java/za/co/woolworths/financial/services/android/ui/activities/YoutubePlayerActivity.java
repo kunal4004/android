@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.android.youtube.player.YouTubeBaseActivity;
@@ -11,6 +10,7 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayer.Provider;
 import com.google.android.youtube.player.YouTubePlayerView;
 
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
 public class YoutubePlayerActivity extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
@@ -19,11 +19,11 @@ public class YoutubePlayerActivity extends YouTubeBaseActivity implements YouTub
 	private YouTubePlayerView youTubeView;
 	private MyPlayerStateChangeListener playerStateChangeListener;
 	private MyPlaybackEventListener playbackEventListener;
-	private YouTubePlayer player;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Utils.updateStatusBarBackground(YoutubePlayerActivity.this);
 		setContentView(R.layout.youtube_api_player);
 
 		youTubeView = (YouTubePlayerView) findViewById(R.id.youtube_view);
@@ -31,35 +31,22 @@ public class YoutubePlayerActivity extends YouTubeBaseActivity implements YouTub
 
 		playerStateChangeListener = new MyPlayerStateChangeListener();
 		playbackEventListener = new MyPlaybackEventListener();
-
-//		final EditText seekToText = (EditText) findViewById(R.id.seek_to_text);
-//		Button seekToButton = (Button) findViewById(R.id.seek_to_button);
-//		seekToButton.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				int skipToSecs = Integer.valueOf(seekToText.getText().toString());
-//				player.seekToMillis(skipToSecs * 1000);
-//			}
-//		});
 	}
 
 	@Override
 	public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean wasRestored) {
-		this.player = player;
-		player.setPlayerStateChangeListener(playerStateChangeListener);
-		player.setPlaybackEventListener(playbackEventListener);
+		YouTubePlayer youTubePlayer = player;
+		youTubePlayer.setPlayerStateChangeListener(playerStateChangeListener);
+		youTubePlayer.setPlaybackEventListener(playbackEventListener);
 
 		if (!wasRestored) {
-			player.loadVideo("kbgu50dKXrM");
+			youTubePlayer.loadVideo("kbgu50dKXrM");
 		}
 
 	}
 
 	@Override
 	public void onInitializationFailure(Provider provider, YouTubeInitializationResult errorReason) {
-		if (errorReason.isUserRecoverableError()) {
-		} else {
-		}
 	}
 
 	@Override
@@ -74,28 +61,21 @@ public class YoutubePlayerActivity extends YouTubeBaseActivity implements YouTub
 		return youTubeView;
 	}
 
-	private void showMessage(String message) {
-		Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-	}
-
 	private final class MyPlaybackEventListener implements YouTubePlayer.PlaybackEventListener {
 
 		@Override
 		public void onPlaying() {
 			// Called when playback starts, either due to user action or call to play().
-			showMessage("Playing");
 		}
 
 		@Override
 		public void onPaused() {
 			// Called when playback is paused, either due to user action or call to pause().
-			showMessage("Paused");
 		}
 
 		@Override
 		public void onStopped() {
 			// Called when playback stops for a reason other than being paused.
-			showMessage("Stopped");
 		}
 
 		@Override

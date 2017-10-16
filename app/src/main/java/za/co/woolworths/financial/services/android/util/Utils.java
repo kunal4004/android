@@ -340,8 +340,11 @@ public class Utils {
 	}
 
 	public static void setBadgeCounter(Context context, int badgeCount) {
-		ShortcutBadger.applyCount(context, badgeCount);
-		sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
+		try {
+			ShortcutBadger.applyCount(context, badgeCount);
+			sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
+		} catch (NullPointerException ex) {
+		}
 	}
 
 	public static void removeBadgeCounter(Context context) {
@@ -433,6 +436,17 @@ public class Utils {
 		context.startActivity(openMsg);
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
+
+	public static void displayValidationMessage(Context context, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST key, int resultCode) {
+		AppCompatActivity appCompatActivity = ((AppCompatActivity) context);
+		Intent openMsg = new Intent(context, CustomPopUpDialogManager.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		openMsg.putExtras(args);
+		appCompatActivity.startActivityForResult(openMsg, resultCode);
+		appCompatActivity.overridePendingTransition(0, 0);
+	}
+
 
 	public static void alertErrorMessage(Context context, String message) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(context);

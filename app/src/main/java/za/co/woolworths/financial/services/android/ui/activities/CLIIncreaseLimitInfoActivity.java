@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -14,9 +16,10 @@ import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.adapters.CLIIncreaseLimitInfoPagerAdapter;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.controller.SelectedItemCallback;
 
 
-public class CLIIncreaseLimitInfoActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+public class CLIIncreaseLimitInfoActivity extends AppCompatActivity implements SelectedItemCallback, ViewPager.OnPageChangeListener {
 
 	private Toolbar mToolbar;
 	private LinearLayout pager_indicator;
@@ -35,7 +38,7 @@ public class CLIIncreaseLimitInfoActivity extends AppCompatActivity implements V
 		getSupportActionBar().setTitle(null);
 		pager = (ViewPager) findViewById(R.id.cliInfoPager);
 		pager_indicator = (LinearLayout) findViewById(R.id.viewPagerCountDots);
-		cliInfoAdapter = new CLIIncreaseLimitInfoPagerAdapter(CLIIncreaseLimitInfoActivity.this);
+		cliInfoAdapter = new CLIIncreaseLimitInfoPagerAdapter(CLIIncreaseLimitInfoActivity.this, this);
 		pager.setAdapter(cliInfoAdapter);
 		pager.addOnPageChangeListener(this);
 		setUiPageViewController();
@@ -103,5 +106,12 @@ public class CLIIncreaseLimitInfoActivity extends AppCompatActivity implements V
 				break;
 		}
 		return false;
+	}
+
+	@Override
+	public void onItemClick(View v, int position) {
+		Intent openYoutubeVideo = new Intent(this, YoutubePlayerActivity.class);
+		startActivity(openYoutubeVideo);
+		overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 }

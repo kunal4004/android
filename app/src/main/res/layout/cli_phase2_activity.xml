@@ -60,6 +60,7 @@
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="10sp"
+                    android:visibility="visible"
                     app:WTextView_font="medium"/>
 
                 <ProgressBar

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -58,11 +57,12 @@
                     android:layout_marginTop="50dp"
                     android:background="@android:color/transparent"
                     android:gravity="center"
+                    android:imeActionId="@+id/etBackButton"
                     android:letterSpacing="0.0"
                     android:text="45 000"
                     android:textColor="@color/overview_color"
                     android:textSize="55dp"
-                    app:WTextView_font="medium"/>
+                    app:WEditTextView_font="medium"/>
 
                 <RelativeLayout
                     android:layout_width="match_parent"

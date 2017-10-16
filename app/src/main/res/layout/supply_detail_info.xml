@@ -27,9 +27,8 @@
                 android:id="@+id/llSupplyDetailContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
-
-            <View style="@style/bottom_line"/>
+                android:orientation="vertical"
+                android:paddingTop="@dimen/twelve_dp"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
                 android:id="@+id/btnLoanHighOk"

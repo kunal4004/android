@@ -23,7 +23,6 @@ import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.ui.fragments.OfferCalculationFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
@@ -303,7 +302,6 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				LinearLayout llSupplyDetailContainer = (LinearLayout) findViewById(R.id.llSupplyDetailContainer);
 				LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-				ObjectMapper mapper = new ObjectMapper();
 				// convert JSON string to Map
 				LinkedHashMap<String, String> supplyDetailMap = null;
 				try {
@@ -406,9 +404,9 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
+					Intent result = new Intent();
+					setResult(RESULT_OK, result);
 					dismissLayout();
-					Intent intent = new Intent(OfferCalculationFragment.DECLINE_OFFER_APPROVED_CALL);
-					sendBroadcast(intent);
 				}
 			});
 			mRelRootContainer.startAnimation(animation);

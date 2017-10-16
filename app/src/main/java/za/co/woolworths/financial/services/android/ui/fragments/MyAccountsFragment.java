@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -828,7 +827,9 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				dismissProgress();
+				try {
+					dismissProgress();
+				}catch (Exception ex){}
 			}
 		});
 	}

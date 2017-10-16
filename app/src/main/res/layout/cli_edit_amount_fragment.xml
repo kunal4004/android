@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="top"
+              android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ten_dp"
+        android:background="@color/default_background"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvAmount"
+            style="@style/edit_cursor_style"
+            android:layout_width="wrap_content"
+            android:layout_marginEnd="@dimen/two_dp"
+            android:text="R"
+            app:WTextView_font="medium"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+            android:id="@+id/etAmount"
+            style="@style/edit_cursor_style"
+            android:layout_width="wrap_content"
+            android:text="1000"/>
+    </LinearLayout>
+
+</LinearLayout>

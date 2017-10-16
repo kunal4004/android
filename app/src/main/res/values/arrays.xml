@@ -83,7 +83,7 @@
         <item>@string/expenses_rental_payment_desc</item>
         <item>@string/expenses_maintenance_payment_desc</item>
         <item>@string/expense_monthly_credit_payment_desc</item>
-        <item>@string/cli_overlay_other_expenses</item>
+        <item>@string/cli_overlay_all_expenses</item>
     </string-array>
     <string-array name="cli_option">
         <item>@string/cli_option_one</item>
@@ -209,12 +209,14 @@
         <item>@string/expenses_rental_payment</item>
         <item>@string/expenses_maintenance_payment</item>
         <item>@string/expense_monthly_credit_payment</item>
+        <item>@string/cli_other_expenses</item>
     </string-array>
     <string-array name="supply_info_expenses_desc">
         <item>@string/expenses_mortgage_payment_desc</item>
         <item>@string/expenses_rental_payment_desc</item>
         <item>@string/expenses_maintenance_payment_desc</item>
         <item>@string/expense_monthly_credit_payment_desc</item>
+        <item>@string/cli_overlay_all_expenses</item>
     </string-array>
 
 </resources>

@@ -3,4 +3,5 @@
     <integer name="slide_animation_duration">300</integer>
     <integer name="slide_animation_duration_long">3000</integer>
     <integer name="blur_dialog_animation_duration">300</integer>
+    <integer name="twelve">12</integer>
 </resources>

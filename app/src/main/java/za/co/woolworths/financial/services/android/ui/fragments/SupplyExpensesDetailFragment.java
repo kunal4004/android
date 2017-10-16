@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
@@ -41,7 +42,6 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 	private WEditTextView etMortgagePayments, etRentalPayments, etMaintainanceExpenses, etMonthlyCreditPayments, etOtherExpenses;
 	private boolean etMortgagePaymentsWasEdited, etRentalPaymentsWasEdited, etMaintainanceExpensesWasEdited, etMonthlyCreditPaymentsWasEdited, etOtherExpensesWasEdited;
 	private LinearLayout llNextButtonLayout, llMortgagePayment, llRentalPayment, llMaintainanceExpenses, llMonthlyCreditPayments, llOtherExpensesContainer;
-	private CLIPhase2Activity mCliPhase2Activity;
 	private NestedScrollView nsSupplyExpense;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -78,8 +78,8 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 			etMaintainanceExpenses.clearFocus();
 			etMonthlyCreditPayments.clearFocus();
 			etOtherExpenses.clearFocus();
-			getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		}
+		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
 
 	private void init(View view) {
@@ -121,10 +121,6 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 		etMonthlyCreditPayments.addTextChangedListener(new GenericTextWatcher(etMonthlyCreditPayments));
 		etOtherExpenses.addTextChangedListener(new GenericTextWatcher(etOtherExpenses));
 
-		etMortgagePayments.setOnFocusChangeListener(this);
-		etRentalPayments.setOnFocusChangeListener(this);
-		etMaintainanceExpenses.setOnFocusChangeListener(this);
-		etMonthlyCreditPayments.setOnFocusChangeListener(this);
 		etOtherExpenses.setOnFocusChangeListener(this);
 
 
@@ -206,9 +202,11 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 		if (hasFocus) {
 			if (etOtherExpenses.hasFocus()) {
 				Log.e("otherExpense", "etOtherExpenses");
+				llOtherExpensesContainer.performClick();
 				nsSupplyExpense.post(new Runnable() {
 					@Override
 					public void run() {
+						ObjectAnimator.ofInt(nsSupplyExpense, "scrollY", nsSupplyExpense.getTop()).setDuration(300).start();
 					}
 				});
 			}

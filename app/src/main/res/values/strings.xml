@@ -317,7 +317,6 @@
     <string name="expenses_rental_payment_desc">Rental Payment is the cost of monthly accommodation.</string>
     <string name="expenses_maintenance_payment_desc">Maintenance expenses refer to your monthly accommodation</string>
     <string name="expense_monthly_credit_payment_desc">Monthly Instalment of creditor account i.e.: Credit Card, Personal Loan, Furniture Accounts etc.</string>
-    <string name="cli_overlay_other_expenses">All Other Expenses, i.e.: groceries, transport, telephone/cellphone etc.</string>
     <string name="cli_overlay_all_expenses">All Other Expenses, i.e.: groceries,transport, telephone/cellphone etc.</string>
     <string name="cli_creating_offer">CREATING OFFER...</string>
     <string name="cli_process_error_content">Are you sure you want to log out? You will need to re-enter your username and password to log in again.</string>

@@ -3,8 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -12,16 +10,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
 import com.awfs.coordination.R;
@@ -29,6 +27,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -43,18 +42,25 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDial
 import za.co.woolworths.financial.services.android.ui.views.CircleProgressBar;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.DrawImage;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
+import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
+import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
 
-public class OfferCalculationFragment extends CLIFragment implements View.OnClickListener {
+public class OfferCalculationFragment extends CLIFragment implements View.OnClickListener, NetworkChangeListener {
 
+	private static final int INCREASE_PROGRESS_BY = 100;
 	private HashMap<String, String> mHashIncomeDetail, mHashExpenseDetail;
-	private WTextView tvCurrentCreditLimitAmount, tvNewCreditLimitAmount, tvAdditionalCreditLimitAmount, tvCalculatingYourOffer, tvLoadTime, tvSlideToEditSeekInfo, tvSlideToEditAmount, tvDeclineOffer;
+	private WTextView tvCurrentCreditLimitAmount, tvNewCreditLimitAmount, tvAdditionalCreditLimitAmount, tvCalculatingYourOffer, tvLoadTime, tvSlideToEditSeekInfo, tvSlideToEditAmount;
 	private ProgressBar cpCurrentCreditLimit, cpAdditionalCreditLimit, cpNewCreditAmount;
 	private LinearLayout llSlideToEditContainer, llNextButtonLayout;
 	private CircleProgressBar mCircleView;
@@ -66,7 +72,16 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private int mCurrentCredit = 0;
 	private CreateOfferResponse mObjOffer;
 	private CLIPhase2Activity mCliPhase2Activity;
-	public static final String DECLINE_OFFER_APPROVED_CALL = "DECLINE_OFFER_APPROVED_CALL";
+	private ProgressBar mAcceptOfferProgressBar;
+	private BroadcastReceiver mConnectionBroadcast;
+	private boolean loadCompleted = false;
+	private ErrorHandlerView mErrorHandlerView;
+	private ViewTooltip mTooltip;
+
+
+	private enum LATEST_BACKGROUND_CALL {CREATE_OFFER, DECLINE_OFFER, ACCEPT_OFFER}
+
+	private LATEST_BACKGROUND_CALL latest_background_call;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.offer_calculation_fragment, container, false);
@@ -75,32 +90,33 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		Bundle b = this.getArguments();
-		Serializable incomeDetail = b.getSerializable(IncreaseLimitController.INCOME_DETAILS);
-		Serializable expenseDetail = b.getSerializable(IncreaseLimitController.EXPENSE_DETAILS);
-		if (incomeDetail != null) {
-			mHashIncomeDetail = (HashMap<String, String>) incomeDetail;
-		}
-		if (expenseDetail != null) {
-			mHashExpenseDetail = (HashMap<String, String>) expenseDetail;
-		}
-		init(view);
-		onLoad();
-		cliCreateOfferRequest(createOffer(mHashIncomeDetail, mHashExpenseDetail));
-		seekBar();
-		fadeOutAndHideTooltip(tvSlideToEditSeekInfo);
-		listener();
-		cliStepIndicatorListener.onStepSelected(3);
-	}
-
-	private void listener() {
-		tvDeclineOffer.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.CLI_DANGER_ACTION_MESSAGE_VALIDATION, "");
+		if (savedInstanceState == null) {
+			mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
+			init(view);
+			onLoad();
+			seekBar();
+			Bundle b = this.getArguments();
+			Serializable incomeDetail = b.getSerializable(IncreaseLimitController.INCOME_DETAILS);
+			Serializable expenseDetail = b.getSerializable(IncreaseLimitController.EXPENSE_DETAILS);
+			setInvisibleView(tvSlideToEditSeekInfo);
+			cliStepIndicatorListener.onStepSelected(3);
+			mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
+			if (incomeDetail != null) {
+				mHashIncomeDetail = (HashMap<String, String>) incomeDetail;
 			}
-		});
-		OfferCalculationFragment.this.getActivity().registerReceiver(mDeclineOfferBroadCast, new IntentFilter(DECLINE_OFFER_APPROVED_CALL));
+			if (expenseDetail != null) {
+				mHashExpenseDetail = (HashMap<String, String>) expenseDetail;
+				mObjOffer = ((CLIPhase2Activity) getActivity()).offerActiveObject();
+				displayCurrentOffer(mObjOffer);
+			} else {
+				cliCreateOfferRequest(createOffer(mHashIncomeDetail, mHashExpenseDetail));
+			}
+
+			TooltipHelper tooltipHelper = new TooltipHelper(getActivity());
+			mTooltip = tooltipHelper.showToolTipView(sbSlideAmount, getString(R.string.slide_to_edit_amount),
+					ContextCompat.getColor(getActivity(), R.color.tooltip_bg_color));
+			mTooltip.show();
+		}
 	}
 
 	private void seekBar() {
@@ -116,6 +132,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				progress = progress / INCREASE_PROGRESS_BY;
+				progress = progress * INCREASE_PROGRESS_BY;
 				int newCLIAmount = mCreditReqestMin + progress;
 				tvSlideToEditAmount.setText(formatAmount(newCLIAmount));
 				tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
@@ -125,6 +143,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	}
 
 	private void cliCreateOfferRequest(CreateOfferRequest createOfferRequest) {
+		latestBackgroundTask(LATEST_BACKGROUND_CALL.CREATE_OFFER);
 		CLICreateOffer getOfferAPITask = new CLICreateOffer(getActivity(), createOfferRequest, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -132,29 +151,24 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				int httpCode = mObjOffer.httpCode;
 				switch (httpCode) {
 					case 200:
-						Offer offer = mObjOffer.cli.offer;
-						mCurrentCredit = offer.currCredit;
-						mCreditReqestMin = offer.creditReqestMin;
-						int creditRequestMax = offer.creditRequestMax;
-						mDifferenceCreditLimit = (creditRequestMax - mCreditReqestMin);
+						displayCurrentOffer(mObjOffer);
+						break;
 
-						sbSlideAmount.setMax(mDifferenceCreditLimit);
-						sbSlideAmount.incrementProgressBy(100);
-						sbSlideAmount.setProgress(mDifferenceCreditLimit);
-
-						tvCurrentCreditLimitAmount.setText(formatAmount(mCurrentCredit));
-						tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
-						tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
+					case 440:
+						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
 						break;
 
 					default:
+						Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR, mObjOffer.response.desc);
 						break;
 				}
+				onLoadCompleted(true);
 				onLoadComplete();
 			}
 
 			@Override
 			public void onFailure(String e) {
+				onLoadCompleted(false);
 			}
 		});
 		getOfferAPITask.execute();
@@ -163,9 +177,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private void init(View view) {
 
 		mCliPhase2Activity = (CLIPhase2Activity) getActivity();
-		tvDeclineOffer = mCliPhase2Activity.getTVDeclineOffer();
-
 		tvSlideToEditSeekInfo = (WTextView) view.findViewById(R.id.tvSlideToEditSeekInfo);
+		mAcceptOfferProgressBar = (ProgressBar) view.findViewById(R.id.mWoolworthsProgressBar);
 
 		tvCurrentCreditLimitAmount = (WTextView) view.findViewById(R.id.tvCurrentCreditLimitAmount);
 		tvAdditionalCreditLimitAmount = (WTextView) view.findViewById(R.id.tvAdditionalCreditLimitAmount);
@@ -192,8 +205,10 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 		btnContinue = (WButton) view.findViewById(R.id.btnContinue);
 		btnContinue.setOnClickListener(this);
+		tvSlideToEditAmount.setOnClickListener(this);
 		btnContinue.setText(getActivity().getResources().getString(R.string.accept_offer));
 		showView(btnContinue);
+		mCliPhase2Activity.showDeclineOffer();
 
 		try {
 			new DrawImage(getActivity()).handleGIFImage(imOfferTime);
@@ -281,6 +296,18 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		v.setVisibility(View.VISIBLE);
 	}
 
+	private void onAcceptOfferLoad() {
+		showView(mAcceptOfferProgressBar);
+		mAcceptOfferProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+		hideView(btnContinue);
+	}
+
+	private void onAcceptOfferCompleted() {
+		hideView(mAcceptOfferProgressBar);
+		showView(btnContinue);
+	}
+
+
 	private void setBackgroundColor(View v, int id) {
 		v.setBackgroundColor(ContextCompat.getColor(getActivity(), id));
 	}
@@ -299,12 +326,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.btnContinue:
-				DocumentFragment documentFragment = new DocumentFragment();
-				documentFragment.setStepIndicatorListener(cliStepIndicatorListener);
-				FragmentUtils fragmentUtils = new FragmentUtils();
-				fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), documentFragment, R.id.cli_steps_container);
-
-				/*int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
+				onAcceptOfferLoad();
+				latestBackgroundTask(LATEST_BACKGROUND_CALL.ACCEPT_OFFER);
+				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
 				CreateOfferDecision createOfferDecision = new CreateOfferDecision(String.valueOf(mObjOffer.cliOfferId), "Accept", String.valueOf(newCreditLimitAmount));
 				CLIOfferDecision cliOfferDecision =
 						new CLIOfferDecision(getActivity(), createOfferDecision, new OnEventListener() {
@@ -312,24 +336,58 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 							@Override
 							public void onSuccess(Object object) {
 								mObjOffer = ((CreateOfferResponse) object);
+								switch (mObjOffer.httpCode) {
+									case 200:
+
+										DocumentFragment documentFragment = new DocumentFragment();
+										documentFragment.setStepIndicatorListener(cliStepIndicatorListener);
+										FragmentUtils fragmentUtils = new FragmentUtils();
+										fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), documentFragment, R.id.cli_steps_container);
+										break;
+									case 440:
+										SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
+										break;
+									default:
+										Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR, mObjOffer.response.desc);
+										break;
+								}
+								onLoadCompleted(true);
+								onAcceptOfferCompleted();
 							}
 
 							@Override
 							public void onFailure(String e) {
-
+								onLoadCompleted(false);
+								onAcceptOfferCompleted();
 							}
 						});
 
-				cliOfferDecision.execute();*/
+				cliOfferDecision.execute();
+				break;
+
+			case R.id.tvSlideToEditAmount:
+				try {
+					Bundle args = new Bundle();
+					String slideAmount = tvSlideToEditAmount.getText().toString();
+					if (slideAmount != null) {
+						args.putInt("slideAmount", Integer.valueOf(Utils.numericFieldOnly(slideAmount)));
+					}
+
+					args.putInt("currCredit", mObjOffer.cli.offer.currCredit);
+					args.putInt("creditReqestMin", mObjOffer.cli.offer.creditReqestMin);
+					args.putInt("creditRequestMax", mObjOffer.cli.offer.creditRequestMax);
+
+					mCliPhase2Activity.actionBarBackIcon();
+					EditAmountFragment editAmountFragment = new EditAmountFragment();
+					editAmountFragment.setArguments(args);
+					editAmountFragment.setStepIndicatorListener(cliStepIndicatorListener);
+					FragmentUtils fragmentUtils = new FragmentUtils(false);
+					fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), editAmountFragment, R.id.cli_steps_container);
+				} catch (NullPointerException ignored) {
+				}
+
 				break;
 		}
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		mCliPhase2Activity.actionBarCloseIcon();
-		mCliPhase2Activity.showDeclineOffer();
 	}
 
 	public CreateOfferRequest createOffer(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
@@ -372,81 +430,96 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		animation.start();
 	}
 
-	private void fadeOutAndHideTooltip(final WTextView textView) {
-		Animation fadeOut = new AlphaAnimation(1, 0);
-		fadeOut.setInterpolator(new AccelerateInterpolator());
-		fadeOut.setDuration(3000);
+	public void displayCurrentOffer(CreateOfferResponse mObjOffer) {
+		Offer offer = mObjOffer.cli.offer;
+		mCurrentCredit = offer.currCredit;
+		mCreditReqestMin = offer.creditReqestMin;
+		int creditRequestMax = offer.creditRequestMax;
+		mDifferenceCreditLimit = (creditRequestMax - mCreditReqestMin);
 
-		fadeOut.setAnimationListener(new Animation.AnimationListener() {
-			public void onAnimationEnd(Animation animation) {
-				textView.setVisibility(View.INVISIBLE);
-			}
+		sbSlideAmount.setMax(mDifferenceCreditLimit);
+		sbSlideAmount.incrementProgressBy(INCREASE_PROGRESS_BY);
+		sbSlideAmount.setProgress(mDifferenceCreditLimit);
 
-			public void onAnimationRepeat(Animation animation) {
-			}
-
-			public void onAnimationStart(Animation animation) {
-			}
-		});
-
-		textView.startAnimation(fadeOut);
+		tvCurrentCreditLimitAmount.setText(formatAmount(mCurrentCredit));
+		tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
+		tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
+		int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
+		((WoolworthsApplication) OfferCalculationFragment.this.getActivity().getApplication()).getWGlobalState().setDecisionDeclineOffer(new CreateOfferDecision(String.valueOf(mObjOffer.cliOfferId), "Decline", String.valueOf(newCreditLimitAmount)));
+		onLoadComplete();
 	}
 
-	private void cliDelcineOfferRequest(CreateOfferDecision createOfferDecision) {
-		CLIOfferDecision cliOfferDecision = new CLIOfferDecision(getActivity(), createOfferDecision, new OnEventListener() {
-
-			@Override
-			public void onSuccess(Object object) {
-				mObjOffer = ((CreateOfferResponse) object);
-				onDeclineComplete();
-				finishActivity();
-			}
-
-			@Override
-			public void onFailure(String e) {
-				onDeclineComplete();
-			}
-		});
-
-		cliOfferDecision.execute();
+	public void setInvisibleView(View invisibleView) {
+		invisibleView.setVisibility(View.INVISIBLE);
 	}
 
-	private void onDeclineLoad() {
-		mCliPhase2Activity.showDeclineProgressBar();
+	private void latestBackgroundTask(LATEST_BACKGROUND_CALL latest_background_call) {
+		this.latest_background_call = latest_background_call;
 	}
-
-	private void onDeclineComplete() {
-		OfferCalculationFragment.this.getActivity().runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				mCliPhase2Activity.showDeclineOffer();
-			}
-		});
-	}
-
-	BroadcastReceiver mDeclineOfferBroadCast = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			getActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					onDeclineLoad();
-					int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
-					cliDelcineOfferRequest(new CreateOfferDecision(String.valueOf(mObjOffer.cliOfferId), "Decline", String.valueOf(newCreditLimitAmount)));
-				}
-			});
-		}
-	};
 
 	@Override
-	public void onDetach() {
-		super.onDetach();
-		if (mDeclineOfferBroadCast != null)
-			OfferCalculationFragment.this.getActivity().unregisterReceiver(mDeclineOfferBroadCast);
+	public void onPause() {
+		super.onPause();
+		getActivity().unregisterReceiver(mConnectionBroadcast);
 	}
 
-	public void finishActivity() {
-		getActivity().finish();
-		getActivity().overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+	@Override
+	public void onResume() {
+		super.onResume();
+//		int editNumberFromUser = mCliPhase2Activity.getEditNumberValue();
+//		if (!TextUtils.isEmpty(String.valueOf(editNumberFromUser))) {
+//			sbSlideAmount.setProgress(editNumberFromUser);
+//		}
+		mCliPhase2Activity.actionBarCloseIcon();
+		getActivity().registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+	}
+
+	@Override
+	public void onConnectionChanged() {
+		retryConnect();
+	}
+
+	private void retryConnect() {
+		getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+
+				if (new ConnectionDetector().isOnline(getActivity())) {
+					if (!loadCompleted) {
+						if (latest_background_call != null) {
+							switch (latest_background_call) {
+								case CREATE_OFFER:
+									break;
+
+								case ACCEPT_OFFER:
+									btnContinue.performClick();
+									break;
+
+								default:
+									break;
+							}
+						}
+					}
+				} else {
+//					mErrorHandlerView.showToast();
+					Log.e("ConnectionDetector", "showToast");
+					switch (latest_background_call) {
+						case CREATE_OFFER:
+							break;
+
+						case ACCEPT_OFFER:
+							mErrorHandlerView.showToast();
+							break;
+
+						default:
+							break;
+					}
+				}
+			}
+		});
+	}
+
+	private void onLoadCompleted(boolean value) {
+		loadCompleted = value;
 	}
 }

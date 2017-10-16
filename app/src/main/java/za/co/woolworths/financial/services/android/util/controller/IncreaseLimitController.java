@@ -77,15 +77,21 @@ public class IncreaseLimitController {
 		wTextView.setVisibility(View.VISIBLE);
 	}
 
-	public void offerActiveUIState(LinearLayout llCommonLayer, WTextView tvIncreaseLimit, WTextView tvApplyNowIncreaseLimit,
-								   ImageView logoIncreaseLimit, OfferActive offerActive) {
+	public void offerActiveUIState(LinearLayout llCommonLayer, WTextView tvIncreaseLimit, WTextView tvApplyNowIncreaseLimit, WTextView tvIncreaseLimitDescription, ImageView logoIncreaseLimit, OfferActive offerActive) {
 		Cli cli = getCLI(offerActive);
 		String nextStep = cli.nextStep;
 		String messageSummary = cli.messageSummary;
 		String messageDetail = cli.messageDetail;
 		setNextStep(nextStep);
 		setOfferActive(offerActive.offerActive);
-		if (messageSummary.equalsIgnoreCase(getString(R.string.status_offer_available))) {
+		if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
+			messageSummary = getString(R.string.apply_now);
+			hideView(logoIncreaseLimit);
+			showView(llCommonLayer);
+			setCLITag(messageSummary, R.drawable.cli_round_offer_available, tvApplyNowIncreaseLimit);
+			tvIncreaseLimit.setText(getString(R.string.cli_credit_limit_increase));
+			tvIncreaseLimitDescription.setText(messageDetail);
+		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_offer_available))) {
 			showView(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			setCLITag(messageSummary, R.drawable.cli_round_offer_available, tvApplyNowIncreaseLimit);
@@ -98,6 +104,11 @@ public class IncreaseLimitController {
 			showView(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			setCLITag(messageSummary, R.drawable.cli_round_inprogress_tag, tvApplyNowIncreaseLimit);
+		} else if (messageSummary.equalsIgnoreCase(getString(R.string.decline))) {
+			showView(logoIncreaseLimit);
+			hideView(llCommonLayer);
+			messageSummary = getString(R.string.status_unavailable);
+			setCLITag(messageSummary, R.drawable.cli_round_offer_unavailable, tvApplyNowIncreaseLimit);
 		} else {
 			showView(logoIncreaseLimit);
 			hideView(llCommonLayer);
@@ -262,5 +273,13 @@ public class IncreaseLimitController {
 
 	private String toString(int value) {
 		return String.valueOf(value);
+	}
+
+	public void disableView(View v) {
+		v.setEnabled(false);
+	}
+
+	public void enableView(View v) {
+		v.setEnabled(true);
 	}
 }

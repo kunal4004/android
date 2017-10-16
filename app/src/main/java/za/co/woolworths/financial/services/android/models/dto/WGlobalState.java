@@ -33,6 +33,7 @@ public class WGlobalState {
 	private List<StoreDetails> storeDetailsArrayList;
 	private ArrayList<OtherSku> colourSKUArrayList;
 	private OtherSku colorPopUpValue, sizePopUpValue;
+	public CreateOfferDecision mDeclineDecision;
 
 	public void setAccountSignInState(boolean accountSignInState) {
 		setPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE, accountSignInState);
@@ -235,5 +236,13 @@ public class WGlobalState {
 	public void setSizePickerSku(OtherSku sizePopUpValue) {
 		this.sizePopUpValue = sizePopUpValue;
 		this.mLatestSelectedPicker = 2;
+	}
+
+	public CreateOfferDecision getDeclineDecision() {
+		return mDeclineDecision;
+	}
+
+	public void setDecisionDeclineOffer(CreateOfferDecision createOfferDecision) {
+		this.mDeclineDecision = createOfferDecision;
 	}
 }

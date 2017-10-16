@@ -92,6 +92,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		connectionBroadcast();
 		mCliPhase2Activity = (CLIPhase2Activity) getActivity();
 		mCliPhase2Activity.actionBarCloseIcon();
+		mCliPhase2Activity.hideDeclineOffer();
 		init(view);
 		onLoad();
 		cliDeaBankRequest();

@@ -9,6 +9,15 @@ import com.awfs.coordination.R;
 
 public class FragmentUtils {
 
+	private boolean animate = true;
+
+	public FragmentUtils() {
+	}
+
+	public FragmentUtils(boolean animate) {
+		this.animate = animate;
+	}
+
 	public void currentFragment(AppCompatActivity activity, Fragment nextFragment, int fragmentId) {
 		FragmentManager fragmentManager = activity.getSupportFragmentManager();
 		fragmentManager.beginTransaction()
@@ -29,9 +38,15 @@ public class FragmentUtils {
 
 	public void nextFragment(AppCompatActivity activity, FragmentTransaction fragmentTransaction, Fragment fragment, int fragmentId) {
 		FragmentManager fragmentManager = activity.getSupportFragmentManager();
-		fragmentTransaction
-				.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
-				.replace(fragmentId, fragment).addToBackStack(fragment.getClass().getSimpleName()).commit();
+		if (animate) {
+			fragmentTransaction
+					.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
+					.replace(fragmentId, fragment).addToBackStack(fragment.getClass().getSimpleName()).commit();
+		} else {
+			fragmentTransaction
+					.setCustomAnimations(0, 0, 0, 0)
+					.replace(fragmentId, fragment).addToBackStack(fragment.getClass().getSimpleName()).commit();
+		}
 		fragmentManager.executePendingTransactions();
 	}
 

@@ -15,21 +15,17 @@
 
     <RelativeLayout
         android:id="@+id/relNextButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/blackButtonStyle"
+        android:background="@drawable/button_disable_color"
         android:gravity="center">
 
         <ProgressBar
             android:id="@+id/mWoolworthsProgressBar"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:visibility="gone"/>
+            style="@style/progress_button_style"/>
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnContinue"
             style="@style/blackButtonStyle"
-            android:background="@drawable/button_disable_color"
             android:gravity="center"
             android:text="@string/cli_continue"
             android:textColor="@color/text_color_selector"
