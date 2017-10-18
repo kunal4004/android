@@ -672,7 +672,7 @@
     <string name="stock_finder_list_view">list view</string>
     <string name="stock_finder_btn_label">find in-store</string>
     <string name="product_loading_color_size">Loading size &amp; colour</string>
-    <string name="find_in_store_info">Remember, this is based on last night\'s stock record.  Stock moves quickly, so items may have sold since then.</string>
+    <string name="find_in_store_info">We update these numbers every few hours. Stock moves quickly, so items may have sold since the last count.</string>
     <string name="confirm_color_desc">Please confirm your colour</string>
     <string name="confirm_size_desc">Please confirm your size</string>
     <string name="sf_instore_availability_title">In-Store Availability</string>
