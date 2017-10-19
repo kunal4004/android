@@ -132,6 +132,8 @@
     <dimen name="text_size">12sp</dimen>
     <dimen name="radius">10dp</dimen>
     <dimen name="thirty_two_dp">32dp</dimen>
-
+    <dimen name="twenty_two_sp">22sp</dimen>
+    <dimen name="twenty_nine_dp">29dp</dimen>
+    <dimen name="twenty_two_dp">22dp</dimen>
 </resources>
 

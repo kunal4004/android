@@ -41,8 +41,12 @@ public class WFormatter {
 		return String.format("R%s.%02d", stringBuilder.reverse().toString(), amount % 100);
 	}
 
+	public static String addSpaceToDate(String value) {
+		return value.replaceAll("/", " / ");
+	}
+
 	public static String amountFormat(int amount) {
-		String[] split = String.valueOf(amount/100).split("");
+		String[] split = String.valueOf(amount / 100).split("");
 		StringBuilder stringBuilder = new StringBuilder();
 		int counter = 0;
 		for (int i = split.length - 1; i > 0; i--) {

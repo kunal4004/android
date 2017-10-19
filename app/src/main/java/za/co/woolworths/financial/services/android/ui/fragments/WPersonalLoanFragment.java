@@ -126,7 +126,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 			AccountsResponse temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 			onLoadComplete();
-			setTextSize();
 			mErrorHandlerView = new ErrorHandlerView(getActivity());
 			if (temp != null)
 				bindData(temp);
@@ -174,7 +173,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 					minAmountDue.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
 					currentBalance.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
 					try {
-						dueDate.setText(WFormatter.newDateFormat(p.paymentDueDate));
+						dueDate.setText(WFormatter.addSpaceToDate(WFormatter.newDateFormat(p.paymentDueDate)));
 					} catch (ParseException ex) {
 						dueDate.setText(p.paymentDueDate);
 					}
@@ -301,16 +300,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		tvIncreaseLimit.setVisibility(View.VISIBLE);
 	}
 
-	private void setTextSize() {
-		dueDate.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-		minAmountDue.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-		currentBalance.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-		Typeface mMyriaProFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Regular.otf");
-		dueDate.setTypeface(mMyriaProFont);
-		minAmountDue.setTypeface(mMyriaProFont);
-		currentBalance.setTypeface(mMyriaProFont);
-	}
-
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -319,8 +308,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mSharePreferenceHelper.removeValue("lw_months");
 		mSharePreferenceHelper.removeValue("lw_product_offering_id");
 		mSharePreferenceHelper.removeValue("lw_amount_drawn_cent");
-
-		setTextSize();
 	}
 
 	@Override

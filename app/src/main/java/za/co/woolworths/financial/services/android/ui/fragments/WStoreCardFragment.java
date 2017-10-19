@@ -5,12 +5,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,11 +71,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private NetworkChangeListener networkChangeListener;
 	private boolean bolBroacastRegistred;
 	private View view;
-	private RelativeLayout mRelFindOutMore, mRelIncreaseMyLimit;
 	private LinearLayout llCommonLayer, llIncreaseLimitContainer;
-	private ImageView logoIncreaseLimit, iconDrawnDownAmount;
 	private OfferActive offerActive;
 	private IncreaseLimitController mIncreaseLimitController;
+	private ImageView logoIncreaseLimit;
 
 	@Nullable
 	@Override
@@ -106,13 +103,12 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
-		mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
-		mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
+		RelativeLayout mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
+		RelativeLayout mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
 		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
 		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
 		llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
 		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
-		iconDrawnDownAmount = (ImageView) view.findViewById(R.id.iconDrawnDownAmount);
 
 		mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
 
@@ -158,7 +154,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					minAmountDue.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.minimumAmountDue)));
 					currentBalance.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
 					try {
-						dueDate.setText(WFormatter.newDateFormat(p.paymentDueDate));
+						dueDate.setText(WFormatter.addSpaceToDate(WFormatter.newDateFormat(p.paymentDueDate)));
 					} catch (ParseException e) {
 						dueDate.setText(p.paymentDueDate);
 						WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
@@ -238,7 +234,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					}
 
 					mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
-
 					storeWasAlreadyRunOnce = true;
 					break;
 
@@ -269,22 +264,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		tvIncreaseLimit.setVisibility(View.VISIBLE);
 	}
 
-	private void setTextSize() {
-		dueDate.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-		minAmountDue.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-		currentBalance.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-
-		Typeface mMyriaProFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Regular.otf");
-		dueDate.setTypeface(mMyriaProFont);
-		minAmountDue.setTypeface(mMyriaProFont);
-		currentBalance.setTypeface(mMyriaProFont);
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		setTextSize();
-	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
 	public String removeNegativeSymbol(String amount) {

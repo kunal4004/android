@@ -5,12 +5,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,9 +61,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private View view;
-	private RelativeLayout mRelDrawnDownAmount, mRelFindOutMore, mRelIncreaseMyLimit;
+	private RelativeLayout mRelFindOutMore, mRelIncreaseMyLimit;
 	private LinearLayout llCommonLayer, llIncreaseLimitContainer;
-	private ImageView logoIncreaseLimit, iconDrawnDownAmount;
+	private ImageView logoIncreaseLimit;
 	private IncreaseLimitController mIncreaseLimitController;
 	private OfferActive offerActive;
 
@@ -100,14 +98,12 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
 		mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
-		mRelDrawnDownAmount = (RelativeLayout) view.findViewById(R.id.relDrawnDownAmount);
 		mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
 		mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
 		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
 		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
 		llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
 		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
-		iconDrawnDownAmount = (ImageView) view.findViewById(R.id.iconDrawnDownAmount);
 
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
@@ -158,7 +154,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 					currentBalance.setText(removeNegativeSymbol(WFormatter.newAmountFormat(p.currentBalance)));
 					WoolworthsApplication.setCreditCardType(p.accountNumberBin);
 					try {
-						dueDate.setText(WFormatter.newDateFormat(p.paymentDueDate));
+						dueDate.setText(WFormatter.addSpaceToDate(WFormatter.newDateFormat(p.paymentDueDate)));
 					} catch (ParseException e) {
 						dueDate.setText(p.paymentDueDate);
 						WiGroupLogger.e(getActivity(), "TAG", e.getMessage(), e);
@@ -248,9 +244,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		switch (offerActive.httpCode) {
 			case 200:
 				Cli cli = offerActive.cli;
-				String nextStep = cli.nextStep;
 				String messageSummary = cli.messageSummary;
-				String messageDetail = cli.messageDetail;
 
 				if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
 					mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
@@ -281,23 +275,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		mProgressCreditLimit.setVisibility(View.GONE);
 		tvApplyNowIncreaseLimit.setVisibility(View.VISIBLE);
 		tvIncreaseLimit.setVisibility(View.VISIBLE);
-	}
-
-	private void setTextSize() {
-		dueDate.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-		minAmountDue.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-		currentBalance.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-
-		Typeface mMyriaProFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/MyriadPro-Regular.otf");
-		dueDate.setTypeface(mMyriaProFont);
-		minAmountDue.setTypeface(mMyriaProFont);
-		currentBalance.setTypeface(mMyriaProFont);
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		setTextSize();
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance

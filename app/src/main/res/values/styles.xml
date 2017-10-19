@@ -703,22 +703,22 @@
     </style>
 
     <style name="card_item_style">
-        <item name="android:paddingTop">9dp</item>
+        <item name="android:paddingTop">28.2dp</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:paddingBottom">14dp</item>
-        <item name="android:layout_height">48dp</item>
+        <item name="android:paddingBottom">26.2dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingLeft">@dimen/default_margin</item>
         <item name="android:paddingRight">@dimen/default_margin</item>
         <item name="android:background">@drawable/bottom_light_divider_list</item>
     </style>
 
     <style name="card_item_click_style">
-        <item name="android:paddingTop">9dp</item>
+        <item name="android:paddingTop">28.2dp</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingLeft">@dimen/default_margin</item>
         <item name="android:paddingRight">8dp</item>
-        <item name="android:paddingBottom">20dp</item>
+        <item name="android:paddingBottom">26.8dp</item>
         <item name="android:background">@drawable/bottom_light_divider_list</item>
     </style>
 
@@ -751,8 +751,8 @@
         <item name="android:layout_alignParentStart">true</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:textColor">@color/black_50</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/account_label_color</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">center|start</item>
         <item name="WTextView_font">myriadpro_regular</item>
@@ -812,11 +812,11 @@
         <item name="android:layout_alignParentEnd">true</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/account_amount_color</item>
         <item name="android:lineSpacingExtra">0.1sp</item>
         <item name="android:gravity">center|end</item>
-        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="WTextView_font">myriadpro_semibold</item>
     </style>
 
     <style name="style_loan_desc">
@@ -834,7 +834,7 @@
         <item name="android:layout_centerInParent">true</item>
         <item name="android:layout_alignParentEnd">true</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:src">@drawable/ic_caret_black</item>
 
     </style>
@@ -1044,7 +1044,7 @@
     <style name="bottom_line" parent="android:Theme">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0.4dp</item>
-        <item name="android:background">@color/description_color</item>
+        <item name="android:background">@color/default_background</item>
     </style>
 
     <style name="bottom_line_with_margin" parent="android:Theme">
@@ -1175,6 +1175,27 @@
         <item name="android:layout_height">@dimen/ten_dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:background">@color/default_background</item>
+    </style>
+
+    <style name="account_card_style">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/black_50</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginBottom">5dp</item>
+    </style>
+
+    <style name="account_card_amount_style">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginRight">@dimen/ten_dp</item>
+        <item name="android:textSize">@dimen/twenty_two_sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="WTextView_font">medium_bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_alignParentLeft">true</item>
     </style>
 
 </resources>

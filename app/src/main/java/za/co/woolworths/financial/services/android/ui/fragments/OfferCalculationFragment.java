@@ -394,7 +394,11 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 										SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
 										break;
 									default:
-										Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR, mObjOffer.response.desc);
+										DocumentFragment mdocumentFragment = new DocumentFragment();
+										mdocumentFragment.setStepIndicatorListener(cliStepIndicatorListener);
+										FragmentUtils fragmentUtilss = new FragmentUtils();
+										fragmentUtilss.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), mdocumentFragment, R.id.cli_steps_container);
+//										Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR, mObjOffer.response.desc);
 										break;
 								}
 								onLoadCompleted(true);

@@ -67,6 +67,11 @@ public class EditAmountFragment extends CLIFragment {
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
 					retrieveNumber(etAmount.getText().toString());
+					View view = getActivity().getCurrentFocus();
+					if (view != null) {
+						InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+						imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+					}
 					return true;
 				}
 				return false;
