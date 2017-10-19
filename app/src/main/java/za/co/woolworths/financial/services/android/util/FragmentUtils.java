@@ -26,7 +26,7 @@ public class FragmentUtils {
 
 	public void nextFragment(FragmentManager fragmentManager, Fragment nextFragment, int fragmentId) {
 		fragmentManager.beginTransaction()
-				.setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
+				.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
 				.replace(fragmentId, nextFragment).commit();
 	}
 
@@ -44,7 +44,7 @@ public class FragmentUtils {
 					.replace(fragmentId, fragment).addToBackStack(fragment.getClass().getSimpleName()).commit();
 		} else {
 			fragmentTransaction
-					.setCustomAnimations(0, 0, 0, 0)
+					.setTransition(FragmentTransaction.TRANSIT_NONE)
 					.replace(fragmentId, fragment).addToBackStack(fragment.getClass().getSimpleName()).commit();
 		}
 		fragmentManager.executePendingTransactions();

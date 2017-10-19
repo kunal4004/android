@@ -7,7 +7,6 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,6 +92,8 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 		llMonthlyCreditPayments = (LinearLayout) view.findViewById(R.id.llMonthlyCreditPayments);
 		llNextButtonLayout = (LinearLayout) view.findViewById(R.id.llNextButtonLayout);
 		llOtherExpensesContainer = (LinearLayout) view.findViewById(R.id.llOtherExpensesContainer);
+		IncreaseLimitController increaseLimitController = new IncreaseLimitController(getActivity());
+		increaseLimitController.setQuarterHeight(view.findViewById(R.id.llEmptyLayout));
 
 		nsSupplyExpense = (NestedScrollView) view.findViewById(R.id.nsSupplyExpense);
 
@@ -122,7 +123,6 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 		etOtherExpenses.addTextChangedListener(new GenericTextWatcher(etOtherExpenses));
 
 		etOtherExpenses.setOnFocusChangeListener(this);
-
 
 		tvMortgagePayments = (WTextView) view.findViewById(R.id.tvMortgagePayments);
 		tvRentalPayments = (WTextView) view.findViewById(R.id.tvRentalPayments);
@@ -187,6 +187,8 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 				Bundle bundle = new Bundle();
 				bundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, mHashIncomeDetail);
 				bundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, hmExpenseMap);
+				bundle.putBoolean(IncreaseLimitController.FROM_EXPENSE_SCREEN, true);
+
 				OfferCalculationFragment ocFragment = new OfferCalculationFragment();
 				ocFragment.setStepIndicatorListener(cliStepIndicatorListener);
 				ocFragment.setArguments(bundle);
@@ -201,12 +203,11 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 	public void onFocusChange(View v, boolean hasFocus) {
 		if (hasFocus) {
 			if (etOtherExpenses.hasFocus()) {
-				Log.e("otherExpense", "etOtherExpenses");
 				llOtherExpensesContainer.performClick();
 				nsSupplyExpense.post(new Runnable() {
 					@Override
 					public void run() {
-						ObjectAnimator.ofInt(nsSupplyExpense, "scrollY", nsSupplyExpense.getTop()).setDuration(300).start();
+						ObjectAnimator.ofInt(nsSupplyExpense, "scrollY", nsSupplyExpense.getBottom()).setDuration(300).start();
 					}
 				});
 			}
@@ -261,10 +262,8 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 
 				if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_GO || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
 					llRentalPayment.performClick();
-					return true;
-				} else {
-					return false;
 				}
+				return false;
 			}
 		});
 		etRentalPayments.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -272,10 +271,8 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 
 				if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_GO || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
 					llMaintainanceExpenses.performClick();
-					return true;
-				} else {
-					return false;
 				}
+				return false;
 			}
 		});
 		etMaintainanceExpenses.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -283,10 +280,8 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 
 				if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_GO || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
 					llMonthlyCreditPayments.performClick();
-					return true;
-				} else {
-					return false;
 				}
+				return false;
 			}
 		});
 
@@ -295,11 +290,10 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 
 				if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_GO || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
 					llOtherExpensesContainer.performClick();
-					return true;
-				} else {
-					return false;
 				}
+				return false;
 			}
+
 		});
 	}
 

@@ -34,6 +34,7 @@ import za.co.woolworths.financial.services.android.models.dto.Cli;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CLIIncreaseLimitInfoActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -61,7 +62,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private AsyncTask<String, String, OfferActive> asyncRequestCredit;
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
-	private NetworkChangeListener networkChangeListener;
 	private View view;
 	private RelativeLayout mRelDrawnDownAmount, mRelFindOutMore, mRelIncreaseMyLimit;
 	private LinearLayout llCommonLayer, llIncreaseLimitContainer;
@@ -118,16 +118,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		rlViewTransactions.setOnClickListener(this);
 		llIncreaseLimitContainer.setOnClickListener(this);
 		mRelIncreaseMyLimit.setOnClickListener(this);
+		mRelFindOutMore.setOnClickListener(this);
 	}
 
 	private void addListener() {
 		tvViewTransaction.setOnClickListener(this);
 		tvIncreaseLimit.setOnClickListener(this);
-		try {
-			networkChangeListener = this;
-		} catch (ClassCastException ignored) {
-		}
-		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
+		connectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 	}
 
@@ -183,9 +180,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 
-			case R.id.tvApplyNowIncreaseLimit:
-				break;
-
 			case R.id.relBalanceProtection:
 				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
 				startActivity(intBalanceProtection);
@@ -195,6 +189,12 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			case R.id.relIncreaseMyLimit:
 			case R.id.llIncreaseLimitContainer:
 				mIncreaseLimitController.nextStep(offerActive, productOfferingId);
+				break;
+
+			case R.id.relFindOutMore:
+				Intent openFindOutMore = new Intent(getActivity(), CLIIncreaseLimitInfoActivity.class);
+				getActivity().startActivity(openFindOutMore);
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 		}
 	}

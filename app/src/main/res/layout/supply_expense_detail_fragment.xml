@@ -10,7 +10,6 @@
         android:id="@+id/nsSupplyExpense"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/ten_dp"
         android:descendantFocusability="beforeDescendants"
         android:scrollbars="none">
 
@@ -18,6 +17,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <View
+                style="@style/top_view_style"/>
 
             <RelativeLayout style="@style/increase_limit_relative_style">
 
@@ -28,7 +30,6 @@
                 <ImageView
                     android:id="@+id/imInfo"
                     style="@style/increase_limit_info_circle"
-                    android:alpha="0.4"
                     android:contentDescription="@string/app_name"/>
 
             </RelativeLayout>
@@ -164,13 +165,17 @@
 
             </LinearLayout>
 
-            <View
+            <LinearLayout
+                android:id="@+id/llEmptyLayout"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"/>
+                android:layout_height="wrap_content"
+                android:background="@color/default_background"
+                android:orientation="vertical"/>
 
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
+
 
     <include
         layout="@layout/cli_next_button"

@@ -65,7 +65,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
-	private NetworkChangeListener networkChangeListener;
 	private boolean boolBroadcastRegistered;
 	private int minDrawnAmount;
 	public RelativeLayout mRelDrawnDownAmount, mRelFindOutMore, mRelIncreaseMyLimit;
@@ -88,55 +87,53 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-		mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
-		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
-		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
-		dueDate = (WTextView) view.findViewById(R.id.dueDate);
-		minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
-		currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
-		tvViewTransaction = (WTextView) view.findViewById(R.id.tvViewTransaction);
-		tvProtectionInsurance = (WTextView) view.findViewById(R.id.tvProtectionInsurance);
-		tvIncreaseLimitDescription = (WTextView) view.findViewById(R.id.tvIncreaseLimitDescription);
-		tvIncreaseLimit = (WTextView) view.findViewById(R.id.tvIncreaseLimit);
-		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
-		mRelDrawnDownAmount = (RelativeLayout) view.findViewById(R.id.relDrawnDownAmount);
-		mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
-		mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
-		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
-		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
-		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
-		llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
+		if (savedInstanceState == null) {
+			woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
+			mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
+			availableBalance = (WTextView) view.findViewById(R.id.available_funds);
+			creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
+			dueDate = (WTextView) view.findViewById(R.id.dueDate);
+			minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
+			currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
+			tvViewTransaction = (WTextView) view.findViewById(R.id.tvViewTransaction);
+			tvProtectionInsurance = (WTextView) view.findViewById(R.id.tvProtectionInsurance);
+			tvIncreaseLimitDescription = (WTextView) view.findViewById(R.id.tvIncreaseLimitDescription);
+			tvIncreaseLimit = (WTextView) view.findViewById(R.id.tvIncreaseLimit);
+			mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
+			mRelDrawnDownAmount = (RelativeLayout) view.findViewById(R.id.relDrawnDownAmount);
+			mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
+			mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
+			tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
+			llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
+			logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
+			llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
 
-		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
-		RelativeLayout relViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
+			RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
+			RelativeLayout relViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
-		tvApplyNowIncreaseLimit.setOnClickListener(this);
-		tvViewTransaction.setOnClickListener(this);
-		tvIncreaseLimit.setOnClickListener(this);
-		relBalanceProtection.setOnClickListener(this);
-		mRelDrawnDownAmount.setOnClickListener(this);
-		relViewTransactions.setOnClickListener(this);
-		mRelFindOutMore.setOnClickListener(this);
-		mRelIncreaseMyLimit.setOnClickListener(this);
-		llIncreaseLimitContainer.setOnClickListener(this);
+			tvApplyNowIncreaseLimit.setOnClickListener(this);
+			tvViewTransaction.setOnClickListener(this);
+			tvIncreaseLimit.setOnClickListener(this);
+			relBalanceProtection.setOnClickListener(this);
+			mRelDrawnDownAmount.setOnClickListener(this);
+			relViewTransactions.setOnClickListener(this);
+			mRelFindOutMore.setOnClickListener(this);
+			mRelIncreaseMyLimit.setOnClickListener(this);
+			llIncreaseLimitContainer.setOnClickListener(this);
 
-		try {
-			networkChangeListener = this;
-		} catch (ClassCastException ignored) {
+			connectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
+			boolBroadcastRegistered = true;
+			getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+			AccountsResponse temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+			onLoadComplete();
+			setTextSize();
+			mErrorHandlerView = new ErrorHandlerView(getActivity());
+			if (temp != null)
+				bindData(temp);
+
+			mIncreaseLimitController.showView(mRelDrawnDownAmount);
+			mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
 		}
-		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
-		boolBroadcastRegistered = true;
-		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-		AccountsResponse temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
-		onLoadComplete();
-		setTextSize();
-		mErrorHandlerView = new ErrorHandlerView(getActivity());
-		if (temp != null)
-			bindData(temp);
-
-		mIncreaseLimitController.showView(mRelDrawnDownAmount);
-		mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -197,8 +194,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				startActivity(intent);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim
 						.stay);
-				break;
-			case R.id.tvApplyNowIncreaseLimit:
 				break;
 
 			case R.id.relBalanceProtection:
@@ -266,10 +261,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				String messageDetail = cli.messageDetail;
 
 				if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
-					mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
 					mIncreaseLimitController.disableView(llIncreaseLimitContainer);
 				} else {
-					mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
 					mIncreaseLimitController.enableView(llIncreaseLimitContainer);
 				}
 

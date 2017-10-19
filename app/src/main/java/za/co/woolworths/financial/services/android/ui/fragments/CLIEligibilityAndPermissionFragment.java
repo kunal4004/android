@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,12 +17,14 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDial
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class CLIEligibilityAndPermissionFragment extends Fragment implements View.OnClickListener {
 
+	private static final int SLIDE_UP_ANIM_DURATION = 300;
 	private LinearLayout permissionView;
 	private WTextView eligibilityYes;
 	private WTextView eligibilityNo;
@@ -32,6 +33,8 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 	private ScrollView scrollView;
 	private boolean isEligible;
 	private boolean isPermitted;
+	private int paddingDp = 0;
+	private LinearLayout llEligibilityView;
 
 	public CLIEligibilityAndPermissionFragment() {
 		// Required empty public constructor
@@ -43,6 +46,7 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 		// Inflate the layout for this fragment
 		View view = inflater.inflate(R.layout.cli_eligibility_and_permission_fragment, container, false);
 		permissionView = (LinearLayout) view.findViewById(R.id.permissionView);
+		llEligibilityView = (LinearLayout) view.findViewById(R.id.llEligibilityView);
 		eligibilityYes = (WTextView) view.findViewById(R.id.eligibilityYes);
 		eligibilityNo = (WTextView) view.findViewById(R.id.eligibilityNo);
 		permissionYes = (WTextView) view.findViewById(R.id.permissionYes);
@@ -73,15 +77,26 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 				eligibilityNo.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
 				eligibilityNo.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
 				permissionView.setVisibility(View.VISIBLE);
+				IncreaseLimitController ilc = new IncreaseLimitController(getActivity());
+				int paddingPixel = 16;
+				float density = getActivity().getResources().getDisplayMetrics().density;
+				paddingDp = (int) (paddingPixel * density);
+				permissionView.setPadding(0, paddingDp, 0, ilc.getScreenHeight(getActivity()));
 				scrollView.post(new Runnable() {
 					@Override
 					public void run() {
-						//scrollView.smoothScrollTo(0,permissionView.getTop());
-						ObjectAnimator.ofInt(scrollView, "scrollY", permissionView.getTop()).setDuration(300).start();
+						ObjectAnimator.ofInt(scrollView, "scrollY", permissionView.getTop()).setDuration(SLIDE_UP_ANIM_DURATION).start();
 					}
 				});
+
 				break;
 			case R.id.permissionYes:
+				permissionNo.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
+				permissionNo.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
+				permissionYes.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
+				permissionYes.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
+				llEligibilityView.setVisibility(View.GONE);
+				permissionView.setPadding(0, paddingDp, 0, 0);
 				FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 				FragmentUtils fragmentUtils = new FragmentUtils();
 				fragmentUtils.nextFragment(fragmentManager,

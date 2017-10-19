@@ -123,7 +123,7 @@ public class DrawImage {
 	}
 
 	public void handleGIFImage(SimpleDraweeView simpleDraweeView) throws IOException {
-		ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithResourceId(R.raw.pascals_triangle_example_showing_recursion).build();
+		ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithResourceId(R.raw.calc).build();
 		DraweeController controller = Fresco.newDraweeControllerBuilder()
 				.setUri(imageRequest.getSourceUri())
 				.setAutoPlayAnimations(true)

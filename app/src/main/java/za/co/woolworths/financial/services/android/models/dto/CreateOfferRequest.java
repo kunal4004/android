@@ -1,59 +1,72 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
-/**
- * Created by dimitrij on 2016/12/23.
- */
 
 public class CreateOfferRequest {
 
-    @SerializedName("productOfferingId")
-    @Expose
-    public int productOfferingId;
-    @SerializedName("creditLimitRequested")
-    @Expose
-    public int creditLimitRequested;
-    @SerializedName("grossMonthlyIncome")
-    @Expose
-    public int grossMonthlyIncome;
-    @SerializedName("nettMonthlyIncome")
-    @Expose
-    public int nettMonthlyIncome;
-    @SerializedName("additionalIncomeAmount")
-    @Expose
-    public int additionalIncomeAmount;
-    @SerializedName("mortgagePaymentAmount")
-    @Expose
-    public int mortgagePaymentAmount;
-    @SerializedName("rentalPaymentAmount")
-    @Expose
-    public int rentalPaymentAmount;
-    @SerializedName("maintenanceExpenseAmount")
-    @Expose
-    public int maintenanceExpenseAmount;
-    @SerializedName("totalCreditExpenseAmount")
-    @Expose
-    public int totalCreditExpenseAmount;
-    @SerializedName("otherExpenseAmount")
-    @Expose
-    public int otherExpenseAmount;
+	public String channel;
+	public boolean debtDisclosed;
+	public boolean canObtainCreditInfo;
+	public boolean canObtainBankStatements;
+	public boolean applicationInfoIsCorrect;
+	public boolean staffMember;
+	public boolean automaticCreditIncrease;
+	public boolean maxCreditRequested;
+	public int productOfferingId;
+	public int creditLimitRequested;
+	public int grossMonthlyIncome;
+	public int nettMonthlyIncome;
+	public int additionalIncomeAmount;
+	public int mortgagePaymentAmount;
+	public int rentalPaymentAmount;
+	public int maintenanceExpenseAmount;
+	public int totalCreditExpenseAmount;
+	public int otherExpenseAmount;
 
-    public CreateOfferRequest() {
+	/**
+	 * No args constructor for use in serialization
+	 */
+	public CreateOfferRequest() {
+	}
 
-    }
-
-    public CreateOfferRequest(int productOfferingId, int creditLimitRequested, int grossMonthlyIncome, int nettMonthlyIncome, int additionalIncomeAmount, int mortgagePaymentAmount, int rentalPaymentAmount, int maintenanceExpenseAmount, int totalCreditExpenseAmount, int otherExpenseAmount) {
-        this.productOfferingId = productOfferingId;
-        this.creditLimitRequested = creditLimitRequested;
-        this.grossMonthlyIncome = grossMonthlyIncome;
-        this.nettMonthlyIncome = nettMonthlyIncome;
-        this.additionalIncomeAmount = additionalIncomeAmount;
-        this.mortgagePaymentAmount = mortgagePaymentAmount;
-        this.rentalPaymentAmount = rentalPaymentAmount;
-        this.maintenanceExpenseAmount = maintenanceExpenseAmount;
-        this.totalCreditExpenseAmount = totalCreditExpenseAmount;
-        this.otherExpenseAmount = otherExpenseAmount;
-    }
+	/**
+	 * @param otherExpenseAmount
+	 * @param canObtainCreditInfo
+	 * @param maxCreditRequested
+	 * @param staffMember
+	 * @param debtDisclosed
+	 * @param mortgagePaymentAmount
+	 * @param canObtainBankStatements
+	 * @param rentalPaymentAmount
+	 * @param applicationInfoIsCorrect
+	 * @param grossMonthlyIncome
+	 * @param nettMonthlyIncome
+	 * @param totalCreditExpenseAmount
+	 * @param automaticCreditIncrease
+	 * @param maintenanceExpenseAmount
+	 * @param additionalIncomeAmount
+	 * @param productOfferingId
+	 * @param channel
+	 * @param creditLimitRequested
+	 */
+	public CreateOfferRequest(String channel, boolean debtDisclosed, boolean canObtainCreditInfo, boolean canObtainBankStatements, boolean applicationInfoIsCorrect, boolean staffMember, boolean automaticCreditIncrease, boolean maxCreditRequested, int productOfferingId, int creditLimitRequested, int grossMonthlyIncome, int nettMonthlyIncome, int additionalIncomeAmount, int mortgagePaymentAmount, int rentalPaymentAmount, int maintenanceExpenseAmount, int totalCreditExpenseAmount, int otherExpenseAmount) {
+		super();
+		this.channel = channel;
+		this.debtDisclosed = debtDisclosed;
+		this.canObtainCreditInfo = canObtainCreditInfo;
+		this.canObtainBankStatements = canObtainBankStatements;
+		this.applicationInfoIsCorrect = applicationInfoIsCorrect;
+		this.staffMember = staffMember;
+		this.automaticCreditIncrease = automaticCreditIncrease;
+		this.maxCreditRequested = maxCreditRequested;
+		this.productOfferingId = productOfferingId;
+		this.creditLimitRequested = creditLimitRequested;
+		this.grossMonthlyIncome = grossMonthlyIncome;
+		this.nettMonthlyIncome = nettMonthlyIncome;
+		this.additionalIncomeAmount = additionalIncomeAmount;
+		this.mortgagePaymentAmount = mortgagePaymentAmount;
+		this.rentalPaymentAmount = rentalPaymentAmount;
+		this.maintenanceExpenseAmount = maintenanceExpenseAmount;
+		this.totalCreditExpenseAmount = totalCreditExpenseAmount;
+		this.otherExpenseAmount = otherExpenseAmount;
+	}
 }

@@ -63,7 +63,6 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionParentO
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.CLIAllStepsContainerFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 import static android.Manifest.permission_group.STORAGE;

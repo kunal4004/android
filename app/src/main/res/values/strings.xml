@@ -293,7 +293,8 @@
     <string name="cli_account_type">ACCOUNT TYPE</string>
     <string name="cli_complete_process">COMPLETE PROCESS</string>
     <string name="cli_credit_limit_received">Credit limit increase\nrequest received</string>
-    <string name="cli_contact_delay">Thanks for your patience – your application is being processed and we will be in contact with you within two working days.</string>
+    <string name="cli_contact_delay">We will be in contact with you within
+two working days. Please watch the app for updates on the progress of your application.</string>
     <string name="cli_back_to_acc">Back to my accounts</string>
     <string name="cli_income_proof">proof of income</string>
     <string name="cli_send_document_title">submit your documents via:</string>
@@ -739,7 +740,7 @@
     <string name="status_offer_available">Offer Available</string>
     <string name="status_please_try_again">please try again</string>
     <string name="status_poi_required">POI Required</string>
-    <string name="status_poi_problem">poi problem</string>
+    <string name="status_poi_problem">POI Problem</string>
     <string name="decline">decline</string>
     <string name="decline_desc">decline offer desc</string>
     <string name="find_out_more">Find Out More</string>
@@ -750,9 +751,12 @@
     <string name="status_offer">Offer</string>
     <string name="status_consents">Consents</string>
     <string name="status_decline">Decline</string>
-    <string name="status_contact_us">contactUs</string>
+    <string name="status_contact_us">Contact Us</string>
     <string name="select_from_gallery">select from gallery</string>
     <string name="select_from_drive">import file from drive</string>
+    <string name="status_apply_now">Apply Now</string>
+    <string name="poi_income_detail_problem">There is a problem with the income details you submitted.</string>
+    <string name="poi_problem_phone_no">+27 21 411 5000</string>
 
 
 </resources>

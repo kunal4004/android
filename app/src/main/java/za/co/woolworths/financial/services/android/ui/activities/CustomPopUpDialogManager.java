@@ -35,7 +35,7 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 	public Animation mPopEnterAnimation;
 	public RelativeLayout mRelPopContainer;
 	public boolean viewWasClicked = false;
-	public static final int ANIM_DOWN_DURATION = 700;
+	public static final int ANIM_DOWN_DURATION = 800;
 	public WoolworthsApplication woolworthsApplication;
 	public WGlobalState mWGlobalState;
 

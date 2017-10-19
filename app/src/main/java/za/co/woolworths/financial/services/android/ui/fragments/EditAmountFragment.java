@@ -91,7 +91,7 @@ public class EditAmountFragment extends CLIFragment {
 		} else if (newAmount > creditRequestMax) {
 			Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR, "newAmount > creditRequestMax");
 		} else {
-			int progressValue = Utils.numericFieldOnly(etAmount.getText().toString()) - currCredit;
+			int progressValue = Utils.numericFieldOnly(etAmount.getText().toString()) - creditReqestMin;
 			((CLIPhase2Activity) getActivity()).setEditNumberValue(progressValue);
 			FragmentManager fm = getActivity().getSupportFragmentManager();
 			fm.popBackStack(EditAmountFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -120,6 +120,7 @@ public class EditAmountFragment extends CLIFragment {
 				public void run() {
 					etAmount.requestFocus();
 					forceKeyboard(etAmount);
+					etAmount.setSelection(etAmount.getText().toString().length());
 				}
 			});
 		} catch (Exception ex) {

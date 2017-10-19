@@ -17,11 +17,13 @@ import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
-import za.co.woolworths.financial.services.android.models.dto.CreateOfferResponse;
+import za.co.woolworths.financial.services.android.models.dto.CLICreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIAllStepsContainerFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIEligibilityAndPermissionFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.CLIPOIProblemFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.ContactUsFinancialServiceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.DocumentFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.OfferCalculationFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.SupplyIncomeDetailFragment;
@@ -30,14 +32,15 @@ import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.binder.ContactUsFragmentChange;
 import za.co.woolworths.financial.services.android.util.controller.CLIStepIndicatorListener;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class CLIPhase2Activity extends AppCompatActivity implements View.OnClickListener {
+public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFragmentChange, View.OnClickListener {
 
-	private WTextView tvDeclineOffer;
+	private WTextView tvDeclineOffer, mToolbarText;
 	private ProgressBar pbDecline;
-	private CreateOfferResponse createOfferResponse;
+	private CLICreateOfferResponse mCLICreateOfferResponse;
 	private String mOfferActivePayload;
 	private boolean mOfferActive, mCloseButtonEnabled;
 	private String mNextStep;
@@ -59,8 +62,8 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 		if (mBundle != null) {
 			mOfferActivePayload = mBundle.getString("OFFER_ACTIVE_PAYLOAD");
 			mOfferActive = mBundle.getBoolean("OFFER_IS_ACTIVE");
-			createOfferResponse = offerActiveObject();
-			mNextStep = createOfferResponse.cli.nextStep;
+			mCLICreateOfferResponse = offerActiveObject();
+			mNextStep = mCLICreateOfferResponse.cli.nextStep;
 			loadFragment(mNextStep);
 		}
 	}
@@ -79,6 +82,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 
 	private void actionBar() {
 		Toolbar mToolbar = (Toolbar) findViewById(R.id.mToolbar);
+		mToolbarText = (WTextView) findViewById(R.id.toolbarText);
 		setSupportActionBar(mToolbar);
 		getSupportActionBar().setTitle(null);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -88,6 +92,14 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
 			CLIEligibilityAndPermissionFragment cLIEligibilityAndPermissionFragment = new CLIEligibilityAndPermissionFragment();
 			openNextFragment(cLIEligibilityAndPermissionFragment);
+		} else if (nextStep.equalsIgnoreCase(getString(R.string.status_poi_problem))) {
+			CLIPOIProblemFragment clipoiProblem = new CLIPOIProblemFragment();
+			openNextFragment(clipoiProblem);
+		} else if (nextStep.equalsIgnoreCase(getString(R.string.status_contact_us))) {
+			ContactUsFinancialServiceFragment contactUsFinancialServiceFragment = new ContactUsFinancialServiceFragment();
+			openNextFragment(contactUsFinancialServiceFragment);
+			setTitle(getString(R.string.contact_us_financial_services));
+			actionBarCloseIcon();
 		} else {
 			moveToCLIAllStepsContainerFragment();
 		}
@@ -106,8 +118,8 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 		}
 
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_i_n_e)) && offerActive) {
-			HashMap<String, String> incomeHashMap = increaseLimitController.incomeHashMap(createOfferResponse);
-			HashMap<String, String> expenseHashMap = increaseLimitController.expenseHashMap(createOfferResponse);
+			HashMap<String, String> incomeHashMap = increaseLimitController.incomeHashMap(mCLICreateOfferResponse);
+			HashMap<String, String> expenseHashMap = increaseLimitController.expenseHashMap(mCLICreateOfferResponse);
 			SupplyIncomeDetailFragment supplyIncomeDetailFragment = new SupplyIncomeDetailFragment();
 			offerBundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, incomeHashMap);
 			offerBundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, expenseHashMap);
@@ -125,8 +137,8 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 		}
 
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_offer))) {
-			HashMap<String, String> icomeHashMap = increaseLimitController.incomeHashMap(createOfferResponse);
-			HashMap<String, String> expenseHashMap = increaseLimitController.expenseHashMap(createOfferResponse);
+			HashMap<String, String> icomeHashMap = increaseLimitController.incomeHashMap(mCLICreateOfferResponse);
+			HashMap<String, String> expenseHashMap = increaseLimitController.expenseHashMap(mCLICreateOfferResponse);
 			offerBundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, icomeHashMap);
 			offerBundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, expenseHashMap);
 			OfferCalculationFragment offerCalculationFragment = new OfferCalculationFragment();
@@ -188,8 +200,8 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 		pbDecline.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 	}
 
-	public CreateOfferResponse offerActiveObject() {
-		return (CreateOfferResponse) Utils.strToJson(mOfferActivePayload, CreateOfferResponse.class);
+	public CLICreateOfferResponse offerActiveObject() {
+		return (CLICreateOfferResponse) Utils.strToJson(mOfferActivePayload, CLICreateOfferResponse.class);
 	}
 
 	private void openNextFragment(Fragment fragment) {
@@ -265,11 +277,11 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 
 	private void cliDelcineOfferRequest(CreateOfferDecision createOfferDecision) {
 		onDeclineLoad();
-		CLIOfferDecision cliOfferDecision = new CLIOfferDecision(CLIPhase2Activity.this, createOfferDecision, new OnEventListener() {
+		CLIOfferDecision cliOfferDecision = new CLIOfferDecision(CLIPhase2Activity.this, createOfferDecision, String.valueOf(mCLICreateOfferResponse.cli.cliId), new OnEventListener() {
 
 			@Override
 			public void onSuccess(Object object) {
-				CreateOfferResponse mObjOffer = ((CreateOfferResponse) object);
+				CLICreateOfferResponse mObjOffer = ((CLICreateOfferResponse) object);
 				switch (mObjOffer.httpCode) {
 					case 200:
 						finishActivity();
@@ -294,7 +306,12 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 	}
 
 	private void onDeclineLoad() {
-		showDeclineProgressBar();
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				showDeclineProgressBar();
+			}
+		});
 	}
 
 	private void onDeclineComplete() {
@@ -313,4 +330,19 @@ public class CLIPhase2Activity extends AppCompatActivity implements View.OnClick
 	public void setEditNumberValue(int editNumberValue) {
 		this.editNumberValue = editNumberValue;
 	}
+
+	@Override
+	public void onFragmentChanged(String title) {
+		//contact us change title listener
+	}
+
+	private void setTitle(String text) {
+		mToolbarText.setText(text);
+	}
+
+	public void hideBurgerButton() {
+		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+	}
+
+
 }

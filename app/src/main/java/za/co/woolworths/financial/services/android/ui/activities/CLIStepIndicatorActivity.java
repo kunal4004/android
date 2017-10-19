@@ -20,7 +20,7 @@ import com.awfs.coordination.R;
 import za.co.woolworths.financial.services.android.models.WOnboardingOnFragmentInteractionListener;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIFirstStepFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.CLIFourthStepFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.CLISuccessFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.CLISecondStepFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIThirdStepFragment;
 import za.co.woolworths.financial.services.android.ui.views.WFragmentViewPager;
@@ -155,7 +155,7 @@ public class CLIStepIndicatorActivity extends BaseActivity implements WOnboardin
 					fragment = new CLIThirdStepFragment();
 					break;
 				case 3:
-					fragment = new CLIFourthStepFragment();
+					fragment = new CLISuccessFragment();
 					break;
 				default:
 					break;

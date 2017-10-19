@@ -22,7 +22,7 @@ import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
-import za.co.woolworths.financial.services.android.models.dto.CreateOfferResponse;
+import za.co.woolworths.financial.services.android.models.dto.CLICreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
@@ -332,7 +332,7 @@ public interface ApiInterface {
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/user/cli/offer")
-	CreateOfferResponse createOfferRequest(
+	CLICreateOfferResponse createOfferRequest(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,
@@ -348,7 +348,7 @@ public interface ApiInterface {
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/user/cli/offer/{cliId}/decision")
-	CreateOfferResponse createOfferDecision(
+	CLICreateOfferResponse createOfferDecision(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,
@@ -365,7 +365,7 @@ public interface ApiInterface {
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/user/cli/offer/{cliId}/POI")
-	CreateOfferResponse cliSubmitPOI(
+	CLICreateOfferResponse cliSubmitPOI(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,
@@ -376,7 +376,7 @@ public interface ApiInterface {
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sessionToken") String sessionToken,
-			@Body MultipartTypedOutput attachments, Callback<CreateOfferResponse> response);
+			@Body MultipartTypedOutput attachments, Callback<CLICreateOfferResponse> response);
 
 	//WOP-650 Set cacheTime to zero to allow correct status of CLI getOfferActive
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:0"})

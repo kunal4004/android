@@ -9,13 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:descendantFocusability="beforeDescendants"
-        android:layout_marginTop="@dimen/ten_dp"
         android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <View
+                style="@style/top_view_style"/>
 
             <RelativeLayout style="@style/increase_limit_relative_style">
 
@@ -26,7 +28,6 @@
                 <ImageView
                     android:id="@+id/imInfo"
                     style="@style/increase_limit_info_circle"
-                    android:alpha="0.4"
                     android:contentDescription="@string/app_name"/>
 
             </RelativeLayout>

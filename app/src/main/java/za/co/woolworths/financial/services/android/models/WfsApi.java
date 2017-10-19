@@ -26,7 +26,7 @@ import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
-import za.co.woolworths.financial.services.android.models.dto.CreateOfferResponse;
+import za.co.woolworths.financial.services.android.models.dto.CLICreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
@@ -127,12 +127,12 @@ public class WfsApi {
 		return mApiInterface.getMessages(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), pageSize, pageNumber);
 	}
 
-	public CreateOfferResponse createOfferRequest(CreateOfferRequest offerRequest) {
+	public CLICreateOfferResponse createOfferRequest(CreateOfferRequest offerRequest) {
 		return mApiInterface.createOfferRequest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), offerRequest);
 	}
 
-	public CreateOfferResponse createOfferDecision(CreateOfferDecision createOfferDecision) {
-		return mApiInterface.createOfferDecision(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), createOfferDecision.getCliOfferId(), createOfferDecision);
+	public CLICreateOfferResponse createOfferDecision(CreateOfferDecision createOfferDecision, String cliId) {
+		return mApiInterface.createOfferDecision(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), cliId, createOfferDecision);
 	}
 
 	public DeaBanks getDeaBanks() {

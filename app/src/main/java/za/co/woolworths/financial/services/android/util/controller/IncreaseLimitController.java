@@ -3,8 +3,11 @@ package za.co.woolworths.financial.services.android.util.controller;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,7 +19,7 @@ import java.util.HashMap;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Application;
 import za.co.woolworths.financial.services.android.models.dto.Cli;
-import za.co.woolworths.financial.services.android.models.dto.CreateOfferResponse;
+import za.co.woolworths.financial.services.android.models.dto.CLICreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
@@ -28,7 +31,9 @@ public class IncreaseLimitController {
 
 	public static final String INCOME_DETAILS = "INCOME_DETAILS";
 	public static final String EXPENSE_DETAILS = "EXPENSE_DETAILS";
-	public static final String YOUTUBE_API_KEY = "AIzaSyB2o1ArKC7pf8lixwPNG98obPsdp5-UZZM";
+	public static final String FROM_EXPENSE_SCREEN = "FROM_EXPENSE_SCREEN";
+
+	public static final String YOUTUBE_API_KEY = "AIzaSyDY-DV5jz11iahZuIFGWcxQWtA37MgoSIA";
 
 	private Context mContext;
 	private String nextStep;
@@ -84,8 +89,7 @@ public class IncreaseLimitController {
 		String messageDetail = cli.messageDetail;
 		setNextStep(nextStep);
 		setOfferActive(offerActive.offerActive);
-		if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
-			messageSummary = getString(R.string.apply_now);
+		if (messageSummary.equalsIgnoreCase(getString(R.string.status_apply_now))) {
 			hideView(logoIncreaseLimit);
 			showView(llCommonLayer);
 			setCLITag(messageSummary, R.drawable.cli_round_offer_available, tvApplyNowIncreaseLimit);
@@ -93,24 +97,39 @@ public class IncreaseLimitController {
 			tvIncreaseLimitDescription.setText(messageDetail);
 		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_offer_available))) {
 			showView(logoIncreaseLimit);
+			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			setCLITag(messageSummary, R.drawable.cli_round_offer_available, tvApplyNowIncreaseLimit);
 		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_retry))) {
 			showView(logoIncreaseLimit);
+			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			messageSummary = getString(R.string.status_please_try_again);
 			setCLITag(messageSummary, R.drawable.cli_round_inprogress_tag, tvApplyNowIncreaseLimit);
 		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_poi_required))) {
 			showView(logoIncreaseLimit);
+			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			setCLITag(messageSummary, R.drawable.cli_round_inprogress_tag, tvApplyNowIncreaseLimit);
 		} else if (messageSummary.equalsIgnoreCase(getString(R.string.decline))) {
 			showView(logoIncreaseLimit);
+			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			messageSummary = getString(R.string.status_unavailable);
 			setCLITag(messageSummary, R.drawable.cli_round_offer_unavailable, tvApplyNowIncreaseLimit);
+		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_contact_us))) {
+			showView(logoIncreaseLimit);
+			cliIcon(logoIncreaseLimit);
+			hideView(llCommonLayer);
+			setCLITag(messageSummary, R.drawable.cli_round_inprogress_tag, tvApplyNowIncreaseLimit);
+		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_poi_problem))) {
+			showView(logoIncreaseLimit);
+			cliIcon(logoIncreaseLimit);
+			hideView(llCommonLayer);
+			setCLITag(messageSummary, R.drawable.cli_round_offer_poi_problem, tvApplyNowIncreaseLimit);
 		} else {
 			showView(logoIncreaseLimit);
+			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			messageSummary = getString(R.string.status_unavailable);
 			setCLITag(messageSummary, R.drawable.cli_round_offer_unavailable, tvApplyNowIncreaseLimit);
@@ -247,7 +266,7 @@ public class IncreaseLimitController {
 		return mHmSupplyIncomeDetail;
 	}
 
-	public HashMap<String, String> incomeHashMap(CreateOfferResponse offerActive) {
+	public HashMap<String, String> incomeHashMap(CLICreateOfferResponse offerActive) {
 		Application application = getApplication(offerActive);
 		HashMap<String, String> incomeHashMap = new HashMap<>();
 		incomeHashMap.put("GROSS_MONTHLY_INCOME", toString(application.grossMonthlyIncome));
@@ -256,7 +275,7 @@ public class IncreaseLimitController {
 		return incomeHashMap;
 	}
 
-	public HashMap<String, String> expenseHashMap(CreateOfferResponse offerActive) {
+	public HashMap<String, String> expenseHashMap(CLICreateOfferResponse offerActive) {
 		Application application = getApplication(offerActive);
 		HashMap<String, String> expenseHashMap = new HashMap<>();
 		expenseHashMap.put("MORTGAGE_PAYMENTS", toString(application.mortgagePaymentAmount));
@@ -267,7 +286,7 @@ public class IncreaseLimitController {
 		return expenseHashMap;
 	}
 
-	private Application getApplication(CreateOfferResponse offerActive) {
+	private Application getApplication(CLICreateOfferResponse offerActive) {
 		return offerActive.cli.application;
 	}
 
@@ -281,5 +300,21 @@ public class IncreaseLimitController {
 
 	public void enableView(View v) {
 		v.setEnabled(true);
+	}
+
+	public void cliIcon(ImageView logoIncreaseLimit) {
+		logoIncreaseLimit.setImageResource(R.drawable.cli);
+	}
+
+	public int getScreenHeight(Activity activity) {
+		Display display = activity.getWindowManager().getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		return size.y;
+	}
+
+	public void setQuarterHeight(View view) {
+		ViewGroup.LayoutParams params = view.getLayoutParams();
+		params.height = getScreenHeight((Activity) mContext) / 4;
 	}
 }

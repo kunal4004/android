@@ -29,11 +29,11 @@
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/toolbarText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center"
                 android:layout_toStartOf="@+id/flDecline"
-                android:gravity="center|center_vertical"
+                android:gravity="center"
                 android:letterSpacing="0.2"
                 android:paddingEnd="@dimen/bank_spacing_width"
                 android:text="@string/cli_activity_title"

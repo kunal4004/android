@@ -34,6 +34,7 @@ import za.co.woolworths.financial.services.android.models.dto.Cli;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CLIIncreaseLimitInfoActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -120,6 +121,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		tvViewTransaction.setOnClickListener(this);
 		rlViewTransactions.setOnClickListener(this);
 		llIncreaseLimitContainer.setOnClickListener(this);
+		mRelIncreaseMyLimit.setOnClickListener(this);
+		mRelFindOutMore.setOnClickListener(this);
 
 		try {
 			networkChangeListener = this;
@@ -178,9 +181,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 						.stay);
 				break;
 
-			case R.id.tvApplyNowIncreaseLimit:
-				break;
-
 			case R.id.relBalanceProtection:
 				Intent intBalanceProtection = new Intent(getActivity(), BalanceProtectionActivity.class);
 				startActivity(intBalanceProtection);
@@ -190,6 +190,14 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			case R.id.relIncreaseMyLimit:
 			case R.id.llIncreaseLimitContainer:
 				mIncreaseLimitController.nextStep(offerActive, productOfferingId);
+				break;
+
+			case R.id.relFindOutMore:
+				Intent openFindOutMore = new Intent(getActivity(), CLIIncreaseLimitInfoActivity.class);
+				getActivity().startActivity(openFindOutMore);
+				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				break;
+			default:
 				break;
 		}
 	}
@@ -223,11 +231,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 					Cli cli = offerActive.cli;
 					String messageSummary = cli.messageSummary;
 
-					if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
-						mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
+					if (messageSummary.equalsIgnoreCase(getString(R.string.status_apply_now))) {
 						mIncreaseLimitController.disableView(llIncreaseLimitContainer);
 					} else {
-						mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
 						mIncreaseLimitController.enableView(llIncreaseLimitContainer);
 					}
 

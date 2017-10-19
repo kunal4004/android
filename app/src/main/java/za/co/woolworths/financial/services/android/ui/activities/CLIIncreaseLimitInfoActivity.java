@@ -18,7 +18,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.CLIIncreaseLimitI
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.SelectedItemCallback;
 
-
 public class CLIIncreaseLimitInfoActivity extends AppCompatActivity implements SelectedItemCallback, ViewPager.OnPageChangeListener {
 
 	private Toolbar mToolbar;
