@@ -22,14 +22,17 @@ public class WGlobalState {
 	public static final String ON_CANCEL = "CANCEL";
 	public static final String ON_SIGN_IN = "SIGNIN";
 
+	public static final int SYNC_FIND_IN_STORE = 3401;
+
 	private boolean clothingProducts, foodProducts;
-	private int startRadius, endRadius;
+	private int startRadius, endRadius, mLatestSelectedPicker;
 
 	private boolean cardGestureIsEnabled, onBackPressed, accountHasExpired, rewardHasExpired,
-			FragmentIsReward, defaultPopupState;
+			FragmentIsReward, defaultPopupState, colorWasPopup, sizeWasPopup;
 	private String pressState, newSTSParams, storeLocatorJson, selectedSKUId;
 	private List<StoreDetails> storeDetailsArrayList;
 	private ArrayList<OtherSku> colourSKUArrayList;
+	private OtherSku colorPopUpValue, sizePopUpValue;
 
 	public void setAccountSignInState(boolean accountSignInState) {
 		setPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE, accountSignInState);
@@ -194,5 +197,43 @@ public class WGlobalState {
 
 	public void setColourSKUArrayList(ArrayList<OtherSku> colourSKUArrayList) {
 		this.colourSKUArrayList = colourSKUArrayList;
+	}
+
+	public boolean colorWasPopup() {
+		return colorWasPopup;
+	}
+
+	public void setColorWasPopup(boolean colorWasPopup) {
+		this.colorWasPopup = colorWasPopup;
+	}
+
+	public boolean sizeWasPopup() {
+		return sizeWasPopup;
+	}
+
+	public void setSizeWasPopup(boolean sizeWasPopup) {
+		this.sizeWasPopup = sizeWasPopup;
+	}
+
+	public OtherSku getColorPickerSku() {
+		return colorPopUpValue;
+	}
+
+	public void setColorPickerSku(OtherSku colorPopUpValue) {
+		this.colorPopUpValue = colorPopUpValue;
+		this.mLatestSelectedPicker = 1;
+	}
+
+	public OtherSku getSizePickerSku() {
+		return sizePopUpValue;
+	}
+
+	public int getLatestSelectedPicker() {
+		return mLatestSelectedPicker;
+	}
+
+	public void setSizePickerSku(OtherSku sizePopUpValue) {
+		this.sizePopUpValue = sizePopUpValue;
+		this.mLatestSelectedPicker = 2;
 	}
 }

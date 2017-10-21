@@ -48,6 +48,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
+
 	public WTextView availableBalance, creditLimit, dueDate, minAmountDue, currentBalance, tvViewTransaction, tvIncreaseLimit;
 	private boolean bolBroacastRegistred, isOfferActive = false, creditWasAlreadyRunOnce = false;
 
@@ -60,12 +61,15 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private BroadcastReceiver connectionBroadcast;
 	private NetworkChangeListener networkChangeListener;
 	private RelativeLayout rlIncreaseLimit;
+	private View view;
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		setRetainInstance(true);
-		return inflater.inflate(R.layout.card_common_fragment, container, false);
+		if (view == null) {
+			view = inflater.inflate(R.layout.card_common_fragment, container, false);
+		}
+		return view;
 	}
 
 	@Override
@@ -113,7 +117,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		bolBroacastRegistred = true;
 		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		bindData(accountsResponse);
-		disableIncreaseLimit();
 		hideProgressBar();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
 	}

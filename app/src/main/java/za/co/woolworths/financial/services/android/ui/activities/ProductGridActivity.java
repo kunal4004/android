@@ -50,6 +50,7 @@ import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.Product;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
@@ -60,15 +61,16 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
+import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
@@ -118,12 +120,12 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	private PermissionUtils permissionUtils;
 	private ProgressBar mButtonProgress;
 	private WTextView tvBtnFinder;
-	private LinearLayout llProductDetail;
-	private Location mLocation;
 	private String TAG = this.getClass().getSimpleName();
 	private LocationItemTask locationItemTask;
-	private MyBroadcastReceiver updateStoreFinderReceiver;
-	protected static final int REQUEST_CHECK_SETTINGS = 99;
+	private boolean mProductHasColour;
+	private boolean mProductHasSize;
+	private boolean mProductHasOneColour;
+	private boolean mProductHasOneSize;
 
 	private enum RUN_BACKGROUND_TASK {
 		SEARCH_PRODUCT, SEARCH_MORE_PRODUCT, LOAD_PRODUCT, LOAD_MORE_PRODUCT
@@ -149,10 +151,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		}
 		connectionBroadcast = Utils.connectionBroadCast(ProductGridActivity.this, networkChangeListener);
 		mWoolWorthsApplication = ((WoolworthsApplication) ProductGridActivity.this.getApplication());
-		mGlobalState = mWoolWorthsApplication.getWGlobalState();
-		updateStoreFinderReceiver = new MyBroadcastReceiver();
-		this.registerReceiver(updateStoreFinderReceiver, new IntentFilter(MyBroadcastReceiver.ACTION));
-
+		mGlobalState = ((WoolworthsApplication) ProductGridActivity.this.getApplication()).getWGlobalState();
 		initUI();
 		initProductDetailUI();
 		actionBar();
@@ -212,6 +211,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 				switch (newState) {
 					case COLLAPSED:
 						panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
+						resetColorSizePopup();
 						dismissPopWindow();
 						dismissFindInStoreProgress();
 						cancelInStoreTask();
@@ -307,7 +307,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mRelProgressBar = (RelativeLayout) findViewById(R.id.relProgressBar);
 		mSlideUpPanelLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
 		mLinProductList = (LinearLayout) findViewById(R.id.linProductList);
-		llProductDetail = (LinearLayout) findViewById(R.id.llProductDetail);
 		mRelViewProgressBar = (RelativeLayout) findViewById(R.id.relViewProgressBar);
 		mProductScroll = (NestedScrollView) findViewById(R.id.scrollProduct);
 		mBtnShopOnlineWoolies = (Button) findViewById(R.id.btnShopOnlineWoolies);
@@ -605,7 +604,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 							mProductJSON = strProduct;
 							ArrayList<WProductDetail> mProductList = new ArrayList<>();
 							WProductDetail productList = wProduct.product;
-							clothingIsEnabled(productList);
+							productIsActive(productList);
 							mOtherSKU = wProduct.product.otherSkus;
 							if (productList != null) {
 								mProductList.add(productList);
@@ -681,7 +680,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		super.onDestroy();
 		menuItemVisible(mMenu, true);
 		unregisterReceiver(broadcast_reciever);
-		this.unregisterReceiver(updateStoreFinderReceiver);
 	}
 
 	private void finishActivity() {
@@ -861,7 +859,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		});
 	}
 
-
 	private String toJson(Object jsonObject) {
 		return new Gson().toJson(jsonObject);
 	}
@@ -901,7 +898,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	private boolean productHasColour() {
-		return getColorList().size() > 0 ? true : false;
+		return getColorList().size() > 0;
 	}
 
 	private boolean productHasOneColour() {
@@ -913,7 +910,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	private boolean productHasSize() {
-		return getSizeList().size() > 0 ? true : false;
+		return getSizeList().size() > 0;
 	}
 
 	public void colourIntent() {
@@ -924,7 +921,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
@@ -936,11 +933,11 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
-	public void sizeOnlyIntent(String colour) {
+	public void sizeIntent(String colour) {
 		mGlobalState.setColourSKUArrayList(getColorList());
 		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
 		mIntent.putExtra("SELECTED_COLOUR", colour);
@@ -948,26 +945,26 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
-	public void colourNoSizeIntent() {
-		mGlobalState.setColourSKUArrayList(getColorList());
+	public void colorIntent(String size) {
 		Intent mIntent = new Intent(this, ConfirmColorSizeActivity.class);
-		mIntent.putExtra("COLOR_LIST", toJson(getColorList()));
+		mIntent.putExtra("SELECTED_COLOUR", size);
+		mIntent.putExtra("COLOR_LIST", toJson(mGlobalState.getColourSKUArrayList()));
 		mIntent.putExtra("OTHERSKU", toJson(mOtherSKU));
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", false);
 		mIntent.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-		startActivity(mIntent);
+		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		overridePendingTransition(0, 0);
 	}
 
 	public void noSizeColorIntent() {
 		mScrollProductDetail.scrollTo(0, 0);
 		mGlobalState.setSelectedSKUId(mSkuId);
-		inStoreFinderUpdate();
+		startLocationUpdates();
 	}
 
 	private void disableStoreFinder() {
@@ -975,31 +972,22 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		llStoreFinder.setVisibility(View.GONE);
 	}
 
-	private void clothingIsEnabled(WProductDetail productList) {
+	private void productIsActive(WProductDetail productList) {
 		String productType = productList.productType;
-		if (productType.equalsIgnoreCase("clothingProducts")) {
-			if (mGlobalState.clothingIsEnabled()) {
-				setLayoutWeight(mBtnShopOnlineWoolies, 0.5f);
-				setLayoutWeight(llStoreFinder, 0.5f);
-				llStoreFinder.setVisibility(View.VISIBLE);
-			} else {
-				setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
-				llStoreFinder.setVisibility(View.GONE);
-			}
+		WGlobalState mcs = mWoolWorthsApplication.getWGlobalState();
+		if ((productType.equalsIgnoreCase("clothingProducts") & mcs.clothingIsEnabled()) || (productType.equalsIgnoreCase("foodProducts") & mcs.isFoodProducts())) {
+			setLayoutWeight(mBtnShopOnlineWoolies, 0.5f);
+			setLayoutWeight(llStoreFinder, 0.5f);
+			llStoreFinder.setVisibility(View.VISIBLE);
 		} else {
-			if (mGlobalState.isFoodProducts()) {
-				setLayoutWeight(mBtnShopOnlineWoolies, 0.5f);
-				setLayoutWeight(llStoreFinder, 0.5f);
-				llStoreFinder.setVisibility(View.VISIBLE);
-			} else {
-				setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
-				llStoreFinder.setVisibility(View.GONE);
-			}
+			setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
+			llStoreFinder.setVisibility(View.GONE);
 		}
 	}
 
 	@Override
 	public void onClick(View v) {
+		MultiClickPreventer.preventMultiClick(v);
 		switch (v.getId()) {
 			case R.id.textSelectColour:
 			case R.id.imSelectedColor:
@@ -1045,7 +1033,10 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 						View popupView = layoutInflater.inflate(R.layout.product_size_row, null);
 						mRecyclerviewSize = (RecyclerView) popupView.findViewById(R.id.recyclerviewSize);
 						LinearLayout mPopLinContainer = (LinearLayout) popupView.findViewById(R.id.linPopUpContainer);
-						bindWithUI(otherSkusList, false);
+
+						String selectedColor = mTextColour.getText().toString();
+						mSizePopUpList = sizePopUpList(selectedColor);
+						bindWithUI(mSizePopUpList, false);
 						mPSizeWindow = new PopupWindow(
 								popupView,
 								ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -1091,51 +1082,133 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	@Override
 	public void PermissionGranted(int request_code) {
 		Log.i("PERMISSION", "GRANTED");
+		mScrollProductDetail.scrollTo(0, 0);
 		if (Utils.isLocationEnabled(ProductGridActivity.this)) {
-			boolean productHasColour = productHasColour();
-			boolean productHasSize = productHasSize();
-			boolean productHasOneColour = productHasOneColour();
-			boolean productHasOneSize = productHasOneSize();
-			mScrollProductDetail.scrollTo(0, 0);
-			if (productHasColour) {
-				if (productHasOneColour) {
-					// one colour only
-					String skuColour = getColorList().get(0).colour;
-					ArrayList<OtherSku> getSize;
-					if (!TextUtils.isEmpty(skuColour)) {
-						getSize = commonSizeList(skuColour);
-					} else {
-						getSize = getSizeList();
-					}
-					if (getSize.size() > 0) {
-						if (getSize.size() == 1) {
-							mSkuId = getSize.get(0).sku;
-							noSizeColorIntent();
-						} else {
-							sizeOnlyIntent(skuColour);
-						}
-					} else {
-						mSkuId = mProduct.get(0).sku;
-						noSizeColorIntent();
-					}
-				} else {
-					// contain several colours
-					colourIntent();
-				}
+
+			mProductHasColour = productHasColour();
+			mProductHasSize = productHasSize();
+			mProductHasOneColour = productHasOneColour();
+			mProductHasOneSize = productHasOneSize();
+
+			boolean colorWasPopUp = mGlobalState.colorWasPopup();
+			boolean sizeWasPopUp = mGlobalState.sizeWasPopup();
+
+			OtherSku popupColorSKu = mGlobalState.getColorPickerSku();
+			OtherSku popupSizeSKu = mGlobalState.getSizePickerSku();
+
+			/*
+			color | size
+			0 | 0 - > none selected
+			0 | 1 - > size was selected
+			1 | 0 - > color was selected
+			1 | 1 - color and size were selected
+			*/
+
+			if (!colorWasPopUp && !sizeWasPopUp) {
+				sizeColorSelector();
+			} else if (!colorWasPopUp && sizeWasPopUp) {
+				displayColor(popupSizeSKu);
+			} else if (colorWasPopUp && !sizeWasPopUp) {
+				sizeOnlyIntent(popupColorSKu);
 			} else {
-				if (productHasSize) {
-					if (productHasOneSize) { //one size
-						ArrayList<OtherSku> getSize = getSizeList();
+				switch (mGlobalState.getLatestSelectedPicker()) {
+					case 1:
+						mSkuId = mGlobalState.getColorPickerSku().sku;
+						break;
+					case 2:
+						mSkuId = mGlobalState.getSizePickerSku().sku;
+						break;
+					default:
+						break;
+				}
+				noSizeColorIntent();
+			}
+		}
+	}
+
+	private void sizeColorSelector() {
+		if (mProductHasColour) {
+			if (mProductHasOneColour) {
+				// one colour only
+				String skuColour = getColorList().get(0).colour;
+				ArrayList<OtherSku> getSize;
+				if (!TextUtils.isEmpty(skuColour)) {
+					getSize = commonSizeList(skuColour);
+				} else {
+					getSize = getSizeList();
+				}
+				if (getSize.size() > 0) {
+					if (getSize.size() == 1) {
 						mSkuId = getSize.get(0).sku;
 						noSizeColorIntent();
-					} else { // more sizes
-						sizeIntent();
+					} else {
+						sizeIntent(skuColour);
 					}
 				} else {
 					mSkuId = mProduct.get(0).sku;
 					noSizeColorIntent();
 				}
+			} else {
+				// contain several colours
+				colourIntent();
 			}
+		} else {
+			if (mProductHasSize) {
+				if (mProductHasOneSize) { //one size
+					ArrayList<OtherSku> getSize = getSizeList();
+					mSkuId = getSize.get(0).sku;
+					noSizeColorIntent();
+				} else { // more sizes
+					sizeIntent();
+				}
+			} else {
+				mSkuId = mProduct.get(0).sku;
+				noSizeColorIntent();
+			}
+		}
+	}
+
+	private void displayColor(OtherSku otherSku) {
+		ArrayList<OtherSku> colorList = commonColorList(otherSku.size);
+		if (colorList != null) {
+			int colorListSize = colorList.size();
+			if (colorListSize > 0) {
+				if (colorListSize == 1) {
+					// one color only
+					mSkuId = colorList.get(0).sku;
+					noSizeColorIntent();
+				} else {
+					// color > 1
+					mGlobalState.setColourSKUArrayList(colorList);
+					colorIntent(otherSku.size);
+				}
+			} else {
+				// no color
+				mSkuId = otherSku.sku;
+				noSizeColorIntent();
+			}
+		} else {
+			mSkuId = otherSku.sku;
+			noSizeColorIntent();
+		}
+	}
+
+	private void sizeOnlyIntent(OtherSku otherSku) {
+		ArrayList<OtherSku> sizeList = commonSizeList(otherSku.colour);
+		int sizeListSize = sizeList.size();
+		if (sizeListSize > 0) {
+			if (sizeListSize == 1) {
+				// one size only
+				mSkuId = sizeList.get(0).sku;
+				noSizeColorIntent();
+			} else {
+				// size > 1
+				sizeIntent(otherSku.colour);
+			}
+		} else {
+			// no size
+			mSkuId = otherSku.sku;
+			noSizeColorIntent();
 		}
 	}
 
@@ -1145,12 +1218,18 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 			public void onSuccess(Object object) {
 				if (object != null) {
 					List<StoreDetails> location = ((LocationResponse) object).Locations;
-					if (location != null && location.size() > 0) {
-						mGlobalState.setStoreDetailsArrayList(location);
-						Intent intentInStoreFinder = new Intent(ProductGridActivity.this, WStockFinderActivity.class);
-						intentInStoreFinder.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-						startActivity(intentInStoreFinder);
-						overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+					if ((location != null) && (location.size() > 0)) {
+						Utils.removeObjectFromArrayList(ProductGridActivity.this, location);
+						if (location.size() > 0) {
+							mGlobalState.setStoreDetailsArrayList(location);
+							Intent intentInStoreFinder = new Intent(ProductGridActivity.this, WStockFinderActivity.class);
+							intentInStoreFinder.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
+							startActivity(intentInStoreFinder);
+							overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+						} else {
+							//no stock error message
+							Utils.displayValidationMessage(ProductGridActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");
+						}
 					} else {
 						//no stock error message
 						Utils.displayValidationMessage(ProductGridActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");
@@ -1166,9 +1245,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 					public void run() {
 						dismissFindInStoreProgress();
 						Log.e("callbackInStoreFinder", "error " + e);
-						if (e.contains("Connect")) {
-							//mErrorHandlerView.showToast();
-						}
 					}
 				});
 			}
@@ -1177,13 +1253,12 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	private ArrayList<OtherSku> commonSizeList(String colour) {
-		List<OtherSku> otherSkus = mOtherSKU;
 		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
 
 		if (productHasColour()) { //product has color
 			// filter by colour
 			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : otherSkus) {
+			for (OtherSku sku : mOtherSKU) {
 				if (sku.colour.equalsIgnoreCase(colour)) {
 					sizeList.add(sku);
 				}
@@ -1191,7 +1266,43 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
 			//remove duplicates
 			for (OtherSku os : sizeList) {
+				if (!sizeValueExist(commonSizeList, os.colour)) {
+					commonSizeList.add(os);
+				}
+			}
+		} else { // no color found
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : mOtherSKU) {
+				if (sku.colour.contains(colour)) {
+					sizeList.add(sku);
+				}
+			}
+			//remove duplicates
+			for (OtherSku os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.size)) {
+					commonSizeList.add(os);
+				}
+			}
+		}
+		return commonSizeList;
+	}
+
+	private ArrayList<OtherSku> commonColorList(String size) {
+		List<OtherSku> otherSkus = mOtherSKU;
+		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+
+		if (productHasColour()) { //product has color
+			// filter by colour
+			ArrayList<OtherSku> sizeList = new ArrayList<>();
+			for (OtherSku sku : otherSkus) {
+				if (sku.size.equalsIgnoreCase(size)) {
+					sizeList.add(sku);
+				}
+			}
+
+			//remove duplicates
+			for (OtherSku os : sizeList) {
+				if (!sizeValueExist(commonSizeList, os.colour)) {
 					commonSizeList.add(os);
 				}
 			}
@@ -1205,7 +1316,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		}
 		return commonSizeList;
 	}
-
 
 	@Override
 	public void PartialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
@@ -1242,7 +1352,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		@Override
 		public void onReceive(Context context, final Intent intent) {
 			try {
-				mLocation = intent.getParcelableExtra(FusedLocationSingleton.LBM_EVENT_LOCATION_UPDATE);
+				Location mLocation = intent.getParcelableExtra(FusedLocationSingleton.LBM_EVENT_LOCATION_UPDATE);
 				Utils.saveLastLocation(mLocation, ProductGridActivity.this);
 				stopLocationUpdate();
 				callbackInStoreFinder();
@@ -1252,18 +1362,17 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		}
 	};
 
-	private void inStoreFinderUpdate() {
-		Intent intent = new Intent();
-		intent.setAction(ProductGridActivity.MyBroadcastReceiver.ACTION);
-		sendBroadcast(intent);
-	}
-
-	public class MyBroadcastReceiver extends BroadcastReceiver {
-		public static final String ACTION = "com.inStoreFinder.UPDATE";
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			startLocationUpdates();
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode) {
+			case WGlobalState.SYNC_FIND_IN_STORE:
+				if (resultCode == RESULT_OK) {
+					startLocationUpdates();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 }

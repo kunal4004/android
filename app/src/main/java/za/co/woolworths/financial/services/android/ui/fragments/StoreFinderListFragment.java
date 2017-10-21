@@ -66,7 +66,10 @@ public class StoreFinderListFragment extends Fragment implements UpdateStoreFind
 
 				Gson gson = new Gson();
 				String store = gson.toJson(mStoreDetailList.get(position));
-				startActivity(new Intent(getActivity(), StoreDetailsActivity.class).putExtra("store", store));
+				Intent cardDetailIntent = new Intent(getActivity(), StoreDetailsActivity.class);
+				cardDetailIntent.putExtra("store", store);
+				cardDetailIntent.putExtra("FromStockLocator", true);
+				getActivity().startActivity(cardDetailIntent);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 			}
 

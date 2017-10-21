@@ -4,8 +4,6 @@ package za.co.woolworths.financial.services.android.models;
 import retrofit.Callback;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
-import retrofit.http.EncodedPath;
-import retrofit.http.Field;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.Headers;
@@ -94,8 +92,8 @@ public interface ApiInterface {
 			@Header("sessionToken") String sessionToken,
 			@Path("productOfferingId") String productOfferingId);
 
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:129600"})
-//cachetime 36hours
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800"})
+//cachetime changed to 8 hrs.
 	@GET("/user/vouchers")
 	VoucherResponse getVouchers(
 			@Header("apiId") String apiId,
@@ -227,8 +225,8 @@ public interface ApiInterface {
 			@Header("longitude") String longitude,
 			@Path(value = "sku", encode = false) String sku,
 			@Query("startRadius") String startRadius,
-			@Query("endRadius") String endRadius
-	);
+			@Query("endRadius") String endRadius,
+			@Query("getStatus") boolean getStatus);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@GET("/user/messages")
@@ -345,8 +343,8 @@ public interface ApiInterface {
 			@Header("sessionToken") String sessionToken,
 			@Body CreateOfferRequest createOfferRequest);
 
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:86400"})
-//cache for 24 hours
+	//WOP-650 Set cacheTime to zero to allow correct status of CLI getOfferActive
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:0"})
 	@GET("/user/cli/offerActive")
 	OfferActive getActiveOfferRequest(
 			@Header("apiId") String apiId,

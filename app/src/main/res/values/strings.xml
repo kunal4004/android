@@ -672,20 +672,27 @@
     <string name="stock_finder_list_view">list view</string>
     <string name="stock_finder_btn_label">find in-store</string>
     <string name="product_loading_color_size">Loading size &amp; colour</string>
-    <string name="find_in_store_info">Items based on last night’s stock record.</string>
+    <string name="find_in_store_info">We update these numbers every few hours. Stock moves quickly, so items may have sold since the last count.</string>
     <string name="confirm_color_desc">Please confirm your colour</string>
     <string name="confirm_size_desc">Please confirm your size</string>
-    <string name="available">available</string>
     <string name="sf_instore_availability_title">In-Store Availability</string>
-    <string name="sf_instore_availability_desc">These stores are most likely to have your item based on last night\'s stock record</string>
-
     <string name="color">color</string>
     <string name="size">size</string>
     <string name="not_found">Unfortunately not found</string>
-    <string name="stock_available_product">We have no stock available of this product at the moment.</string>
+    <string name="stock_available_product">Stores in this area are out of your item (or have very little stock).  How about searching our online store ?</string>
     <string name="back_to_product">back to products</string>
-    <string name="no_stock_title">no stock</string>
+    <string name="no_stock_title">NO PRODUCT FOUND</string>
     <string name="location_disable_title">Location Services</string>
     <string name="location_disable_desc">This feature cannot be used without Location Services.</string>
-
+    <string name="downloaing_text">Downloading File</string>
+    <string name="status_red_desc">Unlikely to have stock</string>
+    <string name="status_green_desc">Most likely to have stock</string>
+    <string name="status_amber_desc">Low stock</string>
+    <string name="status_amber">AMBER</string>
+    <string name="status_red">RED</string>
+    <string name="status_green">GREEN</string>
+    <string name="sf_instore_availability_desc_top">We are trialling this feature.</string>
+    <string name="sf_instore_availability_desc_bottom">Each store shows a colour indicator:</string>
+    <!--FaceBook ID-->
+    <string name="facebook_app_id">790724074427665</string>
 </resources>

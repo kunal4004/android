@@ -218,8 +218,6 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 	private String getRandomVideos() {
 		ArrayList<String> listOfVideo = new ArrayList<>();
 		String rawFolderPath = "android.resource://" + getPackageName() + "/";
-		listOfVideo.add(rawFolderPath + R.raw.fashion_studiow_men);
-		listOfVideo.add(rawFolderPath + R.raw.fashion_summertime);
 		listOfVideo.add(rawFolderPath + R.raw.food_broccoli);
 		listOfVideo.add(rawFolderPath + R.raw.food_chocolate);
 		Collections.shuffle(listOfVideo);

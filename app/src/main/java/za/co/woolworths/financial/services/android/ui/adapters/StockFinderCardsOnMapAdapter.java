@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.text.SpannableString;
@@ -15,17 +16,14 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import static android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE;
 
-/**
- * Created by W7099877 on 10/10/2016.
- */
-
 public class StockFinderCardsOnMapAdapter extends PagerAdapter {
-	public Activity mContext;
-	public List<StoreDetails> storeDetailsList;
+	private Activity mContext;
+	private List<StoreDetails> storeDetailsList;
 
 	public StockFinderCardsOnMapAdapter(Activity context, List<StoreDetails> storeDetailsList) {
 		this.mContext = context;
@@ -34,23 +32,24 @@ public class StockFinderCardsOnMapAdapter extends PagerAdapter {
 
 	@Override
 	public void destroyItem(ViewGroup container, int position, Object object) {
-
 		container.removeView((View) object);
 	}
-
 
 	@Override
 	public Object instantiateItem(ViewGroup container, final int position) {
 
 		View cView = mContext.getLayoutInflater().inflate(R.layout.stock_finder_item, container, false);
 		WTextView storeName = (WTextView) cView.findViewById(R.id.storeName);
-		WTextView storeOfferings = (WTextView) cView.findViewById(R.id.offerings);
 		WTextView storeDistance = (WTextView) cView.findViewById(R.id.distance);
 		WTextView storeAddress = (WTextView) cView.findViewById(R.id.storeAddress);
 		WTextView storeTimeing = (WTextView) cView.findViewById(R.id.timeing);
-		storeName.setText(storeDetailsList.get(position).name);
-		storeAddress.setText(storeDetailsList.get(position).address);
+		WTextView offerings = (WTextView) cView.findViewById(R.id.offerings);
 
+		StoreDetails storeDetails = storeDetailsList.get(position);
+		storeName.setText(storeDetails.name);
+		storeAddress.setText(storeDetails.address);
+		String status = storeDetails.status;
+		Utils.setRagRating(storeDistance.getContext(), offerings, storeDetails.status);
 		int mKmDistance = mContext.getResources().getDimensionPixelSize(R.dimen.distance_km);
 		SpannableString ssDistance = new SpannableString(WFormatter.formatMeter(storeDetailsList.get(position).distance));
 		SpannableString mSpanKm = new SpannableString(mContext.getResources().getString(R.string.distance_in_km));
@@ -58,8 +57,6 @@ public class StockFinderCardsOnMapAdapter extends PagerAdapter {
 		CharSequence mDistancekM = TextUtils.concat(ssDistance, "\n", mSpanKm);
 		storeDistance.setText(mDistancekM);
 
-		if (storeDetailsList.get(position).offerings != null)
-			storeOfferings.setText(mContext.getResources().getString(R.string.available).toUpperCase());
 		if (storeDetailsList.get(position).times != null) {
 			try {
 				String mHour = WFormatter.formatOpenUntilTime(storeDetailsList.get(position).times.get(0).hours);
