@@ -83,7 +83,7 @@ android {
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
-            versionCode 50
+            versionCode 54
         }
         dexOptions {
             javaMaxHeapSize "2560M"
