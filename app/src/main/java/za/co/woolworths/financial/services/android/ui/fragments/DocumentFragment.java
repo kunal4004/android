@@ -62,7 +62,7 @@ import za.co.woolworths.financial.services.android.util.controller.IncreaseLimit
 
 import static android.app.Activity.RESULT_OK;
 
-public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener, DocumentsAccountTypeAdapter.OnAccountTypeClick, View.OnClickListener, POIDocumentSubmitTypeAdapter.OnSubmitType, TextWatcher,AddedDocumentsListAdapter.ItemRemoved {
+public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener, DocumentsAccountTypeAdapter.OnAccountTypeClick, View.OnClickListener, POIDocumentSubmitTypeAdapter.OnSubmitType, TextWatcher,AddedDocumentsListAdapter.ItemRemoved,View.OnLayoutChangeListener {
 
 	private RecyclerView rclSelectYourBank;
 	private List<Bank> deaBankList;
@@ -92,8 +92,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private AddedDocumentsListAdapter addedDocumentsListAdapter;
 	private List<Document> documentList;
 	private RelativeLayout addDocumentButton;
-	public static final int PERMS_REQUEST_CODE=111;
-
+	private LinearLayout uploadDocumentsLayout;
 	public DocumentFragment() {
 		// Required empty public constructor
 	}
@@ -199,12 +198,14 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		llAccountNumberLayout = (LinearLayout) view.findViewById(R.id.llAccountNumberLayout);
 		rclAddedDocumentsList=(RecyclerView)view.findViewById(R.id.rclDocumentsList);
 		addDocumentButton=(RelativeLayout)view.findViewById(R.id.addDocuments);
+		uploadDocumentsLayout=(LinearLayout)view.findViewById(R.id.uploadDocumentsLayout);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
 		yesPOIFromBank.setOnClickListener(this);
 		noPOIFromBank.setOnClickListener(this);
 		llAccountNumberLayout.setOnClickListener(this);
 		etAccountNumber.addTextChangedListener(this);
 		addDocumentButton.setOnClickListener(this);
+		rclAddedDocumentsList.addOnLayoutChangeListener(this);
 	}
 
 	private void selectBankLayoutManager(List<Bank> deaBankList) {
@@ -266,13 +267,26 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	@Override
 	public void onSubmitTypeSelected(View view, int position) {
-		showSubmitButton();
+		switch (position){
+			case 0:
+				documentList.clear();
+				hideView(btnSubmit);
+				scrollUpAddDocumentsLayout();
+				break;
+			case 1:
+				scrollUpDocumentSubmitTypeLayout();
+				showView(btnSubmit);
+				break;
+			default:
+				break;
+		}
 	}
 
 	@Override
 	public void onItemRemoved(View view, int position) {
 		documentList.remove(position);
 		addedDocumentsListAdapter.notifyDataSetChanged();
+
 	}
 
 	@Override
@@ -385,6 +399,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	public void scrollUpDocumentSubmitTypeLayout() {
+		hideView(uploadDocumentsLayout);
 		poiDocumentSubmitTypeLayout.setVisibility(View.VISIBLE);
 		nestedScrollView.post(new Runnable() {
 			@Override
@@ -404,6 +419,15 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			}
 		});
 	}
+	public void scrollUpAddDocumentsLayout() {
+		uploadDocumentsLayout.setVisibility(View.VISIBLE);
+		nestedScrollView.post(new Runnable() {
+			@Override
+			public void run() {
+				ObjectAnimator.ofInt(nestedScrollView, "scrollY", uploadDocumentsLayout.getTop()).setDuration(300).start();
+			}
+		});
+	}
 
 	public void invalidateBankTypeSelection() {
 		yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
@@ -413,6 +437,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		hideView(accountTypeLayout);
 		hideView(accountNumberLayout);
 		hideView(btnSubmit);
+		hideView(uploadDocumentsLayout);
 		resetAccountNumberView();
 		if (accountTypeAdapter != null)
 			accountTypeAdapter.clearSelection();
@@ -495,11 +520,14 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				Uri uri = data.getData();
 				documentList.add(convertUtiToDocumentObj(uri));
 			}
-			if (addedDocumentsListAdapter.getItemCount() == 0) {
-				addedDocumentsListAdapter=new AddedDocumentsListAdapter(this,documentList);
-				rclAddedDocumentsList.setAdapter(addedDocumentsListAdapter);
-			} else {
-				addedDocumentsListAdapter.notifyDataSetChanged();
+			if(documentList.size()>0) {
+				if (addedDocumentsListAdapter.getItemCount() == 0) {
+					addedDocumentsListAdapter = new AddedDocumentsListAdapter(this, documentList);
+					rclAddedDocumentsList.setAdapter(addedDocumentsListAdapter);
+				} else {
+					addedDocumentsListAdapter.notifyDataSetChanged();
+				}
+				manageSubmitButtonOnDocumentAdd();
 			}
 
 		/*	// Get the Uri of the selected file
@@ -548,5 +576,25 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		}
 
 		return document;
+	}
+
+	public void manageSubmitButtonOnDocumentAdd()
+	{
+		if(addedDocumentsListAdapter.getItemCount()==0)
+			hideView(btnSubmit);
+		else if(addedDocumentsListAdapter.getItemCount()>0 && btnSubmit.getVisibility()==View.GONE)
+			showSubmitButton();
+	}
+
+	@Override
+	public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+		switch (view.getId())
+		{
+			case R.id.rclDocumentsList:
+				manageSubmitButtonOnDocumentAdd();
+				break;
+			default:
+				break;
+		}
 	}
 }
