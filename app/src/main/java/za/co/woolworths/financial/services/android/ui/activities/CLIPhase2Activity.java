@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
@@ -52,6 +53,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	private WGlobalState wGlobalState;
 	private int editNumberValue;
 	public EventStatus eventStatus;
+	public ImageView imBack;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,14 +77,15 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 
 	private void listener() {
 		tvDeclineOffer.setOnClickListener(this);
+		imBack.setOnClickListener(this);
 	}
 
 	private void init() {
 		woolworthsApplication = (WoolworthsApplication) CLIPhase2Activity.this.getApplication();
 		wGlobalState = woolworthsApplication.getWGlobalState();
-
 		tvDeclineOffer = (WTextView) findViewById(R.id.tvDeclineOffer);
 		pbDecline = (ProgressBar) findViewById(R.id.pbDecline);
+		imBack = (ImageView) findViewById(R.id.imBack);
 	}
 
 	private void actionBar() {
@@ -90,7 +93,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 		mToolbarText = (WTextView) findViewById(R.id.toolbarText);
 		setSupportActionBar(mToolbar);
 		getSupportActionBar().setTitle(null);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 	}
 
 	public void loadFragment(String nextStep) {
@@ -184,12 +187,12 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 
 	public void actionBarCloseIcon() {
 		setCloseButtonEnabled(true);
-		getSupportActionBar().setHomeAsUpIndicator(R.drawable.close_24);
+		imBack.setImageResource(R.drawable.close_24);
 	}
 
 	public void actionBarBackIcon() {
 		setCloseButtonEnabled(false);
-		getSupportActionBar().setHomeAsUpIndicator(R.drawable.back24);
+		imBack.setImageResource(R.drawable.back24);
 	}
 
 	public void showDeclineOffer() {
@@ -204,7 +207,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 
 	public void showDeclineProgressBar() {
 		pbDecline.setVisibility(View.VISIBLE);
-		tvDeclineOffer.setVisibility(View.INVISIBLE);
+		tvDeclineOffer.setVisibility(View.GONE);
 		pbDecline.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 	}
 
@@ -255,6 +258,9 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 		switch (v.getId()) {
 			case R.id.tvDeclineOffer:
 				Utils.displayValidationMessage(CLIPhase2Activity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.CLI_DANGER_ACTION_MESSAGE_VALIDATION, DECLINE_OFFER_CODE);
+				break;
+			case R.id.imBack:
+				onBack();
 				break;
 		}
 	}

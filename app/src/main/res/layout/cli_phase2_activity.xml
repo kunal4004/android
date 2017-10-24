@@ -24,16 +24,24 @@
         >
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            >
+
+            <ImageView
+                android:id="@+id/imBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/sixteen_dp"
+                android:src="@drawable/back24"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/toolbarText"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center"
                 android:gravity="center"
                 android:letterSpacing="0.2"
                 android:text="@string/cli_activity_title"
@@ -42,17 +50,18 @@
                 android:textSize="12sp"
                 app:WTextView_font="medium_bold"/>
 
-            <FrameLayout
-                android:id="@+id/flDecline"
+
+            <RelativeLayout
+                android:id="@+id/relDeclineContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="@dimen/default_margin"
-                >
+                android:gravity="center|end"
+                android:paddingEnd="@dimen/sixteen_dp">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/tvDeclineOffer"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:letterSpacing="0.1"
@@ -63,6 +72,7 @@
                     android:visibility="visible"
                     app:WTextView_font="medium"/>
 
+
                 <ProgressBar
                     android:id="@+id/pbDecline"
                     style="@style/circle_progressbar_white_style"
@@ -70,8 +80,8 @@
                     android:layout_height="20dp"
                     android:layout_gravity="center"
                     android:visibility="gone"/>
-            </FrameLayout>
 
+            </RelativeLayout>
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 

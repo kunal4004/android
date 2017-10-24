@@ -139,5 +139,6 @@
     <dimen name="eight_dp">8dp</dimen>
     <dimen name="eighty_dp">80dp</dimen>
     <dimen name="thirty_four_dp">34dp</dimen>
+    <dimen name="ten_sp">10sp</dimen>
 </resources>
 

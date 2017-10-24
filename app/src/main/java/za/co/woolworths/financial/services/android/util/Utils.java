@@ -64,6 +64,8 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
+import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
 
 import static android.Manifest.permission_group.STORAGE;
 
@@ -548,6 +550,24 @@ public class Utils {
 			}
 		} catch (NullPointerException ignored) {
 		}
+	}
+
+	public static void showOneTimeTooltip(Context context, SessionDao.KEY key, View view, String message) {
+		try {
+			String firstTime = Utils.getSessionDaoValue(context, key);
+			if (firstTime == null) {
+				showTooltip(context, view, message);
+				Utils.sessionDaoSave(context, key, "1");
+			}
+		} catch (NullPointerException ignored) {
+		}
+	}
+
+	public static void showTooltip(Context context, View view, String message) {
+		TooltipHelper tooltipHelper = new TooltipHelper(context);
+		ViewTooltip mTooltip = tooltipHelper.showToolTipView(view, message,
+				ContextCompat.getColor(context, R.color.tooltip_bg_color));
+		mTooltip.show();
 	}
 
 	public static void triggerFireBaseEvents(Context mContext, String eventName, Map<String, String> arguments) {
