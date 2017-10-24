@@ -144,7 +144,7 @@
                         android:id="@+id/tvCurrentCreditLimit"
                         style="@style/offer_relative_rowtype_key_style"
                         android:layout_toStartOf="@+id/llCPCurrentCreditLimit"
-                        android:text="@string/current_credit_limit"/>
+                        android:text="@string/request_loan_amount"/>
 
                     <LinearLayout
                         android:id="@+id/llCPCurrentCreditLimit"
@@ -174,7 +174,7 @@
                         android:id="@+id/tvAdditionalCreditLimit"
                         style="@style/offer_relative_rowtype_key_style"
                         android:layout_toStartOf="@+id/llCPAdditionalCreditLimit"
-                        android:text="@string/additional_credit_limit"/>
+                        android:text="@string/approximate_repayments"/>
 
                     <LinearLayout
                         android:id="@+id/llCPAdditionalCreditLimit"
@@ -203,7 +203,7 @@
                         android:id="@+id/tvNewCreditLimit"
                         style="@style/offer_relative_rowtype_key_style"
                         android:layout_toStartOf="@+id/llCPNewCreditLimit"
-                        android:text="@string/new_credit_limit"/>
+                        android:text="@string/term"/>
 
                     <LinearLayout
                         android:id="@+id/llCPNewCreditLimit"

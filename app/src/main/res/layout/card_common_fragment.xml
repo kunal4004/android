@@ -136,7 +136,7 @@
         android:id="@+id/llIncreaseLimitContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/twenty_two_dp"
+        android:layout_marginBottom="@dimen/sixteen_dp"
         android:background="@color/white"
         android:orientation="vertical"
         android:paddingEnd="@dimen/ten_dp"

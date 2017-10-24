@@ -6,15 +6,15 @@ import android.text.TextUtils;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
-import za.co.woolworths.financial.services.android.models.dto.CLICreateOfferResponse;
+import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 
-public class CLIOfferDecision extends HttpAsyncTask<String, String, CLICreateOfferResponse> {
+public class CLIOfferDecision extends HttpAsyncTask<String, String, OfferActive> {
 
 	private CreateOfferDecision createOfferDecision;
 	private WoolworthsApplication mWoolworthsApp;
-	private OnEventListener<CLICreateOfferResponse> mCallBack;
+	private OnEventListener<OfferActive> mCallBack;
 	private Context mContext;
 	public String mException, mCliId;
 
@@ -27,28 +27,28 @@ public class CLIOfferDecision extends HttpAsyncTask<String, String, CLICreateOff
 	}
 
 	@Override
-	protected CLICreateOfferResponse httpDoInBackground(String... params) {
+	protected OfferActive httpDoInBackground(String... params) {
 		return mWoolworthsApp.getApi().createOfferDecision(createOfferDecision, mCliId);
 	}
 
 	@Override
-	protected CLICreateOfferResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+	protected OfferActive httpError(String errorMessage, HttpErrorCode httpErrorCode) {
 		mException = errorMessage;
 		mCallBack.onFailure(errorMessage);
-		return new CLICreateOfferResponse();
+		return new OfferActive();
 	}
 
 	@Override
-	protected Class<CLICreateOfferResponse> httpDoInBackgroundReturnType() {
-		return CLICreateOfferResponse.class;
+	protected Class<OfferActive> httpDoInBackgroundReturnType() {
+		return OfferActive.class;
 	}
 
 	@Override
-	protected void onPostExecute(CLICreateOfferResponse CLICreateOfferResponse) {
-		super.onPostExecute(CLICreateOfferResponse);
+	protected void onPostExecute(OfferActive offerActive) {
+		super.onPostExecute(offerActive);
 		if (mCallBack != null) {
 			if (TextUtils.isEmpty(mException)) {
-				mCallBack.onSuccess(CLICreateOfferResponse);
+				mCallBack.onSuccess(offerActive);
 			}
 		}
 	}

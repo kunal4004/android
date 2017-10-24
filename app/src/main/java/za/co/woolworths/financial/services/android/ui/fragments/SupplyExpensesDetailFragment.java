@@ -9,6 +9,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -42,6 +43,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 	private boolean etMortgagePaymentsWasEdited, etRentalPaymentsWasEdited, etMaintainanceExpensesWasEdited, etMonthlyCreditPaymentsWasEdited, etOtherExpensesWasEdited;
 	private LinearLayout llNextButtonLayout, llMortgagePayment, llRentalPayment, llMaintainanceExpenses, llMonthlyCreditPayments, llOtherExpensesContainer;
 	private NestedScrollView nsSupplyExpense;
+	private boolean etOtherExpensesWasTouched = false;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (rootView == null) {
@@ -202,7 +204,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 	@Override
 	public void onFocusChange(View v, boolean hasFocus) {
 		if (hasFocus) {
-			if (etOtherExpenses.hasFocus()) {
+			if (etOtherExpenses.hasFocus() && etOtherExpensesWasTouched) {
 				llOtherExpensesContainer.performClick();
 				nsSupplyExpense.post(new Runnable() {
 					@Override
@@ -281,6 +283,14 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 				if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_GO || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
 					llMonthlyCreditPayments.performClick();
 				}
+				return false;
+			}
+		});
+
+		etOtherExpenses.setOnTouchListener(new View.OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				etOtherExpensesWasTouched = true;
 				return false;
 			}
 		});

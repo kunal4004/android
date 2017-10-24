@@ -28,7 +28,6 @@ import za.co.woolworths.financial.services.android.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
-import za.co.woolworths.financial.services.android.models.dto.Cli;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
@@ -75,6 +74,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private OfferActive offerActive;
 	private IncreaseLimitController mIncreaseLimitController;
 	private ImageView logoIncreaseLimit;
+	private RelativeLayout mRelIncreaseMyLimit;
 
 	@Nullable
 	@Override
@@ -104,13 +104,14 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
 		RelativeLayout mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
-		RelativeLayout mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
+		mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
 		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
 		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
 		llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
 		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
 
-		mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
+		if (controllerNotNull())
+			mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
 
 		relBalanceProtection.setOnClickListener(this);
 		tvIncreaseLimit.setOnClickListener(this);
@@ -185,7 +186,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 			case R.id.relIncreaseMyLimit:
 			case R.id.llIncreaseLimitContainer:
-				mIncreaseLimitController.nextStep(offerActive, productOfferingId);
+				if (controllerNotNull())
+					mIncreaseLimitController.nextStep(offerActive, productOfferingId);
 				break;
 
 			case R.id.relFindOutMore:
@@ -224,16 +226,18 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		try {
 			switch (offerActive.httpCode) {
 				case 200:
-					Cli cli = offerActive.cli;
-					String messageSummary = cli.messageSummary;
+					String messageSummary = offerActive.messageSummary;
 
 					if (messageSummary.equalsIgnoreCase(getString(R.string.status_apply_now))) {
-						mIncreaseLimitController.disableView(llIncreaseLimitContainer);
+						if (controllerNotNull())
+							mIncreaseLimitController.disableView(llIncreaseLimitContainer);
 					} else {
-						mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+						if (controllerNotNull())
+							mIncreaseLimitController.enableView(llIncreaseLimitContainer);
 					}
 
-					mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
+					if (controllerNotNull())
+						mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
 					storeWasAlreadyRunOnce = true;
 					break;
 
@@ -252,6 +256,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	}
 
 	private void onLoad() {
+		llIncreaseLimitContainer.setEnabled(false);
+		mRelIncreaseMyLimit.setEnabled(false);
 		mProgressCreditLimit.setVisibility(View.VISIBLE);
 		mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		tvApplyNowIncreaseLimit.setVisibility(View.GONE);
@@ -259,6 +265,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	}
 
 	public void onLoadComplete() {
+		llIncreaseLimitContainer.setEnabled(true);
+		mRelIncreaseMyLimit.setEnabled(true);
 		mProgressCreditLimit.setVisibility(View.GONE);
 		tvApplyNowIncreaseLimit.setVisibility(View.VISIBLE);
 		tvIncreaseLimit.setVisibility(View.VISIBLE);
@@ -341,5 +349,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				onLoadComplete();
 			}
 		}
+	}
+
+	private boolean controllerNotNull() {
+		return mIncreaseLimitController != null;
 	}
 }

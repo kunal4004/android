@@ -436,6 +436,17 @@ public class Utils {
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 
+	public static void displayValidationMessage(Context context, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST key, String title, String description) {
+		Intent openMsg = new Intent(context, CustomPopUpDialogManager.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("title", title);
+		args.putString("description", description);
+		openMsg.putExtras(args);
+		context.startActivity(openMsg);
+		((AppCompatActivity) context).overridePendingTransition(0, 0);
+	}
+
 	public static void displayValidationMessage(Context context, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST key, int resultCode) {
 		AppCompatActivity appCompatActivity = ((AppCompatActivity) context);
 		Intent openMsg = new Intent(context, CustomPopUpDialogManager.class);

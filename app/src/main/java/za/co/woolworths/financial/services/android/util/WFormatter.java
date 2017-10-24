@@ -103,6 +103,10 @@ public class WFormatter {
 		return String.format("R%d", amount / 100);
 	}
 
+	public static String escapeDecimalFormat(int amount) {
+		return newAmountFormat(amount * 100).replaceAll("\\.0*$", "");
+	}
+
 	public static String formatPercent(int amount) {
 		return String.format("%d%%", amount / 100);
 	}

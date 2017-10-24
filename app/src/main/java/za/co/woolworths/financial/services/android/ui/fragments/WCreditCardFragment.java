@@ -28,7 +28,6 @@ import za.co.woolworths.financial.services.android.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
-import za.co.woolworths.financial.services.android.models.dto.Cli;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
@@ -61,7 +60,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private View view;
-	private RelativeLayout mRelFindOutMore, mRelIncreaseMyLimit;
+	private RelativeLayout mRelIncreaseMyLimit;
 	private LinearLayout llCommonLayer, llIncreaseLimitContainer;
 	private ImageView logoIncreaseLimit;
 	private IncreaseLimitController mIncreaseLimitController;
@@ -98,7 +97,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
 		mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
-		mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
+		RelativeLayout mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
 		mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
 		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
 		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
@@ -108,7 +107,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
 		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
-		mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
+		if (controllerNotNull()) {
+			mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
+		}
 
 		relBalanceProtection.setOnClickListener(this);
 		rlViewTransactions.setOnClickListener(this);
@@ -184,7 +185,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 			case R.id.relIncreaseMyLimit:
 			case R.id.llIncreaseLimitContainer:
-				mIncreaseLimitController.nextStep(offerActive, productOfferingId);
+				if (controllerNotNull()) {
+					mIncreaseLimitController.nextStep(offerActive, productOfferingId);
+				}
 				break;
 
 			case R.id.relFindOutMore:
@@ -235,6 +238,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	}
 
 	private void onLoad() {
+		llIncreaseLimitContainer.setEnabled(false);
+		mRelIncreaseMyLimit.setEnabled(false);
 		mProgressCreditLimit.setVisibility(View.VISIBLE);
 		tvApplyNowIncreaseLimit.setVisibility(View.GONE);
 		tvIncreaseLimit.setVisibility(View.VISIBLE);
@@ -243,18 +248,19 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private void bindUI(OfferActive offerActive) {
 		switch (offerActive.httpCode) {
 			case 200:
-				Cli cli = offerActive.cli;
-				String messageSummary = cli.messageSummary;
+				String messageSummary = offerActive.messageSummary;
 
-				if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
-					mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
-					mIncreaseLimitController.disableView(llIncreaseLimitContainer);
-				} else {
-					mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
-					mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+				if (controllerNotNull()) {
+					if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
+						mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
+						mIncreaseLimitController.disableView(llIncreaseLimitContainer);
+					} else {
+						mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
+						mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+					}
+
+					mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
 				}
-
-				mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
 
 				creditWasAlreadyRunOnce = true;
 				break;
@@ -272,6 +278,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 
 	public void onLoadComplete() {
+		llIncreaseLimitContainer.setEnabled(true);
+		mRelIncreaseMyLimit.setEnabled(true);
 		mProgressCreditLimit.setVisibility(View.GONE);
 		tvApplyNowIncreaseLimit.setVisibility(View.VISIBLE);
 		tvIncreaseLimit.setVisibility(View.VISIBLE);
@@ -354,5 +362,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				onLoadComplete();
 			}
 		}
+	}
+
+	private boolean controllerNotNull() {
+		return mIncreaseLimitController != null;
 	}
 }

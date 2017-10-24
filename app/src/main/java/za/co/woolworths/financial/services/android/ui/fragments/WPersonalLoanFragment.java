@@ -5,13 +5,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +29,6 @@ import za.co.woolworths.financial.services.android.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
-import za.co.woolworths.financial.services.android.models.dto.Cli;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
@@ -130,8 +127,11 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			if (temp != null)
 				bindData(temp);
 
-			mIncreaseLimitController.showView(mRelDrawnDownAmount);
-			mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
+			{
+				if (controllerNotNull())
+					mIncreaseLimitController.showView(mRelDrawnDownAmount);
+				mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
+			}
 		}
 	}
 
@@ -217,7 +217,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				break;
 			case R.id.relIncreaseMyLimit:
 			case R.id.llIncreaseLimitContainer:
-				mIncreaseLimitController.nextStep(offerActive, productOfferingId);
+				if (controllerNotNull())
+					mIncreaseLimitController.nextStep(offerActive, productOfferingId);
 				break;
 
 			default:
@@ -254,15 +255,16 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private void bindUI(OfferActive offerActive) {
 		switch (offerActive.httpCode) {
 			case 200:
-				Cli cli = offerActive.cli;
-				String nextStep = cli.nextStep;
-				String messageSummary = cli.messageSummary;
-				String messageDetail = cli.messageDetail;
+				String nextStep = notNull(offerActive.nextStep);
+				String messageSummary = notNull(offerActive.messageSummary);
+				String messageDetail = notNull(offerActive.messageDetail);
 
-				if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
-					mIncreaseLimitController.disableView(llIncreaseLimitContainer);
-				} else {
-					mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+				if (controllerNotNull()) {
+					if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
+						mIncreaseLimitController.disableView(llIncreaseLimitContainer);
+					} else {
+						mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+					}
 				}
 
 				HashMap<String, String> hMIncreaseCreditLimit = new HashMap<>();
@@ -270,7 +272,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				hMIncreaseCreditLimit.put("MESSAGE_SUMMARY", messageSummary);
 				hMIncreaseCreditLimit.put("MESSAGE_DETAIL", messageDetail);
 
-				mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
+				if (controllerNotNull()) {
+					mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
+				}
 
 				personalWasAlreadyRunOnce = true;
 				break;
@@ -288,12 +292,16 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 
 	private void onLoad() {
+		llIncreaseLimitContainer.setEnabled(false);
+		mRelIncreaseMyLimit.setEnabled(false);
 		mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		mProgressCreditLimit.setVisibility(View.VISIBLE);
 		tvApplyNowIncreaseLimit.setVisibility(View.GONE);
 	}
 
 	public void onLoadComplete() {
+		llIncreaseLimitContainer.setEnabled(true);
+		mRelIncreaseMyLimit.setEnabled(true);
 		mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(null);
 		mProgressCreditLimit.setVisibility(View.GONE);
 		tvApplyNowIncreaseLimit.setVisibility(View.VISIBLE);
@@ -378,5 +386,16 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			}
 		}
 	}
+
+	private boolean controllerNotNull() {
+		return mIncreaseLimitController != null;
+	}
+
+
+	private String notNull(String value) {
+		return TextUtils.isEmpty(value) ? "" : value;
+	}
+
+
 }
 

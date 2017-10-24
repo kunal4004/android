@@ -741,8 +741,9 @@ two working days. Please watch the app for updates on the progress of your appli
     <string name="status_please_try_again">please try again</string>
     <string name="status_poi_required">POI Required</string>
     <string name="status_poi_problem">POI Problem</string>
-    <string name="decline">decline</string>
-    <string name="decline_desc">decline offer desc</string>
+    <string name="decline">Decline</string>
+    <string name="decline_title">Decline offer?</string>
+    <string name="decline_desc">Are you sure you would like to decline the offer of  {Rxxxxx}?</string>
     <string name="find_out_more">Find Out More</string>
     <string name="status_unavailable">unavailable</string>
     <string name="status_retry">Retry</string>
@@ -757,6 +758,11 @@ two working days. Please watch the app for updates on the progress of your appli
     <string name="status_apply_now">Apply Now</string>
     <string name="poi_income_detail_problem">There is a problem with the income details you submitted.</string>
     <string name="poi_problem_phone_no">+27 21 411 5000</string>
-
+    <string name="request_loan_amount">Requested Loan Amount:</string>
+    <string name="approximate_repayments">Approximate Repayments:</string>
+    <string name="term">Term:</string>
+    <string name="amount_too_low_modal_title">oops, incorrect Amount</string>
+    <string name="amount_too_low_modal_desc">The amount you have entered is below the minimum amount which can be requested. Please request an amount above #R.</string>
+    <string name="amount_too_high_modal_desc">The amount you have entered exceeds the maximum amount which can be requested. Please request an amount below #R</string>
 
 </resources>

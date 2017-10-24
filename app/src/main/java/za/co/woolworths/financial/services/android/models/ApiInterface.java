@@ -332,7 +332,7 @@ public interface ApiInterface {
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/user/cli/offer")
-	CLICreateOfferResponse createOfferRequest(
+	OfferActive createOfferRequest(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,
@@ -345,10 +345,25 @@ public interface ApiInterface {
 			@Header("sessionToken") String sessionToken,
 			@Body CreateOfferRequest createOfferRequest);
 
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@POST("/user/cli/offer/{cliId}")
+	OfferActive cliUpdateApplication(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("userAgent") String userAgent,
+			@Header("userAgentVersion") String userAgentVersion,
+			@Header("sessionToken") String sessionToken,
+			@Path("cliId") String cliId,
+			@Body CreateOfferRequest createOfferRequest);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/user/cli/offer/{cliId}/decision")
-	CLICreateOfferResponse createOfferDecision(
+	OfferActive createOfferDecision(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,
@@ -361,7 +376,6 @@ public interface ApiInterface {
 			@Header("sessionToken") String sessionToken,
 			@Path("cliId") String cliId,
 			@Body CreateOfferDecision createOfferDecision);
-
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/user/cli/offer/{cliId}/POI")

@@ -20,7 +20,8 @@
         app:contentInsetEnd="0dp"
         app:contentInsetLeft="0dp"
         app:contentInsetRight="0dp"
-        app:contentInsetStart="0dp">
+        app:contentInsetStart="0dp"
+        >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -28,14 +29,13 @@
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/toolbarText"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_centerVertical="true"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
                 android:layout_gravity="center"
-                android:layout_toStartOf="@+id/flDecline"
                 android:gravity="center"
                 android:letterSpacing="0.2"
-                android:paddingEnd="@dimen/bank_spacing_width"
                 android:text="@string/cli_activity_title"
                 android:textAllCaps="true"
                 android:textColor="@color/black"

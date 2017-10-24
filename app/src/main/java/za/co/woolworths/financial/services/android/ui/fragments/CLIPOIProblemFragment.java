@@ -75,7 +75,6 @@ public class CLIPOIProblemFragment extends Fragment implements View.OnClickListe
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {

@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
@@ -17,7 +19,7 @@ import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
-import za.co.woolworths.financial.services.android.models.dto.CLICreateOfferResponse;
+import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIAllStepsContainerFragment;
@@ -40,9 +42,9 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 
 	private WTextView tvDeclineOffer, mToolbarText;
 	private ProgressBar pbDecline;
-	private CLICreateOfferResponse mCLICreateOfferResponse;
+	private OfferActive mCLICreateOfferResponse;
 	private String mOfferActivePayload;
-	private boolean mOfferActive, mCloseButtonEnabled;
+	private boolean mOfferActive, mCloseButtonEnabled, incomeExpensePopulated;
 	private String mNextStep;
 	private final int DECLINE_OFFER_CODE = 123;
 	WoolworthsApplication woolworthsApplication;
@@ -63,7 +65,8 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			mOfferActivePayload = mBundle.getString("OFFER_ACTIVE_PAYLOAD");
 			mOfferActive = mBundle.getBoolean("OFFER_IS_ACTIVE");
 			mCLICreateOfferResponse = offerActiveObject();
-			mNextStep = mCLICreateOfferResponse.cli.nextStep;
+			mNextStep = mCLICreateOfferResponse.nextStep;
+			//mNextStep = getString(R.string.status_offer);
 			loadFragment(mNextStep);
 		}
 	}
@@ -107,7 +110,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 
 	public void initFragment(CLIStepIndicatorListener cliStepIndicatorListener) {
 		String nextStep = mNextStep;
-		boolean offerActive = mOfferActive;
+		boolean offerActive = !mOfferActive;
 		IncreaseLimitController increaseLimitController = new IncreaseLimitController(CLIPhase2Activity.this);
 		Bundle offerBundle = new Bundle();
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
@@ -125,6 +128,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			offerBundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, expenseHashMap);
 			supplyIncomeDetailFragment.setStepIndicatorListener(cliStepIndicatorListener);
 			supplyIncomeDetailFragment.setArguments(offerBundle);
+			setIncomeExpensePopulated(true);
 			openFragment(supplyIncomeDetailFragment);
 			return;
 		}
@@ -132,6 +136,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_i_n_e)) && !offerActive) {
 			SupplyIncomeDetailFragment supplyIncomeDetailFragment = new SupplyIncomeDetailFragment();
 			supplyIncomeDetailFragment.setStepIndicatorListener(cliStepIndicatorListener);
+			setIncomeExpensePopulated(false);
 			openFragment(supplyIncomeDetailFragment);
 			return;
 		}
@@ -166,6 +171,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			finishActivity();
 		} else {
 			if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+				hideSoftKeyboard();
 				getSupportFragmentManager().popBackStack();
 				overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 			} else {
@@ -200,8 +206,8 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 		pbDecline.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 	}
 
-	public CLICreateOfferResponse offerActiveObject() {
-		return (CLICreateOfferResponse) Utils.strToJson(mOfferActivePayload, CLICreateOfferResponse.class);
+	public OfferActive offerActiveObject() {
+		return (OfferActive) Utils.strToJson(mOfferActivePayload, OfferActive.class);
 	}
 
 	private void openNextFragment(Fragment fragment) {
@@ -277,11 +283,11 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 
 	private void cliDelcineOfferRequest(CreateOfferDecision createOfferDecision) {
 		onDeclineLoad();
-		CLIOfferDecision cliOfferDecision = new CLIOfferDecision(CLIPhase2Activity.this, createOfferDecision, String.valueOf(mCLICreateOfferResponse.cli.cliId), new OnEventListener() {
+		CLIOfferDecision cliOfferDecision = new CLIOfferDecision(CLIPhase2Activity.this, createOfferDecision, String.valueOf(mCLICreateOfferResponse.cliId), new OnEventListener() {
 
 			@Override
 			public void onSuccess(Object object) {
-				CLICreateOfferResponse mObjOffer = ((CLICreateOfferResponse) object);
+				OfferActive mObjOffer = ((OfferActive) object);
 				switch (mObjOffer.httpCode) {
 					case 200:
 						finishActivity();
@@ -344,5 +350,36 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 	}
 
+	public static void toggle(Activity activity) {
+		InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+		if (imm.isActive()) {
+			imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0); // hide
+		} else {
+			imm.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY); // show
+		}
+	}//end method
 
+	/**
+	 * Hides the soft keyboard
+	 */
+	private void hideSoftKeyboard() {
+		try {
+			final Activity activity = CLIPhase2Activity.this;
+			if (activity != null) {
+				if (activity.getCurrentFocus() != null) {
+					InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(INPUT_METHOD_SERVICE);
+					inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+				}
+			}
+		} catch (Exception ignored) {
+		}
+	}
+
+	public boolean incomeExpensePopulated() {
+		return incomeExpensePopulated;
+	}
+
+	public void setIncomeExpensePopulated(boolean incomeExpensePopulated) {
+		this.incomeExpensePopulated = incomeExpensePopulated;
+	}
 }

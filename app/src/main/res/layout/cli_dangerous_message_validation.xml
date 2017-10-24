@@ -10,8 +10,8 @@
         android:id="@+id/relContainerRootMessage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -81,7 +81,7 @@
                     style="@style/whiteButtonStyle"
                     android:layout_marginRight="4dp"
                     android:layout_weight="0.5"
-                    android:text="@string/cancel"
+                    android:text="@string/no_connection"
                     android:textAllCaps="true"
                     app:WButton_font="medium_bold"
                     />

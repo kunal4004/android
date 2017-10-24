@@ -224,4 +224,5 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 		});
 	}
 
+
 }

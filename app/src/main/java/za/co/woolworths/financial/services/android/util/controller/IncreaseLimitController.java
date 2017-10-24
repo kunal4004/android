@@ -18,8 +18,6 @@ import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Application;
-import za.co.woolworths.financial.services.android.models.dto.Cli;
-import za.co.woolworths.financial.services.android.models.dto.CLICreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
@@ -34,6 +32,8 @@ public class IncreaseLimitController {
 	public static final String FROM_EXPENSE_SCREEN = "FROM_EXPENSE_SCREEN";
 
 	public static final String YOUTUBE_API_KEY = "AIzaSyDY-DV5jz11iahZuIFGWcxQWtA37MgoSIA";
+	public static final String ACCEPT = "Accept";
+	public static final String DECLINE = "Decline";
 
 	private Context mContext;
 	private String nextStep;
@@ -83,10 +83,9 @@ public class IncreaseLimitController {
 	}
 
 	public void offerActiveUIState(LinearLayout llCommonLayer, WTextView tvIncreaseLimit, WTextView tvApplyNowIncreaseLimit, WTextView tvIncreaseLimitDescription, ImageView logoIncreaseLimit, OfferActive offerActive) {
-		Cli cli = getCLI(offerActive);
-		String nextStep = cli.nextStep;
-		String messageSummary = cli.messageSummary;
-		String messageDetail = cli.messageDetail;
+		String nextStep = offerActive.nextStep;
+		String messageSummary = offerActive.messageSummary;
+		String messageDetail = offerActive.messageDetail;
 		setNextStep(nextStep);
 		setOfferActive(offerActive.offerActive);
 		if (messageSummary.equalsIgnoreCase(getString(R.string.status_apply_now))) {
@@ -134,33 +133,6 @@ public class IncreaseLimitController {
 			messageSummary = getString(R.string.status_unavailable);
 			setCLITag(messageSummary, R.drawable.cli_round_offer_unavailable, tvApplyNowIncreaseLimit);
 		}
-//
-//		switch (status) {
-//			case APPLY_NOW:
-//				hideView(logoIncreaseLimit);
-//				showView(llCommonLayer);
-//				setCLITag(messageSummary, R.drawable.cli_round_apply_now_tag, tvApplyNowIncreaseLimit);
-//				tvIncreaseLimit.setText(getString(R.string.cli_credit_limit_increase));
-//				break;
-//
-//			case IN_PROGRESS:
-//				showView(logoIncreaseLimit);
-//				hideView(llCommonLayer);
-//				setCLITag(messageSummary, R.drawable.cli_round_inprogress_tag, tvApplyNowIncreaseLimit);
-//				break;
-//
-//
-//			case POI_PROBLEM:
-//				showView(logoIncreaseLimit);
-//				hideView(llCommonLayer);
-//				setCLITag(messageSummary, R.drawable.cli_round_offer_poi_problem, tvApplyNowIncreaseLimit);
-//				break;
-//
-//			case UNAVAILABLE:
-//				break;
-//			default:
-//				break;
-//		}
 	}
 
 	private void hideView(View view) {
@@ -200,15 +172,10 @@ public class IncreaseLimitController {
 	}
 
 	private Offer getOffer(OfferActive offerActive) {
-		Cli cliOffer = getCLI(offerActive);
-		if (cliOffer != null) {
-			return cliOffer.offer;
+		if (offerActive != null) {
+			return offerActive.offer;
 		}
 		return new Offer();
-	}
-
-	private Cli getCLI(OfferActive active) {
-		return active.cli;
 	}
 
 	public static void focusEditView(WEditTextView wEditText, Context context) {
@@ -266,16 +233,16 @@ public class IncreaseLimitController {
 		return mHmSupplyIncomeDetail;
 	}
 
-	public HashMap<String, String> incomeHashMap(CLICreateOfferResponse offerActive) {
+	public HashMap<String, String> incomeHashMap(OfferActive offerActive) {
 		Application application = getApplication(offerActive);
 		HashMap<String, String> incomeHashMap = new HashMap<>();
-		incomeHashMap.put("GROSS_MONTHLY_INCOME", toString(application.grossMonthlyIncome));
-		incomeHashMap.put("NET_MONTHLY_INCOME", toString(application.netMonthlyIncome));
+		incomeHashMap.put("GROSS_MONTHLY_INCOME", toString(application.grossMonthlyIncomeAmount));
+		incomeHashMap.put("NET_MONTHLY_INCOME", toString(application.netMonthlyIncomeAmount));
 		incomeHashMap.put("ADDITIONAL_MONTHLY_INCOME", toString(application.additionalIncomeAmount));
 		return incomeHashMap;
 	}
 
-	public HashMap<String, String> expenseHashMap(CLICreateOfferResponse offerActive) {
+	public HashMap<String, String> expenseHashMap(OfferActive offerActive) {
 		Application application = getApplication(offerActive);
 		HashMap<String, String> expenseHashMap = new HashMap<>();
 		expenseHashMap.put("MORTGAGE_PAYMENTS", toString(application.mortgagePaymentAmount));
@@ -286,8 +253,8 @@ public class IncreaseLimitController {
 		return expenseHashMap;
 	}
 
-	private Application getApplication(CLICreateOfferResponse offerActive) {
-		return offerActive.cli.application;
+	private Application getApplication(OfferActive offerActive) {
+		return offerActive.application;
 	}
 
 	private String toString(int value) {

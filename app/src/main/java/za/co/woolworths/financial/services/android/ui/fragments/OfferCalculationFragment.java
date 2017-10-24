@@ -31,10 +31,11 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Application;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
-import za.co.woolworths.financial.services.android.models.dto.CLICreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.Offer;
+import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLICreateOffer;
 import za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision;
+import za.co.woolworths.financial.services.android.models.rest.CLIUpdateApplication;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -67,7 +68,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private int mCreditReqestMin = 0;
 	private int mDifferenceCreditLimit = 0;
 	private int mCurrentCredit = 0;
-	private CLICreateOfferResponse mObjOffer;
+	private OfferActive mObjOffer;
 	private CLIPhase2Activity mCliPhase2Activity;
 	private ProgressBar mAcceptOfferProgressBar;
 	private BroadcastReceiver mConnectionBroadcast;
@@ -78,7 +79,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private boolean fromOfferActive, showSlideInfo = true, editorWasShown;
 	private WoolworthsApplication mWoolies;
 
-	private enum LATEST_BACKGROUND_CALL {CREATE_OFFER, DECLINE_OFFER, ACCEPT_OFFER}
+	private enum LATEST_BACKGROUND_CALL {CREATE_OFFER, DECLINE_OFFER, UPDATE_APPLICATION, ACCEPT_OFFER}
 
 	private LATEST_BACKGROUND_CALL latest_background_call;
 
@@ -118,8 +119,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			if (expenseDetail != null) {
 				mHashExpenseDetail = (HashMap<String, String>) expenseDetail;
 				fromOfferActive = false;
+
 				if (loadFromExpenseScreen) {
-					cliCreateOfferRequest(createOffer(mHashIncomeDetail, mHashExpenseDetail));
+					cliUpdateApplicationTask(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mObjOffer.cliId));
 				} else {
 					displayCurrentOffer(mObjOffer);
 					fromOfferActive = true;
@@ -182,10 +184,10 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private void cliCreateOfferRequest(CreateOfferRequest createOfferRequest) {
 		onLoad();
 		latestBackgroundTask(LATEST_BACKGROUND_CALL.CREATE_OFFER);
-		CLICreateOffer getOfferAPITask = new CLICreateOffer(getActivity(), createOfferRequest, new OnEventListener() {
+		CLICreateOffer createOfferTask = new CLICreateOffer(getActivity(), createOfferRequest, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				mObjOffer = ((CLICreateOfferResponse) object);
+				mObjOffer = ((OfferActive) object);
 				int httpCode = mObjOffer.httpCode;
 				switch (httpCode) {
 					case 200:
@@ -215,7 +217,46 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				});
 			}
 		});
-		getOfferAPITask.execute();
+		createOfferTask.execute();
+	}
+
+	private void cliUpdateApplicationTask(CreateOfferRequest createOfferRequest, String cliId) {
+		onLoad();
+		latestBackgroundTask(LATEST_BACKGROUND_CALL.UPDATE_APPLICATION);
+		CLIUpdateApplication cliUpdateApplication = new CLIUpdateApplication(getActivity(), createOfferRequest, cliId, new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				mObjOffer = ((OfferActive) object);
+				int httpCode = mObjOffer.httpCode;
+				switch (httpCode) {
+					case 200:
+						displayCurrentOffer(mObjOffer);
+						break;
+
+					case 440:
+						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
+						break;
+
+					default:
+						Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR, mObjOffer.response.desc);
+						break;
+				}
+				onLoadCompleted(true);
+				onLoadComplete();
+			}
+
+			@Override
+			public void onFailure(String e) {
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						onLoadCompleted(false);
+						mErrorHandlerView.showErrorHandler();
+					}
+				});
+			}
+		});
+		cliUpdateApplication.execute();
 	}
 
 	private void init(View view) {
@@ -376,13 +417,13 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				onAcceptOfferLoad();
 				latestBackgroundTask(LATEST_BACKGROUND_CALL.ACCEPT_OFFER);
 				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
-				CreateOfferDecision createOfferDecision = new CreateOfferDecision(mWoolies.getProductOfferingId(), mObjOffer.cliOfferId, "Accept", newCreditLimitAmount);
+				CreateOfferDecision createOfferDecision = new CreateOfferDecision(mWoolies.getProductOfferingId(), mObjOffer.cliId, IncreaseLimitController.ACCEPT, newCreditLimitAmount);
 				CLIOfferDecision cliOfferDecision =
-						new CLIOfferDecision(getActivity(), createOfferDecision, String.valueOf(mObjOffer.cli.cliId), new OnEventListener() {
+						new CLIOfferDecision(getActivity(), createOfferDecision, String.valueOf(mObjOffer.cliId), new OnEventListener() {
 
 							@Override
 							public void onSuccess(Object object) {
-								mObjOffer = ((CLICreateOfferResponse) object);
+								mObjOffer = ((OfferActive) object);
 								switch (mObjOffer.httpCode) {
 									case 200:
 										DocumentFragment documentFragment = new DocumentFragment();
@@ -422,9 +463,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						args.putInt("slideAmount", Integer.valueOf(Utils.numericFieldOnly(slideAmount)));
 					}
 
-					args.putInt("currCredit", mObjOffer.cli.offer.currCredit);
-					args.putInt("creditReqestMin", mObjOffer.cli.offer.creditReqestMin);
-					args.putInt("creditRequestMax", mObjOffer.cli.offer.creditRequestMax);
+					args.putInt("currCredit", mObjOffer.offer.currCredit);
+					args.putInt("creditReqestMin", mObjOffer.offer.creditReqestMin);
+					args.putInt("creditRequestMax", mObjOffer.offer.creditRequestMax);
 
 					mCliPhase2Activity.actionBarBackIcon();
 					EditAmountFragment editAmountFragment = new EditAmountFragment();
@@ -442,7 +483,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	}
 
 	public CreateOfferRequest createOffer(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
-		Application application = mObjOffer.cli.application;
+		Application application = mObjOffer.application;
 		return new CreateOfferRequest(
 				application.channel,
 				application.debtDisclosed,
@@ -450,10 +491,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				application.canObtainBankStatements,
 				application.applicationInfoIsCorrect,
 				application.staffMember,
-				application.automaticCreditIncrease,
-				application.maxCreditRequested,
-				11,
-				//mWoolies.getProductOfferingId(),
+				application.maxCreditLimitRequested,
+				application.maxCreditLimitRequested,
+				mWoolies.getProductOfferingId(),
 				1000,
 				Integer.valueOf(hashIncomeDetail.get("NET_MONTHLY_INCOME")),
 				Integer.valueOf(hashIncomeDetail.get("ADDITIONAL_MONTHLY_INCOME")),
@@ -466,8 +506,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				));
 	}
 
-	public void displayCurrentOffer(CLICreateOfferResponse mObjOffer) {
-		Offer offer = mObjOffer.cli.offer;
+	public void displayCurrentOffer(OfferActive mObjOffer) {
+		Offer offer = mObjOffer.offer;
 		mCurrentCredit = offer.currCredit;
 		mCreditReqestMin = offer.creditReqestMin;
 		int creditRequestMax = offer.creditRequestMax;
@@ -480,8 +520,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
 		tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
 		int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
-		int cliId = mObjOffer.cliOfferId;
-		((WoolworthsApplication) OfferCalculationFragment.this.getActivity().getApplication()).getWGlobalState().setDecisionDeclineOffer(new CreateOfferDecision(mWoolies.getProductOfferingId(), cliId, "Decline", newCreditLimitAmount));
+		int cliId = mObjOffer.cliId;
+		((WoolworthsApplication) OfferCalculationFragment.this.getActivity().getApplication()).getWGlobalState().setDecisionDeclineOffer(new CreateOfferDecision(mWoolies.getProductOfferingId(), cliId, IncreaseLimitController.DECLINE, newCreditLimitAmount));
 		onLoadComplete();
 	}
 

@@ -6,20 +6,20 @@ import android.text.TextUtils;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
-import za.co.woolworths.financial.services.android.models.dto.CLICreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 
-public class CLICreateOffer extends HttpAsyncTask<String, String, OfferActive> {
+public class CLIUpdateApplication extends HttpAsyncTask<String, String, OfferActive> {
 
 	private CreateOfferRequest mCreateOfferRequest;
 	private WoolworthsApplication mWoolworthsApp;
 	private OnEventListener<OfferActive> mCallBack;
 	private Context mContext;
-	public String mException;
+	public String mException,cliId;
 
-	public CLICreateOffer(Context context, CreateOfferRequest createOfferRequest, OnEventListener callback) {
+	public CLIUpdateApplication(Context context, CreateOfferRequest createOfferRequest,String cliId, OnEventListener callback) {
+		this.cliId = cliId;
 		this.mCallBack = callback;
 		this.mContext = context;
 		this.mWoolworthsApp = ((WoolworthsApplication) ((AppCompatActivity) mContext).getApplication());
@@ -28,7 +28,7 @@ public class CLICreateOffer extends HttpAsyncTask<String, String, OfferActive> {
 
 	@Override
 	protected OfferActive httpDoInBackground(String... params) {
-		return mWoolworthsApp.getApi().createOfferRequest(mCreateOfferRequest);
+		return mWoolworthsApp.getApi().cliUpdateApplication(mCreateOfferRequest,cliId);
 	}
 
 	@Override

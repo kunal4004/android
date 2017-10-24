@@ -30,7 +30,7 @@
     <!--<color name="white">#ececec</color>-->
     <color name="outside_border">#0c000000</color>
     <color name="overview_color">#222222</color>
-    <color name="unavailable">#ef3a14</color>
+    <color name="unavailable">#b2b2b2</color>
     <color name="poi_required">#74afda</color>
     <color name="poi_problem">#ff7000</color>
     <color name="tooltip_bg_color">#e5242424</color>

@@ -96,6 +96,7 @@
 
     <application
         android:name="za.co.woolworths.financial.services.android.models.WoolworthsApplication"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/appicon"
         android:label="@string/app_label"
         android:largeHeap="true"

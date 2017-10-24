@@ -1,9 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDial
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.util.CurrencyTextWatcher;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 
 public class EditAmountFragment extends CLIFragment {
@@ -37,7 +40,6 @@ public class EditAmountFragment extends CLIFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
 		if (view == null) {
 			view = inflater.inflate(R.layout.cli_edit_amount_fragment, container, false);
 		}
@@ -91,15 +93,20 @@ public class EditAmountFragment extends CLIFragment {
 
 	private void retrieveNumber(String number) {
 		int newAmount = Utils.numericFieldOnly(number);
+		String title = getString(R.string.amount_too_low_modal_title);
 		if (newAmount < creditReqestMin) {
-			Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR, "newAmount < creditReqestMin");
+			Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.AMOUNT_STOCK, title, getString(R.string.amount_too_low_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(creditReqestMin)));
 		} else if (newAmount > creditRequestMax) {
-			Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR, "newAmount > creditRequestMax");
+			Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.AMOUNT_STOCK, title, getString(R.string.amount_too_high_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(creditRequestMax)));
 		} else {
 			int progressValue = Utils.numericFieldOnly(etAmount.getText().toString()) - creditReqestMin;
-			((CLIPhase2Activity) getActivity()).setEditNumberValue(progressValue);
-			FragmentManager fm = getActivity().getSupportFragmentManager();
-			fm.popBackStack(EditAmountFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+			Activity activity = getActivity();
+			if (activity instanceof CLIPhase2Activity) {
+				CLIPhase2Activity cliPhase2Activity = ((CLIPhase2Activity) activity);
+				cliPhase2Activity.setEditNumberValue(progressValue);
+				FragmentManager fm = cliPhase2Activity.getSupportFragmentManager();
+				fm.popBackStack(EditAmountFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+			}
 		}
 	}
 

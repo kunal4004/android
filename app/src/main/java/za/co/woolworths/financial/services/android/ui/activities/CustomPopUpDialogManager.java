@@ -43,11 +43,12 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
 		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
-		CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE
+		CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE, AMOUNT_STOCK
 	}
 
 	VALIDATION_MESSAGE_LIST current_view;
 	String description;
+	String title;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,11 +63,8 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 		Bundle mBundle = intent.getExtras();
 		if (mBundle != null) {
 			current_view = (VALIDATION_MESSAGE_LIST) mBundle.getSerializable("key");
-			description = mBundle.getString("description");
-			if (TextUtils.isEmpty(description)) { //avoid nullpointerexception
-				description = "";
-			}
-
+			title = getText(mBundle.getString("title"));
+			description = getText(mBundle.getString("description"));
 			displayView(current_view);
 		} else {
 			finish();
@@ -338,8 +336,9 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				WTextView tvDeclineOfferDesc = (WTextView) findViewById(R.id.tvDeclineOfferDesc);
 				WButton btnCancelDecline = (WButton) findViewById(R.id.btnCancelDecline);
 				WButton btnConfirmDecline = (WButton) findViewById(R.id.btnConfirmDecline);
-				btnConfirmDecline.setText(getString(R.string.confirm));
-				tvDeclineOffer.setText(getString(R.string.decline));
+				btnConfirmDecline.setText(getString(R.string.cli_yes));
+				btnCancelDecline.setText(getString(R.string.cli_no));
+				tvDeclineOffer.setText(getString(R.string.decline_title));
 				tvDeclineOfferDesc.setText(getString(R.string.decline_desc));
 				btnCancelDecline.setOnClickListener(this);
 				btnConfirmDecline.setOnClickListener(this);
@@ -351,6 +350,20 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
 				setAnimation();
+				mRelPopContainer.setOnClickListener(this);
+				break;
+
+			case AMOUNT_STOCK:
+				setContentView(R.layout.lw_too_high_error);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				WButton mBtnOk = (WButton) findViewById(R.id.btnLoanHighOk);
+				WTextView mAmountTitle = (WTextView) findViewById(R.id.title);
+				WTextView mAmountDesc = (WTextView) findViewById(R.id.textProofIncome);
+				mAmountTitle.setText(title);
+				mAmountDesc.setText(description);
+				setAnimation();
+				mBtnOk.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
 
@@ -675,5 +688,9 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 		if (mWGlobalState != null) {
 			mWGlobalState.setDefaultPopupState(state);
 		}
+	}
+
+	private String getText(String text) {
+		return TextUtils.isEmpty(text) ? "" : text;
 	}
 }

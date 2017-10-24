@@ -127,11 +127,15 @@ public class WfsApi {
 		return mApiInterface.getMessages(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), pageSize, pageNumber);
 	}
 
-	public CLICreateOfferResponse createOfferRequest(CreateOfferRequest offerRequest) {
+	public OfferActive createOfferRequest(CreateOfferRequest offerRequest) {
 		return mApiInterface.createOfferRequest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), offerRequest);
 	}
 
-	public CLICreateOfferResponse createOfferDecision(CreateOfferDecision createOfferDecision, String cliId) {
+	public OfferActive cliUpdateApplication(CreateOfferRequest offerRequest,String cliId) {
+		return mApiInterface.cliUpdateApplication(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), cliId,offerRequest);
+	}
+
+	public OfferActive createOfferDecision(CreateOfferDecision createOfferDecision, String cliId) {
 		return mApiInterface.createOfferDecision(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), cliId, createOfferDecision);
 	}
 
