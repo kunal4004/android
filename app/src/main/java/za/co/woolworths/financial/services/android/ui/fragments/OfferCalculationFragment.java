@@ -1,7 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -104,11 +107,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		if (!editorWasShown) {
 			onLoad();
 			Serializable incomeDetail = null, expenseDetail = null;
-			boolean loadFromExpenseScreen = false;
 			if (bundle != null) {
 				incomeDetail = bundle.getSerializable(IncreaseLimitController.INCOME_DETAILS);
 				expenseDetail = bundle.getSerializable(IncreaseLimitController.EXPENSE_DETAILS);
-				loadFromExpenseScreen = bundle.getBoolean(IncreaseLimitController.FROM_EXPENSE_SCREEN);
 			}
 			setInvisibleView(tvSlideToEditSeekInfo);
 			cliStepIndicatorListener.onStepSelected(3);
@@ -118,19 +119,23 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			}
 			if (expenseDetail != null) {
 				mHashExpenseDetail = (HashMap<String, String>) expenseDetail;
-				fromOfferActive = false;
+				Activity activity = getActivity();
+				if (activity instanceof CLIPhase2Activity) {
+					switch (((CLIPhase2Activity) activity).getEventStatus()) {
+						case CREATE_OFFER:
+							cliCreateOfferRequest(createOffer(mHashIncomeDetail, mHashExpenseDetail));
+							break;
 
-				if (loadFromExpenseScreen) {
-					cliUpdateApplicationTask(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mObjOffer.cliId));
-				} else {
-					displayCurrentOffer(mObjOffer);
-					fromOfferActive = true;
+						case UPDATE_OFFER:
+							cliUpdateApplicationTask(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mObjOffer.cliId));
+							break;
+						default:
+							displayCurrentOffer(mObjOffer);
+							fromOfferActive = true;
+							break;
+					}
 				}
-			} else {
-				fromOfferActive = false;
-				cliCreateOfferRequest(createOffer(mHashIncomeDetail, mHashExpenseDetail));
 			}
-			showTooltip();
 		}
 	}
 
@@ -482,7 +487,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		}
 	}
 
-	public CreateOfferRequest createOffer(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
+	public CreateOfferRequest createOffer
+			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
 		Application application = mObjOffer.application;
 		return new CreateOfferRequest(
 				application.channel,
@@ -612,6 +618,13 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			public void onAnimationUpdate(ValueAnimator animation) {
 				int animProgress = (Integer) animation.getAnimatedValue();
 				sbSlideAmount.setProgress(animProgress);
+			}
+
+		});
+		anim.addListener(new AnimatorListenerAdapter() {
+			@Override
+			public void onAnimationEnd(Animator animation) {
+				showTooltip();
 			}
 		});
 		anim.start();

@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.ContactUsFragmentChange;
 import za.co.woolworths.financial.services.android.util.controller.CLIStepIndicatorListener;
+import za.co.woolworths.financial.services.android.util.controller.EventStatus;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
 public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFragmentChange, View.OnClickListener {
@@ -44,12 +45,13 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	private ProgressBar pbDecline;
 	private OfferActive mCLICreateOfferResponse;
 	private String mOfferActivePayload;
-	private boolean mOfferActive, mCloseButtonEnabled, incomeExpensePopulated;
+	private boolean mOfferActive, mCloseButtonEnabled;
 	private String mNextStep;
 	private final int DECLINE_OFFER_CODE = 123;
 	WoolworthsApplication woolworthsApplication;
 	private WGlobalState wGlobalState;
 	private int editNumberValue;
+	public EventStatus eventStatus;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +112,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 
 	public void initFragment(CLIStepIndicatorListener cliStepIndicatorListener) {
 		String nextStep = mNextStep;
-		boolean offerActive = !mOfferActive;
+		boolean offerActive = mOfferActive;
 		IncreaseLimitController increaseLimitController = new IncreaseLimitController(CLIPhase2Activity.this);
 		Bundle offerBundle = new Bundle();
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
@@ -128,7 +130,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			offerBundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, expenseHashMap);
 			supplyIncomeDetailFragment.setStepIndicatorListener(cliStepIndicatorListener);
 			supplyIncomeDetailFragment.setArguments(offerBundle);
-			setIncomeExpensePopulated(true);
+			setEventStatus(EventStatus.UPDATE_OFFER);
 			openFragment(supplyIncomeDetailFragment);
 			return;
 		}
@@ -136,7 +138,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_i_n_e)) && !offerActive) {
 			SupplyIncomeDetailFragment supplyIncomeDetailFragment = new SupplyIncomeDetailFragment();
 			supplyIncomeDetailFragment.setStepIndicatorListener(cliStepIndicatorListener);
-			setIncomeExpensePopulated(false);
+			setEventStatus(EventStatus.CREATE_OFFER);
 			openFragment(supplyIncomeDetailFragment);
 			return;
 		}
@@ -375,11 +377,11 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 		}
 	}
 
-	public boolean incomeExpensePopulated() {
-		return incomeExpensePopulated;
+	public EventStatus getEventStatus() {
+		return eventStatus;
 	}
 
-	public void setIncomeExpensePopulated(boolean incomeExpensePopulated) {
-		this.incomeExpensePopulated = incomeExpensePopulated;
+	public void setEventStatus(EventStatus eventStatus) {
+		this.eventStatus = eventStatus;
 	}
 }

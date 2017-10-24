@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
@@ -190,8 +191,8 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 				bundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, mHashIncomeDetail);
 				bundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, hmExpenseMap);
 				bundle.putBoolean(IncreaseLimitController.FROM_EXPENSE_SCREEN, true);
-
 				OfferCalculationFragment ocFragment = new OfferCalculationFragment();
+
 				ocFragment.setStepIndicatorListener(cliStepIndicatorListener);
 				ocFragment.setArguments(bundle);
 				FragmentUtils fragmentUtils = new FragmentUtils();
