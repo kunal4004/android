@@ -339,7 +339,7 @@
                 android:background="@color/default_background"
                 android:orientation="vertical"
                 android:paddingTop="16dp"
-                android:visibility="visible"
+                android:visibility="gone"
                 >
 
                 <RelativeLayout
@@ -419,7 +419,7 @@
                         android:layout_height="24dp"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/icon_info"
+                        android:background="@drawable/add_black"
                         android:padding="5dp"/>
                 </RelativeLayout>
             </LinearLayout>
