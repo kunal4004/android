@@ -78,6 +78,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private boolean fromOfferActive, editorWasShown;
 	private WoolworthsApplication mWoolies;
 	private boolean mAlreadyLoaded = false;
+	private int mCLiId;
 
 	private enum LATEST_BACKGROUND_CALL {CREATE_OFFER, DECLINE_OFFER, UPDATE_APPLICATION, ACCEPT_OFFER}
 
@@ -285,6 +286,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		cpNewCreditAmount = (ProgressBar) view.findViewById(R.id.cpNewCreditAmount);
 		llNextButtonLayout = (LinearLayout) view.findViewById(R.id.llNextButtonLayout);
 		showView(llNextButtonLayout);
+		disableView(llNextButtonLayout);
 		btnContinue = (WButton) view.findViewById(R.id.btnContinue);
 		btnContinue.setOnClickListener(this);
 		tvSlideToEditAmount.setOnClickListener(this);
@@ -355,6 +357,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		hideView(flCircularProgressSpinner);
 		enableView(btnContinue);
 		setBackgroundColor(llNextButtonLayout, android.R.color.transparent);
+		enableView(llNextButtonLayout);
 	}
 
 	private void getCLIText(WTextView wTextView, int id) {
@@ -409,11 +412,12 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			case R.id.btnContinue:
 				onAcceptOfferLoad();
 				latestBackgroundTask(LATEST_BACKGROUND_CALL.ACCEPT_OFFER);
+
 				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
-				CreateOfferDecision createOfferDecision = new CreateOfferDecision(mWoolies.getProductOfferingId(), mObjOffer.cliId
+				CreateOfferDecision createOfferDecision = new CreateOfferDecision(mWoolies.getProductOfferingId(),mCLiId
 						, IncreaseLimitController.ACCEPT, newCreditLimitAmount);
 				CLIOfferDecision cliOfferDecision =
-						new CLIOfferDecision(getActivity(), createOfferDecision, String.valueOf(mObjOffer.cliId), new OnEventListener() {
+						new CLIOfferDecision(getActivity(), createOfferDecision, String.valueOf(mCLiId), new OnEventListener() {
 
 							@Override
 							public void onSuccess(Object object) {
@@ -503,7 +507,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		mCreditReqestMin = offer.creditReqestMin;
 		int creditRequestMax = offer.creditRequestMax;
 		mDifferenceCreditLimit = (creditRequestMax - mCreditReqestMin);
-
+		mCLiId = mObjOffer.cliId;
 		sbSlideAmount.setMax(mDifferenceCreditLimit);
 		sbSlideAmount.incrementProgressBy(INCREASE_PROGRESS_BY);
 		animSeekBarToMaximum();
