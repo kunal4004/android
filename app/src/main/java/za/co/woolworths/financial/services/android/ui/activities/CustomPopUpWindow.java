@@ -371,8 +371,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				setContentView(R.layout.document_modal_layout);
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				WButton btnUploadDocuments = (WButton) findViewById(R.id.btnUploadDocuments);
 				setAnimation();
 				mRelPopContainer.setOnClickListener(this);
+				btnUploadDocuments.setOnClickListener(this);
 				break;
 
 			default:
@@ -596,6 +598,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			case R.id.btnSignOutCancel:
 			case R.id.btnBarcodeOk:
 			case R.id.relPopContainer:
+			case R.id.btnUploadDocuments:
 			case R.id.btnShopOk:
 			case R.id.btnMandatoryOK:
 				startExitAnimation();
