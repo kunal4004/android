@@ -8,13 +8,18 @@ import android.util.Log;
 
 import com.jakewharton.retrofit.Ok3Client;
 
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import retrofit.RestAdapter;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import retrofit.mime.TypedFile;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
@@ -40,6 +45,7 @@ import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.POIDocumentUploadResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
@@ -222,7 +228,9 @@ public class WfsApi {
 				getOS(), getNetworkCarrier(), getApiId(), "", "",
 				getSha1Password(), productId, skuId);
 	}
-
+	public POIDocumentUploadResponse uploadPOIDocuments(Map<String, TypedFile> files) {
+		return mApiInterface.uploadPOIDocuments(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(),"20",files);
+	}
 	private String getOsVersion() {
 		String osVersion = Util.getOsVersion();
 		if (TextUtils.isEmpty(osVersion)) {

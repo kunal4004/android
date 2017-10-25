@@ -30,14 +30,27 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit.http.Multipart;
+import retrofit.mime.TypedFile;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.Document;
+import za.co.woolworths.financial.services.android.models.dto.POIDocumentUploadResponse;
+import za.co.woolworths.financial.services.android.models.dto.Voucher;
+import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetBankAccountTypes;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetDeaBank;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
@@ -50,8 +63,10 @@ import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.PathUtil;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
@@ -207,6 +222,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		addDocumentButton.setOnClickListener(this);
 		poiDocumentInfo.setOnClickListener(this);
 		rclAddedDocumentsList.addOnLayoutChangeListener(this);
+		btnSubmit.setOnClickListener(this);
 	}
 
 	private void selectBankLayoutManager(List<Bank> deaBankList) {
@@ -374,6 +390,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			case R.id.addDocuments:
 				openGalleryToPickDocuments();
 				break;
+			case R.id.submitCLI:
+				if(documentList.size()>0)
+				{
+					uploadDocuments(documentList).execute();
+				}
+				break;
+
 
 			case R.id.poiDocumentInfo:
 				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.UPLOAD_DOCUMENT_MODAL, "");
@@ -598,5 +621,69 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			default:
 				break;
 		}
+	}
+
+	public HttpAsyncTask<String, String, POIDocumentUploadResponse> uploadDocuments(final List<Document> datalist) {
+		return new HttpAsyncTask<String, String, POIDocumentUploadResponse>() {
+			@Override
+			protected void onPreExecute() {
+				super.onPreExecute();
+			}
+			@Override
+			protected POIDocumentUploadResponse httpDoInBackground(String... params) {
+				return ((WoolworthsApplication) getActivity().getApplication()).getApi().uploadPOIDocuments(buildRequestBody(datalist));
+			}
+
+			@Override
+			protected Class<POIDocumentUploadResponse> httpDoInBackgroundReturnType() {
+				return POIDocumentUploadResponse.class;
+			}
+
+			@Override
+			protected POIDocumentUploadResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+				return new POIDocumentUploadResponse();
+			}
+
+			@Override
+			protected void onPostExecute(POIDocumentUploadResponse uploadResponse) {
+				super.onPostExecute(uploadResponse);
+				int httpCode = uploadResponse.httpCode;
+				switch (httpCode) {
+					case 200:
+
+						break;
+
+					case 440:
+
+						break;
+
+					default:
+
+						break;
+				}
+			}
+		};
+	}
+
+	public Map<String, TypedFile>  buildRequestBody(List<Document> list)
+	{
+		/*MultipartBody.Builder builder = new MultipartBody.Builder();
+		builder.setType(MultipartBody.FORM);*/
+		//List<MultipartBody.Part> muPartList=new ArrayList<>();
+		Map<String, TypedFile> files = new HashMap<>();
+		for (int i=0;i<list.size();i++)
+		{
+			try {
+				String path= PathUtil.getPath(getActivity(),documentList.get(i).getUri());
+				//builder.addFormDataPart("files",documentList.get(i).getName(), RequestBody.create(null, new File(path)));
+				//muPartList.add(MultipartBody.Part.createFormData("files",documentList.get(i).getName(), RequestBody.create(null, new File(path))));
+				TypedFile typedFile = new TypedFile("multipart/form-data", new File(path));
+				files.put("photo_" + String.valueOf(i + 1), typedFile);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+		}
+		//MultipartBody requestBody = builder.build();
+		return files;
 	}
 }
