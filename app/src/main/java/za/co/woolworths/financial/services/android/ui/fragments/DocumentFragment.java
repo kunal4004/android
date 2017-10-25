@@ -59,7 +59,7 @@ import za.co.woolworths.financial.services.android.util.controller.IncreaseLimit
 import static android.app.Activity.RESULT_OK;
 
 
-public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener, DocumentsAccountTypeAdapter.OnAccountTypeClick, View.OnClickListener, POIDocumentSubmitTypeAdapter.OnSubmitType, TextWatcher,AddedDocumentsListAdapter.ItemRemoved,View.OnLayoutChangeListener {
+public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener, DocumentsAccountTypeAdapter.OnAccountTypeClick, View.OnClickListener, POIDocumentSubmitTypeAdapter.OnSubmitType, TextWatcher, AddedDocumentsListAdapter.ItemRemoved, View.OnLayoutChangeListener {
 
 	private RecyclerView rclSelectYourBank;
 	private List<Bank> deaBankList;
@@ -91,6 +91,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private RelativeLayout addDocumentButton;
 	private ImageView poiDocumentInfo;
 	private LinearLayout uploadDocumentsLayout;
+
 	public DocumentFragment() {
 		// Required empty public constructor
 	}
@@ -195,9 +196,9 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		poiDocumentInfo = (ImageView) view.findViewById(R.id.poiDocumentInfo);
 		etAccountNumber = (WEditTextView) view.findViewById(R.id.etAccountNumber);
 		llAccountNumberLayout = (LinearLayout) view.findViewById(R.id.llAccountNumberLayout);
-		rclAddedDocumentsList=(RecyclerView)view.findViewById(R.id.rclDocumentsList);
-		addDocumentButton=(RelativeLayout)view.findViewById(R.id.addDocuments);
-		uploadDocumentsLayout=(LinearLayout)view.findViewById(R.id.uploadDocumentsLayout);
+		rclAddedDocumentsList = (RecyclerView) view.findViewById(R.id.rclDocumentsList);
+		addDocumentButton = (RelativeLayout) view.findViewById(R.id.addDocuments);
+		uploadDocumentsLayout = (LinearLayout) view.findViewById(R.id.uploadDocumentsLayout);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
 		yesPOIFromBank.setOnClickListener(this);
 		noPOIFromBank.setOnClickListener(this);
@@ -266,7 +267,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	@Override
 	public void onSubmitTypeSelected(View view, int position) {
-		switch (position){
+		switch (position) {
 			case 0:
 				documentList.clear();
 				hideView(btnSubmit);
@@ -425,6 +426,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			}
 		});
 	}
+
 	public void scrollUpAddDocumentsLayout() {
 		uploadDocumentsLayout.setVisibility(View.VISIBLE);
 		nestedScrollView.post(new Runnable() {
@@ -523,7 +525,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				documentList.add(convertUtiToDocumentObj(uri));
 			}
 
-			if(documentList.size()>0) {
+			if (documentList.size() > 0) {
 				if (addedDocumentsListAdapter.getItemCount() == 0) {
 					addedDocumentsListAdapter = new AddedDocumentsListAdapter(this, documentList);
 					rclAddedDocumentsList.setAdapter(addedDocumentsListAdapter);
@@ -580,18 +582,16 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		return document;
 	}
 
-	public void manageSubmitButtonOnDocumentAdd()
-	{
-		if(addedDocumentsListAdapter.getItemCount()==0)
+	public void manageSubmitButtonOnDocumentAdd() {
+		if (addedDocumentsListAdapter.getItemCount() == 0)
 			hideView(btnSubmit);
-		else if(addedDocumentsListAdapter.getItemCount()>0 && btnSubmit.getVisibility()==View.GONE)
+		else if (addedDocumentsListAdapter.getItemCount() > 0 && btnSubmit.getVisibility() == View.GONE)
 			showSubmitButton();
 	}
 
 	@Override
 	public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-		switch (view.getId())
-		{
+		switch (view.getId()) {
 			case R.id.rclDocumentsList:
 				manageSubmitButtonOnDocumentAdd();
 				break;

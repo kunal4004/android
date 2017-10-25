@@ -200,11 +200,14 @@ public class IncreaseLimitController {
 	}
 
 	public void nextStep(OfferActive offerActive, String productOfferingId) {
-		String nextStep = getNextStep();
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
-			moveToCLIPhase(offerActive, productOfferingId);
-		} else {
-			moveToCLIPhase(offerActive, productOfferingId);
+		try {
+			String nextStep = getNextStep();
+			if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
+				moveToCLIPhase(offerActive, productOfferingId);
+			} else {
+				moveToCLIPhase(offerActive, productOfferingId);
+			}
+		} catch (NullPointerException ignored) {
 		}
 	}
 
