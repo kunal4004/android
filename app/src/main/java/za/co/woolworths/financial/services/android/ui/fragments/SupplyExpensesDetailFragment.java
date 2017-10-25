@@ -31,6 +31,7 @@ import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CurrencyTextWatcher;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
+import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
@@ -74,13 +75,16 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 			llMaintainanceExpenses.performClick();
 			llMonthlyCreditPayments.performClick();
 			llOtherExpensesContainer.performClick();
-			etMortgagePayments.clearFocus();
-			etRentalPayments.clearFocus();
-			etMaintainanceExpenses.clearFocus();
-			etMonthlyCreditPayments.clearFocus();
-			etOtherExpenses.clearFocus();
 		}
 		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		FragmentUtils fragmentUtils = new FragmentUtils(getActivity());
+		etMortgagePayments.clearFocus();
+		etRentalPayments.clearFocus();
+		etMaintainanceExpenses.clearFocus();
+		etMonthlyCreditPayments.clearFocus();
+		etOtherExpenses.clearFocus();
+		fragmentUtils.hideSoftKeyboard();
+		llMortgagePayment.requestFocus();
 	}
 
 	private void init(View view) {
@@ -142,6 +146,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 
 	@Override
 	public void onClick(View v) {
+		MultiClickPreventer.preventMultiClick(v);
 		llMortgagePayment.setOnClickListener(this);
 		llRentalPayment.setOnClickListener(this);
 		llMaintainanceExpenses.setOnClickListener(this);
@@ -320,8 +325,17 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 	}
 
 	@Override
+	public void onStart() {
+		super.onStart();
+		if (llNextButtonLayout != null)
+			llNextButtonLayout.requestFocus();
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
+		if (llNextButtonLayout != null)
+			llNextButtonLayout.requestFocus();
 		CLIPhase2Activity cliPhase2Activity = (CLIPhase2Activity) getActivity();
 		cliPhase2Activity.actionBarBackIcon();
 	}

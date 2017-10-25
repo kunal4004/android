@@ -67,10 +67,15 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 			llGrossMonthlyIncomeLayout.performClick();
 			llNetMonthlyIncomeLayout.performClick();
 			llAdditionalMonthlyIncomeLayout.performClick();
-			etGrossMonthlyIncome.clearFocus();
-			etNetMonthlyIncome.clearFocus();
-			etAdditionalMonthlyIncome.clearFocus();
 		}
+		etGrossMonthlyIncome.clearFocus();
+		etNetMonthlyIncome.clearFocus();
+		etAdditionalMonthlyIncome.clearFocus();
+		llAdditionalMonthlyIncomeLayout.requestFocus();
+		etGrossMonthlyIncome.setEnabled(false);
+		etAdditionalMonthlyIncome.setEnabled(false);
+		etNetMonthlyIncome.setEnabled(false);
+
 		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
 
@@ -160,7 +165,7 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 
 	@Override
 	public void onClick(View v) {
-		MultiClickPreventer.preventMultiClick(btnContinue);
+		MultiClickPreventer.preventMultiClick(v);
 		switch (v.getId()) {
 			case R.id.imInfo:
 				String[] arrTitle = getResources().getStringArray(R.array.supply_info_income_title);
@@ -186,6 +191,8 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 
 			case R.id.btnContinue:
 			case R.id.llNextButtonLayout:
+				FragmentUtils fragmentUtils = new FragmentUtils(getActivity());
+				fragmentUtils.hideSoftKeyboard();
 				IncreaseLimitController increaseLimitController = new IncreaseLimitController(getActivity());
 				HashMap<String, String> hmIncomeDetail = increaseLimitController.incomeHashMap(etGrossMonthlyIncome, etNetMonthlyIncome, etAdditionalMonthlyIncome);
 				Bundle bundle = new Bundle();
@@ -194,8 +201,10 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 				SupplyExpensesDetailFragment supplyExpensesDetailFragment = new SupplyExpensesDetailFragment();
 				supplyExpensesDetailFragment.setArguments(bundle);
 				supplyExpensesDetailFragment.setStepIndicatorListener(cliStepIndicatorListener);
-				FragmentUtils fragmentUtils = new FragmentUtils();
 				fragmentUtils.nextFragment((AppCompatActivity) SupplyIncomeDetailFragment.this.getActivity(), getFragmentManager(), supplyExpensesDetailFragment, R.id.cli_steps_container);
+				break;
+
+			default:
 				break;
 		}
 	}
@@ -224,5 +233,20 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 		});
 	}
 
+	@Override
+	public void onStart() {
+		super.onStart();
+		if (llNetMonthlyIncomeLayout != null)
+			llNetMonthlyIncomeLayout.requestFocus();
+	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		etGrossMonthlyIncome.setEnabled(true);
+		etAdditionalMonthlyIncome.setEnabled(true);
+		etNetMonthlyIncome.setEnabled(true);
+		if (llNetMonthlyIncomeLayout != null)
+			llNetMonthlyIncomeLayout.requestFocus();
+	}
 }

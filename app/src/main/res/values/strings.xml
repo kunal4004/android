@@ -724,8 +724,8 @@ two working days. Please watch the app for updates on the progress of your appli
 
     <string name="amount_of_time_info">This may take 2 minutes</string>
 
-    <string name="pre_approved_for_title">you have been pre-approved for:</string>
-    <string name="subject_to_proof_of_income">*Subject to proof of income</string>
+    <string name="pre_approved_for_title">YOU’VE BEEN PROVISIONALLY APPROVED FOR:</string>
+    <string name="subject_to_proof_of_income">(Subject to receiving your proof of income)</string>
 
     <string name="accept_offer">accept offer</string>
     <string name="slide_to_edit_amount">slide to edit amount</string>
@@ -743,7 +743,7 @@ two working days. Please watch the app for updates on the progress of your appli
     <string name="status_poi_problem">POI Problem</string>
     <string name="decline">Decline</string>
     <string name="decline_title">Decline offer?</string>
-    <string name="decline_desc">Are you sure you would like to decline the offer of  {Rxxxxx}?</string>
+    <string name="decline_desc">Are you sure you would like to decline the offer of  #R?</string>
     <string name="find_out_more">Find Out More</string>
     <string name="status_unavailable">unavailable</string>
     <string name="status_retry">Retry</string>

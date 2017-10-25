@@ -29,7 +29,7 @@ public class WGlobalState {
 
 	private boolean cardGestureIsEnabled, onBackPressed, accountHasExpired, rewardHasExpired,
 			FragmentIsReward, defaultPopupState, colorWasPopup, sizeWasPopup;
-	private String pressState, newSTSParams, storeLocatorJson, selectedSKUId;
+	private String pressState, newSTSParams, storeLocatorJson, selectedSKUId, creditLimit;
 	private List<StoreDetails> storeDetailsArrayList;
 	private ArrayList<OtherSku> colourSKUArrayList;
 	private OtherSku colorPopUpValue, sizePopUpValue;
@@ -244,5 +244,13 @@ public class WGlobalState {
 
 	public void setDecisionDeclineOffer(CreateOfferDecision createOfferDecision) {
 		this.mDeclineDecision = createOfferDecision;
+	}
+
+	public String getCreditLimit() {
+		return creditLimit;
+	}
+
+	public void setCreditLimit(String creditLimit) {
+		this.creditLimit = creditLimit;
 	}
 }

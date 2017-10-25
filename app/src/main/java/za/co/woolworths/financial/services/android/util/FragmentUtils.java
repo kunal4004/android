@@ -85,7 +85,7 @@ public class FragmentUtils {
 	/**
 	 * Hides the soft keyboard
 	 */
-	private void hideSoftKeyboard() {
+	public void hideSoftKeyboard() {
 		try {
 			final Activity activity = (Activity) mContext;
 			if (activity != null) {

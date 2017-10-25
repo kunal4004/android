@@ -37,6 +37,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecisio
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
 import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.CLICreateOffer;
 import za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.rest.CLIUpdateApplication;
@@ -79,6 +80,10 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private WoolworthsApplication mWoolies;
 	private boolean mAlreadyLoaded = false;
 	private int mCLiId;
+	private WGlobalState mGlobalState;
+	private RelativeLayout mRelNextButton;
+	private FrameLayout flTopLayout;
+	private LinearLayout llEmptyLayout;
 
 	private enum LATEST_BACKGROUND_CALL {CREATE_OFFER, DECLINE_OFFER, UPDATE_APPLICATION, ACCEPT_OFFER}
 
@@ -94,7 +99,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		return view;
 	}
 
-
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
@@ -105,6 +109,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			seekBar();
 			listener();
 			mWoolies = ((WoolworthsApplication) getActivity().getApplication());
+			mGlobalState = mWoolies.getWGlobalState();
 			Bundle bundle = this.getArguments();
 			if (!editorWasShown) {
 				onLoad();
@@ -172,7 +177,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				progress = progress * INCREASE_PROGRESS_BY;
 				int newCLIAmount = mCreditReqestMin + progress;
 				tvSlideToEditAmount.setText(formatAmount(newCLIAmount));
-				tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
+				String amount = tvSlideToEditAmount.getText().toString();
+				tvNewCreditLimitAmount.setText(amount);
+				mGlobalState.setCreditLimit(amount);
 				tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
 			}
 		});
@@ -259,10 +266,12 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private void init(View view) {
 
 		mCliPhase2Activity = (CLIPhase2Activity) getActivity();
+		mRelNextButton = (RelativeLayout) view.findViewById(R.id.relNextButton);
 		tvSlideToEditSeekInfo = (WTextView) view.findViewById(R.id.tvSlideToEditSeekInfo);
 		mAcceptOfferProgressBar = (ProgressBar) view.findViewById(R.id.mWoolworthsProgressBar);
 		SimpleDraweeView imOfferTime = (SimpleDraweeView) view.findViewById(R.id.imOfferTime);
 		relConnectionLayout = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
+		flTopLayout = (FrameLayout) view.findViewById(R.id.flTopLayout);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), relConnectionLayout);
 		mErrorHandlerView.setMargin(relConnectionLayout, 0, 0, 0, 0);
 		tvCurrentCreditLimitAmount = (WTextView) view.findViewById(R.id.tvCurrentCreditLimitAmount);
@@ -275,8 +284,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		flCircularProgressSpinner = (FrameLayout) view.findViewById(R.id.flCircularProgressSpinner);
 
 		llSlideToEditContainer = (LinearLayout) view.findViewById(R.id.llSlideToEditContainer);
+		llEmptyLayout = (LinearLayout) view.findViewById(R.id.llEmptyLayout);
 		IncreaseLimitController increaseLimitController = new IncreaseLimitController(getActivity());
-		increaseLimitController.setQuarterHeight(view.findViewById(R.id.llEmptyLayout));
+		increaseLimitController.setQuarterHeight(llEmptyLayout);
 
 		tvCalculatingYourOffer = (WTextView) view.findViewById(R.id.tvCalculatingYourOffer);
 		tvLoadTime = (WTextView) view.findViewById(R.id.tvLoadTime);
@@ -327,6 +337,11 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	}
 
 	private void onLoad() {
+		setBackgroundColor(llEmptyLayout, R.color.white);
+		setBackgroundColor(llNextButtonLayout, R.color.white);
+		setBackgroundColor(flTopLayout, R.color.white);
+		disableView(mRelNextButton);
+		disableView(btnContinue);
 		getCLIText(tvCalculatingYourOffer, R.string.calculating_your_offer);
 		getCLIText(tvLoadTime, R.string.amount_of_time_info);
 		hideView(tvCurrentCreditLimitAmount);
@@ -340,11 +355,12 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		progressColorFilter(cpCurrentCreditLimit, Color.BLACK);
 		progressColorFilter(cpAdditionalCreditLimit, Color.BLACK);
 		progressColorFilter(cpNewCreditAmount, Color.BLACK);
-		disableView(btnContinue);
-		setBackgroundColor(llNextButtonLayout, R.color.white);
 	}
 
 	private void onLoadComplete() {
+		setBackgroundColor(llEmptyLayout, R.color.default_background);
+		setBackgroundColor(flTopLayout, R.color.default_background);
+		enableView(mRelNextButton);
 		getCLIText(tvCalculatingYourOffer, R.string.pre_approved_for_title);
 		getCLIText(tvLoadTime, R.string.subject_to_proof_of_income);
 		showView(tvCurrentCreditLimitAmount);
@@ -355,8 +371,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		hideView(cpAdditionalCreditLimit);
 		hideView(cpNewCreditAmount);
 		hideView(flCircularProgressSpinner);
-		enableView(btnContinue);
 		setBackgroundColor(llNextButtonLayout, android.R.color.transparent);
+		enableView(btnContinue);
 		enableView(llNextButtonLayout);
 	}
 
@@ -412,13 +428,11 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			case R.id.btnContinue:
 				onAcceptOfferLoad();
 				latestBackgroundTask(LATEST_BACKGROUND_CALL.ACCEPT_OFFER);
-
 				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
-				CreateOfferDecision createOfferDecision = new CreateOfferDecision(mWoolies.getProductOfferingId(),mCLiId
+				CreateOfferDecision createOfferDecision = new CreateOfferDecision(mWoolies.getProductOfferingId(), mCLiId
 						, IncreaseLimitController.ACCEPT, newCreditLimitAmount);
 				CLIOfferDecision cliOfferDecision =
 						new CLIOfferDecision(getActivity(), createOfferDecision, String.valueOf(mCLiId), new OnEventListener() {
-
 							@Override
 							public void onSuccess(Object object) {
 								mObjOffer = ((OfferActive) object);
@@ -516,7 +530,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
 		int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
 		int cliId = mObjOffer.cliId;
-		((WoolworthsApplication) OfferCalculationFragment.this.getActivity().getApplication()).getWGlobalState().setDecisionDeclineOffer(new CreateOfferDecision(mWoolies.getProductOfferingId(), cliId, IncreaseLimitController.DECLINE, newCreditLimitAmount));
+		mGlobalState.setDecisionDeclineOffer(new CreateOfferDecision(mWoolies.getProductOfferingId(), cliId, IncreaseLimitController.DECLINE, newCreditLimitAmount));
 		onLoadComplete();
 	}
 

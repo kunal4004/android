@@ -339,7 +339,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				btnConfirmDecline.setText(getString(R.string.cli_yes));
 				btnCancelDecline.setText(getString(R.string.cli_no));
 				tvDeclineOffer.setText(getString(R.string.decline_title));
-				tvDeclineOfferDesc.setText(getString(R.string.decline_desc));
+				String creditLimit = mWGlobalState.getCreditLimit();
+				tvDeclineOfferDesc.setText(getString(R.string.decline_desc).replaceAll("#R", creditLimit));
 				btnCancelDecline.setOnClickListener(this);
 				btnConfirmDecline.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
@@ -380,7 +381,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			default:
 				break;
 		}
-
 	}
 
 	private void startExitAnimation() {

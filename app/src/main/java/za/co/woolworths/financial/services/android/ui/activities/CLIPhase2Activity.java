@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -176,8 +177,9 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			finishActivity();
 		} else {
 			if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-				hideSoftKeyboard();
 				getSupportFragmentManager().popBackStack();
+				CLIPhase2Activity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+				hideSoftKeyboard();
 				overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 			} else {
 				finishActivity();
@@ -261,6 +263,8 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 				break;
 			case R.id.imBack:
 				onBack();
+				break;
+			default:
 				break;
 		}
 	}
@@ -357,15 +361,6 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	public void hideBurgerButton() {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 	}
-
-	public static void toggle(Activity activity) {
-		InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-		if (imm.isActive()) {
-			imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0); // hide
-		} else {
-			imm.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY); // show
-		}
-	}//end method
 
 	/**
 	 * Hides the soft keyboard
