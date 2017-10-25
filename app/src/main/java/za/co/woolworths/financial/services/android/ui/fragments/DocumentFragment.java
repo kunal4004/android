@@ -1,20 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -26,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -34,7 +30,6 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +41,7 @@ import za.co.woolworths.financial.services.android.models.dto.Document;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetBankAccountTypes;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetDeaBank;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.AddedDocumentsListAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentsAccountTypeAdapter;
@@ -62,7 +58,7 @@ import za.co.woolworths.financial.services.android.util.controller.IncreaseLimit
 
 import static android.app.Activity.RESULT_OK;
 
-public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener, DocumentsAccountTypeAdapter.OnAccountTypeClick, View.OnClickListener, POIDocumentSubmitTypeAdapter.OnSubmitType, TextWatcher,AddedDocumentsListAdapter.ItemRemoved {
+public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener, DocumentsAccountTypeAdapter.OnAccountTypeClick, View.OnClickListener, POIDocumentSubmitTypeAdapter.OnSubmitType, TextWatcher, AddedDocumentsListAdapter.ItemRemoved {
 
 	private RecyclerView rclSelectYourBank;
 	private List<Bank> deaBankList;
@@ -92,7 +88,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private AddedDocumentsListAdapter addedDocumentsListAdapter;
 	private List<Document> documentList;
 	private RelativeLayout addDocumentButton;
-	public static final int PERMS_REQUEST_CODE=111;
+	private ImageView poiDocumentInfo;
 
 	public DocumentFragment() {
 		// Required empty public constructor
@@ -195,16 +191,18 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		yesPOIFromBank = (WTextView) view.findViewById(R.id.yesPOIFromBank);
 		noPOIFromBank = (WTextView) view.findViewById(R.id.noPOIFromBank);
 		btnSubmit = (WTextView) view.findViewById(R.id.submitCLI);
+		poiDocumentInfo = (ImageView) view.findViewById(R.id.poiDocumentInfo);
 		etAccountNumber = (WEditTextView) view.findViewById(R.id.etAccountNumber);
 		llAccountNumberLayout = (LinearLayout) view.findViewById(R.id.llAccountNumberLayout);
-		rclAddedDocumentsList=(RecyclerView)view.findViewById(R.id.rclDocumentsList);
-		addDocumentButton=(RelativeLayout)view.findViewById(R.id.addDocuments);
+		rclAddedDocumentsList = (RecyclerView) view.findViewById(R.id.rclDocumentsList);
+		addDocumentButton = (RelativeLayout) view.findViewById(R.id.addDocuments);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
 		yesPOIFromBank.setOnClickListener(this);
 		noPOIFromBank.setOnClickListener(this);
 		llAccountNumberLayout.setOnClickListener(this);
 		etAccountNumber.addTextChangedListener(this);
 		addDocumentButton.setOnClickListener(this);
+		poiDocumentInfo.setOnClickListener(this);
 	}
 
 	private void selectBankLayoutManager(List<Bank> deaBankList) {
@@ -232,12 +230,11 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		rclPOIDocuments.setAdapter(documentSubmitTypeAdapter);
 	}
 
-	private void loadAddedDocumentsListView()
-	{
-		documentList=new ArrayList<>();
+	private void loadAddedDocumentsListView() {
+		documentList = new ArrayList<>();
 		documentList.clear();
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-		addedDocumentsListAdapter = new AddedDocumentsListAdapter(this,documentList);
+		addedDocumentsListAdapter = new AddedDocumentsListAdapter(this, documentList);
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		rclAddedDocumentsList.setLayoutManager(mLayoutManager);
 		rclAddedDocumentsList.setAdapter(addedDocumentsListAdapter);
@@ -357,8 +354,15 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			case R.id.llAccountNumberLayout:
 				IncreaseLimitController.focusEditView(etAccountNumber, getActivity());
 				break;
-			case  R.id.addDocuments:
+			case R.id.addDocuments:
 				openGalleryToPickDocuments();
+				break;
+
+			case R.id.poiDocumentInfo:
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.UPLOAD_DOCUMENT_MODAL, "");
+				break;
+
+			default:
 				break;
 
 		}
@@ -457,8 +461,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 
-	public void openGalleryToPickDocuments()
-	{
+	public void openGalleryToPickDocuments() {
 		Intent uploadIntent = new Intent();
 		uploadIntent.setType("*/*");
 		uploadIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -480,23 +483,20 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode==11 && resultCode==RESULT_OK && data != null)
-		{
+		if (requestCode == 11 && resultCode == RESULT_OK && data != null) {
 			ClipData clipData = data.getClipData();
-			if(clipData!=null)
-			{
+			if (clipData != null) {
 				for (int i = 0; i < clipData.getItemCount(); i++) {
 					ClipData.Item item = clipData.getItemAt(i);
 					Uri uri = item.getUri();
 					documentList.add(convertUtiToDocumentObj(uri));
 				}
-			}else if(data.getData()!=null)
-			{
+			} else if (data.getData() != null) {
 				Uri uri = data.getData();
 				documentList.add(convertUtiToDocumentObj(uri));
 			}
 			if (addedDocumentsListAdapter.getItemCount() == 0) {
-				addedDocumentsListAdapter=new AddedDocumentsListAdapter(this,documentList);
+				addedDocumentsListAdapter = new AddedDocumentsListAdapter(this, documentList);
 				rclAddedDocumentsList.setAdapter(addedDocumentsListAdapter);
 			} else {
 				addedDocumentsListAdapter.notifyDataSetChanged();
@@ -525,10 +525,9 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		}
 	}
 
-	public Document convertUtiToDocumentObj(Uri uri)
-	{
-		Document document=new Document();
-		String uriString=uri.toString();
+	public Document convertUtiToDocumentObj(Uri uri) {
+		Document document = new Document();
+		String uriString = uri.toString();
 		document.setUri(uri);
 		if (uriString.startsWith("content://")) {
 			Cursor cursor = null;
@@ -538,13 +537,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 					document.setName(cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
 					document.setSize((cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE))) / 1024);
 				}
-			}  finally {
+			} finally {
 				cursor.close();
 			}
 		} else if (uriString.startsWith("file://")) {
 			File file = new File(uri.getPath());
 			document.setName(file.getName());
-			document.setSize(file.length()/1024);
+			document.setSize(file.length() / 1024);
 		}
 
 		return document;

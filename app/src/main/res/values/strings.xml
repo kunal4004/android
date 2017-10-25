@@ -764,5 +764,11 @@ two working days. Please watch the app for updates on the progress of your appli
     <string name="amount_too_low_modal_title">oops, incorrect Amount</string>
     <string name="amount_too_low_modal_desc">The amount you have entered is below the minimum amount which can be requested. Please request an amount above #R.</string>
     <string name="amount_too_high_modal_desc">The amount you have entered exceeds the maximum amount which can be requested. Please request an amount below #R</string>
+    <string name="uploading_your_documents">uploading your documents</string>
+    <string name="uploading_your_documents_desc">Please provide your latest three payslips or the last three months’ bank statements.</string>
+    <string name="uploading_clear_scan_photo">Clear photo/scan of the document</string>
+    <string name="uploading_name_address">Name and address must be visible</string>
+    <string name="uploading_statement_period">Statement period must be visible</string>
+    <string name="uploading_older_month">Can’t be older than 3 months</string>
 
 </resources>

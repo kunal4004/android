@@ -251,7 +251,7 @@
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
 
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
         <activity

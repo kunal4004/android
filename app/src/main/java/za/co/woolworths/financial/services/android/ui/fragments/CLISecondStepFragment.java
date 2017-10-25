@@ -17,7 +17,7 @@ import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -117,7 +117,7 @@ public class CLISecondStepFragment extends Fragment implements CompoundButton.On
                 mBtnContinue.startAnimation(buttonClick);
                 if (mRadApplySolvency.getCheckedRadioButtonId() == -1) {
                     Utils.displayValidationMessage(getActivity(),
-                            CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
+                            CustomPopUpWindow.MODAL_LAYOUT.ERROR,
                             getString(R.string.cli_check_field));
                     return;
                 }

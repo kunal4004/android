@@ -68,7 +68,6 @@ import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
-import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ProgressBar;
@@ -702,7 +701,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				if (Utils.isLocationEnabled(ProductDetailActivity.this)) {
 					permissionUtils.check_permission(permissions, "Explain here why the app needs permissions", 1);
 				} else {
-					Utils.displayValidationMessage(ProductDetailActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.LOCATION_OFF, "");
+					Utils.displayValidationMessage(ProductDetailActivity.this, CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "");
 				}
 				break;
 		}
@@ -1264,11 +1263,11 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 							overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 						} else {
 							//no stock error message
-							Utils.displayValidationMessage(ProductDetailActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");
+							Utils.displayValidationMessage(ProductDetailActivity.this, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 						}
 					} else {
 						//no stock error message
-						Utils.displayValidationMessage(ProductDetailActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");
+						Utils.displayValidationMessage(ProductDetailActivity.this, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 					}
 				}
 				dismissFindInStoreProgress();

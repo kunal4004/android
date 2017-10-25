@@ -17,7 +17,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -61,7 +60,7 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
@@ -428,8 +427,8 @@ public class Utils {
 		return historyList;
 	}
 
-	public static void displayValidationMessage(Context context, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST key, String description) {
-		Intent openMsg = new Intent(context, CustomPopUpDialogManager.class);
+	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description) {
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
 		Bundle args = new Bundle();
 		args.putSerializable("key", key);
 		args.putString("description", description);
@@ -438,8 +437,8 @@ public class Utils {
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 
-	public static void displayValidationMessage(Context context, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST key, String title, String description) {
-		Intent openMsg = new Intent(context, CustomPopUpDialogManager.class);
+	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String title, String description) {
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
 		Bundle args = new Bundle();
 		args.putSerializable("key", key);
 		args.putString("title", title);
@@ -449,9 +448,9 @@ public class Utils {
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 
-	public static void displayValidationMessage(Context context, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST key, int resultCode) {
+	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, int resultCode) {
 		AppCompatActivity appCompatActivity = ((AppCompatActivity) context);
-		Intent openMsg = new Intent(context, CustomPopUpDialogManager.class);
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
 		Bundle args = new Bundle();
 		args.putSerializable("key", key);
 		openMsg.putExtras(args);
@@ -539,7 +538,7 @@ public class Utils {
 		}).start();
 	}
 
-	public static void showOneTimePopup(Context context, SessionDao.KEY key, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST message_key) {
+	public static void showOneTimePopup(Context context, SessionDao.KEY key, CustomPopUpWindow.MODAL_LAYOUT message_key) {
 		try {
 			String firstTime = Utils.getSessionDaoValue(context, key);
 			if (firstTime == null) {
@@ -606,7 +605,7 @@ public class Utils {
 			mContext.startActivity(emailIntent);
 		} else {
 			Utils.displayValidationMessage(mContext,
-					CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INFO,
+					CustomPopUpWindow.MODAL_LAYOUT.INFO,
 					mContext.getResources().getString(R.string.contact_us_no_email_error)
 							.replace("email_address", emailId).replace("subject_line", subject));
 		}

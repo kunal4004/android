@@ -187,7 +187,7 @@ public class LoanWithdrawalConfirmActivity extends BaseActivity implements View.
 							String desc = authoriseLoanResponse.response.desc;
 							if (desc != null && !TextUtils.isEmpty(desc)) {
 								Utils.displayValidationMessage(LoanWithdrawalConfirmActivity.this,
-										CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
+										CustomPopUpWindow.MODAL_LAYOUT.ERROR,
 										desc);
 							}
 							break;

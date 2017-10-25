@@ -248,21 +248,25 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private void bindUI(OfferActive offerActive) {
 		switch (offerActive.httpCode) {
 			case 200:
-				String messageSummary = offerActive.messageSummary;
+				try {
+					String messageSummary = offerActive.messageSummary;
 
-				if (controllerNotNull()) {
-					if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
-						mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
-						mIncreaseLimitController.disableView(llIncreaseLimitContainer);
-					} else {
-						mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
-						mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+					if (controllerNotNull()) {
+						if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
+							mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
+							mIncreaseLimitController.disableView(llIncreaseLimitContainer);
+						} else {
+							mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
+							mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+						}
+
+						mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
 					}
 
-					mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
-				}
+					creditWasAlreadyRunOnce = true;
+				} catch (IllegalStateException ex) {
 
-				creditWasAlreadyRunOnce = true;
+				}
 				break;
 
 			case 440:

@@ -41,7 +41,7 @@ import za.co.woolworths.financial.services.android.models.rest.CLICreateOffer;
 import za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.rest.CLIUpdateApplication;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -77,6 +77,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private RelativeLayout relConnectionLayout;
 	private boolean fromOfferActive, editorWasShown;
 	private WoolworthsApplication mWoolies;
+	private boolean mAlreadyLoaded = false;
 
 	private enum LATEST_BACKGROUND_CALL {CREATE_OFFER, DECLINE_OFFER, UPDATE_APPLICATION, ACCEPT_OFFER}
 
@@ -92,43 +93,48 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		return view;
 	}
 
+
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
-		init(view);
-		seekBar();
-		mWoolies = ((WoolworthsApplication) getActivity().getApplication());
-		Bundle bundle = this.getArguments();
-		if (!editorWasShown) {
-			onLoad();
-			Serializable incomeDetail = null, expenseDetail = null;
-			if (bundle != null) {
-				incomeDetail = bundle.getSerializable(IncreaseLimitController.INCOME_DETAILS);
-				expenseDetail = bundle.getSerializable(IncreaseLimitController.EXPENSE_DETAILS);
-			}
-			setInvisibleView(tvSlideToEditSeekInfo);
-			cliStepIndicatorListener.onStepSelected(3);
-			mObjOffer = ((CLIPhase2Activity) OfferCalculationFragment.this.getActivity()).offerActiveObject();
-			if (incomeDetail != null) {
-				mHashIncomeDetail = (HashMap<String, String>) incomeDetail;
-			}
-			if (expenseDetail != null) {
-				mHashExpenseDetail = (HashMap<String, String>) expenseDetail;
-				Activity activity = getActivity();
-				if (activity instanceof CLIPhase2Activity) {
-					switch (((CLIPhase2Activity) activity).getEventStatus()) {
-						case CREATE_OFFER:
-							cliCreateOfferRequest(createOffer(mHashIncomeDetail, mHashExpenseDetail));
-							break;
+		if (savedInstanceState == null && !mAlreadyLoaded) {
+			mAlreadyLoaded = true;
+			mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
+			init(view);
+			seekBar();
+			listener();
+			mWoolies = ((WoolworthsApplication) getActivity().getApplication());
+			Bundle bundle = this.getArguments();
+			if (!editorWasShown) {
+				onLoad();
+				Serializable incomeDetail = null, expenseDetail = null;
+				if (bundle != null) {
+					incomeDetail = bundle.getSerializable(IncreaseLimitController.INCOME_DETAILS);
+					expenseDetail = bundle.getSerializable(IncreaseLimitController.EXPENSE_DETAILS);
+				}
+				setInvisibleView(tvSlideToEditSeekInfo);
+				cliStepIndicatorListener.onStepSelected(3);
+				mObjOffer = ((CLIPhase2Activity) OfferCalculationFragment.this.getActivity()).offerActiveObject();
+				if (incomeDetail != null) {
+					mHashIncomeDetail = (HashMap<String, String>) incomeDetail;
+				}
+				if (expenseDetail != null) {
+					mHashExpenseDetail = (HashMap<String, String>) expenseDetail;
+					Activity activity = getActivity();
+					if (activity instanceof CLIPhase2Activity) {
+						switch (((CLIPhase2Activity) activity).getEventStatus()) {
+							case CREATE_OFFER:
+								cliCreateOfferRequest(createOffer(mHashIncomeDetail, mHashExpenseDetail));
+								break;
 
-						case UPDATE_OFFER:
-							cliUpdateApplicationTask(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mObjOffer.cliId));
-							break;
-						default:
-							displayCurrentOffer(mObjOffer);
-							fromOfferActive = true;
-							break;
+							case UPDATE_OFFER:
+								cliUpdateApplicationTask(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mObjOffer.cliId));
+								break;
+							default:
+								displayCurrentOffer(mObjOffer);
+								fromOfferActive = true;
+								break;
+						}
 					}
 				}
 			}
@@ -145,7 +151,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					cliCreateOfferRequest(createOffer(mHashIncomeDetail, mHashExpenseDetail));
 				}
 			}
-
 		});
 	}
 
@@ -190,7 +195,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					default:
-						Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR, mObjOffer.response.desc);
+						Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, mObjOffer.response.desc);
 						break;
 				}
 				onLoadCompleted(true);
@@ -229,7 +234,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					default:
-						Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR, mObjOffer.response.desc);
+						Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, mObjOffer.response.desc);
 						break;
 				}
 				onLoadCompleted(true);
@@ -278,11 +283,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		cpCurrentCreditLimit = (ProgressBar) view.findViewById(R.id.cpCurrentCreditLimit);
 		cpAdditionalCreditLimit = (ProgressBar) view.findViewById(R.id.cpAdditionalCreditLimit);
 		cpNewCreditAmount = (ProgressBar) view.findViewById(R.id.cpNewCreditAmount);
-
 		llNextButtonLayout = (LinearLayout) view.findViewById(R.id.llNextButtonLayout);
-
 		showView(llNextButtonLayout);
-
 		btnContinue = (WButton) view.findViewById(R.id.btnContinue);
 		btnContinue.setOnClickListener(this);
 		tvSlideToEditAmount.setOnClickListener(this);
@@ -408,7 +410,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				onAcceptOfferLoad();
 				latestBackgroundTask(LATEST_BACKGROUND_CALL.ACCEPT_OFFER);
 				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
-				CreateOfferDecision createOfferDecision = new CreateOfferDecision(mWoolies.getProductOfferingId(), mObjOffer.cliId, IncreaseLimitController.ACCEPT, newCreditLimitAmount);
+				CreateOfferDecision createOfferDecision = new CreateOfferDecision(mWoolies.getProductOfferingId(), mObjOffer.cliId
+						, IncreaseLimitController.ACCEPT, newCreditLimitAmount);
 				CLIOfferDecision cliOfferDecision =
 						new CLIOfferDecision(getActivity(), createOfferDecision, String.valueOf(mObjOffer.cliId), new OnEventListener() {
 
@@ -426,7 +429,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 										SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
 										break;
 									default:
-										Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR, mObjOffer.response.desc);
+										Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, mObjOffer.response.desc);
 										break;
 								}
 								onLoadCompleted(true);
@@ -571,8 +574,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					switch (latest_background_call) {
 						case CREATE_OFFER:
 							if (fromOfferActive) {
-								hideView(llNextButtonLayout);
 								mErrorHandlerView.showErrorHandler();
+								hideView(llNextButtonLayout);
 							}
 							break;
 						case ACCEPT_OFFER:

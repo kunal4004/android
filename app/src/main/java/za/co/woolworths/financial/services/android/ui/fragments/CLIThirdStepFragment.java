@@ -38,7 +38,7 @@ import za.co.woolworths.financial.services.android.models.dto.IncomeProof;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.ui.activities.CLIStepIndicatorActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIBankAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIIncomeProofAdapter;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -225,7 +225,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 										!TextUtils.isEmpty(bankAccountTypes.response.desc)) {
 									getBankAccountClicked = false;
 									Utils.displayValidationMessage(getActivity(),
-											CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
+											CustomPopUpWindow.MODAL_LAYOUT.ERROR,
 											bankAccountTypes.response.desc);
 								}
 								break;
@@ -265,17 +265,17 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 							hideKeyboard(getContext());
 						} else {
 							Utils.displayValidationMessage(getActivity(),
-									CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
+									CustomPopUpWindow.MODAL_LAYOUT.ERROR,
 									getString(R.string.cli_enter_acc_number_error));
 						}
 					} else {
 						Utils.displayValidationMessage(getActivity(),
-								CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
+								CustomPopUpWindow.MODAL_LAYOUT.ERROR,
 								getString(R.string.cli_select_acc_type));
 					}
 				} else {
 					Utils.displayValidationMessage(getActivity(),
-							CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
+							CustomPopUpWindow.MODAL_LAYOUT.ERROR,
 							getString(R.string.cli_select_acc_type));
 				}
 				break;
@@ -385,7 +385,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 						case 200:
 							sendEmailButtonClicked = false;
 							Utils.displayValidationMessage(getActivity(),
-									CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.EMAIL, mEmail);
+									CustomPopUpWindow.MODAL_LAYOUT.EMAIL, mEmail);
 							break;
 
 						case 440:
@@ -396,7 +396,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 						default:
 							sendEmailButtonClicked = false;
 							Utils.displayValidationMessage(getActivity(),
-									CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR, desc);
+									CustomPopUpWindow.MODAL_LAYOUT.ERROR, desc);
 							break;
 
 					}
@@ -455,7 +455,7 @@ public class CLIThirdStepFragment extends Fragment implements View.OnClickListen
 								String desc = updateBankDetailResponse.response.desc;
 								if (!TextUtils.isEmpty(desc)) {
 									Utils.displayValidationMessage(getActivity(),
-											CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
+											CustomPopUpWindow.MODAL_LAYOUT.ERROR,
 											desc);
 								}
 								break;

@@ -25,7 +25,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.ProductDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.ProductProgressDialogFrag;
 
 public class WebAppInterface {
@@ -69,7 +69,7 @@ public class WebAppInterface {
 			((AppCompatActivity) mContext).runOnUiThread(new Runnable() {
 				public void run() {
 					Utils.displayValidationMessage(mContext,
-							CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
+							CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_LIST_INFO,
 							"viewShoppingList");
 				}
 			});

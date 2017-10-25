@@ -29,7 +29,7 @@ import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class CustomPopUpDialogManager extends AppCompatActivity implements View.OnClickListener {
+public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener {
 
 	public RelativeLayout mRelRootContainer;
 	public Animation mPopEnterAnimation;
@@ -39,14 +39,14 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 	public WoolworthsApplication woolworthsApplication;
 	public WGlobalState mWGlobalState;
 
-	public enum VALIDATION_MESSAGE_LIST {
+	public enum MODAL_LAYOUT {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
 		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
-		CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE, AMOUNT_STOCK
+		CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL
 	}
 
-	VALIDATION_MESSAGE_LIST current_view;
+	MODAL_LAYOUT current_view;
 	String description;
 	String title;
 
@@ -56,13 +56,13 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 		Utils.updateStatusBarBackground(this, android.R.color.transparent);
 		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-		woolworthsApplication = (WoolworthsApplication) CustomPopUpDialogManager.this.getApplication();
+		woolworthsApplication = (WoolworthsApplication) CustomPopUpWindow.this.getApplication();
 		mWGlobalState = woolworthsApplication.getWGlobalState();
 
 		Intent intent = getIntent();
 		Bundle mBundle = intent.getExtras();
 		if (mBundle != null) {
-			current_view = (VALIDATION_MESSAGE_LIST) mBundle.getSerializable("key");
+			current_view = (MODAL_LAYOUT) mBundle.getSerializable("key");
 			title = getText(mBundle.getString("title"));
 			description = getText(mBundle.getString("description"));
 			displayView(current_view);
@@ -91,7 +91,7 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 		runningActivityState(false);
 	}
 
-	private void displayView(VALIDATION_MESSAGE_LIST current_view) {
+	private void displayView(MODAL_LAYOUT current_view) {
 		switch (current_view) {
 			case BARCODE_ERROR:
 				setContentView(R.layout.transparent_activity);
@@ -367,6 +367,13 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				mRelPopContainer.setOnClickListener(this);
 				break;
 
+			case UPLOAD_DOCUMENT_MODAL:
+				setContentView(R.layout.document_modal_layout);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				setAnimation();
+				mRelPopContainer.setOnClickListener(this);
+				break;
 
 			default:
 				break;
@@ -633,7 +640,7 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 				} else {
 					mSTSParams = Utils.getScope(mSTSParams);
 				}
-				ScreenManager.presentExpiredTokenSSOSignIn(CustomPopUpDialogManager.this, mSTSParams);
+				ScreenManager.presentExpiredTokenSSOSignIn(CustomPopUpWindow.this, mSTSParams);
 				overridePendingTransition(0, 0);
 				finish();
 				break;
@@ -642,7 +649,7 @@ public class CustomPopUpDialogManager extends AppCompatActivity implements View.
 
 	private void clearHistory() {
 		mWGlobalState.setOnBackPressed(false);
-		Intent i = new Intent(CustomPopUpDialogManager.this, WOneAppBaseActivity.class);
+		Intent i = new Intent(CustomPopUpWindow.this, WOneAppBaseActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

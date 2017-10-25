@@ -13,7 +13,7 @@ import android.widget.ScrollView;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -69,7 +69,7 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 				eligibilityYes.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
 				eligibilityYes.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
 				permissionView.setVisibility(View.GONE);
-				Utils.displayValidationMessage(CLIEligibilityAndPermissionFragment.this.getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.CONFIDENTIAL, "");
+				Utils.displayValidationMessage(CLIEligibilityAndPermissionFragment.this.getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CONFIDENTIAL, "");
 				break;
 			case R.id.eligibilityNo:
 				eligibilityYes.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
@@ -105,7 +105,7 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 			case R.id.permissionNo:
 				permissionNo.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
 				permissionNo.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
-				Utils.displayValidationMessage(CLIEligibilityAndPermissionFragment.this.getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.CONFIDENTIAL, "");
+				Utils.displayValidationMessage(CLIEligibilityAndPermissionFragment.this.getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CONFIDENTIAL, "");
 				break;
 			default:
 				break;

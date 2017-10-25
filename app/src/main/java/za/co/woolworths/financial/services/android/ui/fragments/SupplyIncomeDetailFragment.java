@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -170,7 +170,7 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 					incomeMap.put(arrTitle[position], arrDescription[position]);
 				}
 				Utils.displayValidationMessage(getActivity(),
-						CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.SUPPLY_DETAIL_INFO, new Gson().toJson(incomeMap, LinkedHashMap.class));
+						CustomPopUpWindow.MODAL_LAYOUT.SUPPLY_DETAIL_INFO, new Gson().toJson(incomeMap, LinkedHashMap.class));
 				break;
 			case R.id.llGrossMonthlyIncomeLayout:
 				IncreaseLimitController.focusEditView(etGrossMonthlyIncome, tvGrossMonthlyIncome, getActivity());

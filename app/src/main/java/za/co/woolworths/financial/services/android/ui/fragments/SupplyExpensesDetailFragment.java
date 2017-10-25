@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
@@ -26,7 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -179,7 +178,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 				}
 
 				Utils.displayValidationMessage(getActivity(),
-						CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.SUPPLY_DETAIL_INFO,
+						CustomPopUpWindow.MODAL_LAYOUT.SUPPLY_DETAIL_INFO,
 						new Gson().toJson(incomeMap, LinkedHashMap.class));
 				break;
 

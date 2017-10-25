@@ -26,7 +26,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.CLIDeaBankMapAdapter;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -204,7 +204,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 				} else {
 					if (!TextUtils.isEmpty(deaBanks.response.desc)) {
 						Utils.displayValidationMessage(getActivity(),
-								CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
+								CustomPopUpWindow.MODAL_LAYOUT.ERROR,
 								deaBanks.response.desc);
 					}
 				}
@@ -239,7 +239,7 @@ public class CLIFirstStepFragment extends Fragment implements View.OnClickListen
 					}
 				} else {
 					Utils.displayValidationMessage(getActivity(),
-							CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
+							CustomPopUpWindow.MODAL_LAYOUT.ERROR,
 							getString(R.string.cli_select_bank_error));
 				}
 				break;

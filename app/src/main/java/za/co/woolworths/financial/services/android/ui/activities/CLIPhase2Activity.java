@@ -257,7 +257,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.tvDeclineOffer:
-				Utils.displayValidationMessage(CLIPhase2Activity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.CLI_DANGER_ACTION_MESSAGE_VALIDATION, DECLINE_OFFER_CODE);
+				Utils.displayValidationMessage(CLIPhase2Activity.this, CustomPopUpWindow.MODAL_LAYOUT.CLI_DANGER_ACTION_MESSAGE_VALIDATION, DECLINE_OFFER_CODE);
 				break;
 			case R.id.imBack:
 				onBack();
@@ -304,7 +304,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(CLIPhase2Activity.this, mObjOffer.response.stsParams);
 						break;
 					default:
-						Utils.displayValidationMessage(CLIPhase2Activity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR, mObjOffer.response.desc);
+						Utils.displayValidationMessage(CLIPhase2Activity.this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, mObjOffer.response.desc);
 						break;
 				}
 				onDeclineComplete();
