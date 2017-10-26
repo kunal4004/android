@@ -72,16 +72,6 @@ public class FragmentUtils {
 		fragmentManager.executePendingTransactions();
 	}
 
-	public void nextBottomUpFragment(AppCompatActivity activity, FragmentTransaction fragmentTransaction, Fragment fragment, int fragmentId) {
-		hideSoftKeyboard();
-		FragmentManager fragmentManager = activity.getSupportFragmentManager();
-		fragmentTransaction
-				.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
-				.replace(fragmentId, fragment).addToBackStack(fragment.getClass().getSimpleName()).commit();
-		fragmentManager.executePendingTransactions();
-	}
-
-
 	/**
 	 * Hides the soft keyboard
 	 */

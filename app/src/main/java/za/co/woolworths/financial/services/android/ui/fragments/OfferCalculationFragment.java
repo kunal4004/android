@@ -365,6 +365,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private void onLoadComplete() {
 		setBackgroundColor(llEmptyLayout, R.color.default_background);
 		setBackgroundColor(flTopLayout, R.color.default_background);
+		setBackgroundColor(llNextButtonLayout, R.color.default_background);
 		enableView(mRelNextButton);
 		getCLIText(tvCalculatingYourOffer, R.string.pre_approved_for_title);
 		getCLIText(tvLoadTime, R.string.subject_to_proof_of_income);
@@ -376,7 +377,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		hideView(cpAdditionalCreditLimit);
 		hideView(cpNewCreditAmount);
 		hideView(flCircularProgressSpinner);
-		setBackgroundColor(llNextButtonLayout, android.R.color.transparent);
 		enableView(btnContinue);
 		enableView(llNextButtonLayout);
 	}
