@@ -5,7 +5,7 @@
     android:id="@+id/llNextButtonLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/outside_border"
+    android:background="@color/default_background"
     android:orientation="vertical"
     android:paddingBottom="8dp"
     android:paddingLeft="8dp"
