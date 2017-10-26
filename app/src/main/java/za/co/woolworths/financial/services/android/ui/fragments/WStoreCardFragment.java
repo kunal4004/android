@@ -75,6 +75,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private IncreaseLimitController mIncreaseLimitController;
 	private ImageView logoIncreaseLimit;
 	private RelativeLayout mRelIncreaseMyLimit;
+	private boolean viewWasCreated = false;
+	private RelativeLayout rlViewTransactions, relBalanceProtection, mRelFindOutMore;
 
 	@Nullable
 	@Override
@@ -89,6 +91,14 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		if (savedInstanceState == null & !viewWasCreated) {
+			initUI(view);
+			addListener();
+			setAccountDetails();
+		}
+	}
+
+	private void initUI(View view) {
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
 		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
@@ -100,38 +110,15 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
 		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
 		tvIncreaseLimitDescription = (WTextView) view.findViewById(R.id.tvIncreaseLimitDescription);
-		RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
-		RelativeLayout rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
+		relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
+		rlViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
 
-		RelativeLayout mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
+		mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
 		mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
 		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
 		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
 		llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
 		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
-
-		if (controllerNotNull())
-			mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
-
-		relBalanceProtection.setOnClickListener(this);
-		tvIncreaseLimit.setOnClickListener(this);
-		tvViewTransaction.setOnClickListener(this);
-		rlViewTransactions.setOnClickListener(this);
-		llIncreaseLimitContainer.setOnClickListener(this);
-		mRelIncreaseMyLimit.setOnClickListener(this);
-		mRelFindOutMore.setOnClickListener(this);
-
-		try {
-			networkChangeListener = this;
-		} catch (ClassCastException ignored) {
-		}
-		bolBroacastRegistred = true;
-		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
-		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
-		bindData(accountsResponse);
-		onLoadComplete();
-		mErrorHandlerView = new ErrorHandlerView(getActivity());
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -141,6 +128,16 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			currentAmount = currentAmount.replace("-", "") + " CR";
 		}
 		return currentAmount;
+	}
+
+	private void addListener() {
+		relBalanceProtection.setOnClickListener(this);
+		tvIncreaseLimit.setOnClickListener(this);
+		tvViewTransaction.setOnClickListener(this);
+		rlViewTransactions.setOnClickListener(this);
+		llIncreaseLimitContainer.setOnClickListener(this);
+		mRelIncreaseMyLimit.setOnClickListener(this);
+		mRelFindOutMore.setOnClickListener(this);
 	}
 
 	public void bindData(AccountsResponse response) {
@@ -163,6 +160,25 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				}
 			}
 		}
+	}
+
+	private void setAccountDetails() {
+		if (controllerNotNull())
+			mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
+		addListener();
+
+		try {
+			networkChangeListener = this;
+		} catch (ClassCastException ignored) {
+		}
+		bolBroacastRegistred = true;
+		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
+		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+		bindData(accountsResponse);
+		onLoadComplete();
+		mErrorHandlerView = new ErrorHandlerView(getActivity());
+		viewWasCreated = true;
 	}
 
 	@Override
@@ -222,12 +238,19 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		asyncTaskStore = cliGetOfferActive.execute();
 	}
 
-	private void bindUI(OfferActive offerActive) {
+	private void bindUI(OfferActive offerActiv) {
 		try {
+			OfferActive offerActive = new OfferActive();
+			offerActive.httpCode = 200;
+			offerActive.messageSummary = getString(R.string.status_apply_now);
+			offerActive.messageDetail = getString(R.string.status_apply_now);
+			offerActive.offerActive = false;
+			offerActive.nextStep = "POI";
+
 			switch (offerActive.httpCode) {
 				case 200:
 					String messageSummary = offerActive.messageSummary;
-
+					messageSummary = getString(R.string.status_apply_now);
 					if (messageSummary.equalsIgnoreCase(getString(R.string.status_apply_now))) {
 						if (controllerNotNull())
 							mIncreaseLimitController.disableView(llIncreaseLimitContainer);

@@ -65,6 +65,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private ImageView logoIncreaseLimit;
 	private IncreaseLimitController mIncreaseLimitController;
 	private OfferActive offerActive;
+	private boolean viewWasCreated = false;
 
 	@Nullable
 	@Override
@@ -79,10 +80,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-		init(view);
-		addListener();
-		setAccountDetail();
+		if (savedInstanceState == null & !viewWasCreated) {
+			woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
+			init(view);
+			addListener();
+			setAccountDetail();
+			viewWasCreated = true;
+		}
 	}
 
 	private void init(View view) {

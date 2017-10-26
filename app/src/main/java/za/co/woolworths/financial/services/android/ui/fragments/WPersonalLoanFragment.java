@@ -70,6 +70,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private ImageView logoIncreaseLimit;
 	private OfferActive offerActive;
 	private IncreaseLimitController mIncreaseLimitController;
+	private boolean viewWasCreated = false;
+	private RelativeLayout relBalanceProtection, relViewTransactions;
 
 	@Nullable
 	@Override
@@ -84,54 +86,65 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		if (savedInstanceState == null) {
-			woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-			mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
-			availableBalance = (WTextView) view.findViewById(R.id.available_funds);
-			creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
-			dueDate = (WTextView) view.findViewById(R.id.dueDate);
-			minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
-			currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
-			tvViewTransaction = (WTextView) view.findViewById(R.id.tvViewTransaction);
-			tvProtectionInsurance = (WTextView) view.findViewById(R.id.tvProtectionInsurance);
-			tvIncreaseLimitDescription = (WTextView) view.findViewById(R.id.tvIncreaseLimitDescription);
-			tvIncreaseLimit = (WTextView) view.findViewById(R.id.tvIncreaseLimit);
-			mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
-			mRelDrawnDownAmount = (RelativeLayout) view.findViewById(R.id.relDrawnDownAmount);
-			mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
-			mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
-			tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
-			llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
-			logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
-			llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
+		if (savedInstanceState == null & !viewWasCreated) {
+			init(view);
+			addListener();
+			setAccountDetails();
+			viewWasCreated = true;
+		}
+	}
 
-			RelativeLayout relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
-			RelativeLayout relViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
+	private void init(View view) {
+		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
+		mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
+		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
+		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
+		dueDate = (WTextView) view.findViewById(R.id.dueDate);
+		minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
+		currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
+		tvViewTransaction = (WTextView) view.findViewById(R.id.tvViewTransaction);
+		tvProtectionInsurance = (WTextView) view.findViewById(R.id.tvProtectionInsurance);
+		tvIncreaseLimitDescription = (WTextView) view.findViewById(R.id.tvIncreaseLimitDescription);
+		tvIncreaseLimit = (WTextView) view.findViewById(R.id.tvIncreaseLimit);
+		mProgressCreditLimit = (ProgressBar) view.findViewById(R.id.progressCreditLimit);
+		mRelDrawnDownAmount = (RelativeLayout) view.findViewById(R.id.relDrawnDownAmount);
+		mRelFindOutMore = (RelativeLayout) view.findViewById(R.id.relFindOutMore);
+		mRelIncreaseMyLimit = (RelativeLayout) view.findViewById(R.id.relIncreaseMyLimit);
+		tvApplyNowIncreaseLimit = (WTextView) view.findViewById(R.id.tvApplyNowIncreaseLimit);
+		llCommonLayer = (LinearLayout) view.findViewById(R.id.llCommonLayer);
+		logoIncreaseLimit = (ImageView) view.findViewById(R.id.logoIncreaseLimit);
+		llIncreaseLimitContainer = (LinearLayout) view.findViewById(R.id.llIncreaseLimitContainer);
 
-			tvApplyNowIncreaseLimit.setOnClickListener(this);
-			tvViewTransaction.setOnClickListener(this);
-			tvIncreaseLimit.setOnClickListener(this);
-			relBalanceProtection.setOnClickListener(this);
-			mRelDrawnDownAmount.setOnClickListener(this);
-			relViewTransactions.setOnClickListener(this);
-			mRelFindOutMore.setOnClickListener(this);
-			mRelIncreaseMyLimit.setOnClickListener(this);
-			llIncreaseLimitContainer.setOnClickListener(this);
+		relBalanceProtection = (RelativeLayout) view.findViewById(R.id.relBalanceProtection);
+		relViewTransactions = (RelativeLayout) view.findViewById(R.id.rlViewTransactions);
+	}
 
-			connectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
-			boolBroadcastRegistered = true;
-			getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-			AccountsResponse temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
-			onLoadComplete();
-			mErrorHandlerView = new ErrorHandlerView(getActivity());
-			if (temp != null)
-				bindData(temp);
+	private void addListener() {
+		tvApplyNowIncreaseLimit.setOnClickListener(this);
+		tvViewTransaction.setOnClickListener(this);
+		tvIncreaseLimit.setOnClickListener(this);
+		relBalanceProtection.setOnClickListener(this);
+		mRelDrawnDownAmount.setOnClickListener(this);
+		relViewTransactions.setOnClickListener(this);
+		mRelFindOutMore.setOnClickListener(this);
+		mRelIncreaseMyLimit.setOnClickListener(this);
+		llIncreaseLimitContainer.setOnClickListener(this);
+		connectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
+	}
 
-			{
-				if (controllerNotNull())
-					mIncreaseLimitController.showView(mRelDrawnDownAmount);
-				mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
-			}
+	private void setAccountDetails() {
+		boolBroadcastRegistered = true;
+		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+		AccountsResponse temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+		onLoadComplete();
+		mErrorHandlerView = new ErrorHandlerView(getActivity());
+		if (temp != null)
+			bindData(temp);
+
+		{
+			if (controllerNotNull())
+				mIncreaseLimitController.showView(mRelDrawnDownAmount);
+			mIncreaseLimitController.defaultIncreaseLimitView(logoIncreaseLimit, llCommonLayer, tvIncreaseLimit);
 		}
 	}
 
