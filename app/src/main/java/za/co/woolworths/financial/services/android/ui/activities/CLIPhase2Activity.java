@@ -71,7 +71,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			mOfferActive = mBundle.getBoolean("OFFER_IS_ACTIVE");
 			mCLICreateOfferResponse = offerActiveObject();
 			mNextStep = mCLICreateOfferResponse.nextStep;
-		//	mNextStep = getString(R.string.status_consents);
+			//	mNextStep = getString(R.string.status_consents);
 			loadFragment(mNextStep);
 		}
 	}
@@ -122,8 +122,8 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
 			SupplyIncomeDetailFragment cLIEligibilityAndPermissionFragment = new SupplyIncomeDetailFragment();
 			cLIEligibilityAndPermissionFragment.setStepIndicatorListener(cliStepIndicatorListener);
-			openFragment(cLIEligibilityAndPermissionFragment);
 			setEventStatus(EventStatus.CREATE_OFFER);
+			openFragment(cLIEligibilityAndPermissionFragment);
 			return;
 		}
 
@@ -156,8 +156,8 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			OfferCalculationFragment offerCalculationFragment = new OfferCalculationFragment();
 			offerCalculationFragment.setStepIndicatorListener(cliStepIndicatorListener);
 			offerCalculationFragment.setArguments(offerBundle);
-			openFragment(offerCalculationFragment);
 			setEventStatus(EventStatus.NONE);
+			openFragment(offerCalculationFragment);
 			return;
 		}
 
