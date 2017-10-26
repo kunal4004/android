@@ -182,6 +182,7 @@
         layout="@layout/cli_next_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"/>
+        android:layout_gravity="bottom"
+        android:background="@color/default_background"/>
 
 </FrameLayout>

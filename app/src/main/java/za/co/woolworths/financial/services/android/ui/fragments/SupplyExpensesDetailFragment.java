@@ -196,11 +196,10 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 				bundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, hmExpenseMap);
 				bundle.putBoolean(IncreaseLimitController.FROM_EXPENSE_SCREEN, true);
 				OfferCalculationFragment ocFragment = new OfferCalculationFragment();
-
 				ocFragment.setStepIndicatorListener(cliStepIndicatorListener);
 				ocFragment.setArguments(bundle);
 				FragmentUtils fragmentUtils = new FragmentUtils();
-				fragmentUtils.nextBottomUpFragment((AppCompatActivity) SupplyExpensesDetailFragment.this.getActivity()
+				fragmentUtils.nextFragment((AppCompatActivity) SupplyExpensesDetailFragment.this.getActivity()
 						, getFragmentManager().beginTransaction(), ocFragment, R.id.cli_steps_container);
 				break;
 		}
@@ -256,8 +255,11 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 					break;
 
 				case R.id.etOtherExpenses:
+					llOtherExpensesContainer.performClick();
 					etOtherExpensesWasEdited = IncreaseLimitController.editTextLength(currentAmount);
 					enableNextButton();
+					break;
+				default:
 					break;
 			}
 		}

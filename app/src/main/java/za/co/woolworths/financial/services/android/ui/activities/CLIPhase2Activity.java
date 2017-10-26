@@ -53,7 +53,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	WoolworthsApplication woolworthsApplication;
 	private WGlobalState wGlobalState;
 	private int editNumberValue;
-	public EventStatus eventStatus;
+	public EventStatus eventStatus = EventStatus.NONE;
 	public ImageView imBack;
 
 	@Override
@@ -71,7 +71,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			mOfferActive = mBundle.getBoolean("OFFER_IS_ACTIVE");
 			mCLICreateOfferResponse = offerActiveObject();
 			mNextStep = mCLICreateOfferResponse.nextStep;
-			//mNextStep = getString(R.string.status_offer);
+		//	mNextStep = getString(R.string.status_consents);
 			loadFragment(mNextStep);
 		}
 	}
@@ -123,6 +123,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			SupplyIncomeDetailFragment cLIEligibilityAndPermissionFragment = new SupplyIncomeDetailFragment();
 			cLIEligibilityAndPermissionFragment.setStepIndicatorListener(cliStepIndicatorListener);
 			openFragment(cLIEligibilityAndPermissionFragment);
+			setEventStatus(EventStatus.CREATE_OFFER);
 			return;
 		}
 
@@ -156,6 +157,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			offerCalculationFragment.setStepIndicatorListener(cliStepIndicatorListener);
 			offerCalculationFragment.setArguments(offerBundle);
 			openFragment(offerCalculationFragment);
+			setEventStatus(EventStatus.NONE);
 			return;
 		}
 

@@ -87,13 +87,13 @@ public class FragmentUtils {
 	 */
 	public void hideSoftKeyboard() {
 		try {
-			final Activity activity = (Activity) mContext;
-			if (activity != null) {
-				if (activity.getCurrentFocus() != null) {
-					InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(INPUT_METHOD_SERVICE);
-					inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-				}
-			}
+//			final Activity activity = (Activity) mContext;
+//			if (activity != null) {
+//				if (activity.getCurrentFocus() != null) {
+//					InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(INPUT_METHOD_SERVICE);
+//					inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+//				}
+//			}
 		} catch (Exception ignored) {
 		}
 	}

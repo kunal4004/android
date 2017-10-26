@@ -55,6 +55,7 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
+import za.co.woolworths.financial.services.android.util.controller.EventStatus;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
 public class OfferCalculationFragment extends CLIFragment implements View.OnClickListener, NetworkChangeListener {
@@ -128,7 +129,11 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					mHashExpenseDetail = (HashMap<String, String>) expenseDetail;
 					Activity activity = getActivity();
 					if (activity instanceof CLIPhase2Activity) {
-						switch (((CLIPhase2Activity) activity).getEventStatus()) {
+						EventStatus eventStatus = ((CLIPhase2Activity) activity).getEventStatus();
+						if (eventStatus == null) {
+							eventStatus = EventStatus.NONE;
+						}
+						switch (eventStatus) {
 							case CREATE_OFFER:
 								cliCreateOfferRequest(createOffer(mHashIncomeDetail, mHashExpenseDetail));
 								break;

@@ -1,9 +1,8 @@
 package za.co.woolworths.financial.services.android.util.controller;
 
-import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 
 public enum EventStatus {
-	CREATE_OFFER(1), UPDATE_OFFER(2);
+	CREATE_OFFER(1), UPDATE_OFFER(2), NONE(3);
 	private int value;
 
 	public static final EventStatus values[] = values();
