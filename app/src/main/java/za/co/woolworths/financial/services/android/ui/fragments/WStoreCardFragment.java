@@ -238,19 +238,11 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		asyncTaskStore = cliGetOfferActive.execute();
 	}
 
-	private void bindUI(OfferActive offerActiv) {
+	private void bindUI(OfferActive offerActive) {
 		try {
-			OfferActive offerActive = new OfferActive();
-			offerActive.httpCode = 200;
-			offerActive.messageSummary = getString(R.string.status_apply_now);
-			offerActive.messageDetail = getString(R.string.status_apply_now);
-			offerActive.offerActive = false;
-			offerActive.nextStep = "POI";
-
 			switch (offerActive.httpCode) {
 				case 200:
 					String messageSummary = offerActive.messageSummary;
-					messageSummary = getString(R.string.status_apply_now);
 					if (messageSummary.equalsIgnoreCase(getString(R.string.status_apply_now))) {
 						if (controllerNotNull())
 							mIncreaseLimitController.disableView(llIncreaseLimitContainer);
