@@ -71,7 +71,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			mOfferActive = mBundle.getBoolean("OFFER_IS_ACTIVE");
 			mCLICreateOfferResponse = offerActiveObject();
 			mNextStep = mCLICreateOfferResponse.nextStep;
-			//	mNextStep = getString(R.string.status_consents);
+			mNextStep = getString(R.string.status_poi_problem);
 			loadFragment(mNextStep);
 		}
 	}
@@ -100,16 +100,21 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	public void loadFragment(String nextStep) {
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
 			CLIEligibilityAndPermissionFragment cLIEligibilityAndPermissionFragment = new CLIEligibilityAndPermissionFragment();
+			showView(imBack);
 			openNextFragment(cLIEligibilityAndPermissionFragment);
 		} else if (nextStep.equalsIgnoreCase(getString(R.string.status_poi_problem))) {
+			hideBurgerButton();
 			CLIPOIProblemFragment clipoiProblem = new CLIPOIProblemFragment();
+			hideView(imBack);
 			openNextFragment(clipoiProblem);
 		} else if (nextStep.equalsIgnoreCase(getString(R.string.status_contact_us))) {
+			showView(imBack);
 			ContactUsFinancialServiceFragment contactUsFinancialServiceFragment = new ContactUsFinancialServiceFragment();
 			openNextFragment(contactUsFinancialServiceFragment);
 			setTitle(getString(R.string.contact_us_financial_services));
 			actionBarCloseIcon();
 		} else {
+			showView(imBack);
 			moveToCLIAllStepsContainerFragment();
 		}
 	}
@@ -386,5 +391,13 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 
 	public void setEventStatus(EventStatus eventStatus) {
 		this.eventStatus = eventStatus;
+	}
+
+	public void showView(View v) {
+		v.setVisibility(View.VISIBLE);
+	}
+
+	public void hideView(View v) {
+		v.setVisibility(View.GONE);
 	}
 }

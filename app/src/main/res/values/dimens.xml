@@ -142,5 +142,6 @@
     <dimen name="ten_sp">10sp</dimen>
     <dimen name="fifteen_sp">15sp</dimen>
     <dimen name="fourteen_dp">14dp</dimen>
+    <dimen name="seventy_dp">70dp</dimen>
 </resources>
 
