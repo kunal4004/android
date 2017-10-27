@@ -71,7 +71,6 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			mOfferActive = mBundle.getBoolean("OFFER_IS_ACTIVE");
 			mCLICreateOfferResponse = offerActiveObject();
 			mNextStep = mCLICreateOfferResponse.nextStep;
-			mNextStep = getString(R.string.status_poi_problem);
 			loadFragment(mNextStep);
 		}
 	}
