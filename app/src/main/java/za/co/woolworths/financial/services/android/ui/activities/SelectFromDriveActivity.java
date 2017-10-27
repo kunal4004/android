@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,8 @@ public class SelectFromDriveActivity extends AppCompatActivity implements View.O
 	public RelativeLayout mRelPopContainer;
 	public static final int ANIM_DOWN_DURATION = 700;
 	public WoolworthsApplication woolworthsApplication;
+	public static final int GALLERY=123;
+	public static final int CAMERA=223;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,12 +42,12 @@ public class SelectFromDriveActivity extends AppCompatActivity implements View.O
 		mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
 
 		WTextView tvSelectFromGallery = (WTextView) findViewById(R.id.tvSelectFromGallery);
-		WTextView tvSelectFromDrive = (WTextView) findViewById(R.id.tvSelectFromDrive);
+		WTextView tvSelectFromCamera = (WTextView) findViewById(R.id.tvSelectFromCamera);
 
 		WButton btnLoanHighOk = (WButton) findViewById(R.id.btnLoanHighOk);
 
 		tvSelectFromGallery.setOnClickListener(this);
-		tvSelectFromDrive.setOnClickListener(this);
+		tvSelectFromCamera.setOnClickListener(this);
 		btnLoanHighOk.setOnClickListener(this);
 
 		setAnimation();
@@ -65,10 +68,12 @@ public class SelectFromDriveActivity extends AppCompatActivity implements View.O
 				startExitAnimation();
 				break;
 			case R.id.tvSelectFromGallery:
-				Toast.makeText(this, "SELECT FROM GALLERY", Toast.LENGTH_LONG).show();
+				setResult(RESULT_OK,new Intent().putExtra("selected",GALLERY));
+				startExitAnimation();
 				break;
-			case R.id.tvSelectFromDrive:
-				Toast.makeText(this, "IMPORT FROM DRIVE", Toast.LENGTH_LONG).show();
+			case R.id.tvSelectFromCamera:
+				setResult(RESULT_OK,new Intent().putExtra("selected",CAMERA));
+				startExitAnimation();
 				break;
 			default:
 				break;

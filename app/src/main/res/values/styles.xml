@@ -1139,10 +1139,10 @@
     </style>
 
     <style name="select_from_drive_style" parent="android:Theme">
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">75dp</item>
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_marginBottom">@dimen/twenty_seven_dp</item>
-        <item name="android:layout_marginTop">@dimen/twenty_eight_dp</item>
+        <item name="android:paddingLeft">32dp</item>
+        <item name="android:paddingRight">32dp</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/black</item>

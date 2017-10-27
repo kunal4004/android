@@ -14,23 +14,40 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignParentStart="true"
-        android:background="@drawable/transactions"/>
+        android:background="@drawable/transactions" />
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/tvDocumentName"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/two_dp"
-        android:layout_marginStart="@dimen/thirteen_dp"
-        android:layout_toEndOf="@+id/imgDocument"
-        android:letterSpacing="0.2"
-        android:text="Standard Bank"
-        android:textAllCaps="true"
-        android:textColor="@color/black"
-        android:textSize="12sp"
-        app:WTextView_font="medium_bold"/>
+        android:layout_toRightOf="@+id/imgDocument"
+        android:layout_toLeftOf="@+id/imgRemoveDoc"
+        android:layout_marginLeft="13dp"
+        android:layout_marginRight="13dp"
+        android:orientation="vertical">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvDocumentName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.2"
+            android:text="Standard Bank"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:WTextView_font="medium_bold" />
+
+        <ProgressBar
+            android:id="@+id/fileUploadProgressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="13dp"
+            android:max="100"
+            android:progressDrawable="@drawable/progressbar_file_upload" />
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/imgRemoveDoc"
@@ -38,6 +55,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:src="@drawable/cancelcircle"/>
+        android:src="@drawable/cancelcircle" />
 
 </RelativeLayout>

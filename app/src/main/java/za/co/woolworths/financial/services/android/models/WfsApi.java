@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import retrofit.mime.MultipartTypedOutput;
 import retrofit.mime.TypedFile;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -228,7 +229,7 @@ public class WfsApi {
 				getOS(), getNetworkCarrier(), getApiId(), "", "",
 				getSha1Password(), productId, skuId);
 	}
-	public POIDocumentUploadResponse uploadPOIDocuments(Map<String, TypedFile> files) {
+	public POIDocumentUploadResponse uploadPOIDocuments(MultipartTypedOutput files) {
 		return mApiInterface.uploadPOIDocuments(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(),"20",files);
 	}
 	private String getOsVersion() {

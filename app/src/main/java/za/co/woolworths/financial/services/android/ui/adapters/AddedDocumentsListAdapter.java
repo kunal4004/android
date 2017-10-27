@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
@@ -38,16 +39,27 @@ public class AddedDocumentsListAdapter extends RecyclerView.Adapter<AddedDocumen
 	public class MyViewHolder extends RecyclerView.ViewHolder {
 		private ImageView  imgRemoveDocument;
 		private WTextView tvDocumentName;
+		private ProgressBar fileUploadProgressBar;
 
 		public MyViewHolder(View view) {
 			super(view);
 			tvDocumentName = (WTextView) view.findViewById(R.id.tvDocumentName);
 			imgRemoveDocument = (ImageView) view.findViewById(R.id.imgRemoveDoc);
+			fileUploadProgressBar=(ProgressBar)view.findViewById(R.id.fileUploadProgressBar);
 		}
 
 		public void bindUI(int position, final MyViewHolder holder) {
 			onRemoevButtonClick(holder);
 			setText(holder, documentList.get(position).getName());
+			int progress=documentList.get(position).getProgress();
+			if(progress>0)
+			{
+				holder.fileUploadProgressBar.setVisibility(View.VISIBLE);
+				holder.fileUploadProgressBar.setProgress(progress);
+			}else {
+				holder.fileUploadProgressBar.setVisibility(View.GONE);
+			}
+
 		}
 
 

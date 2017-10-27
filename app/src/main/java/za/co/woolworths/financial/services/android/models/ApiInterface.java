@@ -624,7 +624,6 @@ public interface ApiInterface {
 			Callback<String> callback);
 
 	@Headers({ "Accept: application/json"})
-	@Multipart
 	@POST("/user/cli/offer/{cliId}/POI")
 	POIDocumentUploadResponse uploadPOIDocuments(
 			@Header("apiId") String apiId,
@@ -636,5 +635,5 @@ public interface ApiInterface {
 			@Header("osVersion") String osVersion,
 			@Header("sessionToken") String sessionToken,
 			@Path("cliId") String cliId,
-			@PartMap Map<String, TypedFile> files);
+			@Body MultipartTypedOutput files);
 }

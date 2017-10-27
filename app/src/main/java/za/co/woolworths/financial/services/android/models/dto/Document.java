@@ -11,6 +11,7 @@ public class Document {
 	public String name;
 	public Uri uri;
 	public long size;
+	public int progress;
 
 	public String getName() {
 		return name;
@@ -34,5 +35,13 @@ public class Document {
 
 	public void setSize(long size) {
 		this.size = size;
+	}
+
+	public int getProgress() {
+		return progress;
+	}
+
+	public void setProgress(int progress) {
+		this.progress = progress;
 	}
 }

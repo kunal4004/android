@@ -1,17 +1,25 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,18 +38,14 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import retrofit.http.Multipart;
-import retrofit.mime.TypedFile;
+import retrofit.mime.MultipartTypedOutput;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
@@ -49,12 +53,11 @@ import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.Document;
 import za.co.woolworths.financial.services.android.models.dto.POIDocumentUploadResponse;
-import za.co.woolworths.financial.services.android.models.dto.Voucher;
-import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetBankAccountTypes;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetDeaBank;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.SelectFromDriveActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.AddedDocumentsListAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentsAccountTypeAdapter;
@@ -62,11 +65,14 @@ import za.co.woolworths.financial.services.android.ui.adapters.POIDocumentSubmit
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.CountingTypedFile;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.PathUtil;
+import za.co.woolworths.financial.services.android.util.PermissionUtils;
+import za.co.woolworths.financial.services.android.util.ProgressListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
@@ -106,6 +112,12 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private RelativeLayout addDocumentButton;
 	private ImageView poiDocumentInfo;
 	private LinearLayout uploadDocumentsLayout;
+	private static final int OPEN_WINDOW_FOR_DRIVE_SELECTION=99;
+	private static final int OPEN_GALLERY_TO_PICk_FILE=11;
+	private static final int OPEN_CAMERA_TO_PICk_IMAGE=33;
+	public static final int PERMS_REQUEST_CODE_GALLERY = 222;
+	public static final int PERMS_REQUEST_CODE_CAMERA=333;
+	public Uri mCameraUri;
 
 	public DocumentFragment() {
 		// Required empty public constructor
@@ -388,12 +400,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				IncreaseLimitController.focusEditView(etAccountNumber, getActivity());
 				break;
 			case R.id.addDocuments:
-				openGalleryToPickDocuments();
+				//openGalleryToPickDocuments();
+				startActivityForResult(new Intent(getActivity(), SelectFromDriveActivity.class),OPEN_WINDOW_FOR_DRIVE_SELECTION);
 				break;
 			case R.id.submitCLI:
 				if(documentList.size()>0)
 				{
-					uploadDocuments(documentList).execute();
+					uploadDocuments(documentList);
 				}
 				break;
 
@@ -519,7 +532,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		uploadIntent.setAction(Intent.ACTION_GET_CONTENT);
 		uploadIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 		uploadIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-		startActivityForResult(uploadIntent, 11);
+		startActivityForResult(uploadIntent, OPEN_GALLERY_TO_PICk_FILE);
 		/*String[] zips = {".zip",".rar"};
 		String[] pdfs = {".pdf"};
 		FilePickerBuilder.getInstance().setMaxCount(5)
@@ -535,49 +548,41 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == 11 && resultCode == RESULT_OK && data != null) {
-			ClipData clipData = data.getClipData();
-			if (clipData != null) {
-				for (int i = 0; i < clipData.getItemCount(); i++) {
-					ClipData.Item item = clipData.getItemAt(i);
-					Uri uri = item.getUri();
-					documentList.add(convertUtiToDocumentObj(uri));
+		switch (requestCode)
+		{
+			case OPEN_GALLERY_TO_PICk_FILE:
+				if(resultCode==RESULT_OK &&data != null)
+				{
+					addPickedPOIDocumentsToList(data);
 				}
-			} else if (data.getData() != null) {
-				Uri uri = data.getData();
-				documentList.add(convertUtiToDocumentObj(uri));
-			}
+				break;
+			case OPEN_WINDOW_FOR_DRIVE_SELECTION:
+				if(resultCode==RESULT_OK)
+				{
+					switch (data.getIntExtra("selected",0))
+					{
+						case SelectFromDriveActivity.GALLERY:
+							if(checkRuntimePermission(PERMS_REQUEST_CODE_GALLERY))
+								openGalleryToPickDocuments();
+							break;
+						case SelectFromDriveActivity.CAMERA:
+							if(checkRuntimePermission(PERMS_REQUEST_CODE_CAMERA))
+								openCamera();
+							break;
 
-			if (documentList.size() > 0) {
-				if (addedDocumentsListAdapter.getItemCount() == 0) {
-					addedDocumentsListAdapter = new AddedDocumentsListAdapter(this, documentList);
-					rclAddedDocumentsList.setAdapter(addedDocumentsListAdapter);
-				} else {
-					addedDocumentsListAdapter.notifyDataSetChanged();
-				}
-				manageSubmitButtonOnDocumentAdd();
-			}
-
-		/*	// Get the Uri of the selected file
-			Uri uri = data.getData();
-			String uriString = uri.toString();//uri.getPath()
-			File myFile = new File(uriString);
-			String path = myFile.getAbsolutePath();
-			String displayName = null;
-
-			if (uriString.startsWith("content://")) {
-				Cursor cursor = null;
-				try {
-					cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
-					if (cursor != null && cursor.moveToFirst()) {
-						displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
 					}
-				} finally {
-					cursor.close();
+
 				}
-			} else if (uriString.startsWith("file://")) {
-				displayName = myFile.getName();
-			}*/
+				break;
+			case OPEN_CAMERA_TO_PICk_IMAGE:
+				if(resultCode==RESULT_OK && data != null)
+				{
+					data.setData(mCameraUri);
+					addPickedPOIDocumentsToList(data);
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -623,15 +628,34 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		}
 	}
 
-	public HttpAsyncTask<String, String, POIDocumentUploadResponse> uploadDocuments(final List<Document> datalist) {
+	public HttpAsyncTask<String, String, POIDocumentUploadResponse> initUpload(final Document document) {
 		return new HttpAsyncTask<String, String, POIDocumentUploadResponse>() {
+
+			private ProgressListener listener;
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
 			}
 			@Override
 			protected POIDocumentUploadResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().uploadPOIDocuments(buildRequestBody(datalist));
+
+
+				String path= null ;
+				try {
+					path = PathUtil.getPath(getActivity(),document.getUri());
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
+				}
+				final File file=new File(path);
+				listener = new ProgressListener() {
+					@Override
+					public void transferred(long num) {
+						publishProgress(String.valueOf((int) ((num / (float) file.length()) * 100)));
+					}
+				};
+				MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
+				multipartTypedOutput.addPart("files",new CountingTypedFile("*/*", new File(path),listener));
+				return ((WoolworthsApplication) getActivity().getApplication()).getApi().uploadPOIDocuments(multipartTypedOutput);
 			}
 
 			@Override
@@ -642,6 +666,14 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			@Override
 			protected POIDocumentUploadResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
 				return new POIDocumentUploadResponse();
+			}
+
+			@Override
+			protected void onProgressUpdate(String... values) {
+				super.onProgressUpdate(values);
+				Log.i("Progress",values[0]);
+				document.setProgress(Integer.parseInt(values[0]));
+				addedDocumentsListAdapter.notifyDataSetChanged();
 			}
 
 			@Override
@@ -665,25 +697,128 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		};
 	}
 
-	public Map<String, TypedFile>  buildRequestBody(List<Document> list)
+	/*public MultipartTypedOutput buildRequestBody(List<Document> list)
 	{
-		/*MultipartBody.Builder builder = new MultipartBody.Builder();
-		builder.setType(MultipartBody.FORM);*/
-		//List<MultipartBody.Part> muPartList=new ArrayList<>();
-		Map<String, TypedFile> files = new HashMap<>();
+		MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
 		for (int i=0;i<list.size();i++)
 		{
 			try {
 				String path= PathUtil.getPath(getActivity(),documentList.get(i).getUri());
-				//builder.addFormDataPart("files",documentList.get(i).getName(), RequestBody.create(null, new File(path)));
-				//muPartList.add(MultipartBody.Part.createFormData("files",documentList.get(i).getName(), RequestBody.create(null, new File(path))));
-				TypedFile typedFile = new TypedFile("multipart/form-data", new File(path));
-				files.put("photo_" + String.valueOf(i + 1), typedFile);
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}
 		}
-		//MultipartBody requestBody = builder.build();
-		return files;
+		return multipartTypedOutput;
+	}*/
+
+	public boolean checkRuntimePermission(int REQUEST_CODE) {
+		switch (REQUEST_CODE){
+			case PERMS_REQUEST_CODE_GALLERY:
+
+
+				if (ContextCompat.checkSelfPermission(getActivity(),
+						Manifest.permission.READ_EXTERNAL_STORAGE)
+						!= PackageManager.PERMISSION_GRANTED) {
+					if (shouldShowRequestPermissionRationale(
+							Manifest.permission.READ_EXTERNAL_STORAGE)) {
+						requestPermissions(
+								new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+								REQUEST_CODE);
+					} else {
+						//we can request the permission.
+						requestPermissions(
+								new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+								REQUEST_CODE);
+					}
+					return false;
+				} else {
+					return true;
+				}
+
+
+			case PERMS_REQUEST_CODE_CAMERA:
+				String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+				if (!PermissionUtils.hasPermissions(getActivity(),PERMISSIONS)) {
+					if (shouldShowRequestPermissionRationale(
+							Manifest.permission.CAMERA)) {
+						requestPermissions(
+								PERMISSIONS,
+								REQUEST_CODE);
+					} else {
+						//we can request the permission.
+						requestPermissions(
+								PERMISSIONS,
+								REQUEST_CODE);
+					}
+					return false;
+				} else {
+					return true;
+				}
+			default:
+				return false;
+		}
+
 	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		switch (requestCode)
+		{
+			case PERMS_REQUEST_CODE_GALLERY:
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+					openGalleryToPickDocuments();
+				break;
+			case PERMS_REQUEST_CODE_CAMERA:
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED)
+					//openCamera();
+				break;
+		}
+	}
+
+	public void uploadDocuments(List<Document> dataList)
+	{
+		for(int i=0;i<dataList.size();i++)
+		    initUpload(dataList.get(i)).execute();
+	}
+
+	public void openCamera()
+	{
+
+		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		mCameraUri=FileProvider.getUriForFile(
+				getActivity(),
+				getActivity().getApplicationContext()
+						.getPackageName() + ".provider", new File(Environment.getExternalStorageDirectory(), "pic_"+ String.valueOf(System.currentTimeMillis()) + ".jpg"));
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, mCameraUri);
+		startActivityForResult(intent, OPEN_CAMERA_TO_PICk_IMAGE);
+
+	}
+	public void addPickedPOIDocumentsToList(Intent data)
+	{
+
+		ClipData clipData = data.getClipData();
+		if (clipData != null) {
+			for (int i = 0; i < clipData.getItemCount(); i++) {
+				ClipData.Item item = clipData.getItemAt(i);
+				Uri uri = item.getUri();
+				documentList.add(convertUtiToDocumentObj(uri));
+			}
+		} else if (data.getData() != null) {
+			Uri uri = data.getData();
+			documentList.add(convertUtiToDocumentObj(uri));
+		}
+
+		if (documentList.size() > 0) {
+			if (addedDocumentsListAdapter.getItemCount() == 0) {
+				addedDocumentsListAdapter = new AddedDocumentsListAdapter(this, documentList);
+				rclAddedDocumentsList.setAdapter(addedDocumentsListAdapter);
+			} else {
+				addedDocumentsListAdapter.notifyDataSetChanged();
+			}
+			manageSubmitButtonOnDocumentAdd();
+		}
+	}
+
+
 }

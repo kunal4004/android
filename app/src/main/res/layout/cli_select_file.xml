@@ -20,8 +20,7 @@
             android:background="@color/white"
             android:gravity="bottom"
             android:orientation="vertical"
-            android:paddingLeft="@dimen/bank_spacing_width"
-            android:paddingRight="@dimen/bank_spacing_width">
+            >
 
             <LinearLayout
                 android:id="@+id/llSupplyDetailContainer"
@@ -33,31 +32,37 @@
                 android:id="@+id/tvSelectFromGallery"
                 style="@style/select_from_drive_style"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="75dp"
                 android:letterSpacing="0.05"
                 android:text="@string/select_from_gallery"
                 />
 
-            <View style="@style/bottom_line"/>
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/tvSelectFromDrive"
-                style="@style/select_from_drive_style"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:letterSpacing="0.08"
-                android:text="@string/select_from_drive"
+            <View style="@style/bottom_line"
+                android:layout_marginLeft="@dimen/bank_spacing_width"
+                android:layout_marginRight="@dimen/bank_spacing_width"
                 />
 
-            <View style="@style/bottom_line"/>
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvSelectFromCamera"
+                style="@style/select_from_drive_style"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:letterSpacing="0.08"
+                android:text="@string/from_camera"
+                />
+
+            <View style="@style/bottom_line"
+                android:layout_marginLeft="@dimen/bank_spacing_width"
+                android:layout_marginRight="@dimen/bank_spacing_width"
+                />
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
                 android:id="@+id/btnLoanHighOk"
                 style="?android:attr/borderlessButtonStyle"
+                android:paddingLeft="@dimen/bank_spacing_width"
+                android:paddingRight="@dimen/bank_spacing_width"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/twenty_seven_dp"
-                android:layout_marginTop="@dimen/twenty_eight_dp"
+                android:layout_height="75dp"
                 android:background="@color/white"
                 android:gravity="center"
                 android:letterSpacing="0.2"
