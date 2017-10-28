@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,16 +22,20 @@ import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 
+import za.co.woolworths.financial.services.android.models.WRewardsCardDetails;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.TierInfo;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
+import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.FeaturedPromotionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
@@ -165,12 +170,6 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 	}
 
 	public void handleTireHistoryView(TierInfo tireInfo) {
-		barCodeNumber.setText("6007 8525 6157 1473");
-		try {
-			bardCodeImage.setImageBitmap(Utils.encodeAsBitmap("6007852561571473", BarcodeFormat.CODE_128, bardCodeImage.getWidth(), 60));
-		} catch (WriterException e) {
-			e.printStackTrace();
-		}
 		overviewLayout.setVisibility(View.VISIBLE);
 		noTireHistory.setVisibility(View.GONE);
 		currentStatus = tireInfo.currentTier.toUpperCase();
@@ -184,16 +183,8 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 			toNextTire.setText(WFormatter.formatAmount(tireInfo.toSpend));
 		}
 		loadPromotions();
+		loadCardDetails();
 
-		loadAnimations();
-		changeCameraDistance();
-		Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				flipCard();
-			}
-		}, 500);
 	}
 
 	@Override
@@ -257,5 +248,51 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 	public void onStart() {
 		super.onStart();
 		isStarted=true;
+	}
+
+	public void loadCardDetails()
+	{
+		new WRewardsCardDetails(getActivity(), new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				CardDetailsResponse cardDetailsResponse= (CardDetailsResponse) object;
+				if(cardDetailsResponse!=null)
+					handleCard(cardDetailsResponse);
+			}
+
+			@Override
+			public void onFailure(String e) {
+				//do nothing
+			}
+		}).execute();
+	}
+
+	public void handleCard(CardDetailsResponse cardDetailsResponse)
+	{
+		if(cardDetailsResponse.cardType !=null&& cardDetailsResponse.cardNumber !=null)
+		{
+			if(cardDetailsResponse.cardType.equalsIgnoreCase("WRewards Card"))
+			{
+
+			}else if(cardDetailsResponse.cardType.equalsIgnoreCase("MySchool Card"))
+			{
+
+			}
+			barCodeNumber.setText(WFormatter.formatVoucher(cardDetailsResponse.cardNumber));
+			try {
+				bardCodeImage.setImageBitmap(Utils.encodeAsBitmap(cardDetailsResponse.cardNumber, BarcodeFormat.CODE_128, bardCodeImage.getWidth(), 60));
+			} catch (WriterException e) {
+				e.printStackTrace();
+			}
+			loadAnimations();
+			changeCameraDistance();
+			Handler handler = new Handler();
+			handler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					flipCard();
+				}
+			}, 500);
+		}
 	}
 }
