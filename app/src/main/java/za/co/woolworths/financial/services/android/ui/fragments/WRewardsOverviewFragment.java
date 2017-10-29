@@ -198,10 +198,10 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 				redirectToWRewardsMemberActivity(2);
 			}
 		}
-		else if(v.getId() == R.id.flipCardBackLayout || v.getId()==R.id.flipCardFrontLayout)
+		/*else if(v.getId() == R.id.flipCardBackLayout || v.getId()==R.id.flipCardFrontLayout)
 		{
 			flipCard();
-		}
+		}*/
 	}
 
 	private void changeCameraDistance() {
@@ -232,7 +232,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		}
 	}
 
-	@Override
+	/*@Override
 	public void setUserVisibleHint(boolean isVisibleToUser) {
 		super.setUserVisibleHint(isVisibleToUser);
 		if (isStarted) {
@@ -242,7 +242,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 			}
 		}
 
-	}
+	}*/
 
 	@Override
 	public void onStart() {
@@ -273,10 +273,12 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		{
 			if(cardDetailsResponse.cardType.equalsIgnoreCase("WRewards Card"))
 			{
-
+				flipCardFrontLayout.setBackgroundResource(R.drawable.wrewards_card);
+				flipCardBackLayout.setBackgroundResource(R.drawable.wrewards_card_flipped);
 			}else if(cardDetailsResponse.cardType.equalsIgnoreCase("MySchool Card"))
 			{
-
+				flipCardFrontLayout.setBackgroundResource(R.drawable.myschool_card);
+				flipCardBackLayout.setBackgroundResource(R.drawable.myschool_card_flipped);
 			}
 			barCodeNumber.setText(WFormatter.formatVoucher(cardDetailsResponse.cardNumber));
 			try {
@@ -292,7 +294,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 				public void run() {
 					flipCard();
 				}
-			}, 500);
+			}, 1000);
 		}
 	}
 }

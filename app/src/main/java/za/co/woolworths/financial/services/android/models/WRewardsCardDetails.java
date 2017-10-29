@@ -14,19 +14,19 @@ import za.co.woolworths.financial.services.android.util.OnEventListener;
  */
 
 public class WRewardsCardDetails extends HttpAsyncTask<String,String,CardDetailsResponse> {
-	private Context mContext;
+	private Context context;
 	private WoolworthsApplication mWoolworthsApp;
 	private OnEventListener<CardDetailsResponse> mCallBack=null;
 
 	public WRewardsCardDetails(Context mContext) {
-		this.mContext=mContext;
-		mWoolworthsApp = ((WoolworthsApplication) ((AppCompatActivity) mContext).getApplication());
+		this.context=mContext;
+		this.mWoolworthsApp = ((WoolworthsApplication) ((AppCompatActivity) context).getApplication());
 	}
 
 	public WRewardsCardDetails(Context mContext, OnEventListener mCallBack) {
-		this.mContext=mContext;
+		this.context=mContext;
 		this.mCallBack=mCallBack;
-		mWoolworthsApp = ((WoolworthsApplication) ((AppCompatActivity) mContext).getApplication());
+		mWoolworthsApp = ((WoolworthsApplication) ((AppCompatActivity) context).getApplication());
 	}
 
 	@Override
