@@ -85,6 +85,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private RelativeLayout mRelNextButton;
 	private FrameLayout flTopLayout;
 	private LinearLayout llEmptyLayout;
+	private EventStatus mEventStatus;
 
 	private enum LATEST_BACKGROUND_CALL {CREATE_OFFER, DECLINE_OFFER, UPDATE_APPLICATION, ACCEPT_OFFER}
 
@@ -129,23 +130,11 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					mHashExpenseDetail = (HashMap<String, String>) expenseDetail;
 					Activity activity = getActivity();
 					if (activity instanceof CLIPhase2Activity) {
-						EventStatus eventStatus = ((CLIPhase2Activity) activity).getEventStatus();
-						if (eventStatus == null) {
-							eventStatus = EventStatus.NONE;
+						mEventStatus = ((CLIPhase2Activity) activity).getEventStatus();
+						if (mEventStatus == null) {
+							mEventStatus = EventStatus.NONE;
 						}
-						switch (eventStatus) {
-							case CREATE_OFFER:
-								cliCreateOfferRequest(createOffer(mHashIncomeDetail, mHashExpenseDetail));
-								break;
-
-							case UPDATE_OFFER:
-								cliUpdateApplicationTask(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mObjOffer.cliId));
-								break;
-							default:
-								displayCurrentOffer(mObjOffer);
-								fromOfferActive = true;
-								break;
-						}
+						createUpdateOfferTask(mEventStatus);
 					}
 				}
 			}
@@ -159,7 +148,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				if (new ConnectionDetector().isOnline(getActivity())) {
 					showView(llNextButtonLayout);
 					mErrorHandlerView.hideErrorHandlerLayout();
-					cliCreateOfferRequest(createOffer(mHashIncomeDetail, mHashExpenseDetail));
+					createUpdateOfferTask(mEventStatus);
 				}
 			}
 		});
@@ -220,6 +209,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
+						hideView(llNextButtonLayout);
 						onLoadCompleted(false);
 						mErrorHandlerView.showErrorHandler();
 					}
@@ -255,11 +245,12 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			}
 
 			@Override
-			public void onFailure(String e) {
+			public void onFailure(final String e) {
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
 						onLoadCompleted(false);
+						hideView(llNextButtonLayout);
 						mErrorHandlerView.showErrorHandler();
 					}
 				});
@@ -357,6 +348,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		showView(cpAdditionalCreditLimit);
 		showView(cpNewCreditAmount);
 		showView(flCircularProgressSpinner);
+		showView(llNextButtonLayout);
 		progressColorFilter(cpCurrentCreditLimit, Color.BLACK);
 		progressColorFilter(cpAdditionalCreditLimit, Color.BLACK);
 		progressColorFilter(cpNewCreditAmount, Color.BLACK);
@@ -409,8 +401,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 	private void onAcceptOfferCompleted() {
 		hideView(mAcceptOfferProgressBar);
-		btnContinue.setTextColor(Color.WHITE);
 		showView(btnContinue);
+		btnContinue.setTextColor(Color.WHITE);
 	}
 
 	private void setBackgroundColor(View v, int id) {
@@ -461,8 +453,13 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 							@Override
 							public void onFailure(String e) {
-								onLoadCompleted(false);
-								onAcceptOfferCompleted();
+								getActivity().runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										onLoadCompleted(false);
+										onAcceptOfferCompleted();
+									}
+								});
 							}
 						});
 				cliOfferDecision.execute();
@@ -581,7 +578,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					if (!loadCompleted) {
 						if (latest_background_call != null) {
 							switch (latest_background_call) {
-								case CREATE_OFFER:
+								case DECLINE_OFFER:
 									break;
 
 								case ACCEPT_OFFER:
@@ -595,12 +592,13 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					}
 				} else {
 					switch (latest_background_call) {
-						case CREATE_OFFER:
+						case DECLINE_OFFER:
 							if (fromOfferActive) {
-								mErrorHandlerView.showErrorHandler();
 								hideView(llNextButtonLayout);
+								mErrorHandlerView.showErrorHandler();
 							}
 							break;
+
 						case ACCEPT_OFFER:
 							mErrorHandlerView.showToast();
 							break;
@@ -636,5 +634,21 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			}
 		});
 		anim.start();
+	}
+
+	public void createUpdateOfferTask(EventStatus eventStatus) {
+		switch (eventStatus) {
+			case CREATE_OFFER:
+				cliCreateOfferRequest(createOffer(mHashIncomeDetail, mHashExpenseDetail));
+				break;
+
+			case UPDATE_OFFER:
+				cliUpdateApplicationTask(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mObjOffer.cliId));
+				break;
+			default:
+				displayCurrentOffer(mObjOffer);
+				fromOfferActive = true;
+				break;
+		}
 	}
 }

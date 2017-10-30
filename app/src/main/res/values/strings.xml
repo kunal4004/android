@@ -734,7 +734,7 @@ two working days. Please watch the app for updates on the progress of your appli
     <string name="select_your_bank_desc">As responsible lender and as proscribed by law, we need to verify the info you provided.</string>
     <string name="increase_limit_desc">You can apply for a limit increase whenever you need to xxxxx xxxx</string>
 
-    <string name="status_in_progress">InProgress</string>
+    <string name="status_in_progress">In Progress</string>
     <string name="status_in_progress_text">in progress</string>
     <string name="status_poi_problem_text">poi problem</string>
     <string name="status_offer_available">Offer Available</string>

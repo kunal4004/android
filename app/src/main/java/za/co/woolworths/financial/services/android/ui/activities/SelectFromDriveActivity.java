@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 
@@ -27,8 +26,8 @@ public class SelectFromDriveActivity extends AppCompatActivity implements View.O
 	public RelativeLayout mRelPopContainer;
 	public static final int ANIM_DOWN_DURATION = 700;
 	public WoolworthsApplication woolworthsApplication;
-	public static final int GALLERY=123;
-	public static final int CAMERA=223;
+	public static final int GALLERY = 123;
+	public static final int CAMERA = 223;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,12 +67,12 @@ public class SelectFromDriveActivity extends AppCompatActivity implements View.O
 				startExitAnimation();
 				break;
 			case R.id.tvSelectFromGallery:
-				setResult(RESULT_OK,new Intent().putExtra("selected",GALLERY));
-				startExitAnimation();
+				setResult(RESULT_OK, new Intent().putExtra("selected", GALLERY));
+				exitAnimation();
 				break;
 			case R.id.tvSelectFromCamera:
-				setResult(RESULT_OK,new Intent().putExtra("selected",CAMERA));
-				startExitAnimation();
+				setResult(RESULT_OK, new Intent().putExtra("selected", CAMERA));
+				exitAnimation();
 				break;
 			default:
 				break;
@@ -82,6 +81,28 @@ public class SelectFromDriveActivity extends AppCompatActivity implements View.O
 
 	private void startExitAnimation() {
 		TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+		animation.setFillAfter(true);
+		animation.setDuration(ANIM_DOWN_DURATION);
+		animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				dismissLayout();
+			}
+		});
+		mRelRootContainer.startAnimation(animation);
+	}
+
+	private void exitAnimation() {
+		TranslateAnimation animation = new TranslateAnimation(0, 0, 0, 0);
 		animation.setFillAfter(true);
 		animation.setDuration(ANIM_DOWN_DURATION);
 		animation.setAnimationListener(new TranslateAnimation.AnimationListener() {

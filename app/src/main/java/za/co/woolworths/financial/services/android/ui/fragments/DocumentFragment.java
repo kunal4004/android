@@ -4,14 +4,13 @@ import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -34,15 +33,11 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-
 import com.awfs.coordination.R;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import retrofit.mime.MultipartTypedOutput;
@@ -112,11 +107,11 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private RelativeLayout addDocumentButton;
 	private ImageView poiDocumentInfo;
 	private LinearLayout uploadDocumentsLayout;
-	private static final int OPEN_WINDOW_FOR_DRIVE_SELECTION=99;
-	private static final int OPEN_GALLERY_TO_PICk_FILE=11;
-	private static final int OPEN_CAMERA_TO_PICk_IMAGE=33;
+	private static final int OPEN_WINDOW_FOR_DRIVE_SELECTION = 99;
+	private static final int OPEN_GALLERY_TO_PICk_FILE = 11;
+	private static final int OPEN_CAMERA_TO_PICk_IMAGE = 33;
 	public static final int PERMS_REQUEST_CODE_GALLERY = 222;
-	public static final int PERMS_REQUEST_CODE_CAMERA=333;
+	public static final int PERMS_REQUEST_CODE_CAMERA = 333;
 	public Uri mCameraUri;
 
 	public DocumentFragment() {
@@ -401,11 +396,10 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				break;
 			case R.id.addDocuments:
 				//openGalleryToPickDocuments();
-				startActivityForResult(new Intent(getActivity(), SelectFromDriveActivity.class),OPEN_WINDOW_FOR_DRIVE_SELECTION);
+				startActivityForResult(new Intent(getActivity(), SelectFromDriveActivity.class), OPEN_WINDOW_FOR_DRIVE_SELECTION);
 				break;
 			case R.id.submitCLI:
-				if(documentList.size()>0)
-				{
+				if (documentList.size() > 0) {
 					uploadDocuments(documentList);
 				}
 				break;
@@ -548,25 +542,21 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		switch (requestCode)
-		{
+		switch (requestCode) {
 			case OPEN_GALLERY_TO_PICk_FILE:
-				if(resultCode==RESULT_OK &&data != null)
-				{
+				if (resultCode == RESULT_OK && data != null) {
 					addPickedPOIDocumentsToList(data);
 				}
 				break;
 			case OPEN_WINDOW_FOR_DRIVE_SELECTION:
-				if(resultCode==RESULT_OK)
-				{
-					switch (data.getIntExtra("selected",0))
-					{
+				if (resultCode == RESULT_OK) {
+					switch (data.getIntExtra("selected", 0)) {
 						case SelectFromDriveActivity.GALLERY:
-							if(checkRuntimePermission(PERMS_REQUEST_CODE_GALLERY))
+							if (checkRuntimePermission(PERMS_REQUEST_CODE_GALLERY))
 								openGalleryToPickDocuments();
 							break;
 						case SelectFromDriveActivity.CAMERA:
-							if(checkRuntimePermission(PERMS_REQUEST_CODE_CAMERA))
+							if (checkRuntimePermission(PERMS_REQUEST_CODE_CAMERA))
 								openCamera();
 							break;
 
@@ -575,8 +565,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				}
 				break;
 			case OPEN_CAMERA_TO_PICk_IMAGE:
-				if(resultCode==RESULT_OK && data != null)
-				{
+				if (resultCode == RESULT_OK && data != null) {
 					data.setData(mCameraUri);
 					addPickedPOIDocumentsToList(data);
 				}
@@ -632,21 +621,22 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		return new HttpAsyncTask<String, String, POIDocumentUploadResponse>() {
 
 			private ProgressListener listener;
+
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
 			}
+
 			@Override
 			protected POIDocumentUploadResponse httpDoInBackground(String... params) {
-
-
-				String path= null ;
+				String path = null;
 				try {
-					path = PathUtil.getPath(getActivity(),document.getUri());
+					path = PathUtil.getPath(getActivity(), document.getUri());
+					getRealPathFromURI(getActivity(), document.getUri());
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
-				final File file=new File(path);
+				final File file = new File(path);
 				listener = new ProgressListener() {
 					@Override
 					public void transferred(long num) {
@@ -654,7 +644,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 					}
 				};
 				MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
-				multipartTypedOutput.addPart("files",new CountingTypedFile("*/*", new File(path),listener));
+				multipartTypedOutput.addPart("files", new CountingTypedFile("*/*", new File(path), listener));
 				return ((WoolworthsApplication) getActivity().getApplication()).getApi().uploadPOIDocuments(multipartTypedOutput);
 			}
 
@@ -671,7 +661,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			@Override
 			protected void onProgressUpdate(String... values) {
 				super.onProgressUpdate(values);
-				Log.i("Progress",values[0]);
+				Log.i("Progress", values[0]);
 				document.setProgress(Integer.parseInt(values[0]));
 				addedDocumentsListAdapter.notifyDataSetChanged();
 			}
@@ -712,7 +702,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}*/
 
 	public boolean checkRuntimePermission(int REQUEST_CODE) {
-		switch (REQUEST_CODE){
+		switch (REQUEST_CODE) {
 			case PERMS_REQUEST_CODE_GALLERY:
 
 
@@ -737,8 +727,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 
 			case PERMS_REQUEST_CODE_CAMERA:
-				String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
-				if (!PermissionUtils.hasPermissions(getActivity(),PERMISSIONS)) {
+				String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+				if (!PermissionUtils.hasPermissions(getActivity(), PERMISSIONS)) {
 					if (shouldShowRequestPermissionRationale(
 							Manifest.permission.CAMERA)) {
 						requestPermissions(
@@ -763,39 +753,36 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	@Override
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-		switch (requestCode)
-		{
+		switch (requestCode) {
 			case PERMS_REQUEST_CODE_GALLERY:
 				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
 					openGalleryToPickDocuments();
 				break;
 			case PERMS_REQUEST_CODE_CAMERA:
 				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED)
-					//openCamera();
+					openCamera();
 				break;
 		}
 	}
 
-	public void uploadDocuments(List<Document> dataList)
-	{
-		for(int i=0;i<dataList.size();i++)
-		    initUpload(dataList.get(i)).execute();
+	public void uploadDocuments(List<Document> dataList) {
+		for (int i = 0; i < dataList.size(); i++)
+			initUpload(dataList.get(i)).execute();
 	}
 
-	public void openCamera()
-	{
+	public void openCamera() {
 
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		mCameraUri=FileProvider.getUriForFile(
+		mCameraUri = FileProvider.getUriForFile(
 				getActivity(),
 				getActivity().getApplicationContext()
-						.getPackageName() + ".provider", new File(Environment.getExternalStorageDirectory(), "pic_"+ String.valueOf(System.currentTimeMillis()) + ".jpg"));
+						.getPackageName() + ".provider", new File(Environment.getExternalStorageDirectory(), "pic_" + String.valueOf(System.currentTimeMillis()) + ".jpg"));
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, mCameraUri);
 		startActivityForResult(intent, OPEN_CAMERA_TO_PICk_IMAGE);
 
 	}
-	public void addPickedPOIDocumentsToList(Intent data)
-	{
+
+	public void addPickedPOIDocumentsToList(Intent data) {
 
 		ClipData clipData = data.getClipData();
 		if (clipData != null) {
@@ -807,6 +794,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		} else if (data.getData() != null) {
 			Uri uri = data.getData();
 			documentList.add(convertUtiToDocumentObj(uri));
+
 		}
 
 		if (documentList.size() > 0) {
@@ -818,7 +806,22 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			}
 			manageSubmitButtonOnDocumentAdd();
 		}
+
 	}
 
+	public String getRealPathFromURI(Context context, Uri contentUri) {
+		Cursor cursor = null;
+		try {
+			String[] proj = {MediaStore.Images.Media.DATA};
+			cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+			int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			cursor.moveToFirst();
+			return cursor.getString(column_index);
+		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
+		}
+	}
 
 }

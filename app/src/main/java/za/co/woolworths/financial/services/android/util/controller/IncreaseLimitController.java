@@ -126,6 +126,11 @@ public class IncreaseLimitController {
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			setCLITag(messageSummary, R.drawable.cli_round_offer_poi_problem, tvApplyNowIncreaseLimit);
+		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_in_progress))) {
+			showView(logoIncreaseLimit);
+			cliIcon(logoIncreaseLimit);
+			hideView(llCommonLayer);
+			setCLITag(messageSummary, R.drawable.cli_round_inprogress_tag, tvApplyNowIncreaseLimit);
 		} else {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
@@ -204,6 +209,8 @@ public class IncreaseLimitController {
 			String nextStep = getNextStep();
 			if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
 				moveToCLIPhase(offerActive, productOfferingId);
+			} else if ((nextStep.equalsIgnoreCase(getString(R.string.status_in_progress))) || nextStep.equalsIgnoreCase(getString(R.string.status_decline)) || nextStep.equalsIgnoreCase(getString(R.string.status_unavailable))) {
+
 			} else {
 				moveToCLIPhase(offerActive, productOfferingId);
 			}
