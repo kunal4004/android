@@ -8,11 +8,9 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -28,18 +26,16 @@ import za.co.woolworths.financial.services.android.models.dto.CardDetailsRespons
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.TierInfo;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
-import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.FeaturedPromotionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.CardType;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
-
-import static com.awfs.coordination.R.string.vouchers;
 
 /**
  * Created by W7099877 on 05/01/2017.
@@ -104,7 +100,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 			}
 
 		});
-
+		loadDefaultCardType();
 		return view;
 	}
 
@@ -271,14 +267,17 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 	{
 		if(cardDetailsResponse.cardType !=null&& cardDetailsResponse.cardNumber !=null)
 		{
-			if(cardDetailsResponse.cardType.equalsIgnoreCase("WRewards Card"))
+			if(cardDetailsResponse.cardType.equalsIgnoreCase(CardType.WREWARDS.getType()))
 			{
 				flipCardFrontLayout.setBackgroundResource(R.drawable.wrewards_card);
 				flipCardBackLayout.setBackgroundResource(R.drawable.wrewards_card_flipped);
-			}else if(cardDetailsResponse.cardType.equalsIgnoreCase("MySchool Card"))
+			}else if(cardDetailsResponse.cardType.equalsIgnoreCase(CardType.MYSCHOOL.getType()))
 			{
 				flipCardFrontLayout.setBackgroundResource(R.drawable.myschool_card);
 				flipCardBackLayout.setBackgroundResource(R.drawable.myschool_card_flipped);
+			}
+			else {
+				return;
 			}
 			barCodeNumber.setText(WFormatter.formatVoucher(cardDetailsResponse.cardNumber));
 			try {
@@ -296,5 +295,11 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 				}
 			}, 1000);
 		}
+	}
+
+	public void loadDefaultCardType()
+	{
+		flipCardFrontLayout.setBackgroundResource(R.drawable.wrewards_card);
+		flipCardBackLayout.setBackgroundResource(R.drawable.wrewards_card_flipped);
 	}
 }
