@@ -29,6 +29,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.awfs.coordination.R;
+import com.google.android.gms.iid.InstanceID;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.VisibleRegion;
@@ -64,10 +65,12 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 import static android.Manifest.permission_group.STORAGE;
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class Utils {
 
@@ -653,5 +656,21 @@ public class Utils {
 			}
 		}
 		return false;
+	}
+
+	public static String getUniqueDeviceID(Context context)
+	{
+		String deviceID=null;
+		if(deviceID==null)
+		{
+			deviceID=getSessionDaoValue(context, SessionDao.KEY.DEVICE_ID);
+			if(deviceID==null)
+			{
+				deviceID= InstanceID.getInstance(context).getId();
+				sessionDaoSave(context, SessionDao.KEY.DEVICE_ID,deviceID);
+			}
+		}
+
+		return deviceID;
 	}
 }
