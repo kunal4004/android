@@ -105,7 +105,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private RecyclerView rclAddedDocumentsList;
 	private AddedDocumentsListAdapter addedDocumentsListAdapter;
 	private List<Document> documentList;
-	private RelativeLayout addDocumentButton;
+	private RelativeLayout addDocumentButton,rlSubmitCli;
 	private ImageView poiDocumentInfo, uploadDocumentInfo;
 	private LinearLayout uploadDocumentsLayout;
 	private static final int OPEN_WINDOW_FOR_DRIVE_SELECTION = 99;
@@ -200,6 +200,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	private void init(View view) {
+		rlSubmitCli = (RelativeLayout) view.findViewById(R.id.rlSubmitCli);
 		rclSelectYourBank = (RecyclerView) view.findViewById(R.id.rclSelectYourBank);
 		rclAccountType = (RecyclerView) view.findViewById(R.id.rclSelectAccountType);
 		rclPOIDocuments = (RecyclerView) view.findViewById(R.id.rclPOIDocuments);
@@ -291,12 +292,12 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		switch (position) {
 			case 0:
 				documentList.clear();
-				hideView(btnSubmit);
+				hideView(rlSubmitCli);
 				scrollUpAddDocumentsLayout();
 				break;
 			case 1:
 				scrollUpDocumentSubmitTypeLayout();
-				showView(btnSubmit);
+				showView(rlSubmitCli);
 				break;
 			default:
 				break;
@@ -373,7 +374,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
 				yesPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
 				hideView(poiDocumentSubmitTypeLayout);
-				hideView(btnSubmit);
+				hideView(rlSubmitCli);
 				if (documentSubmitTypeAdapter != null)
 					documentSubmitTypeAdapter.clearSelection();
 				scrollUpAccountTypeSelectionLayout();
@@ -483,7 +484,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		noPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
 		hideView(accountTypeLayout);
 		hideView(accountNumberLayout);
-		hideView(btnSubmit);
+		hideView(rlSubmitCli);
 		hideView(uploadDocumentsLayout);
 		resetAccountNumberView();
 		if (accountTypeAdapter != null)
@@ -493,7 +494,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	public void showSubmitButton() {
-		btnSubmit.setVisibility(View.VISIBLE);
+		showView(rlSubmitCli);
 		nestedScrollView.post(new Runnable() {
 
 			@Override
@@ -506,7 +507,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	public void resetAccountNumberView() {
 		etAccountNumber.getText().clear();
-		hideView(btnSubmit);
+		hideView(rlSubmitCli);
 	}
 
 
@@ -522,10 +523,10 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	@Override
 	public void afterTextChanged(Editable editable) {
-		if (IncreaseLimitController.editTextLength(etAccountNumber.getText().toString()) && btnSubmit.getVisibility() == View.GONE)
+		if (IncreaseLimitController.editTextLength(etAccountNumber.getText().toString()) && rlSubmitCli.getVisibility() == View.GONE)
 			showSubmitButton();
 		else if (!IncreaseLimitController.editTextLength(etAccountNumber.getText().toString()))
-			hideView(btnSubmit);
+			hideView(rlSubmitCli);
 	}
 
 
@@ -614,8 +615,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	public void manageSubmitButtonOnDocumentAdd() {
 		if (addedDocumentsListAdapter.getItemCount() == 0)
-			hideView(btnSubmit);
-		else if (addedDocumentsListAdapter.getItemCount() > 0 && btnSubmit.getVisibility() == View.GONE)
+			hideView(rlSubmitCli);
+		else if (addedDocumentsListAdapter.getItemCount() > 0 && rlSubmitCli.getVisibility() == View.GONE)
 			showSubmitButton();
 	}
 

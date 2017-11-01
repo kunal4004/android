@@ -426,28 +426,37 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:background="@drawable/add_black"
-                        android:padding="5dp"/>
+                        android:padding="5dp"
+                        android:tint="@color/white"/>
                 </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/submitCLI"
+    <RelativeLayout
+        android:id="@+id/rlSubmitCli"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:background="@color/black"
+        android:background="@color/default_background"
         android:gravity="center"
-        android:minHeight="50dp"
-        android:text="@string/submit"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textSize="12sp"
-        android:visibility="gone"
-        app:WTextView_font="medium_bold"
-        />
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:visibility="gone">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/submitCLI"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:gravity="center"
+            android:minHeight="50dp"
+            android:text="@string/submit"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:WTextView_font="medium_bold"
+            />
+    </RelativeLayout>
 </RelativeLayout>
