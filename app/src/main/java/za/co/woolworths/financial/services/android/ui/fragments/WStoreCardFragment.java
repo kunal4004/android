@@ -252,7 +252,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 					if (controllerNotNull())
 						mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
-					storeWasAlreadyRunOnce = true;
 					break;
 
 				case 440:
@@ -263,10 +262,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				default:
 					break;
 			}
-			onLoadComplete();
 		} catch (NullPointerException ex) {
-			onLoadComplete();
 		}
+		storeWasAlreadyRunOnce = true;
+		onLoadComplete();
 	}
 
 	private void onLoad() {

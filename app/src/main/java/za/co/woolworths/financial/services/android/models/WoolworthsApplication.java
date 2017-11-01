@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatActivity;
 
@@ -203,6 +204,8 @@ public class WoolworthsApplication extends Application {
 		super.onCreate();
 		Fresco.initialize(this);
 		AppEventsLogger.activateApp(this);
+		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+		StrictMode.setVmPolicy(builder.build());
 		mWGlobalState = new WGlobalState(WoolworthsApplication.this);
 		updateBankDetail = new UpdateBankDetail();
 		WoolworthsApplication.context = this.getApplicationContext();

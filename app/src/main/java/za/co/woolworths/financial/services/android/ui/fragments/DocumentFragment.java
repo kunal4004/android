@@ -4,11 +4,11 @@ import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,7 +18,6 @@ import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,6 +35,7 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 
 import java.io.File;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +63,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.CountingTypedFile;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.PathUtil;
@@ -77,10 +78,10 @@ import static android.app.Activity.RESULT_OK;
 
 public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener, DocumentsAccountTypeAdapter.OnAccountTypeClick, View.OnClickListener, POIDocumentSubmitTypeAdapter.OnSubmitType, TextWatcher, AddedDocumentsListAdapter.ItemRemoved, View.OnLayoutChangeListener {
 
+	private final int ANIM_DURATION = 600;
 	private RecyclerView rclSelectYourBank;
 	private List<Bank> deaBankList;
 	private ProgressBar pbDeaBank;
-	private NetworkChangeListener networkChangeListener;
 	private BroadcastReceiver connectionBroadcast;
 	private ErrorHandlerView mErrorHandlerView;
 	private boolean backgroundTaskLoaded;
@@ -105,7 +106,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private AddedDocumentsListAdapter addedDocumentsListAdapter;
 	private List<Document> documentList;
 	private RelativeLayout addDocumentButton;
-	private ImageView poiDocumentInfo;
+	private ImageView poiDocumentInfo, uploadDocumentInfo;
 	private LinearLayout uploadDocumentsLayout;
 	private static final int OPEN_WINDOW_FOR_DRIVE_SELECTION = 99;
 	private static final int OPEN_GALLERY_TO_PICk_FILE = 11;
@@ -144,11 +145,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	private void connectionBroadcast() {
-		try {
-			networkChangeListener = this;
-		} catch (ClassCastException ignored) {
-		}
-		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
+		connectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 	}
 
 	private void onLoad() {
@@ -216,6 +213,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		noPOIFromBank = (WTextView) view.findViewById(R.id.noPOIFromBank);
 		btnSubmit = (WTextView) view.findViewById(R.id.submitCLI);
 		poiDocumentInfo = (ImageView) view.findViewById(R.id.poiDocumentInfo);
+		uploadDocumentInfo = (ImageView) view.findViewById(R.id.uploadDocumentInfo);
 		etAccountNumber = (WEditTextView) view.findViewById(R.id.etAccountNumber);
 		llAccountNumberLayout = (LinearLayout) view.findViewById(R.id.llAccountNumberLayout);
 		rclAddedDocumentsList = (RecyclerView) view.findViewById(R.id.rclDocumentsList);
@@ -230,6 +228,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		poiDocumentInfo.setOnClickListener(this);
 		rclAddedDocumentsList.addOnLayoutChangeListener(this);
 		btnSubmit.setOnClickListener(this);
+		uploadDocumentInfo.setOnClickListener(this);
 	}
 
 	private void selectBankLayoutManager(List<Bank> deaBankList) {
@@ -270,7 +269,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	@Override
 	public void onItemClick(View view, int position) {
 		Bank selectedBank = deaBankList.get(position);
-		Log.e("selectedBank", selectedBank.bankName);
 		if (selectedBank.bankName.equalsIgnoreCase(otherBank)) {
 			hideView(bankTypeConfirmationLayout);
 			invalidateBankTypeSelection();
@@ -367,6 +365,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	@Override
 	public void onClick(View view) {
+		MultiClickPreventer.preventMultiClick(view);
 		switch (view.getId()) {
 			case R.id.yesPOIFromBank:
 				noPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
@@ -403,8 +402,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 					uploadDocuments(documentList);
 				}
 				break;
-
-
+			case R.id.uploadDocumentInfo:
 			case R.id.poiDocumentInfo:
 				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.UPLOAD_DOCUMENT_MODAL, "");
 				break;
@@ -416,53 +414,64 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	public void scrollUpAccountTypeSelectionLayout() {
-		accountTypeLayout.setVisibility(View.VISIBLE);
+		showView(accountTypeLayout);
+		dynamicLayoutPadding(bankTypeConfirmationLayout, true);
+		dynamicLayoutPadding(poiDocumentSubmitTypeLayout, true);
+		dynamicLayoutPadding(accountTypeLayout, false);
 		nestedScrollView.post(new Runnable() {
 			@Override
 			public void run() {
-				ObjectAnimator.ofInt(nestedScrollView, "scrollY", accountTypeLayout.getTop()).setDuration(300).start();
+				ObjectAnimator.ofInt(nestedScrollView, "scrollY", accountTypeLayout.getTop()).setDuration(ANIM_DURATION).start();
 			}
 		});
 	}
 
 	public void scrollUpConfirmationFroPOIFromBankLayout() {
-		bankTypeConfirmationLayout.setVisibility(View.VISIBLE);
+		showView(bankTypeConfirmationLayout);
+		dynamicLayoutPadding(bankTypeConfirmationLayout, false);
 		nestedScrollView.post(new Runnable() {
 			@Override
 			public void run() {
-				ObjectAnimator.ofInt(nestedScrollView, "scrollY", bankTypeConfirmationLayout.getTop()).setDuration(300).start();
+				ObjectAnimator.ofInt(nestedScrollView, "scrollY", bankTypeConfirmationLayout.getTop()).setDuration(ANIM_DURATION).start();
 			}
 		});
 	}
 
 	public void scrollUpDocumentSubmitTypeLayout() {
 		hideView(uploadDocumentsLayout);
-		poiDocumentSubmitTypeLayout.setVisibility(View.VISIBLE);
+		showView(poiDocumentSubmitTypeLayout);
+		dynamicLayoutPadding(bankTypeConfirmationLayout, true);
+		dynamicLayoutPadding(poiDocumentSubmitTypeLayout, false);
 		nestedScrollView.post(new Runnable() {
 			@Override
 			public void run() {
-				ObjectAnimator.ofInt(nestedScrollView, "scrollY", poiDocumentSubmitTypeLayout.getTop()).setDuration(300).start();
+				ObjectAnimator.ofInt(nestedScrollView, "scrollY", poiDocumentSubmitTypeLayout.getTop()).setDuration(ANIM_DURATION).start();
 			}
 		});
 	}
 
 	public void scrollUpAccountNumberLayout() {
 		resetAccountNumberView();
-		accountNumberLayout.setVisibility(View.VISIBLE);
+		hideView(uploadDocumentsLayout);
+		showView(accountNumberLayout);
+		dynamicLayoutPadding(accountTypeLayout, true);
+		dynamicLayoutPadding(accountNumberLayout, false);
 		nestedScrollView.post(new Runnable() {
 			@Override
 			public void run() {
-				ObjectAnimator.ofInt(nestedScrollView, "scrollY", accountNumberLayout.getTop()).setDuration(300).start();
+				ObjectAnimator.ofInt(nestedScrollView, "scrollY", accountNumberLayout.getTop()).setDuration(ANIM_DURATION).start();
 			}
 		});
 	}
 
 	public void scrollUpAddDocumentsLayout() {
-		uploadDocumentsLayout.setVisibility(View.VISIBLE);
+		showView(uploadDocumentsLayout);
+		dynamicLayoutPadding(poiDocumentSubmitTypeLayout, true);
+		dynamicLayoutPadding(uploadDocumentsLayout, false);
 		nestedScrollView.post(new Runnable() {
 			@Override
 			public void run() {
-				ObjectAnimator.ofInt(nestedScrollView, "scrollY", uploadDocumentsLayout.getTop()).setDuration(300).start();
+				ObjectAnimator.ofInt(nestedScrollView, "scrollY", uploadDocumentsLayout.getTop()).setDuration(ANIM_DURATION).start();
 			}
 		});
 	}
@@ -594,6 +603,10 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			File file = new File(uri.getPath());
 			document.setName(file.getName());
 			document.setSize(file.length() / 1024);
+		} else if (uriString.startsWith("file:/storage")) {
+			File file = new File(uri.getPath());
+			document.setName(file.getName());
+			document.setSize(file.length() / 1024);
 		}
 
 		return document;
@@ -632,7 +645,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				String path = null;
 				try {
 					path = PathUtil.getPath(getActivity(), document.getUri());
-					getRealPathFromURI(getActivity(), document.getUri());
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
@@ -704,8 +716,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public boolean checkRuntimePermission(int REQUEST_CODE) {
 		switch (REQUEST_CODE) {
 			case PERMS_REQUEST_CODE_GALLERY:
-
-
 				if (ContextCompat.checkSelfPermission(getActivity(),
 						Manifest.permission.READ_EXTERNAL_STORAGE)
 						!= PackageManager.PERMISSION_GRANTED) {
@@ -724,7 +734,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				} else {
 					return true;
 				}
-
 
 			case PERMS_REQUEST_CODE_CAMERA:
 				String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
@@ -771,15 +780,22 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	public void openCamera() {
+		//In some devices, the Uri is null in onActivityForResult(). So you need to set Uri to placing the captured image.
+		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		// If there any applications that can handle this intent then call the intent.
+		if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
 
-		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		mCameraUri = FileProvider.getUriForFile(
-				getActivity(),
-				getActivity().getApplicationContext()
-						.getPackageName() + ".provider", new File(Environment.getExternalStorageDirectory(), "pic_" + String.valueOf(System.currentTimeMillis()) + ".jpg"));
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, mCameraUri);
-		startActivityForResult(intent, OPEN_CAMERA_TO_PICk_IMAGE);
+			URI oldUri = getOutputMediaFile();
 
+			mCameraUri = new Uri.Builder().scheme(oldUri.getScheme())
+					.encodedAuthority(oldUri.getRawAuthority())
+					.encodedPath(oldUri.getRawPath())
+					.query(oldUri.getRawQuery())
+					.fragment(oldUri.getRawFragment())
+					.build();
+			takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCameraUri);
+			startActivityForResult(takePictureIntent, OPEN_CAMERA_TO_PICk_IMAGE);
+		}
 	}
 
 	public void addPickedPOIDocumentsToList(Intent data) {
@@ -794,7 +810,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		} else if (data.getData() != null) {
 			Uri uri = data.getData();
 			documentList.add(convertUtiToDocumentObj(uri));
-
 		}
 
 		if (documentList.size() > 0) {
@@ -809,19 +824,43 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	}
 
-	public String getRealPathFromURI(Context context, Uri contentUri) {
-		Cursor cursor = null;
-		try {
-			String[] proj = {MediaStore.Images.Media.DATA};
-			cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
-			int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-			cursor.moveToFirst();
-			return cursor.getString(column_index);
-		} finally {
-			if (cursor != null) {
-				cursor.close();
+	public URI getOutputMediaFile() {
+		// To be safe, you should check that the SDCard is mounted
+		// using Environment.getExternalStorageState() before doing this.
+
+		File mediaStorageDir;
+		// If the external directory is writable then then return the External pictures directory.
+		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+			mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), getString(R.string.app_name));
+		} else {
+			mediaStorageDir = Environment.getDownloadCacheDirectory();
+		}
+		// Create the storage directory if it does not exist
+		if (!mediaStorageDir.exists()) {
+			if (!mediaStorageDir.mkdirs()) {
+				Log.d("MyCameraApp", "failed to create directory");
+				return null;
 			}
 		}
+		// Create a media file name
+		File mediaFile;
+		mediaFile = new File(mediaStorageDir.getPath() + File.separator + "pic_" + String.valueOf(System.currentTimeMillis()) + ".jpg");
+
+		return mediaFile.toURI();
+	}
+
+	public void dynamicLayoutPadding(View view, boolean defaultPaddingEnabled) {
+		IncreaseLimitController ilc = new IncreaseLimitController(getActivity());
+		int paddingPixel = 16;
+		float density = getActivity().getResources().getDisplayMetrics().density;
+		int paddingDp = (int) (paddingPixel * density);
+		int screenHeight = ilc.getScreenHeight(getActivity()) / 2;
+		if (defaultPaddingEnabled) {
+			view.setPadding(0, paddingDp, 0, 0);
+		} else {
+			view.setPadding(0, paddingDp, 0, screenHeight);
+		}
+
 	}
 
 }

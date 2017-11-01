@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CLIIncreaseLimitInfoActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -211,7 +212,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 					offerActive = ((OfferActive) object);
 					switch (offerActive.httpCode) {
 						case 200:
-							creditWasAlreadyRunOnce = true;
 							bindUI(offerActive);
 							break;
 
@@ -224,8 +224,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 							break;
 					}
 				} catch (NullPointerException ex) {
-					onLoadComplete();
 				}
+				creditWasAlreadyRunOnce = true;
+				onLoadComplete();
 			}
 
 			@Override

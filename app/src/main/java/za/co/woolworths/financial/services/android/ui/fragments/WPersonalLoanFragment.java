@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CLIIncreaseLimitInfoActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -248,8 +249,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				try {
 					bindUI(offerActive);
 				} catch (NullPointerException ex) {
-					onLoadComplete();
 				}
+				personalWasAlreadyRunOnce = true;
+				onLoadComplete();
 			}
 
 			@Override
@@ -288,8 +290,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				if (controllerNotNull()) {
 					mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
 				}
-
-				personalWasAlreadyRunOnce = true;
 				break;
 
 			case 440:
