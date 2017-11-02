@@ -51,7 +51,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-
 import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;

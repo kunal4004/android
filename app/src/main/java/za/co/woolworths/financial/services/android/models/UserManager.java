@@ -5,18 +5,10 @@ import android.content.SharedPreferences;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
-import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
-
-import static android.R.id.edit;
 
 public class UserManager {
 

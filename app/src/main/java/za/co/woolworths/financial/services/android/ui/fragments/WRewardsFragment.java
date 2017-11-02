@@ -17,7 +17,6 @@ import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 
-
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;

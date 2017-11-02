@@ -5,8 +5,6 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.view.inputmethod.InputMethodManager;
 
-import za.co.woolworths.financial.services.android.util.FragmentUtils;
-
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class CLIFragment extends Fragment {

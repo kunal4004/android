@@ -1,9 +1,7 @@
 package za.co.woolworths.financial.services.android.util;
 
-import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.google.android.gms.iid.InstanceID;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 

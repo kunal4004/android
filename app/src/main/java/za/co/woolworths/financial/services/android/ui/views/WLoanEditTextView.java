@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.widget.EditText;
 
 import com.awfs.coordination.R;
 

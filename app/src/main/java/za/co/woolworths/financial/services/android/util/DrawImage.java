@@ -6,7 +6,6 @@ import android.net.Uri;
 
 import com.awfs.coordination.R;
 import com.facebook.drawee.backends.pipeline.Fresco;
-
 import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.controller.ControllerListener;

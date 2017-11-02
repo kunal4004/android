@@ -2,9 +2,6 @@ package za.co.woolworths.financial.services.android.util;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.os.Handler;
-
-import java.io.IOException;
 
 /**
  * Created by dimitrij on 2016/12/13.

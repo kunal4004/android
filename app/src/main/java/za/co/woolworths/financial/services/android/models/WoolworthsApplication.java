@@ -12,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
-
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.analytics.GoogleAnalytics;

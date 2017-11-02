@@ -8,11 +8,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 
-
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 
 import java.util.ArrayList;
 
@@ -23,9 +21,9 @@ import za.co.woolworths.financial.services.android.models.dto.Ingredient;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.ProductDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.ProductProgressDialogFrag;
 
 public class WebAppInterface {

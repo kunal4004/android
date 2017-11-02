@@ -30,8 +30,6 @@ import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-import static za.co.woolworths.financial.services.android.util.AnimationUtils.startFadeInAnimation;
-
 public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener {
 
 	public RelativeLayout mRelRootContainer;

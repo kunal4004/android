@@ -12,12 +12,7 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-import java.util.List;
-
-import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-
-import static android.R.attr.accountType;
 
 /**
  * Created by W7099877 on 2017/10/05.
