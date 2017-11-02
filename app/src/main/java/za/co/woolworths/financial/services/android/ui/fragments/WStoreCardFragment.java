@@ -31,7 +31,6 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CLIIncreaseLimitInfoActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -206,9 +205,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				break;
 
 			case R.id.relFindOutMore:
-				Intent openFindOutMore = new Intent(getActivity(), CLIIncreaseLimitInfoActivity.class);
-				getActivity().startActivity(openFindOutMore);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				if (controllerNotNull())
+					mIncreaseLimitController.intentFindOutMore(getActivity(), offerActive);
 				break;
 			default:
 				break;

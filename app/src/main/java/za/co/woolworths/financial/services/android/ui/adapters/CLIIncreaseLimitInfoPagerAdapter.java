@@ -6,7 +6,6 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 
@@ -23,13 +22,13 @@ public class CLIIncreaseLimitInfoPagerAdapter extends PagerAdapter {
 	public Activity mContext;
 	private String[] titles = null;
 	private String[] descriptions = null;
-	private TypedArray images = null;
+	private TypedArray images;
 
 	public CLIIncreaseLimitInfoPagerAdapter(Activity context, SelectedItemCallback selectedItemCallback) {
 		this.mContext = context;
-		titles = mContext.getResources().getStringArray(R.array.on_boarding_walkthrough_titles);
-		images = mContext.getResources().obtainTypedArray(R.array.on_boarding_walkthrough_images);
-		descriptions = mContext.getResources().getStringArray(R.array.on_boarding_walkthrough_descriptions);
+		this.titles = mContext.getResources().getStringArray(R.array.cli_carousel_title);
+		this.images = mContext.getResources().obtainTypedArray(R.array.cli_carousel_image);
+		this.descriptions = mContext.getResources().getStringArray(R.array.cli_carousel_desc);
 		this.selectedItemCallback = selectedItemCallback;
 	}
 
@@ -45,12 +44,10 @@ public class CLIIncreaseLimitInfoPagerAdapter extends PagerAdapter {
 
 	@Override
 	public Object instantiateItem(ViewGroup container, final int position) {
-		View cView = mContext.getLayoutInflater().inflate(R.layout.cli_increse_limit_info_pager_item, container, false);
-		ImageView boardingImage = (ImageView) cView.findViewById(R.id.cli_info_image);
+		View cView = mContext.getLayoutInflater().inflate(R.layout.cli_increase_limit_pager_item, container, false);
 		final WTextView title = (WTextView) cView.findViewById(R.id.cli_info_title);
 		WTextView description = (WTextView) cView.findViewById(R.id.cli_info_desc);
 		WTextView videoText = (WTextView) cView.findViewById(R.id.cli_ifo_video);
-		//boardingImage.setImageResource(images.getResourceId(position,-1));
 		title.setText(titles[position]);
 		description.setText(descriptions[position]);
 		container.addView(cView);

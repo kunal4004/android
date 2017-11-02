@@ -219,4 +219,20 @@
         <item>@string/cli_overlay_all_expenses</item>
     </string-array>
 
+    <string-array name="cli_carousel_title">
+        <item>@string/credit_bureau</item>
+        <item>@string/txt_proof_of_income</item>
+    </string-array>
+
+    <string-array name="cli_carousel_desc">
+        <item>@string/credit_bureau_desc</item>
+        <item>@string/txt_proof_of_income_desc</item>
+    </string-array>
+
+    <integer-array name="cli_carousel_image">
+        <item>@drawable/walkthrough_1</item>
+        <item>@drawable/walkthrough_2</item>
+    </integer-array>
+
+
 </resources>

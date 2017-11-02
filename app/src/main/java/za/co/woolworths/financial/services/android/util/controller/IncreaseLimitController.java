@@ -20,7 +20,9 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Application;
 import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.ui.activities.FindOutMoreActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
+import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -207,6 +209,7 @@ public class IncreaseLimitController {
 	public void nextStep(OfferActive offerActive, String productOfferingId) {
 		try {
 			String nextStep = getNextStep();
+			nextStep = "do";
 			if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
 				moveToCLIPhase(offerActive, productOfferingId);
 			} else if ((nextStep.equalsIgnoreCase(getString(R.string.status_in_progress))) || nextStep.equalsIgnoreCase(getString(R.string.status_decline)) || nextStep.equalsIgnoreCase(getString(R.string.status_unavailable))) {
@@ -293,5 +296,15 @@ public class IncreaseLimitController {
 	public void setQuarterHeight(View view) {
 		ViewGroup.LayoutParams params = view.getLayoutParams();
 		params.height = getScreenHeight((Activity) mContext) / 4;
+	}
+
+	public void intentFindOutMore(Activity activity, OfferActive offerActive) {
+		Intent openFindOutMore = new Intent(activity, FindOutMoreActivity.class);
+		if (activity instanceof MyAccountCardsActivity) {
+			openFindOutMore.putExtra("OFFER_ACTIVE_PAYLOAD", Utils.objectToJson(offerActive));
+			openFindOutMore.putExtra("OFFER_IS_ACTIVE", offerActive.offerActive);
+			activity.startActivity(openFindOutMore);
+			activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+		}
 	}
 }

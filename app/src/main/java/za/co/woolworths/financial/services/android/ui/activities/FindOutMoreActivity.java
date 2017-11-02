@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -15,31 +16,43 @@ import android.widget.LinearLayout;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.adapters.CLIIncreaseLimitInfoPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.SelectedItemCallback;
 
-public class CLIIncreaseLimitInfoActivity extends AppCompatActivity implements SelectedItemCallback, ViewPager.OnPageChangeListener {
+public class FindOutMoreActivity extends AppCompatActivity implements SelectedItemCallback, ViewPager.OnPageChangeListener, View.OnClickListener {
 
-	private Toolbar mToolbar;
 	private LinearLayout pager_indicator;
 	private int dotsCount;
 	private ImageView[] dots;
-	private ViewPager pager;
 	private CLIIncreaseLimitInfoPagerAdapter cliInfoAdapter;
+	public WButton btnIncreaseMyLimit;
+	private String mOfferActivePayload;
+	private boolean mOfferActive;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.cli_increse_limit_info_activity);
+		setContentView(R.layout.cli_find_out_more_carousel_activity);
 		Utils.updateStatusBarBackground(this);
-		mToolbar = (Toolbar) findViewById(R.id.mToolbar);
+		Bundle mBundle = getIntent().getExtras();
+		if (mBundle != null) {
+			mOfferActivePayload = mBundle.getString("OFFER_ACTIVE_PAYLOAD");
+			mOfferActive = mBundle.getBoolean("OFFER_IS_ACTIVE");
+		}
+		Toolbar mToolbar = (Toolbar) findViewById(R.id.mToolbar);
 		setSupportActionBar(mToolbar);
-		getSupportActionBar().setTitle(null);
-		pager = (ViewPager) findViewById(R.id.cliInfoPager);
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setTitle(null);
+		}
+		ViewPager pager = (ViewPager) findViewById(R.id.cliInfoPager);
+		btnIncreaseMyLimit = (WButton) findViewById(R.id.btnIncreaseMyLimit);
 		pager_indicator = (LinearLayout) findViewById(R.id.viewPagerCountDots);
-		cliInfoAdapter = new CLIIncreaseLimitInfoPagerAdapter(CLIIncreaseLimitInfoActivity.this, this);
+		cliInfoAdapter = new CLIIncreaseLimitInfoPagerAdapter(FindOutMoreActivity.this, this);
 		pager.setAdapter(cliInfoAdapter);
 		pager.addOnPageChangeListener(this);
+		btnIncreaseMyLimit.setOnClickListener(this);
 		setUiPageViewController();
 	}
 
@@ -49,8 +62,8 @@ public class CLIIncreaseLimitInfoActivity extends AppCompatActivity implements S
 			dotsCount = cliInfoAdapter.getCount();
 			dots = new ImageView[dotsCount];
 			for (int i = 0; i < dotsCount; i++) {
-				dots[i] = new ImageView(CLIIncreaseLimitInfoActivity.this);
-				dots[i].setImageDrawable(ContextCompat.getDrawable(CLIIncreaseLimitInfoActivity.this, R.drawable.page_control_inactive));
+				dots[i] = new ImageView(FindOutMoreActivity.this);
+				dots[i].setImageDrawable(ContextCompat.getDrawable(FindOutMoreActivity.this, R.drawable.page_control_inactive));
 				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 						LinearLayout.LayoutParams.WRAP_CONTENT,
 						LinearLayout.LayoutParams.WRAP_CONTENT
@@ -58,7 +71,7 @@ public class CLIIncreaseLimitInfoActivity extends AppCompatActivity implements S
 				params.setMargins(10, 0, 10, 0);
 				pager_indicator.addView(dots[i], params);
 			}
-			dots[0].setImageDrawable(ContextCompat.getDrawable(CLIIncreaseLimitInfoActivity.this, R.drawable.page_control_active));
+			dots[0].setImageDrawable(ContextCompat.getDrawable(FindOutMoreActivity.this, R.drawable.page_control_active));
 		} catch (Exception ignored) {
 		}
 	}
@@ -76,9 +89,9 @@ public class CLIIncreaseLimitInfoActivity extends AppCompatActivity implements S
 	@Override
 	public void onPageSelected(int position) {
 		for (int i = 0; i < dotsCount; i++) {
-			dots[i].setImageDrawable(ContextCompat.getDrawable(CLIIncreaseLimitInfoActivity.this, R.drawable.page_control_inactive));
+			dots[i].setImageDrawable(ContextCompat.getDrawable(FindOutMoreActivity.this, R.drawable.page_control_inactive));
 		}
-		dots[position].setImageDrawable(ContextCompat.getDrawable(CLIIncreaseLimitInfoActivity.this, R.drawable.page_control_active));
+		dots[position].setImageDrawable(ContextCompat.getDrawable(FindOutMoreActivity.this, R.drawable.page_control_active));
 	}
 
 	@Override
@@ -112,5 +125,21 @@ public class CLIIncreaseLimitInfoActivity extends AppCompatActivity implements S
 		Intent openYoutubeVideo = new Intent(this, YoutubePlayerActivity.class);
 		startActivity(openYoutubeVideo);
 		overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.btnIncreaseMyLimit:
+				Intent openFindOutMore = new Intent(FindOutMoreActivity.this, CLIPhase2Activity.class);
+				openFindOutMore.putExtra("OFFER_ACTIVE_PAYLOAD", mOfferActivePayload);
+				openFindOutMore.putExtra("OFFER_IS_ACTIVE", mOfferActive);
+				startActivity(openFindOutMore);
+				overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				FindOutMoreActivity.this.finish();
+				break;
+			default:
+				break;
+		}
 	}
 }

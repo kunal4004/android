@@ -203,7 +203,6 @@
     <string name="txt_insurance_claim">Insurance claim</string>
     <string name="txt_payment_query">Payment query</string>
     <string name="txt_sc_and_pl_query">Store Card &amp; Personal Loan query</string>
-    <string name="txt_proof_of_income">Proof of income</string>
     <string name="txt_technical_problem">Technical</string>
     <string name="online_local_caller_number">0860 100 987</string>
     <string name="online_inter_national_caller_number">+27 21 407 6137</string>
@@ -771,5 +770,11 @@ two working days. Please watch the app for updates on the progress of your appli
     <string name="uploading_statement_period">Statement period must be visible</string>
     <string name="uploading_older_month">Can’t be older than 3 months</string>
     <string name="from_camera">Camera</string>
+
+    <!-- Cli carousel: Find Out More -->
+    <string name="credit_bureau">Credit bureau</string>
+    <string name="credit_bureau_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.</string>
+    <string name="txt_proof_of_income">Proof of income</string>
+    <string name="txt_proof_of_income_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.</string>
 
 </resources>

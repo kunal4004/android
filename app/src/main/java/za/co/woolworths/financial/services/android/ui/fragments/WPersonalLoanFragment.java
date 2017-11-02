@@ -32,8 +32,6 @@ import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CLIIncreaseLimitInfoActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -225,9 +223,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				break;
 
 			case R.id.relFindOutMore:
-				Intent openFindOutMore = new Intent(getActivity(), CLIIncreaseLimitInfoActivity.class);
-				getActivity().startActivity(openFindOutMore);
-				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				if (controllerNotNull())
+					mIncreaseLimitController.intentFindOutMore(getActivity(), offerActive);
 				break;
 			case R.id.relIncreaseMyLimit:
 			case R.id.llIncreaseLimitContainer:

@@ -25,9 +25,12 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+
+import static za.co.woolworths.financial.services.android.util.AnimationUtils.startFadeInAnimation;
 
 public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener {
 
@@ -97,7 +100,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				setContentView(R.layout.transparent_activity);
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				setAnimation();
 				WButton wButton = (WButton) findViewById(R.id.btnBarcodeOk);
 				wButton.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
@@ -111,7 +113,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					findViewById(R.id.shoppingListDivider).setVisibility(View.VISIBLE);
 					findViewById(R.id.btnViewShoppingList).setVisibility(View.VISIBLE);
 				}
-				setAnimation();
 				WButton wButtonOk = (WButton) findViewById(R.id.btnShopOk);
 				WButton wBtnViewShoppingList = (WButton) findViewById(R.id.btnViewShoppingList);
 				wButtonOk.setOnClickListener(this);
@@ -135,7 +136,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				setContentView(R.layout.open_overlay_got_it);
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				setAnimation();
 				WTextView mOverlayTitle = (WTextView) findViewById(R.id.textApplicationNotProceed);
 				WTextView mOverlayDescription = (WTextView) findViewById(R.id.overlayDescription);
 				WButton mOverlayBtn = (WButton) findViewById(R.id.btnOverlay);
@@ -154,7 +154,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
 				WButton mBtnOverlay = (WButton) findViewById(R.id.btnOverlay);
 				WTextView mDescriptionOverlay = (WTextView) findViewById(R.id.overlayDescription);
-				setAnimation();
 				if (description != null)
 					mDescriptionOverlay.setText(description);
 				mBtnOverlay.setOnClickListener(this);
@@ -168,7 +167,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				WButton mBtnEmailOk = (WButton) findViewById(R.id.btnEmailOk);
 				mBtnEmailOk.setOnClickListener(this);
 				WTextView mTextEmailAddress = (WTextView) findViewById(R.id.textEmailAddress);
-				setAnimation();
 				if (description != null)
 					mTextEmailAddress.setText(description);
 				break;
@@ -194,7 +192,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				WButton btnMandatoryOK = (WButton) findViewById(R.id.btnMandatoryOK);
 				WTextView mTextProceed = (WTextView) findViewById(R.id.textApplicationNotProceed);
 				mTextProceed.setText(description);
-				setAnimation();
 				btnMandatoryOK.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
@@ -212,7 +209,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					mTextProofIncome.setText(getString(R.string.loan_request_low_desc).replace
 							("R1 500.00", WFormatter.formatAmount(description)));
 				}
-				setAnimation();
 				mLowLoanAmount.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
@@ -232,7 +228,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
 				WButton btnConfidentialOk = (WButton) findViewById(R.id.btnConfidentialOk);
-				setAnimation();
 				btnConfidentialOk.setOnClickListener(this);
 				break;
 
@@ -274,7 +269,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mTextTitle.setText(getString(R.string.no_stock_title));
 				mTextProofIncome = (WTextView) findViewById(R.id.textProofIncome);
 				mTextProofIncome.setText(getString(R.string.stock_available_product));
-				setAnimation();
 				mLowLoanAmount.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
@@ -288,7 +282,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mTextTitle.setText(getString(R.string.location_disable_title));
 				mTextProofIncome = (WTextView) findViewById(R.id.textProofIncome);
 				mTextProofIncome.setText(getString(R.string.location_disable_desc));
-				setAnimation();
 				mLowLoanAmount.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
@@ -322,7 +315,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					llSupplyDetailContainer.addView(view);
 				}
 				mLowLoanAmount = (WButton) findViewById(R.id.btnLoanHighOk);
-				setAnimation();
 				mLowLoanAmount.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
@@ -350,7 +342,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				setContentView(R.layout.cli_select_file);
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				setAnimation();
 				mRelPopContainer.setOnClickListener(this);
 				break;
 
@@ -363,7 +354,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				WTextView mAmountDesc = (WTextView) findViewById(R.id.textProofIncome);
 				mAmountTitle.setText(title);
 				mAmountDesc.setText(description);
-				setAnimation();
 				mBtnOk.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
@@ -373,7 +363,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
 				WButton btnUploadDocuments = (WButton) findViewById(R.id.btnUploadDocuments);
-				setAnimation();
 				mRelPopContainer.setOnClickListener(this);
 				btnUploadDocuments.setOnClickListener(this);
 				break;
@@ -381,6 +370,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			default:
 				break;
 		}
+		setAnimation();
 	}
 
 	private void startExitAnimation() {
@@ -591,6 +581,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 	@Override
 	public void onClick(View v) {
+		MultiClickPreventer.preventMultiClick(v);
 		switch (v.getId()) {
 			case R.id.btnCancelDecline:
 			case R.id.btnLoanHighOk:
