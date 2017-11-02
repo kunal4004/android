@@ -398,7 +398,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				startActivityForResult(new Intent(getActivity(), SelectFromDriveActivity.class), OPEN_WINDOW_FOR_DRIVE_SELECTION);
 				break;
 			case R.id.submitCLI:
-				if (documentList.size() > 0) {
+				if (getValidDocumentList(documentList).size()> 0) {
 					uploadDocuments(documentList);
 				}
 				break;
@@ -414,6 +414,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	public void scrollUpAccountTypeSelectionLayout() {
+		hideView(uploadDocumentsLayout);
 		showView(accountTypeLayout);
 		dynamicLayoutPadding(bankTypeConfirmationLayout, true);
 		dynamicLayoutPadding(poiDocumentSubmitTypeLayout, true);
@@ -775,8 +776,10 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	public void uploadDocuments(List<Document> dataList) {
-		for (int i = 0; i < dataList.size(); i++)
-			initUpload(dataList.get(i)).execute();
+		for (int i = 0; i < dataList.size(); i++) {
+			if (dataList.get(i).getSize() <= Utils.POI_UPLOAD_FILE_SIZE_MAX)
+				initUpload(dataList.get(i)).execute();
+		}
 	}
 
 	public void openCamera() {
@@ -861,6 +864,18 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			view.setPadding(0, paddingDp, 0, screenHeight);
 		}
 
+	}
+
+	public List<Document> getValidDocumentList(List<Document> docs)
+	{
+
+		List<Document> subList=new ArrayList<>();
+		for (Document document : docs) {
+			if (document.getSize() <= Utils.POI_UPLOAD_FILE_SIZE_MAX)
+				subList.add(document);
+		}
+
+		return subList;
 	}
 
 }

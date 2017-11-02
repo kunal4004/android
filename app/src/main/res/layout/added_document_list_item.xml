@@ -30,12 +30,25 @@
             android:id="@+id/tvDocumentName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLines="2"
             android:letterSpacing="0.2"
-            android:text="Standard Bank"
+            android:ellipsize="end"
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="12sp"
             app:WTextView_font="medium_bold" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/fileSizeError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="File size is more then 10 MB"
+            android:layout_marginTop="5dp"
+            android:textAllCaps="true"
+            android:textColor="@color/red"
+            android:textSize="8sp"
+            app:WTextView_font="medium" />
 
         <ProgressBar
             android:id="@+id/fileUploadProgressBar"

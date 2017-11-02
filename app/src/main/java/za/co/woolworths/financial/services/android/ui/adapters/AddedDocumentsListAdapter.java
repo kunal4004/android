@@ -15,6 +15,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Document;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 /**
  * Created by W7099877 on 2017/10/19.
@@ -38,12 +39,16 @@ public class AddedDocumentsListAdapter extends RecyclerView.Adapter<AddedDocumen
 		private ImageView imgRemoveDocument;
 		private WTextView tvDocumentName;
 		private ProgressBar fileUploadProgressBar;
+		private WTextView tvFileSizeError;
+		private ImageView imgDocument;
 
 		public MyViewHolder(View view) {
 			super(view);
 			tvDocumentName = (WTextView) view.findViewById(R.id.tvDocumentName);
 			imgRemoveDocument = (ImageView) view.findViewById(R.id.imgRemoveDoc);
 			fileUploadProgressBar = (ProgressBar) view.findViewById(R.id.fileUploadProgressBar);
+			tvFileSizeError =(WTextView)view.findViewById(R.id.fileSizeError);
+			imgDocument=(ImageView)view.findViewById(R.id.imgDocument);
 		}
 
 		public void bindUI(int position, final MyViewHolder holder) {
@@ -61,6 +66,23 @@ public class AddedDocumentsListAdapter extends RecyclerView.Adapter<AddedDocumen
 				holder.fileUploadProgressBar.setProgress(progress);
 			} else {
 				holder.fileUploadProgressBar.setVisibility(View.GONE);
+			}
+
+
+			if(document.getSize()> Utils.POI_UPLOAD_FILE_SIZE_MAX)
+			{
+				tvFileSizeError.setVisibility(View.VISIBLE);
+				tvDocumentName.setAlpha(.3f);
+				imgRemoveDocument.setEnabled(false);
+				imgRemoveDocument.setAlpha(0.3f);
+				imgDocument.setAlpha(0.3f);
+			}else
+			{
+				tvFileSizeError.setVisibility(View.GONE);
+				tvDocumentName.setAlpha(1f);
+				imgRemoveDocument.setEnabled(true);
+				imgRemoveDocument.setAlpha(1f);
+				imgDocument.setAlpha(1f);
 			}
 		}
 	}

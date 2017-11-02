@@ -98,6 +98,8 @@ public class Utils {
 	public static final String BLACK_CARD = "410375";
 	public static final int ACCOUNTS_PROGRESS_BAR_MAX_VALUE = 10000;
 
+	public static final long POI_UPLOAD_FILE_SIZE_MAX = 10240;
+
 	public static void saveLastLocation(Location loc, Context mContext) {
 
 		try {
