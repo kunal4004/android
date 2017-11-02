@@ -70,8 +70,10 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			mOfferActivePayload = mBundle.getString("OFFER_ACTIVE_PAYLOAD");
 			mOfferActive = mBundle.getBoolean("OFFER_IS_ACTIVE");
 			mCLICreateOfferResponse = offerActiveObject();
-			mNextStep = mCLICreateOfferResponse.nextStep;
-			loadFragment(mNextStep);
+			if (mCLICreateOfferResponse != null) {
+				mNextStep = mCLICreateOfferResponse.nextStep;
+				loadFragment(mNextStep);
+			}
 		}
 	}
 
