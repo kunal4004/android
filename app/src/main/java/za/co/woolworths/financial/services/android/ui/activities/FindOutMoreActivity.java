@@ -40,6 +40,7 @@ public class FindOutMoreActivity extends AppCompatActivity implements SelectedIt
 			mOfferActivePayload = mBundle.getString("OFFER_ACTIVE_PAYLOAD");
 			mOfferActive = mBundle.getBoolean("OFFER_IS_ACTIVE");
 		}
+
 		Toolbar mToolbar = (Toolbar) findViewById(R.id.mToolbar);
 		setSupportActionBar(mToolbar);
 		ActionBar actionBar = getSupportActionBar();

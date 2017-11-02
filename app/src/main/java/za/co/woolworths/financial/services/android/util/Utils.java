@@ -28,6 +28,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.awfs.coordination.R;
+import com.google.android.gms.iid.InstanceID;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.VisibleRegion;
@@ -67,6 +68,7 @@ import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
 import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
 
 import static android.Manifest.permission_group.STORAGE;
+
 
 public class Utils {
 
@@ -719,5 +721,18 @@ public class Utils {
 
 	public static Object strToJson(String jsonString, Class<?> className) {
 		return new Gson().fromJson(jsonString, className);
+	}
+
+	public static String getUniqueDeviceID(Context context) {
+		String deviceID = null;
+		if (deviceID == null) {
+			deviceID = getSessionDaoValue(context, SessionDao.KEY.DEVICE_ID);
+			if (deviceID == null) {
+				deviceID = InstanceID.getInstance(context).getId();
+				sessionDaoSave(context, SessionDao.KEY.DEVICE_ID, deviceID);
+			}
+		}
+
+		return deviceID;
 	}
 }
