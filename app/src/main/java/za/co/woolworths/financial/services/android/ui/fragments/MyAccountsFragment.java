@@ -913,7 +913,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			} else {
 				initialize();
 				getVouchers().execute();
-				new WRewardsCardDetails(getActivity()).execute();
+				if(getActivity() != null)
+					new WRewardsCardDetails(getActivity()).execute();
 			}
 		} else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()) {
 			wGlobalState.setAccountSignInState(false);

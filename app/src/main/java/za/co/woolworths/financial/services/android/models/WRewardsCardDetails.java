@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.models;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -14,19 +15,19 @@ import za.co.woolworths.financial.services.android.util.OnEventListener;
  */
 
 public class WRewardsCardDetails extends HttpAsyncTask<String,String,CardDetailsResponse> {
-	private Context context;
+	private Activity context;
 	private WoolworthsApplication mWoolworthsApp;
 	private OnEventListener<CardDetailsResponse> mCallBack=null;
 
-	public WRewardsCardDetails(Context mContext) {
+	public WRewardsCardDetails(Activity mContext) {
 		this.context=mContext;
-		this.mWoolworthsApp = ((WoolworthsApplication) ((AppCompatActivity) context).getApplication());
+		mWoolworthsApp = (WoolworthsApplication)context.getApplication();
 	}
 
-	public WRewardsCardDetails(Context mContext, OnEventListener mCallBack) {
+	public WRewardsCardDetails(Activity mContext, OnEventListener mCallBack) {
 		this.context=mContext;
 		this.mCallBack=mCallBack;
-		mWoolworthsApp = ((WoolworthsApplication) ((AppCompatActivity) context).getApplication());
+		mWoolworthsApp = (WoolworthsApplication)context.getApplication();
 	}
 
 	@Override
