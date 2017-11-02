@@ -93,8 +93,8 @@ public interface ApiInterface {
 			@Header("sessionToken") String sessionToken,
 			@Path("productOfferingId") String productOfferingId);
 
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:129600"})
-//cachetime 36hours
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800"})
+//cachetime changed to 8 hrs.
 	@GET("/user/vouchers")
 	VoucherResponse getVouchers(
 			@Header("apiId") String apiId,
