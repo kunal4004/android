@@ -71,7 +71,8 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 117
+            versionCode 118
+            versionName("5.4.2")
         }
 
         staging {
