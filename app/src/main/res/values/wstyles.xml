@@ -16,155 +16,10 @@
 
 <resources>
 
-    <style name="Amount">
-        <item name="android:textSize">40sp</item>
-        <item name="android:textColor">@color/black</item>
-    </style>
-
-    <style name="HeaderBarTitle">
-        <item name="android:textSize">27sp</item>
-        <item name="android:textColor">#ffffff</item>
-        <item name="android:letterSpacing">0.02</item>
-        <item name="android:gravity">center_horizontal</item>
-    </style>
-
-    <style name="ButtonTextWhite">
-        <item name="android:textSize">27sp</item>
-        <item name="android:textColor">#ffffff</item>
-        <item name="android:letterSpacing">0.02</item>
-        <item name="android:lineSpacingExtra">4sp</item>
-        <item name="android:gravity">center_horizontal</item>
-    </style>
-
-    <style name="RecipeDetailTitleBlack">
-        <item name="android:textSize">24sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:letterSpacing">-0.02</item>
-        <item name="android:gravity">center_horizontal</item>
-    </style>
-
-    <style name="RecipeCollectionTitleWhite">
-        <item name="android:textSize">24sp</item>
-        <item name="android:textColor">#ffffff</item>
-        <item name="android:letterSpacing">-0.02</item>
-        <item name="android:gravity">center_horizontal</item>
-    </style>
-
-    <style name="RecipeCarcTitleBlack">
-        <item name="android:textSize">20sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:letterSpacing">-0.02</item>
-        <item name="android:gravity">center_horizontal</item>
-    </style>
-
-    <style name="Cardtitle3">
-        <item name="android:textSize">20sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:letterSpacing">-0.01</item>
-        <item name="android:lineSpacingExtra">0sp</item>
-    </style>
-
-    <style name="CardTitle2">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:letterSpacing">0.01</item>
-    </style>
-
-    <style name="Bodymessage">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:lineSpacingExtra">4sp</item>
-    </style>
-
     <style name="TableLeft">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:lineSpacingExtra">9sp</item>
-    </style>
-
-    <style name="TableValue">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/black_30</item>
-        <item name="android:gravity">end</item>
-    </style>
-
-    <style name="TableLeft2">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:lineSpacingExtra">5sp</item>
-        <item name="android:gravity">center_horizontal</item>
-    </style>
-
-    <style name="Cardtitle1">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/black_off</item>
-        <item name="android:letterSpacing">0.01</item>
-        <item name="android:lineSpacingExtra">2sp</item>
-    </style>
-
-    <style name="Cardtitle2">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/black_off</item>
-        <item name="android:letterSpacing">0.01</item>
-        <item name="android:lineSpacingExtra">1sp</item>
-    </style>
-
-    <style name="RecipeCollectionIntroWhite">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">#ffffff</item>
-        <item name="android:lineSpacingExtra">4sp</item>
-        <item name="android:gravity">center_horizontal</item>
-    </style>
-
-    <style name="RecipeCardIntroBlack">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">#cc000000</item>
-        <item name="android:lineSpacingExtra">4sp</item>
-        <item name="android:gravity">center_horizontal</item>
-    </style>
-
-    <style name="MapCardTime">
-        <item name="android:textSize">13sp</item>
-        <item name="android:textColor">@color/greyish</item>
-        <item name="android:letterSpacing">0.02</item>
-    </style>
-
-    <style name="MapCardAddress">
-        <item name="android:textSize">13sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:lineSpacingExtra">5sp</item>
-    </style>
-
-    <style name="Titlenavsection">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:letterSpacing">0.17</item>
-        <item name="android:gravity">center_horizontal|center_vertical</item>
-    </style>
-
-    <style name="Buttonwhite">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:letterSpacing">0.12</item>
-        <item name="android:gravity">center_horizontal</item>
-    </style>
-
-    <style name="Caption">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/black_50</item>
-        <item name="android:gravity">end</item>
-    </style>
-
-    <style name="Caption2">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/black_50</item>
-        <item name="android:lineSpacingExtra">3sp</item>
-    </style>
-
-    <style name="LabelSkipRight">
-        <item name="android:textSize">13sp</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:letterSpacing">0.1</item>
     </style>
 
     <style name="TitleWSemiBoldWhite">
@@ -211,19 +66,6 @@
     <style name="BlurDialogFragment.Default.Animation" parent="@android:style/Animation.Activity">
         <item name="android:windowEnterAnimation">@anim/default_dialog_in</item>
         <item name="android:windowExitAnimation">@anim/default_dialog_out</item>
-    </style>
-
-    <style name="increaseLimitEditTextStyle">
-        <item name="android:textSize">20sp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:gravity">start|center</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:layout_marginEnd">4dp</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:lineSpacingExtra">1.3dp</item>
-        <item name="android:text">R</item>
-        <item name="WTextView_font">medium</item>
     </style>
 
     <style name="editTextLayoutContainerStyle">

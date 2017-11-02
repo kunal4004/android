@@ -364,8 +364,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 				Log.i("Handling 502", "Handled a 502 error from the server");
 				break;
 			default:
-				((TextView) findViewById(R.id.no_internet_message)).setText(accountsResponse.response.desc);
-				findViewById(R.id.no_internet).setVisibility(View.VISIBLE);
+				break;
 		}
 	}
 

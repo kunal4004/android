@@ -8,18 +8,6 @@
         <item>fonts/MyriadPro-Regular.otf</item>
         <item>fonts/MyriadPro-Semibold.otf</item>
     </string-array>
-    <integer-array name="months_default">
-        <item>12</item>
-        <item>24</item>
-        <item>36</item>
-    </integer-array>
-    <integer-array name="months_max">
-        <item>12</item>
-        <item>24</item>
-        <item>36</item>
-        <item>48</item>
-        <item>60</item>
-    </integer-array>
     <!-- navigation drawer item labels  -->
     <string-array name="nav_drawer_labels">
         <item>@string/nav_item_today</item>
@@ -55,48 +43,6 @@
         <item>@drawable/ic_drw_wrewards</item>
         <item>@drawable/ic_drw_accounts</item>
     </integer-array>
-    <string-array name="cl_amount">
-        <item></item>
-        <item></item>
-        <item></item>
-        <item></item>
-        <item></item>
-        <item></item>
-        <item></item>
-        <item></item>
-    </string-array>
-    <string-array name="cl_label">
-        <item>@string/income_gross_monthly_title</item>
-        <item>@string/income_net_monthly_title</item>
-        <item>@string/income_additional_monthly_title</item>
-        <item>@string/expenses_mortgage_payment</item>
-        <item>@string/expenses_rental_payment</item>
-        <item>@string/expenses_maintenance_payment</item>
-        <item>@string/expense_monthly_credit_payment</item>
-        <item>@string/cli_other_expenses</item>
-    </string-array>
-    <string-array name="cl_overlay_label">
-        <item>@string/income_gross_monthly_desc</item>
-        <item>@string/income_net_monthly_desc</item>
-        <item>@string/income_additional_monthly_desc</item>
-        <item>@string/expenses_mortgage_payment_desc</item>
-        <item>@string/expenses_rental_payment_desc</item>
-        <item>@string/expenses_maintenance_payment_desc</item>
-        <item>@string/expense_monthly_credit_payment_desc</item>
-        <item>@string/cli_overlay_all_expenses</item>
-    </string-array>
-    <string-array name="cli_option">
-        <item>@string/cli_option_one</item>
-        <item>@string/cli_option_two</item>
-    </string-array>
-    <string-array name="cli_option_desc">
-        <item>@string/cli_option_one_desc</item>
-        <item>@string/cli_option_two_desc</item>
-    </string-array>
-    <array name="cli_drawable">
-        <item>@drawable/icon_paperclip</item>
-        <item>@drawable/icon_fax</item>
-    </array>
 
     <integer-array name="empty_state_icon">
         <item>@drawable/emptyvouchers</item>
