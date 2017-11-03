@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanReque
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanResponse;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
+import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferResponse;
@@ -212,6 +213,10 @@ public class WfsApi {
 		return mApiInterface.getProductDetail(getOsVersion(), getDeviceModel(), getOsVersion(),
 				getOS(), getNetworkCarrier(), getApiId(), "", "",
 				getSha1Password(), productId, skuId);
+	}
+
+	public CardDetailsResponse getCardDetails() {
+		return mApiInterface.getCardDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(),getSessionToken());
 	}
 
 	private String getOsVersion() {

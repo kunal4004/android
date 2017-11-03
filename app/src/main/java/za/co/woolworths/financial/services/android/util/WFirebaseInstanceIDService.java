@@ -32,8 +32,12 @@ public class WFirebaseInstanceIDService extends FirebaseInstanceIdService {
         // sending gcm token to server
         Log.d(TAG, "sendRegistrationToServer: " + token);
         final CreateUpdateDevice device=new CreateUpdateDevice();
-        device.appInstanceId= InstanceID.getInstance(getApplicationContext()).getId();
+        device.appInstanceId= Utils.getUniqueDeviceID(getApplicationContext());
         device.pushNotificationToken=token;
+
+        //Don't update token if pushNotificationToken or appInstanceID NULL
+        if(device.appInstanceId == null || device.pushNotificationToken==null)
+            return;
 
         //Sending Token and app instance Id to App server
         //Need to be done after Login

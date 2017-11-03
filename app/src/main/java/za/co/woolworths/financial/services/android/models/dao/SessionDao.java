@@ -33,7 +33,8 @@ public class SessionDao extends BaseDao {
         SPLASH_VIDEO("SPLASH_VIDEO"),
         APP_VERSION("APP_VERSION"),
         LAST_KNOWN_LOCATION("LAST_KNOWN_LOCATION"),
-        NOTIFICATION_ID("NOTIFICATION_ID");
+        NOTIFICATION_ID("NOTIFICATION_ID"),
+        DEVICE_ID("DEVICE_ID");
 
         private final String text;
 

@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
+import za.co.woolworths.financial.services.android.models.WRewardsCardDetails;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
@@ -912,6 +913,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			} else {
 				initialize();
 				getVouchers().execute();
+				if(getActivity() != null)
+					new WRewardsCardDetails(getActivity()).execute();
 			}
 		} else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()) {
 			wGlobalState.setAccountSignInState(false);
