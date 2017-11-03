@@ -113,9 +113,25 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public static final int PERMS_REQUEST_CODE_GALLERY = 222;
 	public static final int PERMS_REQUEST_CODE_CAMERA = 333;
 	public Uri mCameraUri;
+	public SubmitType submitType;
 
 	public DocumentFragment() {
 		// Required empty public constructor
+	}
+
+	public enum SubmitType{
+		ACCOUNT_NUMBER(1),
+		DOCUMENTS(2),
+		LATER(3);
+
+		SubmitType(int type){
+			this.result=type;
+		}
+		private  int result;
+
+		public int getType() {
+			return result;
+		}
 	}
 
 	@Override
@@ -290,11 +306,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public void onSubmitTypeSelected(View view, int position) {
 		switch (position) {
 			case 0:
+				submitType=SubmitType.DOCUMENTS;
 				documentList.clear();
 				hideView(rlSubmitCli);
 				scrollUpAddDocumentsLayout();
 				break;
 			case 1:
+				submitType=SubmitType.LATER;
 				scrollUpDocumentSubmitTypeLayout();
 				showView(rlSubmitCli);
 				break;
@@ -368,6 +386,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		MultiClickPreventer.preventMultiClick(view);
 		switch (view.getId()) {
 			case R.id.yesPOIFromBank:
+				submitType=SubmitType.ACCOUNT_NUMBER;
 				noPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
 				noPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
 				yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
@@ -398,9 +417,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				startActivityForResult(new Intent(getActivity(), SelectFromDriveActivity.class), OPEN_WINDOW_FOR_DRIVE_SELECTION);
 				break;
 			case R.id.submitCLI:
-				if (getValidDocumentList(documentList).size()> 0) {
-					uploadDocuments(documentList);
-				}
+				onSubmitClick(submitType);
 				break;
 			case R.id.uploadDocumentInfo:
 			case R.id.poiDocumentInfo:
@@ -682,10 +699,15 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			@Override
 			protected void onPostExecute(POIDocumentUploadResponse uploadResponse) {
 				super.onPostExecute(uploadResponse);
+				//update document as its uploaded
+				document.setUploaded(true);
+				if(isAllFilesUploaded(getValidDocumentList(documentList)))
+				{
+
+				}
 				int httpCode = uploadResponse.httpCode;
 				switch (httpCode) {
 					case 200:
-
 						break;
 
 					case 440:
@@ -878,4 +900,34 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		return subList;
 	}
 
+	public void onSubmitClick(SubmitType type)
+	{
+		switch (type)
+		{
+			case ACCOUNT_NUMBER:
+				break;
+			case DOCUMENTS:
+				if (getValidDocumentList(documentList).size()> 0) {
+					Utils.disableEnableChildViews(nestedScrollView,false);
+					uploadDocuments(documentList);
+				}
+				break;
+			case LATER:
+				break;
+			default:
+				break;
+
+		}
+	}
+
+	public boolean isAllFilesUploaded(List<Document> allFiles)
+	{
+		for(Document document : allFiles)
+		{
+			if(!document.isUploaded())
+				return false;
+		}
+
+		return true;
+	}
 }

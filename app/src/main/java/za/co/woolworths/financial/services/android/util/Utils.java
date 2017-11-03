@@ -24,6 +24,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -735,5 +736,16 @@ public class Utils {
 		}
 
 		return deviceID;
+	}
+
+	public static void disableEnableChildViews(View view, boolean enabled) {
+		view.setEnabled(enabled);
+		if (view instanceof ViewGroup) {
+			ViewGroup viewGroup = (ViewGroup) view;
+			for (int i = 0; i < viewGroup.getChildCount(); i++) {
+				View child = viewGroup.getChildAt(i);
+				disableEnableChildViews(child, enabled);
+			}
+		}
 	}
 }

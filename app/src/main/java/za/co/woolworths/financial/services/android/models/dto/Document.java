@@ -12,6 +12,7 @@ public class Document {
 	public Uri uri;
 	public long size;
 	public int progress;
+	public boolean isUploaded;
 
 	public String getName() {
 		return name;
@@ -43,5 +44,13 @@ public class Document {
 
 	public void setProgress(int progress) {
 		this.progress = progress;
+	}
+
+	public boolean isUploaded() {
+		return isUploaded;
+	}
+
+	public void setUploaded(boolean uploaded) {
+		isUploaded = uploaded;
 	}
 }
