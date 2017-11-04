@@ -18,10 +18,6 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-import static za.co.woolworths.financial.services.android.util.AnimationUtils.startFadeInAnimation;
-import static za.co.woolworths.financial.services.android.util.AnimationUtils.startFadeOutAnimation;
-
-
 public class SelectFromDriveActivity extends AppCompatActivity implements View.OnClickListener {
 
 	public RelativeLayout mRelRootContainer;
@@ -42,7 +38,6 @@ public class SelectFromDriveActivity extends AppCompatActivity implements View.O
 		setContentView(R.layout.cli_select_file);
 		mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 		mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-		startFadeInAnimation(this, mRelPopContainer);
 		WTextView tvSelectFromGallery = (WTextView) findViewById(R.id.tvSelectFromGallery);
 		WTextView tvSelectFromCamera = (WTextView) findViewById(R.id.tvSelectFromCamera);
 
@@ -120,7 +115,6 @@ public class SelectFromDriveActivity extends AppCompatActivity implements View.O
 
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				startFadeOutAnimation(SelectFromDriveActivity.this, mRelPopContainer);
 				dismissLayout();
 			}
 		});
@@ -132,4 +126,8 @@ public class SelectFromDriveActivity extends AppCompatActivity implements View.O
 		overridePendingTransition(0, 0);
 	}
 
+	@Override
+	public void onBackPressed() {
+		exitAnimation();
+	}
 }

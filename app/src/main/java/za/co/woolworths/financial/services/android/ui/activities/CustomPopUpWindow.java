@@ -122,7 +122,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				setContentView(R.layout.sign_out);
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				setAnimation();
 				WButton mBtnSignOutCancel = (WButton) findViewById(R.id.btnSignOutCancel);
 				WButton mBtnSignOut = (WButton) findViewById(R.id.btnSignOut);
 				mBtnSignOutCancel.setOnClickListener(this);
@@ -178,7 +177,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				WTextView wTextProofIncome = (WTextView) findViewById(R.id.textProofIncome);
 				wTextTitle.setText(getString(R.string.loan_request_high));
 				wTextProofIncome.setText(getString(R.string.loan_request_high_desc));
-				setAnimation();
 				mHighLoanAmount.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
@@ -216,7 +214,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
 				WButton btnInsolvencyOK = (WButton) findViewById(R.id.btnInsolvencyOK);
-				setAnimation();
 				btnInsolvencyOK.setOnClickListener(this);
 				//mRelPopContainer.setOnClickListener(this);
 				break;
@@ -241,7 +238,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					mWGlobalState.setAccountSignInState(false);
 					tvSessionExpiredDesc.setText(getString(R.string.session_expired_account_desc));
 				}
-				setAnimation();
 				WButton mBtnSessionExpiredCancel = (WButton) findViewById(R.id.btnSECancel);
 				WButton mBtnSignIn = (WButton) findViewById(R.id.btnSESignIn);
 				mBtnSessionExpiredCancel.setOnClickListener(this);
@@ -253,7 +249,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
 				mLowLoanAmount = (WButton) findViewById(R.id.btnLoanHighOk);
-				setAnimation();
 				mLowLoanAmount.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 				break;
@@ -321,7 +316,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				setContentView(R.layout.cli_dangerous_message_validation);
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				setAnimation();
 				WTextView tvDeclineOffer = (WTextView) findViewById(R.id.tvDeclineOffer);
 				WTextView tvDeclineOfferDesc = (WTextView) findViewById(R.id.tvDeclineOfferDesc);
 				WButton btnCancelDecline = (WButton) findViewById(R.id.btnCancelDecline);

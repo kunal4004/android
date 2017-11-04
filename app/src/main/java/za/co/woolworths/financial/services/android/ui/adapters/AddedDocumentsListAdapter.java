@@ -1,11 +1,12 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
-import android.support.v4.content.ContextCompat;
+import android.animation.ObjectAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -47,8 +48,8 @@ public class AddedDocumentsListAdapter extends RecyclerView.Adapter<AddedDocumen
 			tvDocumentName = (WTextView) view.findViewById(R.id.tvDocumentName);
 			imgRemoveDocument = (ImageView) view.findViewById(R.id.imgRemoveDoc);
 			fileUploadProgressBar = (ProgressBar) view.findViewById(R.id.fileUploadProgressBar);
-			tvFileSizeError =(WTextView)view.findViewById(R.id.fileSizeError);
-			imgDocument=(ImageView)view.findViewById(R.id.imgDocument);
+			tvFileSizeError = (WTextView) view.findViewById(R.id.fileSizeError);
+			imgDocument = (ImageView) view.findViewById(R.id.imgDocument);
 		}
 
 		public void bindUI(int position, final MyViewHolder holder) {
@@ -60,24 +61,16 @@ public class AddedDocumentsListAdapter extends RecyclerView.Adapter<AddedDocumen
 					setText(holder, name);
 				}
 			}
-			int progress = document.getProgress();
-			if (progress > 0) {
-				holder.fileUploadProgressBar.setVisibility(View.VISIBLE);
-				holder.fileUploadProgressBar.setProgress(progress);
-			} else {
-				holder.fileUploadProgressBar.setVisibility(View.GONE);
-			}
 
+			showUploadProgress(document, holder, position);
 
-			if(document.getSize()> Utils.POI_UPLOAD_FILE_SIZE_MAX)
-			{
+			if (document.getSize() > Utils.POI_UPLOAD_FILE_SIZE_MAX) {
 				tvFileSizeError.setVisibility(View.VISIBLE);
 				tvDocumentName.setAlpha(.3f);
 				imgRemoveDocument.setEnabled(false);
 				imgRemoveDocument.setAlpha(0.3f);
 				imgDocument.setAlpha(0.3f);
-			}else
-			{
+			} else {
 				tvFileSizeError.setVisibility(View.GONE);
 				tvDocumentName.setAlpha(1f);
 				imgRemoveDocument.setEnabled(true);
@@ -86,7 +79,6 @@ public class AddedDocumentsListAdapter extends RecyclerView.Adapter<AddedDocumen
 			}
 		}
 	}
-
 
 	private void setText(MyViewHolder holder, String submitType) {
 		holder.tvDocumentName.setText(submitType);
@@ -103,10 +95,6 @@ public class AddedDocumentsListAdapter extends RecyclerView.Adapter<AddedDocumen
 		});
 	}
 
-	private void rowBackground(final MyViewHolder holder, int id) {
-		holder.itemView.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(), id));
-	}
-
 	@Override
 	public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		return new MyViewHolder(LayoutInflater.from(parent.getContext())
@@ -118,10 +106,47 @@ public class AddedDocumentsListAdapter extends RecyclerView.Adapter<AddedDocumen
 		holder.bindUI(position, holder);
 	}
 
-
 	@Override
 	public int getItemCount() {
 		return documentList.size();
 	}
 
+	public void showUploadProgress(Document document, MyViewHolder holder, int position) {
+		if (document.progressIsDisplayed()) {
+			showView(holder.fileUploadProgressBar);
+			int progress = document.getProgress();
+			if (progress > 0) {
+				setProgressAnimate(holder.fileUploadProgressBar, progress);
+				if (progress == holder.fileUploadProgressBar.getMax()) {
+					setImageResource(holder.imgRemoveDocument, R.drawable.cli_step_indicator_active);
+					disableView(holder.imgRemoveDocument, false);
+				}
+			}
+		} else {
+			hideView(holder.fileUploadProgressBar);
+		}
+	}
+
+	private void setProgressAnimate(ProgressBar pb, int progressTo) {
+		ObjectAnimator animation = ObjectAnimator.ofInt(pb, "progress", pb.getProgress(), progressTo * 100);
+		//animation.setDuration(1000);
+		animation.setInterpolator(new DecelerateInterpolator());
+		animation.start();
+	}
+
+	private void hideView(View v) {
+		v.setVisibility(View.GONE);
+	}
+
+	private void showView(View v) {
+		v.setVisibility(View.VISIBLE);
+	}
+
+	private void setImageResource(ImageView image, int id) {
+		image.setImageResource(id);
+	}
+
+	private void disableView(View v, boolean enabled) {
+		v.setEnabled(enabled);
+	}
 }

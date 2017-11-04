@@ -31,6 +31,7 @@ public class EditAmountFragment extends CLIFragment {
 	private int creditReqestMin = 0;
 	private int creditRequestMax = 0;
 	private int currCredit = 0;
+	private int slideAmount;
 
 	public EditAmountFragment() {
 		// Required empty public constructor
@@ -52,7 +53,7 @@ public class EditAmountFragment extends CLIFragment {
 		listener();
 		Bundle args = getArguments();
 		if (args != null) {
-			int slideAmount = args.getInt("slideAmount");
+			slideAmount = args.getInt("slideAmount");
 			creditReqestMin = args.getInt("creditReqestMin");
 			creditRequestMax = args.getInt("creditRequestMax");
 			currCredit = args.getInt("currCredit");
@@ -83,7 +84,11 @@ public class EditAmountFragment extends CLIFragment {
 				new WLoanEditTextView.OnKeyPreImeListener() {
 					@Override
 					public void onBackPressed() {
-						getActivity().onBackPressed();
+						Activity activity = getActivity();
+						if (activity instanceof CLIPhase2Activity) {
+							((CLIPhase2Activity) activity).setEditNumberValue(-1);
+							activity.onBackPressed();
+						}
 					}
 				};
 

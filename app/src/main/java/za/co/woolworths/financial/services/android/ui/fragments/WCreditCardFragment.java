@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -204,23 +205,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		CLIGetOfferActive cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				try {
-					offerActive = ((OfferActive) object);
-					switch (offerActive.httpCode) {
-						case 200:
-							bindUI(offerActive);
-							break;
-
-						case 440:
-							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), offerActive
-									.response.stsParams);
-							break;
-
-						default:
-							break;
-					}
-				} catch (NullPointerException ex) {
-				}
+				offerActive = ((OfferActive) object);
+				bindUI(offerActive);
 				creditWasAlreadyRunOnce = true;
 				onLoadComplete();
 			}
@@ -248,33 +234,15 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	private void bindUI(OfferActive offerActive) {
 		switch (offerActive.httpCode) {
+			case 502:
 			case 200:
-				try {
-					String messageSummary = offerActive.messageSummary;
-
-					if (controllerNotNull()) {
-						if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
-							mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
-							mIncreaseLimitController.disableView(llIncreaseLimitContainer);
-						} else {
-							mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
-							mIncreaseLimitController.enableView(llIncreaseLimitContainer);
-						}
-
-						mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
-					}
-
-					creditWasAlreadyRunOnce = true;
-				} catch (IllegalStateException ex) {
-
-				}
+				offerActiveResult(offerActive);
 				break;
 
 			case 440:
 				SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), offerActive
 						.response.stsParams);
 				break;
-
 			default:
 				break;
 		}
@@ -366,6 +334,21 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				mErrorHandlerView.showToast();
 				onLoadComplete();
 			}
+		}
+	}
+
+	private void offerActiveResult(OfferActive offerActive) {
+		String messageSummary = TextUtils.isEmpty(offerActive.messageSummary) ? "" : offerActive.messageSummary;
+		if (controllerNotNull()) {
+			if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
+				mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
+				mIncreaseLimitController.disableView(llIncreaseLimitContainer);
+			} else {
+				mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
+				mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+			}
+
+			mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
 		}
 	}
 

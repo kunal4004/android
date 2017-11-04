@@ -26,8 +26,8 @@ public class POIDocumentSubmitTypeAdapter extends RecyclerView.Adapter<POIDocume
 
 	private OnSubmitType onSubmitType;
 	private int selectedPosition = -1;
-	private String[] submitTypes={"Submit Documents Now","Submit at a Later Date"};
-	private int[] icons={R.drawable.listview,R.drawable.ic_time24};
+	private String[] submitTypes = {"Submit Documents Now", "Submit at a Later Date"};
+	private int[] icons = {R.drawable.listview, R.drawable.ic_time24};
 
 	public POIDocumentSubmitTypeAdapter(OnSubmitType onSubmitType) {
 		this.onSubmitType = onSubmitType;
@@ -124,9 +124,8 @@ public class POIDocumentSubmitTypeAdapter extends RecyclerView.Adapter<POIDocume
 		return submitTypes.length;
 	}
 
-	public void clearSelection()
-	{
-		selectedPosition=-1;
+	public void clearSelection() {
+		selectedPosition = -1;
 		notifyDataSetChanged();
 	}
 }

@@ -541,4 +541,12 @@
     <string name="txt_proof_of_income">Proof of income</string>
     <string name="txt_proof_of_income_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.</string>
 
+    <!-- Cli carousel: Complete process title -->
+    <string name="process_complete_title">Thank you, Your application is being processed.</string>
+    <string name="process_complete_desc">We will be in contact with you within
+        two working days. Please watch the app for updates on the progress of your application.</string>
+    <string name="process_complete_back_account">back to my account</string>
+    <string name="status_document_required">Documents Required</string>
+    <string name="back_to_my_account">back to my account</string>
+
 </resources>

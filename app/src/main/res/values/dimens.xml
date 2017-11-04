@@ -99,5 +99,6 @@
     <dimen name="fourty_nine_dp">49dp</dimen>
     <dimen name="twelve_sp">12sp</dimen>
     <dimen name="sixteen_sp">16sp</dimen>
+    <dimen name="sixty_seven_dp">67dp</dimen>
 </resources>
 

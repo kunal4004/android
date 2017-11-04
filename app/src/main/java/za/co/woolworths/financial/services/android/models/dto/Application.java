@@ -18,4 +18,5 @@ public class Application {
 	public Integer totalCreditExpenseAmount;
 	public Integer otherExpenseAmount;
 	public boolean readOnly;
+	public boolean automaticCreditIncrease;
 }

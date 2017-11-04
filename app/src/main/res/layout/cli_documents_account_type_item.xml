@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/relDeaBank"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:gravity="center"
-    android:paddingBottom="@dimen/twenty_five_dp"
-    android:paddingTop="@dimen/twenty_five_dp">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/relDeaBank"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:gravity="center"
+                android:paddingBottom="@dimen/twenty_five_dp"
+                android:paddingTop="@dimen/twenty_five_dp">
 
     <ImageView
         android:id="@+id/imBankLogo"
@@ -25,12 +25,11 @@
         android:layout_marginEnd="@dimen/two_dp"
         android:layout_marginStart="@dimen/thirteen_dp"
         android:layout_toEndOf="@+id/imBankLogo"
-        android:letterSpacing="0.2"
         android:text="Standard Bank"
         android:textAllCaps="true"
-        android:textColor="@color/black_50"
-        android:textSize="12sp"
-        app:WTextView_font="medium"/>
+        android:textColor="@color/black_overlay"
+        android:textSize="15sp"
+        app:WTextView_font="myriadpro_regular"/>
 
     <ImageView
         android:id="@+id/imgSelectBank"

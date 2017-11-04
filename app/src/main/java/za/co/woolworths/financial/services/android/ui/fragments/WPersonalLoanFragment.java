@@ -22,7 +22,6 @@ import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.FragmentLifecycle;
@@ -243,10 +242,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			@Override
 			public void onSuccess(Object object) {
 				offerActive = ((OfferActive) object);
-				try {
-					bindUI(offerActive);
-				} catch (NullPointerException ex) {
-				}
+				bindUI(offerActive);
 				personalWasAlreadyRunOnce = true;
 				onLoadComplete();
 			}
@@ -266,27 +262,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 	private void bindUI(OfferActive offerActive) {
 		switch (offerActive.httpCode) {
+			case 502:
 			case 200:
-				String nextStep = notNull(offerActive.nextStep);
-				String messageSummary = notNull(offerActive.messageSummary);
-				String messageDetail = notNull(offerActive.messageDetail);
-
-				if (controllerNotNull()) {
-					if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
-						mIncreaseLimitController.disableView(llIncreaseLimitContainer);
-					} else {
-						mIncreaseLimitController.enableView(llIncreaseLimitContainer);
-					}
-				}
-
-				HashMap<String, String> hMIncreaseCreditLimit = new HashMap<>();
-				hMIncreaseCreditLimit.put("NEXT_STEP", nextStep);
-				hMIncreaseCreditLimit.put("MESSAGE_SUMMARY", messageSummary);
-				hMIncreaseCreditLimit.put("MESSAGE_DETAIL", messageDetail);
-
-				if (controllerNotNull()) {
-					mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
-				}
+				offerActiveResult(offerActive);
 				break;
 
 			case 440:
@@ -316,6 +294,21 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mProgressCreditLimit.setVisibility(View.GONE);
 		tvApplyNowIncreaseLimit.setVisibility(View.VISIBLE);
 		tvIncreaseLimit.setVisibility(View.VISIBLE);
+	}
+
+	private void offerActiveResult(OfferActive offerActive) {
+		String messageSummary = TextUtils.isEmpty(offerActive.messageSummary) ? "" : offerActive.messageSummary;
+		if (controllerNotNull()) {
+			if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
+				mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
+				mIncreaseLimitController.disableView(llIncreaseLimitContainer);
+			} else {
+				mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
+				mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+			}
+
+			mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
+		}
 	}
 
 	@Override
@@ -400,12 +393,5 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private boolean controllerNotNull() {
 		return mIncreaseLimitController != null;
 	}
-
-
-	private String notNull(String value) {
-		return TextUtils.isEmpty(value) ? "" : value;
-	}
-
-
 }
 

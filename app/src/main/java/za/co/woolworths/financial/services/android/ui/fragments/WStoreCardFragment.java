@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -236,32 +237,21 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	}
 
 	private void bindUI(OfferActive offerActive) {
-		try {
-			switch (offerActive.httpCode) {
-				case 200:
-					String messageSummary = offerActive.messageSummary;
-					if (messageSummary.equalsIgnoreCase(getString(R.string.status_apply_now))) {
-						if (controllerNotNull())
-							mIncreaseLimitController.disableView(llIncreaseLimitContainer);
-					} else {
-						if (controllerNotNull())
-							mIncreaseLimitController.enableView(llIncreaseLimitContainer);
-					}
+		switch (offerActive.httpCode) {
+			case 502:
+			case 200:
+				offerActiveResult(offerActive);
+				break;
 
-					if (controllerNotNull())
-						mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
-					break;
+			case 440:
+				SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), offerActive
+						.response.stsParams);
+				break;
 
-				case 440:
-					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), offerActive
-							.response.stsParams);
-					break;
-
-				default:
-					break;
-			}
-		} catch (NullPointerException ex) {
+			default:
+				break;
 		}
+
 		storeWasAlreadyRunOnce = true;
 		onLoadComplete();
 	}
@@ -283,6 +273,20 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		tvIncreaseLimit.setVisibility(View.VISIBLE);
 	}
 
+	private void offerActiveResult(OfferActive offerActive) {
+		String messageSummary = TextUtils.isEmpty(offerActive.messageSummary) ? "" : offerActive.messageSummary;
+		if (controllerNotNull()) {
+			if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
+				mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
+				mIncreaseLimitController.disableView(llIncreaseLimitContainer);
+			} else {
+				mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
+				mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+			}
+
+			mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
+		}
+	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
 	public String removeNegativeSymbol(String amount) {

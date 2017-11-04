@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
@@ -502,7 +501,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				application.canObtainBankStatements,
 				application.applicationInfoIsCorrect,
 				application.staffMember,
-				application.maxCreditLimitRequested,
+				application.automaticCreditIncrease,
 				application.maxCreditLimitRequested,
 				mWoolies.getProductOfferingId(),
 				1000,
@@ -555,7 +554,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		super.onResume();
 		if (editorWasShown) {
 			int editNumberFromUser = mCliPhase2Activity.getEditNumberValue();
-			if (!TextUtils.isEmpty(String.valueOf(editNumberFromUser))) {
+			if (!TextUtils.isEmpty(String.valueOf(editNumberFromUser)) && !(editNumberFromUser == -1)) {
 				sbSlideAmount.setProgress(editNumberFromUser);
 			}
 			editorWasShown = false;

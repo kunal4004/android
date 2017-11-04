@@ -45,8 +45,10 @@ import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
+import za.co.woolworths.financial.services.android.models.dto.DeaBanksResponse;
 import za.co.woolworths.financial.services.android.models.dto.Document;
 import za.co.woolworths.financial.services.android.models.dto.POIDocumentUploadResponse;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetBankAccountTypes;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetDeaBank;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
@@ -68,6 +70,7 @@ import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.PathUtil;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.ProgressListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
@@ -79,7 +82,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	private final int ANIM_DURATION = 600;
 	private RecyclerView rclSelectYourBank;
-	private List<Bank> deaBankList;
+	private DeaBanks deaBankList;
 	private ProgressBar pbDeaBank;
 	private BroadcastReceiver connectionBroadcast;
 	private ErrorHandlerView mErrorHandlerView;
@@ -104,7 +107,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private RecyclerView rclAddedDocumentsList;
 	private AddedDocumentsListAdapter addedDocumentsListAdapter;
 	private List<Document> documentList;
-	private RelativeLayout addDocumentButton,rlSubmitCli;
+	private RelativeLayout addDocumentButton, rlSubmitCli;
 	private ImageView poiDocumentInfo, uploadDocumentInfo;
 	private LinearLayout uploadDocumentsLayout;
 	private static final int OPEN_WINDOW_FOR_DRIVE_SELECTION = 99;
@@ -114,20 +117,22 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public static final int PERMS_REQUEST_CODE_CAMERA = 333;
 	public Uri mCameraUri;
 	public SubmitType submitType;
+	private List<Bank> mDeaBankList;
 
 	public DocumentFragment() {
 		// Required empty public constructor
 	}
 
-	public enum SubmitType{
+	public enum SubmitType {
 		ACCOUNT_NUMBER(1),
 		DOCUMENTS(2),
 		LATER(3);
 
-		SubmitType(int type){
-			this.result=type;
+		SubmitType(int type) {
+			this.result = type;
 		}
-		private  int result;
+
+		private int result;
 
 		public int getType() {
 			return result;
@@ -139,7 +144,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 							 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
 		View view = inflater.inflate(R.layout.document_fragment, container, false);
-		deaBankList = new ArrayList<>();
+		deaBankList = new DeaBanks();
 		cliStepIndicatorListener.onStepSelected(4);
 		return view;
 	}
@@ -183,10 +188,38 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			@Override
 			public void onSuccess(Object object) {
 				backgroundTaskLoaded(false);
+				deaBankList = ((DeaBanks) object);
+				int httpCode = deaBankList.httpCode;
+				httpCode = 200;
+				/*
+					to be deleted 
+					Mocked data for dev testing
+				 */
+				mDeaBankList = new ArrayList<>();
+				mDeaBankList.add(new Bank("ABSA"));
+				mDeaBankList.add(new Bank("SOMEBANK"));
+				mDeaBankList.add(new Bank("SOMEBANK"));
+				mDeaBankList.add(new Bank("SOMEBANK"));
+				mDeaBankList.add(new Bank("SOMEBANK"));
+				mDeaBankList.add(new Bank(otherBank));
+				switch (httpCode) {
+					case 200:
+						//mDeaBankList = deaBankList.banks;
+						selectBankLayoutManager(mDeaBankList);
+						break;
+					case 440:
+						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), deaBankList
+								.response.stsParams);
+						break;
+
+					default:
+						DeaBanksResponse response = deaBankList.response;
+						if (response != null) {
+							Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+						}
+						break;
+				}
 				onLoadComplete();
-				deaBankList = ((DeaBanks) object).banks;
-				deaBankList.add(new Bank(otherBank));
-				selectBankLayoutManager(deaBankList);
 			}
 
 			@Override
@@ -284,7 +317,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	@Override
 	public void onItemClick(View view, int position) {
-		Bank selectedBank = deaBankList.get(position);
+		Bank selectedBank = mDeaBankList.get(position);
 		if (selectedBank.bankName.equalsIgnoreCase(otherBank)) {
 			hideView(bankTypeConfirmationLayout);
 			invalidateBankTypeSelection();
@@ -306,13 +339,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public void onSubmitTypeSelected(View view, int position) {
 		switch (position) {
 			case 0:
-				submitType=SubmitType.DOCUMENTS;
+				submitType = SubmitType.DOCUMENTS;
 				documentList.clear();
 				hideView(rlSubmitCli);
 				scrollUpAddDocumentsLayout();
 				break;
 			case 1:
-				submitType=SubmitType.LATER;
+				submitType = SubmitType.LATER;
 				scrollUpDocumentSubmitTypeLayout();
 				showView(rlSubmitCli);
 				break;
@@ -386,7 +419,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		MultiClickPreventer.preventMultiClick(view);
 		switch (view.getId()) {
 			case R.id.yesPOIFromBank:
-				submitType=SubmitType.ACCOUNT_NUMBER;
+				submitType = SubmitType.ACCOUNT_NUMBER;
 				noPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
 				noPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
 				yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
@@ -415,6 +448,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			case R.id.addDocuments:
 				//openGalleryToPickDocuments();
 				startActivityForResult(new Intent(getActivity(), SelectFromDriveActivity.class), OPEN_WINDOW_FOR_DRIVE_SELECTION);
+				getActivity().overridePendingTransition(0, 0);
 				break;
 			case R.id.submitCLI:
 				onSubmitClick(submitType);
@@ -554,16 +588,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		uploadIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 		uploadIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
 		startActivityForResult(uploadIntent, OPEN_GALLERY_TO_PICk_FILE);
-		/*String[] zips = {".zip",".rar"};
-		String[] pdfs = {".pdf"};
-		FilePickerBuilder.getInstance().setMaxCount(5)
-				.setActivityTheme(R.style.PickerTheme)
-				.addFileSupport("ZIP",zips)
-				.addFileSupport("PDF",pdfs)
-				.enableDocSupport(false)
-				.enableImagePicker(true)
-				.withOrientation(Orientation.UNSPECIFIED)
-				.pickFile(this);*/
 	}
 
 	@Override
@@ -701,8 +725,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				super.onPostExecute(uploadResponse);
 				//update document as its uploaded
 				document.setUploaded(true);
-				if(isAllFilesUploaded(getValidDocumentList(documentList)))
-				{
+				if (isAllFilesUploaded(getValidDocumentList(documentList))) {
 
 				}
 				int httpCode = uploadResponse.httpCode;
@@ -721,20 +744,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			}
 		};
 	}
-
-	/*public MultipartTypedOutput buildRequestBody(List<Document> list)
-	{
-		MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
-		for (int i=0;i<list.size();i++)
-		{
-			try {
-				String path= PathUtil.getPath(getActivity(),documentList.get(i).getUri());
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
-		}
-		return multipartTypedOutput;
-	}*/
 
 	public boolean checkRuntimePermission(int REQUEST_CODE) {
 		switch (REQUEST_CODE) {
@@ -888,10 +897,9 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	}
 
-	public List<Document> getValidDocumentList(List<Document> docs)
-	{
+	public List<Document> getValidDocumentList(List<Document> docs) {
 
-		List<Document> subList=new ArrayList<>();
+		List<Document> subList = new ArrayList<>();
 		for (Document document : docs) {
 			if (document.getSize() <= Utils.POI_UPLOAD_FILE_SIZE_MAX)
 				subList.add(document);
@@ -900,15 +908,16 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		return subList;
 	}
 
-	public void onSubmitClick(SubmitType type)
-	{
-		switch (type)
-		{
+	public void onSubmitClick(SubmitType type) {
+		switch (type) {
 			case ACCOUNT_NUMBER:
 				break;
 			case DOCUMENTS:
-				if (getValidDocumentList(documentList).size()> 0) {
-					Utils.disableEnableChildViews(nestedScrollView,false);
+				for (Document doc : documentList) {
+					doc.setDisplayProgress(true);
+				}
+				addedDocumentsListAdapter.notifyDataSetChanged();
+				if (getValidDocumentList(documentList).size() > 0) {
 					uploadDocuments(documentList);
 				}
 				break;
@@ -920,11 +929,9 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		}
 	}
 
-	public boolean isAllFilesUploaded(List<Document> allFiles)
-	{
-		for(Document document : allFiles)
-		{
-			if(!document.isUploaded())
+	public boolean isAllFilesUploaded(List<Document> allFiles) {
+		for (Document document : allFiles) {
+			if (!document.isUploaded())
 				return false;
 		}
 

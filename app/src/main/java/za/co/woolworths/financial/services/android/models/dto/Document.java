@@ -13,6 +13,7 @@ public class Document {
 	public long size;
 	public int progress;
 	public boolean isUploaded;
+	public boolean displayProgress;
 
 	public String getName() {
 		return name;
@@ -52,5 +53,13 @@ public class Document {
 
 	public void setUploaded(boolean uploaded) {
 		isUploaded = uploaded;
+	}
+
+	public boolean progressIsDisplayed() {
+		return displayProgress;
+	}
+
+	public void setDisplayProgress(boolean displayProgress) {
+		this.displayProgress = displayProgress;
 	}
 }
