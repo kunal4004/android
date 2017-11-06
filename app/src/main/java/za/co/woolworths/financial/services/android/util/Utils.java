@@ -101,6 +101,8 @@ public class Utils {
 
 	public static final long POI_UPLOAD_FILE_SIZE_MAX = 10240;
 
+	public static final int CLI_OTHER_BANK_ID=100;
+
 	public static void saveLastLocation(Location loc, Context mContext) {
 
 		try {

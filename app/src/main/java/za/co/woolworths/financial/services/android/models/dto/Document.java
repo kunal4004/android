@@ -55,11 +55,4 @@ public class Document {
 		isUploaded = uploaded;
 	}
 
-	public boolean progressIsDisplayed() {
-		return displayProgress;
-	}
-
-	public void setDisplayProgress(boolean displayProgress) {
-		this.displayProgress = displayProgress;
-	}
 }

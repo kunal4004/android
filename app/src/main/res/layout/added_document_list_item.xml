@@ -59,7 +59,7 @@
             android:layout_marginTop="13dp"
             android:max="100"
             android:progressDrawable="@drawable/progressbar_file_upload"
-            android:visibility="visible"/>
+            android:visibility="gone"/>
     </LinearLayout>
 
     <ImageView

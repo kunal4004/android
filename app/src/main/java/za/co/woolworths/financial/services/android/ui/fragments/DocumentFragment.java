@@ -101,6 +101,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private WTextView noPOIFromBank;
 	private RecyclerView rclPOIDocuments;
 	private String otherBank = "Other";
+	private int otherBankId	=Utils.CLI_OTHER_BANK_ID;
 	private DocumentsAccountTypeAdapter accountTypeAdapter;
 	private POIDocumentSubmitTypeAdapter documentSubmitTypeAdapter;
 	private WEditTextView etAccountNumber;
@@ -215,7 +216,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 					case 200:
 						mDeaBankList = deaBankList.banks;
 						if (mDeaBankList != null) {
-							mDeaBankList.add(new Bank(otherBank));
+							mDeaBankList.add(new Bank(otherBank,otherBankId));
 						}
 						selectBankLayoutManager(mDeaBankList);
 						break;
@@ -694,6 +695,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
+
 			}
 
 			@Override
@@ -740,7 +742,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				//update document as its uploaded
 				document.setUploaded(true);
 				if (isAllFilesUploaded(getValidDocumentList(documentList))) {
-
+				//MAKE POI ORIGIN API CALL
 				}
 				int httpCode = uploadResponse.httpCode;
 				switch (httpCode) {
@@ -821,6 +823,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	public void uploadDocuments(List<Document> dataList) {
+		Utils.disableEnableChildViews(nestedScrollView,false);
 		for (int i = 0; i < dataList.size(); i++) {
 			if (dataList.get(i).getSize() <= Utils.POI_UPLOAD_FILE_SIZE_MAX)
 				initUpload(dataList.get(i)).execute();
@@ -925,13 +928,10 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public void onSubmitClick(SubmitType type) {
 		switch (type) {
 			case ACCOUNT_NUMBER:
+				updateBankDetails();
 				break;
 			case DOCUMENTS:
-				for (Document doc : documentList) {
-					doc.setDisplayProgress(true);
-				}
-				addedDocumentsListAdapter.notifyDataSetChanged();
-				if (getValidDocumentList(documentList).size() > 0) {
+			if (getValidDocumentList(documentList).size() > 0) {
 					uploadDocuments(documentList);
 				}
 				break;
@@ -954,19 +954,22 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	public void updateBankDetails()
 	{
+		Utils.disableEnableChildViews(nestedScrollView,false);
 		UpdateBankDetail bankDetail=new UpdateBankDetail();
+		bankDetail.setCliOfferID(12345);//change to cliOfferId
 		bankDetail.setAccountType(getSelectedAccountType());
 		bankDetail.setBankName(getSelectedBankType());
 		bankDetail.setAccountNumber(etAccountNumber.getText().toString().trim());
 		new CLIUpdateBankDetails(getActivity(), bankDetail, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
+				Utils.disableEnableChildViews(nestedScrollView,true);
 				updateBankDetailResponse= (UpdateBankDetailResponse) object;
 			}
 
 			@Override
 			public void onFailure(String e) {
-
+				Utils.disableEnableChildViews(nestedScrollView,true);
 			}
 		});
 	}

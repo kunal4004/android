@@ -11,11 +11,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.DrawImage;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.MyViewHolder> {
 
@@ -26,6 +29,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.MyView
 	private OnItemClick onItemClick;
 	private List<Bank> deaBankList;
 	private int selectedPosition = -1;
+	private DrawImage drawImage;
 
 	public DocumentAdapter(List<Bank> deaBankList, OnItemClick onItemClick) {
 		this.deaBankList = deaBankList;
@@ -33,7 +37,8 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.MyView
 	}
 
 	public class MyViewHolder extends RecyclerView.ViewHolder {
-		private ImageView imBankLogo, imgSelectBank;
+		private ImageView imgSelectBank;
+		private SimpleDraweeView imBankLogo;
 		private WTextView tvBankName;
 		private RelativeLayout relDeaBank;
 
@@ -41,7 +46,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.MyView
 			super(view);
 			tvBankName = (WTextView) view.findViewById(R.id.tvBankName);
 			relDeaBank = (RelativeLayout) view.findViewById(R.id.relDeaBank);
-			imBankLogo = (ImageView) view.findViewById(R.id.imBankLogo);
+			imBankLogo = (SimpleDraweeView) view.findViewById(R.id.imBankLogo);
 			imgSelectBank = (ImageView) view.findViewById(R.id.imgSelectBank);
 		}
 
@@ -51,6 +56,7 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.MyView
 			onItemClick(holder);
 			setText(holder, deaBank);
 			onItemSelected(holder, position);
+			setBankImage(holder,deaBank);
 		}
 
 		private void onItemSelected(final MyViewHolder holder, int position) {
@@ -68,6 +74,17 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.MyView
 
 		private void setText(MyViewHolder holder, Bank bank) {
 			holder.tvBankName.setText(bank.bankName);
+		}
+
+		private void  setBankImage(MyViewHolder holder, Bank bank)
+		{
+			if(bank.id== Utils.CLI_OTHER_BANK_ID)
+			{
+				holder.imBankLogo.setImageResource(R.drawable.other_bank);
+			}else {
+				drawImage = new DrawImage(holder.imBankLogo.getContext());
+				drawImage.displayImage(holder.imBankLogo, bank.bankImage);
+			}
 		}
 
 		private void rowTypeBorder(MyViewHolder holder, int position) {

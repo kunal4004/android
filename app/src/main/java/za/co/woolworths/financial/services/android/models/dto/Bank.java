@@ -8,7 +8,12 @@ public class Bank {
 	@Expose
 	public String bankName;
 
-	public Bank(String bankName) {
+	public String bankImage;
+
+	public int id;
+
+	public Bank(String bankName,int id) {
 		this.bankName = bankName;
+		this.id=id;
 	}
 }
