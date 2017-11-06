@@ -39,14 +39,6 @@ android {
             storePassword 'H]|{0*[\'C[Y\\jze'
         }
     }
-    flavorDimensions 'tier'
-    productFlavors {
-        free {
-            dimension 'tier'
-            missingDimensionStrategy 'woolworths', 'woneapp_staging', 'woneapp_qa', 'woneapp_dev'
-        }
-        paid {}
-    }
 
     defaultConfig {
         minSdkVersion 19 //kitkat 4.4
@@ -112,7 +104,6 @@ android {
 
 repositories {
     mavenCentral()
-    google()
 }
 
 
