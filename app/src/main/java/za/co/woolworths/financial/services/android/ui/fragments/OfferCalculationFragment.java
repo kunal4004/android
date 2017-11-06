@@ -228,17 +228,14 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			@Override
 			public void onSuccess(Object object) {
 				mObjOffer = ((OfferActive) object);
-				int httpCode = mObjOffer.httpCode;
-				httpCode = 440;
-				switch (httpCode) {
+				switch (mObjOffer.httpCode) {
 					case 200:
 						displayCurrentOffer(mObjOffer);
 						onLoadComplete();
 						break;
 
 					case 440:
-						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), "scope=C2Id");
-						//SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
+						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
 						break;
 
 					default:
