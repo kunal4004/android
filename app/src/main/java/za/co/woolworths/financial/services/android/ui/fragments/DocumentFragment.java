@@ -48,8 +48,11 @@ import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanksResponse;
 import za.co.woolworths.financial.services.android.models.dto.Document;
 import za.co.woolworths.financial.services.android.models.dto.POIDocumentUploadResponse;
+import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
+import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetBankAccountTypes;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetDeaBank;
+import za.co.woolworths.financial.services.android.models.rest.CLIUpdateBankDetails;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.SelectFromDriveActivity;
@@ -117,6 +120,25 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public Uri mCameraUri;
 	public SubmitType submitType;
 	private List<Bank> mDeaBankList;
+	public String selectedBankType;
+	public String selectedAccountType;
+	public UpdateBankDetailResponse updateBankDetailResponse;
+
+	public String getSelectedBankType() {
+		return selectedBankType;
+	}
+
+	public void setSelectedBankType(String selectedBankType) {
+		this.selectedBankType = selectedBankType;
+	}
+
+	public String getSelectedAccountType() {
+		return selectedAccountType;
+	}
+
+	public void setSelectedAccountType(String selectedAccountType) {
+		this.selectedAccountType = selectedAccountType;
+	}
 
 	public DocumentFragment() {
 		// Required empty public constructor
@@ -313,6 +335,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			invalidateBankTypeSelection();
 			scrollUpDocumentSubmitTypeLayout();
 		} else {
+			setSelectedBankType(selectedBank.bankName);
 			hideView(poiDocumentSubmitTypeLayout);
 			invalidateBankTypeSelection();
 			scrollUpConfirmationFroPOIFromBankLayout();
@@ -322,6 +345,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	@Override
 	public void onAccountTypeClick(View view, int position) {
+		setSelectedAccountType(bankAccountTypes.get(position).accountType);
 		scrollUpAccountNumberLayout();
 	}
 
@@ -926,5 +950,24 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		}
 
 		return true;
+	}
+
+	public void updateBankDetails()
+	{
+		UpdateBankDetail bankDetail=new UpdateBankDetail();
+		bankDetail.setAccountType(getSelectedAccountType());
+		bankDetail.setBankName(getSelectedBankType());
+		bankDetail.setAccountNumber(etAccountNumber.getText().toString().trim());
+		new CLIUpdateBankDetails(getActivity(), bankDetail, new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				updateBankDetailResponse= (UpdateBankDetailResponse) object;
+			}
+
+			@Override
+			public void onFailure(String e) {
+
+			}
+		});
 	}
 }
