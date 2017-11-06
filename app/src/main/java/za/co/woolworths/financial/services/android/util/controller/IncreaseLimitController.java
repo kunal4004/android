@@ -19,7 +19,6 @@ import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Application;
-import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.FindOutMoreActivity;
@@ -50,39 +49,30 @@ public class IncreaseLimitController {
 	}
 
 	public static boolean editTextLength(String value) {
-		return value.toString().length() > 0 ? true : false;
+		return value.length() > 0;
 	}
 
 	public static void showKeyboard(WEditTextView wEditTextView, Context context) {
 		InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.showSoftInput(wEditTextView,
-				InputMethodManager.SHOW_IMPLICIT);
-	}
-
-	public static void hideKeyboard(WEditTextView wEditTextView, Context context) {
-		InputMethodManager imm = (InputMethodManager)
-				context.getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(
-				wEditTextView.getWindowToken(), 0);
-	}
-
-	public static void hideSoftKeyboard(Activity activity) {
-		// Check if no view has focus:
-		View view = activity.getCurrentFocus();
-		if (view != null) {
-			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-		}
+		assert imm != null;
+		imm.showSoftInput(wEditTextView, InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 
 	public static String removeNonDigit(WEditTextView view) {
 		return view.getText().toString().replaceAll("\\D+", "");
 	}
 
-	public static void focusEditView(WEditTextView wEditText, WTextView wTextView, Context context) {
+	public void populateExpenseField(WEditTextView wEditText, WTextView wTextView, Context context) {
 		wEditText.requestFocus();
-		IncreaseLimitController.showKeyboard(wEditText, context);
+		showKeyboard(wEditText, context);
 		wTextView.setVisibility(View.VISIBLE);
+	}
+
+	public void populateExpenseField(WEditTextView editTextView, String value, WTextView wTextView) {
+		wTextView.setVisibility(View.VISIBLE);
+		editTextView.setText(value);
+		editTextView.clearFocus();
+
 	}
 
 	public void offerActiveUIState(LinearLayout llCommonLayer, WTextView tvIncreaseLimit, WTextView tvApplyNowIncreaseLimit, WTextView tvIncreaseLimitDescription, ImageView logoIncreaseLimit, OfferActive offerActive) {
@@ -194,29 +184,22 @@ public class IncreaseLimitController {
 		setStatusBackground(drawableId, tvApplyNowIncreaseLimit, messageSummary);
 	}
 
-	public void moveToCLIPhase(OfferActive offerActive, String productOfferingId) {
+	private void moveToCLIPhase(OfferActive offerActive, String productOfferingId) {
 		AppCompatActivity activity = (AppCompatActivity) mContext;
 		((WoolworthsApplication) activity.getApplication()).setProductOfferingId(Integer.valueOf(productOfferingId));
 		Intent openCLIIncrease = new Intent(activity, CLIPhase2Activity.class);
 		openCLIIncrease.putExtra("OFFER_ACTIVE_PAYLOAD", Utils.objectToJson(offerActive));
 		openCLIIncrease.putExtra("OFFER_IS_ACTIVE", offerIsActive());
-		activity.startActivity(openCLIIncrease);
+		activity.startActivityForResult(openCLIIncrease, 0);
 		activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 
-	private Offer getOffer(OfferActive offerActive) {
-		if (offerActive != null) {
-			return offerActive.offer;
-		}
-		return new Offer();
-	}
-
-	public static void focusEditView(WEditTextView wEditText, Context context) {
+	public static void populateExpenseField(WEditTextView wEditText, Context context) {
 		wEditText.requestFocus();
-		IncreaseLimitController.showKeyboard(wEditText, context);
+		showKeyboard(wEditText, context);
 	}
 
-	public String getNextStep() {
+	private String getNextStep() {
 		return nextStep;
 	}
 
@@ -224,7 +207,7 @@ public class IncreaseLimitController {
 		this.nextStep = nextStep;
 	}
 
-	public boolean offerIsActive() {
+	private boolean offerIsActive() {
 		return offerActive;
 	}
 
@@ -307,7 +290,7 @@ public class IncreaseLimitController {
 		v.setEnabled(true);
 	}
 
-	public void cliIcon(ImageView logoIncreaseLimit) {
+	private void cliIcon(ImageView logoIncreaseLimit) {
 		logoIncreaseLimit.setImageResource(R.drawable.cli);
 	}
 
@@ -333,7 +316,7 @@ public class IncreaseLimitController {
 		}
 	}
 
-	public void displayDescription(WTextView view, String messageDetail) {
+	private void displayDescription(WTextView view, String messageDetail) {
 		view.setVisibility(View.VISIBLE);
 		view.setText(messageDetail);
 	}

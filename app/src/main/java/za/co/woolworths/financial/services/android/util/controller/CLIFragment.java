@@ -9,10 +9,10 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class CLIFragment extends Fragment {
 
-	public CLIStepIndicatorListener cliStepIndicatorListener;
+	public CLIStepIndicatorListener mCliStepIndicatorListener;
 
 	public void setStepIndicatorListener(CLIStepIndicatorListener cliStepIndicatorListener) {
-		this.cliStepIndicatorListener = cliStepIndicatorListener;
+		this.mCliStepIndicatorListener = cliStepIndicatorListener;
 	}
 
 	@Override

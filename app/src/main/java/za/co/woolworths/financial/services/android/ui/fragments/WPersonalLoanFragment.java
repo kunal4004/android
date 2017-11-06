@@ -70,6 +70,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private IncreaseLimitController mIncreaseLimitController;
 	private boolean viewWasCreated = false;
 	private RelativeLayout relBalanceProtection, relViewTransactions;
+	private CLIGetOfferActive cliGetOfferActive;
 
 	@Nullable
 	@Override
@@ -238,7 +239,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 	private void getActiveOffer() {
 		onLoad();
-		CLIGetOfferActive cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
+		cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				offerActive = ((OfferActive) object);
@@ -261,7 +262,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	}
 
 	private void bindUI(OfferActive offerActive) {
-		switch (offerActive.httpCode) {
+		int httpCode = offerActive.httpCode;
+		switch (httpCode) {
 			case 502:
 			case 200:
 				offerActiveResult(offerActive);
@@ -392,6 +394,16 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 	private boolean controllerNotNull() {
 		return mIncreaseLimitController != null;
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (cliGetOfferActive != null) {
+			if (!cliGetOfferActive.isCancelled()) {
+				cliGetOfferActive.cancel(true);
+			}
+		}
 	}
 }
 

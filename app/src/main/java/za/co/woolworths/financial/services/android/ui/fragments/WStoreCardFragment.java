@@ -76,6 +76,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private RelativeLayout mRelIncreaseMyLimit;
 	private boolean viewWasCreated = false;
 	private RelativeLayout rlViewTransactions, relBalanceProtection, mRelFindOutMore;
+	private CLIGetOfferActive cliGetOfferActive;
 
 	@Nullable
 	@Override
@@ -216,7 +217,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 	private void getActiveOffer() {
 		onLoad();
-		CLIGetOfferActive cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
+		cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				offerActive = ((OfferActive) object);
@@ -368,5 +369,15 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 	private boolean controllerNotNull() {
 		return mIncreaseLimitController != null;
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (cliGetOfferActive != null) {
+			if (!cliGetOfferActive.isCancelled()) {
+				cliGetOfferActive.cancel(true);
+			}
+		}
 	}
 }

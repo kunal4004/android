@@ -85,6 +85,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private FrameLayout flTopLayout;
 	private LinearLayout llEmptyLayout;
 	private EventStatus mEventStatus;
+	private CLIUpdateApplication cliUpdateApplication;
+	private CLICreateOffer createOfferTask;
+	private CLIOfferDecision cliAcceptOfferDecision;
 
 	private enum LATEST_BACKGROUND_CALL {CREATE_OFFER, DECLINE_OFFER, UPDATE_APPLICATION, ACCEPT_OFFER}
 
@@ -120,7 +123,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					expenseDetail = bundle.getSerializable(IncreaseLimitController.EXPENSE_DETAILS);
 				}
 				setInvisibleView(tvSlideToEditSeekInfo);
-				cliStepIndicatorListener.onStepSelected(3);
+				mCliStepIndicatorListener.onStepSelected(3);
 				mObjOffer = ((CLIPhase2Activity) OfferCalculationFragment.this.getActivity()).offerActiveObject();
 				if (incomeDetail != null) {
 					mHashIncomeDetail = (HashMap<String, String>) incomeDetail;
@@ -181,7 +184,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private void cliCreateOfferRequest(CreateOfferRequest createOfferRequest) {
 		onLoad();
 		latestBackgroundTask(LATEST_BACKGROUND_CALL.CREATE_OFFER);
-		CLICreateOffer createOfferTask = new CLICreateOffer(getActivity(), createOfferRequest, new OnEventListener() {
+		createOfferTask = new CLICreateOffer(getActivity(), createOfferRequest, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				mObjOffer = ((OfferActive) object);
@@ -221,18 +224,21 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private void cliUpdateApplicationTask(CreateOfferRequest createOfferRequest, String cliId) {
 		onLoad();
 		latestBackgroundTask(LATEST_BACKGROUND_CALL.UPDATE_APPLICATION);
-		CLIUpdateApplication cliUpdateApplication = new CLIUpdateApplication(getActivity(), createOfferRequest, cliId, new OnEventListener() {
+		cliUpdateApplication = new CLIUpdateApplication(getActivity(), createOfferRequest, cliId, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				mObjOffer = ((OfferActive) object);
 				int httpCode = mObjOffer.httpCode;
+				httpCode = 440;
 				switch (httpCode) {
 					case 200:
 						displayCurrentOffer(mObjOffer);
+						onLoadComplete();
 						break;
 
 					case 440:
-						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
+						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), "scope=C2Id");
+						//SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
 						break;
 
 					default:
@@ -240,7 +246,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 				}
 				onLoadCompleted(true);
-				onLoadComplete();
 			}
 
 			@Override
@@ -427,7 +432,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
 				CreateOfferDecision createOfferDecision = new CreateOfferDecision(mWoolies.getProductOfferingId(), mCLiId
 						, IncreaseLimitController.ACCEPT, newCreditLimitAmount);
-				CLIOfferDecision cliOfferDecision =
+				cliAcceptOfferDecision =
 						new CLIOfferDecision(getActivity(), createOfferDecision, String.valueOf(mCLiId), new OnEventListener() {
 							@Override
 							public void onSuccess(Object object) {
@@ -435,7 +440,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 								switch (mObjOffer.httpCode) {
 									case 200:
 										DocumentFragment documentFragment = new DocumentFragment();
-										documentFragment.setStepIndicatorListener(cliStepIndicatorListener);
+										documentFragment.setStepIndicatorListener(mCliStepIndicatorListener);
 										FragmentUtils fragmentUtils = new FragmentUtils();
 										fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), documentFragment, R.id.cli_steps_container);
 										break;
@@ -461,7 +466,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 								});
 							}
 						});
-				cliOfferDecision.execute();
+				cliAcceptOfferDecision.execute();
 				break;
 
 			case R.id.tvSlideToEditAmount:
@@ -479,7 +484,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					mCliPhase2Activity.actionBarBackIcon();
 					EditAmountFragment editAmountFragment = new EditAmountFragment();
 					editAmountFragment.setArguments(args);
-					editAmountFragment.setStepIndicatorListener(cliStepIndicatorListener);
+					editAmountFragment.setStepIndicatorListener(mCliStepIndicatorListener);
 					FragmentUtils ftils = new FragmentUtils(false);
 					ftils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), editAmountFragment, R.id.cli_steps_container);
 
@@ -648,6 +653,25 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				displayCurrentOffer(mObjOffer);
 				fromOfferActive = true;
 				break;
+		}
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (cliUpdateApplication != null) {
+			if (!cliUpdateApplication.isCancelled())
+				cliUpdateApplication.cancel(true);
+		}
+
+		if (createOfferTask != null) {
+			if (!createOfferTask.isCancelled())
+				createOfferTask.cancel(true);
+		}
+
+		if (cliAcceptOfferDecision != null) {
+			if (!cliAcceptOfferDecision.isCancelled())
+				cliAcceptOfferDecision.cancel(true);
 		}
 	}
 }

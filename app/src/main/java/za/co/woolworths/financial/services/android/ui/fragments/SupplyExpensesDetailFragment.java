@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
@@ -45,6 +46,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 	private LinearLayout llNextButtonLayout, llMortgagePayment, llRentalPayment, llMaintainanceExpenses, llMonthlyCreditPayments, llOtherExpensesContainer;
 	private NestedScrollView nsSupplyExpense;
 	private boolean etOtherExpensesWasTouched = false;
+	private IncreaseLimitController mIncreaseLimitController;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (rootView == null) {
@@ -56,6 +58,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		mIncreaseLimitController = new IncreaseLimitController(getActivity());
 		Bundle b = this.getArguments();
 		if (b.getSerializable(IncreaseLimitController.INCOME_DETAILS) != null) {
 			mHashIncomeDetail = (HashMap<String, String>) b.getSerializable(IncreaseLimitController.INCOME_DETAILS);
@@ -63,26 +66,19 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 		}
 		init(view);
 		nextFocusEditText();
-		cliStepIndicatorListener.onStepSelected(2);
+		mCliStepIndicatorListener.onStepSelected(2);
 		if (mHashExpenseDetail != null) {
-			etMortgagePayments.setText(mHashExpenseDetail.get("MORTGAGE_PAYMENTS"));
-			etRentalPayments.setText(mHashExpenseDetail.get("RENTAL_PAYMENTS"));
-			etMaintainanceExpenses.setText(mHashExpenseDetail.get("MAINTENANCE_EXPENSES"));
-			etMonthlyCreditPayments.setText(mHashExpenseDetail.get("MONTHLY_CREDIT_EXPENSES"));
-			etOtherExpenses.setText(mHashExpenseDetail.get("OTHER_EXPENSES"));
-			llMortgagePayment.performClick();
-			llRentalPayment.performClick();
-			llMaintainanceExpenses.performClick();
-			llMonthlyCreditPayments.performClick();
-			llOtherExpensesContainer.performClick();
+			mIncreaseLimitController.populateExpenseField(etMortgagePayments, mHashExpenseDetail.get("MORTGAGE_PAYMENTS"), tvMortgagePayments);
+			mIncreaseLimitController.populateExpenseField(etRentalPayments, mHashExpenseDetail.get("RENTAL_PAYMENTS"), tvRentalPayments);
+			mIncreaseLimitController.populateExpenseField(etMaintainanceExpenses, mHashExpenseDetail.get("MAINTENANCE_EXPENSES"), tvMaintainanceExpenses);
+			mIncreaseLimitController.populateExpenseField(etMonthlyCreditPayments, mHashExpenseDetail.get("MONTHLY_CREDIT_EXPENSES"), tvMonthlyCreditPayments);
+			mIncreaseLimitController.populateExpenseField(etOtherExpenses, mHashExpenseDetail.get("OTHER_EXPENSES"), tvOtherExpenses);
 		}
-		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		Activity activity = getActivity();
+		if (activity instanceof CLIPhase2Activity) {
+			activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		}
 		FragmentUtils fragmentUtils = new FragmentUtils(getActivity());
-		etMortgagePayments.clearFocus();
-		etRentalPayments.clearFocus();
-		etMaintainanceExpenses.clearFocus();
-		etMonthlyCreditPayments.clearFocus();
-		etOtherExpenses.clearFocus();
 		fragmentUtils.hideSoftKeyboard();
 		llMortgagePayment.requestFocus();
 	}
@@ -147,30 +143,25 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 	@Override
 	public void onClick(View v) {
 		MultiClickPreventer.preventMultiClick(v);
-		llMortgagePayment.setOnClickListener(this);
-		llRentalPayment.setOnClickListener(this);
-		llMaintainanceExpenses.setOnClickListener(this);
-		llMonthlyCreditPayments.setOnClickListener(this);
-		llNextButtonLayout.setOnClickListener(this);
-		llOtherExpensesContainer.setOnClickListener(this);
-
 		switch (v.getId()) {
 			case R.id.llMortgagePayment:
-				IncreaseLimitController.focusEditView(etMortgagePayments, tvMortgagePayments, getActivity());
+				mIncreaseLimitController.populateExpenseField(etMortgagePayments, tvMortgagePayments, getActivity());
 				break;
 
 			case R.id.llRentalPayment:
-				IncreaseLimitController.focusEditView(etRentalPayments, tvRentalPayments, getActivity());
+				mIncreaseLimitController.populateExpenseField(etRentalPayments, tvRentalPayments, getActivity());
 				break;
+
 			case R.id.llMaintainanceExpenses:
-				IncreaseLimitController.focusEditView(etMaintainanceExpenses, tvMaintainanceExpenses, getActivity());
+				mIncreaseLimitController.populateExpenseField(etMaintainanceExpenses, tvMaintainanceExpenses, getActivity());
 				break;
+
 			case R.id.llMonthlyCreditPayments:
-				IncreaseLimitController.focusEditView(etMonthlyCreditPayments, tvMonthlyCreditPayments, getActivity());
+				mIncreaseLimitController.populateExpenseField(etMonthlyCreditPayments, tvMonthlyCreditPayments, getActivity());
 				break;
 
 			case R.id.llOtherExpensesContainer:
-				IncreaseLimitController.focusEditView(etOtherExpenses, tvOtherExpenses, getActivity());
+				mIncreaseLimitController.populateExpenseField(etOtherExpenses, tvOtherExpenses, getActivity());
 				break;
 
 			case R.id.imInfo:
@@ -196,7 +187,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 				bundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, hmExpenseMap);
 				bundle.putBoolean(IncreaseLimitController.FROM_EXPENSE_SCREEN, true);
 				OfferCalculationFragment ocFragment = new OfferCalculationFragment();
-				ocFragment.setStepIndicatorListener(cliStepIndicatorListener);
+				ocFragment.setStepIndicatorListener(mCliStepIndicatorListener);
 				ocFragment.setArguments(bundle);
 				FragmentUtils fragmentUtils = new FragmentUtils();
 				fragmentUtils.nextFragment((AppCompatActivity) SupplyExpensesDetailFragment.this.getActivity()
@@ -209,7 +200,6 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 	public void onFocusChange(View v, boolean hasFocus) {
 		if (hasFocus) {
 			if (etOtherExpenses.hasFocus() && etOtherExpensesWasTouched) {
-				llOtherExpensesContainer.performClick();
 				nsSupplyExpense.post(new Runnable() {
 					@Override
 					public void run() {
@@ -231,7 +221,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 		public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 		}
 
-		public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+		public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
 		}
 
 		public void afterTextChanged(Editable editable) {
@@ -255,7 +245,6 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 					break;
 
 				case R.id.etOtherExpenses:
-					llOtherExpensesContainer.performClick();
 					etOtherExpensesWasEdited = IncreaseLimitController.editTextLength(currentAmount);
 					enableNextButton();
 					break;

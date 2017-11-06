@@ -65,6 +65,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private IncreaseLimitController mIncreaseLimitController;
 	private OfferActive offerActive;
 	private boolean viewWasCreated = false;
+	private CLIGetOfferActive cliGetOfferActive;
 
 	@Nullable
 	@Override
@@ -202,7 +203,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	private void getActiveOffer() {
 		onLoad();
-		CLIGetOfferActive cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
+		cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				offerActive = ((OfferActive) object);
@@ -354,5 +355,15 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	private boolean controllerNotNull() {
 		return mIncreaseLimitController != null;
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (cliGetOfferActive != null) {
+			if (!cliGetOfferActive.isCancelled()) {
+				cliGetOfferActive.cancel(true);
+			}
+		}
 	}
 }

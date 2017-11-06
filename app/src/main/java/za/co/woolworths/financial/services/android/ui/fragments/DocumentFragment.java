@@ -48,7 +48,6 @@ import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanksResponse;
 import za.co.woolworths.financial.services.android.models.dto.Document;
 import za.co.woolworths.financial.services.android.models.dto.POIDocumentUploadResponse;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetBankAccountTypes;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetDeaBank;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
@@ -145,7 +144,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		// Inflate the layout for this fragment
 		View view = inflater.inflate(R.layout.document_fragment, container, false);
 		deaBankList = new DeaBanks();
-		cliStepIndicatorListener.onStepSelected(4);
+		mCliStepIndicatorListener.onStepSelected(4);
 		return view;
 	}
 
@@ -443,7 +442,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				scrollUpDocumentSubmitTypeLayout();
 				break;
 			case R.id.llAccountNumberLayout:
-				IncreaseLimitController.focusEditView(etAccountNumber, getActivity());
+				IncreaseLimitController.populateExpenseField(etAccountNumber, getActivity());
 				break;
 			case R.id.addDocuments:
 				//openGalleryToPickDocuments();

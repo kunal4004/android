@@ -43,6 +43,7 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 	private View rootView;
 	private CLIPhase2Activity mCliPhase2Activity;
 	private HashMap<String, String> hmExpenseDetail;
+	private IncreaseLimitController mIncreaseLimitController;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if (rootView == null) {
@@ -56,26 +57,20 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 		super.onViewCreated(view, savedInstanceState);
 		init(view);
 		nextFocusEditText();
-		cliStepIndicatorListener.onStepSelected(1);
+		mIncreaseLimitController = new IncreaseLimitController(getActivity());
+		mCliStepIndicatorListener.onStepSelected(1);
 		Bundle b = this.getArguments();
 		if (b != null) {
 			HashMap<String, String> mHashIncomeDetail = (HashMap<String, String>) b.getSerializable(IncreaseLimitController.INCOME_DETAILS);
 			hmExpenseDetail = (HashMap<String, String>) b.getSerializable(IncreaseLimitController.EXPENSE_DETAILS);
-			etGrossMonthlyIncome.setText(mHashIncomeDetail.get("GROSS_MONTHLY_INCOME"));
-			etNetMonthlyIncome.setText(mHashIncomeDetail.get("NET_MONTHLY_INCOME"));
-			etAdditionalMonthlyIncome.setText(mHashIncomeDetail.get("ADDITIONAL_MONTHLY_INCOME"));
-			llGrossMonthlyIncomeLayout.performClick();
-			llNetMonthlyIncomeLayout.performClick();
-			llAdditionalMonthlyIncomeLayout.performClick();
+			mIncreaseLimitController.populateExpenseField(etGrossMonthlyIncome, mHashIncomeDetail.get("GROSS_MONTHLY_INCOME"), tvGrossMonthlyIncome);
+			mIncreaseLimitController.populateExpenseField(etNetMonthlyIncome, mHashIncomeDetail.get("NET_MONTHLY_INCOME"), tvNetMonthlyIncome);
+			mIncreaseLimitController.populateExpenseField(etAdditionalMonthlyIncome, mHashIncomeDetail.get("ADDITIONAL_MONTHLY_INCOME"), tvAdditionalMonthlyIncome);
 		}
-		etGrossMonthlyIncome.clearFocus();
-		etNetMonthlyIncome.clearFocus();
-		etAdditionalMonthlyIncome.clearFocus();
 		llAdditionalMonthlyIncomeLayout.requestFocus();
 		etGrossMonthlyIncome.setEnabled(false);
 		etAdditionalMonthlyIncome.setEnabled(false);
 		etNetMonthlyIncome.setEnabled(false);
-
 		getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
 
@@ -128,12 +123,19 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 			this.view = view;
 		}
 
+		@Override
 		public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 		}
 
-		public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+		@Override
+		public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+//			boolean userChange = Math.abs(count - before) == 1;
+//			if (userChange) {
+//				mIncreaseLimitController.setUserHasFocused(true);
+//			}
 		}
 
+		@Override
 		public void afterTextChanged(Editable editable) {
 			String currentAmount = editable.toString();
 			switch (view.getId()) {
@@ -178,29 +180,28 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 						CustomPopUpWindow.MODAL_LAYOUT.SUPPLY_DETAIL_INFO, new Gson().toJson(incomeMap, LinkedHashMap.class));
 				break;
 			case R.id.llGrossMonthlyIncomeLayout:
-				IncreaseLimitController.focusEditView(etGrossMonthlyIncome, tvGrossMonthlyIncome, getActivity());
+				mIncreaseLimitController.populateExpenseField(etGrossMonthlyIncome, tvGrossMonthlyIncome, getActivity());
 				break;
 
 			case R.id.llNetMonthlyIncomeLayout:
-				IncreaseLimitController.focusEditView(etNetMonthlyIncome, tvNetMonthlyIncome, getActivity());
+				mIncreaseLimitController.populateExpenseField(etNetMonthlyIncome, tvNetMonthlyIncome, getActivity());
 				break;
 
 			case R.id.llAdditionalMonthlyIncomeLayout:
-				IncreaseLimitController.focusEditView(etAdditionalMonthlyIncome, tvAdditionalMonthlyIncome, getActivity());
+				mIncreaseLimitController.populateExpenseField(etAdditionalMonthlyIncome, tvAdditionalMonthlyIncome, getActivity());
 				break;
 
 			case R.id.btnContinue:
 			case R.id.llNextButtonLayout:
 				FragmentUtils fragmentUtils = new FragmentUtils(getActivity());
 				fragmentUtils.hideSoftKeyboard();
-				IncreaseLimitController increaseLimitController = new IncreaseLimitController(getActivity());
-				HashMap<String, String> hmIncomeDetail = increaseLimitController.incomeHashMap(etGrossMonthlyIncome, etNetMonthlyIncome, etAdditionalMonthlyIncome);
+				HashMap<String, String> hmIncomeDetail = mIncreaseLimitController.incomeHashMap(etGrossMonthlyIncome, etNetMonthlyIncome, etAdditionalMonthlyIncome);
 				Bundle bundle = new Bundle();
 				bundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, hmIncomeDetail);
 				bundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, hmExpenseDetail);
 				SupplyExpensesDetailFragment supplyExpensesDetailFragment = new SupplyExpensesDetailFragment();
 				supplyExpensesDetailFragment.setArguments(bundle);
-				supplyExpensesDetailFragment.setStepIndicatorListener(cliStepIndicatorListener);
+				supplyExpensesDetailFragment.setStepIndicatorListener(mCliStepIndicatorListener);
 				fragmentUtils.nextFragment((AppCompatActivity) SupplyIncomeDetailFragment.this.getActivity(), getFragmentManager(), supplyExpensesDetailFragment, R.id.cli_steps_container);
 				break;
 
