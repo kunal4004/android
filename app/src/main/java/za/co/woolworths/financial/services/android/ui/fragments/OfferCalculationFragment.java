@@ -496,6 +496,10 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	public CreateOfferRequest createOffer
 			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
 		Application application = mObjOffer.application;
+		if (application == null) {
+			application = new Application();
+			application.channel = "WWOneApp";
+		}
 		return new CreateOfferRequest(
 				application.channel,
 				application.debtDisclosed,

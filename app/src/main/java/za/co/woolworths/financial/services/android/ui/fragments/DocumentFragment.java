@@ -189,21 +189,12 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				backgroundTaskLoaded(false);
 				deaBankList = ((DeaBanks) object);
 				int httpCode = deaBankList.httpCode;
-				httpCode = 200;
-				/*
-					to be deleted 
-					Mocked data for dev testing
-				 */
-				mDeaBankList = new ArrayList<>();
-				mDeaBankList.add(new Bank("ABSA"));
-				mDeaBankList.add(new Bank("SOMEBANK"));
-				mDeaBankList.add(new Bank("SOMEBANK"));
-				mDeaBankList.add(new Bank("SOMEBANK"));
-				mDeaBankList.add(new Bank("SOMEBANK"));
-				mDeaBankList.add(new Bank(otherBank));
 				switch (httpCode) {
 					case 200:
-						//mDeaBankList = deaBankList.banks;
+						mDeaBankList = deaBankList.banks;
+						if (mDeaBankList != null) {
+							mDeaBankList.add(new Bank(otherBank));
+						}
 						selectBankLayoutManager(mDeaBankList);
 						break;
 					case 440:
