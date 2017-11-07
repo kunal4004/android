@@ -3,7 +3,10 @@ package za.co.woolworths.financial.services.android.util.controller;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.GradientDrawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Display;
@@ -94,7 +97,7 @@ public class IncreaseLimitController {
 		if (messageSummary.equalsIgnoreCase(getString(R.string.status_apply_now))) {
 			hideView(logoIncreaseLimit);
 			showView(llCommonLayer);
-			setCLITag(messageSummary, R.drawable.status_green, tvApplyNowIncreaseLimit);
+			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 			tvIncreaseLimit.setText(getString(R.string.cli_credit_limit_increase));
 			displayDescription(tvIncreaseLimitDescription, messageDetail);
 		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_offer_available))) {
@@ -102,51 +105,51 @@ public class IncreaseLimitController {
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			displayDescription(tvIncreaseLimitDescription, messageDetail);
-			setCLITag(messageSummary, R.drawable.status_green, tvApplyNowIncreaseLimit);
+			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_retry))) {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			displayDescription(tvIncreaseLimitDescription, messageDetail);
 			messageSummary = getString(R.string.status_please_try_again);
-			setCLITag(messageSummary, R.drawable.status_blue, tvApplyNowIncreaseLimit);
+			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 
 		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_poi_required))) {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			hideView(tvIncreaseLimitDescription);
-			setCLITag(messageSummary, R.drawable.status_blue, tvApplyNowIncreaseLimit);
+			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 		} else if (messageSummary.equalsIgnoreCase(getString(R.string.decline))) {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			displayDescription(tvIncreaseLimitDescription, messageDetail);
-			setCLITag(messageSummary, R.drawable.status_red, tvApplyNowIncreaseLimit);
+			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_contact_us))) {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
-			setCLITag(messageSummary, R.drawable.status_blue, tvApplyNowIncreaseLimit);
+			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 			displayDescription(tvIncreaseLimitDescription, messageDetail);
 		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_poi_problem))) {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			hideView(tvIncreaseLimitDescription);
-			setCLITag(messageSummary, R.drawable.status_orange, tvApplyNowIncreaseLimit);
+			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_in_progress))) {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
 			hideView(tvIncreaseLimitDescription);
 			hideView(llCommonLayer);
-			setCLITag(messageSummary, R.drawable.status_blue, tvApplyNowIncreaseLimit);
+			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 			displayDescription(tvIncreaseLimitDescription, messageDetail);
 		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_document_required))) {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
-			setCLITag(messageSummary, R.drawable.status_orange, tvApplyNowIncreaseLimit);
+			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 			displayDescription(tvIncreaseLimitDescription, messageDetail);
 		} else {
 			showView(logoIncreaseLimit);
@@ -170,18 +173,21 @@ public class IncreaseLimitController {
 		wTextView.setText(messageSummary);
 	}
 
-	private void setStatusBackground(int drawable, WTextView wTextView, String messageSummary) {
-		wTextView.setBackgroundResource(drawable);
-		wTextView.setText(messageSummary);
-	}
 
 	private String getString(int stringId) {
 		return mContext.getResources().getString(stringId);
 	}
 
-	private void setCLITag(String messageSummary, int drawableId, WTextView tvApplyNowIncreaseLimit) {
+	private void setCLITag(String messageSummary, String nextStepColour, WTextView tvApplyNowIncreaseLimit) {
 		setStatusText(messageSummary, tvApplyNowIncreaseLimit);
-		setStatusBackground(drawableId, tvApplyNowIncreaseLimit, messageSummary);
+		roundCornerDrawable(tvApplyNowIncreaseLimit, nextStepColour);
+		tvApplyNowIncreaseLimit.setText(messageSummary);
+	}
+
+	private void setCLITag(String messageSummary, int nextStepColour, WTextView tvApplyNowIncreaseLimit) {
+		setStatusText(messageSummary, tvApplyNowIncreaseLimit);
+		tvApplyNowIncreaseLimit.setBackground(ContextCompat.getDrawable(tvApplyNowIncreaseLimit.getContext(), nextStepColour));
+		tvApplyNowIncreaseLimit.setText(messageSummary);
 	}
 
 	private void moveToCLIPhase(OfferActive offerActive, String productOfferingId) {
@@ -257,20 +263,28 @@ public class IncreaseLimitController {
 	public HashMap<String, String> incomeHashMap(OfferActive offerActive) {
 		Application application = getApplication(offerActive);
 		HashMap<String, String> incomeHashMap = new HashMap<>();
-		incomeHashMap.put("GROSS_MONTHLY_INCOME", toString(application.grossMonthlyIncomeAmount));
-		incomeHashMap.put("NET_MONTHLY_INCOME", toString(application.netMonthlyIncomeAmount));
-		incomeHashMap.put("ADDITIONAL_MONTHLY_INCOME", toString(application.additionalIncomeAmount));
+		String grossMonthlyIncomeAmount = nullToEmpty(application.grossMonthlyIncomeAmount);
+		String netMonthlyIncomeAmount = nullToEmpty(application.netMonthlyIncomeAmount);
+		String additionalIncomeAmount = nullToEmpty(application.additionalIncomeAmount);
+		incomeHashMap.put("GROSS_MONTHLY_INCOME", grossMonthlyIncomeAmount);
+		incomeHashMap.put("NET_MONTHLY_INCOME", netMonthlyIncomeAmount);
+		incomeHashMap.put("ADDITIONAL_MONTHLY_INCOME", additionalIncomeAmount);
 		return incomeHashMap;
 	}
 
 	public HashMap<String, String> expenseHashMap(OfferActive offerActive) {
 		Application application = getApplication(offerActive);
 		HashMap<String, String> expenseHashMap = new HashMap<>();
-		expenseHashMap.put("MORTGAGE_PAYMENTS", toString(application.mortgagePaymentAmount));
-		expenseHashMap.put("RENTAL_PAYMENTS", toString(application.rentalPaymentAmount));
-		expenseHashMap.put("MAINTENANCE_EXPENSES", toString(application.maintenanceExpenseAmount));
-		expenseHashMap.put("MONTHLY_CREDIT_EXPENSES", toString(application.totalCreditExpenseAmount));
-		expenseHashMap.put("OTHER_EXPENSES", toString(application.otherExpenseAmount));
+		String mortgagePaymentAmount = nullToEmpty(application.mortgagePaymentAmount);
+		String rentalPaymentAmount = nullToEmpty(application.rentalPaymentAmount);
+		String maintenanceExpenseAmount = nullToEmpty(application.maintenanceExpenseAmount);
+		String totalCreditExpenseAmount = nullToEmpty(application.totalCreditExpenseAmount);
+		String otherExpenseAmount = nullToEmpty(application.otherExpenseAmount);
+		expenseHashMap.put("MORTGAGE_PAYMENTS", mortgagePaymentAmount);
+		expenseHashMap.put("RENTAL_PAYMENTS",rentalPaymentAmount);
+		expenseHashMap.put("MAINTENANCE_EXPENSES", maintenanceExpenseAmount);
+		expenseHashMap.put("MONTHLY_CREDIT_EXPENSES",totalCreditExpenseAmount);
+		expenseHashMap.put("OTHER_EXPENSES",otherExpenseAmount);
 		return expenseHashMap;
 	}
 
@@ -320,4 +334,23 @@ public class IncreaseLimitController {
 		view.setVisibility(View.VISIBLE);
 		view.setText(messageDetail);
 	}
+
+	public static void roundCornerDrawable(View v, String color) {
+		if (TextUtils.isEmpty(color))
+			return;
+
+		int paddingDp = (int) (12 * v.getContext().getResources().getDisplayMetrics().density);
+
+		GradientDrawable shape = new GradientDrawable();
+		shape.setShape(GradientDrawable.RECTANGLE);
+		shape.setCornerRadii(new float[]{paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp, paddingDp});
+		shape.setColor(Color.parseColor(color));
+		shape.setStroke(2, Color.parseColor(color));
+		v.setBackground(shape);
+	}
+
+	private String nullToEmpty(Integer amount) {
+		return amount == null ? "" : String.valueOf(amount);
+	}
+
 }

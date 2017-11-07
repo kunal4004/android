@@ -5,6 +5,7 @@ public class OfferActive {
 	public Boolean offerActive;
 	public Integer cliId;
 	public String cliStatus;
+	public String nextStepColour;
 	public String nextStep;
 	public String messageSummary;
 	public String messageDetail;
