@@ -353,4 +353,15 @@ public class IncreaseLimitController {
 		return amount == null ? "" : String.valueOf(amount);
 	}
 
+	/**
+	 * Hides the soft keyboard
+	 */
+	public void hideSoftKeyboard(Context context) {
+		Activity activity = (Activity) context;
+		View focus = activity.getCurrentFocus();
+		if (focus != null) {
+			InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+			inputMethodManager.hideSoftInputFromWindow(focus.getWindowToken(), 0);
+		}
+	}
 }

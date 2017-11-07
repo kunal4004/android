@@ -172,6 +172,7 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 				for (int position = 0; position < arrTitle.length; position++) {
 					incomeMap.put(arrTitle[position], arrDescription[position]);
 				}
+				mIncreaseLimitController.hideSoftKeyboard(getActivity());
 				Utils.displayValidationMessage(getActivity(),
 						CustomPopUpWindow.MODAL_LAYOUT.SUPPLY_DETAIL_INFO, new Gson().toJson(incomeMap, LinkedHashMap.class));
 				break;
