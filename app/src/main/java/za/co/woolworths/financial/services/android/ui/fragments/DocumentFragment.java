@@ -46,6 +46,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
+import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanksResponse;
 import za.co.woolworths.financial.services.android.models.dto.Document;
@@ -55,6 +56,7 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetBankAccountTypes;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetDeaBank;
+import za.co.woolworths.financial.services.android.models.rest.CLISendEmailRequest;
 import za.co.woolworths.financial.services.android.models.rest.CLIUpdateBankDetails;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -726,7 +728,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				};
 				MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
 				multipartTypedOutput.addPart("files", new CountingTypedFile("*/*", new File(path), listener));
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().uploadPOIDocuments(multipartTypedOutput,getCLICreateOfferResponse().cliId);
+				return ((WoolworthsApplication) getActivity().getApplication()).getApi().uploadPOIDocuments(multipartTypedOutput,22);
 			}
 
 			@Override
@@ -754,6 +756,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				document.setUploaded(true);
 				if (isAllFilesUploaded(getValidDocumentList(documentList))) {
 					//MAKE POI ORIGIN API CALL
+					enableSubmitButton();
+					moveToProcessCompleteFragment();
 				}
 				int httpCode = uploadResponse.httpCode;
 				switch (httpCode) {
@@ -834,7 +838,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	public void uploadDocuments(List<Document> dataList) {
-		Utils.disableEnableChildViews(nestedScrollView, false);
+		disableSubmitButton();
 		for (int i = 0; i < dataList.size(); i++) {
 			if (dataList.get(i).getSize() <= Utils.POI_UPLOAD_FILE_SIZE_MAX)
 				initUpload(dataList.get(i)).execute();
@@ -947,6 +951,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				}
 				break;
 			case LATER:
+				initSendEmailRequest();
 				break;
 			default:
 				break;
@@ -1017,5 +1022,25 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		FragmentUtils fragmentUtils = new FragmentUtils();
 		fragmentUtils.nextFragment((AppCompatActivity) getActivity(), getFragmentManager().beginTransaction(), processCompleteFragment, R.id.cli_steps_container);
 
+	}
+
+	public  void initSendEmailRequest()
+	{
+		disableSubmitButton();
+		new CLISendEmailRequest(getActivity(), new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				CLIEmailResponse response= (CLIEmailResponse) object;
+				if(response.httpCode==200)
+					moveToProcessCompleteFragment();
+				else
+					enableSubmitButton();
+			}
+
+			@Override
+			public void onFailure(String e) {
+			enableSubmitButton();
+			}
+		});
 	}
 }
