@@ -167,7 +167,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			return;
 		}
 
-		if (nextStep.equalsIgnoreCase(getString(R.string.status_poi))) {
+		if (nextStep.equalsIgnoreCase(getString(R.string.status_poi_required))) {
 			DocumentFragment documentFragment = new DocumentFragment();
 			documentFragment.setStepIndicatorListener(cliStepIndicatorListener);
 			openFragment(documentFragment);
