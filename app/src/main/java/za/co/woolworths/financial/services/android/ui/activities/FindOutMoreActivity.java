@@ -123,9 +123,9 @@ public class FindOutMoreActivity extends AppCompatActivity implements SelectedIt
 
 	@Override
 	public void onItemClick(View v, int position) {
-		Intent openYoutubeVideo = new Intent(this, YoutubePlayerActivity.class);
+		/*Intent openYoutubeVideo = new Intent(this, YoutubePlayerActivity.class);
 		startActivity(openYoutubeVideo);
-		overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+		overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);*/
 	}
 
 	@Override
