@@ -1041,6 +1041,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			public void onFailure(String e) {
 			enableSubmitButton();
 			}
-		});
+		}).execute();
 	}
 }
