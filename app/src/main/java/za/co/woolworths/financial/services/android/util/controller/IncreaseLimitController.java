@@ -69,13 +69,13 @@ public class IncreaseLimitController {
 		wEditText.requestFocus();
 		showKeyboard(wEditText, context);
 		wTextView.setVisibility(View.VISIBLE);
+		wEditText.setCursorVisible(true);
 	}
 
 	public void populateExpenseField(WEditTextView editTextView, String value, WTextView wTextView) {
 		wTextView.setVisibility(View.VISIBLE);
 		editTextView.setText(value);
 		editTextView.clearFocus();
-
 	}
 
 	public void offerActiveUIState(LinearLayout llCommonLayer, WTextView tvIncreaseLimit, WTextView tvApplyNowIncreaseLimit, WTextView tvIncreaseLimitDescription, ImageView logoIncreaseLimit, OfferActive offerActive) {
@@ -281,10 +281,10 @@ public class IncreaseLimitController {
 		String totalCreditExpenseAmount = nullToEmpty(application.totalCreditExpenseAmount);
 		String otherExpenseAmount = nullToEmpty(application.otherExpenseAmount);
 		expenseHashMap.put("MORTGAGE_PAYMENTS", mortgagePaymentAmount);
-		expenseHashMap.put("RENTAL_PAYMENTS",rentalPaymentAmount);
+		expenseHashMap.put("RENTAL_PAYMENTS", rentalPaymentAmount);
 		expenseHashMap.put("MAINTENANCE_EXPENSES", maintenanceExpenseAmount);
-		expenseHashMap.put("MONTHLY_CREDIT_EXPENSES",totalCreditExpenseAmount);
-		expenseHashMap.put("OTHER_EXPENSES",otherExpenseAmount);
+		expenseHashMap.put("MONTHLY_CREDIT_EXPENSES", totalCreditExpenseAmount);
+		expenseHashMap.put("OTHER_EXPENSES", otherExpenseAmount);
 		return expenseHashMap;
 	}
 
