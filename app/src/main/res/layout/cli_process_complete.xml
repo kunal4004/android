@@ -2,32 +2,31 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:layout_editor_absoluteY="73dp">
-
+    android:layout_marginEnd="@dimen/thirty_two_dp"
+    android:layout_marginStart="@dimen/thirty_three_dp">
 
     <ImageView
         android:id="@+id/imProcessComplete"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="67dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
         android:contentDescription="@string/process_complete_title"
+        app:layout_constraintBottom_toTopOf="@+id/tvProcessCompleteTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/appicon"/>
-
+        app:srcCompat="@drawable/creditcardbenfits"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvProcessCompleteTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="33dp"
-        android:layout_marginTop="53dp"
+        android:layout_marginBottom="@dimen/thirteen_dp"
         android:gravity="center_horizontal"
         android:letterSpacing="0.03"
         android:lineSpacingExtra="2sp"
@@ -36,34 +35,35 @@
         android:textColor="@color/black"
         android:textSize="@dimen/sixteen_sp"
         app:WTextView_font="medium_bold"
+        app:layout_constraintBottom_toTopOf="@+id/tvProcessCompleteDesc"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imProcessComplete"/>
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvProcessCompleteDesc"
         style="@style/style_text_description"
+        android:layout_marginBottom="@dimen/fifty_dp"
         android:text="@string/process_complete_desc"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvProcessCompleteTitle"/>
+        app:layout_constraintBottom_toTopOf="@+id/relProcessCompleteButtonContainer"/>
 
     <RelativeLayout
-        android:id="@+id/relProcessComplete"
-        style="@style/blackButtonStyle"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/button_disable_color"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:id="@+id/relProcessCompleteButtonContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnProcessComplete"
             style="@style/whiteWButtonStyle"
-            android:layout_alignParentStart="true"
             android:gravity="center"
             android:text="@string/back_to_my_account"
             android:textColor="@color/black"
             app:WButton_font="medium_bold"/>
+
     </RelativeLayout>
+
 
 </android.support.constraint.ConstraintLayout>
