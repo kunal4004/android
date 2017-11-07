@@ -129,10 +129,6 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 
 		@Override
 		public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-//			boolean userChange = Math.abs(count - before) == 1;
-//			if (userChange) {
-//				mIncreaseLimitController.setUserHasFocused(true);
-//			}
 		}
 
 		@Override
