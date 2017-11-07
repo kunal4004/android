@@ -38,6 +38,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import retrofit.mime.MultipartTypedOutput;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -101,7 +102,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private WTextView noPOIFromBank;
 	private RecyclerView rclPOIDocuments;
 	private String otherBank = "Other";
-	private int otherBankId	=Utils.CLI_OTHER_BANK_ID;
 	private DocumentsAccountTypeAdapter accountTypeAdapter;
 	private POIDocumentSubmitTypeAdapter documentSubmitTypeAdapter;
 	private WEditTextView etAccountNumber;
@@ -124,6 +124,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public String selectedBankType;
 	public String selectedAccountType;
 	public UpdateBankDetailResponse updateBankDetailResponse;
+	private CLIGetBankAccountTypes cliGetBankAccountTypes;
 
 	public String getSelectedBankType() {
 		return selectedBankType;
@@ -216,7 +217,9 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 					case 200:
 						mDeaBankList = deaBankList.banks;
 						if (mDeaBankList != null) {
-							mDeaBankList.add(new Bank(otherBank,otherBankId));
+							Random rand = new Random();
+							int n = rand.nextInt(50) + 1;
+							mDeaBankList.add(new Bank(n, otherBank, ""));
 						}
 						selectBankLayoutManager(mDeaBankList);
 						break;
@@ -245,7 +248,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	private void cliBankAccountTypeRequest() {
-		CLIGetBankAccountTypes cliGetBankAccountTypes = new CLIGetBankAccountTypes(getActivity(), new OnEventListener() {
+		cliGetBankAccountTypes = new CLIGetBankAccountTypes(getActivity(), new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				bankAccountTypes = ((BankAccountTypes) object).bankAccountTypes;
@@ -742,7 +745,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				//update document as its uploaded
 				document.setUploaded(true);
 				if (isAllFilesUploaded(getValidDocumentList(documentList))) {
-				//MAKE POI ORIGIN API CALL
+					//MAKE POI ORIGIN API CALL
 				}
 				int httpCode = uploadResponse.httpCode;
 				switch (httpCode) {
@@ -823,7 +826,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	public void uploadDocuments(List<Document> dataList) {
-		Utils.disableEnableChildViews(nestedScrollView,false);
+		Utils.disableEnableChildViews(nestedScrollView, false);
 		for (int i = 0; i < dataList.size(); i++) {
 			if (dataList.get(i).getSize() <= Utils.POI_UPLOAD_FILE_SIZE_MAX)
 				initUpload(dataList.get(i)).execute();
@@ -931,7 +934,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				updateBankDetails();
 				break;
 			case DOCUMENTS:
-			if (getValidDocumentList(documentList).size() > 0) {
+				if (getValidDocumentList(documentList).size() > 0) {
 					uploadDocuments(documentList);
 				}
 				break;
@@ -952,10 +955,9 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		return true;
 	}
 
-	public void updateBankDetails()
-	{
-		Utils.disableEnableChildViews(nestedScrollView,false);
-		UpdateBankDetail bankDetail=new UpdateBankDetail();
+	public void updateBankDetails() {
+		Utils.disableEnableChildViews(nestedScrollView, false);
+		UpdateBankDetail bankDetail = new UpdateBankDetail();
 		bankDetail.setCliOfferID(12345);//change to cliOfferId
 		bankDetail.setAccountType(getSelectedAccountType());
 		bankDetail.setBankName(getSelectedBankType());
@@ -963,14 +965,24 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		new CLIUpdateBankDetails(getActivity(), bankDetail, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				Utils.disableEnableChildViews(nestedScrollView,true);
-				updateBankDetailResponse= (UpdateBankDetailResponse) object;
+				Utils.disableEnableChildViews(nestedScrollView, true);
+				updateBankDetailResponse = (UpdateBankDetailResponse) object;
 			}
 
 			@Override
 			public void onFailure(String e) {
-				Utils.disableEnableChildViews(nestedScrollView,true);
+				Utils.disableEnableChildViews(nestedScrollView, true);
 			}
 		});
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (cliGetBankAccountTypes != null) {
+			if (!cliGetBankAccountTypes.isCancelled()) {
+				cliGetBankAccountTypes.cancel(true);
+			}
+		}
 	}
 }

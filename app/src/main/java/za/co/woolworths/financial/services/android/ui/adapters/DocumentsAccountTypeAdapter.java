@@ -11,11 +11,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.DrawImage;
 
 /**
  * Created by W7099877 on 2017/10/05.
@@ -37,7 +39,8 @@ public class DocumentsAccountTypeAdapter extends RecyclerView.Adapter<DocumentsA
 	}
 
 	public class MyViewHolder extends RecyclerView.ViewHolder {
-		private ImageView imBankLogo, imgSelectBank;
+		private ImageView imgSelectBank;
+		public SimpleDraweeView imBankLogo;
 		private WTextView tvAccountType;
 		private RelativeLayout relDeaBank;
 
@@ -45,7 +48,7 @@ public class DocumentsAccountTypeAdapter extends RecyclerView.Adapter<DocumentsA
 			super(view);
 			tvAccountType = (WTextView) view.findViewById(R.id.tvBankName);
 			relDeaBank = (RelativeLayout) view.findViewById(R.id.relDeaBank);
-			imBankLogo = (ImageView) view.findViewById(R.id.imBankLogo);
+			imBankLogo = (SimpleDraweeView) view.findViewById(R.id.imBankLogo);
 			imgSelectBank = (ImageView) view.findViewById(R.id.imgSelectBank);
 		}
 
@@ -55,6 +58,13 @@ public class DocumentsAccountTypeAdapter extends RecyclerView.Adapter<DocumentsA
 			onItemClick(holder);
 			setText(holder, bankAccountType);
 			onItemSelected(holder, position);
+			setAccountImage(holder, bankAccountType);
+		}
+
+		public void setAccountImage(MyViewHolder holder, BankAccountType bank) {
+			SimpleDraweeView imBankLogo = holder.imBankLogo;
+			DrawImage drawImage = new DrawImage(imBankLogo.getContext());
+			drawImage.displaySmallImage(imBankLogo, bank.accountTypeImage);
 		}
 
 		private void onItemSelected(final MyViewHolder holder, int position) {
@@ -127,9 +137,8 @@ public class DocumentsAccountTypeAdapter extends RecyclerView.Adapter<DocumentsA
 		return bankAccountTypes.size();
 	}
 
-	public void clearSelection()
-	{
-		selectedPosition=-1;
+	public void clearSelection() {
+		selectedPosition = -1;
 		notifyDataSetChanged();
 	}
 }
