@@ -276,8 +276,18 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 		etMaintainanceExpenses.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			public boolean onEditorAction(TextView exampleView, int actionId, KeyEvent event) {
 
-				if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_GO || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+				if (actionId == EditorInfo.IME_ACTION_DONE || (actionId == EditorInfo.IME_ACTION_NEXT) || actionId == EditorInfo.IME_ACTION_GO || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
 					llMonthlyCreditPayments.performClick();
+				}
+				return false;
+			}
+		});
+
+		etMonthlyCreditPayments.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			public boolean onEditorAction(TextView exampleView, int actionId, KeyEvent event) {
+
+				if (actionId == EditorInfo.IME_ACTION_DONE || (actionId == EditorInfo.IME_ACTION_NEXT) || actionId == EditorInfo.IME_ACTION_GO || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+					llOtherExpensesContainer.performClick();
 				}
 				return false;
 			}
