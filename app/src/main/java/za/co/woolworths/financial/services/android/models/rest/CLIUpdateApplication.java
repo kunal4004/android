@@ -16,9 +16,9 @@ public class CLIUpdateApplication extends HttpAsyncTask<String, String, OfferAct
 	private WoolworthsApplication mWoolworthsApp;
 	private OnEventListener<OfferActive> mCallBack;
 	private Context mContext;
-	public String mException,cliId;
+	public String mException, cliId;
 
-	public CLIUpdateApplication(Context context, CreateOfferRequest createOfferRequest,String cliId, OnEventListener callback) {
+	public CLIUpdateApplication(Context context, CreateOfferRequest createOfferRequest, String cliId, OnEventListener callback) {
 		this.cliId = cliId;
 		this.mCallBack = callback;
 		this.mContext = context;
@@ -28,7 +28,7 @@ public class CLIUpdateApplication extends HttpAsyncTask<String, String, OfferAct
 
 	@Override
 	protected OfferActive httpDoInBackground(String... params) {
-		return mWoolworthsApp.getApi().cliUpdateApplication(mCreateOfferRequest,cliId);
+		return mWoolworthsApp.getApi().cliUpdateApplication(mCreateOfferRequest, cliId);
 	}
 
 	@Override
