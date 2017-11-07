@@ -624,6 +624,6 @@ public interface ApiInterface {
 			@Header("os") String os,
 			@Header("osVersion") String osVersion,
 			@Header("sessionToken") String sessionToken,
-			@Path("cliId") String cliId,
+			@Path("cliId") int cliId,
 			@Body MultipartTypedOutput files);
 }

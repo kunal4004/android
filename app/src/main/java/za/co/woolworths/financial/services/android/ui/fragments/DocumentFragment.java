@@ -18,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -48,6 +49,7 @@ import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanksResponse;
 import za.co.woolworths.financial.services.android.models.dto.Document;
+import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.POIDocumentUploadResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
@@ -66,6 +68,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.CountingTypedFile;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
@@ -144,6 +147,11 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	public DocumentFragment() {
 		// Required empty public constructor
+	}
+
+	public OfferActive getCLICreateOfferResponse()
+	{
+		return ((CLIPhase2Activity)this.getActivity()).mCLICreateOfferResponse;
 	}
 
 	public enum SubmitType {
@@ -718,7 +726,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				};
 				MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
 				multipartTypedOutput.addPart("files", new CountingTypedFile("*/*", new File(path), listener));
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().uploadPOIDocuments(multipartTypedOutput);
+				return ((WoolworthsApplication) getActivity().getApplication()).getApi().uploadPOIDocuments(multipartTypedOutput,getCLICreateOfferResponse().cliId);
 			}
 
 			@Override
@@ -956,24 +964,26 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	public void updateBankDetails() {
-		Utils.disableEnableChildViews(nestedScrollView, false);
+		disableSubmitButton();
 		UpdateBankDetail bankDetail = new UpdateBankDetail();
-		bankDetail.setCliOfferID(12345);//change to cliOfferId
+		//bankDetail.setCliOfferID(getCLICreateOfferResponse().offer.offerId);//change to cliOfferId
+		bankDetail.setCliOfferID(111);
 		bankDetail.setAccountType(getSelectedAccountType());
 		bankDetail.setBankName(getSelectedBankType());
 		bankDetail.setAccountNumber(etAccountNumber.getText().toString().trim());
 		new CLIUpdateBankDetails(getActivity(), bankDetail, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				Utils.disableEnableChildViews(nestedScrollView, true);
+				enableSubmitButton();
 				updateBankDetailResponse = (UpdateBankDetailResponse) object;
+				moveToProcessCompleteFragment();
 			}
 
 			@Override
 			public void onFailure(String e) {
-				Utils.disableEnableChildViews(nestedScrollView, true);
+				enableSubmitButton();
 			}
-		});
+		}).execute();
 	}
 
 	@Override
@@ -984,5 +994,28 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				cliGetBankAccountTypes.cancel(true);
 			}
 		}
+	}
+
+	public void disableSubmitButton()
+	{
+		Utils.disableEnableChildViews(nestedScrollView, false);
+		btnSubmit.setEnabled(false);
+		btnSubmit.setAlpha(0.3f);
+	}
+
+	public void enableSubmitButton()
+	{
+		Utils.disableEnableChildViews(nestedScrollView, true);
+		btnSubmit.setEnabled(true);
+		btnSubmit.setAlpha(1f);
+	}
+
+	public void moveToProcessCompleteFragment()
+	{
+		ProcessCompleteFragment processCompleteFragment = new ProcessCompleteFragment();
+		processCompleteFragment.setStepIndicatorListener(mCliStepIndicatorListener);
+		FragmentUtils fragmentUtils = new FragmentUtils();
+		fragmentUtils.nextFragment((AppCompatActivity) getActivity(), getFragmentManager().beginTransaction(), processCompleteFragment, R.id.cli_steps_container);
+
 	}
 }

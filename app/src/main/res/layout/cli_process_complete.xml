@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginEnd="@dimen/thirty_two_dp"
@@ -12,15 +13,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
         android:contentDescription="@string/process_complete_title"
         app:layout_constraintBottom_toTopOf="@+id/tvProcessCompleteTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/creditcardbenfits"/>
+        app:srcCompat="@drawable/applicationbeingprocessed_image"
+        tools:layout_editor_absoluteX="0dp" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvProcessCompleteTitle"
@@ -37,23 +37,28 @@
         app:WTextView_font="medium_bold"
         app:layout_constraintBottom_toTopOf="@+id/tvProcessCompleteDesc"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvProcessCompleteDesc"
         style="@style/style_text_description"
         android:layout_marginBottom="@dimen/fifty_dp"
         android:text="@string/process_complete_desc"
-        app:layout_constraintBottom_toTopOf="@+id/relProcessCompleteButtonContainer"/>
+        app:layout_constraintBottom_toTopOf="@+id/relProcessCompleteButtonContainer"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        tools:layout_editor_absoluteX="0dp" />
 
     <RelativeLayout
         android:id="@+id/relProcessCompleteButtonContainer"
-        android:layout_width="match_parent"
+        android:layout_width="312dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteX="8dp">
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnProcessComplete"

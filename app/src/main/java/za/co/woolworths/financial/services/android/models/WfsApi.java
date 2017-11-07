@@ -222,8 +222,8 @@ public class WfsApi {
 				getOS(), getNetworkCarrier(), getApiId(), "", "",
 				getSha1Password(), productId, skuId);
 	}
-	public POIDocumentUploadResponse uploadPOIDocuments(MultipartTypedOutput files) {
-		return mApiInterface.uploadPOIDocuments(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(),"20",files);
+	public POIDocumentUploadResponse uploadPOIDocuments(MultipartTypedOutput files,int cliId) {
+		return mApiInterface.uploadPOIDocuments(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(),cliId,files);
 	}
 	private String getOsVersion() {
 		String osVersion = Util.getOsVersion();
