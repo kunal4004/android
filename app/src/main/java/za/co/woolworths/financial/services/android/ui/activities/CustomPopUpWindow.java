@@ -324,7 +324,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				btnCancelDecline.setText(getString(R.string.cli_no));
 				tvDeclineOffer.setText(getString(R.string.decline_title));
 				String creditLimit = mWGlobalState.getCreditLimit();
-				tvDeclineOfferDesc.setText(getString(R.string.decline_desc).replaceAll("#R", creditLimit));
+				if (!TextUtils.isEmpty(creditLimit)) {
+					tvDeclineOfferDesc.setText(getString(R.string.decline_desc).replaceAll("#R", creditLimit));
+				}
 				btnCancelDecline.setOnClickListener(this);
 				btnConfirmDecline.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
