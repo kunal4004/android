@@ -45,7 +45,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 
 	private WTextView tvDeclineOffer, mToolbarText;
 	private ProgressBar pbDecline;
-	private OfferActive mCLICreateOfferResponse;
+	public OfferActive mCLICreateOfferResponse;
 	private String mOfferActivePayload;
 	private boolean mOfferActive, mCloseButtonEnabled;
 	private String mNextStep;
