@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
@@ -13,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -526,19 +528,29 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		Offer offer = mObjOffer.offer;
 		mCurrentCredit = offer.currCredit;
 		mCreditReqestMin = offer.creditReqestMin;
-		int creditRequestMax = offer.creditRequestMax;
-		mDifferenceCreditLimit = (creditRequestMax - mCreditReqestMin);
-		mCLiId = mObjOffer.cliId;
-		sbSlideAmount.setMax(mDifferenceCreditLimit);
-		sbSlideAmount.incrementProgressBy(INCREASE_PROGRESS_BY);
-		animSeekBarToMaximum();
-		tvCurrentCreditLimitAmount.setText(formatAmount(mCurrentCredit));
-		tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
-		tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
-		int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
-		int cliId = mObjOffer.cliId;
-		mGlobalState.setDecisionDeclineOffer(new CreateOfferDecision(mWoolies.getProductOfferingId(), cliId, IncreaseLimitController.DECLINE, newCreditLimitAmount));
-		onLoadComplete();
+		String nextStep = mObjOffer.nextStep;
+
+		if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_decline))) {
+			Activity activity = getActivity();
+			if (activity instanceof CLIPhase2Activity) {
+				activity.finish();
+				activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+			}
+		} else {
+			int creditRequestMax = offer.creditRequestMax;
+			mDifferenceCreditLimit = (creditRequestMax - mCreditReqestMin);
+			mCLiId = mObjOffer.cliId;
+			sbSlideAmount.setMax(mDifferenceCreditLimit);
+			sbSlideAmount.incrementProgressBy(INCREASE_PROGRESS_BY);
+			animSeekBarToMaximum();
+			tvCurrentCreditLimitAmount.setText(formatAmount(mCurrentCredit));
+			tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
+			tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
+			int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
+			int cliId = mObjOffer.cliId;
+			mGlobalState.setDecisionDeclineOffer(new CreateOfferDecision(mWoolies.getProductOfferingId(), cliId, IncreaseLimitController.DECLINE, newCreditLimitAmount));
+			onLoadComplete();
+		}
 	}
 
 	public void setInvisibleView(View invisibleView) {
