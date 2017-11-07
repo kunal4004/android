@@ -21,6 +21,7 @@ public class ProcessCompleteFragment extends CLIFragment implements View.OnClick
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		if (view == null) {
+			((CLIPhase2Activity)this.getActivity()).hideCloseIcon();
 			view = inflater.inflate(R.layout.cli_process_complete, container, false);
 		}
 		return view;

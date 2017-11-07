@@ -401,4 +401,8 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	public void hideView(View v) {
 		v.setVisibility(View.GONE);
 	}
+
+	public void hideCloseIcon() {
+		imBack.setVisibility(View.INVISIBLE);
+	}
 }
