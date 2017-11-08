@@ -372,6 +372,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			case 0:
 				submitType = SubmitType.DOCUMENTS;
 				documentList.clear();
+				addedDocumentsListAdapter.notifyDataSetChanged();
 				hideView(rlSubmitCli);
 				scrollUpAddDocumentsLayout();
 				break;
@@ -606,7 +607,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	@Override
 	public void afterTextChanged(Editable editable) {
 		if (Utils.checkCLIAccountNumberValidation(etAccountNumber.getText().toString()) && rlSubmitCli.getVisibility() == View.GONE)
-			showSubmitButton();
+			showView(rlSubmitCli);
 		else if (!Utils.checkCLIAccountNumberValidation(etAccountNumber.getText().toString()))
 			hideView(rlSubmitCli);
 	}
@@ -689,7 +690,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		if (addedDocumentsListAdapter.getItemCount() == 0)
 			hideView(rlSubmitCli);
 		else if (addedDocumentsListAdapter.getItemCount() > 0 && rlSubmitCli.getVisibility() == View.GONE)
-			showSubmitButton();
+			showView(rlSubmitCli);
 	}
 
 	@Override
