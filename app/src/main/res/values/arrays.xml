@@ -176,8 +176,8 @@
     </string-array>
 
     <integer-array name="cli_carousel_image">
-        <item>@drawable/walkthrough_1</item>
-        <item>@drawable/walkthrough_2</item>
+        <item>@drawable/cli_walkthrough_creditbureau</item>
+        <item>@drawable/cli_walkthrough_proofofincome</item>
     </integer-array>
 
 

@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 
@@ -48,6 +49,8 @@ public class CLIIncreaseLimitInfoPagerAdapter extends PagerAdapter {
 		final WTextView title = (WTextView) cView.findViewById(R.id.cli_info_title);
 		WTextView description = (WTextView) cView.findViewById(R.id.cli_info_desc);
 		WTextView videoText = (WTextView) cView.findViewById(R.id.cli_ifo_video);
+		ImageView image=(ImageView)cView.findViewById(R.id.cli_info_image);
+		image.setImageResource(images.getResourceId(position,-1));
 		title.setText(titles[position]);
 		description.setText(descriptions[position]);
 		container.addView(cView);
