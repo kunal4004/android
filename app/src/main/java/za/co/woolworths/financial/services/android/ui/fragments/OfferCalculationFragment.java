@@ -497,6 +497,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
 		Application application = mObjOffer.application;
 		return new CreateOfferRequest(
+				1000,
 				application.maxCreditLimitRequested,
 				mWoolies.getProductOfferingId(),
 				Integer.valueOf(hashIncomeDetail.get("GROSS_MONTHLY_INCOME")),
