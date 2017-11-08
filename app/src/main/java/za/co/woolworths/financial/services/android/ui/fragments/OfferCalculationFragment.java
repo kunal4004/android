@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
@@ -14,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -498,25 +496,13 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	public CreateOfferRequest createOffer
 			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
 		Application application = mObjOffer.application;
-		if (application == null) {
-			application = new Application();
-			application.channel = "WWOneApp";
-		}
 		return new CreateOfferRequest(
-				application.channel,
-				application.debtDisclosed,
-				application.canObtainCreditInfo,
-				application.canObtainBankStatements,
-				application.applicationInfoIsCorrect,
-				application.staffMember,
-				application.automaticCreditIncrease,
 				application.maxCreditLimitRequested,
 				mWoolies.getProductOfferingId(),
-				1000,
+				Integer.valueOf(hashIncomeDetail.get("GROSS_MONTHLY_INCOME")),
 				Integer.valueOf(hashIncomeDetail.get("NET_MONTHLY_INCOME")),
 				Integer.valueOf(hashIncomeDetail.get("ADDITIONAL_MONTHLY_INCOME")),
 				Integer.valueOf(hashExpenseDetail.get("MORTGAGE_PAYMENTS")),
-				Integer.valueOf(hashIncomeDetail.get("GROSS_MONTHLY_INCOME")),
 				Integer.valueOf(hashExpenseDetail.get("RENTAL_PAYMENTS")),
 				Integer.valueOf(hashExpenseDetail.get("MAINTENANCE_EXPENSES")),
 				Integer.valueOf(hashExpenseDetail.get("MONTHLY_CREDIT_EXPENSES")),
@@ -660,7 +646,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				break;
 
 			case UPDATE_OFFER:
-				cliUpdateApplicationTask(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mObjOffer.cliId));
+				cliUpdateApplicationTask(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(12));
 				break;
 			default:
 				displayCurrentOffer(mObjOffer);

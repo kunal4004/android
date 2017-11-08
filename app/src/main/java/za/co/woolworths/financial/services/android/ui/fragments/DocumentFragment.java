@@ -151,9 +151,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		// Required empty public constructor
 	}
 
-	public OfferActive getCLICreateOfferResponse()
-	{
-		return ((CLIPhase2Activity)this.getActivity()).mCLICreateOfferResponse;
+	public OfferActive getCLICreateOfferResponse() {
+		return ((CLIPhase2Activity) this.getActivity()).mCLICreateOfferResponse;
 	}
 
 	public enum SubmitType {
@@ -728,7 +727,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				};
 				MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
 				multipartTypedOutput.addPart("files", new CountingTypedFile("*/*", new File(path), listener));
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().uploadPOIDocuments(multipartTypedOutput,22);
+				return ((WoolworthsApplication) getActivity().getApplication()).getApi().uploadPOIDocuments(multipartTypedOutput, 22);
 			}
 
 			@Override
@@ -1001,22 +1000,19 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		}
 	}
 
-	public void disableSubmitButton()
-	{
+	public void disableSubmitButton() {
 		Utils.disableEnableChildViews(nestedScrollView, false);
 		btnSubmit.setEnabled(false);
 		btnSubmit.setAlpha(0.3f);
 	}
 
-	public void enableSubmitButton()
-	{
+	public void enableSubmitButton() {
 		Utils.disableEnableChildViews(nestedScrollView, true);
 		btnSubmit.setEnabled(true);
 		btnSubmit.setAlpha(1f);
 	}
 
-	public void moveToProcessCompleteFragment()
-	{
+	public void moveToProcessCompleteFragment() {
 		ProcessCompleteFragment processCompleteFragment = new ProcessCompleteFragment();
 		processCompleteFragment.setStepIndicatorListener(mCliStepIndicatorListener);
 		FragmentUtils fragmentUtils = new FragmentUtils();
@@ -1024,14 +1020,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	}
 
-	public  void initSendEmailRequest()
-	{
+	public void initSendEmailRequest() {
 		disableSubmitButton();
 		new CLISendEmailRequest(getActivity(), new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				CLIEmailResponse response= (CLIEmailResponse) object;
-				if(response.httpCode==200)
+				CLIEmailResponse response = (CLIEmailResponse) object;
+				if (response.httpCode == 200)
 					moveToProcessCompleteFragment();
 				else
 					enableSubmitButton();
@@ -1039,7 +1034,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 			@Override
 			public void onFailure(String e) {
-			enableSubmitButton();
+				enableSubmitButton();
 			}
 		}).execute();
 	}
