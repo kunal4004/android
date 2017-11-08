@@ -14,6 +14,7 @@ public class Document {
 	public int progress;
 	public boolean isUploaded;
 	public boolean displayProgress;
+	public int fileNumber;
 
 	public String getName() {
 		return name;
@@ -55,4 +56,11 @@ public class Document {
 		isUploaded = uploaded;
 	}
 
+	public int getFileNumber() {
+		return fileNumber;
+	}
+
+	public void setFileNumber(int fileNumber) {
+		this.fileNumber = fileNumber;
+	}
 }

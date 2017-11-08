@@ -23,6 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanReque
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanResponse;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
+import za.co.woolworths.financial.services.android.models.dto.CliPoiOriginResponse;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
@@ -160,7 +161,7 @@ public class WfsApi {
 	}
 
 	public CLIEmailResponse cliEmailResponse() {
-		return mApiInterface.cliSendEmailRquest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), "");
+		return mApiInterface.cliSendEmailRquest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
 	}
 
 
@@ -222,9 +223,14 @@ public class WfsApi {
 				getOS(), getNetworkCarrier(), getApiId(), "", "",
 				getSha1Password(), productId, skuId);
 	}
-	public POIDocumentUploadResponse uploadPOIDocuments(MultipartTypedOutput files,int cliId) {
-		return mApiInterface.uploadPOIDocuments(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(),cliId,files);
+	public POIDocumentUploadResponse uploadPOIDocuments(MultipartTypedOutput files,int cliId,int fileNumber,int fileTotal,String saId) {
+		return mApiInterface.uploadPOIDocuments(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(),cliId,files,fileNumber,fileTotal,saId);
 	}
+
+	public CliPoiOriginResponse cliPOIOriginRequest(int cliId,String productOfferingId) {
+		return mApiInterface.cliPoiOriginRequest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(),cliId,productOfferingId);
+	}
+
 	private String getOsVersion() {
 		String osVersion = Util.getOsVersion();
 		if (TextUtils.isEmpty(osVersion)) {

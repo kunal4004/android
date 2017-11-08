@@ -19,6 +19,7 @@ import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRespo
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.CLICreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
+import za.co.woolworths.financial.services.android.models.dto.CliPoiOriginResponse;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
@@ -419,8 +420,7 @@ public interface ApiInterface {
 			@Header("network") String network,
 			@Header("os") String os,
 			@Header("osVersion") String osVersion,
-			@Header("sessionToken") String sessionToken,
-			@Body String body);
+			@Header("sessionToken") String sessionToken);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/user/cli/offer/bankingDetails")
@@ -625,5 +625,22 @@ public interface ApiInterface {
 			@Header("osVersion") String osVersion,
 			@Header("sessionToken") String sessionToken,
 			@Path("cliId") int cliId,
-			@Body MultipartTypedOutput files);
+			@Body MultipartTypedOutput files,
+			@Query("fileNumber") int fileNumber,
+			@Query("fileTotal") int fileTotal,
+			@Query("saId") String saId);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@POST("/user/cli/offer/POIOrigin")
+	CliPoiOriginResponse cliPoiOriginRequest(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("sessionToken") String sessionToken,
+			@Path("cliId") int cliId,
+			@Query("productOfferingId") String productOfferingId);
 }

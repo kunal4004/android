@@ -47,6 +47,7 @@ import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
+import za.co.woolworths.financial.services.android.models.dto.CliPoiOriginResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanksResponse;
 import za.co.woolworths.financial.services.android.models.dto.Document;
@@ -56,6 +57,7 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetBankAccountTypes;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetDeaBank;
+import za.co.woolworths.financial.services.android.models.rest.CLIPOIOriginRequest;
 import za.co.woolworths.financial.services.android.models.rest.CLISendEmailRequest;
 import za.co.woolworths.financial.services.android.models.rest.CLIUpdateBankDetails;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
@@ -84,6 +86,8 @@ import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
 import static android.app.Activity.RESULT_OK;
+import static com.awfs.coordination.R.style.CLI;
+import static com.crittercism.internal.ap.C;
 
 
 public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener, DocumentsAccountTypeAdapter.OnAccountTypeClick, View.OnClickListener, POIDocumentSubmitTypeAdapter.OnSubmitType, TextWatcher, AddedDocumentsListAdapter.ItemRemoved, View.OnLayoutChangeListener {
@@ -601,9 +605,9 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	@Override
 	public void afterTextChanged(Editable editable) {
-		if (IncreaseLimitController.editTextLength(etAccountNumber.getText().toString()) && rlSubmitCli.getVisibility() == View.GONE)
+		if (Utils.checkCLIAccountNumberValidation(etAccountNumber.getText().toString()) && rlSubmitCli.getVisibility() == View.GONE)
 			showSubmitButton();
-		else if (!IncreaseLimitController.editTextLength(etAccountNumber.getText().toString()))
+		else if (!Utils.checkCLIAccountNumberValidation(etAccountNumber.getText().toString()))
 			hideView(rlSubmitCli);
 	}
 
@@ -699,7 +703,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		}
 	}
 
-	public HttpAsyncTask<String, String, POIDocumentUploadResponse> initUpload(final Document document) {
+	public HttpAsyncTask<String, String, POIDocumentUploadResponse> initUpload(final Document document, final int totalFiles) {
 		return new HttpAsyncTask<String, String, POIDocumentUploadResponse>() {
 
 			private ProgressListener listener;
@@ -727,7 +731,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				};
 				MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
 				multipartTypedOutput.addPart("files", new CountingTypedFile("*/*", new File(path), listener));
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().uploadPOIDocuments(multipartTypedOutput, 22);
+				return ((WoolworthsApplication) getActivity().getApplication()).getApi().uploadPOIDocuments(multipartTypedOutput, 22,document.getFileNumber(),totalFiles,"8699101112");//make dynamic
 			}
 
 			@Override
@@ -754,7 +758,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				//update document as its uploaded
 				document.setUploaded(true);
 				if (isAllFilesUploaded(getValidDocumentList(documentList))) {
-					//MAKE POI ORIGIN API CALL
+					initPOIOriginRequest();
 					enableSubmitButton();
 					moveToProcessCompleteFragment();
 				}
@@ -838,9 +842,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	public void uploadDocuments(List<Document> dataList) {
 		disableSubmitButton();
+		int j=1;
 		for (int i = 0; i < dataList.size(); i++) {
-			if (dataList.get(i).getSize() <= Utils.POI_UPLOAD_FILE_SIZE_MAX)
-				initUpload(dataList.get(i)).execute();
+			if (dataList.get(i).getSize() <= Utils.POI_UPLOAD_FILE_SIZE_MAX) {
+				dataList.get(i).setFileNumber(j);
+				++j;
+				initUpload(dataList.get(i),getValidDocumentList(documentList).size()).execute();
+			}
 		}
 	}
 
@@ -1035,6 +1043,20 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			@Override
 			public void onFailure(String e) {
 				enableSubmitButton();
+			}
+		}).execute();
+	}
+	public void initPOIOriginRequest() {
+		//make dynamic values for cliID and productOfferingID
+		new CLIPOIOriginRequest(getActivity(), 111, "20", new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				CliPoiOriginResponse response= (CliPoiOriginResponse) object;
+			}
+
+			@Override
+			public void onFailure(String e) {
+
 			}
 		}).execute();
 	}

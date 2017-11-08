@@ -750,4 +750,13 @@ public class Utils {
 			}
 		}
 	}
+
+	public static boolean checkCLIAccountNumberValidation(String value)
+	{
+		String regex ="[0-9]+";
+		if(value !=null && value.matches(regex) && value.length()>4)
+			return true;
+		else
+			return false;
+	}
 }
