@@ -2,34 +2,21 @@ package za.co.woolworths.financial.services.android.models.dto;
 
 public class CreateOfferRequest {
 
-	public boolean maxCreditRequested;
-	public int productOfferingId;
-	public int grossMonthlyIncome;
-	public int nettMonthlyIncome;
-	public int additionalIncomeAmount;
-	public int mortgagePaymentAmount;
-	public int rentalPaymentAmount;
-	public int maintenanceExpenseAmount;
-	public int totalCreditExpenseAmount;
-	public int otherExpenseAmount;
+	private boolean maxCreditRequested;
+	private int productOfferingId;
+	private int creditLimitRequested;
+	private int grossMonthlyIncome;
+	private int nettMonthlyIncome;
+	private int additionalIncomeAmount;
+	private int mortgagePaymentAmount;
+	private int rentalPaymentAmount;
+	private int maintenanceExpenseAmount;
+	private int totalCreditExpenseAmount;
+	private int otherExpenseAmount;
 
-	public CreateOfferRequest() {
-	}
-
-	/**
-	 * @param mortgagePaymentAmount
-	 * @param rentalPaymentAmount
-	 * @param grossMonthlyIncome
-	 * @param nettMonthlyIncome
-	 * @param totalCreditExpenseAmount
-	 * @param maintenanceExpenseAmount
-	 * @param additionalIncomeAmount
-	 * @param productOfferingId
-	 * @param otherExpenseAmount
-	 */
-
-	public CreateOfferRequest(boolean maxCreditRequested, int productOfferingId, int grossMonthlyIncome, int nettMonthlyIncome, int additionalIncomeAmount, int mortgagePaymentAmount, int rentalPaymentAmount, int maintenanceExpenseAmount, int totalCreditExpenseAmount, int otherExpenseAmount) {
+	public CreateOfferRequest(boolean maxCreditRequested, int productOfferingId, int creditLimitRequested, int grossMonthlyIncome, int nettMonthlyIncome, int additionalIncomeAmount, int mortgagePaymentAmount, int rentalPaymentAmount, int maintenanceExpenseAmount, int totalCreditExpenseAmount, int otherExpenseAmount) {
 		super();
+		this.creditLimitRequested = creditLimitRequested;
 		this.maxCreditRequested = maxCreditRequested;
 		this.productOfferingId = productOfferingId;
 		this.grossMonthlyIncome = grossMonthlyIncome;
