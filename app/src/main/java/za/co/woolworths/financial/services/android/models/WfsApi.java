@@ -132,8 +132,8 @@ public class WfsApi {
 		return mApiInterface.createOfferRequest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), offerRequest);
 	}
 
-	public OfferActive cliUpdateApplication(CreateOfferRequest offerRequest,String cliId) {
-		return mApiInterface.cliUpdateApplication(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), cliId,offerRequest);
+	public OfferActive cliUpdateApplication(CreateOfferRequest offerRequest, String cliId) {
+		return mApiInterface.cliUpdateApplication(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), cliId, offerRequest);
 	}
 
 	public OfferActive createOfferDecision(CreateOfferDecision createOfferDecision, String cliId) {
