@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -410,8 +411,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					Intent result = new Intent();
-					setResult(RESULT_OK, result);
+					woolworthsApplication
+							.bus()
+							.send(new CreateOfferDecision());
 					dismissLayout();
 				}
 			});

@@ -24,6 +24,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.service.RxBus;
 import za.co.woolworths.financial.services.android.ui.activities.YoutubePlayerActivity;
 
 
@@ -69,6 +70,8 @@ public class WoolworthsApplication extends Application {
 	private static int NumVouchers = 0;
 
 	public UpdateBankDetail updateBankDetail;
+
+	private RxBus bus;
 
 	public static void setSha1Password(String sha1Password) {
 		WoolworthsApplication.sha1Password = sha1Password;
@@ -213,6 +216,7 @@ public class WoolworthsApplication extends Application {
 		Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
 		CalligraphyConfig.initDefault("fonts/WFutura-medium.ttf", R.attr.fontPath);
 		getTracker();
+		bus = new RxBus();
 		registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
 
 			@Override
@@ -402,5 +406,9 @@ public class WoolworthsApplication extends Application {
 
 	public static void setSsoUpdateDetailsRedirectUri(String pSsoUpdateDetailsRedirectUri) {
 		ssoUpdateDetailsRedirectUri = pSsoUpdateDetailsRedirectUri;
+	}
+
+	public RxBus bus() {
+		return bus;
 	}
 }

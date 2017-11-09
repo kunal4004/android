@@ -1,11 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -20,10 +20,7 @@ import com.awfs.coordination.R;
 import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
-import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIAllStepsContainerFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIEligibilityAndPermissionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIPOIProblemFragment;
@@ -32,16 +29,15 @@ import za.co.woolworths.financial.services.android.ui.fragments.DocumentFragment
 import za.co.woolworths.financial.services.android.ui.fragments.OfferCalculationFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.SupplyIncomeDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.DeclineOfferInterface;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.ContactUsFragmentChange;
 import za.co.woolworths.financial.services.android.util.controller.CLIStepIndicatorListener;
 import za.co.woolworths.financial.services.android.util.controller.EventStatus;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFragmentChange, View.OnClickListener {
+public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFragmentChange, View.OnClickListener, DeclineOfferInterface {
 
 	private WTextView tvDeclineOffer, mToolbarText;
 	private ProgressBar pbDecline;
@@ -49,9 +45,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	private String mOfferActivePayload;
 	private boolean mOfferActive, mCloseButtonEnabled;
 	private String mNextStep;
-	private final int DECLINE_OFFER_CODE = 123;
 	WoolworthsApplication woolworthsApplication;
-	private WGlobalState wGlobalState;
 	private int editNumberValue;
 	public EventStatus eventStatus = EventStatus.NONE;
 	public ImageView imBack;
@@ -84,7 +78,6 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 
 	private void init() {
 		woolworthsApplication = (WoolworthsApplication) CLIPhase2Activity.this.getApplication();
-		wGlobalState = woolworthsApplication.getWGlobalState();
 		tvDeclineOffer = (WTextView) findViewById(R.id.tvDeclineOffer);
 		pbDecline = (ProgressBar) findViewById(R.id.pbDecline);
 		imBack = (ImageView) findViewById(R.id.imBack);
@@ -94,8 +87,11 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 		Toolbar mToolbar = (Toolbar) findViewById(R.id.mToolbar);
 		mToolbarText = (WTextView) findViewById(R.id.toolbarText);
 		setSupportActionBar(mToolbar);
-		getSupportActionBar().setTitle(null);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setTitle(null);
+			actionBar.setDisplayHomeAsUpEnabled(false);
+		}
 	}
 
 	public void loadFragment(String nextStep) {
@@ -171,7 +167,6 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			DocumentFragment documentFragment = new DocumentFragment();
 			documentFragment.setStepIndicatorListener(cliStepIndicatorListener);
 			openFragment(documentFragment);
-			return;
 		}
 	}
 
@@ -267,7 +262,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.tvDeclineOffer:
-				Utils.displayValidationMessage(CLIPhase2Activity.this, CustomPopUpWindow.MODAL_LAYOUT.CLI_DANGER_ACTION_MESSAGE_VALIDATION, DECLINE_OFFER_CODE);
+				Utils.displayValidationMessage(CLIPhase2Activity.this, CustomPopUpWindow.MODAL_LAYOUT.CLI_DANGER_ACTION_MESSAGE_VALIDATION, "");
 				break;
 			case R.id.imBack:
 				onBack();
@@ -275,60 +270,6 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			default:
 				break;
 		}
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-
-		switch (resultCode) {
-			case RESULT_OK:
-				switch (requestCode) {
-					case DECLINE_OFFER_CODE:
-						runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								cliDelcineOfferRequest(wGlobalState.getDeclineDecision());
-							}
-						});
-						break;
-					default:
-						break;
-				}
-				break;
-			default:
-				break;
-		}
-	}
-
-	private void cliDelcineOfferRequest(CreateOfferDecision createOfferDecision) {
-		onDeclineLoad();
-		CLIOfferDecision cliOfferDecision = new CLIOfferDecision(CLIPhase2Activity.this, createOfferDecision, String.valueOf(mCLICreateOfferResponse.cliId), new OnEventListener() {
-
-			@Override
-			public void onSuccess(Object object) {
-				OfferActive mObjOffer = ((OfferActive) object);
-				switch (mObjOffer.httpCode) {
-					case 200:
-						finishActivity();
-						break;
-					case 440:
-						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(CLIPhase2Activity.this, mObjOffer.response.stsParams);
-						break;
-					default:
-						Utils.displayValidationMessage(CLIPhase2Activity.this, CustomPopUpWindow.MODAL_LAYOUT.ERROR, mObjOffer.response.desc);
-						break;
-				}
-				onDeclineComplete();
-			}
-
-			@Override
-			public void onFailure(String e) {
-				onDeclineComplete();
-			}
-		});
-
-		cliOfferDecision.execute();
 	}
 
 	private void onDeclineLoad() {
@@ -367,22 +308,18 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	}
 
 	public void hideBurgerButton() {
-		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setDisplayHomeAsUpEnabled(false);
+		}
 	}
 
-	/**
-	 * Hides the soft keyboard
-	 */
 	private void hideSoftKeyboard() {
-		try {
-			final Activity activity = CLIPhase2Activity.this;
-			if (activity != null) {
-				if (activity.getCurrentFocus() != null) {
-					InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(INPUT_METHOD_SERVICE);
-					inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-				}
-			}
-		} catch (Exception ignored) {
+		Activity activity = CLIPhase2Activity.this;
+		if (activity.getCurrentFocus() != null) {
+			InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(INPUT_METHOD_SERVICE);
+			assert inputMethodManager != null;
+			inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
 		}
 	}
 
@@ -404,5 +341,15 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 
 	public void hideCloseIcon() {
 		imBack.setVisibility(View.INVISIBLE);
+	}
+
+	@Override
+	public void onLoad() {
+		onDeclineLoad();
+	}
+
+	@Override
+	public void onLoadComplete() {
+		onDeclineComplete();
 	}
 }
