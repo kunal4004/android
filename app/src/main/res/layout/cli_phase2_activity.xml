@@ -65,7 +65,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:letterSpacing="0.1"
-                    android:text="@string/decline"
+                    android:text="@string/status_decline"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
                     android:textSize="10sp"
