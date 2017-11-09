@@ -454,17 +454,6 @@ public class Utils {
 		((AppCompatActivity) context).overridePendingTransition(0, 0);
 	}
 
-	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, int resultCode) {
-		AppCompatActivity appCompatActivity = ((AppCompatActivity) context);
-		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
-		Bundle args = new Bundle();
-		args.putSerializable("key", key);
-		openMsg.putExtras(args);
-		appCompatActivity.startActivityForResult(openMsg, resultCode);
-		appCompatActivity.overridePendingTransition(0, 0);
-	}
-
-
 	public static void alertErrorMessage(Context context, String message) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setMessage(message);
