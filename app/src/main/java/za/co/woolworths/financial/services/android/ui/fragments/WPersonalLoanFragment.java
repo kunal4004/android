@@ -24,6 +24,10 @@ import com.google.gson.Gson;
 import java.text.ParseException;
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
@@ -71,6 +75,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private boolean viewWasCreated = false;
 	private RelativeLayout relBalanceProtection, relViewTransactions;
 	private CLIGetOfferActive cliGetOfferActive;
+	private final CompositeDisposable disposables = new CompositeDisposable();
 
 	@Nullable
 	@Override
@@ -90,6 +95,16 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			addListener();
 			setAccountDetails();
 			viewWasCreated = true;
+			disposables.add(woolworthsApplication
+					.bus()
+					.toObservable()
+					.subscribeOn(Schedulers.io())
+					.observeOn(AndroidSchedulers.mainThread())
+					.subscribe(new Consumer<Object>() {
+						@Override
+						public void accept(Object object) throws Exception {
+						}
+					}));
 		}
 	}
 
@@ -399,6 +414,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		disposables.clear();
 		if (cliGetOfferActive != null) {
 			if (!cliGetOfferActive.isCancelled()) {
 				cliGetOfferActive.cancel(true);
