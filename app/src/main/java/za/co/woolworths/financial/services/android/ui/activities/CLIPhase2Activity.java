@@ -103,12 +103,6 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			CLIPOIProblemFragment clipoiProblem = new CLIPOIProblemFragment();
 			hideView(imBack);
 			openNextFragment(clipoiProblem);
-		} else if (nextStep.equalsIgnoreCase(getString(R.string.status_contact_us))) {
-			showView(imBack);
-			ContactUsFinancialServiceFragment contactUsFinancialServiceFragment = new ContactUsFinancialServiceFragment();
-			openNextFragment(contactUsFinancialServiceFragment);
-			setTitle(getString(R.string.contact_us_financial_services));
-			actionBarCloseIcon();
 		} else {
 			showView(imBack);
 			moveToCLIAllStepsContainerFragment();

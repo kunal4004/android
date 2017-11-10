@@ -230,6 +230,15 @@ public class IncreaseLimitController {
 					|| nextStep.equalsIgnoreCase(getString(R.string.status_decline))
 					|| nextStep.equalsIgnoreCase(getString(R.string.status_unavailable))) {
 
+			} else if (nextStep.equalsIgnoreCase(getString(R.string.status_contact_us))) {
+				String messageDetail = offerActive.messageDetail;
+				if (!TextUtils.isEmpty(messageDetail)) {
+					Integer stripToNumber = Utils.numericFieldOnly(messageDetail);
+					if (stripToNumber != null) {
+						Utils.makeCall(mContext, String.valueOf(stripToNumber));
+					}
+				}
+
 			} else {
 				moveToCLIPhase(offerActive, productOfferingId);
 			}
