@@ -1,7 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -14,17 +17,24 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
 
+import za.co.woolworths.financial.services.android.models.WRewardsCardDetails;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.TierInfo;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsMembersInfoActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.FeaturedPromotionsAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.CardType;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 /**
@@ -45,6 +55,15 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 	public WTextView noTireHistory;
 	private RelativeLayout mRlConnect;
 	private ErrorHandlerView mErrorHandlerView;
+	private WTextView barCodeNumber;
+	private ImageView bardCodeImage;
+	private View flipCardFrontLayout;
+	private View flipCardBackLayout;
+	private AnimatorSet mSetRightOut;
+	private AnimatorSet mSetLeftIn;
+	private boolean mIsBackVisible = false;
+	private boolean isStarted=false;
+
 
 	@Nullable
 	@Override
@@ -61,6 +80,10 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		toNextTire = (WTextView) view.findViewById(R.id.toNextTire);
 		toNextTireLayout = (RelativeLayout) view.findViewById(R.id.toNextTireLayout);
 		promotionViewPager = (ViewPager) view.findViewById(R.id.promotionViewPager);
+		barCodeNumber=(WTextView)view.findViewById(R.id.barCodeNumber);
+		bardCodeImage=(ImageView) view.findViewById(R.id.barCodeImage);
+		flipCardFrontLayout=view.findViewById(R.id.flipCardFrontLayout);
+		flipCardBackLayout=view.findViewById(R.id.flipCardBackLayout);
 		Bundle bundle = getArguments();
 		voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
 		if (voucherResponse.tierInfo != null) {
@@ -77,7 +100,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 			}
 
 		});
-
+		loadDefaultCardType();
 		return view;
 	}
 
@@ -149,11 +172,15 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		tireStatus.setText(tireInfo.currentTier);
 		savings.setText(WFormatter.formatAmount(tireInfo.earned));
 		infoImage.setOnClickListener(this);
+		flipCardFrontLayout.setOnClickListener(this);
+		flipCardBackLayout.setOnClickListener(this);
 		if (currentStatus.equals(getString(R.string.valued)) || currentStatus.equals(getString(R.string.loyal))) {
 			toNextTireLayout.setVisibility(View.VISIBLE);
 			toNextTire.setText(WFormatter.formatAmount(tireInfo.toSpend));
 		}
 		loadPromotions();
+		loadCardDetails();
+
 	}
 
 	@Override
@@ -167,5 +194,112 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 				redirectToWRewardsMemberActivity(2);
 			}
 		}
+		/*else if(v.getId() == R.id.flipCardBackLayout || v.getId()==R.id.flipCardFrontLayout)
+		{
+			flipCard();
+		}*/
+	}
+
+	private void changeCameraDistance() {
+		int distance = 8000;
+		float scale = getResources().getDisplayMetrics().density * distance;
+		flipCardFrontLayout.setCameraDistance(scale);
+		flipCardBackLayout.setCameraDistance(scale);
+	}
+
+	private void loadAnimations() {
+		mSetRightOut = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.animator.card_flip_out);
+		mSetLeftIn = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.animator.card_flip_in);
+	}
+
+	public void flipCard() {
+		if (!mIsBackVisible) {
+			mSetRightOut.setTarget(flipCardFrontLayout);
+			mSetLeftIn.setTarget(flipCardBackLayout);
+			mSetRightOut.start();
+			mSetLeftIn.start();
+			mIsBackVisible = true;
+		} else {
+			mSetRightOut.setTarget(flipCardBackLayout);
+			mSetLeftIn.setTarget(flipCardFrontLayout);
+			mSetRightOut.start();
+			mSetLeftIn.start();
+			mIsBackVisible = false;
+		}
+	}
+
+	/*@Override
+	public void setUserVisibleHint(boolean isVisibleToUser) {
+		super.setUserVisibleHint(isVisibleToUser);
+		if (isStarted) {
+			if(isVisibleToUser && voucherResponse.tierInfo!=null && !mIsBackVisible )
+			{
+				flipCard();
+			}
+		}
+
+	}*/
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		isStarted=true;
+	}
+
+	public void loadCardDetails()
+	{
+		new WRewardsCardDetails(getActivity(), new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				CardDetailsResponse cardDetailsResponse= (CardDetailsResponse) object;
+				if(cardDetailsResponse!=null)
+					handleCard(cardDetailsResponse);
+			}
+
+			@Override
+			public void onFailure(String e) {
+				//do nothing
+			}
+		}).execute();
+	}
+
+	public void handleCard(CardDetailsResponse cardDetailsResponse)
+	{
+		if(cardDetailsResponse.cardType !=null&& cardDetailsResponse.cardNumber !=null)
+		{
+			if(cardDetailsResponse.cardType.equalsIgnoreCase(CardType.WREWARDS.getType()))
+			{
+				flipCardFrontLayout.setBackgroundResource(R.drawable.wrewards_card);
+				flipCardBackLayout.setBackgroundResource(R.drawable.wrewards_card_flipped);
+			}else if(cardDetailsResponse.cardType.equalsIgnoreCase(CardType.MYSCHOOL.getType()))
+			{
+				flipCardFrontLayout.setBackgroundResource(R.drawable.myschool_card);
+				flipCardBackLayout.setBackgroundResource(R.drawable.myschool_card_flipped);
+			}
+			else {
+				return;
+			}
+			barCodeNumber.setText(WFormatter.formatVoucher(cardDetailsResponse.cardNumber));
+			try {
+				bardCodeImage.setImageBitmap(Utils.encodeAsBitmap(cardDetailsResponse.cardNumber, BarcodeFormat.CODE_128, bardCodeImage.getWidth(), 60));
+			} catch (WriterException e) {
+				e.printStackTrace();
+			}
+			loadAnimations();
+			changeCameraDistance();
+			Handler handler = new Handler();
+			handler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					flipCard();
+				}
+			}, 1000);
+		}
+	}
+
+	public void loadDefaultCardType()
+	{
+		flipCardFrontLayout.setBackgroundResource(R.drawable.wrewards_card);
+		flipCardBackLayout.setBackgroundResource(R.drawable.wrewards_card_flipped);
 	}
 }

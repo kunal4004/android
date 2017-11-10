@@ -4,4 +4,6 @@
     <integer name="blur_dialog_animation_duration">300</integer>
     <integer name="twelve">12</integer>
     <integer name="transition_duration">1000</integer>
+    <integer name="anim_length">1000</integer>
+    <integer name="anim_length_half">500</integer>
 </resources>

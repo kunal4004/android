@@ -20,6 +20,7 @@ import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.CLICreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
 import za.co.woolworths.financial.services.android.models.dto.CliPoiOriginResponse;
+import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
@@ -613,7 +614,7 @@ public interface ApiInterface {
 			@Query("sku") String sku,
 			Callback<String> callback);
 
-	@Headers({ "Accept: application/json"})
+	@Headers({"Accept: application/json"})
 	@POST("/user/cli/offer/{cliId}/POI")
 	POIDocumentUploadResponse uploadPOIDocuments(
 			@Header("apiId") String apiId,
@@ -643,4 +644,17 @@ public interface ApiInterface {
 			@Header("sessionToken") String sessionToken,
 			@Path("cliId") int cliId,
 			@Query("productOfferingId") String productOfferingId);
+
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800"})
+	@GET("/reward/cardDetails")
+	CardDetailsResponse getCardDetails(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("sessionToken") String sessionToken);
 }
