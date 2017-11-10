@@ -46,7 +46,6 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	private boolean mOfferActive, mCloseButtonEnabled;
 	private String mNextStep;
 	WoolworthsApplication woolworthsApplication;
-	private int editNumberValue;
 	public EventStatus eventStatus = EventStatus.NONE;
 	public ImageView imBack;
 
@@ -288,14 +287,6 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 				showDeclineOffer();
 			}
 		});
-	}
-
-	public int getEditNumberValue() {
-		return editNumberValue;
-	}
-
-	public void setEditNumberValue(int editNumberValue) {
-		this.editNumberValue = editNumberValue;
 	}
 
 	@Override

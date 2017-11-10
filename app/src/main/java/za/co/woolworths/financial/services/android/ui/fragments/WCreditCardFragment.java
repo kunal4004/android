@@ -69,7 +69,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private IncreaseLimitController mIncreaseLimitController;
 	private OfferActive offerActive;
 	private boolean viewWasCreated = false;
-	private CLIGetOfferActive cliGetOfferActive;
 	private final CompositeDisposable disposables = new CompositeDisposable();
 
 	@Nullable
@@ -219,7 +218,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	private void getActiveOffer() {
 		onLoad();
-		cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
+		CLIGetOfferActive cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				offerActive = ((OfferActive) object);

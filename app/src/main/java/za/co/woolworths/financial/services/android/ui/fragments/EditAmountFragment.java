@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
@@ -30,8 +33,6 @@ public class EditAmountFragment extends CLIFragment {
 	private WLoanEditTextView etAmount;
 	private int creditReqestMin = 0;
 	private int creditRequestMax = 0;
-	private int currCredit = 0;
-	private int slideAmount;
 
 	public EditAmountFragment() {
 		// Required empty public constructor
@@ -53,11 +54,9 @@ public class EditAmountFragment extends CLIFragment {
 		listener();
 		Bundle args = getArguments();
 		if (args != null) {
-			slideAmount = args.getInt("slideAmount");
+			int slideAmount = args.getInt("slideAmount");
 			creditReqestMin = args.getInt("creditReqestMin");
 			creditRequestMax = args.getInt("creditRequestMax");
-			currCredit = args.getInt("currCredit");
-
 			etAmount.setText(String.valueOf(slideAmount));
 			etAmount.setSelection(etAmount.getText().toString().length());
 		}
@@ -68,10 +67,14 @@ public class EditAmountFragment extends CLIFragment {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
-					retrieveNumber(etAmount.getText().toString());
+					String slideAmount = etAmount.getText().toString();
+					if (!TextUtils.isEmpty(slideAmount)) {
+						retrieveNumber(slideAmount);
+					}
 					View view = getActivity().getCurrentFocus();
 					if (view != null) {
 						InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+						assert imm != null;
 						imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 					}
 					return true;
@@ -86,7 +89,6 @@ public class EditAmountFragment extends CLIFragment {
 					public void onBackPressed() {
 						Activity activity = getActivity();
 						if (activity instanceof CLIPhase2Activity) {
-							((CLIPhase2Activity) activity).setEditNumberValue(-1);
 							activity.onBackPressed();
 						}
 					}
@@ -95,19 +97,21 @@ public class EditAmountFragment extends CLIFragment {
 		etAmount.setOnKeyPreImeListener(onKeyPreImeListener);
 	}
 
-	private void retrieveNumber(String number) {
-		int newAmount = Utils.numericFieldOnly(number);
+	private void retrieveNumber(String slideAmount) {
+		int newAmount = Utils.numericFieldOnly(slideAmount);
 		String title = getString(R.string.amount_too_low_modal_title);
 		if (newAmount < creditReqestMin) {
 			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.AMOUNT_STOCK, title, getString(R.string.amount_too_low_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(creditReqestMin)));
 		} else if (newAmount > creditRequestMax) {
 			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.AMOUNT_STOCK, title, getString(R.string.amount_too_high_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(creditRequestMax)));
 		} else {
-			int progressValue = Utils.numericFieldOnly(etAmount.getText().toString()) - creditReqestMin;
+			int progressValue = newAmount - creditReqestMin;
 			Activity activity = getActivity();
 			if (activity instanceof CLIPhase2Activity) {
 				CLIPhase2Activity cliPhase2Activity = ((CLIPhase2Activity) activity);
-				cliPhase2Activity.setEditNumberValue(progressValue);
+				((WoolworthsApplication) getActivity().getApplication())
+						.bus()
+						.send(new BusStation(progressValue));
 				FragmentManager fm = cliPhase2Activity.getSupportFragmentManager();
 				fm.popBackStack(EditAmountFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
 			}
@@ -122,6 +126,7 @@ public class EditAmountFragment extends CLIFragment {
 
 	private void forceKeyboard(WLoanEditTextView etAmount) {
 		InputMethodManager imm = (InputMethodManager) EditAmountFragment.this.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		assert imm != null;
 		imm.showSoftInput(etAmount, InputMethodManager.SHOW_IMPLICIT);
 		EditAmountFragment.this.getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 		etAmount.addTextChangedListener(new CurrencyTextWatcher(etAmount));
@@ -139,7 +144,7 @@ public class EditAmountFragment extends CLIFragment {
 					etAmount.setSelection(etAmount.getText().toString().length());
 				}
 			});
-		} catch (Exception ex) {
+		} catch (Exception ignored) {
 		}
 
 		if (etAmount != null)

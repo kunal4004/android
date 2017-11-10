@@ -226,7 +226,9 @@ public class IncreaseLimitController {
 			String nextStep = getNextStep();
 			if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
 				moveToCLIPhase(offerActive, productOfferingId);
-			} else if ((nextStep.equalsIgnoreCase(getString(R.string.status_in_progress))) || nextStep.equalsIgnoreCase(getString(R.string.status_decline)) || nextStep.equalsIgnoreCase(getString(R.string.status_unavailable))) {
+			} else if ((nextStep.equalsIgnoreCase(getString(R.string.status_in_progress)))
+					|| nextStep.equalsIgnoreCase(getString(R.string.status_decline))
+					|| nextStep.equalsIgnoreCase(getString(R.string.status_unavailable))) {
 
 			} else {
 				moveToCLIPhase(offerActive, productOfferingId);

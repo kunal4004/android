@@ -60,7 +60,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	private ActionBar mActionBar;
 	private DrawerLayout mDrawerLayout;
 	private WGlobalState mWGlobalState;
-	private int a, b;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

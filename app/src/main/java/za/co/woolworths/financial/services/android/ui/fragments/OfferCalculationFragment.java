@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +43,7 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.CLICreateOffer;
 import za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.rest.CLIUpdateApplication;
+import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -161,7 +161,10 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						public void accept(Object object) throws Exception {
 							if (object instanceof CreateOfferDecision) {
 								cliDelcineOfferRequest(mGlobalState.getDeclineDecision());
-							} else if (object instanceof EditAmountFragment) {
+							} else if (object instanceof BusStation) {
+								BusStation busStation = (BusStation) object;
+								if (busStation != null)
+									sbSlideAmount.setProgress(busStation.getNumber());
 							}
 						}
 					}));
@@ -256,7 +259,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				switch (mObjOffer.httpCode) {
 					case 200:
 						displayCurrentOffer(mObjOffer);
-						onLoadComplete();
 						break;
 
 					case 440:
@@ -537,7 +539,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			case R.id.tvSlideToEditAmount:
 				try {
 					Bundle args = new Bundle();
-
 					String slideAmount = tvSlideToEditAmount.getText().toString();
 					if (slideAmount != null) {
 						args.putInt("slideAmount", Integer.valueOf(Utils.numericFieldOnly(slideAmount)));
@@ -545,7 +546,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					args.putInt("currCredit", mObjOffer.offer.currCredit);
 					args.putInt("creditReqestMin", mObjOffer.offer.creditReqestMin);
 					args.putInt("creditRequestMax", mObjOffer.offer.creditRequestMax);
-
 					mCliPhase2Activity.actionBarBackIcon();
 					EditAmountFragment editAmountFragment = new EditAmountFragment();
 					editAmountFragment.setArguments(args);
@@ -563,12 +563,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 	public CreateOfferRequest createOffer
 			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
-		Application application = mObjOffer.application;
-		if (application == null) {
-			application = new Application();
-		}
 		return new CreateOfferRequest(
-				application.maxCreditLimitRequested,
 				woolworthsApplication.getProductOfferingId(),
 				1000,
 				Integer.valueOf(hashIncomeDetail.get("GROSS_MONTHLY_INCOME")),
@@ -628,14 +623,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (editorWasShown) {
-			int editNumberFromUser = mCliPhase2Activity.getEditNumberValue();
-			if (!TextUtils.isEmpty(String.valueOf(editNumberFromUser)) && !(editNumberFromUser == -1)) {
-				sbSlideAmount.setProgress(editNumberFromUser);
-			}
-			editorWasShown = false;
-		}
-		mCliPhase2Activity.actionBarCloseIcon();
+		if (mCliPhase2Activity != null)
+			mCliPhase2Activity.actionBarCloseIcon();
 		getActivity().registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 	}
 
