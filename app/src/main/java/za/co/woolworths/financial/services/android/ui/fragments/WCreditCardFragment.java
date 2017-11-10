@@ -363,7 +363,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				mIncreaseLimitController.enableView(llIncreaseLimitContainer);
 			}
 
-			mIncreaseLimitController.offerActiveUIState(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
+			mIncreaseLimitController.accountCLIStatus(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
 		}
 	}
 

@@ -78,7 +78,7 @@ public class IncreaseLimitController {
 		editTextView.clearFocus();
 	}
 
-	public void offerActiveUIState(LinearLayout llCommonLayer, WTextView tvIncreaseLimit, WTextView tvApplyNowIncreaseLimit, WTextView tvIncreaseLimitDescription, ImageView logoIncreaseLimit, OfferActive offerActive) {
+	public void accountCLIStatus(LinearLayout llCommonLayer, WTextView tvIncreaseLimit, WTextView tvApplyNowIncreaseLimit, WTextView tvIncreaseLimitDescription, ImageView logoIncreaseLimit, OfferActive offerActive) {
 		String nextStep = offerActive.nextStep;
 		String messageSummary = offerActive.messageSummary;
 		String messageDetail = offerActive.messageDetail;
