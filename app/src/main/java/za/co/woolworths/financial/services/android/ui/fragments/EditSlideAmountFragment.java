@@ -27,14 +27,16 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 
-public class EditAmountFragment extends CLIFragment {
+public class EditSlideAmountFragment extends CLIFragment {
 
 	private View view;
 	private WLoanEditTextView etAmount;
 	private int creditReqestMin = 0;
 	private int creditRequestMax = 0;
+	String title;
 
-	public EditAmountFragment() {
+
+	public EditSlideAmountFragment() {
 		// Required empty public constructor
 	}
 
@@ -59,6 +61,7 @@ public class EditAmountFragment extends CLIFragment {
 			creditRequestMax = args.getInt("creditRequestMax");
 			etAmount.setText(String.valueOf(slideAmount));
 			etAmount.setSelection(etAmount.getText().toString().length());
+			title = getString(R.string.amount_too_low_modal_title);
 		}
 	}
 
@@ -67,15 +70,12 @@ public class EditAmountFragment extends CLIFragment {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
+					hideKeyboard();
 					String slideAmount = etAmount.getText().toString();
 					if (!TextUtils.isEmpty(slideAmount)) {
 						retrieveNumber(slideAmount);
-					}
-					View view = getActivity().getCurrentFocus();
-					if (view != null) {
-						InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-						assert imm != null;
-						imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+					} else {
+						minAmountMessage();
 					}
 					return true;
 				}
@@ -99,21 +99,22 @@ public class EditAmountFragment extends CLIFragment {
 
 	private void retrieveNumber(String slideAmount) {
 		int newAmount = Utils.numericFieldOnly(slideAmount);
-		String title = getString(R.string.amount_too_low_modal_title);
 		if (newAmount < creditReqestMin) {
-			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.AMOUNT_STOCK, title, getString(R.string.amount_too_low_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(creditReqestMin)));
+			minAmountMessage();
 		} else if (newAmount > creditRequestMax) {
-			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.AMOUNT_STOCK, title, getString(R.string.amount_too_high_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(creditRequestMax)));
+			maxAmountMessage();
 		} else {
 			int progressValue = newAmount - creditReqestMin;
 			Activity activity = getActivity();
-			if (activity instanceof CLIPhase2Activity) {
-				CLIPhase2Activity cliPhase2Activity = ((CLIPhase2Activity) activity);
-				((WoolworthsApplication) getActivity().getApplication())
-						.bus()
-						.send(new BusStation(progressValue));
-				FragmentManager fm = cliPhase2Activity.getSupportFragmentManager();
-				fm.popBackStack(EditAmountFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+			if (activity != null) {
+				if (activity instanceof CLIPhase2Activity) {
+					CLIPhase2Activity cliPhase2Activity = ((CLIPhase2Activity) activity);
+					((WoolworthsApplication) activity.getApplication())
+							.bus()
+							.send(new BusStation(progressValue));
+					FragmentManager fm = cliPhase2Activity.getSupportFragmentManager();
+					fm.popBackStack(EditSlideAmountFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+				}
 			}
 		}
 	}
@@ -125,29 +126,55 @@ public class EditAmountFragment extends CLIFragment {
 	}
 
 	private void forceKeyboard(WLoanEditTextView etAmount) {
-		InputMethodManager imm = (InputMethodManager) EditAmountFragment.this.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-		assert imm != null;
-		imm.showSoftInput(etAmount, InputMethodManager.SHOW_IMPLICIT);
-		EditAmountFragment.this.getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-		etAmount.addTextChangedListener(new CurrencyTextWatcher(etAmount));
+		Activity activity = getActivity();
+		if (activity != null) {
+			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+			assert imm != null;
+			imm.showSoftInput(etAmount, InputMethodManager.SHOW_IMPLICIT);
+			activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+			etAmount.addTextChangedListener(new CurrencyTextWatcher(etAmount));
+		}
+	}
+
+	private void hideKeyboard() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			View view = activity.getCurrentFocus();
+			if (view != null) {
+				InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+				assert imm != null;
+				imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+			}
+		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
 		try {
-			getActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					etAmount.requestFocus();
-					forceKeyboard(etAmount);
-					etAmount.setSelection(etAmount.getText().toString().length());
-				}
-			});
+			Activity activity = getActivity();
+			if (activity != null) {
+				activity.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						etAmount.requestFocus();
+						forceKeyboard(etAmount);
+						etAmount.setSelection(etAmount.getText().toString().length());
+					}
+				});
+			}
 		} catch (Exception ignored) {
 		}
 
 		if (etAmount != null)
 			etAmount.requestFocus();
+	}
+
+	private void minAmountMessage() {
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.AMOUNT_STOCK, title, getString(R.string.amount_too_low_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(creditReqestMin)));
+	}
+
+	private void maxAmountMessage() {
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.AMOUNT_STOCK, title, getString(R.string.amount_too_high_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(creditRequestMax)));
 	}
 }
