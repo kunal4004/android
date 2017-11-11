@@ -167,8 +167,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 										sbSlideAmount.setProgress(busStation.getNumber());
 									}
 								});
-								if (mCliPhase2Activity != null)
-									mCliPhase2Activity.actionBarCloseIcon();
 							} else {
 							}
 						}
@@ -623,13 +621,22 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	@Override
 	public void onPause() {
 		super.onPause();
-		getActivity().unregisterReceiver(mConnectionBroadcast);
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.unregisterReceiver(mConnectionBroadcast);
+		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		getActivity().registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+		if (mCliPhase2Activity != null) {
+			mCliPhase2Activity.actionBarCloseIcon();
+		}
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+		}
 	}
 
 	@Override
@@ -638,45 +645,48 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	}
 
 	private void retryConnect() {
-		getActivity().runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
 
-				if (new ConnectionDetector().isOnline(getActivity())) {
-					if (!loadCompleted) {
-						if (latest_background_call != null) {
-							switch (latest_background_call) {
-								case DECLINE_OFFER:
-									woolworthsApplication
-											.bus()
-											.send(new CLIOfferDecision());
-									break;
+					if (new ConnectionDetector().isOnline(getActivity())) {
+						if (!loadCompleted) {
+							if (latest_background_call != null) {
+								switch (latest_background_call) {
+									case DECLINE_OFFER:
+										woolworthsApplication
+												.bus()
+												.send(new CLIOfferDecision());
+										break;
 
-								case ACCEPT_OFFER:
-									btnContinue.performClick();
-									break;
+									case ACCEPT_OFFER:
+										btnContinue.performClick();
+										break;
 
-								default:
-									break;
+									default:
+										break;
+								}
 							}
 						}
-					}
-				} else {
-					switch (latest_background_call) {
-						case DECLINE_OFFER:
-							mErrorHandlerView.showToast();
-							break;
+					} else {
+						switch (latest_background_call) {
+							case DECLINE_OFFER:
+								mErrorHandlerView.showToast();
+								break;
 
-						case ACCEPT_OFFER:
-							mErrorHandlerView.showToast();
-							break;
+							case ACCEPT_OFFER:
+								mErrorHandlerView.showToast();
+								break;
 
-						default:
-							break;
+							default:
+								break;
+						}
 					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	private void onLoadCompleted(boolean value) {
