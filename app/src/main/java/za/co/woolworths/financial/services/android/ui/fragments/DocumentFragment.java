@@ -17,7 +17,6 @@ import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.ArrayMap;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,27 +31,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.error.VolleyError;
-import com.android.volley.request.SimpleMultiPartRequest;
 import com.awfs.coordination.R;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
-import retrofit.mime.MultipartTypedOutput;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
@@ -78,10 +66,10 @@ import za.co.woolworths.financial.services.android.ui.adapters.AddedDocumentsLis
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentsAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.POIDocumentSubmitTypeAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.CountingTypedFile;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -90,16 +78,12 @@ import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.PathUtil;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
-import za.co.woolworths.financial.services.android.util.ProgressListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
 import static android.app.Activity.RESULT_OK;
-import static com.awfs.coordination.R.style.CLI;
-import static com.crittercism.internal.ap.C;
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 
 public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener, DocumentsAccountTypeAdapter.OnAccountTypeClick, View.OnClickListener, POIDocumentSubmitTypeAdapter.OnSubmitType, TextWatcher, AddedDocumentsListAdapter.ItemRemoved, View.OnLayoutChangeListener {
@@ -146,6 +130,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public String selectedAccountType;
 	public UpdateBankDetailResponse updateBankDetailResponse;
 	private CLIGetBankAccountTypes cliGetBankAccountTypes;
+	private CLIGetDeaBank cliGetDeaBank;
 
 	public String getSelectedBankType() {
 		return selectedBankType;
@@ -232,7 +217,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	private void cliDeaBankRequest() {
 		onLoad();
-		CLIGetDeaBank cliGetDeaBank = new CLIGetDeaBank(getActivity(), new OnEventListener() {
+		cliGetDeaBank = new CLIGetDeaBank(getActivity(), new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				backgroundTaskLoaded(false);
@@ -265,6 +250,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 			@Override
 			public void onFailure(String e) {
+				mErrorHandlerView.networkFailureHandler(e.toString());
 				onLoadComplete();
 				backgroundTaskLoaded(true);
 			}
@@ -309,7 +295,11 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		rclAddedDocumentsList = (RecyclerView) view.findViewById(R.id.rclDocumentsList);
 		addDocumentButton = (RelativeLayout) view.findViewById(R.id.addDocuments);
 		uploadDocumentsLayout = (LinearLayout) view.findViewById(R.id.uploadDocumentsLayout);
-		mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
+		WButton btnRetry = (WButton) view.findViewById(R.id.btnRetry);
+		RelativeLayout relConnect = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
+		mErrorHandlerView = new ErrorHandlerView(getActivity(), relConnect);
+		mErrorHandlerView.setMargin(relConnect, 0, 0, 0, 0);
+
 		yesPOIFromBank.setOnClickListener(this);
 		noPOIFromBank.setOnClickListener(this);
 		llAccountNumberLayout.setOnClickListener(this);
@@ -319,6 +309,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		rclAddedDocumentsList.addOnLayoutChangeListener(this);
 		btnSubmit.setOnClickListener(this);
 		uploadDocumentInfo.setOnClickListener(this);
+		btnRetry.setOnClickListener(this);
 	}
 
 	private void selectBankLayoutManager(List<Bank> deaBankList) {
@@ -419,7 +410,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	@Override
 	public void onConnectionChanged() {
-		retryConnect();
+		//retryConnect();
 	}
 
 	private void retryConnect() {
@@ -502,6 +493,12 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.UPLOAD_DOCUMENT_MODAL, "");
 				break;
 
+			case R.id.btnRetry:
+				if (new ConnectionDetector().isOnline(getActivity())) {
+					mErrorHandlerView.hideErrorHandler();
+					cliDeaBankRequest();
+				}
+				break;
 			default:
 				break;
 
@@ -715,6 +712,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				break;
 		}
 	}
+
 	public boolean checkRuntimePermission(int REQUEST_CODE) {
 		switch (REQUEST_CODE) {
 			case PERMS_REQUEST_CODE_GALLERY:
@@ -778,13 +776,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	public void uploadDocuments(List<Document> dataList) {
 		disableSubmitButton();
-		int totalFiles=getValidDocumentList(documentList).size();
-		int j=1;
+		int totalFiles = getValidDocumentList(documentList).size();
+		int j = 1;
 		for (int i = 0; i < dataList.size(); i++) {
 			if (dataList.get(i).getSize() <= Utils.POI_UPLOAD_FILE_SIZE_MAX) {
 				dataList.get(i).setFileNumber(j);
 				++j;
-				initUploadDocument(dataList.get(i),totalFiles,"22","17318731");
+				initUploadDocument(dataList.get(i), totalFiles, "22", "17318731");
 			}
 		}
 	}
@@ -935,16 +933,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		}).execute();
 	}
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		if (cliGetBankAccountTypes != null) {
-			if (!cliGetBankAccountTypes.isCancelled()) {
-				cliGetBankAccountTypes.cancel(true);
-			}
-		}
-	}
-
 	public void disableSubmitButton() {
 		Utils.disableEnableChildViews(nestedScrollView, false);
 		btnSubmit.setEnabled(false);
@@ -983,12 +971,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			}
 		}).execute();
 	}
+
 	public void initPOIOriginRequest() {
 		//make dynamic values for cliID and productOfferingID
 		new CLIPOIOriginRequest(getActivity(), 111, "20", new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				CliPoiOriginResponse response= (CliPoiOriginResponse) object;
+				CliPoiOriginResponse response = (CliPoiOriginResponse) object;
 			}
 
 			@Override
@@ -998,9 +987,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		}).execute();
 	}
 
-	public void initUploadDocument(final Document document, int totalFiles, String cliId, String saId)
-	{
-		String path=null;
+	public void initUploadDocument(final Document document, int totalFiles, String cliId, String saId) {
+		String path = null;
 		try {
 			path = PathUtil.getPath(getActivity(), document.getUri());
 		} catch (URISyntaxException e) {
@@ -1013,10 +1001,9 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		new CLISubmitPOIRequest(getActivity(), path, cliId, document.getFileNumber(), totalFiles, saId, new CLISubmitPOIRequest.UploadEventListener() {
 			@Override
 			public void onSuccess(POIDocumentUploadResponse response) {
-				if(response.httpCode==200) {
+				if (response.httpCode == 200) {
 					document.setUploaded(true);
-				}
-				else {
+				} else {
 					document.setUploaded(false);
 					document.setProgress(0);
 				}
@@ -1029,6 +1016,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				}
 
 			}
+
 			@Override
 			public void onFailure(String e) {
 				document.setUploaded(false);
@@ -1038,10 +1026,24 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 			@Override
 			public void onProgress(int percentage) {
-				Log.d("Progress", String.valueOf(percentage));
 				document.setProgress(percentage);
 				addedDocumentsListAdapter.notifyDataSetChanged();
 			}
 		}).execute();
+	}
+
+	private void cancelRequest(HttpAsyncTask httpAsyncTask) {
+		if (httpAsyncTask != null) {
+			if (!httpAsyncTask.isCancelled()) {
+				httpAsyncTask.cancel(true);
+			}
+		}
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		cancelRequest(cliGetBankAccountTypes);
+		cancelRequest(cliGetDeaBank);
 	}
 }
