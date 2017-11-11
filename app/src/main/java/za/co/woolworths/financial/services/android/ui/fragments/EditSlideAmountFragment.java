@@ -177,4 +177,14 @@ public class EditSlideAmountFragment extends CLIFragment {
 	private void maxAmountMessage() {
 		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.AMOUNT_STOCK, title, getString(R.string.amount_too_high_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(creditRequestMax)));
 	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Activity activity = getActivity();
+		if (activity != null) {
+			CLIPhase2Activity cliPhase2Activity = (CLIPhase2Activity) activity;
+			cliPhase2Activity.actionBarCloseIcon();
+		}
+	}
 }
