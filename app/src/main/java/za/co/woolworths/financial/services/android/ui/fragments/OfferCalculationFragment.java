@@ -167,7 +167,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 										sbSlideAmount.setProgress(busStation.getNumber());
 									}
 								});
-							} else {
 							}
 						}
 					}));
@@ -543,10 +542,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					Bundle args = new Bundle();
 					String slideAmount = tvSlideToEditAmount.getText().toString();
 
-					if (slideAmount != null) {
-						args.putInt("slideAmount", Integer.valueOf(Utils.numericFieldOnly(slideAmount)));
-					}
-
+					args.putInt("slideAmount", Integer.valueOf(Utils.numericFieldOnly(slideAmount)));
 					args.putInt("currCredit", mObjOffer.offer.currCredit);
 					args.putInt("creditReqestMin", mObjOffer.offer.creditReqestMin);
 					args.putInt("creditRequestMax", mObjOffer.offer.creditRequestMax);
@@ -583,30 +579,34 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	}
 
 	public void displayDefaultOffer(OfferActive mObjOffer) {
-		Offer offer = mObjOffer.offer;
-		mCurrentCredit = offer.currCredit;
-		mCreditReqestMin = offer.creditReqestMin;
-		String nextStep = mObjOffer.nextStep;
-
-		if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_decline))) {
-			Activity activity = getActivity();
-			if (activity instanceof CLIPhase2Activity) {
-				activity.finish();
-				activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+		if (mObjOffer != null) {
+			Offer offer = mObjOffer.offer;
+			mCurrentCredit = offer.currCredit;
+			mCreditReqestMin = offer.creditReqestMin;
+			String nextStep = mObjOffer.nextStep;
+			if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required))) {
+				int creditRequestMax = offer.creditRequestMax;
+				int mDifferenceCreditLimit = (creditRequestMax - mCreditReqestMin);
+				mCLiId = mObjOffer.cliId;
+				sbSlideAmount.setMax(mDifferenceCreditLimit);
+				sbSlideAmount.incrementProgressBy(INCREASE_PROGRESS_BY);
+				animSeekBarToMaximum();
+				tvCurrentCreditLimitAmount.setText(formatAmount(mCurrentCredit));
+				tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
+				tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
+				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
+				mGlobalState.setDecisionDeclineOffer(new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, false));
+				onLoadComplete();
+			} else {
+				Activity activity = getActivity();
+				if (activity instanceof CLIPhase2Activity) {
+					woolworthsApplication
+							.bus()
+							.send(new BusStation(mObjOffer));
+					activity.finish();
+					activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+				}
 			}
-		} else {
-			int creditRequestMax = offer.creditRequestMax;
-			int mDifferenceCreditLimit = (creditRequestMax - mCreditReqestMin);
-			mCLiId = mObjOffer.cliId;
-			sbSlideAmount.setMax(mDifferenceCreditLimit);
-			sbSlideAmount.incrementProgressBy(INCREASE_PROGRESS_BY);
-			animSeekBarToMaximum();
-			tvCurrentCreditLimitAmount.setText(formatAmount(mCurrentCredit));
-			tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
-			tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
-			int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
-			mGlobalState.setDecisionDeclineOffer(new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, false));
-			onLoadComplete();
 		}
 	}
 

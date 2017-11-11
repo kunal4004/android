@@ -35,6 +35,7 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
+import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -99,6 +100,13 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 					.subscribe(new Consumer<Object>() {
 						@Override
 						public void accept(Object object) throws Exception {
+							if (object instanceof BusStation) {
+								BusStation busStation = (BusStation) object;
+								OfferActive offerActive = busStation.getOfferActive();
+								if (offerActive != null) {
+									cliOfferStatus(offerActive);
+								}
+							}
 						}
 					}));
 		}
@@ -363,7 +371,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				mIncreaseLimitController.enableView(llIncreaseLimitContainer);
 			}
 
-			mIncreaseLimitController.accountCLIStatus(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
+			cliOfferStatus(offerActive);
 		}
 	}
 
@@ -380,5 +388,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				asyncRequestCredit.cancel(true);
 			}
 		}
+	}
+
+	private void cliOfferStatus(OfferActive offerActive) {
+		mIncreaseLimitController.accountCLIStatus(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
 	}
 }
