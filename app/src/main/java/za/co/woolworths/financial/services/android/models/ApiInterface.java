@@ -23,7 +23,7 @@ import za.co.woolworths.financial.services.android.models.dto.CliPoiOriginRespon
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
-import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
+import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
@@ -378,7 +378,7 @@ public interface ApiInterface {
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sessionToken") String sessionToken,
 			@Path("cliId") String cliId,
-			@Body CreateOfferDecision createOfferDecision);
+			@Body CLIOfferDecision createOfferDecision);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/user/cli/offer/{cliId}/POI")

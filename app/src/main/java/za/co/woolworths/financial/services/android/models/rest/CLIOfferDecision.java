@@ -5,20 +5,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.CreateOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 
 public class CLIOfferDecision extends HttpAsyncTask<String, String, OfferActive> {
 
-	private CreateOfferDecision createOfferDecision;
+	private za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision createOfferDecision;
 	private WoolworthsApplication mWoolworthsApp;
 	private OnEventListener<OfferActive> mCallBack;
 	private Context mContext;
 	public String mException, mCliId;
 
-	public CLIOfferDecision(Context context, CreateOfferDecision createOfferDecision, String cliId, OnEventListener callback) {
+	public CLIOfferDecision(Context context, za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision createOfferDecision, String cliId, OnEventListener callback) {
 		this.mCallBack = callback;
 		this.mContext = context;
 		this.mWoolworthsApp = ((WoolworthsApplication) ((AppCompatActivity) mContext).getApplication());

@@ -37,8 +37,6 @@ public class IncreaseLimitController {
 	public static final String FROM_EXPENSE_SCREEN = "FROM_EXPENSE_SCREEN";
 
 	public static final String YOUTUBE_API_KEY = "AIzaSyDY-DV5jz11iahZuIFGWcxQWtA37MgoSIA";
-	public static final String ACCEPT = "Accept";
-	public static final String DECLINE = "Decline";
 
 	private Context mContext;
 	private String nextStep;
