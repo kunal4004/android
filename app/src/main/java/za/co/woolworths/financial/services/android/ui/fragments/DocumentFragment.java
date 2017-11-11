@@ -17,6 +17,7 @@ import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.ArrayMap;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,14 +32,23 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.error.VolleyError;
+import com.android.volley.request.SimpleMultiPartRequest;
 import com.awfs.coordination.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import retrofit.mime.MultipartTypedOutput;
@@ -59,6 +69,7 @@ import za.co.woolworths.financial.services.android.models.rest.CLIGetBankAccount
 import za.co.woolworths.financial.services.android.models.rest.CLIGetDeaBank;
 import za.co.woolworths.financial.services.android.models.rest.CLIPOIOriginRequest;
 import za.co.woolworths.financial.services.android.models.rest.CLISendEmailRequest;
+import za.co.woolworths.financial.services.android.models.rest.CLISubmitPOIRequest;
 import za.co.woolworths.financial.services.android.models.rest.CLIUpdateBankDetails;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -88,6 +99,7 @@ import za.co.woolworths.financial.services.android.util.controller.IncreaseLimit
 import static android.app.Activity.RESULT_OK;
 import static com.awfs.coordination.R.style.CLI;
 import static com.crittercism.internal.ap.C;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 
 public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener, DocumentsAccountTypeAdapter.OnAccountTypeClick, View.OnClickListener, POIDocumentSubmitTypeAdapter.OnSubmitType, TextWatcher, AddedDocumentsListAdapter.ItemRemoved, View.OnLayoutChangeListener {
@@ -703,83 +715,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				break;
 		}
 	}
-
-	public HttpAsyncTask<String, String, POIDocumentUploadResponse> initUpload(final Document document, final int totalFiles) {
-		return new HttpAsyncTask<String, String, POIDocumentUploadResponse>() {
-
-			private ProgressListener listener;
-
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-
-			}
-
-			@Override
-			protected POIDocumentUploadResponse httpDoInBackground(String... params) {
-				String path = null;
-				try {
-					path = PathUtil.getPath(getActivity(), document.getUri());
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}
-				final File file = new File(path);
-				listener = new ProgressListener() {
-					@Override
-					public void transferred(long num) {
-						publishProgress(String.valueOf((int) ((num / (float) file.length()) * 100)));
-					}
-				};
-				MultipartTypedOutput multipartTypedOutput = new MultipartTypedOutput();
-				multipartTypedOutput.addPart("files", new CountingTypedFile("*/*", new File(path), listener));
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().uploadPOIDocuments(multipartTypedOutput, 22,document.getFileNumber(),totalFiles,"8699101112");//make dynamic
-			}
-
-			@Override
-			protected Class<POIDocumentUploadResponse> httpDoInBackgroundReturnType() {
-				return POIDocumentUploadResponse.class;
-			}
-
-			@Override
-			protected POIDocumentUploadResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				return new POIDocumentUploadResponse();
-			}
-
-			@Override
-			protected void onProgressUpdate(String... values) {
-				super.onProgressUpdate(values);
-				Log.i("Progress", values[0]);
-				document.setProgress(Integer.parseInt(values[0]));
-				addedDocumentsListAdapter.notifyDataSetChanged();
-			}
-
-			@Override
-			protected void onPostExecute(POIDocumentUploadResponse uploadResponse) {
-				super.onPostExecute(uploadResponse);
-				//update document as its uploaded
-				document.setUploaded(true);
-				if (isAllFilesUploaded(getValidDocumentList(documentList))) {
-					initPOIOriginRequest();
-					enableSubmitButton();
-					moveToProcessCompleteFragment();
-				}
-				int httpCode = uploadResponse.httpCode;
-				switch (httpCode) {
-					case 200:
-						break;
-
-					case 440:
-
-						break;
-
-					default:
-
-						break;
-				}
-			}
-		};
-	}
-
 	public boolean checkRuntimePermission(int REQUEST_CODE) {
 		switch (REQUEST_CODE) {
 			case PERMS_REQUEST_CODE_GALLERY:
@@ -843,12 +778,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	public void uploadDocuments(List<Document> dataList) {
 		disableSubmitButton();
+		int totalFiles=getValidDocumentList(documentList).size();
 		int j=1;
 		for (int i = 0; i < dataList.size(); i++) {
 			if (dataList.get(i).getSize() <= Utils.POI_UPLOAD_FILE_SIZE_MAX) {
 				dataList.get(i).setFileNumber(j);
 				++j;
-				initUpload(dataList.get(i),getValidDocumentList(documentList).size()).execute();
+				initUploadDocument(dataList.get(i),totalFiles,"22","17318731");
 			}
 		}
 	}
@@ -1058,6 +994,53 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			@Override
 			public void onFailure(String e) {
 
+			}
+		}).execute();
+	}
+
+	public void initUploadDocument(final Document document, int totalFiles, String cliId, String saId)
+	{
+		String path=null;
+		try {
+			path = PathUtil.getPath(getActivity(), document.getUri());
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			document.setUploaded(false);
+			documentSubmitTypeAdapter.notifyDataSetChanged();
+			return;
+		}
+
+		new CLISubmitPOIRequest(getActivity(), path, cliId, document.getFileNumber(), totalFiles, saId, new CLISubmitPOIRequest.UploadEventListener() {
+			@Override
+			public void onSuccess(POIDocumentUploadResponse response) {
+				if(response.httpCode==200) {
+					document.setUploaded(true);
+				}
+				else {
+					document.setUploaded(false);
+					document.setProgress(0);
+				}
+				addedDocumentsListAdapter.notifyDataSetChanged();
+
+				if (isAllFilesUploaded(getValidDocumentList(documentList))) {
+					initPOIOriginRequest();
+					enableSubmitButton();
+					moveToProcessCompleteFragment();
+				}
+
+			}
+			@Override
+			public void onFailure(String e) {
+				document.setUploaded(false);
+				document.setProgress(0);
+				addedDocumentsListAdapter.notifyDataSetChanged();
+			}
+
+			@Override
+			public void onProgress(int percentage) {
+				Log.d("Progress", String.valueOf(percentage));
+				document.setProgress(percentage);
+				addedDocumentsListAdapter.notifyDataSetChanged();
 			}
 		}).execute();
 	}

@@ -9,7 +9,11 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
 import com.facebook.appevents.AppEventsLogger;
@@ -201,9 +205,15 @@ public class WoolworthsApplication extends Application {
 		WoolworthsApplication.stsURI = stsURI;
 	}
 
+	public static final String TAG = WoolworthsApplication.class.getSimpleName();
+	private RequestQueue mRequestQueue;
+
+	private static WoolworthsApplication mInstance;
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		mInstance=this;
 		Fresco.initialize(this);
 		AppEventsLogger.activateApp(this);
 		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -410,5 +420,33 @@ public class WoolworthsApplication extends Application {
 
 	public RxBus bus() {
 		return bus;
+	}
+
+	public static synchronized WoolworthsApplication getInstance() {
+		return mInstance;
+	}
+
+	public RequestQueue getRequestQueue() {
+		if (mRequestQueue == null) {
+			mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+		}
+
+		return mRequestQueue;
+	}
+
+	public <T> void addToRequestQueue(Request<T> req, String tag) {
+		req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
+		getRequestQueue().add(req);
+	}
+
+	public <T> void addToRequestQueue(Request<T> req) {
+		req.setTag(TAG);
+		getRequestQueue().add(req);
+	}
+
+	public void cancelPendingRequests(Object tag) {
+		if (mRequestQueue != null) {
+			mRequestQueue.cancelAll(tag);
+		}
 	}
 }

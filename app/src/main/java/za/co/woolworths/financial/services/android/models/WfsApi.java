@@ -133,8 +133,8 @@ public class WfsApi {
 		return mApiInterface.createOfferRequest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), offerRequest);
 	}
 
-	public OfferActive cliUpdateApplication(CreateOfferRequest offerRequest, String cliId) {
-		return mApiInterface.cliUpdateApplication(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), cliId, offerRequest);
+	public OfferActive cliUpdateApplication(CreateOfferRequest offerRequest,String cliId) {
+		return mApiInterface.cliUpdateApplication(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), cliId,offerRequest);
 	}
 
 	public OfferActive createOfferDecision(CreateOfferDecision createOfferDecision, String cliId) {
@@ -237,7 +237,7 @@ public class WfsApi {
 		return mApiInterface.getCardDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
 	}
 
-	private String getOsVersion() {
+	public String getOsVersion() {
 		String osVersion = Util.getOsVersion();
 		if (TextUtils.isEmpty(osVersion)) {
 			String myVersion = android.os.Build.VERSION.RELEASE; // e.g. myVersion := "1.6"
@@ -247,28 +247,28 @@ public class WfsApi {
 		return osVersion;
 	}
 
-	private String getOS() {
+	public String getOS() {
 		return "Android";
 	}
 
-	private String getNetworkCarrier() {
+	public String getNetworkCarrier() {
 		String networkCarrier = Util.getNetworkCarrier(mContext);
 		return networkCarrier.isEmpty() ? "Unavailable" : Utils.removeUnicodesFromString(networkCarrier);
 	}
 
-	private String getDeviceModel() {
+	public String getDeviceModel() {
 		return Util.getDeviceModel();
 	}
 
-	private String getDeviceManufacturer() {
+	public String getDeviceManufacturer() {
 		return Util.getDeviceManufacturer();
 	}
 
-	private String getSha1Password() {
+	public String getSha1Password() {
 		return WoolworthsApplication.getSha1Password();
 	}
 
-	private String getApiId() {
+	public String getApiId() {
 		return WoolworthsApplication.getApiKey();
 	}
 
@@ -280,7 +280,7 @@ public class WfsApi {
 		}
 	}
 
-	private String getSessionToken() {
+	public String getSessionToken() {
 		try {
 			SessionDao sessionDao = new SessionDao(mContext, SessionDao.KEY.USER_TOKEN).get();
 			if (sessionDao.value != null && !sessionDao.value.equals("")) {

@@ -115,18 +115,12 @@ public class AddedDocumentsListAdapter extends RecyclerView.Adapter<AddedDocumen
 		int progress = document.getProgress();
 		if (progress > 0) {
 			showView(holder.fileUploadProgressBar);
-			setProgressAnimate(holder.fileUploadProgressBar, progress);
-			if (progress == holder.fileUploadProgressBar.getMax()) {
+			holder.fileUploadProgressBar.setProgress(progress);
+			if (document.isUploaded) {
 				setImageResource(holder.imgRemoveDocument, R.drawable.cli_step_indicator_active);
 				disableView(holder.imgRemoveDocument, false);
 			}
 		}
-	}
-
-	private void setProgressAnimate(ProgressBar pb, int progressTo) {
-		ObjectAnimator animation = ObjectAnimator.ofInt(pb, "progress", pb.getProgress(), progressTo * 100);
-		animation.setInterpolator(new DecelerateInterpolator());
-		animation.start();
 	}
 
 	private void showView(View v) {
