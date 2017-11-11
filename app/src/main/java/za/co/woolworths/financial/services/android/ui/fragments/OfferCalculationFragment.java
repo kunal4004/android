@@ -160,9 +160,16 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 							if (object instanceof CLIOfferDecision) {
 								cliDelcineOfferRequest(mGlobalState.getDeclineDecision());
 							} else if (object instanceof BusStation) {
-								BusStation busStation = (BusStation) object;
-								if (busStation != null)
-									sbSlideAmount.setProgress(busStation.getNumber());
+								final BusStation busStation = (BusStation) object;
+								sbSlideAmount.post(new Runnable() {
+									@Override
+									public void run() {
+										sbSlideAmount.setProgress(busStation.getNumber());
+									}
+								});
+								if (mCliPhase2Activity != null)
+									mCliPhase2Activity.actionBarCloseIcon();
+							} else {
 							}
 						}
 					}));
@@ -207,7 +214,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		});
 	}
 
-	private void cliCreateOfferRequest(CreateOfferRequest createOfferRequest) {
+	private void cliCreateOffer(CreateOfferRequest createOfferRequest) {
 		onLoad();
 		latestBackgroundTask(LATEST_BACKGROUND_CALL.CREATE_OFFER);
 		createOfferTask = new CLICreateOffer(getActivity(), createOfferRequest, new OnEventListener() {
@@ -217,7 +224,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				int httpCode = mObjOffer.httpCode;
 				switch (httpCode) {
 					case 200:
-						displayCurrentOffer(mObjOffer);
+						displayDefaultOffer(mObjOffer);
 						break;
 
 					case 440:
@@ -247,7 +254,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		createOfferTask.execute();
 	}
 
-	private void cliUpdateApplicationTask(CreateOfferRequest createOfferRequest, String cliId) {
+	private void cliUpdateApplication(CreateOfferRequest createOfferRequest, String cliId) {
 		onLoad();
 		latestBackgroundTask(LATEST_BACKGROUND_CALL.UPDATE_APPLICATION);
 		cliUpdateApplication = new CLIUpdateApplication(getActivity(), createOfferRequest, cliId, new OnEventListener() {
@@ -256,7 +263,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				mObjOffer = ((OfferActive) object);
 				switch (mObjOffer.httpCode) {
 					case 200:
-						displayCurrentOffer(mObjOffer);
+						displayDefaultOffer(mObjOffer);
 						break;
 
 					case 440:
@@ -537,14 +544,17 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				try {
 					Bundle args = new Bundle();
 					String slideAmount = tvSlideToEditAmount.getText().toString();
+
 					if (slideAmount != null) {
 						args.putInt("slideAmount", Integer.valueOf(Utils.numericFieldOnly(slideAmount)));
 					}
+
 					args.putInt("currCredit", mObjOffer.offer.currCredit);
 					args.putInt("creditReqestMin", mObjOffer.offer.creditReqestMin);
 					args.putInt("creditRequestMax", mObjOffer.offer.creditRequestMax);
+
 					mCliPhase2Activity.actionBarBackIcon();
-					EditAmountFragment editAmountFragment = new EditAmountFragment();
+					EditSlideAmountFragment editAmountFragment = new EditSlideAmountFragment();
 					editAmountFragment.setArguments(args);
 					editAmountFragment.setStepIndicatorListener(mCliStepIndicatorListener);
 					FragmentUtils ftils = new FragmentUtils(false);
@@ -574,7 +584,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				));
 	}
 
-	public void displayCurrentOffer(OfferActive mObjOffer) {
+	public void displayDefaultOffer(OfferActive mObjOffer) {
 		Offer offer = mObjOffer.offer;
 		mCurrentCredit = offer.currCredit;
 		mCreditReqestMin = offer.creditReqestMin;
@@ -619,8 +629,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (mCliPhase2Activity != null)
-			mCliPhase2Activity.actionBarCloseIcon();
 		getActivity().registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 	}
 
@@ -699,14 +707,14 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	public void createUpdateOfferTask(EventStatus eventStatus) {
 		switch (eventStatus) {
 			case CREATE_OFFER:
-				cliCreateOfferRequest(createOffer(mHashIncomeDetail, mHashExpenseDetail));
+				cliCreateOffer(createOffer(mHashIncomeDetail, mHashExpenseDetail));
 				break;
 
 			case UPDATE_OFFER:
-				cliUpdateApplicationTask(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mObjOffer.cliId));
+				cliUpdateApplication(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mObjOffer.cliId));
 				break;
 			default:
-				displayCurrentOffer(mObjOffer);
+				displayDefaultOffer(mObjOffer);
 				break;
 		}
 	}
