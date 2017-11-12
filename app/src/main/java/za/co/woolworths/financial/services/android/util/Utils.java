@@ -111,6 +111,15 @@ public class Utils {
 
 	public static final int CLI_OTHER_BANK_ID = 100;
 
+	public static final String[] CLI_POI_ACCEPT_MIME_TYPES = {
+			"application/pdf",
+			"application/excel",
+			"application/msword",
+			"image/png",
+			"image/jpeg",
+			"image/tiff"
+	};
+
 	public static void saveLastLocation(Location loc, Context mContext) {
 
 		try {

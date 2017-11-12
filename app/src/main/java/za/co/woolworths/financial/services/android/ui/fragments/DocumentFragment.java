@@ -662,6 +662,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public void openGalleryToPickDocuments() {
 		Intent uploadIntent = new Intent();
 		uploadIntent.setType("*/*");
+		uploadIntent.putExtra(Intent.EXTRA_MIME_TYPES, Utils.CLI_POI_ACCEPT_MIME_TYPES);
 		uploadIntent.setAction(Intent.ACTION_GET_CONTENT);
 		uploadIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 		uploadIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
