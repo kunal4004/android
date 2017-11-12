@@ -376,19 +376,21 @@
             android:paddingRight="8dp"
             android:visibility="gone">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/submitCLI"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/black"
-                android:gravity="center"
-                android:minHeight="50dp"
-                android:text="@string/submit"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                app:WTextView_font="medium_bold"
-                />
+            <RelativeLayout
+                style="@style/blackButtonStyle">
+
+                <ProgressBar
+                    android:id="@+id/pbSubmit"
+                    style="@style/progress_button_style"/>
+
+                <za.co.woolworths.financial.services.android.ui.views.WButton
+                    android:id="@+id/btnSubmit"
+                    style="@style/blackButtonStyle"
+                    android:gravity="center"
+                    android:text="@string/submit"
+                    android:textColor="@color/white"
+                    app:WButton_font="medium_bold"/>
+            </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
 

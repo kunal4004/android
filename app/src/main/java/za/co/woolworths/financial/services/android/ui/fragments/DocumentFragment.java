@@ -2,12 +2,14 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
@@ -61,6 +63,7 @@ import za.co.woolworths.financial.services.android.models.rest.CLIPOIOriginReque
 import za.co.woolworths.financial.services.android.models.rest.CLISendEmailRequest;
 import za.co.woolworths.financial.services.android.models.rest.CLISubmitPOIRequest;
 import za.co.woolworths.financial.services.android.models.rest.CLIUpdateBankDetails;
+import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.SelectFromDriveActivity;
@@ -103,7 +106,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private LinearLayout accountTypeLayout;
 	private LinearLayout accountNumberLayout;
 	private LinearLayout poiDocumentSubmitTypeLayout;
-	private WTextView btnSubmit;
+	private WButton btnSubmit;
 	private NestedScrollView nestedScrollView;
 	private WTextView yesPOIFromBank;
 	private WTextView noPOIFromBank;
@@ -133,15 +136,32 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public UpdateBankDetailResponse updateBankDetailResponse;
 	private CLIGetBankAccountTypes cliGetBankAccountTypes;
 	private CLIGetDeaBank cliGetDeaBank;
-	private ProgressBar pbAccountType;
+	private ProgressBar pbAccountType, pbSubmit;
 	private CLIUpdateBankDetails cliUpdateBankDetails;
 	private CLISendEmailRequest cliSendEmail;
 	private CLIPOIOriginRequest cLIPOIOriginRequest;
 	private CLISubmitPOIRequest cliSubmitPOIRequest;
 	private WTextView tvCLIAccountTypeTitle, tvAccountSavingTitle;
 	private RelativeLayout relConnect;
+	private LoadState loadState;
 
 	private enum NetworkFailureRequest {DEA_BANK, ACCOUNT_TYPE}
+
+	public enum SubmitType {
+		ACCOUNT_NUMBER(1),
+		DOCUMENTS(2),
+		LATER(3);
+
+		SubmitType(int type) {
+			this.result = type;
+		}
+
+		private int result;
+
+		public int getType() {
+			return result;
+		}
+	}
 
 	private NetworkFailureRequest networkFailureRequest;
 
@@ -169,22 +189,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		return ((CLIPhase2Activity) this.getActivity()).mCLICreateOfferResponse;
 	}
 
-	public enum SubmitType {
-		ACCOUNT_NUMBER(1),
-		DOCUMENTS(2),
-		LATER(3);
-
-		SubmitType(int type) {
-			this.result = type;
-		}
-
-		private int result;
-
-		public int getType() {
-			return result;
-		}
-	}
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
@@ -200,6 +204,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		super.onViewCreated(view, savedInstanceState);
 		connectionBroadcast();
 		mCliPhase2Activity = (CLIPhase2Activity) getActivity();
+		loadState = new LoadState();
 		mCliPhase2Activity.actionBarCloseIcon();
 		mCliPhase2Activity.hideDeclineOffer();
 		init(view);
@@ -257,11 +262,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 						}
 						break;
 				}
+				loadSuccess();
 				onLoadComplete(pbDeaBank);
 			}
 
 			@Override
 			public void onFailure(String e) {
+				loadFailure();
 				setNetworkFailureRequest(NetworkFailureRequest.DEA_BANK);
 				mErrorHandlerView.networkFailureHandler(e.toString());
 				onLoadComplete(pbDeaBank);
@@ -322,11 +329,12 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		accountTypeLayout = (LinearLayout) view.findViewById(R.id.accountTypeLayout);
 		accountNumberLayout = (LinearLayout) view.findViewById(R.id.accountNumberLayout);
 		poiDocumentSubmitTypeLayout = (LinearLayout) view.findViewById(R.id.poiDocumentSubmitTypeLayout);
+		pbSubmit = (ProgressBar) view.findViewById(R.id.pbSubmit);
 		yesPOIFromBank = (WTextView) view.findViewById(R.id.yesPOIFromBank);
 		tvCLIAccountTypeTitle = (WTextView) view.findViewById(R.id.tvCLIAccountTypeTitle);
 		tvAccountSavingTitle = (WTextView) view.findViewById(R.id.tvAccountSavingTitle);
 		noPOIFromBank = (WTextView) view.findViewById(R.id.noPOIFromBank);
-		btnSubmit = (WTextView) view.findViewById(R.id.submitCLI);
+		btnSubmit = (WButton) view.findViewById(R.id.btnSubmit);
 		poiDocumentInfo = (ImageView) view.findViewById(R.id.poiDocumentInfo);
 		uploadDocumentInfo = (ImageView) view.findViewById(R.id.uploadDocumentInfo);
 		etAccountNumber = (WEditTextView) view.findViewById(R.id.etAccountNumber);
@@ -454,22 +462,28 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	@Override
 	public void onConnectionChanged() {
-		//retryConnect();
+		retryConnect();
 	}
 
 	private void retryConnect() {
-		getActivity().runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				if (new ConnectionDetector().isOnline(getActivity())) {
-					if (getBackgroundTaskStatus()) {
-						cliDeaBankRequest();
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if (new ConnectionDetector().isOnline(getActivity())) {
+						if (!loadState.onLoanCompleted()) {
+							if (submitType != null) {
+								btnSubmit.performClick();
+							}
+						}
+					} else {
+						mErrorHandlerView.showToast();
+						enableSubmitButton();
 					}
-				} else {
-					mErrorHandlerView.showToast();
 				}
-			}
-		});
+			});
+		}
 	}
 
 	private void progressColorFilter(ProgressBar progressBar, int color) {
@@ -529,7 +543,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				startActivityForResult(new Intent(getActivity(), SelectFromDriveActivity.class), OPEN_WINDOW_FOR_DRIVE_SELECTION);
 				getActivity().overridePendingTransition(0, 0);
 				break;
-			case R.id.submitCLI:
+			case R.id.btnSubmit:
 				onSubmitClick(submitType);
 				break;
 			case R.id.uploadDocumentInfo:
@@ -978,10 +992,12 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				enableSubmitButton();
 				updateBankDetailResponse = (UpdateBankDetailResponse) object;
 				moveToProcessCompleteFragment();
+				loadSuccess();
 			}
 
 			@Override
 			public void onFailure(String e) {
+				loadFailure();
 				enableSubmitButton();
 			}
 		});
@@ -990,14 +1006,15 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	public void disableSubmitButton() {
 		Utils.disableEnableChildViews(nestedScrollView, false);
-		btnSubmit.setEnabled(false);
-		btnSubmit.setAlpha(0.3f);
+		pbSubmit.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
+		pbSubmit.setVisibility(View.VISIBLE);
+		btnSubmit.setVisibility(View.GONE);
 	}
 
 	public void enableSubmitButton() {
 		Utils.disableEnableChildViews(nestedScrollView, true);
-		btnSubmit.setEnabled(true);
-		btnSubmit.setAlpha(1f);
+		pbSubmit.setVisibility(View.GONE);
+		btnSubmit.setVisibility(View.VISIBLE);
 	}
 
 	public void moveToProcessCompleteFragment() {
@@ -1014,14 +1031,18 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			@Override
 			public void onSuccess(Object object) {
 				CLIEmailResponse response = (CLIEmailResponse) object;
-				if (response.httpCode == 200)
+				if (response.httpCode == 200) {
 					moveToProcessCompleteFragment();
-				else
+				} else {
 					enableSubmitButton();
+				}
+
+				loadSuccess();
 			}
 
 			@Override
 			public void onFailure(String e) {
+				loadFailure();
 				enableSubmitButton();
 			}
 		});
@@ -1073,11 +1094,12 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 					enableSubmitButton();
 					moveToProcessCompleteFragment();
 				}
-
+				loadSuccess();
 			}
 
 			@Override
 			public void onFailure(String e) {
+				loadFailure();
 				document.setUploaded(false);
 				document.setProgress(0);
 				addedDocumentsListAdapter.notifyDataSetChanged();
@@ -1117,5 +1139,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		cancelRequest(cliUpdateBankDetails);
 		cancelRequest(cliSendEmail);
 		cancelRequest(cLIPOIOriginRequest);
+	}
+
+	private void loadSuccess() {
+		loadState.setLoadComplete(true);
+	}
+
+	private void loadFailure() {
+		loadState.setLoadComplete(false);
 	}
 }

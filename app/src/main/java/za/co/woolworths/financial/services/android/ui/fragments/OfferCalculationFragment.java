@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.CLICreateOffer;
 import za.co.woolworths.financial.services.android.models.rest.CLIUpdateApplication;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
+import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -78,7 +79,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private CLIPhase2Activity mCliPhase2Activity;
 	private ProgressBar mAcceptOfferProgressBar;
 	private BroadcastReceiver mConnectionBroadcast;
-	private boolean loadCompleted = false;
 	private ErrorHandlerView mErrorHandlerView;
 	private boolean editorWasShown;
 	private WoolworthsApplication woolworthsApplication;
@@ -92,6 +92,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private CLIUpdateApplication cliUpdateApplication;
 	private CLICreateOffer createOfferTask;
 	private za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision cliAcceptOfferDecision;
+	private LoadState loadState;
 	private final CompositeDisposable disposables = new CompositeDisposable();
 
 	private enum LATEST_BACKGROUND_CALL {CREATE_OFFER, DECLINE_OFFER, UPDATE_APPLICATION, ACCEPT_OFFER}
@@ -113,6 +114,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		super.onViewCreated(view, savedInstanceState);
 		if (savedInstanceState == null && !mAlreadyLoaded) {
 			mAlreadyLoaded = true;
+			loadState = new LoadState();
 			try {
 				declineOfferInterface = (DeclineOfferInterface) getActivity();
 			} catch (IllegalArgumentException ignored) {
@@ -232,7 +234,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, mObjOffer.response.desc);
 						break;
 				}
-				onLoadCompleted(true);
+				loadSuccess();
 				onLoadComplete();
 			}
 
@@ -242,7 +244,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					@Override
 					public void run() {
 						hideView(llNextButtonLayout);
-						onLoadCompleted(false);
+						loadFailure();
 						mErrorHandlerView.showErrorHandler();
 					}
 				});
@@ -272,7 +274,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 				}
 				onLoadComplete();
-				onLoadCompleted(true);
+				loadSuccess();
 			}
 
 			@Override
@@ -280,7 +282,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						onLoadCompleted(false);
+						loadFailure();
 						hideView(llNextButtonLayout);
 						mErrorHandlerView.showErrorHandler();
 					}
@@ -310,7 +312,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 				}
 
-				onLoadCompleted(true);
+				loadSuccess();
 				declineOfferInterface.onLoadComplete();
 			}
 
@@ -321,7 +323,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					activity.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
-							onLoadCompleted(false);
+							loadFailure();
 							declineOfferInterface.onLoadComplete();
 						}
 					});
@@ -519,7 +521,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 										Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, mObjOffer.response.desc);
 										break;
 								}
-								onLoadCompleted(true);
+								loadSuccess();
 								onAcceptOfferCompleted();
 							}
 
@@ -528,7 +530,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 								getActivity().runOnUiThread(new Runnable() {
 									@Override
 									public void run() {
-										onLoadCompleted(false);
+										loadFailure();
 										onAcceptOfferCompleted();
 									}
 								});
@@ -652,7 +654,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				public void run() {
 
 					if (new ConnectionDetector().isOnline(getActivity())) {
-						if (!loadCompleted) {
+						if (!loadState.onLoanCompleted()) {
 							if (latest_background_call != null) {
 								switch (latest_background_call) {
 									case DECLINE_OFFER:
@@ -689,9 +691,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		}
 	}
 
-	private void onLoadCompleted(boolean value) {
-		loadCompleted = value;
-	}
 
 	public void animSeekBarToMaximum() {
 		final ValueAnimator anim = ValueAnimator.ofInt(0, sbSlideAmount.getMax());
@@ -755,5 +754,13 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			activity.finish();
 			activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 		}
+	}
+
+	private void loadSuccess() {
+		loadState.setLoadComplete(true);
+	}
+
+	private void loadFailure() {
+		loadState.setLoadComplete(false);
 	}
 }
