@@ -182,40 +182,6 @@
                             android:nestedScrollingEnabled="false"
                             android:paddingLeft="24dp"
                             android:paddingRight="24dp"/>
-                        <!--<View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginLeft="24dp"
-                            android:layout_marginRight="24dp"
-                            android:layout_marginTop="24dp"
-                            android:background="@color/cli_button_border" />
-
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
-                            style="@style/cli_permission_description_text"
-                            android:text="@string/cli_eligibility_check_description" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="50dp"
-                            android:layout_margin="30dp"
-                            android:layout_marginTop="30dp"
-                            android:background="@drawable/cli_yes_no_button_background">
-
-                            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                                android:id="@+id/yesPOIFromBank"
-                                style="@style/cli_yes_no_button"
-                                android:text="@string/cli_yes" />
-
-                            <View
-                                android:layout_width="1dp"
-                                android:layout_height="match_parent"
-                                android:background="#19000000" />
-
-                            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                                android:id="@+id/noPOIFromBank"
-                                style="@style/cli_yes_no_button"
-                                android:text="@string/cli_no" />
-                        </LinearLayout>-->
                     </LinearLayout>
 
                 </LinearLayout>

@@ -141,6 +141,10 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private WTextView tvCLIAccountTypeTitle, tvAccountSavingTitle;
 	private RelativeLayout relConnect;
 
+	private enum NetworkFailureRequest {DEA_BANK, ACCOUNT_TYPE}
+
+	private NetworkFailureRequest networkFailureRequest;
+
 	public String getSelectedBankType() {
 		return selectedBankType;
 	}
@@ -258,6 +262,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 			@Override
 			public void onFailure(String e) {
+				setNetworkFailureRequest(NetworkFailureRequest.DEA_BANK);
 				mErrorHandlerView.networkFailureHandler(e.toString());
 				onLoadComplete(pbDeaBank);
 				backgroundTaskLoaded(true);
@@ -299,6 +304,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			@Override
 			public void onFailure(String e) {
 				onLoadComplete(pbAccountType);
+				setNetworkFailureRequest(NetworkFailureRequest.ACCOUNT_TYPE);
 				mErrorHandlerView.networkFailureHandler(e.toString());
 			}
 		});
@@ -534,7 +540,16 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			case R.id.btnRetry:
 				if (new ConnectionDetector().isOnline(getActivity())) {
 					mErrorHandlerView.hideErrorHandler();
-					cliDeaBankRequest();
+					switch (getNetworkFailureRequest()) {
+						case DEA_BANK:
+							cliDeaBankRequest();
+							break;
+						case ACCOUNT_TYPE:
+							cliBankAccountTypeRequest();
+							break;
+						default:
+							break;
+					}
 				}
 				break;
 			default:
@@ -1084,6 +1099,14 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				httpAsyncTask.cancel(true);
 			}
 		}
+	}
+
+	public NetworkFailureRequest getNetworkFailureRequest() {
+		return networkFailureRequest;
+	}
+
+	public void setNetworkFailureRequest(NetworkFailureRequest networkFailureRequest) {
+		this.networkFailureRequest = networkFailureRequest;
 	}
 
 	@Override
