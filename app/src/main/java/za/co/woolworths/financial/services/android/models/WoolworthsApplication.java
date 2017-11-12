@@ -77,6 +77,8 @@ public class WoolworthsApplication extends Application {
 
 	private RxBus bus;
 
+	private static long poiDocumentSizeLimit;
+
 	public static void setSha1Password(String sha1Password) {
 		WoolworthsApplication.sha1Password = sha1Password;
 	}
@@ -209,6 +211,14 @@ public class WoolworthsApplication extends Application {
 	private RequestQueue mRequestQueue;
 
 	private static WoolworthsApplication mInstance;
+
+	public static long getPoiDocumentSizeLimit() {
+		return poiDocumentSizeLimit;
+	}
+
+	public static void setPoiDocumentSizeLimit(long poiDocumentSizeLimit) {
+		WoolworthsApplication.poiDocumentSizeLimit = poiDocumentSizeLimit;
+	}
 
 	@Override
 	public void onCreate() {

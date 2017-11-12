@@ -16,6 +16,7 @@ public class Environment {
 	public int storeStockLocatorConfigEndRadius;
 	public boolean storeStockLocatorConfigFoodProducts;
 	public boolean storeStockLocatorConfigClothingProducts;
+	public long emailSizeKB;
 
 
 	public String getApiId() {
@@ -108,5 +109,13 @@ public class Environment {
 
 	public void setStoreStockLocatorConfigClothingProducts(boolean storeStockLocatorConfigClothingProducts) {
 		this.storeStockLocatorConfigClothingProducts = storeStockLocatorConfigClothingProducts;
+	}
+
+	public long getEmailSizeKB() {
+		return emailSizeKB;
+	}
+
+	public void setEmailSizeKB(long emailSizeKB) {
+		this.emailSizeKB = emailSizeKB;
 	}
 }

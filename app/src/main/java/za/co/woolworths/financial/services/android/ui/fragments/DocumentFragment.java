@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
@@ -817,7 +818,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		int totalFiles = getValidDocumentList(documentList).size();
 		int j = 1;
 		for (int i = 0; i < dataList.size(); i++) {
-			if (dataList.get(i).getSize() <= Utils.POI_UPLOAD_FILE_SIZE_MAX) {
+			if (dataList.get(i).getSize() <= WoolworthsApplication.getPoiDocumentSizeLimit()) {
 				dataList.get(i).setFileNumber(j);
 				++j;
 				initUploadDocument(dataList.get(i), totalFiles, "22", "17318731");
@@ -913,7 +914,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 		List<Document> subList = new ArrayList<>();
 		for (Document document : docs) {
-			if (document.getSize() <= Utils.POI_UPLOAD_FILE_SIZE_MAX)
+			if (document.getSize() <= WoolworthsApplication.getPoiDocumentSizeLimit())
 				subList.add(document);
 		}
 

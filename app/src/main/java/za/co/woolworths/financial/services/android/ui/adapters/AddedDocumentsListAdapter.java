@@ -14,6 +14,7 @@ import com.awfs.coordination.R;
 
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Document;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -64,7 +65,7 @@ public class AddedDocumentsListAdapter extends RecyclerView.Adapter<AddedDocumen
 
 			showUploadProgress(document, holder, position);
 
-			if (document.getSize() > Utils.POI_UPLOAD_FILE_SIZE_MAX) {
+			if (document.getSize() > WoolworthsApplication.getPoiDocumentSizeLimit()) {
 				tvFileSizeError.setVisibility(View.VISIBLE);
 				tvDocumentName.setAlpha(.3f);
 				imgRemoveDocument.setEnabled(false);
