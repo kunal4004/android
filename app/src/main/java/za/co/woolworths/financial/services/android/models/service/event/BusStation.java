@@ -7,9 +7,14 @@ public class BusStation {
 
 	private int intValue;
 	private OfferActive offerActive;
+	private boolean makeApiCall;
 
 	public BusStation(int intValue) {
 		this.intValue = intValue;
+	}
+
+	public BusStation(boolean makeApiCall) {
+		this.makeApiCall = makeApiCall;
 	}
 
 	public BusStation(OfferActive offerActive) {
@@ -22,5 +27,9 @@ public class BusStation {
 
 	public OfferActive getOfferActive() {
 		return offerActive;
+	}
+
+	public boolean makeApiCall() {
+		return makeApiCall;
 	}
 }

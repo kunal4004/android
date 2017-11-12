@@ -105,6 +105,10 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 								OfferActive offerActive = busStation.getOfferActive();
 								if (offerActive != null) {
 									cliOfferStatus(offerActive);
+								} else if (busStation.makeApiCall()) {
+									creditWasAlreadyRunOnce = false;
+									retryConnect();
+								} else {
 								}
 							}
 						}

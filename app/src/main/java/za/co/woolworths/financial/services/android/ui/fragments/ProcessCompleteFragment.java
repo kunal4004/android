@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
@@ -21,7 +23,7 @@ public class ProcessCompleteFragment extends CLIFragment implements View.OnClick
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		if (view == null) {
-			((CLIPhase2Activity)this.getActivity()).hideCloseIcon();
+			((CLIPhase2Activity) this.getActivity()).hideCloseIcon();
 			view = inflater.inflate(R.layout.cli_process_complete, container, false);
 		}
 		return view;
@@ -45,6 +47,9 @@ public class ProcessCompleteFragment extends CLIFragment implements View.OnClick
 			case R.id.btnProcessComplete:
 				Activity activity = getActivity();
 				if (activity != null && activity instanceof CLIPhase2Activity) {
+					((WoolworthsApplication) activity.getApplication())
+							.bus()
+							.send(new BusStation(true));
 					activity.finish();
 					activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 				}
