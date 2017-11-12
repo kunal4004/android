@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Random;
 
 import za.co.woolworths.financial.services.android.models.dto.Bank;
+import za.co.woolworths.financial.services.android.models.dto.BankAccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
@@ -95,7 +96,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private BroadcastReceiver connectionBroadcast;
 	private ErrorHandlerView mErrorHandlerView;
 	private boolean backgroundTaskLoaded;
-	private List<BankAccountType> bankAccountTypes;
+	private List<BankAccountType> bankAccountTypesList;
 	private RecyclerView rclAccountType;
 	private LinearLayout bankTypeConfirmationLayout;
 	private LinearLayout accountTypeLayout;
@@ -131,6 +132,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public UpdateBankDetailResponse updateBankDetailResponse;
 	private CLIGetBankAccountTypes cliGetBankAccountTypes;
 	private CLIGetDeaBank cliGetDeaBank;
+	private ProgressBar pbAccountType;
 
 	public String getSelectedBankType() {
 		return selectedBankType;
@@ -190,9 +192,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		mCliPhase2Activity.actionBarCloseIcon();
 		mCliPhase2Activity.hideDeclineOffer();
 		init(view);
-		onLoad();
+		onLoad(pbDeaBank);
 		cliDeaBankRequest();
-		cliBankAccountTypeRequest();
 		loadPOIDocumentsSubmitTypeView();
 		loadAddedDocumentsListView();
 	}
@@ -201,22 +202,22 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 	}
 
-	private void onLoad() {
-		showView(pbDeaBank);
-		progressColorFilter(pbDeaBank, R.color.black);
+	private void onLoad(ProgressBar pBar) {
+		showView(pBar);
+		progressColorFilter(pBar, R.color.black);
 	}
 
-	private void onLoadComplete() {
+	private void onLoadComplete(final View v) {
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				hideView(pbDeaBank);
+				hideView(v);
 			}
 		});
 	}
 
 	private void cliDeaBankRequest() {
-		onLoad();
+		onLoad(pbDeaBank);
 		cliGetDeaBank = new CLIGetDeaBank(getActivity(), new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -245,13 +246,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 						}
 						break;
 				}
-				onLoadComplete();
+				onLoadComplete(pbDeaBank);
 			}
 
 			@Override
 			public void onFailure(String e) {
 				mErrorHandlerView.networkFailureHandler(e.toString());
-				onLoadComplete();
+				onLoadComplete(pbDeaBank);
 				backgroundTaskLoaded(true);
 			}
 		});
@@ -259,16 +260,40 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	private void cliBankAccountTypeRequest() {
+		onLoad(pbAccountType);
+		if(accountTypeAdapter!=null && bankAccountTypesList!=null) {
+			bankAccountTypesList.clear();
+			accountTypeAdapter.notifyDataSetChanged();
+		}
+
 		cliGetBankAccountTypes = new CLIGetBankAccountTypes(getActivity(), new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				bankAccountTypes = ((BankAccountTypes) object).bankAccountTypes;
-				loadBankAccountTypesView(bankAccountTypes);
+				BankAccountTypes bankAccountTypes= (BankAccountTypes) object;
+				switch (bankAccountTypes.httpCode)
+				{
+					case 200:
+						bankAccountTypesList = bankAccountTypes.bankAccountTypes;
+						loadBankAccountTypesView(bankAccountTypesList);
+						break;
+					case 440:
+						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), bankAccountTypes
+								.response.stsParams);
+						break;
+					default:
+						BankAccountResponse response = bankAccountTypes.response;
+						if (response != null) {
+							Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+						}
+						break;
+				}
+				onLoadComplete(pbAccountType);
 			}
 
 			@Override
 			public void onFailure(String e) {
-
+				onLoadComplete(pbAccountType);
+				mErrorHandlerView.networkFailureHandler(e.toString());
 			}
 		});
 		cliGetBankAccountTypes.execute();
@@ -297,6 +322,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		uploadDocumentsLayout = (LinearLayout) view.findViewById(R.id.uploadDocumentsLayout);
 		WButton btnRetry = (WButton) view.findViewById(R.id.btnRetry);
 		RelativeLayout relConnect = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
+		pbAccountType = (ProgressBar) view.findViewById(R.id.pbAccountType);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), relConnect);
 		mErrorHandlerView.setMargin(relConnect, 0, 0, 0, 0);
 
@@ -365,7 +391,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	@Override
 	public void onAccountTypeClick(View view, int position) {
-		setSelectedAccountType(bankAccountTypes.get(position).accountType);
+		setSelectedAccountType(bankAccountTypesList.get(position).accountType);
 		scrollUpAccountNumberLayout();
 	}
 
@@ -506,6 +532,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	public void scrollUpAccountTypeSelectionLayout() {
+		cliBankAccountTypeRequest();
 		hideView(uploadDocumentsLayout);
 		showView(accountTypeLayout);
 		dynamicLayoutPadding(bankTypeConfirmationLayout, true);

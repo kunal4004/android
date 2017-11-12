@@ -228,10 +228,23 @@
                     android:paddingTop="10dp"
                     android:visibility="gone"
                     >
+                    <RelativeLayout
+                        style="@style/increase_limit_relative_style"
+                        android:paddingEnd="@dimen/twenty_four_dp"
+                        android:paddingStart="@dimen/twenty_four_dp">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/cli_permission_title_text"
-                        android:text="@string/cli_account_type"/>
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            style="@style/cli_supply_detail_text"
+                            android:text="@string/cli_account_type"/>
+
+                        <ProgressBar
+                            android:id="@+id/pbAccountType"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_alignParentEnd="true"
+                            />
+
+                    </RelativeLayout>
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/rclSelectAccountType"
