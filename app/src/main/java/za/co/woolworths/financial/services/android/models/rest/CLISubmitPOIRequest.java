@@ -4,26 +4,18 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.util.ArrayMap;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.error.AuthFailureError;
 import com.android.volley.error.VolleyError;
 import com.android.volley.request.SimpleMultiPartRequest;
 import com.google.gson.Gson;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Map;
-import java.util.jar.JarException;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.POIDocumentUploadResponse;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
 import static com.google.android.gms.internal.zzagz.runOnUiThread;
 
 /**

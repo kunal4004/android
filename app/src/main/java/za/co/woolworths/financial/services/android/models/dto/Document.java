@@ -13,7 +13,6 @@ public class Document {
 	public long size;
 	public int progress;
 	public boolean isUploaded;
-	public boolean displayProgress;
 	public int fileNumber;
 
 	public String getName() {

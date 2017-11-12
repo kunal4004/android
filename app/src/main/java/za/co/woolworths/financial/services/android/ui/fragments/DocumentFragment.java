@@ -133,6 +133,10 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private CLIGetBankAccountTypes cliGetBankAccountTypes;
 	private CLIGetDeaBank cliGetDeaBank;
 	private ProgressBar pbAccountType;
+	private CLIUpdateBankDetails cliUpdateBankDetails;
+	private CLISendEmailRequest cliSendEmail;
+	private CLIPOIOriginRequest cLIPOIOriginRequest;
+	private CLISubmitPOIRequest cliSubmitPOIRequest;
 
 	public String getSelectedBankType() {
 		return selectedBankType;
@@ -261,7 +265,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	private void cliBankAccountTypeRequest() {
 		onLoad(pbAccountType);
-		if(accountTypeAdapter!=null && bankAccountTypesList!=null) {
+		if (accountTypeAdapter != null && bankAccountTypesList != null) {
 			bankAccountTypesList.clear();
 			accountTypeAdapter.notifyDataSetChanged();
 		}
@@ -269,9 +273,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		cliGetBankAccountTypes = new CLIGetBankAccountTypes(getActivity(), new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				BankAccountTypes bankAccountTypes= (BankAccountTypes) object;
-				switch (bankAccountTypes.httpCode)
-				{
+				BankAccountTypes bankAccountTypes = (BankAccountTypes) object;
+				switch (bankAccountTypes.httpCode) {
 					case 200:
 						bankAccountTypesList = bankAccountTypes.bankAccountTypes;
 						loadBankAccountTypesView(bankAccountTypesList);
@@ -940,12 +943,11 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public void updateBankDetails() {
 		disableSubmitButton();
 		UpdateBankDetail bankDetail = new UpdateBankDetail();
-		//bankDetail.setCliOfferID(getCLICreateOfferResponse().offer.offerId);//change to cliOfferId
 		bankDetail.setCliOfferID(111);
 		bankDetail.setAccountType(getSelectedAccountType());
 		bankDetail.setBankName(getSelectedBankType());
 		bankDetail.setAccountNumber(etAccountNumber.getText().toString().trim());
-		new CLIUpdateBankDetails(getActivity(), bankDetail, new OnEventListener() {
+		cliUpdateBankDetails = new CLIUpdateBankDetails(getActivity(), bankDetail, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				enableSubmitButton();
@@ -957,7 +959,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			public void onFailure(String e) {
 				enableSubmitButton();
 			}
-		}).execute();
+		});
+		cliUpdateBankDetails.execute();
 	}
 
 	public void disableSubmitButton() {
@@ -982,7 +985,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	public void initSendEmailRequest() {
 		disableSubmitButton();
-		new CLISendEmailRequest(getActivity(), new OnEventListener() {
+		cliSendEmail = new CLISendEmailRequest(getActivity(), new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				CLIEmailResponse response = (CLIEmailResponse) object;
@@ -996,12 +999,14 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			public void onFailure(String e) {
 				enableSubmitButton();
 			}
-		}).execute();
+		});
+
+		cliSendEmail.execute();
 	}
 
 	public void initPOIOriginRequest() {
 		//make dynamic values for cliID and productOfferingID
-		new CLIPOIOriginRequest(getActivity(), 111, "20", new OnEventListener() {
+		cLIPOIOriginRequest = new CLIPOIOriginRequest(getActivity(), 111, "20", new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				CliPoiOriginResponse response = (CliPoiOriginResponse) object;
@@ -1011,7 +1016,9 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			public void onFailure(String e) {
 
 			}
-		}).execute();
+		});
+
+		cLIPOIOriginRequest.execute();
 	}
 
 	public void initUploadDocument(final Document document, int totalFiles, String cliId, String saId) {
@@ -1025,7 +1032,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			return;
 		}
 
-		new CLISubmitPOIRequest(getActivity(), path, cliId, document.getFileNumber(), totalFiles, saId, new CLISubmitPOIRequest.UploadEventListener() {
+		cliSubmitPOIRequest = new CLISubmitPOIRequest(getActivity(), path, cliId, document.getFileNumber(), totalFiles, saId, new CLISubmitPOIRequest.UploadEventListener() {
 			@Override
 			public void onSuccess(POIDocumentUploadResponse response) {
 				if (response.httpCode == 200) {
@@ -1056,7 +1063,9 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				document.setProgress(percentage);
 				addedDocumentsListAdapter.notifyDataSetChanged();
 			}
-		}).execute();
+		});
+
+		cliSubmitPOIRequest.execute();
 	}
 
 	private void cancelRequest(HttpAsyncTask httpAsyncTask) {
@@ -1072,5 +1081,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		super.onDestroy();
 		cancelRequest(cliGetBankAccountTypes);
 		cancelRequest(cliGetDeaBank);
+		cancelRequest(cliUpdateBankDetails);
+		cancelRequest(cliSendEmail);
+		cancelRequest(cLIPOIOriginRequest);
 	}
 }
