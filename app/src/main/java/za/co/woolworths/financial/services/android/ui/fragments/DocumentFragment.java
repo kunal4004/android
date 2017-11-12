@@ -23,6 +23,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -321,6 +322,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private void init(View view) {
 		rlSubmitCli = (RelativeLayout) view.findViewById(R.id.rlSubmitCli);
 		rclSelectYourBank = (RecyclerView) view.findViewById(R.id.rclSelectYourBank);
+		((SimpleItemAnimator) rclSelectYourBank.getItemAnimator()).setSupportsChangeAnimations(false);
+
 		rclAccountType = (RecyclerView) view.findViewById(R.id.rclSelectAccountType);
 		rclPOIDocuments = (RecyclerView) view.findViewById(R.id.rclPOIDocuments);
 		pbDeaBank = (ProgressBar) view.findViewById(R.id.pbDeaBank);
@@ -1088,7 +1091,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 					document.setProgress(0);
 				}
 				addedDocumentsListAdapter.notifyDataSetChanged();
-
 				if (isAllFilesUploaded(getValidDocumentList(documentList))) {
 					initPOIOriginRequest();
 					enableSubmitButton();

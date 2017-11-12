@@ -1,12 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
-import android.animation.ObjectAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -17,7 +15,6 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Document;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.Utils;
 
 /**
  * Created by W7099877 on 2017/10/19.
@@ -114,9 +111,11 @@ public class AddedDocumentsListAdapter extends RecyclerView.Adapter<AddedDocumen
 
 	public void showUploadProgress(Document document, MyViewHolder holder, int position) {
 		int progress = document.getProgress();
+		ProgressBar progressBar = holder.fileUploadProgressBar;
+		progressBar.incrementProgressBy(1);
 		if (progress > 0) {
-			showView(holder.fileUploadProgressBar);
-			holder.fileUploadProgressBar.setProgress(progress);
+			showView(progressBar);
+			progressBar.setProgress(progress * 100);
 			if (document.isUploaded) {
 				setImageResource(holder.imgRemoveDocument, R.drawable.cli_step_indicator_active);
 				disableView(holder.imgRemoveDocument, false);

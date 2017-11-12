@@ -57,7 +57,7 @@
             android:layout_height="2dp"
             android:layout_gravity="bottom"
             android:layout_marginTop="13dp"
-            android:max="100"
+            android:max="10000"
             android:progressDrawable="@drawable/progressbar_file_upload"
             android:visibility="gone"/>
     </LinearLayout>
