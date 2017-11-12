@@ -104,9 +104,11 @@ public class DocumentsAccountTypeAdapter extends RecyclerView.Adapter<DocumentsA
 				@Override
 				public void onClick(View v) {
 					int position = holder.getAdapterPosition();
-					selectedPosition = position;
-					onAccountTypeClick.onAccountTypeClick(v, position);
-					notifyDataSetChanged();
+					if(selectedPosition == -1 || position!=selectedPosition) {
+						selectedPosition = position;
+						onAccountTypeClick.onAccountTypeClick(v, position);
+						notifyDataSetChanged();
+					}
 				}
 			});
 		}

@@ -99,9 +99,12 @@ public class DocumentAdapter extends RecyclerView.Adapter<DocumentAdapter.MyView
 				@Override
 				public void onClick(View v) {
 					int position = holder.getAdapterPosition();
+					if(selectedPosition == -1 || position!=selectedPosition)
+					{
 					selectedPosition = position;
 					onItemClick.onItemClick(v, position);
 					notifyDataSetChanged();
+					}
 				}
 			});
 		}

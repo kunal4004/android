@@ -91,9 +91,11 @@ public class POIDocumentSubmitTypeAdapter extends RecyclerView.Adapter<POIDocume
 				@Override
 				public void onClick(View v) {
 					int position = holder.getAdapterPosition();
-					selectedPosition = position;
-					onSubmitType.onSubmitTypeSelected(v, position);
-					notifyDataSetChanged();
+					if(selectedPosition == -1 || position!=selectedPosition) {
+						selectedPosition = position;
+						onSubmitType.onSubmitTypeSelected(v, position);
+						notifyDataSetChanged();
+					}
 				}
 			});
 		}
