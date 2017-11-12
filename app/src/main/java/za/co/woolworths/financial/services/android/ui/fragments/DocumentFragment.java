@@ -139,6 +139,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private CLIPOIOriginRequest cLIPOIOriginRequest;
 	private CLISubmitPOIRequest cliSubmitPOIRequest;
 	private WTextView tvCLIAccountTypeTitle, tvAccountSavingTitle;
+	private RelativeLayout relConnect;
 
 	public String getSelectedBankType() {
 		return selectedBankType;
@@ -328,7 +329,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		addDocumentButton = (RelativeLayout) view.findViewById(R.id.addDocuments);
 		uploadDocumentsLayout = (LinearLayout) view.findViewById(R.id.uploadDocumentsLayout);
 		WButton btnRetry = (WButton) view.findViewById(R.id.btnRetry);
-		RelativeLayout relConnect = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
+		relConnect = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
 		pbAccountType = (ProgressBar) view.findViewById(R.id.pbAccountType);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), relConnect);
 		mErrorHandlerView.setMargin(relConnect, 0, 0, 0, 0);
@@ -901,7 +902,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		int paddingPixel = 16;
 		float density = getActivity().getResources().getDisplayMetrics().density;
 		int paddingDp = (int) (paddingPixel * density);
-		int screenHeight = ilc.getScreenHeight(getActivity()) / 2;
+		int screenHeight = ilc.getScreenHeight(getActivity());
 		if (defaultPaddingEnabled) {
 			view.setPadding(0, paddingDp, 0, 0);
 		} else {
