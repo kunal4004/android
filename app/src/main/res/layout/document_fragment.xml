@@ -257,65 +257,6 @@
                         android:nestedScrollingEnabled="false"
                         android:paddingLeft="24dp"
                         android:paddingRight="24dp"/>
-                    <!--<LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="1dp"
-                        android:background="@color/white"
-                        android:orientation="vertical"
-                        android:paddingLeft="24dp"
-                        android:paddingRight="24dp">
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/checkAccount"
-                            android:minHeight="70dp">
-
-                            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                                style="@style/cli_account_type_selection"
-                                android:id="@+id/checkAccountText"
-                                android:drawableLeft="@drawable/listview"
-                                android:text="Cheque Account"
-                                android:textColor="@color/black_overlay" />
-
-                            <CheckBox
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/checkAccountCheckBox"
-                                android:layout_alignParentRight="true"
-                                android:layout_centerVertical="true"
-                                android:clickable="false"
-                                />
-                        </RelativeLayout>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/cli_button_border" />
-
-                        <RelativeLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/savingsAccount"
-                            android:minHeight="70dp">
-
-                            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                                style="@style/cli_account_type_selection"
-                                android:id="@+id/savingsAccountText"
-                                android:drawableLeft="@drawable/locate_me"
-                                android:text="Savings Account"
-                                android:textColor="@color/black" />
-
-                            <CheckBox
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/savingsAccountCheckBox"
-                                android:layout_alignParentRight="true"
-                                android:layout_centerVertical="true" />
-                        </RelativeLayout>
-
-                    </LinearLayout>-->
                 </LinearLayout>
 
                 <LinearLayout
@@ -329,6 +270,7 @@
                     >
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/tvAccountSavingTitle"
                         style="@style/cli_permission_title_text"
                         android:text="ABSA savings ACCOUNt"/>
 

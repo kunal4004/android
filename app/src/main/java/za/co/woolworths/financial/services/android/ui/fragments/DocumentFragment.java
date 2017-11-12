@@ -137,7 +137,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private CLISendEmailRequest cliSendEmail;
 	private CLIPOIOriginRequest cLIPOIOriginRequest;
 	private CLISubmitPOIRequest cliSubmitPOIRequest;
-	private WTextView tvCLIAccountTypeTitle;
+	private WTextView tvCLIAccountTypeTitle, tvAccountSavingTitle;
 
 	public String getSelectedBankType() {
 		return selectedBankType;
@@ -316,6 +316,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		poiDocumentSubmitTypeLayout = (LinearLayout) view.findViewById(R.id.poiDocumentSubmitTypeLayout);
 		yesPOIFromBank = (WTextView) view.findViewById(R.id.yesPOIFromBank);
 		tvCLIAccountTypeTitle = (WTextView) view.findViewById(R.id.tvCLIAccountTypeTitle);
+		tvAccountSavingTitle = (WTextView) view.findViewById(R.id.tvAccountSavingTitle);
 		noPOIFromBank = (WTextView) view.findViewById(R.id.noPOIFromBank);
 		btnSubmit = (WTextView) view.findViewById(R.id.submitCLI);
 		poiDocumentInfo = (ImageView) view.findViewById(R.id.poiDocumentInfo);
@@ -389,12 +390,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			String selectedBankName = selectedBank.bankName;
 			setSelectedBankType(selectedBank.bankName);
 			String defaultAccountTypeTitle = getString(R.string.account_type);
+			String defaultAccountSavingTitle = getString(R.string.account_saving_title);
 			tvCLIAccountTypeTitle.setText(defaultAccountTypeTitle.replace("###", selectedBankName));
+			tvAccountSavingTitle.setText(defaultAccountSavingTitle.replace("###", selectedBankName));
 			hideView(poiDocumentSubmitTypeLayout);
 			invalidateBankTypeSelection();
 			scrollUpConfirmationFroPOIFromBankLayout();
 		}
-
 	}
 
 	@Override
