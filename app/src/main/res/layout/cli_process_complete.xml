@@ -5,28 +5,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginEnd="@dimen/thirty_two_dp"
-    android:layout_marginStart="@dimen/thirty_three_dp">
+    >
 
     <ImageView
         android:id="@+id/imProcessComplete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:layout_marginTop="32dp"
         android:contentDescription="@string/process_complete_title"
-        app:layout_constraintBottom_toTopOf="@+id/tvProcessCompleteTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/applicationbeingprocessed_image"
-        tools:layout_editor_absoluteX="0dp" />
+        app:srcCompat="@drawable/applicationbeingprocessed_image"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvProcessCompleteTitle"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/thirteen_dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
         android:gravity="center_horizontal"
         android:letterSpacing="0.03"
         android:lineSpacingExtra="2sp"
@@ -38,27 +35,31 @@
         app:layout_constraintBottom_toTopOf="@+id/tvProcessCompleteDesc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintTop_toBottomOf="@+id/imProcessComplete"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvProcessCompleteDesc"
         style="@style/style_text_description"
-        android:layout_marginBottom="@dimen/fifty_dp"
+        android:layout_width="0dp"
+        android:layout_height="82dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
         android:text="@string/process_complete_desc"
         app:layout_constraintBottom_toTopOf="@+id/relProcessCompleteButtonContainer"
-        android:layout_height="0dp"
-        android:layout_width="0dp"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <RelativeLayout
         android:id="@+id/relProcessCompleteButtonContainer"
-        android:layout_width="312dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteX="8dp">
+        app:layout_constraintStart_toStartOf="parent">
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnProcessComplete"
