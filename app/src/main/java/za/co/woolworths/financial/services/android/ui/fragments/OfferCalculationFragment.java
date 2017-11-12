@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
@@ -302,7 +303,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				OfferActive mObjOffer = ((OfferActive) object);
 				switch (mObjOffer.httpCode) {
 					case 200:
-						finishActivity();
+						finishActivity(mObjOffer);
 						break;
 					case 440:
 						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
@@ -494,6 +495,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		progressBar.getIndeterminateDrawable().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
 	}
 
+	@SuppressLint("CommitTransaction")
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -544,7 +546,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					Bundle args = new Bundle();
 					String slideAmount = tvSlideToEditAmount.getText().toString();
 
-					args.putInt("slideAmount", Integer.valueOf(Utils.numericFieldOnly(slideAmount)));
+					args.putInt("slideAmount", Utils.numericFieldOnly(slideAmount));
 					args.putInt("currCredit", mObjOffer.offer.currCredit);
 					args.putInt("creditReqestMin", mObjOffer.offer.creditReqestMin);
 					args.putInt("creditRequestMax", mObjOffer.offer.creditRequestMax);
@@ -748,9 +750,14 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		}
 	}
 
-	public void finishActivity() {
+	public void finishActivity(OfferActive offerActive) {
 		Activity activity = getActivity();
 		if (activity != null) {
+			if (woolworthsApplication != null) {
+				woolworthsApplication
+						.bus()
+						.send(new BusStation(offerActive));
+			}
 			activity.finish();
 			activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 		}
