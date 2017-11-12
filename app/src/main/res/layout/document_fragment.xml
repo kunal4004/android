@@ -73,8 +73,9 @@
                     >
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/tvCLIAccountTypeTitle"
                         style="@style/cli_permission_title_text"
-                        android:text="ABSA ACCOUNT TYPE"/>
+                        android:text="@string/account_type"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -228,6 +229,7 @@
                     android:paddingTop="10dp"
                     android:visibility="gone"
                     >
+
                     <RelativeLayout
                         style="@style/increase_limit_relative_style"
                         android:paddingEnd="@dimen/twenty_four_dp"
@@ -482,6 +484,7 @@
                 />
         </RelativeLayout>
     </RelativeLayout>
+
     <include
         layout="@layout/no_connection_handler"/>
 </FrameLayout>

@@ -137,6 +137,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private CLISendEmailRequest cliSendEmail;
 	private CLIPOIOriginRequest cLIPOIOriginRequest;
 	private CLISubmitPOIRequest cliSubmitPOIRequest;
+	private WTextView tvCLIAccountTypeTitle;
 
 	public String getSelectedBankType() {
 		return selectedBankType;
@@ -314,6 +315,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		accountNumberLayout = (LinearLayout) view.findViewById(R.id.accountNumberLayout);
 		poiDocumentSubmitTypeLayout = (LinearLayout) view.findViewById(R.id.poiDocumentSubmitTypeLayout);
 		yesPOIFromBank = (WTextView) view.findViewById(R.id.yesPOIFromBank);
+		tvCLIAccountTypeTitle = (WTextView) view.findViewById(R.id.tvCLIAccountTypeTitle);
 		noPOIFromBank = (WTextView) view.findViewById(R.id.noPOIFromBank);
 		btnSubmit = (WTextView) view.findViewById(R.id.submitCLI);
 		poiDocumentInfo = (ImageView) view.findViewById(R.id.poiDocumentInfo);
@@ -384,7 +386,10 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			invalidateBankTypeSelection();
 			scrollUpDocumentSubmitTypeLayout();
 		} else {
+			String selectedBankName = selectedBank.bankName;
 			setSelectedBankType(selectedBank.bankName);
+			String defaultAccountTypeTitle = getString(R.string.account_type);
+			tvCLIAccountTypeTitle.setText(defaultAccountTypeTitle.replace("###", selectedBankName));
 			hideView(poiDocumentSubmitTypeLayout);
 			invalidateBankTypeSelection();
 			scrollUpConfirmationFroPOIFromBankLayout();

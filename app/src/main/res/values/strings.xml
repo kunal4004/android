@@ -548,5 +548,6 @@
     <string name="process_complete_back_account">back to my account</string>
     <string name="status_document_required">Documents Required</string>
     <string name="back_to_my_account">back to my account</string>
+    <string name="account_type">### account type</string>
 
 </resources>
