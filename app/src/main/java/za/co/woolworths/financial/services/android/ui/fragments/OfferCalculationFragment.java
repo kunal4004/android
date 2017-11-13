@@ -33,10 +33,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.internal.Util;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
+import za.co.woolworths.financial.services.android.models.dto.Document;
 import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
@@ -513,8 +515,10 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 									case 200:
 										String nextStep = mObjOffer.nextStep;
 										if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required))) {
-
+											Bundle bundle = new Bundle();
+											bundle.putString("OFFER_ACTIVE_PAYLOAD", Utils.objectToJson(mObjOffer));
 											DocumentFragment documentFragment = new DocumentFragment();
+											documentFragment.setArguments(bundle);
 											documentFragment.setStepIndicatorListener(mCliStepIndicatorListener);
 											FragmentUtils fragmentUtils = new FragmentUtils();
 											fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), documentFragment, R.id.cli_steps_container);

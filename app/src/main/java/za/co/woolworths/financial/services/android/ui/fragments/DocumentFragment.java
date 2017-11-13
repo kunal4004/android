@@ -25,6 +25,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.net.URI;
@@ -145,6 +147,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private WTextView tvCLIAccountTypeTitle, tvAccountSavingTitle;
 	private RelativeLayout relConnect;
 	private LoadState loadState;
+	private OfferActive activeOfferObj;
 
 	private enum NetworkFailureRequest {DEA_BANK, ACCOUNT_TYPE}
 
@@ -204,6 +207,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		connectionBroadcast();
+		Bundle b = this.getArguments();
+		if (b != null) {
+			String offerActive = b.getString("OFFER_ACTIVE_PAYLOAD");
+			if (!TextUtils.isEmpty(offerActive)) {
+				activeOfferObj = new Gson().fromJson(offerActive, OfferActive.class);
+			}
+		}
 		mCliPhase2Activity = (CLIPhase2Activity) getActivity();
 		loadState = new LoadState();
 		mCliPhase2Activity.actionBarCloseIcon();
@@ -1150,4 +1160,5 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private void loadFailure() {
 		loadState.setLoadComplete(false);
 	}
+
 }

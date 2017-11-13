@@ -24,7 +24,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIAllStepsContainerFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIEligibilityAndPermissionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIPOIProblemFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.ContactUsFinancialServiceFragment;
+
 import za.co.woolworths.financial.services.android.ui.fragments.DocumentFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.OfferCalculationFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.SupplyIncomeDetailFragment;
@@ -157,7 +157,10 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 		}
 
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_poi_required))) {
+			Bundle bundle = new Bundle();
+			bundle.putString("OFFER_ACTIVE_PAYLOAD", mOfferActivePayload);
 			DocumentFragment documentFragment = new DocumentFragment();
+			documentFragment.setArguments(bundle);
 			documentFragment.setStepIndicatorListener(cliStepIndicatorListener);
 			openFragment(documentFragment);
 		}
