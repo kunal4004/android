@@ -19,8 +19,8 @@ public class CLIPOIOriginRequest extends HttpAsyncTask<String,String,CliPoiOrigi
 	private Context mContext;
 	public String mException;
 	public int cliID;
-	public String productOfferingId;
-	public CLIPOIOriginRequest(Context context,int cliID,String productOfferingId,OnEventListener callback) {
+	public int productOfferingId;
+	public CLIPOIOriginRequest(Context context,int cliID,int productOfferingId,OnEventListener callback) {
 		this.mContext = context;
 		this.mCallBack = callback;
 		this.mWoolworthsApp = ((WoolworthsApplication) ((AppCompatActivity) mContext).getApplication());

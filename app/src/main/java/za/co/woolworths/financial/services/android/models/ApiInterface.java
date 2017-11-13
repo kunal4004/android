@@ -632,7 +632,7 @@ public interface ApiInterface {
 			@Query("saId") String saId);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
-	@POST("/user/cli/offer/POIOrigin")
+	@POST("/user/cli/offer/{cliId}/POIOrigin")
 	CliPoiOriginResponse cliPoiOriginRequest(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
@@ -643,7 +643,7 @@ public interface ApiInterface {
 			@Header("osVersion") String osVersion,
 			@Header("sessionToken") String sessionToken,
 			@Path("cliId") int cliId,
-			@Query("productOfferingId") String productOfferingId);
+			@Query("productOfferingId") int productOfferingId);
 
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800"})

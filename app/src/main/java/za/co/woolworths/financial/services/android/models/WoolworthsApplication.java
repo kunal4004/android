@@ -67,7 +67,7 @@ public class WoolworthsApplication extends Application {
 	private static String creditCardType;
 	private boolean isDEABank = false;
 	private boolean isOther = false;
-	private int productOfferingId;
+	private static int productOfferingId;
 	private LatLng lastKnowLatLng;
 	private AppCompatActivity mCurrentActivity = null;
 
@@ -391,7 +391,7 @@ public class WoolworthsApplication extends Application {
 		isOther = other;
 	}
 
-	public int getProductOfferingId() {
+	public static int getProductOfferingId() {
 		return productOfferingId;
 	}
 

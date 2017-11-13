@@ -229,7 +229,7 @@ public class WfsApi {
 		return mApiInterface.uploadPOIDocuments(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), cliId, files, fileNumber, fileTotal, saId);
 	}
 
-	public CliPoiOriginResponse cliPOIOriginRequest(int cliId, String productOfferingId) {
+	public CliPoiOriginResponse cliPOIOriginRequest(int cliId, int productOfferingId) {
 		return mApiInterface.cliPoiOriginRequest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), cliId, productOfferingId);
 	}
 

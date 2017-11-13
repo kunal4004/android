@@ -864,7 +864,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			if (dataList.get(i).getSize() <= WoolworthsApplication.getPoiDocumentSizeLimit()) {
 				dataList.get(i).setFileNumber(j);
 				++j;
-				initUploadDocument(dataList.get(i), totalFiles, "22", "17318731");
+				initUploadDocument(dataList.get(i), totalFiles, String.valueOf(activeOfferObj.cliId), activeOfferObj.application.saId);
 			}
 		}
 	}
@@ -995,7 +995,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public void updateBankDetails() {
 		disableSubmitButton();
 		UpdateBankDetail bankDetail = new UpdateBankDetail();
-		bankDetail.setCliOfferID(111);
+		bankDetail.setCliOfferID(activeOfferObj.offer.offerId);
 		bankDetail.setAccountType(getSelectedAccountType());
 		bankDetail.setBankName(getSelectedBankType());
 		bankDetail.setAccountNumber(etAccountNumber.getText().toString().trim());
@@ -1065,7 +1065,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	public void initPOIOriginRequest() {
 		//make dynamic values for cliID and productOfferingID
-		cLIPOIOriginRequest = new CLIPOIOriginRequest(getActivity(), 111, "20", new OnEventListener() {
+		cLIPOIOriginRequest = new CLIPOIOriginRequest(getActivity(), activeOfferObj.cliId, WoolworthsApplication.getProductOfferingId(), new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				CliPoiOriginResponse response = (CliPoiOriginResponse) object;
