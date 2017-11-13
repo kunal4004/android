@@ -511,10 +511,16 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 								mObjOffer = ((OfferActive) object);
 								switch (mObjOffer.httpCode) {
 									case 200:
-										DocumentFragment documentFragment = new DocumentFragment();
-										documentFragment.setStepIndicatorListener(mCliStepIndicatorListener);
-										FragmentUtils fragmentUtils = new FragmentUtils();
-										fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), documentFragment, R.id.cli_steps_container);
+										String nextStep = mObjOffer.nextStep;
+										if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required))) {
+
+											DocumentFragment documentFragment = new DocumentFragment();
+											documentFragment.setStepIndicatorListener(mCliStepIndicatorListener);
+											FragmentUtils fragmentUtils = new FragmentUtils();
+											fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), documentFragment, R.id.cli_steps_container);
+										} else {
+											finishActivity(mObjOffer);
+										}
 										break;
 									case 440:
 										SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
@@ -588,7 +594,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			mCurrentCredit = offer.currCredit;
 			mCreditReqestMin = offer.creditReqestMin;
 			String nextStep = mObjOffer.nextStep;
-			if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required))) {
+			if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_offer))) {
 				int creditRequestMax = offer.creditRequestMax;
 				int mDifferenceCreditLimit = (creditRequestMax - mCreditReqestMin);
 				mCLiId = mObjOffer.cliId;
@@ -602,14 +608,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				mGlobalState.setDecisionDeclineOffer(new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, false));
 				onLoadComplete();
 			} else {
-				Activity activity = getActivity();
-				if (activity instanceof CLIPhase2Activity) {
-					woolworthsApplication
-							.bus()
-							.send(new BusStation(mObjOffer));
-					activity.finish();
-					activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
-				}
+				finishActivity(mObjOffer);
 			}
 		}
 	}
