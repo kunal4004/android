@@ -334,8 +334,8 @@ public interface ApiInterface {
 	);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
-	@POST("/user/cli/offer")
-	OfferActive createOfferRequest(
+	@POST("/user/cli/application")
+	OfferActive cliApplication(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,

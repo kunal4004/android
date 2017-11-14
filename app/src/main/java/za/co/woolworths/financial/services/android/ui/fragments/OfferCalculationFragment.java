@@ -33,16 +33,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.internal.Util;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
-import za.co.woolworths.financial.services.android.models.dto.Document;
 import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.rest.CLICreateOffer;
+import za.co.woolworths.financial.services.android.models.rest.CLIApplication;
 import za.co.woolworths.financial.services.android.models.rest.CLIUpdateApplication;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
@@ -93,7 +91,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private LinearLayout llEmptyLayout;
 	private EventStatus mEventStatus;
 	private CLIUpdateApplication cliUpdateApplication;
-	private CLICreateOffer createOfferTask;
+	private CLIApplication createOfferTask;
 	private za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision cliAcceptOfferDecision;
 	private LoadState loadState;
 	private final CompositeDisposable disposables = new CompositeDisposable();
@@ -219,7 +217,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private void cliCreateOffer(CreateOfferRequest createOfferRequest) {
 		onLoad();
 		latestBackgroundTask(LATEST_BACKGROUND_CALL.CREATE_OFFER);
-		createOfferTask = new CLICreateOffer(getActivity(), createOfferRequest, new OnEventListener() {
+		createOfferTask = new CLIApplication(getActivity(), createOfferRequest, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				mObjOffer = ((OfferActive) object);
