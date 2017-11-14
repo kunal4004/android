@@ -19,7 +19,9 @@ import android.widget.TextView;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.WRewardsCardDetails;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
@@ -27,6 +29,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentP
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -49,6 +52,10 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 	private WGlobalState mWGlobalState;
 	private HttpAsyncTask<String, String, VoucherResponse> asyncTaskReward;
 	public static final int DEFAULT_VOUCHER_COUNT = 0;
+	public boolean isWrewardsCalled;
+	public boolean isCardDetailsCalled;
+	public CardDetailsResponse cardDetailsResponse;
+	public VoucherResponse voucherResponse;
 
 	@Nullable
 	@Override
@@ -71,6 +78,7 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), mRlConnect);
 		mErrorHandlerView.setMargin(mRlConnect, 0, 0, 0, 0);
 		loadReward();
+		loadCardDetails();
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -82,9 +90,11 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 		updateNavigationDrawer = (UpdateNavigationDrawer) getActivity();
 	}
 
-	private void setupViewPager(ViewPager viewPager, VoucherResponse voucherResponse) {
+	private void setupViewPager(ViewPager viewPager, VoucherResponse voucherResponse,CardDetailsResponse cardResponse) {
 		Bundle bundle = new Bundle();
 		bundle.putString("WREWARDS", Utils.objectToJson(voucherResponse));
+		if(cardResponse!=null)
+			bundle.putString("CARD_DETAILS",Utils.objectToJson(cardResponse));
 		adapter = new WRewardsFragmentPagerAdapter(getChildFragmentManager(), bundle);
 		adapter.addFrag(new WRewardsOverviewFragment(), getString(R.string.overview));
 		adapter.addFrag(new WRewardsVouchersFragment(), getString(R.string.vouchers));
@@ -155,33 +165,35 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 			}
 
 			@Override
-			protected void onPostExecute(VoucherResponse voucherResponse) {
-				super.onPostExecute(voucherResponse);
-				handleVoucherResponse(voucherResponse);
+			protected void onPostExecute(VoucherResponse response) {
+				super.onPostExecute(response);
+				handleVoucherResponse(response);
 			}
 		};
 	}
 
-	public void handleVoucherResponse(VoucherResponse voucherResponse) {
+	public void handleVoucherResponse(VoucherResponse response) {
 		try {
-			progressBar.setVisibility(View.GONE);
-			fragmentView.setVisibility(View.VISIBLE);
-			switch (voucherResponse.httpCode) {
+			switch (response.httpCode) {
 				case 200:
 					mWGlobalState.setRewardSignInState(true);
 					mWGlobalState.setRewardHasExpired(false);
-					setupViewPager(viewPager, voucherResponse);
-					if (voucherResponse.voucherCollection.vouchers != null)
-						updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
+					if (response.voucherCollection.vouchers != null)
+						updateNavigationDrawer.updateVoucherCount(response.voucherCollection.vouchers.size());
 					else {
 						clearVoucherCounter();
 					}
+					voucherResponse=response;
+					isWrewardsCalled=true;
+					handleWrewardsAndCardDetailsResponse();
 					break;
 				case 440:
+					progressBar.setVisibility(View.GONE);
+					fragmentView.setVisibility(View.VISIBLE);
 					clearVoucherCounter();
 					mWGlobalState.setRewardHasExpired(true);
 					mWGlobalState.setRewardSignInState(false);
-					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), voucherResponse.response.stsParams);
+					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.response.stsParams);
 					Utils.setBadgeCounter(getActivity(), 0);
 					updateNavigationDrawer.updateVoucherCount(0);
 					Intent intent = new Intent();
@@ -193,6 +205,8 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 					break;
 				default:
+					progressBar.setVisibility(View.GONE);
+					fragmentView.setVisibility(View.VISIBLE);
 					clearVoucherCounter();
 					mWGlobalState.setRewardSignInState(false);
 					setupErrorViewPager(viewPager);
@@ -226,5 +240,33 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 
 	public void clearVoucherCounter() {
 		updateNavigationDrawer.updateVoucherCount(0);
+	}
+
+	public void loadCardDetails()
+	{
+		new WRewardsCardDetails(getActivity(), new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				isCardDetailsCalled=true;
+				cardDetailsResponse= (CardDetailsResponse) object;
+				handleWrewardsAndCardDetailsResponse();
+			}
+
+			@Override
+			public void onFailure(String e) {
+				isCardDetailsCalled=true;
+				handleWrewardsAndCardDetailsResponse();
+			}
+		}).execute();
+	}
+
+	public void handleWrewardsAndCardDetailsResponse()
+	{
+		if(isCardDetailsCalled && isWrewardsCalled)
+		{
+			progressBar.setVisibility(View.GONE);
+			fragmentView.setVisibility(View.VISIBLE);
+			setupViewPager(viewPager, voucherResponse,cardDetailsResponse);
+		}
 	}
 }
