@@ -38,7 +38,8 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 	private boolean grossMonthlyIncomeWasEdited, netMonthlyIncomeWasEdited, additionalMonthlyIncomeWasEdited;
 	private WEditTextView etGrossMonthlyIncome, etNetMonthlyIncome, etAdditionalMonthlyIncome;
 	private WTextView tvGrossMonthlyIncome, tvNetMonthlyIncome, tvAdditionalMonthlyIncome;
-	private LinearLayout llNextButtonLayout, llGrossMonthlyIncomeLayout, llNetMonthlyIncomeLayout, llAdditionalMonthlyIncomeLayout;
+	private LinearLayout llNextButtonLayout, llGrossMonthlyIncomeLayout, llNetMonthlyIncomeLayout, llAdditionalMonthlyIncomeLayout,
+			llSupplyIncomeContainer;
 	private WButton btnContinue;
 	private View rootView;
 	private CLIPhase2Activity mCliPhase2Activity;
@@ -67,6 +68,8 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 			mIncreaseLimitController.populateExpenseField(etNetMonthlyIncome, mHashIncomeDetail.get("NET_MONTHLY_INCOME"), tvNetMonthlyIncome);
 			mIncreaseLimitController.populateExpenseField(etAdditionalMonthlyIncome, mHashIncomeDetail.get("ADDITIONAL_MONTHLY_INCOME"), tvAdditionalMonthlyIncome);
 		}
+
+		mIncreaseLimitController.dynamicLayoutPadding(llSupplyIncomeContainer);
 		llAdditionalMonthlyIncomeLayout.requestFocus();
 		etGrossMonthlyIncome.setEnabled(false);
 		etAdditionalMonthlyIncome.setEnabled(false);
@@ -82,6 +85,7 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 		llGrossMonthlyIncomeLayout = (LinearLayout) view.findViewById(R.id.llGrossMonthlyIncomeLayout);
 		llNetMonthlyIncomeLayout = (LinearLayout) view.findViewById(R.id.llNetMonthlyIncomeLayout);
 		llAdditionalMonthlyIncomeLayout = (LinearLayout) view.findViewById(R.id.llAdditionalMonthlyIncomeLayout);
+		llSupplyIncomeContainer = (LinearLayout) view.findViewById(R.id.llSupplyIncomeContainer);
 
 		llGrossMonthlyIncomeLayout.setOnClickListener(this);
 		llNetMonthlyIncomeLayout.setOnClickListener(this);

@@ -43,7 +43,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 	private WTextView tvMortgagePayments, tvRentalPayments, tvMaintainanceExpenses, tvMonthlyCreditPayments, tvOtherExpenses;
 	private WEditTextView etMortgagePayments, etRentalPayments, etMaintainanceExpenses, etMonthlyCreditPayments, etOtherExpenses;
 	private boolean etMortgagePaymentsWasEdited, etRentalPaymentsWasEdited, etMaintainanceExpensesWasEdited, etMonthlyCreditPaymentsWasEdited, etOtherExpensesWasEdited;
-	private LinearLayout llNextButtonLayout, llMortgagePayment, llRentalPayment, llMaintainanceExpenses, llMonthlyCreditPayments, llOtherExpensesContainer;
+	private LinearLayout llNextButtonLayout, llMortgagePayment, llRentalPayment, llMaintainanceExpenses, llMonthlyCreditPayments, llOtherExpensesContainer, llSupplyExpenseContainer;
 	private NestedScrollView nsSupplyExpense;
 	private boolean etOtherExpensesWasTouched = false;
 	private IncreaseLimitController mIncreaseLimitController;
@@ -74,6 +74,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 			mIncreaseLimitController.populateExpenseField(etMonthlyCreditPayments, mHashExpenseDetail.get("MONTHLY_CREDIT_EXPENSES"), tvMonthlyCreditPayments);
 			mIncreaseLimitController.populateExpenseField(etOtherExpenses, mHashExpenseDetail.get("OTHER_EXPENSES"), tvOtherExpenses);
 		}
+		mIncreaseLimitController.dynamicLayoutPadding(llSupplyExpenseContainer);
 		Activity activity = getActivity();
 		if (activity instanceof CLIPhase2Activity) {
 			activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -94,6 +95,7 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 		llMonthlyCreditPayments = (LinearLayout) view.findViewById(R.id.llMonthlyCreditPayments);
 		llNextButtonLayout = (LinearLayout) view.findViewById(R.id.llNextButtonLayout);
 		llOtherExpensesContainer = (LinearLayout) view.findViewById(R.id.llOtherExpensesContainer);
+		llSupplyExpenseContainer = (LinearLayout) view.findViewById(R.id.llSupplyExpenseContainer);
 		IncreaseLimitController increaseLimitController = new IncreaseLimitController(getActivity());
 		increaseLimitController.setQuarterHeight(view.findViewById(R.id.llEmptyLayout));
 

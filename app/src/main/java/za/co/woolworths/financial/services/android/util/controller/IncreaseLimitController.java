@@ -68,12 +68,14 @@ public class IncreaseLimitController {
 		showKeyboard(wEditText, context);
 		wTextView.setVisibility(View.VISIBLE);
 		wEditText.setCursorVisible(true);
+		wEditText.setSelection(wEditText.getText().length());
 	}
 
 	public void populateExpenseField(WEditTextView editTextView, String value, WTextView wTextView) {
 		wTextView.setVisibility(View.VISIBLE);
 		editTextView.setText(value);
 		editTextView.clearFocus();
+		editTextView.setSelection(editTextView.getText().length());
 	}
 
 	public void accountCLIStatus(LinearLayout llCommonLayer, WTextView tvIncreaseLimit, WTextView tvApplyNowIncreaseLimit, WTextView tvIncreaseLimitDescription, ImageView logoIncreaseLimit, OfferActive offerActive) {
@@ -371,6 +373,15 @@ public class IncreaseLimitController {
 		if (focus != null) {
 			InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 			inputMethodManager.hideSoftInputFromWindow(focus.getWindowToken(), 0);
+		}
+	}
+
+	public void dynamicLayoutPadding(View view) {
+		Context context = mContext;
+		Activity activity = (Activity) context;
+		if (activity != null) {
+			int screenHeight = getScreenHeight(activity);
+			view.setPadding(0, 0, 0, screenHeight);
 		}
 	}
 }
