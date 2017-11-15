@@ -537,6 +537,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				scrollUpAccountTypeSelectionLayout();
 				break;
 			case R.id.noPOIFromBank:
+				submitType = SubmitType.LATER;
 				yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
 				yesPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
 				noPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
