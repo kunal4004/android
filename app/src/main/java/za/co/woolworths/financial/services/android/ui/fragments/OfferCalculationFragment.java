@@ -74,7 +74,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private FrameLayout flCircularProgressSpinner;
 	private WButton btnContinue;
 	private SeekBar sbSlideAmount;
-	private int mCreditReqestMin = 0;
 	private int mCurrentCredit = 0;
 	private OfferActive mObjOffer;
 	private CLIPhase2Activity mCliPhase2Activity;
@@ -95,6 +94,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision cliAcceptOfferDecision;
 	private LoadState loadState;
 	private final CompositeDisposable disposables = new CompositeDisposable();
+	private int mCreditRequestMax;
 
 	private enum LATEST_BACKGROUND_CALL {CREATE_OFFER, DECLINE_OFFER, UPDATE_APPLICATION, ACCEPT_OFFER}
 
@@ -204,7 +204,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				progress = progress / INCREASE_PROGRESS_BY;
 				progress = progress * INCREASE_PROGRESS_BY;
-				int newCLIAmount = mCreditReqestMin + progress;
+				int newCLIAmount = mCurrentCredit + progress;
 				tvSlideToEditAmount.setText(formatAmount(newCLIAmount));
 				String amount = tvSlideToEditAmount.getText().toString();
 				tvNewCreditLimitAmount.setText(amount);
@@ -221,8 +221,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			@Override
 			public void onSuccess(Object object) {
 				mObjOffer = ((OfferActive) object);
-				int httpCode = mObjOffer.httpCode;
-				switch (httpCode) {
+				dummyData(mObjOffer);
+
+				switch (mObjOffer.httpCode) {
 					case 200:
 						displayDefaultOffer(mObjOffer);
 						break;
@@ -261,6 +262,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			@Override
 			public void onSuccess(Object object) {
 				mObjOffer = ((OfferActive) object);
+				dummyData(mObjOffer);
 				switch (mObjOffer.httpCode) {
 					case 200:
 						displayDefaultOffer(mObjOffer);
@@ -291,6 +293,19 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			}
 		});
 		cliUpdateApplication.execute();
+	}
+
+	private void dummyData(OfferActive mObjOffer) {
+		mObjOffer.httpCode = 200;
+		mObjOffer.nextStep = getString(R.string.status_poi_required);
+		mObjOffer.nextStepColour = "#303004";
+		mObjOffer.offer = new Offer();
+		mObjOffer.offer.creditRequestMax = 80000;
+		mObjOffer.offer.creditReqestMin = 10000;
+		mObjOffer.offer.currCredit = 25000;
+		mObjOffer.cliId = 3637;
+		mObjOffer.messageSummary = getString(R.string.status_poi_required);
+		mObjOffer.messageDetail = "POI REQUIRED desc";
 	}
 
 	private void cliDelcineOfferRequest(CLIOfferDecision createOfferDecision) {
@@ -555,10 +570,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					String slideAmount = tvSlideToEditAmount.getText().toString();
 
 					args.putInt("slideAmount", Utils.numericFieldOnly(slideAmount));
-					args.putInt("currCredit", mObjOffer.offer.currCredit);
-					args.putInt("creditReqestMin", mObjOffer.offer.creditReqestMin);
-					args.putInt("creditRequestMax", mObjOffer.offer.creditRequestMax);
-
+					args.putInt("currentCredit", mCurrentCredit);
+					args.putInt("creditRequestMax", mCreditRequestMax);
 					mCliPhase2Activity.actionBarBackIcon();
 					EditSlideAmountFragment editAmountFragment = new EditSlideAmountFragment();
 					editAmountFragment.setArguments(args);
@@ -593,17 +606,17 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	public void displayDefaultOffer(OfferActive mObjOffer) {
 		if (mObjOffer != null) {
 			Offer offer = mObjOffer.offer;
-			mCurrentCredit = offer.currCredit;
-			mCreditReqestMin = offer.creditReqestMin;
+			mCurrentCredit = offer.currCredit + INCREASE_PROGRESS_BY;
 			String nextStep = mObjOffer.nextStep;
-			if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_offer))) {
-				int creditRequestMax = offer.creditRequestMax;
-				int mDifferenceCreditLimit = (creditRequestMax - mCreditReqestMin);
+			if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_offer))
+					|| nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required))) {
+				mCreditRequestMax = offer.creditRequestMax;
+				int mDifferenceCreditLimit = (mCreditRequestMax - mCurrentCredit);
 				mCLiId = mObjOffer.cliId;
 				sbSlideAmount.setMax(mDifferenceCreditLimit);
 				sbSlideAmount.incrementProgressBy(INCREASE_PROGRESS_BY);
 				animSeekBarToMaximum();
-				tvCurrentCreditLimitAmount.setText(formatAmount(mCurrentCredit));
+				tvCurrentCreditLimitAmount.setText(formatAmount(mCurrentCredit - INCREASE_PROGRESS_BY));
 				tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
 				tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
 				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());

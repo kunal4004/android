@@ -31,7 +31,7 @@ public class EditSlideAmountFragment extends CLIFragment {
 
 	private View view;
 	private WLoanEditTextView etAmount;
-	private int creditReqestMin = 0;
+	private int currentCredit = 0;
 	private int creditRequestMax = 0;
 	String title;
 
@@ -57,7 +57,7 @@ public class EditSlideAmountFragment extends CLIFragment {
 		Bundle args = getArguments();
 		if (args != null) {
 			int slideAmount = args.getInt("slideAmount");
-			creditReqestMin = args.getInt("creditReqestMin");
+			currentCredit = args.getInt("currentCredit");
 			creditRequestMax = args.getInt("creditRequestMax");
 			etAmount.setText(String.valueOf(slideAmount));
 			etAmount.setSelection(etAmount.getText().toString().length());
@@ -99,12 +99,16 @@ public class EditSlideAmountFragment extends CLIFragment {
 
 	private void retrieveNumber(String slideAmount) {
 		int newAmount = Utils.numericFieldOnly(slideAmount);
-		if (newAmount < creditReqestMin) {
+		if (newAmount < currentCredit) {
 			minAmountMessage();
 		} else if (newAmount > creditRequestMax) {
 			maxAmountMessage();
 		} else {
-			int progressValue = newAmount - creditReqestMin;
+
+			//round down to the nearest hundred
+			newAmount -= newAmount % 100;
+			System.out.println(newAmount);
+			int progressValue = (int) newAmount - currentCredit;
 			Activity activity = getActivity();
 			if (activity != null) {
 				if (activity instanceof CLIPhase2Activity) {
@@ -171,7 +175,7 @@ public class EditSlideAmountFragment extends CLIFragment {
 	}
 
 	private void minAmountMessage() {
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.AMOUNT_STOCK, title, getString(R.string.amount_too_low_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(creditReqestMin)));
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.AMOUNT_STOCK, title, getString(R.string.amount_too_low_modal_desc).replaceAll("#R", WFormatter.escapeDecimalFormat(currentCredit)));
 	}
 
 	private void maxAmountMessage() {
