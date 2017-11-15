@@ -93,8 +93,8 @@ public interface ApiInterface {
 			@Header("sessionToken") String sessionToken,
 			@Path("productOfferingId") String productOfferingId);
 
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800"})
-//cachetime changed to 8 hrs.
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400"})
+//cachetime changed to 4 hrs.
 	@GET("/user/vouchers")
 	VoucherResponse getVouchers(
 			@Header("apiId") String apiId,
@@ -564,7 +564,7 @@ public interface ApiInterface {
 			@Query("sku") String sku,
 			Callback<String> callback);
 
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800"})
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400"})
 	@GET("/reward/cardDetails")
 	CardDetailsResponse getCardDetails(
 			@Header("apiId") String apiId,
