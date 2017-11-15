@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
-import za.co.woolworths.financial.services.android.models.WRewardsCardDetails;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 
@@ -43,6 +42,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
+import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
@@ -64,6 +64,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	private DrawerLayout mDrawerLayout;
 	private WGlobalState mWGlobalState;
 	private int a, b;
+	private String mNotificationUtils;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +78,11 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		mWGlobalState = ((WoolworthsApplication) WOneAppBaseActivity.this.getApplication()).getWGlobalState();
 
 		mActionBar = getSupportActionBar();
-		mActionBar.setDisplayShowHomeEnabled(false);
-		mActionBar.setDisplayShowTitleEnabled(false); // false for hiding the title from actoinBar
+		if (mActionBar != null) {
+			mActionBar.setDisplayShowHomeEnabled(false);
+			mActionBar.setDisplayShowTitleEnabled(false); // false for hiding the title from actoinBar
+		}
+
 		mToolbarTitle = (WTextView) findViewById(R.id.toolbar_title);
 		fragmentList = new ArrayList<>();
 
@@ -91,19 +95,22 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		drawerFragment.setDrawerListener(this);
 		displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 		registerReceiver(logOutReceiver, new IntentFilter("logOutReceiver"));
-		Bundle intent = getIntent().getExtras();
-		if (intent != null) {
-			int mOpenProduct = intent.getInt("myAccount");
-			if (mOpenProduct == 1) {
-				displayView(1);
+		Bundle bundle = getIntent().getExtras();
+		mNotificationUtils = bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT);
+		if (!TextUtils.isEmpty(mNotificationUtils)) {
+			displayView(4);
+		} else {
+			if (bundle != null) {
+				int mOpenProduct = bundle.getInt("myAccount");
+				if (mOpenProduct == 1) {
+					displayView(1);
+				} else {
+					displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
+				}
 			} else {
 				displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 			}
-		} else {
-			displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 		}
-
-		initGetVouchersCall();
 	}
 
 	@Override
@@ -244,7 +251,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		JWTDecodedModel jwtDecodedModel = getJWTDecoded();
 		if (jwtDecodedModel.AtgSession != null && jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
 			getVouchers().execute();
-			new WRewardsCardDetails(WOneAppBaseActivity.this).execute();
 		}
 	}
 
