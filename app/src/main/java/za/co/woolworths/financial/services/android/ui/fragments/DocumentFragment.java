@@ -622,6 +622,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				ObjectAnimator.ofInt(nestedScrollView, "scrollY", poiDocumentSubmitTypeLayout.getTop()).setDuration(ANIM_DURATION).start();
 			}
 		});
+		showView(rlSubmitCli);
 	}
 
 	public void scrollUpAccountNumberLayout() {
