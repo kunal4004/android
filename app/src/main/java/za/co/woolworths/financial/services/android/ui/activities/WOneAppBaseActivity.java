@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
+import za.co.woolworths.financial.services.android.models.WRewardsCardDetails;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 
@@ -111,6 +112,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 				displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 			}
 		}
+		initGetVouchersCall();
 	}
 
 	@Override
@@ -251,6 +253,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		JWTDecodedModel jwtDecodedModel = getJWTDecoded();
 		if (jwtDecodedModel.AtgSession != null && jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
 			getVouchers().execute();
+			new WRewardsCardDetails(WOneAppBaseActivity.this).execute();
 		}
 	}
 
