@@ -136,23 +136,11 @@
                     android:paddingTop="16dp"
                     android:visibility="gone"
                     >
-                    <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:lineSpacingExtra="5dp"
-                        android:layout_marginBottom="24dp"
-                        android:background="@color/white"
-                        android:text="In order to complete your application, we require your latest 3 months’ bank statements or last 3 months payslips."
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        app:WTextView_font="myriadpro_regular"
-                        />
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/white"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         android:paddingRight="18dp">
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -176,18 +164,35 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="1dp"
                         android:background="@color/white"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         android:orientation="vertical">
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/cli_permission_description_text"
                             android:layout_marginBottom="24dp"
-                            android:text="In order to complete your application, we require your latest 3 months’ bank statements or last 3 months payslips."
+                            android:layout_marginRight="30dp"
+                            android:text="@string/cli_poi_email_decription"
                             android:textColor="@color/black"
+                            android:gravity="center_horizontal"
+                            />
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cli_poi_email_id"
+                            android:drawableLeft="@drawable/message_24"
+                            android:gravity="center_vertical"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginBottom="16dp"
+                            android:drawablePadding="16dp"
+                            android:textSize="18sp"
+                            android:textColor="@color/black"
+                            app:WTextView_font="myriadpro_semibold"
                             />
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/rclPOIDocuments"
+                            android:visibility="gone"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="1dp"

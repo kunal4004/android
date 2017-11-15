@@ -550,5 +550,7 @@
     <string name="back_to_my_account">back to my account</string>
     <string name="account_type">### account type</string>
     <string name="account_saving_title">### savings account</string>
+    <string name="cli_poi_email_decription">Please submit POI documents to the email address listed below.</string>
+    <string name="cli_poi_email_id">poi@woolworths.co.za</string>
 
 </resources>
