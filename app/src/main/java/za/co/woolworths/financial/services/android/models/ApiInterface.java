@@ -94,7 +94,6 @@ public interface ApiInterface {
 			@Path("productOfferingId") String productOfferingId);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400"})
-//cachetime changed to 4 hrs.
 	@GET("/user/vouchers")
 	VoucherResponse getVouchers(
 			@Header("apiId") String apiId,
