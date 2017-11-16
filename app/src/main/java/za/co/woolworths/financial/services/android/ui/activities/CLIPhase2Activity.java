@@ -172,14 +172,14 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	}
 
 	private void onBack() {
+		CLIPhase2Activity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		hideSoftKeyboard();
+		overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 		if (closeButtonEnabled()) {
 			finishActivity();
 		} else {
 			if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
 				getSupportFragmentManager().popBackStack();
-				CLIPhase2Activity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-				hideSoftKeyboard();
-				overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 			} else {
 				finishActivity();
 			}
