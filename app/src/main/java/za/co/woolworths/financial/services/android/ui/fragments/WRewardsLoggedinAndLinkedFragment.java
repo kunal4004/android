@@ -90,11 +90,11 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 		updateNavigationDrawer = (UpdateNavigationDrawer) getActivity();
 	}
 
-	private void setupViewPager(ViewPager viewPager, VoucherResponse voucherResponse,CardDetailsResponse cardResponse) {
+	private void setupViewPager(ViewPager viewPager, VoucherResponse voucherResponse, CardDetailsResponse cardResponse) {
 		Bundle bundle = new Bundle();
 		bundle.putString("WREWARDS", Utils.objectToJson(voucherResponse));
 		if(cardResponse!=null)
-			bundle.putString("CARD_DETAILS",Utils.objectToJson(cardResponse));
+			bundle.putString("CARD_DETAILS", Utils.objectToJson(cardResponse));
 		adapter = new WRewardsFragmentPagerAdapter(getChildFragmentManager(), bundle);
 		adapter.addFrag(new WRewardsOverviewFragment(), getString(R.string.overview));
 		adapter.addFrag(new WRewardsVouchersFragment(), getString(R.string.vouchers));
@@ -183,8 +183,8 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 					else {
 						clearVoucherCounter();
 					}
-					voucherResponse=response;
-					isWrewardsCalled=true;
+					voucherResponse = response;
+					isWrewardsCalled = true;
 					handleWrewardsAndCardDetailsResponse();
 					break;
 				case 440:
@@ -247,14 +247,14 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 		new WRewardsCardDetails(getActivity(), new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				isCardDetailsCalled=true;
-				cardDetailsResponse= (CardDetailsResponse) object;
+				isCardDetailsCalled = true;
+				cardDetailsResponse = (CardDetailsResponse) object;
 				handleWrewardsAndCardDetailsResponse();
 			}
 
 			@Override
 			public void onFailure(String e) {
-				isCardDetailsCalled=true;
+				isCardDetailsCalled = true;
 				handleWrewardsAndCardDetailsResponse();
 			}
 		}).execute();
@@ -262,11 +262,11 @@ public class WRewardsLoggedinAndLinkedFragment extends Fragment {
 
 	public void handleWrewardsAndCardDetailsResponse()
 	{
-		if(isCardDetailsCalled && isWrewardsCalled)
+		if (isCardDetailsCalled && isWrewardsCalled)
 		{
 			progressBar.setVisibility(View.GONE);
 			fragmentView.setVisibility(View.VISIBLE);
-			setupViewPager(viewPager, voucherResponse,cardDetailsResponse);
+			setupViewPager(viewPager, voucherResponse, cardDetailsResponse);
 		}
 	}
 }
