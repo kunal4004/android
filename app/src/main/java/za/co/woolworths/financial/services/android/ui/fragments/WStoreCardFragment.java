@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
@@ -67,7 +66,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private ProgressBar mProgressCreditLimit;
 
 	private WTextView tvApplyNowIncreaseLimit;
-	private AsyncTask<String, String, OfferActive> asyncTaskStore;
 	private boolean storeWasAlreadyRunOnce = false;
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
@@ -263,7 +261,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				});
 			}
 		});
-		asyncTaskStore = cliGetOfferActive.execute();
+		cliGetOfferActive.execute();
 	}
 
 	private void bindUI(OfferActive offerActive) {
@@ -329,9 +327,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 	@Override
 	public void onPauseFragment() {
-		if (asyncTaskStore != null) {
-			asyncTaskStore.isCancelled();
-		}
+
 	}
 
 	@Override
@@ -403,7 +399,9 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		disposables.clear();
+		if (!disposables.isDisposed()) {
+			disposables.clear();
+		}
 		if (cliGetOfferActive != null) {
 			if (!cliGetOfferActive.isCancelled()) {
 				cliGetOfferActive.cancel(true);

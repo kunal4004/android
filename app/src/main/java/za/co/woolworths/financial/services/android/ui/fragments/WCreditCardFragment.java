@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
@@ -60,7 +59,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private WoolworthsApplication woolworthsApplication;
 	private ProgressBar mProgressCreditLimit;
 	private WTextView tvApplyNowIncreaseLimit;
-	private AsyncTask<String, String, OfferActive> asyncRequestCredit;
 	private ErrorHandlerView mErrorHandlerView;
 	private BroadcastReceiver connectionBroadcast;
 	private View view;
@@ -71,6 +69,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private OfferActive offerActive;
 	private boolean viewWasCreated = false;
 	private final CompositeDisposable disposables = new CompositeDisposable();
+	private CLIGetOfferActive cliGetOfferActive;
 
 	@Nullable
 	@Override
@@ -229,7 +228,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	private void getActiveOffer() {
 		onLoad();
-		CLIGetOfferActive cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
+		cliGetOfferActive = new CLIGetOfferActive(getActivity(), productOfferingId, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				offerActive = ((OfferActive) object);
@@ -248,7 +247,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 				});
 			}
 		});
-		asyncRequestCredit = cliGetOfferActive.execute();
+		cliGetOfferActive.execute();
 	}
 
 	private void onLoad() {
@@ -296,9 +295,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	@Override
 	public void onPauseFragment() {
-		if (asyncRequestCredit != null) {
-			asyncRequestCredit.isCancelled();
-		}
 	}
 
 	@Override
@@ -386,10 +382,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		disposables.clear(); // do not send event after activity has been destroyed
-		if (asyncRequestCredit != null) {
-			if (!asyncRequestCredit.isCancelled()) {
-				asyncRequestCredit.cancel(true);
+		if (!disposables.isDisposed())
+			disposables.clear(); // do not send event after activity has been destroyed
+		if (cliGetOfferActive != null) {
+			if (!cliGetOfferActive.isCancelled()) {
+				cliGetOfferActive.cancel(true);
 			}
 		}
 	}

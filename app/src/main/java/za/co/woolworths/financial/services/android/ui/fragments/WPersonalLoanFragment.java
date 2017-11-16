@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
@@ -60,7 +59,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private ProgressBar mProgressCreditLimit;
 	private WTextView tvApplyNowIncreaseLimit;
 	private SharePreferenceHelper mSharePreferenceHelper;
-	private AsyncTask<String, String, OfferActive> asyncRequestPersonalLoan;
 	private boolean personalWasAlreadyRunOnce = false;
 
 	private ErrorHandlerView mErrorHandlerView;
@@ -285,7 +283,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				});
 			}
 		});
-		asyncRequestPersonalLoan = cliGetOfferActive.execute();
+		cliGetOfferActive.execute();
 	}
 
 	private void bindUI(OfferActive offerActive) {
@@ -351,9 +349,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 
 	@Override
 	public void onPauseFragment() {
-		if (asyncRequestPersonalLoan != null) {
-			asyncRequestPersonalLoan.isCancelled();
-		}
 	}
 
 	@Override
@@ -425,7 +420,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		disposables.clear();
+		if (!disposables.isDisposed())
+			disposables.clear();
 		if (cliGetOfferActive != null) {
 			if (!cliGetOfferActive.isCancelled()) {
 				cliGetOfferActive.cancel(true);
