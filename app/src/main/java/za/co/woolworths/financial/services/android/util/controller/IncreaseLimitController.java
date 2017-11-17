@@ -111,7 +111,6 @@ public class IncreaseLimitController {
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			displayDescription(tvIncreaseLimitDescription, messageDetail);
-			messageSummary = getString(R.string.status_please_try_again);
 			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 
 		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_poi_required))) {
