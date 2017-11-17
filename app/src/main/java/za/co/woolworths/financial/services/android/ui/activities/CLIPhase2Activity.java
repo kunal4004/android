@@ -21,6 +21,7 @@ import java.util.HashMap;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIAllStepsContainerFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIEligibilityAndPermissionFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.CLIPOIProblemFragment;
@@ -250,6 +251,9 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	}
 
 	public void finishActivity() {
+		((WoolworthsApplication) CLIPhase2Activity.this.getApplication())
+				.bus()
+				.send(new BusStation(true));
 		finish();
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
