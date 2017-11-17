@@ -63,7 +63,7 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 	private AnimatorSet mSetLeftIn;
 	private boolean mIsBackVisible = false;
 	private boolean isStarted=false;
-
+	public CardDetailsResponse cardDetailsResponse;;
 
 	@Nullable
 	@Override
@@ -84,10 +84,16 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 		bardCodeImage=(ImageView) view.findViewById(R.id.barCodeImage);
 		flipCardFrontLayout=view.findViewById(R.id.flipCardFrontLayout);
 		flipCardBackLayout=view.findViewById(R.id.flipCardBackLayout);
+		loadDefaultCardType();
 		Bundle bundle = getArguments();
 		voucherResponse = new Gson().fromJson(bundle.getString("WREWARDS"), VoucherResponse.class);
+
 		if (voucherResponse.tierInfo != null) {
 			handleTireHistoryView(voucherResponse.tierInfo);
+			if (bundle.containsKey("CARD_DETAILS")) {
+				cardDetailsResponse = new Gson().fromJson(bundle.getString("CARD_DETAILS"), CardDetailsResponse.class);
+				handleCard(cardDetailsResponse);
+			}
 		} else {
 			handleNoTireHistoryView();
 		}
@@ -100,7 +106,6 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 			}
 
 		});
-		loadDefaultCardType();
 		return view;
 	}
 
@@ -179,7 +184,6 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 			toNextTire.setText(WFormatter.formatAmount(tireInfo.toSpend));
 		}
 		loadPromotions();
-		loadCardDetails();
 
 	}
 
@@ -244,23 +248,6 @@ public class WRewardsOverviewFragment extends Fragment implements View.OnClickLi
 	public void onStart() {
 		super.onStart();
 		isStarted=true;
-	}
-
-	public void loadCardDetails()
-	{
-		new WRewardsCardDetails(getActivity(), new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				CardDetailsResponse cardDetailsResponse= (CardDetailsResponse) object;
-				if(cardDetailsResponse!=null)
-					handleCard(cardDetailsResponse);
-			}
-
-			@Override
-			public void onFailure(String e) {
-				//do nothing
-			}
-		}).execute();
 	}
 
 	public void handleCard(CardDetailsResponse cardDetailsResponse)

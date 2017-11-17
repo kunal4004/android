@@ -21,9 +21,10 @@ import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActi
 
 public class ScreenManager {
 
-	public static void presentMain(Activity activity) {
+	public static void presentMain(Activity activity, String notificationUtils) {
 
 		Intent intent = new Intent(activity, WOneAppBaseActivity.class);
+		intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, notificationUtils);
 		activity.startActivityForResult(intent, 0);
 		activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 		activity.finish();
