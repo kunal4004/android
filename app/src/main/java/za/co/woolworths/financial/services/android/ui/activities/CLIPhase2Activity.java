@@ -251,9 +251,14 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	}
 
 	public void finishActivity() {
-		((WoolworthsApplication) CLIPhase2Activity.this.getApplication())
-				.bus()
-				.send(new BusStation(true));
+		Fragment mainFragmentContainer = getSupportFragmentManager().findFragmentById(R.id.cliMainFrame);
+		if (mainFragmentContainer instanceof CLIAllStepsContainerFragment) {
+			if (closeButtonEnabled()) {
+				((WoolworthsApplication) CLIPhase2Activity.this.getApplication())
+						.bus()
+						.send(new BusStation(true));
+			}
+		}
 		finish();
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
