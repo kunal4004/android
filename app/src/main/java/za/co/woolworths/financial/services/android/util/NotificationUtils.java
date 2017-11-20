@@ -23,8 +23,10 @@ import za.co.woolworths.financial.services.android.ui.activities.WSplashScreenAc
 public class NotificationUtils {
 
     private static String TAG = NotificationUtils.class.getSimpleName();
+    public static final String PUSH_NOTIFICATION_INTENT = "PUSH_NOTIFICATION_INTENT";
 
-    private Context mContext;
+
+    public Context mContext;
 
     private static final String GROUP_KEY = "Woolworths";
     private static final int SUMMARY_ID = 0;
@@ -43,36 +45,36 @@ public class NotificationUtils {
         myIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         myIntent.setAction(Intent.ACTION_MAIN);
         myIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        PendingIntent contentIntent=PendingIntent.getActivity(safeContext, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        myIntent.putExtra(PUSH_NOTIFICATION_INTENT, PUSH_NOTIFICATION_INTENT);
+        PendingIntent contentIntent = PendingIntent.getActivity(safeContext, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        return new NotificationUtils(safeContext, notificationManager,contentIntent);
+        return new NotificationUtils(safeContext, notificationManager, contentIntent);
     }
 
     private NotificationUtils(Context context,
-                                NotificationManagerCompat notificationManager,
-                                PendingIntent contentIntent) {
+                              NotificationManagerCompat notificationManager,
+                              PendingIntent contentIntent) {
         this.mContext = context.getApplicationContext();
         this.notificationManager = notificationManager;
-        this.contentIntent=contentIntent;
+        this.contentIntent = contentIntent;
     }
 
-    public void sendBundledNotification(String title,String body) {
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+    public void sendBundledNotification(String title, String body) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Notification notification = buildKitKatNotification(title, body);
             notificationManager.notify(getNotificationId(), notification);
-        }else {
+        } else {
             Notification notification = buildNotification(title, body, GROUP_KEY);
             notificationManager.notify(getNotificationId(), notification);
         }
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M)
-        {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             Notification summary = buildSummary(GROUP_KEY);
             notificationManager.notify(SUMMARY_ID, summary);
         }
     }
 
-    private Notification buildKitKatNotification(String title,String body) {
+    private Notification buildKitKatNotification(String title, String body) {
         return new NotificationCompat.Builder(mContext)
                 .setContentTitle(title)
                 .setContentText(body)
@@ -86,7 +88,7 @@ public class NotificationUtils {
                 .build();
     }
 
-    private Notification buildNotification(String title,String body, String groupKey) {
+    private Notification buildNotification(String title, String body, String groupKey) {
         return new NotificationCompat.Builder(mContext)
                 .setContentTitle(title)
                 .setContentText(body)
@@ -102,7 +104,7 @@ public class NotificationUtils {
                 .build();
     }
 
-    private Notification buildSummary( String groupKey) {
+    private Notification buildSummary(String groupKey) {
         return new NotificationCompat.Builder(mContext)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.ic_notification)
@@ -119,12 +121,12 @@ public class NotificationUtils {
 
     private int getNotificationId() {
 
-        String bundleId=Utils.getSessionDaoValue(mContext, SessionDao.KEY.NOTIFICATION_ID);
-        int id = bundleId==null ? SUMMARY_ID+1 : Integer.parseInt(bundleId)+1;
+        String bundleId = Utils.getSessionDaoValue(mContext, SessionDao.KEY.NOTIFICATION_ID);
+        int id = bundleId == null ? SUMMARY_ID + 1 : Integer.parseInt(bundleId) + 1;
         while (id == SUMMARY_ID) {
             id++;
         }
-        Utils.sessionDaoSave(mContext, SessionDao.KEY.NOTIFICATION_ID,String.valueOf(id));
+        Utils.sessionDaoSave(mContext, SessionDao.KEY.NOTIFICATION_ID, String.valueOf(id));
         return id;
     }
 

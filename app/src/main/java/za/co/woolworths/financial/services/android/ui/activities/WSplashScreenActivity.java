@@ -8,6 +8,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -47,6 +48,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 	private RelativeLayout videoViewLayout;
 	private ProgressBar pBar;
 	private WGlobalState mWGlobalState;
+	private String mPushNotificationUpdate;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +58,15 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 		setContentView(R.layout.activity_wsplash_screen);
 		Toolbar toolbar = (Toolbar) findViewById(R.id.mToolbar);
 		setSupportActionBar(toolbar);
-		getSupportActionBar().hide();
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.hide();
+		}
+
+		Bundle bundle = getIntent().getExtras();
+		if (bundle != null) {
+			mPushNotificationUpdate = bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT);
+		}
 
 		WoolworthsApplication woolworthsApplication = (WoolworthsApplication) WSplashScreenActivity.this.getApplication();
 		mWGlobalState = woolworthsApplication.getWGlobalState();
@@ -276,8 +286,9 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 			String isFirstTime = Utils.getSessionDaoValue(WSplashScreenActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN);
 			if (isFirstTime == null || isAppUpdated())
 				ScreenManager.presentOnboarding(WSplashScreenActivity.this);
-			else
-				ScreenManager.presentMain(WSplashScreenActivity.this);
+			else {
+				ScreenManager.presentMain(WSplashScreenActivity.this, mPushNotificationUpdate);
+			}
 		} catch (NullPointerException ignored) {
 		}
 	}

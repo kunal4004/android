@@ -225,14 +225,6 @@ public class WfsApi {
 				getSha1Password(), productId, skuId);
 	}
 
-	public POIDocumentUploadResponse uploadPOIDocuments(MultipartTypedOutput files, int cliId, int fileNumber, int fileTotal, String saId) {
-		return mApiInterface.uploadPOIDocuments(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), cliId, files, fileNumber, fileTotal, saId);
-	}
-
-	public CliPoiOriginResponse cliPOIOriginRequest(int cliId, int productOfferingId) {
-		return mApiInterface.cliPoiOriginRequest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), cliId, productOfferingId);
-	}
-
 	public CardDetailsResponse getCardDetails() {
 		return mApiInterface.getCardDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
 	}

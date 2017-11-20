@@ -97,8 +97,7 @@ public interface ApiInterface {
 			@Header("sessionToken") String sessionToken,
 			@Path("productOfferingId") String productOfferingId);
 
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800"})
-//cachetime changed to 8 hrs.
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400"})
 	@GET("/user/vouchers")
 	VoucherResponse getVouchers(
 			@Header("apiId") String apiId,
@@ -614,39 +613,7 @@ public interface ApiInterface {
 			@Query("sku") String sku,
 			Callback<String> callback);
 
-	@Headers({"Accept: application/json"})
-	@POST("/user/cli/offer/{cliId}/POI")
-	POIDocumentUploadResponse uploadPOIDocuments(
-			@Header("apiId") String apiId,
-			@Header("sha1Password") String sha1Password,
-			@Header("deviceVersion") String deviceVersion,
-			@Header("deviceModel") String deviceModel,
-			@Header("network") String network,
-			@Header("os") String os,
-			@Header("osVersion") String osVersion,
-			@Header("sessionToken") String sessionToken,
-			@Path("cliId") int cliId,
-			@Body MultipartTypedOutput files,
-			@Query("fileNumber") int fileNumber,
-			@Query("fileTotal") int fileTotal,
-			@Query("saId") String saId);
-
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
-	@POST("/user/cli/offer/{cliId}/POIOrigin")
-	CliPoiOriginResponse cliPoiOriginRequest(
-			@Header("apiId") String apiId,
-			@Header("sha1Password") String sha1Password,
-			@Header("deviceVersion") String deviceVersion,
-			@Header("deviceModel") String deviceModel,
-			@Header("network") String network,
-			@Header("os") String os,
-			@Header("osVersion") String osVersion,
-			@Header("sessionToken") String sessionToken,
-			@Path("cliId") int cliId,
-			@Query("productOfferingId") int productOfferingId);
-
-
-	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:28800"})
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json", "cacheTime:14400"})
 	@GET("/reward/cardDetails")
 	CardDetailsResponse getCardDetails(
 			@Header("apiId") String apiId,
