@@ -273,8 +273,8 @@ public class IncreaseLimitController {
 	public HashMap<String, String> incomeHashMap(OfferActive offerActive) {
 		Application application = getApplication(offerActive);
 		HashMap<String, String> incomeHashMap = new HashMap<>();
-		String grossMonthlyIncomeAmount = nullToEmpty(application.grossMonthlyIncomeAmount);
-		String netMonthlyIncomeAmount = nullToEmpty(application.netMonthlyIncomeAmount);
+		String grossMonthlyIncomeAmount = nullToEmpty(application.grossMonthlyIncome);
+		String netMonthlyIncomeAmount = nullToEmpty(application.netMonthlyIncome);
 		String additionalIncomeAmount = nullToEmpty(application.additionalIncomeAmount);
 		incomeHashMap.put("GROSS_MONTHLY_INCOME", grossMonthlyIncomeAmount);
 		incomeHashMap.put("NET_MONTHLY_INCOME", netMonthlyIncomeAmount);
