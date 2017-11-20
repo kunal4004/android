@@ -87,6 +87,8 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		fragmentPager = (WCustomPager) findViewById(R.id.fragmentpager);
 		llRootLayout = (LinearLayout) findViewById(R.id.llRootLayout);
 		fragmentPager.setViewPagerIsScrollable(false);
+		pager.setOffscreenPageLimit(0);
+		fragmentPager.setOffscreenPageLimit(0);
 		cards = new ArrayList<>();
 		changeViewPagerAndActionBarBackground(currentPosition);
 		mBtnApplyNow.setVisibility(View.GONE);
@@ -222,6 +224,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 				.this.getApplication();
 		toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
 		pager = (WViewPager) findViewById(R.id.myAccountsCardPager);
+
 
 		mBtnApplyNow = (Button) findViewById(R.id.btnApplyNow);
 		mScrollAccountCard = (NestedScrollView) findViewById(R.id.nest_scrollview);
