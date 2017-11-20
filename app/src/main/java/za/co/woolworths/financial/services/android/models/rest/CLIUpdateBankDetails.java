@@ -13,7 +13,7 @@ import za.co.woolworths.financial.services.android.util.OnEventListener;
  * Created by W7099877 on 2017/11/04.
  */
 
-public class CLIUpdateBankDetails extends HttpAsyncTask<String,String,UpdateBankDetailResponse> {
+public class CLIUpdateBankDetails extends HttpAsyncTask<String, String, UpdateBankDetailResponse> {
 
 	private UpdateBankDetail updateBankDetail;
 	private WoolworthsApplication mWoolworthsApp;
@@ -21,7 +21,7 @@ public class CLIUpdateBankDetails extends HttpAsyncTask<String,String,UpdateBank
 	private Context mContext;
 	public String mException;
 
-	public CLIUpdateBankDetails(Context context,UpdateBankDetail updateBankDetail,OnEventListener callback)
+	public CLIUpdateBankDetails(Context context, UpdateBankDetail updateBankDetail, OnEventListener callback)
 	{
 		this.mContext = context;
 		this.updateBankDetail = updateBankDetail;
