@@ -478,7 +478,7 @@
     <string name="cli_permission_check_title">Permission to proceed</string>
     <string name="cli_permission_check_description">I agree that Woolworths Financial Services may request and receive my confidential consumer credit information from any credit bureau or third party at any time, including obtaining a bureau score to determine my credit worthiness</string>
     <string name="cli_step_indicator_income">Income</string>
-    <string name="cli_step_indicator_expense">Expense</string>
+    <string name="cli_step_indicator_expense">Expenses</string>
     <string name="cli_step_indicator_offer">Offer</string>
     <string name="cli_step_indicator_documents">Documents</string>
     <string name="increase_limit_supply_detail">please supply your income details</string>
