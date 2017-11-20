@@ -8,19 +8,13 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
-import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONObject;
 
@@ -34,17 +28,12 @@ import za.co.woolworths.financial.services.android.ui.activities.YoutubePlayerAc
 
 public class WoolworthsApplication extends Application {
 
-	public static String LANDING_STORE_CARD = "LANDING_STORE_CARD";
-	public static String LANDING_CREDIT_CARD = "LANDING_CREDIT_CARD";
-	public static String LANDING_LOAN_CARD = "LANDING_LOAN_CARD";
-	public static String LANDING_REWARDS_CARD = "LANDING_REWARDS_CARD";
 	private static Context context;
 	private static Context mContextApplication;
 	private UserManager mUserManager;
 	private WfsApi mWfsApi;
 	private RetrofitAsyncClient mRetrofitClient;
 	private Tracker mTracker;
-	private boolean swapSecondFragment = false;
 	private static String applyNowLink;
 	private static String registrationTCLink;
 	private static String faqLink;
@@ -55,7 +44,6 @@ public class WoolworthsApplication extends Application {
 
 	private WGlobalState mWGlobalState;
 
-	private int cliCardPosition;
 	private static String baseURL;
 	private static String apiKey;
 	private static String sha1Password;
@@ -65,11 +53,8 @@ public class WoolworthsApplication extends Application {
 	private static String ssoUpdateDetailsRedirectUri;
 	private static String wwTodayURI;
 	private static String creditCardType;
-	private boolean isDEABank = false;
 	private boolean isOther = false;
 	private static int productOfferingId;
-	private LatLng lastKnowLatLng;
-	private AppCompatActivity mCurrentActivity = null;
 
 	private static int NumVouchers = 0;
 
@@ -208,7 +193,6 @@ public class WoolworthsApplication extends Application {
 	}
 
 	public static final String TAG = WoolworthsApplication.class.getSimpleName();
-	private RequestQueue mRequestQueue;
 
 	private static WoolworthsApplication mInstance;
 
@@ -361,26 +345,10 @@ public class WoolworthsApplication extends Application {
 		editor.commit();
 	}
 
-	public boolean isDEABank() {
-		return isDEABank;
-	}
-
-	public void setDEABank(boolean DEABank) {
-		this.isDEABank = DEABank;
-	}
-
 	@Override
 	protected void attachBaseContext(Context base) {
 		super.attachBaseContext(base);
 		MultiDex.install(this);
-	}
-
-	public int getCliCardPosition() {
-		return cliCardPosition;
-	}
-
-	public void setCliCardPosition(int cliCardPosition) {
-		this.cliCardPosition = cliCardPosition;
 	}
 
 	public boolean isOther() {
@@ -397,14 +365,6 @@ public class WoolworthsApplication extends Application {
 
 	public void setProductOfferingId(int productOfferingId) {
 		this.productOfferingId = productOfferingId;
-	}
-
-	public LatLng getLastKnowLatLng() {
-		return lastKnowLatLng;
-	}
-
-	public void setLastKnowLatLng(LatLng lastKnowLatLng) {
-		this.lastKnowLatLng = lastKnowLatLng;
 	}
 
 	/**
@@ -434,29 +394,5 @@ public class WoolworthsApplication extends Application {
 
 	public static synchronized WoolworthsApplication getInstance() {
 		return mInstance;
-	}
-
-	public RequestQueue getRequestQueue() {
-		if (mRequestQueue == null) {
-			mRequestQueue = Volley.newRequestQueue(getApplicationContext());
-		}
-
-		return mRequestQueue;
-	}
-
-	public <T> void addToRequestQueue(Request<T> req, String tag) {
-		req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
-		getRequestQueue().add(req);
-	}
-
-	public <T> void addToRequestQueue(Request<T> req) {
-		req.setTag(TAG);
-		getRequestQueue().add(req);
-	}
-
-	public void cancelPendingRequests(Object tag) {
-		if (mRequestQueue != null) {
-			mRequestQueue.cancelAll(tag);
-		}
 	}
 }

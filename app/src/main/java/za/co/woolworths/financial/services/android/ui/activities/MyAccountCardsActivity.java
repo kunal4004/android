@@ -142,7 +142,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 			@Override
 			public void onPageSelected(int newPosition) {
 				fragmentInterfaceListener(newPosition);
-				mWoolworthsApplication.setCliCardPosition(newPosition);
 				fragmentPager.setCurrentItem(newPosition);
 				changeViewPagerAndActionBarBackground(newPosition);
 				changeButtonColor(newPosition);

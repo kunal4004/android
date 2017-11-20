@@ -1,22 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-import android.Manifest;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ClipData;
-import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.provider.OpenableColumns;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -27,11 +18,9 @@ import android.support.v7.widget.SimpleItemAnimator;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -39,38 +28,24 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
 
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
-import za.co.woolworths.financial.services.android.models.dto.BankAccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
-import za.co.woolworths.financial.services.android.models.dto.CliPoiOriginResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
-import za.co.woolworths.financial.services.android.models.dto.DeaBanksResponse;
-import za.co.woolworths.financial.services.android.models.dto.Document;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
-import za.co.woolworths.financial.services.android.models.dto.POIDocumentUploadResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetBankAccountTypes;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetDeaBank;
-import za.co.woolworths.financial.services.android.models.rest.CLIPOIOriginRequest;
 import za.co.woolworths.financial.services.android.models.rest.CLISendEmailRequest;
-import za.co.woolworths.financial.services.android.models.rest.CLISubmitPOIRequest;
 import za.co.woolworths.financial.services.android.models.rest.CLIUpdateBankDetails;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.SelectFromDriveActivity;
-import za.co.woolworths.financial.services.android.ui.adapters.AddedDocumentsListAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentsAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.POIDocumentSubmitTypeAdapter;
@@ -84,17 +59,13 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
-import za.co.woolworths.financial.services.android.util.PathUtil;
-import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-import static android.app.Activity.RESULT_OK;
 
-
-public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener, DocumentsAccountTypeAdapter.OnAccountTypeClick, View.OnClickListener, POIDocumentSubmitTypeAdapter.OnSubmitType, TextWatcher, AddedDocumentsListAdapter.ItemRemoved, View.OnLayoutChangeListener {
+public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnItemClick, NetworkChangeListener, DocumentsAccountTypeAdapter.OnAccountTypeClick, View.OnClickListener, POIDocumentSubmitTypeAdapter.OnSubmitType, TextWatcher {
 
 	private final int ANIM_DURATION = 600;
 	private RecyclerView rclSelectYourBank;
@@ -102,7 +73,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private ProgressBar pbDeaBank;
 	private BroadcastReceiver connectionBroadcast;
 	private ErrorHandlerView mErrorHandlerView;
-	private boolean backgroundTaskLoaded;
 	private List<BankAccountType> bankAccountTypesList;
 	private RecyclerView rclAccountType;
 	private LinearLayout bankTypeConfirmationLayout;
@@ -118,20 +88,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private DocumentsAccountTypeAdapter accountTypeAdapter;
 	private POIDocumentSubmitTypeAdapter documentSubmitTypeAdapter;
 	private WEditTextView etAccountNumber;
-	private LinearLayout llAccountNumberLayout;
-	private CLIPhase2Activity mCliPhase2Activity;
-	private RecyclerView rclAddedDocumentsList;
-	private AddedDocumentsListAdapter addedDocumentsListAdapter;
-	private List<Document> documentList;
-	private RelativeLayout addDocumentButton, rlSubmitCli;
-	private ImageView poiDocumentInfo, uploadDocumentInfo;
+	public RelativeLayout rlSubmitCli;
 	private LinearLayout uploadDocumentsLayout;
-	private static final int OPEN_WINDOW_FOR_DRIVE_SELECTION = 99;
-	private static final int OPEN_GALLERY_TO_PICk_FILE = 11;
-	private static final int OPEN_CAMERA_TO_PICk_IMAGE = 33;
-	public static final int PERMS_REQUEST_CODE_GALLERY = 222;
-	public static final int PERMS_REQUEST_CODE_CAMERA = 333;
-	public Uri mCameraUri;
 	public SubmitType submitType;
 	private List<Bank> mDeaBankList;
 	public String selectedBankType;
@@ -142,12 +100,10 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private ProgressBar pbAccountType, pbSubmit;
 	private CLIUpdateBankDetails cliUpdateBankDetails;
 	private CLISendEmailRequest cliSendEmail;
-	private CLIPOIOriginRequest cLIPOIOriginRequest;
-	private CLISubmitPOIRequest cliSubmitPOIRequest;
 	private WTextView tvCLIAccountTypeTitle, tvAccountSavingTitle;
-	private RelativeLayout relConnect;
 	private LoadState loadState;
 	private OfferActive activeOfferObj;
+	private View view;
 
 	private enum NetworkFailureRequest {DEA_BANK, ACCOUNT_TYPE}
 
@@ -189,15 +145,11 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		// Required empty public constructor
 	}
 
-	public OfferActive getCLICreateOfferResponse() {
-		return ((CLIPhase2Activity) this.getActivity()).mCLICreateOfferResponse;
-	}
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-		View view = inflater.inflate(R.layout.document_fragment, container, false);
+		view = inflater.inflate(R.layout.document_fragment, container, false);
 		deaBankList = new DeaBanks();
 		mCliStepIndicatorListener.onStepSelected(4);
 		return view;
@@ -214,7 +166,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				activeOfferObj = new Gson().fromJson(offerActive, OfferActive.class);
 			}
 		}
-		mCliPhase2Activity = (CLIPhase2Activity) getActivity();
+		CLIPhase2Activity mCliPhase2Activity = (CLIPhase2Activity) getActivity();
 		loadState = new LoadState();
 		mCliPhase2Activity.actionBarCloseIcon();
 		mCliPhase2Activity.hideDeclineOffer();
@@ -222,7 +174,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		onLoad(pbDeaBank);
 		cliDeaBankRequest();
 		loadPOIDocumentsSubmitTypeView();
-		loadAddedDocumentsListView();
 	}
 
 	private void connectionBroadcast() {
@@ -248,7 +199,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		cliGetDeaBank = new CLIGetDeaBank(getActivity(), new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				backgroundTaskLoaded(false);
 				deaBankList = ((DeaBanks) object);
 				int httpCode = deaBankList.httpCode;
 				switch (httpCode) {
@@ -267,10 +217,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 						break;
 
 					default:
-						DeaBanksResponse response = deaBankList.response;
-						if (response != null) {
-							Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
-						}
+						mErrorHandlerView.responseError(view, "");
 						break;
 				}
 				loadSuccess();
@@ -281,9 +228,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			public void onFailure(String e) {
 				loadFailure();
 				setNetworkFailureRequest(NetworkFailureRequest.DEA_BANK);
-				mErrorHandlerView.networkFailureHandler(e.toString());
+				mErrorHandlerView.responseError(view, e);
 				onLoadComplete(pbDeaBank);
-				backgroundTaskLoaded(true);
 			}
 		});
 		cliGetDeaBank.execute();
@@ -310,10 +256,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 								.response.stsParams);
 						break;
 					default:
-						BankAccountResponse response = bankAccountTypes.response;
-						if (response != null) {
-							Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
-						}
+						mErrorHandlerView.responseError(view, "");
 						break;
 				}
 				onLoadComplete(pbAccountType);
@@ -323,7 +266,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			public void onFailure(String e) {
 				onLoadComplete(pbAccountType);
 				setNetworkFailureRequest(NetworkFailureRequest.ACCOUNT_TYPE);
-				mErrorHandlerView.networkFailureHandler(e.toString());
+				mErrorHandlerView.responseError(view, e);
 			}
 		});
 		cliGetBankAccountTypes.execute();
@@ -348,15 +291,12 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		tvAccountSavingTitle = (WTextView) view.findViewById(R.id.tvAccountSavingTitle);
 		noPOIFromBank = (WTextView) view.findViewById(R.id.noPOIFromBank);
 		btnSubmit = (WButton) view.findViewById(R.id.btnSubmit);
-		poiDocumentInfo = (ImageView) view.findViewById(R.id.poiDocumentInfo);
-		uploadDocumentInfo = (ImageView) view.findViewById(R.id.uploadDocumentInfo);
 		etAccountNumber = (WEditTextView) view.findViewById(R.id.etAccountNumber);
-		llAccountNumberLayout = (LinearLayout) view.findViewById(R.id.llAccountNumberLayout);
-		rclAddedDocumentsList = (RecyclerView) view.findViewById(R.id.rclDocumentsList);
-		addDocumentButton = (RelativeLayout) view.findViewById(R.id.addDocuments);
+		LinearLayout llAccountNumberLayout = (LinearLayout) view.findViewById(R.id.llAccountNumberLayout);
+		RelativeLayout addDocumentButton = (RelativeLayout) view.findViewById(R.id.addDocuments);
 		uploadDocumentsLayout = (LinearLayout) view.findViewById(R.id.uploadDocumentsLayout);
 		WButton btnRetry = (WButton) view.findViewById(R.id.btnRetry);
-		relConnect = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
+		RelativeLayout relConnect = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
 		pbAccountType = (ProgressBar) view.findViewById(R.id.pbAccountType);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), relConnect);
 		mErrorHandlerView.setMargin(relConnect, 0, 0, 0, 0);
@@ -366,10 +306,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		llAccountNumberLayout.setOnClickListener(this);
 		etAccountNumber.addTextChangedListener(this);
 		addDocumentButton.setOnClickListener(this);
-		poiDocumentInfo.setOnClickListener(this);
-		rclAddedDocumentsList.addOnLayoutChangeListener(this);
 		btnSubmit.setOnClickListener(this);
-		uploadDocumentInfo.setOnClickListener(this);
 		btnRetry.setOnClickListener(this);
 	}
 
@@ -396,16 +333,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		rclPOIDocuments.setLayoutManager(mLayoutManager);
 		rclPOIDocuments.setAdapter(documentSubmitTypeAdapter);
-	}
-
-	private void loadAddedDocumentsListView() {
-		documentList = new ArrayList<>();
-		documentList.clear();
-		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-		addedDocumentsListAdapter = new AddedDocumentsListAdapter(this, documentList);
-		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-		rclAddedDocumentsList.setLayoutManager(mLayoutManager);
-		rclAddedDocumentsList.setAdapter(addedDocumentsListAdapter);
 	}
 
 	@Override
@@ -437,13 +364,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	@Override
 	public void onSubmitTypeSelected(View view, int position) {
 		switch (position) {
-			case 0:
-				submitType = SubmitType.DOCUMENTS;
-				documentList.clear();
-				addedDocumentsListAdapter.notifyDataSetChanged();
-				hideView(rlSubmitCli);
-				scrollUpAddDocumentsLayout();
-				break;
 			case 1:
 				submitType = SubmitType.LATER;
 				scrollUpDocumentSubmitTypeLayout();
@@ -454,12 +374,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		}
 	}
 
-	@Override
-	public void onItemRemoved(View view, int position) {
-		documentList.remove(position);
-		addedDocumentsListAdapter.notifyDataSetChanged();
-
-	}
 
 	@Override
 	public void onPause() {
@@ -512,14 +426,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		v.setVisibility(View.VISIBLE);
 	}
 
-	private void backgroundTaskLoaded(boolean status) {
-		this.backgroundTaskLoaded = status;
-	}
-
-	private boolean getBackgroundTaskStatus() {
-		return this.backgroundTaskLoaded;
-	}
-
 	@Override
 	public void onClick(View view) {
 		MultiClickPreventer.preventMultiClick(view);
@@ -551,11 +457,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				break;
 			case R.id.llAccountNumberLayout:
 				IncreaseLimitController.populateExpenseField(etAccountNumber, getActivity());
-				break;
-			case R.id.addDocuments:
-				//openGalleryToPickDocuments();
-				startActivityForResult(new Intent(getActivity(), SelectFromDriveActivity.class), OPEN_WINDOW_FOR_DRIVE_SELECTION);
-				getActivity().overridePendingTransition(0, 0);
 				break;
 			case R.id.btnSubmit:
 				onSubmitClick(submitType);
@@ -640,18 +541,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		});
 	}
 
-	public void scrollUpAddDocumentsLayout() {
-		showView(uploadDocumentsLayout);
-		dynamicLayoutPadding(poiDocumentSubmitTypeLayout, true);
-		dynamicLayoutPadding(uploadDocumentsLayout, false);
-		nestedScrollView.post(new Runnable() {
-			@Override
-			public void run() {
-				ObjectAnimator.ofInt(nestedScrollView, "scrollY", uploadDocumentsLayout.getTop()).setDuration(ANIM_DURATION).start();
-			}
-		});
-	}
-
 	public void invalidateBankTypeSelection() {
 		yesPOIFromBank.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
 		yesPOIFromBank.setTextColor(ContextCompat.getColor(getActivity(), R.color.cli_yes_no_button_color));
@@ -666,18 +555,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			accountTypeAdapter.clearSelection();
 		if (documentSubmitTypeAdapter != null)
 			documentSubmitTypeAdapter.clearSelection();
-	}
-
-	public void showSubmitButton() {
-		showView(rlSubmitCli);
-		nestedScrollView.post(new Runnable() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				nestedScrollView.fullScroll(NestedScrollView.FOCUS_DOWN);
-			}
-		});
 	}
 
 	public void resetAccountNumberView() {
@@ -704,243 +581,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			hideView(rlSubmitCli);
 	}
 
-
-	public void openGalleryToPickDocuments() {
-		Intent uploadIntent = new Intent();
-		uploadIntent.setType("*/*");
-		uploadIntent.putExtra(Intent.EXTRA_MIME_TYPES, Utils.CLI_POI_ACCEPT_MIME_TYPES);
-		uploadIntent.setAction(Intent.ACTION_GET_CONTENT);
-		uploadIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-		uploadIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-		startActivityForResult(uploadIntent, OPEN_GALLERY_TO_PICk_FILE);
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		switch (requestCode) {
-			case OPEN_GALLERY_TO_PICk_FILE:
-				if (resultCode == RESULT_OK && data != null) {
-					addPickedPOIDocumentsToList(data);
-				}
-				break;
-			case OPEN_WINDOW_FOR_DRIVE_SELECTION:
-				if (resultCode == RESULT_OK) {
-					switch (data.getIntExtra("selected", 0)) {
-						case SelectFromDriveActivity.GALLERY:
-							if (checkRuntimePermission(PERMS_REQUEST_CODE_GALLERY))
-								openGalleryToPickDocuments();
-							break;
-						case SelectFromDriveActivity.CAMERA:
-							if (checkRuntimePermission(PERMS_REQUEST_CODE_CAMERA))
-								openCamera();
-							break;
-
-					}
-
-				}
-				break;
-			case OPEN_CAMERA_TO_PICk_IMAGE:
-				if (resultCode == RESULT_OK && data != null) {
-					data.setData(mCameraUri);
-					addPickedPOIDocumentsToList(data);
-				}
-				break;
-			default:
-				break;
-		}
-	}
-
-	public Document convertUtiToDocumentObj(Uri uri) {
-		Document document = new Document();
-		String uriString = uri.toString();
-		document.setUri(uri);
-		if (uriString.startsWith("content://")) {
-			Cursor cursor = null;
-			try {
-				cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
-				if (cursor != null && cursor.moveToFirst()) {
-					document.setName(cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
-					document.setSize((cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE))) / 1024);
-				}
-			} finally {
-				cursor.close();
-			}
-		} else if (uriString.startsWith("file://")) {
-			File file = new File(uri.getPath());
-			document.setName(file.getName());
-			document.setSize(file.length() / 1024);
-		} else if (uriString.startsWith("file:/storage")) {
-			File file = new File(uri.getPath());
-			document.setName(file.getName());
-			document.setSize(file.length() / 1024);
-		}
-
-		return document;
-	}
-
-	public void manageSubmitButtonOnDocumentAdd() {
-		if (addedDocumentsListAdapter.getItemCount() == 0)
-			hideView(rlSubmitCli);
-		else if (addedDocumentsListAdapter.getItemCount() > 0 && rlSubmitCli.getVisibility() == View.GONE)
-			showView(rlSubmitCli);
-	}
-
-	@Override
-	public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-		switch (view.getId()) {
-			case R.id.rclDocumentsList:
-				manageSubmitButtonOnDocumentAdd();
-				break;
-			default:
-				break;
-		}
-	}
-
-	public boolean checkRuntimePermission(int REQUEST_CODE) {
-		switch (REQUEST_CODE) {
-			case PERMS_REQUEST_CODE_GALLERY:
-				if (ContextCompat.checkSelfPermission(getActivity(),
-						Manifest.permission.READ_EXTERNAL_STORAGE)
-						!= PackageManager.PERMISSION_GRANTED) {
-					if (shouldShowRequestPermissionRationale(
-							Manifest.permission.READ_EXTERNAL_STORAGE)) {
-						requestPermissions(
-								new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-								REQUEST_CODE);
-					} else {
-						//we can request the permission.
-						requestPermissions(
-								new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-								REQUEST_CODE);
-					}
-					return false;
-				} else {
-					return true;
-				}
-
-			case PERMS_REQUEST_CODE_CAMERA:
-				String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
-				if (!PermissionUtils.hasPermissions(getActivity(), PERMISSIONS)) {
-					if (shouldShowRequestPermissionRationale(
-							Manifest.permission.CAMERA)) {
-						requestPermissions(
-								PERMISSIONS,
-								REQUEST_CODE);
-					} else {
-						//we can request the permission.
-						requestPermissions(
-								PERMISSIONS,
-								REQUEST_CODE);
-					}
-					return false;
-				} else {
-					return true;
-				}
-			default:
-				return false;
-		}
-
-	}
-
-	@Override
-	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-		switch (requestCode) {
-			case PERMS_REQUEST_CODE_GALLERY:
-				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-					openGalleryToPickDocuments();
-				break;
-			case PERMS_REQUEST_CODE_CAMERA:
-				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED)
-					openCamera();
-				break;
-		}
-	}
-
-	public void uploadDocuments(List<Document> dataList) {
-		disableSubmitButton();
-		int totalFiles = getValidDocumentList(documentList).size();
-		int j = 1;
-		for (int i = 0; i < dataList.size(); i++) {
-			if (dataList.get(i).getSize() <= WoolworthsApplication.getPoiDocumentSizeLimit()) {
-				dataList.get(i).setFileNumber(j);
-				++j;
-				initUploadDocument(dataList.get(i), totalFiles, String.valueOf(activeOfferObj.cliId), activeOfferObj.application.saId);
-			}
-		}
-	}
-
-	public void openCamera() {
-		//In some devices, the Uri is null in onActivityForResult(). So you need to set Uri to placing the captured image.
-		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		// If there any applications that can handle this intent then call the intent.
-		if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-
-			URI oldUri = getOutputMediaFile();
-
-			mCameraUri = new Uri.Builder().scheme(oldUri.getScheme())
-					.encodedAuthority(oldUri.getRawAuthority())
-					.encodedPath(oldUri.getRawPath())
-					.query(oldUri.getRawQuery())
-					.fragment(oldUri.getRawFragment())
-					.build();
-			takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCameraUri);
-			startActivityForResult(takePictureIntent, OPEN_CAMERA_TO_PICk_IMAGE);
-		}
-	}
-
-	public void addPickedPOIDocumentsToList(Intent data) {
-
-		ClipData clipData = data.getClipData();
-		if (clipData != null) {
-			for (int i = 0; i < clipData.getItemCount(); i++) {
-				ClipData.Item item = clipData.getItemAt(i);
-				Uri uri = item.getUri();
-				documentList.add(convertUtiToDocumentObj(uri));
-			}
-		} else if (data.getData() != null) {
-			Uri uri = data.getData();
-			documentList.add(convertUtiToDocumentObj(uri));
-		}
-
-		if (documentList.size() > 0) {
-			if (addedDocumentsListAdapter.getItemCount() == 0) {
-				addedDocumentsListAdapter = new AddedDocumentsListAdapter(this, documentList);
-				rclAddedDocumentsList.setAdapter(addedDocumentsListAdapter);
-			} else {
-				addedDocumentsListAdapter.notifyDataSetChanged();
-			}
-			manageSubmitButtonOnDocumentAdd();
-		}
-
-	}
-
-	public URI getOutputMediaFile() {
-		// To be safe, you should check that the SDCard is mounted
-		// using Environment.getExternalStorageState() before doing this.
-
-		File mediaStorageDir;
-		// If the external directory is writable then then return the External pictures directory.
-		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-			mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), getString(R.string.app_name));
-		} else {
-			mediaStorageDir = Environment.getDownloadCacheDirectory();
-		}
-		// Create the storage directory if it does not exist
-		if (!mediaStorageDir.exists()) {
-			if (!mediaStorageDir.mkdirs()) {
-				Log.d("MyCameraApp", "failed to create directory");
-				return null;
-			}
-		}
-		// Create a media file name
-		File mediaFile;
-		mediaFile = new File(mediaStorageDir.getPath() + File.separator + "pic_" + String.valueOf(System.currentTimeMillis()) + ".jpg");
-
-		return mediaFile.toURI();
-	}
-
 	public void dynamicLayoutPadding(View view, boolean defaultPaddingEnabled) {
 		IncreaseLimitController ilc = new IncreaseLimitController(getActivity());
 		int paddingPixel = 16;
@@ -955,26 +595,10 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	}
 
-	public List<Document> getValidDocumentList(List<Document> docs) {
-
-		List<Document> subList = new ArrayList<>();
-		for (Document document : docs) {
-			if (document.getSize() <= WoolworthsApplication.getPoiDocumentSizeLimit())
-				subList.add(document);
-		}
-
-		return subList;
-	}
-
 	public void onSubmitClick(SubmitType type) {
 		switch (type) {
 			case ACCOUNT_NUMBER:
 				updateBankDetails();
-				break;
-			case DOCUMENTS:
-				if (getValidDocumentList(documentList).size() > 0) {
-					uploadDocuments(documentList);
-				}
 				break;
 			case LATER:
 				initSendEmailRequest();
@@ -983,15 +607,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				break;
 
 		}
-	}
-
-	public boolean isAllFilesUploaded(List<Document> allFiles) {
-		for (Document document : allFiles) {
-			if (!document.isUploaded())
-				return false;
-		}
-
-		return true;
 	}
 
 	public void updateBankDetails() {
@@ -1032,6 +647,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		btnSubmit.setVisibility(View.VISIBLE);
 	}
 
+	@SuppressLint("CommitTransaction")
 	public void moveToProcessCompleteFragment() {
 		ProcessCompleteFragment processCompleteFragment = new ProcessCompleteFragment();
 		processCompleteFragment.setStepIndicatorListener(mCliStepIndicatorListener);
@@ -1065,70 +681,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		cliSendEmail.execute();
 	}
 
-	public void initPOIOriginRequest() {
-		//make dynamic values for cliID and productOfferingID
-		cLIPOIOriginRequest = new CLIPOIOriginRequest(getActivity(), activeOfferObj.cliId, WoolworthsApplication.getProductOfferingId(), new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				CliPoiOriginResponse response = (CliPoiOriginResponse) object;
-			}
-
-			@Override
-			public void onFailure(String e) {
-
-			}
-		});
-
-		cLIPOIOriginRequest.execute();
-	}
-
-	public void initUploadDocument(final Document document, int totalFiles, String cliId, String saId) {
-		String path = null;
-		try {
-			path = PathUtil.getPath(getActivity(), document.getUri());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-			document.setUploaded(false);
-			documentSubmitTypeAdapter.notifyDataSetChanged();
-			return;
-		}
-
-		cliSubmitPOIRequest = new CLISubmitPOIRequest(getActivity(), path, cliId, document.getFileNumber(), totalFiles, saId, new CLISubmitPOIRequest.UploadEventListener() {
-			@Override
-			public void onSuccess(POIDocumentUploadResponse response) {
-				if (response.httpCode == 200) {
-					document.setUploaded(true);
-				} else {
-					document.setUploaded(false);
-					document.setProgress(0);
-				}
-				addedDocumentsListAdapter.notifyDataSetChanged();
-				if (isAllFilesUploaded(getValidDocumentList(documentList))) {
-					initPOIOriginRequest();
-					enableSubmitButton();
-					moveToProcessCompleteFragment();
-				}
-				loadSuccess();
-			}
-
-			@Override
-			public void onFailure(String e) {
-				loadFailure();
-				document.setUploaded(false);
-				document.setProgress(0);
-				addedDocumentsListAdapter.notifyDataSetChanged();
-			}
-
-			@Override
-			public void onProgress(int percentage) {
-				document.setProgress(percentage);
-				addedDocumentsListAdapter.notifyDataSetChanged();
-			}
-		});
-
-		cliSubmitPOIRequest.execute();
-	}
-
 	private void cancelRequest(HttpAsyncTask httpAsyncTask) {
 		if (httpAsyncTask != null) {
 			if (!httpAsyncTask.isCancelled()) {
@@ -1152,7 +704,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		cancelRequest(cliGetDeaBank);
 		cancelRequest(cliUpdateBankDetails);
 		cancelRequest(cliSendEmail);
-		cancelRequest(cLIPOIOriginRequest);
 	}
 
 	private void loadSuccess() {

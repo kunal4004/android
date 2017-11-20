@@ -118,7 +118,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
 			SupplyIncomeDetailFragment cLIEligibilityAndPermissionFragment = new SupplyIncomeDetailFragment();
 			cLIEligibilityAndPermissionFragment.setStepIndicatorListener(cliStepIndicatorListener);
-			setEventStatus(EventStatus.CREATE_OFFER);
+			setEventStatus(EventStatus.CREATE_APPLICATION);
 			openFragment(cLIEligibilityAndPermissionFragment);
 			return;
 		}
@@ -131,7 +131,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 			offerBundle.putSerializable(IncreaseLimitController.EXPENSE_DETAILS, expenseHashMap);
 			supplyIncomeDetailFragment.setStepIndicatorListener(cliStepIndicatorListener);
 			supplyIncomeDetailFragment.setArguments(offerBundle);
-			setEventStatus(EventStatus.UPDATE_OFFER);
+			setEventStatus(EventStatus.UPDATE_APPLICATION);
 			openFragment(supplyIncomeDetailFragment);
 			return;
 		}
@@ -139,7 +139,7 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 		if (nextStep.equalsIgnoreCase(getString(R.string.status_i_n_e)) && !offerActive) {
 			SupplyIncomeDetailFragment supplyIncomeDetailFragment = new SupplyIncomeDetailFragment();
 			supplyIncomeDetailFragment.setStepIndicatorListener(cliStepIndicatorListener);
-			setEventStatus(EventStatus.CREATE_OFFER);
+			setEventStatus(EventStatus.CREATE_APPLICATION);
 			openFragment(supplyIncomeDetailFragment);
 			return;
 		}

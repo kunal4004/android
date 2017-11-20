@@ -294,11 +294,6 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:theme="@style/CLI"/>
 
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.SelectFromDriveActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"

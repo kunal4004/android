@@ -333,12 +333,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelPopContainer.setOnClickListener(this);
 				break;
 
-			case SELECT_FROM_DRIVE:
-				setContentView(R.layout.cli_select_file);
-				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
-				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				mRelPopContainer.setOnClickListener(this);
-				break;
 
 			case AMOUNT_STOCK:
 				setContentView(R.layout.lw_too_high_error);

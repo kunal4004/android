@@ -136,12 +136,13 @@
                     android:paddingTop="16dp"
                     android:visibility="gone"
                     >
+
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/white"
-                        android:visibility="visible"
-                        android:paddingRight="18dp">
+                        android:paddingRight="18dp"
+                        android:visibility="visible">
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/cli_permission_title_text"
@@ -164,42 +165,42 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="1dp"
                         android:background="@color/white"
-                        android:visibility="visible"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="visible">
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/cli_permission_description_text"
                             android:layout_marginBottom="24dp"
                             android:layout_marginRight="30dp"
+                            android:gravity="center_horizontal"
                             android:text="@string/cli_poi_email_decription"
                             android:textColor="@color/black"
-                            android:gravity="center_horizontal"
                             />
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/cli_poi_email_id"
-                            android:drawableLeft="@drawable/message_24"
-                            android:gravity="center_vertical"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginBottom="16dp"
+                            android:drawableLeft="@drawable/message_24"
                             android:drawablePadding="16dp"
-                            android:textSize="18sp"
+                            android:gravity="center_vertical"
+                            android:text="@string/cli_poi_email_id"
                             android:textColor="@color/black"
+                            android:textSize="18sp"
                             app:WTextView_font="myriadpro_semibold"
                             />
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/rclPOIDocuments"
-                            android:visibility="gone"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="1dp"
                             android:background="@color/white"
                             android:nestedScrollingEnabled="false"
                             android:paddingLeft="24dp"
-                            android:paddingRight="24dp"/>
+                            android:paddingRight="24dp"
+                            android:visibility="gone"/>
                     </LinearLayout>
 
                 </LinearLayout>
@@ -413,5 +414,5 @@
     </RelativeLayout>
 
     <include
-        layout="@layout/no_connection_handler"/>
+        layout="@layout/no_connection_layout"/>
 </FrameLayout>

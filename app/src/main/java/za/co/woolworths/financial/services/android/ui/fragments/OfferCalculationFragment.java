@@ -53,6 +53,8 @@ import za.co.woolworths.financial.services.android.util.DeclineOfferInterface;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
@@ -95,6 +97,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private LoadState loadState;
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private int mCreditRequestMax;
+	public RelativeLayout relConnectionLayout;
 
 	private enum LATEST_BACKGROUND_CALL {CREATE_OFFER, DECLINE_OFFER, UPDATE_APPLICATION, ACCEPT_OFFER}
 
@@ -121,11 +124,10 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			} catch (IllegalArgumentException ignored) {
 			}
 			mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
-			init(view);
-			seekBar();
-			listener();
 			woolworthsApplication = ((WoolworthsApplication) getActivity().getApplication());
 			mGlobalState = woolworthsApplication.getWGlobalState();
+			init(view);
+			seekBar();
 			Bundle bundle = this.getArguments();
 			if (!editorWasShown) {
 				onLoad();
@@ -148,7 +150,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						if (mEventStatus == null) {
 							mEventStatus = EventStatus.NONE;
 						}
-						createUpdateOfferTask(mEventStatus);
+						cliApplicationRequest(mEventStatus);
 					}
 				}
 			}
@@ -176,19 +178,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		}
 	}
 
-	private void listener() {
-		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(getActivity())) {
-					showView(llNextButtonLayout);
-					mErrorHandlerView.hideErrorHandlerLayout();
-					createUpdateOfferTask(mEventStatus);
-				}
-			}
-		});
-	}
-
 	private void seekBar() {
 		sbSlideAmount.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -214,7 +203,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		});
 	}
 
-	private void cliCreateOffer(CreateOfferRequest createOfferRequest) {
+	private void cliCreateApplication(CreateOfferRequest createOfferRequest) {
 		onLoad();
 		latestBackgroundTask(LATEST_BACKGROUND_CALL.CREATE_OFFER);
 		createOfferTask = new CLIApplication(getActivity(), createOfferRequest, new OnEventListener() {
@@ -225,7 +214,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 				switch (mObjOffer.httpCode) {
 					case 200:
-						displayDefaultOffer(mObjOffer);
+						displayApplication(mObjOffer);
 						break;
 
 					case 440:
@@ -233,7 +222,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					default:
-						Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, mObjOffer.response.desc);
+						hideDeclineButton();
+						mErrorHandlerView.responseError(view, "");
 						break;
 				}
 				loadSuccess();
@@ -241,13 +231,14 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			}
 
 			@Override
-			public void onFailure(String e) {
+			public void onFailure(final String e) {
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
 						hideView(llNextButtonLayout);
 						loadFailure();
-						mErrorHandlerView.showErrorHandler();
+						hideDeclineButton();
+						mErrorHandlerView.responseError(view, e);
 					}
 				});
 			}
@@ -265,7 +256,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				dummyData(mObjOffer);
 				switch (mObjOffer.httpCode) {
 					case 200:
-						displayDefaultOffer(mObjOffer);
+						displayApplication(mObjOffer);
 						break;
 
 					case 440:
@@ -273,7 +264,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					default:
-						Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, mObjOffer.response.desc);
+						hideDeclineButton();
+						mErrorHandlerView.responseError(view, "");
 						break;
 				}
 				onLoadComplete();
@@ -287,7 +279,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					public void run() {
 						loadFailure();
 						hideView(llNextButtonLayout);
-						mErrorHandlerView.showErrorHandler();
+						hideDeclineButton();
+						mErrorHandlerView.responseError(view, e);
 					}
 				});
 			}
@@ -357,7 +350,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		tvSlideToEditSeekInfo = (WTextView) view.findViewById(R.id.tvSlideToEditSeekInfo);
 		mAcceptOfferProgressBar = (ProgressBar) view.findViewById(R.id.mWoolworthsProgressBar);
 		SimpleDraweeView imOfferTime = (SimpleDraweeView) view.findViewById(R.id.imOfferTime);
-		RelativeLayout relConnectionLayout = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
+		relConnectionLayout = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
 		flTopLayout = (FrameLayout) view.findViewById(R.id.flTopLayout);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), relConnectionLayout);
 		mErrorHandlerView.setMargin(relConnectionLayout, 0, 0, 0, 0);
@@ -365,16 +358,15 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		tvAdditionalCreditLimitAmount = (WTextView) view.findViewById(R.id.tvAdditionalCreditLimitAmount);
 		tvNewCreditLimitAmount = (WTextView) view.findViewById(R.id.tvNewCreditLimitAmount);
 		tvSlideToEditAmount = (WTextView) view.findViewById(R.id.tvSlideToEditAmount);
+		WButton btnRetry = (WButton) view.findViewById(R.id.btnRetry);
 
 		sbSlideAmount = (SeekBar) view.findViewById(R.id.sbSlideAmount);
-
 		flCircularProgressSpinner = (FrameLayout) view.findViewById(R.id.flCircularProgressSpinner);
 
 		llSlideToEditContainer = (LinearLayout) view.findViewById(R.id.llSlideToEditContainer);
 		llEmptyLayout = (LinearLayout) view.findViewById(R.id.llEmptyLayout);
 		IncreaseLimitController increaseLimitController = new IncreaseLimitController(getActivity());
 		increaseLimitController.setQuarterHeight(llEmptyLayout);
-
 		tvCalculatingYourOffer = (WTextView) view.findViewById(R.id.tvCalculatingYourOffer);
 		tvLoadTime = (WTextView) view.findViewById(R.id.tvLoadTime);
 
@@ -387,6 +379,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		btnContinue = (WButton) view.findViewById(R.id.btnContinue);
 		btnContinue.setOnClickListener(this);
 		tvSlideToEditAmount.setOnClickListener(this);
+		btnRetry.setOnClickListener(this);
 		btnContinue.setText(getActivity().getResources().getString(R.string.accept_offer));
 		showView(btnContinue);
 		mCliPhase2Activity.showDeclineOffer();
@@ -513,6 +506,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	@SuppressLint("CommitTransaction")
 	@Override
 	public void onClick(View v) {
+		MultiClickPreventer.preventMultiClick(v);
 		switch (v.getId()) {
 			case R.id.btnContinue:
 				onAcceptOfferLoad();
@@ -582,7 +576,14 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					editorWasShown = true;
 				} catch (NullPointerException ignored) {
 				}
+				break;
 
+			case R.id.btnRetry:
+				if (new ConnectionDetector().isOnline(getActivity())) {
+					showView(llNextButtonLayout);
+					mErrorHandlerView.hideErrorHandlerLayout();
+					cliApplicationRequest(mEventStatus);
+				}
 				break;
 		}
 	}
@@ -590,7 +591,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	public CreateOfferRequest createOffer
 			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
 		return new CreateOfferRequest(
-				woolworthsApplication.getProductOfferingId(),
+				WoolworthsApplication.getProductOfferingId(),
 				1000,
 				Integer.valueOf(hashIncomeDetail.get("GROSS_MONTHLY_INCOME")),
 				Integer.valueOf(hashIncomeDetail.get("NET_MONTHLY_INCOME")),
@@ -603,7 +604,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				));
 	}
 
-	public void displayDefaultOffer(OfferActive mObjOffer) {
+	public void displayApplication(OfferActive mObjOffer) {
+		showDeclineButton();
 		if (mObjOffer != null) {
 			Offer offer = mObjOffer.offer;
 			mCurrentCredit = offer.currCredit + INCREASE_PROGRESS_BY;
@@ -729,17 +731,17 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		anim.start();
 	}
 
-	public void createUpdateOfferTask(EventStatus eventStatus) {
+	public void cliApplicationRequest(EventStatus eventStatus) {
 		switch (eventStatus) {
-			case CREATE_OFFER:
-				cliCreateOffer(createOffer(mHashIncomeDetail, mHashExpenseDetail));
+			case CREATE_APPLICATION:
+				cliCreateApplication(createOffer(mHashIncomeDetail, mHashExpenseDetail));
 				break;
 
-			case UPDATE_OFFER:
+			case UPDATE_APPLICATION:
 				cliUpdateApplication(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mObjOffer.cliId));
 				break;
 			default:
-				displayDefaultOffer(mObjOffer);
+				displayApplication(mObjOffer);
 				break;
 		}
 	}
@@ -747,21 +749,11 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		disposables.clear();
-		if (cliUpdateApplication != null) {
-			if (!cliUpdateApplication.isCancelled())
-				cliUpdateApplication.cancel(true);
-		}
-
-		if (createOfferTask != null) {
-			if (!createOfferTask.isCancelled())
-				createOfferTask.cancel(true);
-		}
-
-		if (cliAcceptOfferDecision != null) {
-			if (!cliAcceptOfferDecision.isCancelled())
-				cliAcceptOfferDecision.cancel(true);
-		}
+		if (!disposables.isDisposed())
+			disposables.clear();
+		cancelRequest(cliUpdateApplication);
+		cancelRequest(createOfferTask);
+		cancelRequest(cliAcceptOfferDecision);
 	}
 
 	public void finishActivity(OfferActive offerActive) {
@@ -783,5 +775,21 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 	private void loadFailure() {
 		loadState.setLoadComplete(false);
+	}
+
+	private void showDeclineButton() {
+		mCliPhase2Activity.showDeclineOffer();
+	}
+
+	private void hideDeclineButton() {
+		mCliPhase2Activity.hideDeclineOffer();
+	}
+
+	private void cancelRequest(HttpAsyncTask httpAsyncTask) {
+		if (httpAsyncTask != null) {
+			if (!httpAsyncTask.isCancelled()) {
+				httpAsyncTask.cancel(true);
+			}
+		}
 	}
 }

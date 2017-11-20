@@ -2,7 +2,7 @@ package za.co.woolworths.financial.services.android.util.controller;
 
 
 public enum EventStatus {
-	CREATE_OFFER(1), UPDATE_OFFER(2), NONE(3);
+	CREATE_APPLICATION(1), UPDATE_APPLICATION(2), NONE(3);
 	private int value;
 
 	public static final EventStatus values[] = values();

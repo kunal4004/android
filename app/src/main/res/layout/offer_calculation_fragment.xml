@@ -64,7 +64,6 @@
                         android:layout_marginTop="50dp"
                         android:background="@android:color/transparent"
                         android:gravity="center"
-                        android:imeActionId="@+id/etBackButton"
                         android:letterSpacing="0.0"
                         android:text="45 000"
                         android:textColor="@color/overview_color"
@@ -232,7 +231,7 @@
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 
-        <include layout="@layout/no_connection_handler"/>
+        <include layout="@layout/no_connection_layout"/>
     </FrameLayout>
 
     <include

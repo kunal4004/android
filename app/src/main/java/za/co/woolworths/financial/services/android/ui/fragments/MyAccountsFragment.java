@@ -147,8 +147,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		//Trigger Firebase Tag.
 		JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity) getActivity()).getJWTDecoded();
 		Map<String, String> arguments = new HashMap<>();
-		arguments.put("c2_id", (jwtDecodedModel.C2Id != null)? jwtDecodedModel.C2Id : "");
-		Utils.triggerFireBaseEvents(getActivity(),"accounts_event_appeared",arguments);
+		arguments.put("c2_id", (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
+		Utils.triggerFireBaseEvents(getActivity(), "accounts_event_appeared", arguments);
 
 		return inflater.inflate(R.layout.my_accounts_fragment, container, false);
 	}
@@ -692,9 +692,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	}
 
 	public void redirectToMyAccountsCardsActivity(int position) {
-		woolworthsApplication.setCliCardPosition(position);
 		Intent intent = new Intent(getActivity(), MyAccountCardsActivity.class);
-
 		intent.putExtra("position", position);
 		if (accountsResponse != null) {
 			intent.putExtra("accounts", Utils.objectToJson(accountsResponse));
@@ -830,7 +828,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			public void run() {
 				try {
 					dismissProgress();
-				}catch (Exception ex){}
+				} catch (Exception ex) {
+				}
 			}
 		});
 	}
@@ -914,7 +913,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			} else {
 				initialize();
 				getVouchers().execute();
-				if(getActivity() != null)
+				if (getActivity() != null)
 					new WRewardsCardDetails(getActivity()).execute();
 			}
 		} else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()) {

@@ -553,4 +553,10 @@
     <string name="cli_poi_email_decription">Please submit POI documents to the email address listed below.</string>
     <string name="cli_poi_email_id">poi@woolworths.co.za</string>
 
+    <string name="no_internet_title">OOPS. SOMETHING WENT WRONG!</string>
+    <string name="no_internet_subtitle">Please try again.</string>
+    <string name="calculating_offer_error_desc">If the problem persists, call us on 0861 50 20 20 </string>
+    <string name="cli_wifi_desc_error">Check that your mobile data or WIFI is switched on and ensure that you’re connected to the internet.   If the problem persists, call us on  0861 50 20 20</string>
+    <string name="try_again">try again</string>
+
 </resources>
