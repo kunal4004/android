@@ -210,8 +210,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			@Override
 			public void onSuccess(Object object) {
 				mObjOffer = ((OfferActive) object);
-				dummyData(mObjOffer);
-
 				switch (mObjOffer.httpCode) {
 					case 200:
 						displayApplication(mObjOffer);
@@ -253,7 +251,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			@Override
 			public void onSuccess(Object object) {
 				mObjOffer = ((OfferActive) object);
-				dummyData(mObjOffer);
 				switch (mObjOffer.httpCode) {
 					case 200:
 						displayApplication(mObjOffer);
@@ -286,19 +283,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			}
 		});
 		cliUpdateApplication.execute();
-	}
-
-	private void dummyData(OfferActive mObjOffer) {
-		mObjOffer.httpCode = 200;
-		mObjOffer.nextStep = getString(R.string.status_poi_required);
-		mObjOffer.nextStepColour = "#303004";
-		mObjOffer.offer = new Offer();
-		mObjOffer.offer.creditRequestMax = 80000;
-		mObjOffer.offer.creditReqestMin = 10000;
-		mObjOffer.offer.currCredit = 25000;
-		mObjOffer.cliId = 3637;
-		mObjOffer.messageSummary = getString(R.string.status_poi_required);
-		mObjOffer.messageDetail = "POI REQUIRED desc";
 	}
 
 	private void cliDelcineOfferRequest(CLIOfferDecision createOfferDecision) {
