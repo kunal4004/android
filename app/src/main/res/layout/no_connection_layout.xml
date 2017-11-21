@@ -19,7 +19,9 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center">
+        android:gravity="center"
+        android:paddingEnd="@dimen/fourty_seven_dp"
+        android:paddingStart="@dimen/fourty_nine_dp">
 
         <ImageView
             android:id="@+id/imgNoConnection"

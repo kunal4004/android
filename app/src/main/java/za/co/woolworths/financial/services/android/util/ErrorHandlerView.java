@@ -177,9 +177,9 @@ public class ErrorHandlerView {
 		tvConnectionSubTitle.setText(getString(R.string.no_internet_subtitle));
 		showView(tvConnectionSubTitle);
 		if (TextUtils.isEmpty(errorType)) {
-			tvDescription.setText(getString(R.string.cli_wifi_desc_error)); //response error
+			tvDescription.setText(getString(R.string.calculating_offer_error_desc)); //response error
 		} else {
-			tvDescription.setText(getString(R.string.calculating_offer_error_desc));  //network error
+			tvDescription.setText(getString(R.string.cli_wifi_desc_error));  //network error
 		}
 		responseFailureView(relConnectionLayout);
 	}

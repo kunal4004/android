@@ -205,6 +205,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 	private void cliCreateApplication(CreateOfferRequest createOfferRequest) {
 		onLoad();
+		showView(llNextButtonLayout);
 		latestBackgroundTask(LATEST_BACKGROUND_CALL.CREATE_OFFER);
 		createOfferTask = new CLIApplication(getActivity(), createOfferRequest, new OnEventListener() {
 			@Override
@@ -221,6 +222,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 					default:
 						hideDeclineButton();
+						hideView(llNextButtonLayout);
 						mErrorHandlerView.responseError(view, "");
 						break;
 				}
@@ -246,6 +248,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 	private void cliUpdateApplication(CreateOfferRequest createOfferRequest, String cliId) {
 		onLoad();
+		showView(llNextButtonLayout);
 		latestBackgroundTask(LATEST_BACKGROUND_CALL.UPDATE_APPLICATION);
 		cliUpdateApplication = new CLIUpdateApplication(getActivity(), createOfferRequest, cliId, new OnEventListener() {
 			@Override
@@ -262,6 +265,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 					default:
 						hideDeclineButton();
+						hideView(llNextButtonLayout);
 						mErrorHandlerView.responseError(view, "");
 						break;
 				}
