@@ -35,7 +35,6 @@ public class EditSlideAmountFragment extends CLIFragment {
 	private int creditRequestMax = 0;
 	String title;
 
-
 	public EditSlideAmountFragment() {
 		// Required empty public constructor
 	}

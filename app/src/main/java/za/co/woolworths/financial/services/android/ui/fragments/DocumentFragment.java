@@ -562,7 +562,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		hideView(rlSubmitCli);
 	}
 
-
 	@Override
 	public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 

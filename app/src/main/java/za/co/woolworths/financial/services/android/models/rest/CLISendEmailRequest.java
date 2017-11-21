@@ -13,13 +13,13 @@ import za.co.woolworths.financial.services.android.util.OnEventListener;
  * Created by W7099877 on 2017/11/07.
  */
 
-public class CLISendEmailRequest extends HttpAsyncTask<String,String,CLIEmailResponse>{
+public class CLISendEmailRequest extends HttpAsyncTask<String, String, CLIEmailResponse>{
 	private WoolworthsApplication mWoolworthsApp;
 	private OnEventListener<CLIEmailResponse> mCallBack;
 	private Context mContext;
 	public String mException;
 
-	public CLISendEmailRequest(Context context,OnEventListener callback)
+	public CLISendEmailRequest(Context context, OnEventListener callback)
 	{
 		this.mContext = context;
 		this.mCallBack = callback;
