@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -806,5 +807,14 @@ public class Utils {
 			}
 		}
 		return null;
+	}
+
+	public static void sendEmail(String email, FragmentActivity activity) {
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		Uri data = Uri.parse("mailto:"
+				+ email
+				+ "?subject=" + "" + "&body=" + "");
+		intent.setData(data);
+		activity.startActivity(intent);
 	}
 }

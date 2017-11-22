@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/applicationbeingprocessed_image"/>
+        app:srcCompat="@drawable/application_being_processed_image"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvProcessCompleteTitle"
@@ -64,6 +64,8 @@
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnProcessComplete"
             style="@style/whiteWButtonStyle"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:gravity="center"
             android:text="@string/back_to_my_account"
             android:textColor="@color/black"

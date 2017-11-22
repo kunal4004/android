@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constProofOfIncomeDocument"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvProofIncomeDocument"
+        style="@style/cli_permission_title_text"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/fourteen_dp"
+        android:layout_marginTop="@dimen/sixteen_dp"
+        android:text="@string/proof_of_income_document"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <View
+        android:id="@+id/vBottomLine"
+        style="@style/bottom_line"
+        android:layout_marginTop="@dimen/eight_dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvProofIncomeDocument"/>
+
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvDescription"
+        style="@style/take_photo_document_desc_style"
+        android:text="@string/proof_of_income_statement_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vBottomLine"/>
+
+
+    <View
+        android:id="@+id/vBottomLineDescription"
+        style="@style/bottom_line"
+        android:layout_marginEnd="@dimen/twenty_four_dp"
+        android:layout_marginStart="@dimen/twenty_four_dp"
+        android:layout_marginTop="@dimen/twenty_two_dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDescription"/>
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvClearDocumentPhoto"
+        style="@style/take_photo_document_desc_style"
+        android:text="@string/take_clear_photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vBottomLineDescription"/>
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvProofIncomeRequirement"
+        style="@style/cli_permission_title_text"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/fifteen_dp"
+        android:layout_marginTop="@dimen/eighteen_dp"
+        android:text="@string/proof_of_income_requirement"
+        android:textAllCaps="false"
+        android:textSize="@dimen/fifteen_sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvClearDocumentPhoto"/>
+
+    <LinearLayout
+        android:id="@+id/llClearPhotoScanDocument"
+        style="@style/clear_photo_scan_style"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvProofIncomeRequirement"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/imClearPhotoLogo"
+            style="@style/upload_document_image"
+            android:contentDescription="@string/uploading_clear_scan_photo"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvClearScanPhoto"
+            style="@style/proof_of_income_requirement_style"
+            android:text="@string/uploading_clear_scan_photo"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llNameAddressVisibility"
+        style="@style/clear_photo_scan_style"
+        app:layout_constraintTop_toBottomOf="@+id/llClearPhotoScanDocument">
+
+        <ImageView
+            android:id="@+id/imNameAdressVisibility"
+            style="@style/upload_document_image"
+            android:contentDescription="@string/uploading_name_address"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvNameAddressVisibility"
+            style="@style/proof_of_income_requirement_style"
+            android:text="@string/uploading_name_address"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llStatementPeriod"
+        style="@style/clear_photo_scan_style"
+        android:layout_marginTop="@dimen/eleven_dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llNameAddressVisibility">
+
+        <ImageView
+            android:id="@+id/imStatementPeriod"
+            style="@style/upload_document_image"
+            android:contentDescription="@string/uploading_statement_period"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvStatementPeriod"
+            style="@style/proof_of_income_requirement_style"
+            android:text="@string/uploading_statement_period"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llCardHolder"
+        style="@style/clear_photo_scan_style"
+        android:layout_marginTop="@dimen/thirteen_dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llStatementPeriod">
+
+        <ImageView
+            android:id="@+id/imOlderMonth"
+            style="@style/upload_document_image"
+            android:contentDescription="@string/uploading_older_month"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvOlderMonth"
+            style="@style/proof_of_income_requirement_style"
+            android:text="@string/uploading_older_month"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/vIncomeProofSeparator"
+        style="@style/income_proof_bottom_space_style"
+        app:layout_constraintTop_toBottomOf="@+id/llCardHolder"/>
+
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvProceedDescription"
+        style="@style/take_photo_document_desc_style"
+        android:text="@string/cli_proceed_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vIncomeProofSeparator"/>
+
+</android.support.constraint.ConstraintLayout>

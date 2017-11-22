@@ -23,7 +23,8 @@
                 android:orientation="vertical"
                 android:paddingBottom="70dp">
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
+
+                <za.co.woolworths.financial.services.android.ui.views.ReadMoreTextView
                     android:id="@+id/tvSelectYourBank"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -31,10 +32,16 @@
                     android:layout_marginEnd="@dimen/twenty_four_dp"
                     android:layout_marginStart="@dimen/twenty_four_dp"
                     android:layout_marginTop="@dimen/twelve_dp"
+                    android:lineSpacingExtra="1.9sp"
+                    android:minHeight="@dimen/sixteen_dp"
                     android:text="@string/select_your_bank_desc"
                     android:textColor="@color/black_50"
                     android:textSize="15sp"
-                    app:WTextView_font="myriadpro_regular"/>
+                    app:WTextView_font="myriadpro_regular"
+                    app:trimCollapsedText="@string/read_more"
+                    app:trimExpandedText="@string/read_less"
+                    app:trimLength="69"
+                    app:trimMode="trimModeLength"/>
 
                 <RelativeLayout
                     style="@style/increase_limit_relative_style"
@@ -137,29 +144,6 @@
                     android:visibility="gone"
                     >
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/white"
-                        android:paddingRight="18dp"
-                        android:visibility="visible">
-
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
-                            style="@style/cli_permission_title_text"
-                            android:text="proof of income documents"/>
-
-                        <ImageView
-                            android:id="@+id/poiDocumentInfo"
-                            style="@style/WRewardsInfo"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:alpha="0.2"
-                            android:background="@drawable/icon_info"
-                            android:padding="5dp"/>
-                    </RelativeLayout>
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -168,39 +152,12 @@
                         android:orientation="vertical"
                         android:visibility="visible">
 
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
-                            style="@style/cli_permission_description_text"
-                            android:layout_marginBottom="24dp"
-                            android:layout_marginRight="30dp"
-                            android:gravity="center_horizontal"
-                            android:text="@string/cli_poi_email_decription"
-                            android:textColor="@color/black"
-                            />
-
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginBottom="16dp"
-                            android:drawableLeft="@drawable/message_24"
-                            android:drawablePadding="16dp"
-                            android:gravity="center_vertical"
-                            android:text="@string/cli_poi_email_id"
-                            android:textColor="@color/black"
-                            android:textSize="18sp"
-                            app:WTextView_font="myriadpro_semibold"
-                            />
-
-                        <android.support.v7.widget.RecyclerView
-                            android:id="@+id/rclPOIDocuments"
+                        <fragment
+                            android:id="@+id/adFragment"
+                            android:name="za.co.woolworths.financial.services.android.ui.fragments.CLIProofOfIncomeDocumentFragment"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="1dp"
-                            android:background="@color/white"
-                            android:nestedScrollingEnabled="false"
-                            android:paddingLeft="24dp"
-                            android:paddingRight="24dp"
-                            android:visibility="gone"/>
+                            />
                     </LinearLayout>
 
                 </LinearLayout>

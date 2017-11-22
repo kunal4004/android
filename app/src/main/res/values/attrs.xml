@@ -117,7 +117,6 @@
         <attr name="cornerOffsetBottom" format="dimension"></attr>
     </declare-styleable>
 
-
     <declare-styleable name="LoadingDots">
         <attr name="LoadingDots_auto_play" format="boolean"/>
         <attr name="LoadingDots_dots_color" format="color"/>
@@ -141,19 +140,6 @@
         <attr name="alertText" format="string"/>
     </declare-styleable>
 
-    <!--
-        radius 圆环的半径
-        maxProgress 最大进度值
-        initProgress 初始进度值
-        centreColor 圆形中心的填充色
-        circleColor 圆环的颜色
-        progressColor 圆环中进度的颜色
-        textColor 文字进度的颜色
-        textSize 文字进度的大小
-        startAngle 进度起始的角度
-        textProgressEnable 是否显示文字进度
-    -->
-
     <declare-styleable name="CircleProgressBar">
         <attr name="circleWidth" format="dimension"/>
         <attr name="maxProgress" format="integer"/>
@@ -165,6 +151,19 @@
         <attr name="textSize" format="dimension"/>
         <attr name="startAngle" format="integer"/>
         <attr name="textProgressEnable" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="ReadMoreTextView">
+        <attr name="trimExpandedText" format="string" />
+        <attr name="trimCollapsedText" format="string" />
+        <attr name="trimLength" format="integer" />
+        <attr name="showTrimExpandedText" format="boolean" />
+        <attr name="colorClickableText" format="color" />
+        <attr name="trimLines" format="integer" />
+        <attr name="trimMode">
+            <enum name="trimModeLine" value="0"/>
+            <enum name="trimModeLength" value="1"/>
+        </attr>
     </declare-styleable>
 
 </resources>

@@ -83,7 +83,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private NestedScrollView nestedScrollView;
 	private WTextView yesPOIFromBank;
 	private WTextView noPOIFromBank;
-	private RecyclerView rclPOIDocuments;
 	private String otherBank = "Other";
 	private DocumentsAccountTypeAdapter accountTypeAdapter;
 	private POIDocumentSubmitTypeAdapter documentSubmitTypeAdapter;
@@ -104,6 +103,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private LoadState loadState;
 	private OfferActive activeOfferObj;
 	private View view;
+	private WTextView tvSelectYourBank;
 
 	private enum NetworkFailureRequest {DEA_BANK, ACCOUNT_TYPE}
 
@@ -278,7 +278,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		((SimpleItemAnimator) rclSelectYourBank.getItemAnimator()).setSupportsChangeAnimations(false);
 
 		rclAccountType = (RecyclerView) view.findViewById(R.id.rclSelectAccountType);
-		rclPOIDocuments = (RecyclerView) view.findViewById(R.id.rclPOIDocuments);
+		tvSelectYourBank = (WTextView) view.findViewById(R.id.tvSelectYourBank);
 		pbDeaBank = (ProgressBar) view.findViewById(R.id.pbDeaBank);
 		nestedScrollView = (NestedScrollView) view.findViewById(R.id.nested_scrollview);
 		bankTypeConfirmationLayout = (LinearLayout) view.findViewById(R.id.bankTypeConfirmationLayout);
@@ -331,8 +331,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 		documentSubmitTypeAdapter = new POIDocumentSubmitTypeAdapter(this);
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-		rclPOIDocuments.setLayoutManager(mLayoutManager);
-		rclPOIDocuments.setAdapter(documentSubmitTypeAdapter);
 	}
 
 	@Override
@@ -462,8 +460,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				onSubmitClick(submitType);
 				break;
 			case R.id.uploadDocumentInfo:
-			case R.id.poiDocumentInfo:
-				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.UPLOAD_DOCUMENT_MODAL, "");
+
 				break;
 
 			case R.id.btnRetry:

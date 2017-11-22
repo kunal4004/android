@@ -778,7 +778,7 @@
 
     <style name="bottom_line" parent="android:Theme">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0.4dp</item>
+        <item name="android:layout_height">0.8dp</item>
         <item name="android:background">@color/default_background</item>
     </style>
 
@@ -933,8 +933,8 @@
     </style>
 
     <style name="upload_document_image" parent="android:Theme">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/fifteen_dp</item>
+        <item name="android:layout_width">@dimen/sixteen_dp</item>
         <item name="android:layout_marginEnd">@dimen/eight_dp</item>
         <item name="android:src">@drawable/cli_step_indicator_active</item>
     </style>
@@ -967,6 +967,47 @@
         <item name="android:textColor">@color/black_50</item>
         <item name="android:textSize">@dimen/fifteen_sp</item>
         <item name="WTextView_font">myriadpro_regular</item>
+    </style>
+
+    <style name="proof_of_income_requirement_style" parent="upload_document_title">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:lineSpacingExtra">4dp</item>
+    </style>
+
+    <style name="take_photo_document_desc_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">17dp</item>
+        <item name="android:gravity">left</item>
+        <item name="android:lineSpacingExtra">4dp</item>
+        <item name="android:textColor">@color/black_50</item>
+        <item name="android:textSize">15sp</item>
+        <item name="WTextView_font">myriadpro_regular</item>
+    </style>
+
+    <style name="proof_of_income_requirement_container_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/bg_top_bottom_divider</item>
+        <item name="android:paddingBottom">@dimen/twenty_five_dp</item>
+    </style>
+
+    <style name="clear_photo_scan_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">@dimen/twenty_four_dp</item>
+        <item name="android:layout_marginStart">@dimen/twenty_four_dp</item>
+        <item name="android:layout_marginTop">@dimen/fifteen_dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="income_proof_bottom_space_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/sixteen_dp</item>
+        <item name="android:layout_marginTop">@dimen/twenty_five_dp</item>
+        <item name="android:background">@drawable/bg_top_bottom_divider</item>
     </style>
 
 </resources>

@@ -106,5 +106,8 @@
     <dimen name="fifty_three_dp">53dp</dimen>
     <dimen name="fifty_one_dp">51dp</dimen>
     <dimen name="fourty_seven_dp">47dp</dimen>
+    <dimen name="fifteen_dp">15dp</dimen>
+    <dimen name="twenty_two_dp">22dp</dimen>
+    <dimen name="eighteen_dp">18dp</dimen>
 </resources>
 
