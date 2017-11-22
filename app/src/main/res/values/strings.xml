@@ -526,8 +526,8 @@ If we do not receive your proof of income within 30 (thirty) days from the date 
     <string name="approximate_repayments">Approximate Repayments:</string>
     <string name="term">Term:</string>
     <string name="amount_too_low_modal_title">oops, incorrect Amount</string>
-    <string name="amount_too_low_modal_desc">The amount you have entered is below the minimum amount which can be requested. Please request an amount above #R.</string>
-    <string name="amount_too_high_modal_desc">The amount you have entered exceeds the maximum amount which can be requested. Please request an amount below #R</string>
+    <string name="amount_too_low_modal_desc">The amount you have entered is equal to, or less than your current credit limit. Please enter a larger amount.</string>
+    <string name="amount_too_high_modal_desc">The amount that you have requested exceeds the maximum amount available to you. Please re-enter a lower amount.</string>
     <string name="uploading_your_documents">uploading your documents</string>
     <string name="uploading_your_documents_desc">Please provide your latest three payslips or the last three months’ bank statements.</string>
     <string name="uploading_clear_scan_photo">Clear photo/scan of the document</string>
@@ -559,7 +559,7 @@ If we do not receive your proof of income within 30 (thirty) days from the date 
     <string name="no_internet_title">OOPS. SOMETHING WENT WRONG!</string>
     <string name="no_internet_subtitle">Please try again.</string>
     <string name="calculating_offer_error_desc">If the problem persists, call us on 0861 50 20 20 </string>
-    <string name="cli_wifi_desc_error">Check that your mobile data or WIFI is switched on and ensure that you’re connected to the internet.   If the problem persists, call us on  0861 50 20 20</string>
+    <string name="cli_wifi_desc_error">Check that your mobile data or WIFI is switched on and ensure that you’re connected to the internet.   If the problem persists, call us on 0861 50 20 20</string>
     <string name="try_again">try again</string>
     <string name="proof_of_income_document">proof of income documents</string>
     <string name="take_clear_photo">Take clear photos of your documents and email them to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.</string>
@@ -568,6 +568,8 @@ If we do not receive your proof of income within 30 (thirty) days from the date 
     <string name="cli_proceed_description">Don’t have the required documents right now or need more detailed instructions?  Simply click below and we will send an email to you, so you can complete the process</string>
     <string name="cli_email_sent_document_title">documents sent to:</string>
     <string name="cli_email_sent_description">Please follow the instructions we’ve sent to your email. If you didn’t receive the email, please check your spam folder.</string>
-    <string name="read_more">Read More...</string>
+    <string name="read_more">Read more...</string>
     <string name="read_less">\n\nLess.</string>
+    <string name="proceed">proceed</string>
+    <string name="status_complete">complete</string>
 </resources>

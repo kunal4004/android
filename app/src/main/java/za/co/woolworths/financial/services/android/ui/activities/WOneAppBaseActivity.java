@@ -43,7 +43,6 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
-import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
 import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
 import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -57,7 +56,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	public WTextView mToolbarTitle;
 	private List<Fragment> fragmentList;
 	public static final String TAG = "WOneAppBaseActivity";
-	private SharePreferenceHelper mSharePreferenceHelper;
 
 	private ActionBar mActionBar;
 	private DrawerLayout mDrawerLayout;
@@ -69,7 +67,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.one_app_base_activity);
 		Utils.updateStatusBarBackground(this);
-		mSharePreferenceHelper = SharePreferenceHelper.getInstance(this);
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
 
@@ -181,7 +178,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 			SessionDao sessionDao = new SessionDao(WOneAppBaseActivity.this, SessionDao.KEY.USER_TOKEN).get();
 			if (sessionDao.value != null && !sessionDao.value.equals("")) {
 				result = JWTHelper.decode(sessionDao.value);
-				mSharePreferenceHelper.save(result.email.get(0), "email");
 			}
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage());

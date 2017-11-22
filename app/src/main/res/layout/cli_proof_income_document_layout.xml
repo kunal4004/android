@@ -145,7 +145,6 @@
         style="@style/income_proof_bottom_space_style"
         app:layout_constraintTop_toBottomOf="@+id/llCardHolder"/>
 
-
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvProceedDescription"
         style="@style/take_photo_document_desc_style"
@@ -153,5 +152,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/vIncomeProofSeparator"/>
+
+    <View
+        android:id="@+id/vSpace"
+        style="@style/income_proof_bottom_space_style"
+        android:layout_height="@dimen/sixteen_dp"
+        android:layout_marginTop="0dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@+id/tvProceedDescription"/>
+
+    <View
+        android:id="@+id/vBottomHorizontalLine"
+        style="@style/bottom_line"
+        app:layout_constraintTop_toBottomOf="@+id/vSpace"/>
 
 </android.support.constraint.ConstraintLayout>

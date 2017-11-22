@@ -40,7 +40,7 @@ import za.co.woolworths.financial.services.android.util.controller.IncreaseLimit
 
 public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFragmentChange, View.OnClickListener, DeclineOfferInterface {
 
-	private WTextView tvDeclineOffer, mToolbarText;
+	private WTextView tvDeclineOffer;
 	private ProgressBar pbDecline;
 	public OfferActive mCLICreateOfferResponse;
 	private String mOfferActivePayload;
@@ -85,7 +85,6 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 
 	private void actionBar() {
 		Toolbar mToolbar = (Toolbar) findViewById(R.id.mToolbar);
-		mToolbarText = (WTextView) findViewById(R.id.toolbarText);
 		setSupportActionBar(mToolbar);
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
@@ -298,10 +297,6 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	@Override
 	public void onFragmentChanged(String title) {
 		//contact us change title listener
-	}
-
-	private void setTitle(String text) {
-		mToolbarText.setText(text);
 	}
 
 	public void hideBurgerButton() {

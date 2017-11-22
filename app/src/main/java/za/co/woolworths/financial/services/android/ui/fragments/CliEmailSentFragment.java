@@ -10,13 +10,19 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
+
+import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.controller.CLIFragment;
 
 public class CliEmailSentFragment extends CLIFragment implements View.OnClickListener {
+
 
 	public CliEmailSentFragment() {
 	}
@@ -31,14 +37,15 @@ public class CliEmailSentFragment extends CLIFragment implements View.OnClickLis
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		//mCliStepIndicatorListener.onStepSelected(5);
+		mCliStepIndicatorListener.onStepSelected(5);
 		initUI(view);
 
 	}
 
 	private void initUI(View view) {
 		WButton btnProcessComplete = (WButton) view.findViewById(R.id.btnProcessComplete);
-		//WTextView tvClearDocumentPhoto = (WTextView) view.findViewById(R.id.tvClearDocumentPhoto);
+		WTextView tvEmailAccount = (WTextView) view.findViewById(R.id.tvEmailAccount);
+		populateDocument(tvEmailAccount);
 		btnProcessComplete.setOnClickListener(this);
 	}
 
@@ -57,4 +64,24 @@ public class CliEmailSentFragment extends CLIFragment implements View.OnClickLis
 				break;
 		}
 	}
+
+	public JWTDecodedModel getJWTDecoded() {
+		JWTDecodedModel result = new JWTDecodedModel();
+		try {
+			SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
+			if (sessionDao.value != null && !sessionDao.value.equals("")) {
+				result = JWTHelper.decode(sessionDao.value);
+			}
+		} catch (Exception ignored) {
+		}
+		return result;
+	}
+
+	private void populateDocument(WTextView textView) {
+		JWTDecodedModel userDetail = getJWTDecoded();
+		if (userDetail != null) {
+			textView.setText(userDetail.email.get(0));
+		}
+	}
+
 }

@@ -139,6 +139,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				setInvisibleView(tvSlideToEditSeekInfo);
 				mCliStepIndicatorListener.onStepSelected(3);
 				mObjOffer = ((CLIPhase2Activity) OfferCalculationFragment.this.getActivity()).offerActiveObject();
+				mCLiId = mObjOffer.cliId;
 				if (incomeDetail != null) {
 					mHashIncomeDetail = (HashMap<String, String>) incomeDetail;
 				}
@@ -340,7 +341,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		SimpleDraweeView imOfferTime = (SimpleDraweeView) view.findViewById(R.id.imOfferTime);
 		relConnectionLayout = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
 		flTopLayout = (FrameLayout) view.findViewById(R.id.flTopLayout);
-		mErrorHandlerView = new ErrorHandlerView(getActivity(), relConnectionLayout);
+		mErrorHandlerView = new ErrorHandlerView(getActivity(), relConnectionLayout, this);
 		mErrorHandlerView.setMargin(relConnectionLayout, 0, 0, 0, 0);
 		tvCurrentCreditLimitAmount = (WTextView) view.findViewById(R.id.tvCurrentCreditLimitAmount);
 		tvAdditionalCreditLimitAmount = (WTextView) view.findViewById(R.id.tvAdditionalCreditLimitAmount);
@@ -726,7 +727,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				break;
 
 			case UPDATE_APPLICATION:
-				cliUpdateApplication(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mObjOffer.cliId));
+				cliUpdateApplication(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mCLiId));
 				break;
 			default:
 				displayApplication(mObjOffer);

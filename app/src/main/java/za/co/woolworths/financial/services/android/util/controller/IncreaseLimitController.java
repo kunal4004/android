@@ -150,6 +150,12 @@ public class IncreaseLimitController {
 			hideView(llCommonLayer);
 			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 			displayDescription(tvIncreaseLimitDescription, messageDetail);
+		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_complete))) {
+			showView(logoIncreaseLimit);
+			cliIcon(logoIncreaseLimit);
+			hideView(llCommonLayer);
+			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
+			displayDescription(tvIncreaseLimitDescription, messageDetail);
 		} else {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
@@ -227,16 +233,9 @@ public class IncreaseLimitController {
 				moveToCLIPhase(offerActive, productOfferingId);
 			} else if ((nextStep.equalsIgnoreCase(getString(R.string.status_in_progress)))
 					|| nextStep.equalsIgnoreCase(getString(R.string.status_decline))
-					|| nextStep.equalsIgnoreCase(getString(R.string.status_unavailable))) {
-
-			} else if (nextStep.equalsIgnoreCase(getString(R.string.status_contact_us))) {
-				String messageDetail = offerActive.messageDetail;
-				if (!TextUtils.isEmpty(messageDetail)) {
-					Integer stripToNumber = Utils.numericFieldOnly(messageDetail);
-					if (stripToNumber != null) {
-						Utils.makeCall(mContext, String.valueOf(stripToNumber));
-					}
-				}
+					|| nextStep.equalsIgnoreCase(getString(R.string.status_unavailable))
+					|| nextStep.equalsIgnoreCase(getString(R.string.status_contact_us))
+					|| nextStep.equalsIgnoreCase(getString(R.string.status_complete))) {
 
 			} else {
 				moveToCLIPhase(offerActive, productOfferingId);

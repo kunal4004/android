@@ -45,7 +45,6 @@ import za.co.woolworths.financial.services.android.models.rest.CLISendEmailReque
 import za.co.woolworths.financial.services.android.models.rest.CLIUpdateBankDetails;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentsAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.POIDocumentSubmitTypeAdapter;
@@ -103,7 +102,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	private LoadState loadState;
 	private OfferActive activeOfferObj;
 	private View view;
-	private WTextView tvSelectYourBank;
 
 	private enum NetworkFailureRequest {DEA_BANK, ACCOUNT_TYPE}
 
@@ -278,7 +276,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		((SimpleItemAnimator) rclSelectYourBank.getItemAnimator()).setSupportsChangeAnimations(false);
 
 		rclAccountType = (RecyclerView) view.findViewById(R.id.rclSelectAccountType);
-		tvSelectYourBank = (WTextView) view.findViewById(R.id.tvSelectYourBank);
 		pbDeaBank = (ProgressBar) view.findViewById(R.id.pbDeaBank);
 		nestedScrollView = (NestedScrollView) view.findViewById(R.id.nested_scrollview);
 		bankTypeConfirmationLayout = (LinearLayout) view.findViewById(R.id.bankTypeConfirmationLayout);
@@ -511,6 +508,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	public void scrollUpDocumentSubmitTypeLayout() {
+		submitType = SubmitType.LATER;
 		hideView(uploadDocumentsLayout);
 		showView(poiDocumentSubmitTypeLayout);
 		dynamicLayoutPadding(bankTypeConfirmationLayout, true);
@@ -522,6 +520,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			}
 		});
 		showView(rlSubmitCli);
+		setButtonProceed();
 	}
 
 	public void scrollUpAccountNumberLayout() {
@@ -536,6 +535,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 				ObjectAnimator.ofInt(nestedScrollView, "scrollY", accountNumberLayout.getTop()).setDuration(ANIM_DURATION).start();
 			}
 		});
+		setButtonSubmit();
 	}
 
 	public void invalidateBankTypeSelection() {
@@ -617,7 +617,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			public void onSuccess(Object object) {
 				enableSubmitButton();
 				updateBankDetailResponse = (UpdateBankDetailResponse) object;
-				moveToProcessCompleteFragment();
+				ProcessCompleteFragment processCompleteFragment = new ProcessCompleteFragment();
+				moveToProcessCompleteFragment(processCompleteFragment);
 				loadSuccess();
 			}
 
@@ -644,11 +645,10 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	}
 
 	@SuppressLint("CommitTransaction")
-	public void moveToProcessCompleteFragment() {
-		ProcessCompleteFragment processCompleteFragment = new ProcessCompleteFragment();
-		processCompleteFragment.setStepIndicatorListener(mCliStepIndicatorListener);
+	public void moveToProcessCompleteFragment(CLIFragment fragment) {
+		fragment.setStepIndicatorListener(mCliStepIndicatorListener);
 		FragmentUtils fragmentUtils = new FragmentUtils();
-		fragmentUtils.nextFragment((AppCompatActivity) getActivity(), getFragmentManager().beginTransaction(), processCompleteFragment, R.id.cli_steps_container);
+		fragmentUtils.nextFragment((AppCompatActivity) getActivity(), getFragmentManager().beginTransaction(), fragment, R.id.cli_steps_container);
 
 	}
 
@@ -659,7 +659,8 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			public void onSuccess(Object object) {
 				CLIEmailResponse response = (CLIEmailResponse) object;
 				if (response.httpCode == 200) {
-					moveToProcessCompleteFragment();
+					CliEmailSentFragment cliEmailSentFragment = new CliEmailSentFragment();
+					moveToProcessCompleteFragment(cliEmailSentFragment);
 				} else {
 					enableSubmitButton();
 				}
@@ -710,4 +711,13 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		loadState.setLoadComplete(false);
 	}
 
+	private void setButtonProceed() {
+		btnSubmit.setText(getString(R.string.proceed));
+		rlSubmitCli.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.white));
+	}
+
+	private void setButtonSubmit() {
+		btnSubmit.setText(getString(R.string.submit));
+		rlSubmitCli.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
+	}
 }
