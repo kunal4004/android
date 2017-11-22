@@ -43,9 +43,11 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_margin="30dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_height="@dimen/fifty_dp"
+                    android:layout_marginBottom="@dimen/thirty_dp"
+                    android:layout_marginEnd="@dimen/twenty_six_dp"
+                    android:layout_marginStart="@dimen/thirty_dp"
+                    android:layout_marginTop="@dimen/thirty_dp"
                     android:background="@drawable/cli_yes_no_button_background"
                     >
 
@@ -77,7 +79,6 @@
             android:layout_height="wrap_content"
             android:background="@color/default_background"
             android:orientation="vertical"
-            android:paddingBottom="250dp"
             android:paddingTop="16dp"
             android:visibility="gone"
             >
@@ -102,9 +103,11 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_margin="30dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_height="@dimen/fifty_dp"
+                    android:layout_marginBottom="@dimen/thirty_dp"
+                    android:layout_marginEnd="@dimen/twenty_six_dp"
+                    android:layout_marginStart="@dimen/thirty_dp"
+                    android:layout_marginTop="@dimen/thirty_dp"
                     android:background="@drawable/cli_yes_no_button_background"
                     >
 

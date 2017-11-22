@@ -109,5 +109,6 @@
     <dimen name="fifteen_dp">15dp</dimen>
     <dimen name="twenty_two_dp">22dp</dimen>
     <dimen name="eighteen_dp">18dp</dimen>
+    <dimen name="twenty_six_dp">26dp</dimen>
 </resources>
 

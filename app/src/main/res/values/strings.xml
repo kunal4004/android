@@ -163,18 +163,18 @@
     <string name="cli_lorem_ipsum">Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum </string>
     <string name="cli_got_it">GOT IT</string>
     <string name="income_gross_monthly_desc">Gross monthly income refers to your income before deductions.</string>
-    <string name="income_net_monthly_desc">Net monthly income refers to your income before deductions.</string>
+    <string name="income_net_monthly_desc">Net monthly income refers to your income after deductions.</string>
     <string name="income_additional_monthly_desc">Additional income refers to any income you receive apart from your monthly salary.</string>
     <string name="expenses_mortgage_payment_desc">Monthly mortgage or bond repayment refers to your home loan installments</string>
-    <string name="expenses_rental_payment_desc">Rental Payment is the cost of monthly accommodation.</string>
-    <string name="expenses_maintenance_payment_desc">Maintenance expenses refer to your monthly accommodation</string>
-    <string name="expense_monthly_credit_payment_desc">Monthly Instalment of creditor account i.e.: Credit Card, Personal Loan, Furniture Accounts etc.</string>
-    <string name="cli_overlay_all_expenses">All Other Expenses, i.e.: groceries,transport, telephone/cellphone etc.</string>
+    <string name="expenses_rental_payment_desc">Rent is the cost of your monthly accommodation</string>
+    <string name="expenses_maintenance_payment_desc">Maintenance expenses refer to your monthly obligation to pay for statutory child etc.</string>
+    <string name="expense_monthly_credit_payment_desc">Monthly Instalment of creditor account i.e: Credit Card, Personal Loan, Furniture Accounts etc.</string>
+    <string name="cli_overlay_all_expenses">All Other Expenses, i.e: Groceries, Transport, Telephone/Cellphone etc.</string>
     <string name="cli_send_to_title">EMAIL SENT TO</string>
     <string name="cli_solvency_error">All fields are mandatory.\nIf not applicable, please enter R0.</string>
 
     <string name="cli_pop_confidential_title">UNFORTUNATELY WE CANNOT PROCEED</string>
-    <string name="cli_pop_confidential_desc">You may only apply for a limit increase if you credit profile is in good standing</string>
+    <string name="cli_pop_confidential_desc">You may only apply for a limit increase if your credit profile is in good standing</string>
 
     <string name="cli_pop_insolvency_title">SORRY, WE CANNOT PROCEED WITH YOUR APPLICATION</string>
     <string name="cli_pop_insolvency_desc">Unfortunately we can’t proceed until you no longer have any of these conditions in place.</string>

@@ -691,9 +691,10 @@
     </style>
 
     <style name="cli_permission_description_text">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">30dp</item>
+        <item name="android:layout_marginStart">@dimen/thirty_one_dp</item>
+        <item name="android:layout_marginEnd">@dimen/seventeen_dp</item>
         <item name="android:layout_marginTop">22dp</item>
         <item name="android:lineSpacingExtra">5sp</item>
         <item name="android:textColor">@color/black_50</item>

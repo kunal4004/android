@@ -31,8 +31,6 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 	private WTextView permissionYes;
 	private WTextView permissionNo;
 	private ScrollView scrollView;
-	private boolean isEligible;
-	private boolean isPermitted;
 	private int paddingDp = 0;
 	private LinearLayout llEligibilityView;
 
