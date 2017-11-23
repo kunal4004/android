@@ -6,37 +6,42 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="@dimen/bank_spacing_width"
-    android:layout_marginTop="@dimen/default_margin"
     android:layout_marginRight="@dimen/bank_spacing_width"
+    android:layout_marginTop="@dimen/default_margin"
     android:orientation="vertical">
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center|start"
-    android:minHeight="40dp">
-    <ImageView
-        android:id="@+id/imgSelectBank"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:src="@drawable/tick_cli_inactive"
-        />
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:text=""
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imgSelectBank"
-        android:id="@+id/textBankName"
-        app:WTextView_font="medium"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:gravity="left|center"
-        android:textAllCaps="true"
-        android:textSize="12sp"
-        android:letterSpacing="0.2"
-        android:textColor="@color/black"
-        android:layout_toEndOf="@+id/imgSelectBank"
-        android:layout_alignParentTop="true" />
-</RelativeLayout>
-    <include android:id="@+id/vHorizontanlDivider"
+        android:gravity="center|start"
+        android:minHeight="40dp">
+
+        <ImageView
+            android:id="@+id/imgSelectBank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/tick_cli_inactive"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/textBankName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/imgSelectBank"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_toEndOf="@+id/imgSelectBank"
+            android:gravity="left|center"
+            android:letterSpacing="0.2"
+            android:text=""
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:WTextView_font="medium"/>
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/vHorizontanlDivider"
         layout="@layout/horizontal_divider"/>
 </LinearLayout>

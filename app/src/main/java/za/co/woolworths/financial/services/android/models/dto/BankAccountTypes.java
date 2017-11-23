@@ -4,9 +4,10 @@ package za.co.woolworths.financial.services.android.models.dto;
  * Created by dimitrij on 2016/12/22.
  */
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class BankAccountTypes {
 

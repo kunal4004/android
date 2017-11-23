@@ -2,25 +2,10 @@
 <resources>
     <color name="black">#000</color>
     <color name="white">#FFF</color>
-    <color name="login_font_color">#686663</color>
     <color name="drawer_color">#333333</color>
-    <color name="onboarding_bg">#242529</color>
     <color name="onboarding_desc_text">#80ffffff</color>
-    <color name="store_card">#CD0F69</color>
-    <color name="store_card_pressed">#b00d5a</color>
-    <color name="credit_card">#247EAB</color>
-    <color name="personal_loan">#7E2A80</color>
     <color name="gray_circle">#CCC</color>
-    <color name="rewards">#CCE226</color>
-    <color name="rewards_pressed">#c0d524</color>
-    <color name="personal_loan_cancel">#666</color>
-    <color name="cancel_pressed">#5b5b5b</color>
-    <color name="personal_loan_disabled">#af95b4</color>
-    <color name="credit_card_pressed">#007699</color>
-    <color name="personal_loan_pressed">#6b3973</color>
-    <color name="reward_separator">#999</color>
     <color name="light_gray">#EFEFEF</color>
-    <color name="medium_grey">#EFEFEF</color>
     <color name="dark_grey">#22efefef</color>
     <color name="indicator_unselected">#CCCCCC</color>
     <color name="indicator_selected">#686663</color>
@@ -28,7 +13,6 @@
     <color name="black_off">#343434</color>
     <color name="black_overlay">#66000000</color>
     <color name="recent_search_bg">#EFEFEF</color>
-    <color name="walkthrough_statusbar">#352F30</color>
     <color name="cli_store_card">#4f5051</color>
     <color name="cli_credit_card">#2e353b</color>
     <color name="cli_personal_loan">#312439</color>
@@ -40,62 +24,35 @@
     <color name="black_desc_opacity_light">#85000000</color>
     <color name="press_bg">#05000000</color>
     <color name="charcoal_grey">#4F5051</color>
-    <color name="bg_status_bar_pl">#2F2439</color>
-    <color name="bg_charcoalGreyThree">#2E353B</color>
-    <color name="product_text_color">#b2000000</color>
 
     <!-- step indicator -->
-    <color name="background_default">#A5D6A7</color>
-    <color name="step_default">#4CAF50</color>
-    <color name="current_step_default">#ffffff</color>
-    <color name="text_default">#000000</color>
-    <color name="secondary_text_default">#ffffff</color>
-    <color name="cli_content_color_desc">#80000000</color>
-    <color name="page_indicator_default">#20ffffff</color>
     <color name="horizontal_line">#10000000</color>
     <color name="reward_status_bar_color">#cc000000</color>
     <color name="default_background">#ececec</color>
-    <color name="semi_white">#15ffffff</color>
     <color name="product_search_hint">#20000000</color>
-    <color name="primary">#3F51B5</color>
-    <color name="primary_dark">#303F9F</color>
-    <color name="primary_light">#C5CAE9</color>
-    <color name="accent">#E040FB</color>
-    <color name="primary_text">#212121</color>
-    <color name="secondary_text">#727272</color>
-    <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
-    <color name="viewfinder_mask">#000</color>
-    <color name="viewfinder_laser">#00cc0000</color>
-    <color name="viewfinder_border">#000</color>
-    <color name="horizontal_line_bg">#15000000</color>
-    <color name="colorAccent">#00000000</color>
     <color name="product_divider">#22000000</color>
-    <color name="viewpager_bg">#10000000</color>
     <color name="barcode_button">#40ffffff</color>
     <color name="barcode_button_light">#20ffffff</color>
     <color name="red">#ff0000</color>
-    <color name="spinner_overlay_bg">#99EFEFEF</color>
 
-    <color name="contents_text">#ff000000</color>
-    <color name="encode_view">#ffffffff</color>
-    <color name="possible_result_points">#c0ffbd21</color>
     <!-- Android standard ICS color -->
-    <color name="result_minor_text">#60000000</color>
-    <color name="result_points">#c099cc00</color>
     <!-- Android standard ICS color -->
-    <color name="result_text">#60000000</color>
-    <color name="result_view">#ffffffff</color>
-    <color name="status_text">#ffffffff</color>
     <color name="transparent">#00000000</color>
     <!-- Android standard ICS color -->
-    <color name="qr_code_view_mask">#60000000</color>
-    <color name="qr_code_view_corner">#FF2A7C3B</color>
-    <color name="qr_code_view_border">#ffffffff</color>
-    <color name="barcode_btn_color">#66ffffff</color>
     <color name="stock_finder_map_header_bg">#cc292929</color>
     <color name="promo_text_color">#eb2e25</color>
+    <color name="cli_button_border">#19000000</color>
+    <color name="cli_yes_no_button_color">#212b36</color>
+    <color name="cli_step_indicator_done_text_color">#030303</color>
+    <color name="black30">#4c000000</color>
+    <color name="black10">#10000000</color>
+
     <color name="status_red">#e41f1f</color>
     <color name="status_green">#bad110</color>
     <color name="status_amber">#f4b421</color>
+    <color name="offer_title">#222222</color>
+    <color name="offer_active_desc">#7f030303</color>
+    <color name="status_in_progress">#74afda</color>
+    <color name="account_amount_color">#030303</color>
 </resources>

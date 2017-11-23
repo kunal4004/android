@@ -15,7 +15,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -202,7 +201,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 	private void setAmount() {
 		if (getDrawnDownAmount() < wminDrawnDownAmount) {
 			Utils.displayValidationMessage(LoanWithdrawalActivity.this,
-					CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.LOW_LOAN_AMOUNT,
+					CustomPopUpWindow.MODAL_LAYOUT.LOW_LOAN_AMOUNT,
 					String.valueOf(wminDrawnDownAmount));
 		} else if (getDrawnDownAmount() >= wminDrawnDownAmount
 				&& getDrawnDownAmount() <= getAvailableFund()) {
@@ -217,7 +216,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 			}, 200);
 		} else {
 			Utils.displayValidationMessage(LoanWithdrawalActivity.this,
-					CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.HIGH_LOAN_AMOUNT, "");
+					CustomPopUpWindow.MODAL_LAYOUT.HIGH_LOAN_AMOUNT, "");
 		}
 	}
 
@@ -339,7 +338,7 @@ public class LoanWithdrawalActivity extends BaseActivity implements NetworkChang
 									if (!TextUtils.isEmpty(responseDesc)) {
 										loanWithdrawalClicked = false;
 										Utils.displayValidationMessage(LoanWithdrawalActivity.this,
-												CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
+												CustomPopUpWindow.MODAL_LAYOUT.ERROR,
 												responseDesc);
 									}
 								}

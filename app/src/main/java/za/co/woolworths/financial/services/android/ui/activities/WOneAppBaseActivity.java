@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,7 +17,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.os.Bundle;
 
 import com.awfs.coordination.R;
 
@@ -27,12 +27,10 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WRewardsCardDetails;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-
 import za.co.woolworths.financial.services.android.models.dto.Voucher;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.fragments.MenuNavigationInterface;
-
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
@@ -45,10 +43,9 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
-import za.co.woolworths.financial.services.android.util.SharePreferenceHelper;
+import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
 import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.UpdateNavDrawerTitle;
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
 		, WProductFragment.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle,
@@ -59,12 +56,10 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	public WTextView mToolbarTitle;
 	private List<Fragment> fragmentList;
 	public static final String TAG = "WOneAppBaseActivity";
-	private SharePreferenceHelper mSharePreferenceHelper;
 
 	private ActionBar mActionBar;
 	private DrawerLayout mDrawerLayout;
 	private WGlobalState mWGlobalState;
-	private int a, b;
 	private String mNotificationUtils;
 
 	@Override
@@ -72,7 +67,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.one_app_base_activity);
 		Utils.updateStatusBarBackground(this);
-		mSharePreferenceHelper = SharePreferenceHelper.getInstance(this);
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(mToolbar);
 
@@ -97,7 +91,9 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 		registerReceiver(logOutReceiver, new IntentFilter("logOutReceiver"));
 		Bundle bundle = getIntent().getExtras();
-		mNotificationUtils = bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT);
+		if (bundle != null) {
+			mNotificationUtils = bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT);
+		}
 		if (!TextUtils.isEmpty(mNotificationUtils)) {
 			displayView(4);
 		} else {
@@ -112,6 +108,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 				displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 			}
 		}
+
 		initGetVouchersCall();
 	}
 
@@ -181,7 +178,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 			SessionDao sessionDao = new SessionDao(WOneAppBaseActivity.this, SessionDao.KEY.USER_TOKEN).get();
 			if (sessionDao.value != null && !sessionDao.value.equals("")) {
 				result = JWTHelper.decode(sessionDao.value);
-				mSharePreferenceHelper.save(result.email.get(0), "email");
 			}
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage());

@@ -300,7 +300,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 						mSelectedProduct.productId,
 						mSelectedProduct.productName, false));
 				Utils.displayValidationMessage(WProductDetailActivity.this,
-						CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
+						CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_LIST_INFO,
 						"viewShoppingList");
 			}
 		});

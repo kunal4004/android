@@ -2,12 +2,10 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.google.zxing.BarcodeFormat;
@@ -21,7 +19,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.Voucher;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;

@@ -3,9 +3,12 @@ package za.co.woolworths.financial.services.android.util;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
 import java.util.Map;
+
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 
 public class WFirebaseMessagingService extends FirebaseMessagingService {

@@ -27,127 +27,128 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class WTransactionsAdapter extends BaseExpandableListAdapter {
 
-    Activity mContext;
-    List<TransactionParentObj> transactionParentObjList;
-    public WTransactionsAdapter(Activity mContext, List<TransactionParentObj> transactionParentObjList)
-    {
-        this.mContext=mContext;
-        this.transactionParentObjList=transactionParentObjList;
-    }
-    @Override
-    public int getGroupCount() {
-        return transactionParentObjList.size();
-    }
+	Activity mContext;
+	List<TransactionParentObj> transactionParentObjList;
 
-    @Override
-    public int getChildrenCount(int groupPosition) {
-        return transactionParentObjList.get(groupPosition).getTransactionList().size();
-    }
+	public WTransactionsAdapter(Activity mContext, List<TransactionParentObj> transactionParentObjList) {
+		this.mContext = mContext;
+		this.transactionParentObjList = transactionParentObjList;
+	}
 
-    @Override
-    public Object getGroup(int groupPosition) {
-        return transactionParentObjList.get(groupPosition);
-    }
+	@Override
+	public int getGroupCount() {
+		return transactionParentObjList.size();
+	}
 
-    @Override
-    public Object getChild(int groupPosition, int childPosition) {
-        return transactionParentObjList.get(groupPosition).getTransactionList().get(childPosition);
-    }
+	@Override
+	public int getChildrenCount(int groupPosition) {
+		return transactionParentObjList.get(groupPosition).getTransactionList().size();
+	}
 
-    @Override
-    public long getGroupId(int groupPosition) {
-        return groupPosition;
-    }
+	@Override
+	public Object getGroup(int groupPosition) {
+		return transactionParentObjList.get(groupPosition);
+	}
 
-    @Override
-    public long getChildId(int groupPosition, int childPosition) {
-        return childPosition;
-    }
+	@Override
+	public Object getChild(int groupPosition, int childPosition) {
+		return transactionParentObjList.get(groupPosition).getTransactionList().get(childPosition);
+	}
 
-    @Override
-    public boolean hasStableIds() {
-        return true;
-    }
+	@Override
+	public long getGroupId(int groupPosition) {
+		return groupPosition;
+	}
 
-    @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+	@Override
+	public long getChildId(int groupPosition, int childPosition) {
+		return childPosition;
+	}
 
-        if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) this.mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.transaction_list_parent_item, null);
-        }
+	@Override
+	public boolean hasStableIds() {
+		return true;
+	}
 
-        WTextView transactionMonth=(WTextView)convertView.findViewById(R.id.transactionMonth);
-        transactionMonth.setText(transactionParentObjList.get(groupPosition).getMonth());
+	@Override
+	public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 
-        ExpandableListView eLV = (ExpandableListView) parent;
-        eLV.expandGroup(groupPosition);
-        convertView.setClickable(false);
-        return convertView;
-    }
+		if (convertView == null) {
+			LayoutInflater infalInflater = (LayoutInflater) this.mContext
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			convertView = infalInflater.inflate(R.layout.transaction_list_parent_item, null);
+		}
 
-    public String formatTransactionAmount(float transactionAmount){
-        //convert amount to int
-        int amount = Math.round(transactionAmount);
-        String formatedAmount;
-        //Convert amount to +ve
-        if (amount < 0)
-            formatedAmount = WFormatter.formatAmount(-amount);
-        else
-            formatedAmount = WFormatter.formatAmount(amount);
-        if (transactionAmount < 0)
-            return formatedAmount.replace("R", "R-");
-        else
-            return formatedAmount;
-    }
+		WTextView transactionMonth = (WTextView) convertView.findViewById(R.id.transactionMonth);
+		transactionMonth.setText(transactionParentObjList.get(groupPosition).getMonth());
 
-    public String addNegativeSymbolInFront(SpannableString amount) {
-        String currentAmount = amount.toString();
-        if (currentAmount.contains("R-")) {
-            currentAmount = currentAmount.replace("R-", "- R");
-        }
-        return currentAmount;
-    }
+		ExpandableListView eLV = (ExpandableListView) parent;
+		eLV.expandGroup(groupPosition);
+		convertView.setClickable(false);
+		return convertView;
+	}
 
-    @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        Transaction transaction=transactionParentObjList.get(groupPosition).getTransactionList().get(childPosition);
-        if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) this.mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.transaction_list_child_item, null);
-        }
-        WTextView transactionDate=(WTextView)convertView.findViewById(R.id.transactionDate);
-        WTextView transactionAmount=(WTextView)convertView.findViewById(R.id.transactionAmount);
-        WTextView transactionDescription=(WTextView)convertView.findViewById(R.id.transactionDescription);
+	public String formatTransactionAmount(float transactionAmount) {
+		//convert amount to int
+		int amount = Math.round(transactionAmount);
+		String formatedAmount;
+		//Convert amount to +ve
+		if (amount < 0)
+			formatedAmount = WFormatter.formatAmount(-amount);
+		else
+			formatedAmount = WFormatter.formatAmount(amount);
+		if (transactionAmount < 0)
+			return formatedAmount.replace("R", "R-");
+		else
+			return formatedAmount;
+	}
 
-        //Setting Date to the format dd/MM/yyyy
-        String actualDate = transaction.date;
-        String oldFormat = "yyyy-MM-dd";
-        String newFormat = "dd / MM / yyyy";
+	public String addNegativeSymbolInFront(SpannableString amount) {
+		String currentAmount = amount.toString();
+		if (currentAmount.contains("R-")) {
+			currentAmount = currentAmount.replace("R-", "- R");
+		}
+		return currentAmount;
+	}
 
-        String formatedDate = "";
-        SimpleDateFormat dateFormat = new SimpleDateFormat(oldFormat);
-        Date myDate = null;
-        try {
-            myDate = dateFormat.parse(actualDate);
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        SimpleDateFormat timeFormat = new SimpleDateFormat(newFormat);
-        formatedDate = timeFormat.format(myDate);
-        transactionDate.setText(formatedDate);
+	@Override
+	public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+		Transaction transaction = transactionParentObjList.get(groupPosition).getTransactionList().get(childPosition);
+		if (convertView == null) {
+			LayoutInflater infalInflater = (LayoutInflater) this.mContext
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			convertView = infalInflater.inflate(R.layout.transaction_list_child_item, null);
+		}
+		WTextView transactionDate = (WTextView) convertView.findViewById(R.id.transactionDate);
+		WTextView transactionAmount = (WTextView) convertView.findViewById(R.id.transactionAmount);
+		WTextView transactionDescription = (WTextView) convertView.findViewById(R.id.transactionDescription);
+
+		//Setting Date to the format dd/MM/yyyy
+		String actualDate = transaction.date;
+		String oldFormat = "yyyy-MM-dd";
+		String newFormat = "dd / MM / yyyy";
+
+		String formatedDate = "";
+		SimpleDateFormat dateFormat = new SimpleDateFormat(oldFormat);
+		Date myDate = null;
+		try {
+			myDate = dateFormat.parse(actualDate);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		SimpleDateFormat timeFormat = new SimpleDateFormat(newFormat);
+		formatedDate = timeFormat.format(myDate);
+		transactionDate.setText(formatedDate);
 
 
-        transactionAmount.setText(addNegativeSymbolInFront(FontHyperTextParser.getSpannable(formatTransactionAmount(transaction.amount), 1, mContext)));
-        transactionDescription.setText(transaction.description);
+		transactionAmount.setText(addNegativeSymbolInFront(FontHyperTextParser.getSpannable(formatTransactionAmount(transaction.amount), 1, mContext)));
+		transactionDescription.setText(transaction.description);
 
-        return convertView;
-    }
+		return convertView;
+	}
 
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return false;
-    }
+	@Override
+	public boolean isChildSelectable(int groupPosition, int childPosition) {
+		return false;
+	}
 }

@@ -6,7 +6,6 @@ import android.support.v4.view.PagerAdapter;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 

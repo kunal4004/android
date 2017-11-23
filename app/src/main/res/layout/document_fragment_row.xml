@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:fresco="http://schemas.android.com/tools"
+                android:id="@+id/relDeaBank"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:gravity="center"
+                android:paddingBottom="@dimen/twenty_five_dp"
+                android:paddingEnd="@dimen/twenty_one_dp"
+                android:paddingStart="@dimen/twenty_dp"
+                android:paddingTop="@dimen/twenty_five_dp">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/imBankLogo"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentStart="true"
+        fresco:placeholderImage="@drawable/appicon"
+        fresco:viewAspectRatio="1.0"/>
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvBankName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/two_dp"
+        android:layout_marginStart="@dimen/thirteen_dp"
+        android:layout_toEndOf="@+id/imBankLogo"
+        android:letterSpacing="0.2"
+        android:text="Standard Bank"
+        android:textAllCaps="true"
+        android:textColor="@color/black_50"
+        android:textSize="12sp"
+        app:WTextView_font="medium"/>
+
+    <ImageView
+        android:id="@+id/imgSelectBank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/tick_cli_inactive"/>
+
+</RelativeLayout>
