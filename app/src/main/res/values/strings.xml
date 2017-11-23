@@ -169,7 +169,7 @@
     <string name="expenses_rental_payment_desc">Rent is the cost of your monthly accommodation</string>
     <string name="expenses_maintenance_payment_desc">Maintenance expenses refer to your monthly obligation to pay for statutory child etc.</string>
     <string name="expense_monthly_credit_payment_desc">Monthly Instalment of creditor account i.e: Credit Card, Personal Loan, Furniture Accounts etc.</string>
-    <string name="cli_overlay_all_expenses">All Other Expenses, i.e: groceries, transport, telephone/cellphone etc.</string>
+    <string name="cli_overlay_all_expenses">Other expenses refer to groceries, transport, costs etc.</string>
     <string name="cli_send_to_title">EMAIL SENT TO</string>
     <string name="cli_solvency_error">All fields are mandatory.\nIf not applicable, please enter R0.</string>
 
