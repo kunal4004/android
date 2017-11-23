@@ -70,7 +70,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 121
+            versionCode 123
             versionName("5.4.3")
         }
 
@@ -83,7 +83,8 @@ android {
         production {
             applicationId "com.awfs.coordination"
             signingConfig signingConfigs.woolworths
-            versionCode 56
+            versionCode 58
+
         }
         dexOptions {
             javaMaxHeapSize "2560M"
