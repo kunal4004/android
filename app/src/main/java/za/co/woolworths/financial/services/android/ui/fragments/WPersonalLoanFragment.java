@@ -75,6 +75,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private RelativeLayout relBalanceProtection, relViewTransactions;
 	private CLIGetOfferActive cliGetOfferActive;
 	private final CompositeDisposable disposables = new CompositeDisposable();
+	private RelativeLayout rlViewStatement;
+
 
 	@Nullable
 	@Override
@@ -123,6 +125,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
 		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
+		rlViewStatement = (RelativeLayout) view.findViewById(R.id.rlViewStatement);
 		dueDate = (WTextView) view.findViewById(R.id.dueDate);
 		minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
 		currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
@@ -153,6 +156,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mRelFindOutMore.setOnClickListener(this);
 		mRelIncreaseMyLimit.setOnClickListener(this);
 		llIncreaseLimitContainer.setOnClickListener(this);
+		rlViewStatement.setOnClickListener(this);
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 	}
 
@@ -247,6 +251,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 
+			case R.id.rlViewStatement:
+
+				break;
 			case R.id.relFindOutMore:
 				if (controllerNotNull())
 					mIncreaseLimitController.intentFindOutMore(getActivity(), offerActive);

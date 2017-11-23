@@ -117,6 +117,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	private void init(View view) {
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
+		RelativeLayout rlViewStatement = (RelativeLayout) view.findViewById(R.id.rlViewStatement);
+		rlViewStatement.setVisibility(View.GONE);
 		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
 		dueDate = (WTextView) view.findViewById(R.id.dueDate);
 		minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);

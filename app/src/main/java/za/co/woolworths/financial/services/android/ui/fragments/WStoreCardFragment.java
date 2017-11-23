@@ -82,6 +82,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private CLIGetOfferActive cliGetOfferActive;
 
 	private final CompositeDisposable disposables = new CompositeDisposable();
+	private RelativeLayout rlViewStatement;
 
 
 	@Nullable
@@ -129,6 +130,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
 		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
+		rlViewStatement = (RelativeLayout) view.findViewById(R.id.rlViewStatement);
 		dueDate = (WTextView) view.findViewById(R.id.dueDate);
 		minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
 		currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
@@ -165,6 +167,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		llIncreaseLimitContainer.setOnClickListener(this);
 		mRelIncreaseMyLimit.setOnClickListener(this);
 		mRelFindOutMore.setOnClickListener(this);
+		rlViewStatement.setOnClickListener(this);
 	}
 
 	public void bindData(AccountsResponse response) {
@@ -236,6 +239,10 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			case R.id.relFindOutMore:
 				if (controllerNotNull())
 					mIncreaseLimitController.intentFindOutMore(getActivity(), offerActive);
+				break;
+
+			case R.id.rlViewStatement:
+
 				break;
 			default:
 				break;
