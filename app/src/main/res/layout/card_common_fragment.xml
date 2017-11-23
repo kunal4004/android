@@ -138,6 +138,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/sixteen_dp"
         android:background="@color/white"
+        android:clickable="true"
+        android:focusable="true"
         android:orientation="vertical"
         android:paddingEnd="@dimen/ten_dp"
         android:paddingStart="@dimen/sixteen_dp"

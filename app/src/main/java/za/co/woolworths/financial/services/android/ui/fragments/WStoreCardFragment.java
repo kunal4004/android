@@ -83,7 +83,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 	private final CompositeDisposable disposables = new CompositeDisposable();
 
-
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -159,7 +158,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 	private void addListener() {
 		relBalanceProtection.setOnClickListener(this);
-		tvIncreaseLimit.setOnClickListener(this);
 		tvViewTransaction.setOnClickListener(this);
 		rlViewTransactions.setOnClickListener(this);
 		llIncreaseLimitContainer.setOnClickListener(this);
@@ -227,6 +225,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 
+			case R.id.tvIncreaseLimit:
 			case R.id.relIncreaseMyLimit:
 			case R.id.llIncreaseLimitContainer:
 				if (controllerNotNull())
@@ -307,9 +306,11 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
 				mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
 				mIncreaseLimitController.disableView(llIncreaseLimitContainer);
+				mIncreaseLimitController.disableView(tvIncreaseLimit);
 			} else {
 				mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
 				mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+				mIncreaseLimitController.enableView(tvIncreaseLimit);
 			}
 
 			cliOfferStatus(offerActive);
