@@ -582,7 +582,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		int paddingPixel = 16;
 		float density = getActivity().getResources().getDisplayMetrics().density;
 		int paddingDp = (int) (paddingPixel * density);
-		int screenHeight = ilc.getScreenHeight(getActivity());
+		int screenHeight = (ilc.getScreenHeight(getActivity()))/3;
 		if (defaultPaddingEnabled) {
 			view.setPadding(0, paddingDp, 0, 0);
 		} else {
