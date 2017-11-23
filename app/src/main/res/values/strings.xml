@@ -522,9 +522,9 @@ If we do not receive your proof of income within 30 (thirty) days from the date 
     <string name="status_apply_now">Apply Now</string>
     <string name="poi_income_detail_problem">There is a problem with the income details you submitted.</string>
     <string name="poi_problem_phone_no">+27 21 411 5000</string>
-    <string name="request_loan_amount">Requested Loan Amount:</string>
-    <string name="approximate_repayments">Approximate Repayments:</string>
-    <string name="term">Term:</string>
+    <string name="request_loan_amount">Current Credit Limit:</string>
+    <string name="approximate_repayments">Additional Credit Limit:</string>
+    <string name="term">New Credit Limit:</string>
     <string name="amount_too_low_modal_title">oops, incorrect Amount</string>
     <string name="amount_too_low_modal_desc">The amount you have entered is equal to, or less than your current credit limit. Please enter a larger amount.</string>
     <string name="amount_too_high_modal_desc">The amount that you have requested exceeds the maximum amount available to you. Please re-enter a lower amount.</string>
