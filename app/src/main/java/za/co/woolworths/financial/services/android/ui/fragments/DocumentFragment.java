@@ -624,7 +624,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public void updateBankDetails() {
 		disableSubmitButton();
 		UpdateBankDetail bankDetail = new UpdateBankDetail();
-		bankDetail.setCliOfferID(activeOfferObj.offer.offerId);
+		bankDetail.setCliOfferID(activeOfferObj.cliId);
 		bankDetail.setAccountType(getSelectedAccountType());
 		bankDetail.setBankName(getSelectedBankType());
 		bankDetail.setAccountNumber(etAccountNumber.getText().toString().trim());
