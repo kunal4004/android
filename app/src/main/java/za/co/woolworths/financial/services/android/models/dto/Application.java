@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
 public class Application {
+	public boolean maxCreditRequested;
 	public Integer grossMonthlyIncome;
 	public Integer netMonthlyIncome;
 	public Integer additionalIncomeAmount;

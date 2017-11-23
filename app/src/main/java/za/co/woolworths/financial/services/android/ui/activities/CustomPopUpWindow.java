@@ -45,7 +45,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
 		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
-		CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL
+		CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME
 	}
 
 	MODAL_LAYOUT current_view;
@@ -356,6 +356,14 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				btnUploadDocuments.setOnClickListener(this);
 				break;
 
+			case PROOF_OF_INCOME:
+				setContentView(R.layout.proof_of_income_modal);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				WButton btnOk = (WButton) findViewById(R.id.btnOk);
+				mRelPopContainer.setOnClickListener(this);
+				btnOk.setOnClickListener(this);
+				break;
 			default:
 				break;
 		}
@@ -582,6 +590,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			case R.id.btnUploadDocuments:
 			case R.id.btnShopOk:
 			case R.id.btnMandatoryOK:
+			case R.id.btnOk:
 				startExitAnimation();
 				break;
 

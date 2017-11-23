@@ -12,9 +12,11 @@ public class CreateOfferRequest {
 	private int maintenanceExpenseAmount;
 	private int totalCreditExpenseAmount;
 	private int otherExpenseAmount;
+	private boolean maxCreditRequested;
 
-	public CreateOfferRequest(int productOfferingId, int creditLimitRequested, int grossMonthlyIncome, int nettMonthlyIncome, int additionalIncomeAmount, int mortgagePaymentAmount, int rentalPaymentAmount, int maintenanceExpenseAmount, int totalCreditExpenseAmount, int otherExpenseAmount) {
+	public CreateOfferRequest(boolean maxCreditRequested, int productOfferingId, int creditLimitRequested, int grossMonthlyIncome, int nettMonthlyIncome, int additionalIncomeAmount, int mortgagePaymentAmount, int rentalPaymentAmount, int maintenanceExpenseAmount, int totalCreditExpenseAmount, int otherExpenseAmount) {
 		super();
+		this.maxCreditRequested = maxCreditRequested;
 		this.creditLimitRequested = creditLimitRequested;
 		this.productOfferingId = productOfferingId;
 		this.grossMonthlyIncome = grossMonthlyIncome;
