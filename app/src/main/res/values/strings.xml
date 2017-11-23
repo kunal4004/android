@@ -2,114 +2,29 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <string name="app_name">WOOLWORTHS</string>
-    <string name="drawer_accounts">MY ACCOUNTS</string>
-    <string name="drawer_rewards">MY|!b| W|!?|REWARDS</string>
     <string name="drawer_faq">FAQ</string>
-    <string name="drawer_contact">CONTACT US</string>
-    <string name="drawer_apply_now">APPLY NOW</string>
     <string name="log_in">Sign in</string>
-    <string name="id_number">ID NUMBER</string>
-    <string name="acc_number">ACCOUNT NUMBER</string>
-    <string name="acc_number_info">Your 16 digit card / account number is located on your |!b|W|!?|Rewards, MySchool, Store or Credit Cards.</string>
-    <string name="terms">BY LOGGING IN YOU AGREE TO OUR \n|!s|TERMS AND CONDITIONS|!?|</string>
     <string name="store_card">STORE CARD</string>
 
     <string name="credit_card">CREDIT CARD</string>
     <string name="personal_loan">PERSONAL LOAN</string>
-    <string name="credit_card_line_one">|!b|GET THE CREDIT CARD THAT REWARDS YOU EACH AND EVERY TIME YOU SWIPE.|!?|</string>
-    <string name="credit_card_line_two">With a Woolworths Credit Card you will earn |!b|W|!?|Vouchers each and every time you shop with your card.  As a Woolworths Credit card holder, you\'re automatically part of our great |!b|W|!?|Rewards programme that gives you the opportunity to save from 10% instantly on thousands of items throughout the store.</string>
     <string name="my_accounts">MY ACCOUNTS</string>
-    <string name="rewards">WREWARDS</string>
-    <string name="last_transactions">VIEW PREVIOUS TRANSACTIONS</string>
-    <string name="credit_limit">Credit limit</string>
+    <string name="credit_limit">Credit Limit:</string>
     <string name="available_funds">Available funds</string>
-    <string name="next_payment_date">Next payment due</string>
-    <string name="minimum_payment">Minimum amount due</string>
-    <string name="withdrawal">WITHDRAWAL</string>
-    <string name="personal_loan_withdrawal_button_text">LOANS WITHDRAWAL</string>
-    <string name="personal_loan_withdrawal">PERSONAL LOAN WITHDRAWAL</string>
-    <string name="hide_transactions">HIDE PREVIOUS TRANSACTIONS</string>
+    <string name="next_payment_date">Next Payment Due:</string>
+    <string name="minimum_payment">Amount Due</string>
     <string name="next">NEXT</string>
-    <string name="current_balance">Current balance</string>
-    <string name="withdraw_amount">HOW MUCH DO YOU WANT TO WITHDRAW?</string>
-    <string name="withdraw_repayment_period">SELECT YOUR PAYMENT PERIOD</string>
-    <string name="withdraw_months">%d MONTHS</string>
+    <string name="current_balance">Current Balance:</string>
     <string name="cancel" tools:ignore="ButtonCase">CANCEL</string>
     <string name="submit">SUBMIT</string>
-    <string name="withdrawal_confirmation_amount_label">YOU HAVE REQUESTED TO WITHDRAW</string>
-    <string name="withdrawal_confirmation_months_label">TO BE REPAID OVER</string>
-    <string name="withdrawal_fee">YOUR ADDITIONAL MONTHLY REPAYMENT WILL BE</string>
     <string name="tier_status">TIER STATUS</string>
-    <string name="active_vouchers">ACTIVE VOUCHERS %s</string>
-    <string name="view_terms">VIEW TERMS &amp; CONDITIONS</string>
-    <string name="voucher_value">VOUCHER VALUE</string>
-    <string name="minimum_spent">MINIMUM SPEND</string>
     <string name="valid_from">VALID FROM</string>
     <string name="valid_until">VALID UNTIL</string>
-    <string name="w_reward_use_code">USE VOUCHER CODE:</string>
-    <string name="personal_loan_line_one">|!b|THERE ARE TIMES WHEN ALL OF US COULD USE SOME EXTRA CASH TO COVER INFORESEEN EXPENSES.|!?|</string>
-    <string name="personal_loan_line_two">Flexible repayment terms of up to 60 months</string>
-    <string name="personal_loan_line_three">Cash within 48 hours</string>
-    <string name="personal_loan_line_four">Re-use all the money that has been re-paid</string>
-    <string name="personal_loan_line_five">Low initiation and monthly service fees</string>
-    <string name="personal_loan_line_six">Convenience of accessing cash through our interactive voice message system or mobile app.</string>
-    <string name="call_centre">CALL CENTRE</string>
-    <string name="send">SEND</string>
-    <string name="logging_in">SIGNING IN…</string>
-    <string name="error">ERROR</string>
     <string name="ok">OK</string>
-    <string name="getting_accounts">GETTING ACCOUNTS…</string>
-    <string name="history_loading">LOADING TRANSACTIONS…</string>
-    <string name="transaction_history_empty_string">NO TRANSACTIONS TO DISPLAY</string>
-    <string name="loyalty_list_empty_string">NO VOUCHERS TO DISPLAY</string>
-    <string name="vouchers_loading">LOADING VOUCHERS…</string>
     <string name="retry">RETRY</string>
-    <string name="contact_loading">GETTING CONTACT INFO…</string>
 
-    <string name="err_002">We apologise, the system is unavailable. Please try again later.</string>
-    <string name="err_003">In order to proceed, please enter a valid South African ID Number in the relevant field.</string>
-    <string name="err_004">In order to proceed, please enter a valid Account/Card Number in the relevant field.</string>
-    <string name="w_rewards_info_title">|!b|W|!?|REWARDS INFO</string>
-    <string name="w_rewards_info"> |!b|W|!?|REWARDS is a tiered programme, the tier you\'re on depends on how much you spend. The more you spend, the more rewards you\'ll enjoy. All your purchases at woolworths and at www.woolworths.co.za count - just remember to swipe your card upfront with every purchase and include your cards number on your online orders</string>
-    <string name="w_rewards_terms">TERMS AND CONDITIONS</string>
-    <string name="new_account_body">I would like to apply for a Woolworths Store Card! Please contact me on:\n\nMobile:\n\nLandline:</string>
-    <string name="issue_loan">ISSUING LOAN…</string>
-    <string name="issue_loan_confirmation_months">%s Months</string>
-    <string name="authorising_loan">AUTHORISING LOAN…</string>
-    <string name="success">SUCCESS</string>
-    <string name="session_expired">YOUR SESSION HAS EXPIRED.  YOU WILL NEED TO LOGIN</string>
-    <string name="to_apply">To apply, visit a Woolies store.</string>
-    <string name="success_person_loan_draw_down">Thank you for using our self service withdrawal facility. The money will be transferred to your account within 48 hours.</string>
-    <string name="tier_info">|!b|W|!?|REWARDS STATEMENT</string>
-    <string name="rewards_saving">|!b|W|!?|REWARDS SAVINGS</string>
-    <string name="current_status">YOUR CURRENT TIER STATUS IS</string>
-    <string name="your_current_status">YOUR CURRENT TIER STATUS</string>
     <string name="valued">VALUED</string>
     <string name="loyal">LOYAL</string>
-    <string name="saved">YOU\'VE SAVED</string>
-    <string name="spend">YOU ARE</string>
-    <string name="since">SINCE %s</string>
-    <string name="get_vip">AWAY FROM THE VIP TIER</string>
-    <string name="get_loyal">AWAY FROM THE LOYAL TIER</string>
-    <string name="show_barcode">VIEW BARCODE</string>
-    <string name="back">BACK</string>
-    <string name="get_vip_status">THE MOST REWARDING WAY TO SHOP</string>
-    <string name="how_to_save">HOW TO |!b|SAVE|!?|</string>
-    <string name="statement">STATEMENT</string>
-    <string name="summary">SUMMARY</string>
-    <string name="year_earn">YEAR TO DATE WREWARDS INSTANT SAVINGS</string>
-    <string name="year_spend">YEAR TO DATE SPEND</string>
-    <string name="year_green">YEAR TO DATE WREWARDS GREEN EARNED</string>
-    <string name="year_wearn">QUARTERLY VOUCHER – YEAR TO DATE VALUE EARNED</string>
-    <string name="monthly_spend">MONTHLY SPEND</string>
-    <string name="monthly_earn">MONTHLY EARN</string>
-    <string name="monthly_wearn">QUARTERLY VOUCHER – MONTHLY VALUE EARNED</string>
-    <string name="loyalty_period">LOYALTY PERIOD</string>
-    <string name="monthly_green">MONTHLY WREWARDS GREEN EARNED</string>
-    <string name="month_number">MONTH %s</string>
-    <string name="month_description">YOUR TIER STATUS FOR THE MONTH</string>
-    <string name="information">INFORMATION</string>
-    <string name="voucher_terms_button_text">VIEW GENERAL TERMS &amp; CONDITIONS</string>
     <string name="reward_status_info_1">Swipe your Woolies or MySchool card and get an extra 10\%% off selected items.  Pay with your Woolies card and get a further 5\%%.</string>
     <string name="reward_status_info_2">Invitations to preview sales</string>
     <string name="reward_status_info_3">WRewards Green</string>
@@ -119,15 +34,11 @@
     <string name="w_reward_line_1">The WRewards year is calculated from the first Monday of each financial year of Woolworths which commences at the end of June or at the beginning of July and comes to an end on the last Sunday of the Woolworths financial year 12 (twelve) months later.</string>
     <string name="w_reward_line_2">Your spend updates are refreshed on the 12th day after each specified month end date.</string>
     <string name="w_reward_line_3">Your WRewards tier status is updated at the end of each month.</string>
-    <string name="loyal_spend">SPEND BETWEEN %1$s AND %2$s PER YEAR AT WOOLWORTHS</string>
-    <string name="vip_spend">SPEND OVER %1$s PER YEAR AT WOOLWORTHS</string>
-    <string name="my_vouchers">MY VOUCHERS</string>
     <string name="stores_nearby">STORES NEARBY</string>
     <string name="wrewards">WREWARDS</string>
     <string name="recent_search">RECENT SEARCHES</string>
     <string name="google_maps">GOOGLE MAPS</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="km">km</string>
     <string name="linked_cards">LINKED CARDS</string>
     <string name="contact_us">Contact us</string>
@@ -138,11 +49,7 @@
     <string name="why_we_need_location_services">Location Services</string>
     <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
-    <string name="title_activity_wmain">WMainActivity</string>
 
-
-    <string name="drawer_open">Open</string>
-    <string name="drawer_close">Close</string>
 
     <string name="nav_item_today">TODAY</string>
     <string name="nw_today_title">W TODAY</string>
@@ -151,30 +58,19 @@
     <string name="screen_title_store">STORES NEARBY</string>
     <string name="nav_item_wrewards">WREWARDS</string>
     <string name="nav_item_accounts">MY ACCOUNTS</string>
-    <string name="increase_limit">INCREASE LIMIT</string>
-    <string name="transactions">transactions</string>
+    <string name="increase_limit">Increase Limit</string>
     <string name="apply_now">APPLY NOW</string>
     <string name="woolworths_financial_services">Woolworths financial services</string>
     <string name="the_benefits">The benefits:</string>
-    <string name="free_taste_magazines">Free Taste magazines</string>
-    <string name="free_taste_magazine">Woolworths Black Credit cardholders you’ll receive a monthly voucher for a free TASTE magazine</string>
-    <string name="free_coffee">Free coffee</string>
-    <string name="free_coffee_description">You’ll receive a free coffee or tea at any Woolworths Café, To Go or Tapas Bar twice a month.</string>
-    <string name="free_online_delivery">Free online delivery</string>
-    <string name="free_delivery_description">Woolworths VIP Black Credit cardholders get free online delivery. Simply link your Black Credit Card to your online profile.</string>
     <string name="shop_anywhere">Shop anywhere</string>
     <string name="shop_any_where_description">Your Woolworths Credit Card is internationally recognised and accepted at 29 million outlets around the world wherever you see the Visa sign.</string>
     <string name="cc_to_qualify">To qualify, you have to:</string>
     <string name="bring_following_while_collecting">Bring the following when you collect your Store Card:</string>
-    <string name="points_bring_following_while_collecting">\u2022Avalid South African ID \n\u2022Your latest three payslips or your last three months’ bank statements \n\u2022Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
     <string name="cash_when_you_need_it">Cash when you need it:</string>
     <string name="funds_within_48_hours">Funds within 48 hours</string>
     <string name="funds_within_48_hours_description">Once your application has been approved the cash will be in your account within 48 hours.</string>
     <string name="easy_access">Easy access</string>
     <string name="easy_access_description">Withdraw funds 24/7 in the app using the personal loan withdrawal.</string>
-    <string name="interest_changed">Interest charged</string>
-    <string name="interest_changed_description">Interest will be charged according to the National Credit Act (NCA) and will never exceed the maximum allowed by the NCA. The interest rate charged is a variable interest rate that is linked to the Repo Rate, which may change from time to time.</string>
-    <string name="personal_loan_points_to_qualify">\u2022Be 18 or older \n\u2022Have a valid South African ID \n\u2022Earn a minimum of R2 000 per month \n\u2022Provide your latest three payslips or your last three months’ bank statements Have your own bank account</string>
     <string name="wrewards_gives_more">WRewards gives you more</string>
     <string name="wrewards_gives_more_description">As a Woolworths Store Cardholder, you’re automatically part of our WRewards programme. That means you’ll get exclusive access to great benefits and special offers on selected WRewards items.</string>
     <string name="make_difference">Make a difference</string>
@@ -185,7 +81,6 @@
     <string name="easy_payment_methods_description">You could pay your account using one of the following methods:</string>
     <string name="convenient">It’s Convenient</string>
     f
-    <string name="sc_points_to_qualify">\u2022 \t Be 18 or older \n\u2022 \t Have a valid RSA ID number \n\u2022 \t Earn a minimum of R2000 per month</string>
     <string name="please_enter_the_amount">PLEASE ENTER THE AMOUNT YOU WOULD LIKE TO WITHDRAW:</string>
     <string name="confirm_loan_withdrawal">PLEASE CONFIRM YOUR LOAN\nREQUEST DETAILS:</string>
     <string name="call_us">CALL US</string>
@@ -203,7 +98,6 @@
     <string name="txt_insurance_claim">Insurance claim</string>
     <string name="txt_payment_query">Payment query</string>
     <string name="txt_sc_and_pl_query">Store Card &amp; Personal Loan query</string>
-    <string name="txt_proof_of_income">Proof of income</string>
     <string name="txt_technical_problem">Technical</string>
     <string name="online_local_caller_number">0860 100 987</string>
     <string name="online_inter_national_caller_number">+27 21 407 6137</string>
@@ -228,18 +122,10 @@
     <string name="txt_myschool_card">MySchool card</string>
     <string name="txt_general_enquiry">General enquiries</string>
 
-    <string name="title_activity_animated_splash_screen">AnimatedSplashScreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="contact_us_financial_services">Financial Services</string>
-    <string name="contact_us_online">online</string>
     <string name="contact_us_customer_service">Customer Services</string>
     <string name="contact_us_wrewards">WRewards</string>
     <string name="contact_us_myschool">MySchool enquiries</string>
-
-    <string name="link_wtoday">https://woolies.herokuapp.com</string>
-    <string name="link_products">https://woolies.herokuapp.com/products</string>
-    <string name="withdraw_cash_now">WITHDRAW CASH NOW</string>
 
     <string name="accounts_walkthrough_desc_1">The new Woolies app gives you easy access to fashion trends, recipes, stores, account information and so much more.</string>
     <string name="accounts_walkthrough_desc_2">See how much you’ve saved, track your tier status and access all your vouchers.</string>
@@ -249,100 +135,46 @@
     <string name="accounts_walkthrough_title_2">WRewards at a glance</string>
     <string name="accounts_walkthrough_title_3">Financial services</string>
     <string name="accounts_walkthrough_title_4">GET STARTED</string>
-    <string name="connect_to_server">Cannot connect to server</string>
     <string name="distance_in_km">km</string>
     <string name="search_by_store_loc">Search by Store or Location</string>
     <string name="skip">SKIP</string>
 
     <string name="cli_continue">continue</string>
-    <string name="cli_credit_limit_increase">credit limit increase</string>
+    <string name="cli_credit_limit_increase">CREDIT LIMIT INCREASE</string>
     <string name="cli_before_we_get_started">before we get started</string>
-    <string name="cli_store_card_content">To help us calculate how much additional credit you can qualify for, please answer a few quick and easy questions.  Once you have completed this, you will need to submit proof of income in order for us to proceed with your application.</string>
-    <string name="cli_gold_crd_credit_limit_increase">credit limit increase</string>
-    <string name="cli_gold_crd_before_we_get_started">before we get started</string>
-    <string name="cli_gold_crd_credit_card_content">To help us calculate how much additional credit you can qualify for, please submit proof of income and answer a few quick and easy questions</string>
 
-    <string name="cli_crd_credit_limit_increase">credit limit increase</string>
-    <string name="cli_crd_before_we_get_started">before we get started</string>
-    <string name="cli_crd_credit_card_content">To help us calculate how much additional credit you can qualify for, please submit proof of income and answer a few quick and easy questions</string>
-
-    <string name="cli_psl_credit_limit_increase">credit limit increase</string>
-    <string name="cli_psl_before_we_get_started">before we get started</string>
-    <string name="cli_psl_content">To help us calculate how much additional credit you can qualify for, please submit proof of income and answer a few quick and easy questions</string>
-
-    <string name="title_activity_cli">CLIActivity</string>
-    <string name="action_settings">Settings</string>
-
-    <string name="section_format">Hello World from section: %1$d</string>
     <string name="cli_credit_limit_amount">Credit Limit Amount</string>
     <string name="cli_select_your_bank">Select your bank</string>
-    <string name="cli_rand_60000">R60 000</string>
-    <string name="cli_others">Other</string>
-    <string name="cli_proof_income">I agree that Woolworths Financial Services may request and receive three months of my bank statements from my bank or any third party at any time as proof of income.</string>
-    <string name="cli_confirm_information">DO YOU CONFIRM THAT ALL INFORMATION SUPPLIED IS CORRECT?</string>
     <string name="cli_other_expenses">Other Expenses</string>
-    <string name="cli_monthly_credit_payment">Monthly Credit Payments</string>
-    <string name="cli_maintenance_expenses">Maintenance Expenses</string>
-    <string name="cli_rental_payments">Rental Payments</string>
-    <string name="cli_mortgage_payments">Mortgage Payments</string>
-    <string name="cli_additional_monthly_income">Additional Monthly Income</string>
-    <string name="cli_net_monthly_income">Net Monthly Income</string>
-    <string name="cli_monthly_income">Gross Monthly Income</string>
+    <string name="expense_monthly_credit_payment">Monthly Credit Payments</string>
+    <string name="expenses_maintenance_payment">Maintenance Expenses</string>
+    <string name="expenses_rental_payment">Rental Payments</string>
+    <string name="expenses_mortgage_payment">Mortgage Payments</string>
+    <string name="income_additional_monthly_title">Additional Monthly Income</string>
+    <string name="income_net_monthly_title">Net Monthly Income</string>
+    <string name="income_gross_monthly_title">Gross Monthly Income</string>
     <string name="cli_yes">YES</string>
     <string name="cli_no">No</string>
     <string name="cli_account_type">ACCOUNT TYPE</string>
-    <string name="cli_complete_process">COMPLETE PROCESS</string>
-    <string name="cli_credit_limit_received">Credit limit increase\nrequest received</string>
-    <string name="cli_contact_delay">Thanks for your patience – your application is being processed and we will be in contact with you within two working days.</string>
-    <string name="cli_back_to_acc">Back to my accounts</string>
-    <string name="cli_income_proof">proof of income</string>
-    <string name="cli_send_document_title">submit your documents via:</string>
-    <string name="cli_option_one">EMAIL</string>
     <string name="cli_option_two">FAX US</string>
-    <string name="cli_option_one_desc">Take a photo of your latest 3 month bank statement or last 3 payslips, attach to email include Full Name and reference as subject line.</string>
     <string name="cli_option_two_desc">Simply fax your documents to us at 021 407 9343. Your ID number will be your reference.</string>
-    <string name="cli_send_mail">SEND MAIL</string>
     <string name="loading">LOADING…</string>
-    <string name="cli_select_bank_error">Please select your bank to continue.</string>
-    <string name="cli_enter_acc_number_error">Please capture your bank account number to continue.</string>
-    <string name="cli_select_acc_type">Please select your bank account type to continue.</string>
-    <string name="cli_email_address">We will send further instructions to your email:</string>
     <string name="cli_cancel_application">UNFORTUNATELY WE CANNOT PROCEED</string>
     <string name="cli_lorem_ipsum">Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum Lorum ipsum </string>
     <string name="cli_got_it">GOT IT</string>
-    <string name="cli_overlay_monthly_income">Gross Monthly Income is your income before Tax/ Deductions.</string>
-    <string name="cli_overlay_gross_income">Your net monthly income refers to your income after tax and other deductions. You’ll find this amount on your payslip.</string>
-    <string name="cli_overlay_per_income">Monthly personal income earned over and above your salary, i.e: rental, maintenance and spousal allowances etc.</string>
-    <string name="cli_overlay_monthly_home">Your Monthly Home Loan Repayment.</string>
-    <string name="cli_overlay_rental_payment">Rental Payment — Cost of Renting Accommodation.</string>
-    <string name="cli_overlay_monthly_obliged">Monthly obligation to pay statutory child and/or spousal support etc.</string>
-    <string name="cli_overlay_monthly_installment">Monthly Instalment of creditor account i.e.: Credit Card, Personal Loan, Furniture Accounts etc.</string>
-    <string name="cli_overlay_other_expenses">All Other Expenses, i.e.: groceries, transport, telephone/cellphone etc.</string>
-    <string name="cli_overlay_all_expenses">All Other Expenses, i.e.: groceries,transport, telephone/cellphone etc.</string>
-    <string name="cli_creating_offer">CREATING OFFER...</string>
-    <string name="cli_process_error_content">Are you sure you want to log out? You will need to re-enter your username and password to log in again.</string>
+    <string name="income_gross_monthly_desc">Gross monthly income refers to your income before deductions.</string>
+    <string name="income_net_monthly_desc">Net monthly income refers to your income after deductions.</string>
+    <string name="income_additional_monthly_desc">Additional income refers to any income you receive apart from your monthly salary.</string>
+    <string name="expenses_mortgage_payment_desc">Monthly mortgage or bond repayment refers to your home loan installments</string>
+    <string name="expenses_rental_payment_desc">Rent is the cost of your monthly accommodation</string>
+    <string name="expenses_maintenance_payment_desc">Maintenance expenses refer to your monthly obligation to pay for statutory child etc.</string>
+    <string name="expense_monthly_credit_payment_desc">Monthly Instalment of creditor account i.e: Credit Card, Personal Loan, Furniture Accounts etc.</string>
+    <string name="cli_overlay_all_expenses">All Other Expenses, i.e: groceries, transport, telephone/cellphone etc.</string>
     <string name="cli_send_to_title">EMAIL SENT TO</string>
-    <string name="cli_loading">LOADING...</string>
-    <string name="cli_loading_active_offer">GETTING ACTIVE OFFER...</string>
-    <string name="cli_yes_continue">YES-CONTINUE</string>
-    <string name="cli_sending_email">SENDING EMAIL...</string>
-    <string name="cli_updating_bank_detail">UPDATING BANK DETAIL...</string>
     <string name="cli_solvency_error">All fields are mandatory.\nIf not applicable, please enter R0.</string>
-    <string name="cli_check_field">Please select whether Woolworths Financial Services can access your bank statements to continue.</string>
-    <string name="cli_amount_hint">R</string>
-    <string name="cli_apply_insolvency">DO ANY OF THE FOLLOWING APPLY TO YOU?</string>
-    <string name="cli_solvency_agreement">I agree that Woolworths Financial Services may request and receive my confidential consumer credit information from any credit bureau or third party at any time, including obtaining a bureau score to determine my credit worthiness</string>
-    <string name="cli_require_document">In order to complete your application, we require your latest 3 months’ bank statements or last 3 months payslips.</string>
-    <string name="cli_email_required_email">Don’t have the required documents right now or need more detailed instructions?</string>
-    <string name="cli_email_required_email_desc">Simply click below and we will send an email to you, so you can complete the process</string>
-    <string name="cli_take_a_photo">a) Take a photo</string>
-    <string name="cli_take_a_photo_desc">Take clear photos of your documents and email it to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.
-</string>
-    <string name="cli_attach">b) Attach from a drive</string>
-    <string name="cli_proceed_to_permission">Permission to proceed</string>
 
     <string name="cli_pop_confidential_title">UNFORTUNATELY WE CANNOT PROCEED</string>
-    <string name="cli_pop_confidential_desc">We can only continue with your\napplication once you’ve granted us permission to access your consumer credit information.</string>
+    <string name="cli_pop_confidential_desc">You may only apply for a limit increase if your credit profile is in good standing</string>
 
     <string name="cli_pop_insolvency_title">SORRY, WE CANNOT PROCEED WITH YOUR APPLICATION</string>
     <string name="cli_pop_insolvency_desc">Unfortunately we can’t proceed until you no longer have any of these conditions in place.</string>
@@ -352,23 +184,17 @@
     <string name="onboarding_desc_screen_3">Conveniently view your available funds, next payment due, recent transactions and so much more.</string>
     <string name="onboarding_desc_screen_4">Create a profile or use your existing Woolies online sign in details to get started. Your sign in details will be the same on the app, mobi site and website.</string>
     <string name="welcome_back">Welcome back</string>
-    <string name="cli_activity_desc">To help us calculate how much additional credit you can qualify for, please answer a few quick and easy questions.  Once you have completed this, you will need to submit proof of income in order for us to proceed with your application.</string>
-    <string name="cli_attach_drive_desc">Select your existing saved documents from your device and email it to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.</string>
     <string name="cli_process_email_content">To upload your Proof of Income Documents, follow the instructions we’ve sent to your email. If you didn’t receive the email, please check your spam folder.</string>
     <string name="loan_withdrawal_title">loan withdrawal</string>
     <string name="your_cash_will_be_in_your_account">Your cash will be in your\naccount in 48 hours</string>
     <string name="loan_withdrawal_popup_error">Loan request too high</string>
     <string name="loan_withdrawal_popup_low_error">Loan request too low</string>
-    <string name="loan_withdrawal_popup_low_error_detail">Unfortunately you do not meet the requirements for a loan of this amount. The minimum withdrawal amount is R1000</string>
 
-    <string name="loan_request_low">Loan request too low</string>
     <string name="loan_request_low_desc">Please enter an amount greater\nor equal to R1 000.00</string>
 
     <string name="loan_request_high">Loan request too high</string>
     <string name="loan_request_high_desc">Unfortunately you do not meet the requirements for a loan of this amount. Please request a loan for a lower amount.</string>
 
-    <string name="issueing_loan">Processing your loan...</string>
-    <string name="wrewards_tag_line">|!b|W|!?|Rewards is our way of rewarding customers INSTANTLY.|!b|W|!?|Rewards members save millions every week.</string>
     <string name="wrewards_unlinked_tag_line">We see that your Woolies Card is not yet linked. To see how much you\'ve saved, track your tier status and access all your vouchers, please link your Woolies Card now.</string>
     <string name="link_account">LINK WOOLIES CARD</string>
     <string name="apply_for_wrewards">JOIN WREWARDS</string>
@@ -397,9 +223,7 @@
     <string name="minimum_spend">Minimum Spend</string>
     <string name="view_terms_conditions">TERMS &amp; CONDITIONS</string>
     <string name="expires">"Expires: "</string>
-    <string name="use_before">"USE BEFORE "</string>
     <string name="register">REGISTER</string>
-    <string name="before_we_get_started">before we get started</string>
     <string name="featured_promotions">featured promotions</string>
     <string name="sign_out_desc">Are you sure you want to sign out? You will need to re-enter your username and password to sign in again.</string>
     <string name="bullet">\u2022</string>
@@ -411,7 +235,6 @@
     <string name="sc_points_to_qualify_3">Earn a minimum of R2000 per month</string>
 
     <string name="points_convinent_1">Use your Store Card at any Woolies &amp; Foodstops at selected Engen garages </string>
-    <string name="points_convinent_2">Foodstops at Engen</string>
     <string name="points_convinent_3">Pay utility bills</string>
     <string name="points_convinent_4">Buy airtime</string>
     <string name="points_convinent_5">Shop Woolies online 24/7</string>
@@ -438,43 +261,17 @@
     <string name="points_to_qualify_2">Have a valid RSA ID number</string>
     <string name="points_to_qualify_3">Earn in excess of R3,000.00 per month</string>
 
-    <string name="points_bring_following_while_collecting_1">A valid South African ID</string>
     <string name="points_bring_following_while_collecting_2">Your latest three payslips or your last three months’ bank statements</string>
     <string name="points_bring_following_while_collecting_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
     <string name="terms_conditions">terms &amp; conditions</string>
     <string name="view_general_terms_conditions">view general terms &amp; conditions</string>
-    <string name="off_instantly">OFF INSTANTLY</string>
     <string name="wrewards_monthly_spend">Monthly Spend</string>
-
-    <string name="cli_text_with_bullet_1">I’ve applied for insolvency debt counseling</string>
-    <string name="cli_text_with_bullet_2">I’ve applied for debt administration</string>
-    <string name="cli_text_with_bullet_3">I’m currently insolvent</string>
-    <string name="cli_text_with_bullet_4">I’m currently under debt review</string>
 
     <string name="collect_credit_card_title">When collecting your credit card, bring the following:</string>
     <string name="collect_credit_card_desc_1">A valid South African ID </string>
-    <string name="collect_credit_card_desc_2">Your latest three payslips or your last three months’ bank statements</string>
-    <string name="collect_credit_card_desc_3">Proof of residence in the form of a recent utility bill or your original bank statements dated within the last three months</string>
 
     <string name="product_search_hint">Search products, brands</string>
     <string name="no_product_found">0 ITEMS FOUND</string>
-    <string name="simple_scanner_activity">ZBar Scanner - Simple Activity</string>
-    <string name="simple_scanner_fragment_activity">ZBar Scanner - Simple Fragment Activity</string>
-    <string name="simple_activity_sample">Simple Activity Sample</string>
-    <string name="simple_fragment_sample">Simple Fragment Sample</string>
-    <string name="activity_sample">Full Activity Sample</string>
-    <string name="fragment_sample">Full Fragment Sample</string>
-    <string name="toggle_flash">Flash</string>
-    <string name="flash_on">Flash [ON]</string>
-    <string name="flash_off">Flash [OFF]</string>
-    <string name="auto_focus_on">Auto Focus [ON]</string>
-    <string name="auto_focus_off">Auto Focus [OFF]</string>
-    <string name="formats">Formats</string>
-    <string name="choose_formats">Choose Formats</string>
-    <string name="select_camera">Select a Camera</string>
-    <string name="ok_button">OK</string>
-    <string name="cancel_button">Cancel</string>
-    <string name="enter_product_brand_err">Please enter a product or a brand</string>
     <string name="scan_product">SCAN PRODUCT</string>
     <string name="set_manually_enter_barcode">Manually enter the barcode</string>
     <string name="set_info_detail">Place the barcode within the guidelines &amp; remain steady</string>
@@ -496,7 +293,6 @@
     <string name="product_size">Size</string>
     <string name="shop_online_woolies">Shop online</string>
     <string name="add_to_shopping_list">Add to shopping list</string>
-    <string name="product_description">Update your modern wardrobe with this crisp short sleeved stretch cotton shirt, designed with polka dots for a pop of urban cool. Wear it with jeans for easy casual flair, or with fitted chinos for a smarter update.</string>
     <string name="product_code">Product Code</string>
     <string name="product_colour">Colour</string>
     <string name="unlinked_account_copy">We see that your Woolies Card is not yet linked. To conveniently view your available funds, next payment due, recent transactions and so much more, please link your Woolies Card now.</string>
@@ -515,7 +311,6 @@
     <string name="added_to_shopping_list">added to shopping list</string>
     <string name="added_to_shopping_list_desc">Your shopping list items can be found in Accounts</string>
     <string name="view_shopping_list">view shopping list</string>
-    <string name="shopping_list_empty">shopping list empty</string>
     <string name="contact_us_financial_services_desc">Store Card /Credit Card and Personal Loan</string>
     <string name="contact_us_customer_service_desc">General enquiries, Online, WRewards, MySchool</string>
     <string name="general_enquiry_desc">Products and instore</string>
@@ -544,24 +339,11 @@
 
     <string name="contact_us_no_email_error">In order for us to process your query, please send an email to email_address with \"subject_line\" entered in the subject line. Remember to include your ID number in the body of the email.</string>
     <string name="loading_product_info">Loading product info</string>
-    <string name="session_out_message">In order to protect your personal information, we have signed you out of the Woolies App.</string>
-    <string name="title_authentication_error">Please Sign In.</string>
 
     <string name="services_unavailable">Services Unavailable</string>
     <string name="please_check_back_later">Please check back later.</string>
-    <string name="change_password_url">https://www.woolworths.co.za/store/fragments/dashboard/dashboard-index.jsp?content=myaccount/user-details</string>
     <string name="products_onetime_popup_text">Browse or scan products here.\nTo shop, you’ll be linked to our online store.</string>
-    <string name="connection_error">Please Ensure you\'re connected to the internet and then try
-        again </string>
-    <string name="socket_timeout_error">Your request timed out, please try again</string>
-    <string name="runtime_eror">An error has occured</string>
 
-    <string name="socket_timeout_exception">SocketTimeoutException</string>
-    <string name="connect_exception">ConnectException</string>
-    <string name="connect_flag">Connect</string>
-    <string name="socket_flag">Socket</string>
-    <string name="runtime_exception">RuntimeExecutionException</string>
-    <string name="messages">MESSAGES</string>
     <string name="no_connection">NO CONNECTION</string>
     <string name="no_connection_desc">OOPS. SOMETHING WENT WRONG</string>
     <string name="no_connection_desc_1">We could not load this content.\nPlease try again later.</string>
@@ -593,12 +375,8 @@
     <string name="please_ensure_connection">Please ensure that you are connected \nto the internet.</string>
     <string name="sso_title_text_submit_this_form">SUBMIT THIS FORM</string>
 
-    <string name="token_timeout_authenticate">Re-authenticate</string>
-    <string name="token_timeout_message">For security reasons, you need to re-authenticate your session before you can continue.</string>
-
     <string name="acc_my_detail">My details</string>
     <string name="acc_profile">Profile</string>
-    <string name="acc_update_email_address">Update email address</string>
     <string name="acc_update_password">Update password</string>
 
     <string name="session_expired_title">SESSION EXPIRED</string>
@@ -607,8 +385,6 @@
     <string name="session_expired_reward_desc">Your WRewards session expired. To continue please
         sign in or cancel to return to the rest of the app.</string>
     <string name="session_expired_sign_in">sign in</string>
-    <string name="cli_additional_credit_amount">What is the new credit limit requested?</string>
-    <string name="increase_credit_limit">Increase Credit Limit</string>
     <string name="view_transactions">View Transactions</string>
     <string name="view_statements">View Statements</string>
     <string name="balance_protection_insurance">Balance Protection Insurance</string>
@@ -695,4 +471,108 @@
     <string name="sf_instore_availability_desc_bottom">Each store shows a colour indicator:</string>
     <!--FaceBook ID-->
     <string name="facebook_app_id">790724074427665</string>
+    <string name="cli_info_watch_video">WATCH VIDEO</string>
+    <string name="cli_activity_title">INCREASE MY LIMIT</string>
+    <string name="cli_eligibility_check_title">Do any of the following apply to you?</string>
+    <string name="cli_eligibility_check_description">• I’ve applied for insolvency debt counseling \n• I’ve applied for debt administration \n• I’m currently insolvent \n• I’m currently under debt review</string>
+    <string name="cli_permission_check_title">Permission to proceed</string>
+    <string name="cli_permission_check_description">I agree that Woolworths Financial Services may request and receive my confidential consumer credit information from any credit bureau or third party at any time, including obtaining a bureau score to determine my credit worthiness</string>
+    <string name="cli_step_indicator_income">Income</string>
+    <string name="cli_step_indicator_expense">Expenses</string>
+    <string name="cli_step_indicator_offer">Offer</string>
+    <string name="cli_step_indicator_documents">Documents</string>
+    <string name="increase_limit_supply_detail">please supply your income details</string>
+    <string name="increase_supply_supply_detail">please supply your expense details</string>
+    <string name="increase_my_limit">Increase My Limit</string>
+    <string name="calculating_your_offer">Calculating your offer</string>
+
+    <string name="amount_of_time_info">This may take 2 minutes</string>
+
+    <string name="pre_approved_for_title">YOU’VE BEEN PROVISIONALLY APPROVED FOR:</string>
+    <string name="subject_to_proof_of_income">(Subject to receiving your proof of income)</string>
+
+    <string name="accept_offer">accept offer</string>
+    <string name="slide_to_edit_amount">slide to edit amount</string>
+    <string name="enter_account_number">enter account number</string>
+
+    <string name="select_your_bank_desc">As responsible lenders, we need to verify the info you have provided.
+        Your credit limit increase is subject to the condition that you provide us with your proof of income within 30 (thirty) days from the date of accepting the credit limit increase. \n\nIf your proof of income shows a lower income to the amount that you disclosed to us, we will re-calculate your credit limit increase amount and notify you of your new credit limit increase and instalment.\n\nYou will not have access to your credit limit increase until we receive your proof of income
+If we do not receive your proof of income within 30 (thirty) days from the date of acceptance of the credit limit increase, the credit limit increase will lapse and you will have to submit a new application.
+    </string>
+    <string name="increase_limit_desc">You can apply for a limit increase whenever you need to xxxxx xxxx</string>
+
+    <string name="status_in_progress">In Progress</string>
+    <string name="status_offer_available">Offer Available</string>
+    <string name="status_please_try_again">please try again</string>
+    <string name="status_poi_required">POI Required</string>
+    <string name="status_poi_problem">POI Problem</string>
+    <string name="decline">Declined</string>
+    <string name="decline_title">Decline offer?</string>
+    <string name="decline_desc">Are you sure you would like to decline the offer of  #R?</string>
+    <string name="find_out_more">Find Out More</string>
+    <string name="status_unavailable">unavailable</string>
+    <string name="status_retry">Retry</string>
+    <string name="status_poi">POI</string>
+    <string name="status_i_n_e">I \u0026 E</string>
+    <string name="status_offer">Offer</string>
+    <string name="status_consents">Consents</string>
+    <string name="status_decline">Decline</string>
+    <string name="status_contact_us">Contact Us</string>
+    <string name="select_from_gallery">select from gallery</string>
+    <string name="status_apply_now">Apply Now</string>
+    <string name="poi_income_detail_problem">There is a problem with the income details you submitted.</string>
+    <string name="poi_problem_phone_no">+27 21 411 5000</string>
+    <string name="request_loan_amount">Requested Loan Amount:</string>
+    <string name="approximate_repayments">Approximate Repayments:</string>
+    <string name="term">Term:</string>
+    <string name="amount_too_low_modal_title">oops, incorrect Amount</string>
+    <string name="amount_too_low_modal_desc">The amount you have entered is equal to, or less than your current credit limit. Please enter a larger amount.</string>
+    <string name="amount_too_high_modal_desc">The amount that you have requested exceeds the maximum amount available to you. Please re-enter a lower amount.</string>
+    <string name="uploading_your_documents">uploading your documents</string>
+    <string name="uploading_your_documents_desc">Please provide your latest three payslips or the last three months’ bank statements.</string>
+    <string name="uploading_clear_scan_photo">Clear photo/scan of the document</string>
+    <string name="uploading_name_address">Name and address must be visible</string>
+    <string name="uploading_statement_period">Statement period must be visible</string>
+    <string name="uploading_older_month">Can’t be older than 3 months</string>
+    <string name="from_camera">Camera</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+    <!-- Cli carousel: Find Out More -->
+    <string name="credit_bureau">Credit bureau</string>
+    <string name="credit_bureau_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.</string>
+    <string name="txt_proof_of_income">Proof of income</string>
+    <string name="txt_proof_of_income_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.</string>
+
+    <!-- Cli carousel: Complete process title -->
+    <string name="process_complete_title">Thank you, Your application is being processed.</string>
+    <string name="process_complete_desc">We will be in contact with you within
+        two working days. Please watch the app for updates on the progress of your application.</string>
+    <string name="process_complete_back_account">back to my account</string>
+    <string name="status_document_required">Documents Required</string>
+    <string name="back_to_my_account">back to my account</string>
+    <string name="account_type">### account type</string>
+    <string name="account_saving_title">### savings account</string>
+    <string name="cli_poi_email_decription">Please submit POI documents to the email address listed below.</string>
+    <string name="cli_poi_email_id">poi@woolworths.co.za</string>
+
+    <string name="no_internet_title">OOPS. SOMETHING WENT WRONG!</string>
+    <string name="no_internet_subtitle">Please try again.</string>
+    <string name="calculating_offer_error_desc">If the problem persists, call us on 0861 50 20 20 </string>
+    <string name="cli_wifi_desc_error">Check that your mobile data or WIFI is switched on and ensure that you’re connected to the internet.   If the problem persists, call us on 0861 50 20 20</string>
+    <string name="try_again">try again</string>
+    <string name="proof_of_income_document">proof of income documents</string>
+    <string name="take_clear_photo">Take clear photos of your documents and email them to us at cliproofofincome@wfs.co.za. Your ID number will be your reference.</string>
+    <string name="proof_of_income_requirement">Proof of income Requirements:</string>
+    <string name="proof_of_income_statement_description">In order to complete your application, we require your latest 3 months’ bank statements or last 3 months payslips.</string>
+    <string name="cli_proceed_description">Don’t have the required documents right now or need more detailed instructions?  Simply click below and we will send an email to you, so you can complete the process</string>
+    <string name="cli_email_sent_document_title">documents sent to:</string>
+    <string name="cli_email_sent_description">Please follow the instructions we’ve sent to your email. If you didn’t receive the email, please check your spam folder.</string>
+    <string name="read_more">Read more...</string>
+    <string name="read_less">\n\nLess.</string>
+    <string name="proceed">proceed</string>
+    <string name="status_complete">complete</string>
+    <string name="proof_of_income_popup_desc">Your credit limit increase is subject to the condition that you provide us with your proof of income within 30 (thirty) days from the date of accepting the credit limit increase.\n\nIf your proof of income shows a lower income to the amount that you disclosed to us, we will re-calculate your credit limit increase amount and notify you of your new credit limit increase and instalment.\n\nYou will not have access to your credit limit increase until we receive your proof of income.  If we do not receive your proof of income within 30 (thirty) days from the date of acceptance of the credit limit increase, the credit limit increase will lapse and you will have to submit a new application.
+ </string>
+    <string name="proof_of_income">PROOF OF INCOME</string>
 </resources>

@@ -24,7 +24,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -88,6 +87,8 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		fragmentPager = (WCustomPager) findViewById(R.id.fragmentpager);
 		llRootLayout = (LinearLayout) findViewById(R.id.llRootLayout);
 		fragmentPager.setViewPagerIsScrollable(false);
+		pager.setOffscreenPageLimit(0);
+		fragmentPager.setOffscreenPageLimit(0);
 		cards = new ArrayList<>();
 		changeViewPagerAndActionBarBackground(currentPosition);
 		mBtnApplyNow.setVisibility(View.GONE);
@@ -143,7 +144,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 			@Override
 			public void onPageSelected(int newPosition) {
 				fragmentInterfaceListener(newPosition);
-				mWoolworthsApplication.setCliCardPosition(newPosition);
 				fragmentPager.setCurrentItem(newPosition);
 				changeViewPagerAndActionBarBackground(newPosition);
 				changeButtonColor(newPosition);
@@ -224,6 +224,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 				.this.getApplication();
 		toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
 		pager = (WViewPager) findViewById(R.id.myAccountsCardPager);
+
 
 		mBtnApplyNow = (Button) findViewById(R.id.btnApplyNow);
 		mScrollAccountCard = (NestedScrollView) findViewById(R.id.nest_scrollview);
@@ -364,8 +365,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 				Log.i("Handling 502", "Handled a 502 error from the server");
 				break;
 			default:
-				((TextView) findViewById(R.id.no_internet_message)).setText(accountsResponse.response.desc);
-				findViewById(R.id.no_internet).setVisibility(View.VISIBLE);
+				break;
 		}
 	}
 

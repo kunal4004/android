@@ -1,55 +1,31 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
-/**
- * Created by dimitrij on 2016/12/23.
- */
-
 public class CreateOfferRequest {
 
-    @SerializedName("productOfferingId")
-    @Expose
-    public int productOfferingId;
-    @SerializedName("creditLimitRequested")
-    @Expose
-    public int creditLimitRequested;
-    @SerializedName("grossMonthlyIncome")
-    @Expose
-    public int grossMonthlyIncome;
-    @SerializedName("nettMonthlyIncome")
-    @Expose
-    public int nettMonthlyIncome;
-    @SerializedName("additionalIncomeAmount")
-    @Expose
-    public int additionalIncomeAmount;
-    @SerializedName("mortgagePaymentAmount")
-    @Expose
-    public int mortgagePaymentAmount;
-    @SerializedName("rentalPaymentAmount")
-    @Expose
-    public int rentalPaymentAmount;
-    @SerializedName("maintenanceExpenseAmount")
-    @Expose
-    public int maintenanceExpenseAmount;
-    @SerializedName("totalCreditExpenseAmount")
-    @Expose
-    public int totalCreditExpenseAmount;
-    @SerializedName("otherExpenseAmount")
-    @Expose
-    public int otherExpenseAmount;
+	private int productOfferingId;
+	private int creditLimitRequested;
+	private int grossMonthlyIncome;
+	private int nettMonthlyIncome;
+	private int additionalIncomeAmount;
+	private int mortgagePaymentAmount;
+	private int rentalPaymentAmount;
+	private int maintenanceExpenseAmount;
+	private int totalCreditExpenseAmount;
+	private int otherExpenseAmount;
+	private boolean maxCreditRequested;
 
-    public CreateOfferRequest(int productOfferingId, int creditLimitRequested, int grossMonthlyIncome, int nettMonthlyIncome, int additionalIncomeAmount, int mortgagePaymentAmount, int rentalPaymentAmount, int maintenanceExpenseAmount, int totalCreditExpenseAmount, int otherExpenseAmount) {
-        this.productOfferingId = productOfferingId;
-        this.creditLimitRequested = creditLimitRequested;
-        this.grossMonthlyIncome = grossMonthlyIncome;
-        this.nettMonthlyIncome = nettMonthlyIncome;
-        this.additionalIncomeAmount = additionalIncomeAmount;
-        this.mortgagePaymentAmount = mortgagePaymentAmount;
-        this.rentalPaymentAmount = rentalPaymentAmount;
-        this.maintenanceExpenseAmount = maintenanceExpenseAmount;
-        this.totalCreditExpenseAmount = totalCreditExpenseAmount;
-        this.otherExpenseAmount = otherExpenseAmount;
-    }
+	public CreateOfferRequest(boolean maxCreditRequested, int productOfferingId, int creditLimitRequested, int grossMonthlyIncome, int nettMonthlyIncome, int additionalIncomeAmount, int mortgagePaymentAmount, int rentalPaymentAmount, int maintenanceExpenseAmount, int totalCreditExpenseAmount, int otherExpenseAmount) {
+		super();
+		this.maxCreditRequested = maxCreditRequested;
+		this.creditLimitRequested = creditLimitRequested;
+		this.productOfferingId = productOfferingId;
+		this.grossMonthlyIncome = grossMonthlyIncome;
+		this.nettMonthlyIncome = nettMonthlyIncome;
+		this.additionalIncomeAmount = additionalIncomeAmount;
+		this.mortgagePaymentAmount = mortgagePaymentAmount;
+		this.rentalPaymentAmount = rentalPaymentAmount;
+		this.maintenanceExpenseAmount = maintenanceExpenseAmount;
+		this.totalCreditExpenseAmount = totalCreditExpenseAmount;
+		this.otherExpenseAmount = otherExpenseAmount;
+	}
 }

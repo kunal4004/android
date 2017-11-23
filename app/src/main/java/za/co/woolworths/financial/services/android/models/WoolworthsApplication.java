@@ -6,17 +6,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.multidex.MultiDex;
-import android.support.v7.app.AppCompatActivity;
 
 import com.awfs.coordination.R;
 import com.crittercism.app.Crittercism;
-
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONObject;
 
@@ -24,21 +22,18 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.service.RxBus;
+import za.co.woolworths.financial.services.android.ui.activities.YoutubePlayerActivity;
 
 
 public class WoolworthsApplication extends Application {
 
-	public static String LANDING_STORE_CARD = "LANDING_STORE_CARD";
-	public static String LANDING_CREDIT_CARD = "LANDING_CREDIT_CARD";
-	public static String LANDING_LOAN_CARD = "LANDING_LOAN_CARD";
-	public static String LANDING_REWARDS_CARD = "LANDING_REWARDS_CARD";
 	private static Context context;
 	private static Context mContextApplication;
 	private UserManager mUserManager;
 	private WfsApi mWfsApi;
 	private RetrofitAsyncClient mRetrofitClient;
 	private Tracker mTracker;
-	private boolean swapSecondFragment = false;
 	private static String applyNowLink;
 	private static String registrationTCLink;
 	private static String faqLink;
@@ -49,7 +44,6 @@ public class WoolworthsApplication extends Application {
 
 	private WGlobalState mWGlobalState;
 
-	private int cliCardPosition;
 	private static String baseURL;
 	private static String apiKey;
 	private static String sha1Password;
@@ -59,15 +53,16 @@ public class WoolworthsApplication extends Application {
 	private static String ssoUpdateDetailsRedirectUri;
 	private static String wwTodayURI;
 	private static String creditCardType;
-	private boolean isDEABank = false;
 	private boolean isOther = false;
-	private int productOfferingId;
-	private LatLng lastKnowLatLng;
-	private AppCompatActivity mCurrentActivity = null;
+	private static int productOfferingId;
 
 	private static int NumVouchers = 0;
 
 	public UpdateBankDetail updateBankDetail;
+
+	private RxBus bus;
+
+	private static long poiDocumentSizeLimit;
 
 	public static void setSha1Password(String sha1Password) {
 		WoolworthsApplication.sha1Password = sha1Password;
@@ -197,11 +192,26 @@ public class WoolworthsApplication extends Application {
 		WoolworthsApplication.stsURI = stsURI;
 	}
 
+	public static final String TAG = WoolworthsApplication.class.getSimpleName();
+
+	private static WoolworthsApplication mInstance;
+
+	public static long getPoiDocumentSizeLimit() {
+		return poiDocumentSizeLimit;
+	}
+
+	public static void setPoiDocumentSizeLimit(long poiDocumentSizeLimit) {
+		WoolworthsApplication.poiDocumentSizeLimit = poiDocumentSizeLimit;
+	}
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		mInstance = this;
 		Fresco.initialize(this);
 		AppEventsLogger.activateApp(this);
+		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+		StrictMode.setVmPolicy(builder.build());
 		mWGlobalState = new WGlobalState(WoolworthsApplication.this);
 		updateBankDetail = new UpdateBankDetail();
 		WoolworthsApplication.context = this.getApplicationContext();
@@ -210,15 +220,18 @@ public class WoolworthsApplication extends Application {
 		Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
 		CalligraphyConfig.initDefault("fonts/WFutura-medium.ttf", R.attr.fontPath);
 		getTracker();
+		bus = new RxBus();
 		registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
 
 			@Override
 			public void onActivityCreated(Activity activity,
-			                              Bundle savedInstanceState) {
+										  Bundle savedInstanceState) {
 
 				// new activity created; force its orientation to portrait
-				activity.setRequestedOrientation(
-						ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				if (!(activity instanceof YoutubePlayerActivity)) {
+					activity.setRequestedOrientation(
+							ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				}
 
 			}
 
@@ -332,26 +345,10 @@ public class WoolworthsApplication extends Application {
 		editor.commit();
 	}
 
-	public boolean isDEABank() {
-		return isDEABank;
-	}
-
-	public void setDEABank(boolean DEABank) {
-		this.isDEABank = DEABank;
-	}
-
 	@Override
 	protected void attachBaseContext(Context base) {
 		super.attachBaseContext(base);
 		MultiDex.install(this);
-	}
-
-	public int getCliCardPosition() {
-		return cliCardPosition;
-	}
-
-	public void setCliCardPosition(int cliCardPosition) {
-		this.cliCardPosition = cliCardPosition;
 	}
 
 	public boolean isOther() {
@@ -362,20 +359,12 @@ public class WoolworthsApplication extends Application {
 		isOther = other;
 	}
 
-	public int getProductOfferingId() {
+	public static int getProductOfferingId() {
 		return productOfferingId;
 	}
 
 	public void setProductOfferingId(int productOfferingId) {
 		this.productOfferingId = productOfferingId;
-	}
-
-	public LatLng getLastKnowLatLng() {
-		return lastKnowLatLng;
-	}
-
-	public void setLastKnowLatLng(LatLng lastKnowLatLng) {
-		this.lastKnowLatLng = lastKnowLatLng;
 	}
 
 	/**
@@ -397,5 +386,13 @@ public class WoolworthsApplication extends Application {
 
 	public static void setSsoUpdateDetailsRedirectUri(String pSsoUpdateDetailsRedirectUri) {
 		ssoUpdateDetailsRedirectUri = pSsoUpdateDetailsRedirectUri;
+	}
+
+	public RxBus bus() {
+		return bus;
+	}
+
+	public static synchronized WoolworthsApplication getInstance() {
+		return mInstance;
 	}
 }

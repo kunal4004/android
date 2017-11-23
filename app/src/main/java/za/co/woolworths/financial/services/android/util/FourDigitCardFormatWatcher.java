@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 
 /**
