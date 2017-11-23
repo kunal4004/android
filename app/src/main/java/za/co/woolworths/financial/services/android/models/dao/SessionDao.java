@@ -35,6 +35,7 @@ public class SessionDao extends BaseDao {
 		LAST_KNOWN_LOCATION("LAST_KNOWN_LOCATION"),
 		NOTIFICATION_ID("NOTIFICATION_ID"),
 		CLI_SLIDE_EDIT_AMOUNT_TOOLTIP("CLI_SLIDE_EDIT_AMOUNT_TOOLTIP"),
+		PROOF_OF_INCOME("PROOF_OF_INCOME"),
 		DEVICE_ID("DEVICE_ID");
 
 		private final String text;
@@ -91,7 +92,7 @@ public class SessionDao extends BaseDao {
 
 	public SessionDao get() throws Exception {
 		String query = "SELECT * FROM Session WHERE [key] = ? ORDER BY id ASC LIMIT 1;";
-		Map<String, String> result = PersistenceLayer.getInstance(mContext).executeReturnableQuery(query, new String[] {
+		Map<String, String> result = PersistenceLayer.getInstance(mContext).executeReturnableQuery(query, new String[]{
 				this.key.toString()
 		});
 
@@ -117,7 +118,7 @@ public class SessionDao extends BaseDao {
 		String query = "DELETE FROM Session" +
 				" WHERE [key] = ?";
 
-		PersistenceLayer.getInstance(mContext).executeVoidQuery(query, new String[] {
+		PersistenceLayer.getInstance(mContext).executeVoidQuery(query, new String[]{
 				this.key.toString()
 		});
 	}
