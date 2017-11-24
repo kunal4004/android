@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -36,6 +37,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.EStatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -242,7 +244,12 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 				break;
 
 			case R.id.rlViewStatement:
-
+				Activity activity = getActivity();
+				if (activity != null) {
+					Intent openStatement = new Intent(getActivity(), EStatementActivity.class);
+					startActivity(openStatement);
+					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				}
 				break;
 			default:
 				break;

@@ -40,7 +40,7 @@ public class ShoppingUnCheckedListAdapter extends RecyclerSwipeAdapter<ShoppingU
             swipeLayout = (SwipeLayout) itemView.findViewById(R.id.swipe);
             mProductName = (WTextView) itemView.findViewById(R.id.productName);
             imgdelete = (ImageView) itemView.findViewById(R.id.msgDelete);
-            mCheckedItem = (ImageView) itemView.findViewById(R.id.checkedItem);
+            mCheckedItem = (ImageView) itemView.findViewById(R.id.imCheckItem);
             cardlayout = (LinearLayout) itemView.findViewById(R.id.cardLayout);
         }
     }

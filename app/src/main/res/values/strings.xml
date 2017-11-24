@@ -575,4 +575,7 @@ If we do not receive your proof of income within 30 (thirty) days from the date 
     <string name="proof_of_income_popup_desc">Your credit limit increase is subject to the condition that you provide us with your proof of income within 30 (thirty) days from the date of accepting the credit limit increase.\n\nIf your proof of income shows a lower income to the amount that you disclosed to us, we will re-calculate your credit limit increase amount and notify you of your new credit limit increase and instalment.\n\nYou will not have access to your credit limit increase until we receive your proof of income.  If we do not receive your proof of income within 30 (thirty) days from the date of acceptance of the credit limit increase, the credit limit increase will lapse and you will have to submit a new application.
  </string>
     <string name="proof_of_income">PROOF OF INCOME</string>
+    <string name="statement">statement</string>
+    <string name="select_to_email_statement">select to email your statements</string>
+    <string name="view">View</string>
 </resources>
