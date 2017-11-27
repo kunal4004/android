@@ -4,7 +4,7 @@ android {
 
     def major = "5"
     def minor = "4"
-    def fix = "3"
+    def fix = "4"
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
@@ -71,8 +71,8 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 123
-            versionName("5.4.3")
+            versionCode 125
+            versionName("5.4.4")
         }
 
         staging {
