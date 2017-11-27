@@ -60,7 +60,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	private ActionBar mActionBar;
 	private DrawerLayout mDrawerLayout;
 	private WGlobalState mWGlobalState;
-	private String mNotificationUtils;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -92,20 +91,19 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		registerReceiver(logOutReceiver, new IntentFilter("logOutReceiver"));
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null) {
-			mNotificationUtils = bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT);
-		}
-		if (!TextUtils.isEmpty(mNotificationUtils)) {
-			displayView(4);
-		} else {
-			if (bundle != null) {
-				int mOpenProduct = bundle.getInt("myAccount");
-				if (mOpenProduct == 1) {
-					displayView(1);
+			if (!TextUtils.isEmpty(bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT))) {
+				displayView(4);
+			} else {
+				if (bundle != null) {
+					int mOpenProduct = bundle.getInt("myAccount");
+					if (mOpenProduct == 1) {
+						displayView(1);
+					} else {
+						displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
+					}
 				} else {
 					displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 				}
-			} else {
-				displayView(Utils.DEFAULT_SELECTED_NAVIGATION_ITEM);
 			}
 		}
 
