@@ -3,9 +3,8 @@ package za.co.woolworths.financial.services.android.models.dto;
 public class CreateOfferRequest {
 
 	private int productOfferingId;
-	private int creditLimitRequested;
 	private int grossMonthlyIncome;
-	private int nettMonthlyIncome;
+	private int netMonthlyIncome;
 	private int additionalIncomeAmount;
 	private int mortgagePaymentAmount;
 	private int rentalPaymentAmount;
@@ -14,13 +13,12 @@ public class CreateOfferRequest {
 	private int otherExpenseAmount;
 	private boolean maxCreditRequested;
 
-	public CreateOfferRequest(boolean maxCreditRequested, int productOfferingId, int creditLimitRequested, int grossMonthlyIncome, int nettMonthlyIncome, int additionalIncomeAmount, int mortgagePaymentAmount, int rentalPaymentAmount, int maintenanceExpenseAmount, int totalCreditExpenseAmount, int otherExpenseAmount) {
+	public CreateOfferRequest(boolean maxCreditRequested, int productOfferingId, int grossMonthlyIncome, int netMonthlyIncome, int additionalIncomeAmount, int mortgagePaymentAmount, int rentalPaymentAmount, int maintenanceExpenseAmount, int totalCreditExpenseAmount, int otherExpenseAmount) {
 		super();
 		this.maxCreditRequested = maxCreditRequested;
-		this.creditLimitRequested = creditLimitRequested;
 		this.productOfferingId = productOfferingId;
 		this.grossMonthlyIncome = grossMonthlyIncome;
-		this.nettMonthlyIncome = nettMonthlyIncome;
+		this.netMonthlyIncome = netMonthlyIncome;
 		this.additionalIncomeAmount = additionalIncomeAmount;
 		this.mortgagePaymentAmount = mortgagePaymentAmount;
 		this.rentalPaymentAmount = rentalPaymentAmount;
