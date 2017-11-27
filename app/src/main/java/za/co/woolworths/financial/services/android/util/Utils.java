@@ -18,14 +18,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -59,9 +60,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-
 import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
@@ -69,17 +70,15 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
-import za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
+import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
 
 import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class Utils {
 
@@ -109,6 +108,15 @@ public class Utils {
 	public static final String GOLD_CARD = "410374";
 	public static final String BLACK_CARD = "410375";
 	public static final int ACCOUNTS_PROGRESS_BAR_MAX_VALUE = 10000;
+
+	public static final String[] CLI_POI_ACCEPT_MIME_TYPES = {
+			"application/pdf",
+			"application/excel",
+			"application/msword",
+			"image/png",
+			"image/jpeg",
+			"image/tiff"
+	};
 
 	public static void saveLastLocation(Location loc, Context mContext) {
 
@@ -353,8 +361,11 @@ public class Utils {
 	}
 
 	public static void setBadgeCounter(Context context, int badgeCount) {
-		ShortcutBadger.applyCount(context, badgeCount);
-		sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
+		try {
+			ShortcutBadger.applyCount(context, badgeCount);
+			sessionDaoSave(context, SessionDao.KEY.UNREAD_MESSAGE_COUNT, String.valueOf(badgeCount));
+		} catch (NullPointerException ex) {
+		}
 	}
 
 	public static void removeBadgeCounter(Context context) {
@@ -437,10 +448,21 @@ public class Utils {
 		return historyList;
 	}
 
-	public static void displayValidationMessage(Context context, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST key, String description) {
-		Intent openMsg = new Intent(context, CustomPopUpDialogManager.class);
+	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description) {
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
 		Bundle args = new Bundle();
 		args.putSerializable("key", key);
+		args.putString("description", description);
+		openMsg.putExtras(args);
+		context.startActivity(openMsg);
+		((AppCompatActivity) context).overridePendingTransition(0, 0);
+	}
+
+	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String title, String description) {
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("title", title);
 		args.putString("description", description);
 		openMsg.putExtras(args);
 		context.startActivity(openMsg);
@@ -526,7 +548,7 @@ public class Utils {
 		}).start();
 	}
 
-	public static void showOneTimePopup(Context context, SessionDao.KEY key, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST message_key) {
+	public static void showOneTimePopup(Context context, SessionDao.KEY key, CustomPopUpWindow.MODAL_LAYOUT message_key) {
 		try {
 			String firstTime = Utils.getSessionDaoValue(context, key);
 			if (firstTime == null) {
@@ -537,6 +559,24 @@ public class Utils {
 			}
 		} catch (NullPointerException ignored) {
 		}
+	}
+
+	public static void showOneTimeTooltip(Context context, SessionDao.KEY key, View view, String message) {
+		try {
+			String firstTime = Utils.getSessionDaoValue(context, key);
+			if (firstTime == null) {
+				showTooltip(context, view, message);
+				Utils.sessionDaoSave(context, key, "1");
+			}
+		} catch (NullPointerException ignored) {
+		}
+	}
+
+	public static void showTooltip(Context context, View view, String message) {
+		TooltipHelper tooltipHelper = new TooltipHelper(context);
+		ViewTooltip mTooltip = tooltipHelper.showToolTipView(view, message,
+				ContextCompat.getColor(context, R.color.tooltip_bg_color));
+		mTooltip.show();
 	}
 
 	public static void triggerFireBaseEvents(Context mContext, String eventName, Map<String, String> arguments) {
@@ -558,7 +598,7 @@ public class Utils {
 				result = JWTHelper.decode(sessionDao.value);
 			}
 		} catch (Exception e) {
-			Log.e(TAG, e.getMessage());
+			Log.e("TAG", e.getMessage());
 		}
 		return result;
 	}
@@ -575,7 +615,7 @@ public class Utils {
 			mContext.startActivity(emailIntent);
 		} else {
 			Utils.displayValidationMessage(mContext,
-					CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INFO,
+					CustomPopUpWindow.MODAL_LAYOUT.INFO,
 					mContext.getResources().getString(R.string.contact_us_no_email_error)
 							.replace("email_address", emailId).replace("subject_line", subject));
 		}
@@ -589,6 +629,13 @@ public class Utils {
 		Typeface futuraFont = Typeface.createFromAsset(context.getAssets(), "fonts/WFutura-SemiBold.ttf");
 		textView.setTypeface(futuraFont);
 		textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getContext().getResources().getDimension(R.dimen.rag_rating_sp));
+	}
+
+	public static void setBackground(WTextView textView, int drawableId, int value) {
+		Context context = textView.getContext();
+		textView.setText(context.getResources().getString(value));
+		textView.setTextColor(Color.WHITE);
+		textView.setBackgroundResource(drawableId);
 	}
 
 	public static ListIterator removeObjectFromArrayList(Context context, List<StoreDetails> storeDetails) {
@@ -621,6 +668,15 @@ public class Utils {
 			setBackgroundColor(storeOfferings, R.drawable.round_green_corner, R.string.status_green_desc);
 		} else {
 		}
+	}
+
+	public static void showView(WTextView view, String messageSummary) {
+		view.setVisibility(View.VISIBLE);
+		view.setText(messageSummary);
+	}
+
+	public static void hideView(View view) {
+		view.setVisibility(View.GONE);
 	}
 
 	public static ArrayList<OtherSku> commonSizeList(String colour, boolean productHasColor, List<OtherSku> mOtherSKU) {
@@ -665,6 +721,46 @@ public class Utils {
 			}
 		}
 		return false;
+	}
+
+	public static int numericFieldOnly(String text) {
+		return Integer.valueOf(text.replaceAll("[\\D.]", ""));
+	}
+
+	public static Object strToJson(String jsonString, Class<?> className) {
+		return new Gson().fromJson(jsonString, className);
+	}
+
+	public static String getUniqueDeviceID(Context context) {
+		String deviceID = null;
+		if (deviceID == null) {
+			deviceID = getSessionDaoValue(context, SessionDao.KEY.DEVICE_ID);
+			if (deviceID == null) {
+				deviceID = InstanceID.getInstance(context).getId();
+				sessionDaoSave(context, SessionDao.KEY.DEVICE_ID, deviceID);
+			}
+		}
+
+		return deviceID;
+	}
+
+	public static void disableEnableChildViews(View view, boolean enabled) {
+		view.setEnabled(enabled);
+		if (view instanceof ViewGroup) {
+			ViewGroup viewGroup = (ViewGroup) view;
+			for (int i = 0; i < viewGroup.getChildCount(); i++) {
+				View child = viewGroup.getChildAt(i);
+				disableEnableChildViews(child, enabled);
+			}
+		}
+	}
+
+	public static boolean checkCLIAccountNumberValidation(String value) {
+		String regex = "[0-9]+";
+		if (value != null && value.matches(regex) && value.length() > 4)
+			return true;
+		else
+			return false;
 	}
 
 	public static Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int img_width, int img_height) throws WriterException {
@@ -713,19 +809,12 @@ public class Utils {
 		return null;
 	}
 
-	public static String getUniqueDeviceID(Context context)
-	{
-		String deviceID=null;
-		if(deviceID==null)
-		{
-			deviceID=getSessionDaoValue(context, SessionDao.KEY.DEVICE_ID);
-			if(deviceID==null)
-			{
-				deviceID= InstanceID.getInstance(context).getId();
-				sessionDaoSave(context, SessionDao.KEY.DEVICE_ID,deviceID);
-			}
-		}
-
-		return deviceID;
+	public static void sendEmail(String email, FragmentActivity activity) {
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		Uri data = Uri.parse("mailto:"
+				+ email
+				+ "?subject=" + "" + "&body=" + "");
+		intent.setData(data);
+		activity.startActivity(intent);
 	}
 }

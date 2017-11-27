@@ -4,7 +4,6 @@ import android.content.Context;
 import android.location.Location;
 import android.text.TextUtils;
 
-
 import com.jakewharton.retrofit.Ok3Client;
 
 import java.util.concurrent.TimeUnit;
@@ -12,8 +11,6 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import retrofit.Callback;
 import retrofit.RestAdapter;
-
-import retrofit.client.OkClient;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.util.StringConverter;
 import za.co.woolworths.financial.services.android.util.Utils;

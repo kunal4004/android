@@ -13,4 +13,8 @@ public class BankAccountType {
     @Expose
     public String accountType;
 
+    @SerializedName("accountTypeImage")
+    @Expose
+    public String accountTypeImage;
+
 }

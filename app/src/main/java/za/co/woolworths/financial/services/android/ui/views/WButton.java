@@ -9,7 +9,6 @@ import android.widget.Button;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 
 public class WButton extends Button {

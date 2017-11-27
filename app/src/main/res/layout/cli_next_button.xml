@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/llNextButtonLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/default_background"
+    android:orientation="vertical"
+    android:paddingBottom="8dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:visibility="gone"
+    >
+
+    <RelativeLayout
+        android:id="@+id/relNextButton"
+        style="@style/blackButtonStyle"
+        android:background="@drawable/button_disable_color"
+        android:gravity="center">
+
+        <ProgressBar
+            android:id="@+id/mWoolworthsProgressBar"
+            style="@style/progress_button_style"/>
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnContinue"
+            style="@style/blackButtonStyle"
+            android:background="@drawable/button_disable_color"
+            android:gravity="center"
+            android:text="@string/cli_continue"
+            android:textColor="@color/text_color_selector"
+            app:WButton_font="medium_bold"/>
+    </RelativeLayout>
+
+</LinearLayout>

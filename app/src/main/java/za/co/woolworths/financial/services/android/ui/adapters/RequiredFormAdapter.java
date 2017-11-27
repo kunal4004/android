@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;

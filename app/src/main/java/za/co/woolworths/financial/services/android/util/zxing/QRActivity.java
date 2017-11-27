@@ -84,22 +84,22 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
-import za.co.woolworths.financial.services.android.ui.views.LoadingDots;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.views.LoadingDots;
+import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.WrapContentWebView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.DrawImage;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
@@ -579,7 +579,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 				if (Utils.isLocationEnabled(QRActivity.this)) {
 					permissionUtils.check_permission(permissions, "Explain here why the app needs permissions", 1);
 				} else {
-					Utils.displayValidationMessage(QRActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.LOCATION_OFF, "");
+					Utils.displayValidationMessage(QRActivity.this, CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "");
 				}
 				break;
 		}
@@ -709,7 +709,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	}
 
 	private void errorScanCode() {
-		Utils.displayValidationMessage(this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.BARCODE_ERROR, "");
+		Utils.displayValidationMessage(this, CustomPopUpWindow.MODAL_LAYOUT.BARCODE_ERROR, "");
 	}
 
 	private void resumeScan() {
@@ -1744,11 +1744,11 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 							startActivity(intentInStoreFinder);
 							overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 						} else {
-							Utils.displayValidationMessage(QRActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");
+							Utils.displayValidationMessage(QRActivity.this, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 						}
 					} else {
 						//no stock error message
-						Utils.displayValidationMessage(QRActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");
+						Utils.displayValidationMessage(QRActivity.this, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 					}
 				}
 				dismissFindInStoreProgress();

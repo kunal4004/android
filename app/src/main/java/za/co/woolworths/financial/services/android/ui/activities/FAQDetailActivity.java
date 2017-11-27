@@ -9,11 +9,9 @@ import android.text.Html;
 import android.text.style.URLSpan;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.webkit.URLUtil;
 
 import com.awfs.coordination.R;
-
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseActivity;

@@ -21,7 +21,6 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
 
-
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;

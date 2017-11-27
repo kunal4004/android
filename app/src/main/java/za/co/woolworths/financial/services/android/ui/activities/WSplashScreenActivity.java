@@ -173,6 +173,7 @@ public class WSplashScreenActivity extends AppCompatActivity implements MediaPla
 					WoolworthsApplication.setRewardingLink(configResponse.defaults.getRewardingLink());
 					WoolworthsApplication.setHowToSaveLink(configResponse.defaults.getHowtosaveLink());
 					WoolworthsApplication.setWrewardsTCLink(configResponse.defaults.getWrewardsTCLink());
+					WoolworthsApplication.setPoiDocumentSizeLimit(configResponse.enviroment.getEmailSizeKB());
 
 					mWGlobalState.setStartRadius(configResponse.enviroment.getStoreStockLocatorConfigStartRadius());
 					mWGlobalState.setEndRadius(configResponse.enviroment.getStoreStockLocatorConfigEndRadius());

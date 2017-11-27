@@ -18,7 +18,7 @@ import com.google.gson.Gson;
 import java.text.ParseException;
 
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsSavingsHorizontalScrollAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.RecycleViewClickListner;
@@ -156,11 +156,11 @@ public class WRewardsSavingsFragment extends Fragment implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.savingSinceInfo:
-                Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INFO, getString(R.string.savings_info_message));
+                Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.INFO, getString(R.string.savings_info_message));
                 break;
 
             case R.id.yearToDateSpendInfo:
-                Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INFO, getString(R.string.savings_info_message));
+                Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.INFO, getString(R.string.savings_info_message));
                 break;
         }
     }
