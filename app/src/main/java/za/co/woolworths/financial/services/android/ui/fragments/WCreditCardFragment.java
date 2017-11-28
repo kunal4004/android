@@ -151,7 +151,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	private void addListener() {
 		tvViewTransaction.setOnClickListener(this);
-		tvIncreaseLimit.setOnClickListener(this);
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 	}
@@ -368,9 +367,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 			if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
 				mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
 				mIncreaseLimitController.disableView(llIncreaseLimitContainer);
+				mIncreaseLimitController.disableView(tvIncreaseLimit);
 			} else {
 				mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
 				mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+				mIncreaseLimitController.enableView(tvIncreaseLimit);
 			}
 
 			cliOfferStatus(offerActive);

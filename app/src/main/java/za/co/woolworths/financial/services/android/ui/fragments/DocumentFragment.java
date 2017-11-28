@@ -31,6 +31,7 @@ import com.google.gson.Gson;
 import java.util.List;
 import java.util.Random;
 
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
@@ -45,6 +46,7 @@ import za.co.woolworths.financial.services.android.models.rest.CLISendEmailReque
 import za.co.woolworths.financial.services.android.models.rest.CLIUpdateBankDetails;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentsAccountTypeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.POIDocumentSubmitTypeAdapter;
@@ -172,6 +174,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		onLoad(pbDeaBank);
 		cliDeaBankRequest();
 		loadPOIDocumentsSubmitTypeView();
+		showOneTimePopup();
 	}
 
 	private void connectionBroadcast() {
@@ -208,6 +211,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 							mDeaBankList.add(new Bank(n, otherBank, ""));
 						}
 						selectBankLayoutManager(mDeaBankList);
+
 						break;
 					case 440:
 						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), deaBankList
@@ -231,6 +235,18 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			}
 		});
 		cliGetDeaBank.execute();
+	}
+
+	public void showOneTimePopup() {
+		try {
+			String firstTime = Utils.getSessionDaoValue(getActivity(), SessionDao.KEY.PROOF_OF_INCOME);
+			if (firstTime == null) {
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.PROOF_OF_INCOME, "");
+				Utils.sessionDaoSave(getActivity(), SessionDao.KEY.PROOF_OF_INCOME, "1");
+			}
+		} catch (NullPointerException ignored) {
+		}
+
 	}
 
 	private void cliBankAccountTypeRequest() {
@@ -582,7 +598,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		int paddingPixel = 16;
 		float density = getActivity().getResources().getDisplayMetrics().density;
 		int paddingDp = (int) (paddingPixel * density);
-		int screenHeight = ilc.getScreenHeight(getActivity());
+		int screenHeight = (ilc.getScreenHeight(getActivity())) / 3;
 		if (defaultPaddingEnabled) {
 			view.setPadding(0, paddingDp, 0, 0);
 		} else {
@@ -608,7 +624,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 	public void updateBankDetails() {
 		disableSubmitButton();
 		UpdateBankDetail bankDetail = new UpdateBankDetail();
-		bankDetail.setCliOfferID(activeOfferObj.offer.offerId);
+		bankDetail.setCliOfferID(activeOfferObj.cliId);
 		bankDetail.setAccountType(getSelectedAccountType());
 		bankDetail.setBankName(getSelectedBankType());
 		bankDetail.setAccountNumber(etAccountNumber.getText().toString().trim());

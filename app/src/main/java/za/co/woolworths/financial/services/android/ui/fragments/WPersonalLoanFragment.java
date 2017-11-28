@@ -151,7 +151,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private void addListener() {
 		tvApplyNowIncreaseLimit.setOnClickListener(this);
 		tvViewTransaction.setOnClickListener(this);
-		tvIncreaseLimit.setOnClickListener(this);
 		relBalanceProtection.setOnClickListener(this);
 		mRelDrawnDownAmount.setOnClickListener(this);
 		relViewTransactions.setOnClickListener(this);
@@ -343,9 +342,11 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
 				mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
 				mIncreaseLimitController.disableView(llIncreaseLimitContainer);
+				mIncreaseLimitController.disableView(tvIncreaseLimit);
 			} else {
 				mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
 				mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+				mIncreaseLimitController.enableView(tvIncreaseLimit);
 			}
 			cliOfferStatus(offerActive);
 		}

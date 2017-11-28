@@ -169,7 +169,7 @@
     <string name="expenses_rental_payment_desc">Rent is the cost of your monthly accommodation</string>
     <string name="expenses_maintenance_payment_desc">Maintenance expenses refer to your monthly obligation to pay for statutory child etc.</string>
     <string name="expense_monthly_credit_payment_desc">Monthly Instalment of creditor account i.e: Credit Card, Personal Loan, Furniture Accounts etc.</string>
-    <string name="cli_overlay_all_expenses">All Other Expenses, i.e: groceries, transport, telephone/cellphone etc.</string>
+    <string name="cli_overlay_all_expenses">Other expenses refer to groceries, transport, costs etc.</string>
     <string name="cli_send_to_title">EMAIL SENT TO</string>
     <string name="cli_solvency_error">All fields are mandatory.\nIf not applicable, please enter R0.</string>
 
@@ -522,9 +522,9 @@ If we do not receive your proof of income within 30 (thirty) days from the date 
     <string name="status_apply_now">Apply Now</string>
     <string name="poi_income_detail_problem">There is a problem with the income details you submitted.</string>
     <string name="poi_problem_phone_no">+27 21 411 5000</string>
-    <string name="request_loan_amount">Requested Loan Amount:</string>
-    <string name="approximate_repayments">Approximate Repayments:</string>
-    <string name="term">Term:</string>
+    <string name="request_loan_amount">Current Credit Limit:</string>
+    <string name="approximate_repayments">Additional Credit Limit:</string>
+    <string name="term">New Credit Limit:</string>
     <string name="amount_too_low_modal_title">oops, incorrect Amount</string>
     <string name="amount_too_low_modal_desc">The amount you have entered is equal to, or less than your current credit limit. Please enter a larger amount.</string>
     <string name="amount_too_high_modal_desc">The amount that you have requested exceeds the maximum amount available to you. Please re-enter a lower amount.</string>
@@ -572,8 +572,7 @@ If we do not receive your proof of income within 30 (thirty) days from the date 
     <string name="read_less">\n\nLess.</string>
     <string name="proceed">proceed</string>
     <string name="status_complete">complete</string>
-    <string name="proof_of_income_popup_desc">Your credit limit increase is subject to the condition that you provide us with your proof of income within 30 (thirty) days from the date of accepting the credit limit increase.\n\nIf your proof of income shows a lower income to the amount that you disclosed to us, we will re-calculate your credit limit increase amount and notify you of your new credit limit increase and instalment.\n\nYou will not have access to your credit limit increase until we receive your proof of income.  If we do not receive your proof of income within 30 (thirty) days from the date of acceptance of the credit limit increase, the credit limit increase will lapse and you will have to submit a new application.
- </string>
+    <string name="proof_of_income_popup_desc">Your credit limit increase is subject to the condition that proof of income is provided within 30 (thirty) days from the date of accepting the credit limit increase. Submission outside this period will result in the lapse of the offer.\n\nIf your proof of income is lower than the amount you disclosed, we will re-calculate your credit limit increase amount and notify you accordingly. You will only have access to the credit limit increase once proof of income is received.</string>
     <string name="proof_of_income">PROOF OF INCOME</string>
     <string name="statement">statement</string>
     <string name="select_to_email_statement">select to email your statements</string>

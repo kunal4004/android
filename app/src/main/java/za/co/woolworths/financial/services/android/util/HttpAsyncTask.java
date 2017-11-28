@@ -103,8 +103,7 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
                         result = httpError(retrofitError.getMessage(), HttpErrorCode.UNKOWN_ERROR);
                     }
                 }
-            }
-            else {
+            } else {
                 throw new SocketTimeoutException("SocketTimeoutException");
             }
         }
