@@ -1,11 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import android.view.LayoutInflater;
 
@@ -14,6 +12,7 @@ import com.awfs.coordination.R;
 import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.Statement;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.StatementViewHolder> {
 
@@ -66,7 +65,8 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 			case HEADER_VIEW:
 				break;
 			case CONTENT_VIEW:
-				holder.populateMonth(statement);
+				holder.populateMonth(statement, holder.tvStatementName);
+				holder.selectedByUser(statement, holder.imCheckItem);
 				onClickListener(holder);
 				break;
 			default:
@@ -78,16 +78,12 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				int position = holder.getAdapterPosition();
-				Log.e("adapterPosition", String.valueOf(position));
 				statementListener.onItemClicked(v, holder.getAdapterPosition());
 			}
 		});
 		holder.tvViewStatement.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				int position = holder.getAdapterPosition();
-				Log.e("adapterPosition", String.valueOf(position));
 				statementListener.onViewClicked(v, holder.getAdapterPosition());
 			}
 		});
@@ -99,18 +95,26 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 	}
 
 	public class StatementViewHolder extends RecyclerView.ViewHolder {
-		private TextView tvStatementName, tvViewStatement;
+		private WTextView tvStatementName, tvViewStatement;
 		private ImageView imCheckItem;
 
 		public StatementViewHolder(View itemView) {
 			super(itemView);
-			tvStatementName = (TextView) itemView.findViewById(R.id.tvStatementName);
-			tvViewStatement = (TextView) itemView.findViewById(R.id.tvViewStatement);
+			tvStatementName = (WTextView) itemView.findViewById(R.id.tvStatementName);
+			tvViewStatement = (WTextView) itemView.findViewById(R.id.tvViewStatement);
 			imCheckItem = (ImageView) itemView.findViewById(R.id.imCheckItem);
 		}
 
-		public void populateMonth(Statement statement) {
+		public void populateMonth(Statement statement, WTextView tvStatementName) {
 			tvStatementName.setText(statement.getMonth());
+		}
+
+		public void selectedByUser(Statement statement, final ImageView imageView) {
+			if (statement.selectedByUser()) {
+				imageView.setImageResource(R.drawable.checked_item);
+			} else {
+				imageView.setImageResource(R.drawable.uncheck_item);
+			}
 		}
 	}
 
@@ -119,7 +123,12 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 		notifyItemInserted(mItems.size() - 1);
 	}
 
+	public ArrayList<Statement> getStatementList() {
+		return mItems;
+	}
+
 	public void refreshBlockOverlay(int position) {
 		notifyItemChanged(position);
 	}
+
 }

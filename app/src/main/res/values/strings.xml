@@ -577,4 +577,5 @@ If we do not receive your proof of income within 30 (thirty) days from the date 
     <string name="statement">statement</string>
     <string name="select_to_email_statement">select to email your statements</string>
     <string name="view">View</string>
+    <string name="email_statement">email statement</string>
 </resources>
