@@ -101,7 +101,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/cli_permission_description_text"
-                            android:text="@string/cli_eligibility_check_description"/>
+                            android:text="@string/account_type_info_desc"/>
 
                         <LinearLayout
                             android:layout_width="match_parent"
