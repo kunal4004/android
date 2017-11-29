@@ -33,7 +33,7 @@
 
     <fragment
         android:id="@+id/flEStatement"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.EStatementFragment"
+        android:name="za.co.woolworths.financial.services.android.ui.fragments.EmailStatementFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
