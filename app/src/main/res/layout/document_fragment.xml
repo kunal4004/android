@@ -23,7 +23,6 @@
                 android:orientation="vertical"
                 android:paddingBottom="70dp">
 
-
                 <za.co.woolworths.financial.services.android.ui.views.ReadMoreTextView
                     android:id="@+id/tvSelectYourBank"
                     android:layout_width="match_parent"
