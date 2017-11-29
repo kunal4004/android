@@ -86,6 +86,7 @@ public class EditSlideAmountFragment extends CLIFragment {
 				new WLoanEditTextView.OnKeyPreImeListener() {
 					@Override
 					public void onBackPressed() {
+						hideKeyboard();
 						Activity activity = getActivity();
 						if (activity instanceof CLIPhase2Activity) {
 							activity.onBackPressed();
@@ -140,14 +141,17 @@ public class EditSlideAmountFragment extends CLIFragment {
 	}
 
 	private void hideKeyboard() {
-		Activity activity = getActivity();
-		if (activity != null) {
-			View view = activity.getCurrentFocus();
-			if (view != null) {
-				InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-				assert imm != null;
-				imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+		try {
+			Activity activity = getActivity();
+			if (activity != null) {
+				View view = activity.getCurrentFocus();
+				if (view != null) {
+					InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+					assert imm != null;
+					imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+				}
 			}
+		} catch (Exception ignored) {
 		}
 	}
 
@@ -185,6 +189,7 @@ public class EditSlideAmountFragment extends CLIFragment {
 	public void onDestroy() {
 		super.onDestroy();
 		Activity activity = getActivity();
+		hideKeyboard();
 		if (activity != null) {
 			CLIPhase2Activity cliPhase2Activity = (CLIPhase2Activity) activity;
 			cliPhase2Activity.actionBarCloseIcon();
