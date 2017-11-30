@@ -110,5 +110,11 @@
     <dimen name="twenty_two_dp">22dp</dimen>
     <dimen name="eighteen_dp">18dp</dimen>
     <dimen name="twenty_six_dp">26dp</dimen>
+
+    <dimen name="cli_fifty_dp">50dp</dimen>
+    <dimen name="cli_sixteen_sp">16sp</dimen>
+    <dimen name="cli_fifteen_sp">15sp</dimen>
+    <dimen name="cli_twelve_sp">12sp</dimen>
+
 </resources>
 

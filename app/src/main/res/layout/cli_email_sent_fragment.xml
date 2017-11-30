@@ -9,10 +9,13 @@
 
     <ImageView
         android:id="@+id/imEmailSent"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:contentDescription="@string/cli_send_to_title"
-        app:srcCompat="@drawable/application_being_processed_image"/>
+        android:src="@drawable/process_complete_email_logo"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_editor_absoluteY="2dp"/>
 
     <LinearLayout
         android:id="@+id/llEmailSentContainer"

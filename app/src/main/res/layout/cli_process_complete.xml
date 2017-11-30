@@ -2,49 +2,45 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
     <ImageView
         android:id="@+id/imProcessComplete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:contentDescription="@string/process_complete_title"
+        android:src="@drawable/process_application_complete_logo"
+        app:layout_constraintBottom_toTopOf="@+id/tvProcessCompleteTitle"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/process_complete_logo"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvProcessCompleteTitle"
-        android:layout_width="match_parent"
+        style="@style/process_complete_cli_title_style"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/thirteen_dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"
-        android:gravity="center_horizontal"
-        android:letterSpacing="0.03"
-        android:lineSpacingExtra="2sp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginStart="@dimen/thirty_two_dp"
+        android:gravity="center"
         android:text="@string/process_complete_title"
-        android:textAllCaps="true"
-        android:textColor="@color/black"
-        android:textSize="@dimen/sixteen_sp"
         app:WTextView_font="medium_bold"
         app:layout_constraintBottom_toTopOf="@+id/tvProcessCompleteDesc"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imProcessComplete"/>
+        app:layout_constraintStart_toStartOf="parent"/>
+
 
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:id="@+id/tvProcessCompleteDesc"
         style="@style/style_text_description"
         android:layout_width="0dp"
-        android:layout_height="82dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="@dimen/cli_fifty_dp"
         android:text="@string/process_complete_desc"
         app:layout_constraintBottom_toTopOf="@+id/relProcessCompleteButtonContainer"
         app:layout_constraintEnd_toEndOf="parent"
@@ -54,9 +50,9 @@
         android:id="@+id/relProcessCompleteButtonContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginBottom="@dimen/thirty_two_dp"
+        android:layout_marginEnd="@dimen/thirty_two_dp"
+        android:layout_marginStart="@dimen/thirty_two_dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -64,11 +60,13 @@
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnProcessComplete"
             style="@style/whiteWButtonStyle"
+            android:layout_height="@dimen/cli_button_height_popup"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:gravity="center"
             android:text="@string/back_to_my_account"
             android:textColor="@color/black"
+            android:textSize="@dimen/cli_twelve_sp"
             app:WButton_font="medium_bold"/>
 
     </RelativeLayout>

@@ -192,7 +192,7 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">@dimen/twelve_sp</item>
         <item name="android:letterSpacing">0.2</item>
         <item name="android:stateListAnimator">@null</item>
     </style>
@@ -966,7 +966,7 @@
         <item name="android:gravity">center_horizontal</item>
         <item name="android:lineSpacingExtra">5sp</item>
         <item name="android:textColor">@color/black_50</item>
-        <item name="android:textSize">@dimen/fifteen_sp</item>
+        <item name="android:textSize">@dimen/cli_fifteen_sp</item>
         <item name="WTextView_font">myriadpro_regular</item>
     </style>
 
@@ -1011,6 +1011,19 @@
         <item name="android:layout_height">@dimen/sixteen_dp</item>
         <item name="android:layout_marginTop">@dimen/twenty_five_dp</item>
         <item name="android:background">@drawable/bg_top_bottom_divider</item>
+    </style>
+
+    <style name="process_complete_cli_title_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">32dp</item>
+        <item name="android:layout_marginStart">32dp</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:letterSpacing">0.03</item>
+        <item name="android:lineSpacingExtra">2sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/cli_sixteen_sp</item>
     </style>
 
 </resources>
