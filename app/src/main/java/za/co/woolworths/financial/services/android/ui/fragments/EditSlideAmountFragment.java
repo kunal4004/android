@@ -128,6 +128,7 @@ public class EditSlideAmountFragment extends CLIFragment {
 	private void init() {
 		etAmount = (WLoanEditTextView) view.findViewById(R.id.etAmount);
 		etAmount.requestFocus();
+		etAmount.addTextChangedListener(onTextChangedListener());
 		forceKeyboard(etAmount);
 	}
 
@@ -138,7 +139,6 @@ public class EditSlideAmountFragment extends CLIFragment {
 			assert imm != null;
 			imm.showSoftInput(etAmount, InputMethodManager.SHOW_IMPLICIT);
 			activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-			etAmount.addTextChangedListener(onTextChangedListener());
 		}
 	}
 
