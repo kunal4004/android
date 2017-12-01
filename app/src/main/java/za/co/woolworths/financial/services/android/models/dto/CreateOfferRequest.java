@@ -11,7 +11,7 @@ public class CreateOfferRequest {
 	private int maintenanceExpenseAmount;
 	private int totalCreditExpenseAmount;
 	private int otherExpenseAmount;
-	private boolean maxCreditRequested;
+	private boolean maxCreditRequested = true;
 
 	public CreateOfferRequest(boolean maxCreditRequested, int productOfferingId, int grossMonthlyIncome, int netMonthlyIncome, int additionalIncomeAmount, int mortgagePaymentAmount, int rentalPaymentAmount, int maintenanceExpenseAmount, int totalCreditExpenseAmount, int otherExpenseAmount) {
 		super();
