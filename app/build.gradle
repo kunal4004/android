@@ -3,8 +3,8 @@ apply plugin: 'com.android.application'
 android {
 
     def major = "5"
-    def minor = "4"
-    def fix = "4"
+    def minor = "5"
+    def fix = "0"
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
@@ -70,7 +70,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 125
+            versionCode 126
             versionName("5.4.4")
         }
 

@@ -23,8 +23,7 @@
                 android:orientation="vertical"
                 android:paddingBottom="70dp">
 
-
-                <za.co.woolworths.financial.services.android.ui.views.ReadMoreTextView
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/tvSelectYourBank"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -37,11 +36,7 @@
                     android:text="@string/select_your_bank_desc"
                     android:textColor="@color/black_50"
                     android:textSize="15sp"
-                    app:WTextView_font="myriadpro_regular"
-                    app:trimCollapsedText="@string/read_more"
-                    app:trimExpandedText="@string/read_less"
-                    app:trimLength="69"
-                    app:trimMode="trimModeLength"/>
+                    app:WTextView_font="myriadpro_regular"/>
 
                 <RelativeLayout
                     style="@style/increase_limit_relative_style"
@@ -106,7 +101,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/cli_permission_description_text"
-                            android:text="@string/cli_eligibility_check_description"/>
+                            android:text="@string/account_type_info_desc"/>
 
                         <LinearLayout
                             android:layout_width="match_parent"

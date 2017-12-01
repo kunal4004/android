@@ -484,7 +484,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 	private int calculateAdditionalAmount(int currentCreditLimit, String newCreditLimit) {
 		int mNewCreditLimit = Utils.numericFieldOnly(newCreditLimit);
-		return mNewCreditLimit - currentCreditLimit;
+		return mNewCreditLimit - currentCreditLimit + INCREASE_PROGRESS_BY;
 	}
 
 	private void progressColorFilter(ProgressBar progressBar, int color) {
@@ -586,7 +586,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		return new CreateOfferRequest(
 				maxCreditRequested,
 				WoolworthsApplication.getProductOfferingId(),
-				1000,
 				Integer.valueOf(hashIncomeDetail.get("GROSS_MONTHLY_INCOME")),
 				Integer.valueOf(hashIncomeDetail.get("NET_MONTHLY_INCOME")),
 				Integer.valueOf(hashIncomeDetail.get("ADDITIONAL_MONTHLY_INCOME")),
