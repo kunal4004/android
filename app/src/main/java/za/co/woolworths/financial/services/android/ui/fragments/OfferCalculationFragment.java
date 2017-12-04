@@ -173,6 +173,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 										sbSlideAmount.setProgress(busStation.getNumber());
 									}
 								});
+							} else if (object instanceof CustomPopUpWindow) {
+								if (mCliPhase2Activity != null)
+									mCliPhase2Activity.performClicked();
 							}
 						}
 					}));
@@ -222,9 +225,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					default:
-						hideDeclineButton();
-						hideView(llNextButtonLayout);
-						mErrorHandlerView.responseError(view, "");
+						displayMessageError(mObjOffer);
 						break;
 				}
 				loadSuccess();
@@ -265,9 +266,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					default:
-						hideDeclineButton();
-						hideView(llNextButtonLayout);
-						mErrorHandlerView.responseError(view, "");
+						displayMessageError(mObjOffer);
 						break;
 				}
 				onLoadComplete();
@@ -598,29 +597,54 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	}
 
 	public void displayApplication(OfferActive mObjOffer) {
-		showDeclineButton();
 		if (mObjOffer != null) {
-			Offer offer = mObjOffer.offer;
-			mCurrentCredit = offer.currCredit + INCREASE_PROGRESS_BY;
-			String nextStep = mObjOffer.nextStep;
-			if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_offer))
-					|| nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required))) {
-				mCreditRequestMax = offer.creditRequestMax;
-				int mDifferenceCreditLimit = (mCreditRequestMax - mCurrentCredit);
-				mCLiId = mObjOffer.cliId;
-				sbSlideAmount.setMax(mDifferenceCreditLimit);
-				sbSlideAmount.incrementProgressBy(INCREASE_PROGRESS_BY);
-				animSeekBarToMaximum();
-				tvCurrentCreditLimitAmount.setText(formatAmount(mCurrentCredit - INCREASE_PROGRESS_BY));
-				tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
-				tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
-				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
-				mGlobalState.setDecisionDeclineOffer(new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, false));
-				onLoadComplete();
-			} else {
-				finishActivity(mObjOffer);
+			showDeclineButton();
+			switch (mObjOffer.httpCode) {
+				case 200:
+					Offer offer = mObjOffer.offer;
+					mCurrentCredit = offer.currCredit + INCREASE_PROGRESS_BY;
+					String nextStep = mObjOffer.nextStep;
+					if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_offer))
+							|| nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required))) {
+						mCreditRequestMax = offer.creditRequestMax;
+						int mDifferenceCreditLimit = (mCreditRequestMax - mCurrentCredit);
+						mCLiId = mObjOffer.cliId;
+						sbSlideAmount.setMax(mDifferenceCreditLimit);
+						sbSlideAmount.incrementProgressBy(INCREASE_PROGRESS_BY);
+						animSeekBarToMaximum();
+						tvCurrentCreditLimitAmount.setText(formatAmount(mCurrentCredit - INCREASE_PROGRESS_BY));
+						tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
+						tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
+						int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
+						mGlobalState.setDecisionDeclineOffer(new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, false));
+						onLoadComplete();
+					} else {
+						declineMessage(mObjOffer);
+					}
+					break;
+				case 440:
+					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
+					break;
+
+				default:
+					displayMessageError(mObjOffer);
+					break;
 			}
 		}
+	}
+
+	private void displayMessageError(OfferActive mObjOffer) {
+		if (mCliPhase2Activity != null)
+			mCliPhase2Activity.hideCloseIcon();
+		onLoadComplete();
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, mObjOffer.response.desc);
+	}
+
+	private void declineMessage(OfferActive mObjOffer) {
+		if (mCliPhase2Activity != null)
+			mCliPhase2Activity.hideCloseIcon();
+		onLoadComplete();
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, mObjOffer.offer.declineMessage);
 	}
 
 	public void setInvisibleView(View invisibleView) {

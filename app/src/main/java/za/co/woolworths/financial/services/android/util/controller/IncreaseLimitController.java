@@ -82,6 +82,9 @@ public class IncreaseLimitController {
 		String nextStep = offerActive.nextStep;
 		String messageSummary = offerActive.messageSummary;
 		String messageDetail = offerActive.messageDetail;
+		tvIncreaseLimit.setText(getString(R.string.increase_limit));
+		hideView(llCommonLayer);
+		hideView(tvIncreaseLimitDescription);
 		setNextStep(nextStep);
 		boolean activeOffer = false;
 		if (offerActive != null) {

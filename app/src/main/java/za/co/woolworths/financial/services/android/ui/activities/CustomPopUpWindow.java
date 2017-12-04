@@ -24,6 +24,7 @@ import java.util.Map;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -44,8 +45,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	public enum MODAL_LAYOUT {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
-		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
-		CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME
+		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO, CLI_ERROR, CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME
 	}
 
 	MODAL_LAYOUT current_view;
@@ -156,6 +156,28 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					mDescriptionOverlay.setText(description);
 				mBtnOverlay.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
+				break;
+
+			case CLI_ERROR:
+				setContentView(R.layout.error_popup);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				WButton btnOverlay = (WButton) findViewById(R.id.btnOverlay);
+				WTextView descriptionOverlay = (WTextView) findViewById(R.id.overlayDescription);
+				if (description != null)
+					descriptionOverlay.setText(description);
+				btnOverlay.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						exitCLIAnimation();
+					}
+				});
+				mRelPopContainer.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						exitCLIAnimation();
+					}
+				});
 				break;
 
 			case EMAIL:
@@ -687,6 +709,32 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	private void runningActivityState(boolean state) {
 		if (mWGlobalState != null) {
 			mWGlobalState.setDefaultPopupState(state);
+		}
+	}
+
+	private void exitCLIAnimation() {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					dismissLayout();
+					woolworthsApplication.bus().send(new CustomPopUpWindow());
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
 		}
 	}
 
