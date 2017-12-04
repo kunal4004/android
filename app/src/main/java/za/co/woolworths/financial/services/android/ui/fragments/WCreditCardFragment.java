@@ -102,6 +102,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 							if (object instanceof BusStation) {
 								BusStation busStation = (BusStation) object;
 								OfferActive offerActive = busStation.getOfferActive();
+								hideCLIView();
 								if (offerActive != null) {
 									cliOfferStatus(offerActive);
 								} else if (busStation.makeApiCall()) {
@@ -395,4 +396,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private void cliOfferStatus(OfferActive offerActive) {
 		mIncreaseLimitController.accountCLIStatus(llCommonLayer, tvIncreaseLimit, tvApplyNowIncreaseLimit, tvIncreaseLimitDescription, logoIncreaseLimit, offerActive);
 	}
+
+	private void hideCLIView() {
+		mIncreaseLimitController.cliDefaultView(llCommonLayer, tvIncreaseLimitDescription);
+	}
+
 }
