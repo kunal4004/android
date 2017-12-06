@@ -378,7 +378,7 @@ public class IncreaseLimitController {
 		Context context = mContext;
 		Activity activity = (Activity) context;
 		if (activity != null) {
-			int screenHeight = getScreenHeight(activity);
+			int screenHeight = getScreenHeight(activity) / 4;
 			view.setPadding(0, 0, 0, screenHeight);
 		}
 	}
