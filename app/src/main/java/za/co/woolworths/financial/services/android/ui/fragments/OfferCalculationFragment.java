@@ -578,13 +578,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	}
 
 	public CreateOfferRequest createOffer
-			(OfferActive offerActive, HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
-		boolean maxCreditRequested = false;
-		if (offerActive.application != null) {
-			maxCreditRequested = offerActive.application.maxCreditRequested;
-		}
+			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
 		return new CreateOfferRequest(
-				maxCreditRequested,
 				WoolworthsApplication.getProductOfferingId(),
 				Integer.valueOf(hashIncomeDetail.get("GROSS_MONTHLY_INCOME")),
 				Integer.valueOf(hashIncomeDetail.get("NET_MONTHLY_INCOME")),
@@ -727,11 +722,11 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	public void cliApplicationRequest(EventStatus eventStatus) {
 		switch (eventStatus) {
 			case CREATE_APPLICATION:
-				cliCreateApplication(createOffer(mObjOffer, mHashIncomeDetail, mHashExpenseDetail));
+				cliCreateApplication(createOffer(mHashIncomeDetail, mHashExpenseDetail));
 				break;
 
 			case UPDATE_APPLICATION:
-				cliUpdateApplication(createOffer(mObjOffer, mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mCLiId));
+				cliUpdateApplication(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mCLiId));
 				break;
 			default:
 				displayApplication(mObjOffer);
