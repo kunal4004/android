@@ -395,7 +395,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				WTextView mCLIDeclineDesc = (WTextView) findViewById(R.id.textProofIncome);
 				if (description != null)
 					mCLIDeclineDesc.setText(description);
-				if(title!=null)
+				if (title != null)
 					mCLIDeclineTitle.setText(title);
 				mCLIDeclineOk.setOnClickListener(new View.OnClickListener() {
 					@Override
