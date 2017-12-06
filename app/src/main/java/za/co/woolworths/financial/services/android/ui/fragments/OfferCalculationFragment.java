@@ -225,7 +225,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					default:
-						displayMessageError(mObjOffer);
+						displayMessageError();
 						break;
 				}
 				loadSuccess();
@@ -266,7 +266,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					default:
-						displayMessageError(mObjOffer);
+						displayMessageError();
 						break;
 				}
 				onLoadComplete();
@@ -618,8 +618,11 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
 						mGlobalState.setDecisionDeclineOffer(new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, false));
 						onLoadComplete();
-					} else {
-						declineMessage(mObjOffer);
+					} else if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_decline))){
+						declineMessage();
+					}
+					else {
+						displayMessageError();
 					}
 					break;
 				case 440:
@@ -627,24 +630,24 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					break;
 
 				default:
-					displayMessageError(mObjOffer);
+					displayMessageError();
 					break;
 			}
 		}
 	}
 
-	private void displayMessageError(OfferActive mObjOffer) {
+	private void displayMessageError() {
 		if (mCliPhase2Activity != null)
 			mCliPhase2Activity.hideCloseIcon();
 		onLoadComplete();
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, mObjOffer.response.desc);
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, getString(R.string.cli_create_application_error_message));
 	}
 
-	private void declineMessage(OfferActive mObjOffer) {
+	private void declineMessage() {
 		if (mCliPhase2Activity != null)
 			mCliPhase2Activity.hideCloseIcon();
 		onLoadComplete();
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, mObjOffer.offer.declineMessage);
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_DECLINE, getString(R.string.cli_declined_popup_title),getString(R.string.cli_declined_popup_description));
 	}
 
 	public void setInvisibleView(View invisibleView) {

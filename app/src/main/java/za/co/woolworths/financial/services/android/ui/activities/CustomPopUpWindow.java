@@ -45,7 +45,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	public enum MODAL_LAYOUT {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
-		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO, CLI_ERROR, CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME
+		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO, CLI_ERROR, CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME, CLI_DECLINE
 	}
 
 	MODAL_LAYOUT current_view;
@@ -385,6 +385,30 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				WButton btnOk = (WButton) findViewById(R.id.btnOk);
 				mRelPopContainer.setOnClickListener(this);
 				btnOk.setOnClickListener(this);
+				break;
+			case CLI_DECLINE:
+				setContentView(R.layout.lw_too_high_error);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				WButton mCLIDeclineOk = (WButton) findViewById(R.id.btnLoanHighOk);
+				WTextView mCLIDeclineTitle = (WTextView) findViewById(R.id.title);
+				WTextView mCLIDeclineDesc = (WTextView) findViewById(R.id.textProofIncome);
+				if (description != null)
+					mCLIDeclineDesc.setText(description);
+				if(title!=null)
+					mCLIDeclineTitle.setText(title);
+				mCLIDeclineOk.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						exitCLIAnimation();
+					}
+				});
+				mRelPopContainer.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						exitCLIAnimation();
+					}
+				});
 				break;
 			default:
 				break;
