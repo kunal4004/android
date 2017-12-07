@@ -36,7 +36,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
-import za.co.woolworths.financial.services.android.ui.activities.EStatementActivity;
+import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -255,7 +255,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 			case R.id.rlViewStatement:
 				Activity activity = getActivity();
 				if (activity != null) {
-					Intent openStatement = new Intent(getActivity(), EStatementActivity.class);
+					Intent openStatement = new Intent(getActivity(), StatementActivity.class);
 					startActivity(openStatement);
 					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				}

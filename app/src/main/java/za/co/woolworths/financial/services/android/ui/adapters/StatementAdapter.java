@@ -11,10 +11,11 @@ import com.awfs.coordination.R;
 
 import java.util.ArrayList;
 
-import za.co.woolworths.financial.services.android.models.dto.Statement;
+import za.co.woolworths.financial.services.android.models.dto.statement.Statement;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.StatementViewHolder> {
+
 
 	public interface StatementListener {
 		void onItemClicked(View v, int position);
@@ -66,7 +67,8 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 				break;
 			case CONTENT_VIEW:
 				holder.populateMonth(statement, holder.tvStatementName);
-				holder.selectedByUser(statement, holder.imCheckItem);
+				holder.updateCheckStatementUI(statement, holder.imCheckItem);
+				holder.updateViewStatementUI(statement, holder.tvViewStatement);
 				onClickListener(holder);
 				break;
 			default:
@@ -105,15 +107,23 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 			imCheckItem = (ImageView) itemView.findViewById(R.id.imCheckItem);
 		}
 
-		public void populateMonth(Statement statement, WTextView tvStatementName) {
-			tvStatementName.setText(statement.getMonth());
+		public void populateMonth(Statement statement, WTextView view) {
+			view.setText(statement.docDesc);
 		}
 
-		public void selectedByUser(Statement statement, final ImageView imageView) {
+		public void updateCheckStatementUI(Statement statement, final ImageView view) {
 			if (statement.selectedByUser()) {
-				imageView.setImageResource(R.drawable.checked_item);
+				view.setImageResource(R.drawable.checked_item);
 			} else {
-				imageView.setImageResource(R.drawable.uncheck_item);
+				view.setImageResource(R.drawable.uncheck_item);
+			}
+		}
+
+		public void updateViewStatementUI(Statement statement, WTextView view) {
+			if (statement.getStatementView()) {
+				view.setVisibility(View.GONE);
+			} else {
+				view.setVisibility(View.VISIBLE);
 			}
 		}
 	}
@@ -131,4 +141,12 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 		notifyItemChanged(position);
 	}
 
+	public void updateStatementViewState(boolean value) {
+		int index = 0;
+		for (Statement statement : mItems) {
+			statement.showStatementView(value);
+			refreshBlockOverlay(index);
+			index++;
+		}
+	}
 }

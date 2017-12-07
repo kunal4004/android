@@ -53,11 +53,13 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
@@ -448,6 +450,16 @@ public class Utils {
 		return historyList;
 	}
 
+	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key) {
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("description", "");
+		openMsg.putExtras(args);
+		context.startActivity(openMsg);
+		((AppCompatActivity) context).overridePendingTransition(0, 0);
+	}
+
 	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description) {
 		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
 		Bundle args = new Bundle();
@@ -816,5 +828,16 @@ public class Utils {
 				+ "?subject=" + "" + "&body=" + "");
 		intent.setData(data);
 		activity.startActivity(intent);
+	}
+
+	private static Calendar getCurrentInstance() {
+		return Calendar.getInstance(Locale.ENGLISH);
+	}
+
+	public static String getDate(int month) {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		cal.add(Calendar.MONTH, -month);
+		return sdf.format(cal.getTime());
 	}
 }

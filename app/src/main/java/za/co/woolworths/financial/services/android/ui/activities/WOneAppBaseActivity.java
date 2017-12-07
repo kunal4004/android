@@ -106,8 +106,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 				}
 			}
 		}
-
-		startActivity(new Intent(this, EStatementActivity.class));
 		initGetVouchersCall();
 	}
 

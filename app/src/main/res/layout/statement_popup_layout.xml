@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/relPopContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#8c000000"
+                android:gravity="bottom">
+
+    <RelativeLayout
+        android:id="@+id/relContainerRootMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        tools:ignore="UselessParent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="bottom|center_horizontal"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/bank_spacing_width"
+            android:paddingRight="@dimen/bank_spacing_width">
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvStatementSendTo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/eight_dp"
+                android:layout_marginTop="@dimen/thirty_two_dot_five_dp"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.27"
+                android:text="@string/statement_sent_to_title"
+                android:textColor="@color/statement_title"
+                android:textSize="@dimen/fifteen_sp"
+                app:WTextView_font="myriadpro_regular"/>
+
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvSendEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/thirty_three_dp"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.13"
+                android:text="****@emailaddress.com"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sixteen_sp"
+                app:WTextView_font="medium"/>
+
+            <RelativeLayout
+                android:id="@+id/relNextButton"
+                style="@style/blackButtonStyle"
+                android:layout_marginBottom="@dimen/thirty_two_dp"
+                android:background="@drawable/button_disable_color"
+                android:gravity="center">
+
+                <ProgressBar
+                    android:id="@+id/mWoolworthsProgressBar"
+                    style="@style/progress_button_style"/>
+
+                <za.co.woolworths.financial.services.android.ui.views.WButton
+                    android:id="@+id/btnConfirmEmail"
+                    style="@style/blackButtonStyle"
+                    android:background="@drawable/button_disable_color"
+                    android:gravity="center"
+                    android:letterSpacing="0.1"
+                    android:lineSpacingMultiplier="1.08"
+                    android:text="@string/confirm_email"
+                    android:textColor="@color/text_color_selector"
+                    android:textSize="@dimen/twelve_sp"
+                    app:WButton_font="medium_bold"/>
+            </RelativeLayout>
+
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/tvSendDifferentEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/thirty_four_dot_five_dp"
+                android:background="@drawable/underline_drawable"
+                android:gravity="center"
+                android:letterSpacing="0.2"
+                android:lineSpacingMultiplier="1.08"
+                android:paddingBottom="@dimen/four_dp"
+                android:text="@string/or_send_to_different_email"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="@dimen/twelve_sp"
+                app:WTextView_font="medium"/>
+
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

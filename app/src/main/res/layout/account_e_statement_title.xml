@@ -11,7 +11,8 @@
     <za.co.woolworths.financial.services.android.ui.views.WTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:letterSpacing="0.08"
+        android:letterSpacing="0.1"
+        android:lineSpacingMultiplier="1.67"
         android:paddingBottom="@dimen/sixteen_dp"
         android:paddingTop="@dimen/twenty_dp"
         android:text="@string/select_to_email_statement"

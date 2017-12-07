@@ -25,28 +25,24 @@ public class FragmentUtils {
 	}
 
 	public void currentFragment(AppCompatActivity activity, Fragment nextFragment, int fragmentId) {
-		hideSoftKeyboard();
 		FragmentManager fragmentManager = activity.getSupportFragmentManager();
 		fragmentManager.beginTransaction()
 				.replace(fragmentId, nextFragment).commit();
 	}
 
 	public void nextFragment(FragmentManager fragmentManager, Fragment nextFragment, int fragmentId) {
-		hideSoftKeyboard();
 		fragmentManager.beginTransaction()
 				.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
 				.replace(fragmentId, nextFragment).commit();
 	}
 
 	public void currentFragment(AppCompatActivity activity, FragmentManager fm, Fragment newFragment, int fragmentId) {
-		hideSoftKeyboard();
 		FragmentManager fragmentManager = activity.getSupportFragmentManager();
 		fragmentManager.beginTransaction().replace(fragmentId, newFragment).commit();
 	}
 
 
 	public void nextFragment(AppCompatActivity activity, FragmentTransaction fragmentTransaction, Fragment fragment, int fragmentId) {
-		hideSoftKeyboard();
 		FragmentManager fragmentManager = activity.getSupportFragmentManager();
 		if (animate) {
 			fragmentTransaction
@@ -61,27 +57,10 @@ public class FragmentUtils {
 	}
 
 	public void nextFragment(AppCompatActivity activity, FragmentManager fragmentManager, Fragment fragment, int fragmentId) {
-		hideSoftKeyboard();
 		fragmentManager.beginTransaction()
 				.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
 				.replace(fragmentId, fragment).addToBackStack(fragment.getClass().getSimpleName()).commit();
 		fragmentManager.executePendingTransactions();
-	}
-
-	/**
-	 * Hides the soft keyboard
-	 */
-	public void hideSoftKeyboard() {
-		try {
-//			final Activity activity = (Activity) mContext;
-//			if (activity != null) {
-//				if (activity.getCurrentFocus() != null) {
-//					InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(INPUT_METHOD_SERVICE);
-//					inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-//				}
-//			}
-		} catch (Exception ignored) {
-		}
 	}
 
 }

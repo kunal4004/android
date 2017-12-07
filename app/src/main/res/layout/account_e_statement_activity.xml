@@ -15,14 +15,14 @@
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/toolbarText"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="left|center_vertical"
+            android:layout_height="wrap_content"
             android:letterSpacing="0.2"
             android:text="@string/statement"
             android:textAllCaps="true"
             android:textColor="@color/black"
             android:textSize="12sp"
             app:WTextView_font="medium_bold"/>
+
 
     </android.support.v7.widget.Toolbar>
 
@@ -31,9 +31,8 @@
         android:layout_height="0.1dp"
         android:background="@color/black_desc_opacity"/>
 
-    <fragment
+    <FrameLayout
         android:id="@+id/flEStatement"
-        android:name="za.co.woolworths.financial.services.android.ui.fragments.EmailStatementFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />

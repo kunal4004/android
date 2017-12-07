@@ -195,7 +195,6 @@ public class SupplyIncomeDetailFragment extends CLIFragment implements View.OnCl
 			case R.id.btnContinue:
 			case R.id.llNextButtonLayout:
 				FragmentUtils fragmentUtils = new FragmentUtils(getActivity());
-				fragmentUtils.hideSoftKeyboard();
 				HashMap<String, String> hmIncomeDetail = mIncreaseLimitController.incomeHashMap(etGrossMonthlyIncome, etNetMonthlyIncome, etAdditionalMonthlyIncome);
 				Bundle bundle = new Bundle();
 				bundle.putSerializable(IncreaseLimitController.INCOME_DETAILS, hmIncomeDetail);

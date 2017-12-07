@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments;
+package za.co.woolworths.financial.services.android.ui.fragments.statement;
 
 import android.app.Fragment;
 import android.os.Bundle;

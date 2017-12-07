@@ -37,7 +37,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
-import za.co.woolworths.financial.services.android.ui.activities.EStatementActivity;
+import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -85,6 +85,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private RelativeLayout rlViewStatement;
+	private AccountsResponse accountsResponse;
 
 	@Nullable
 	@Override
@@ -204,7 +205,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		bolBroacastRegistred = true;
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
 		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+		accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		bindData(accountsResponse);
 		onLoadComplete();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
@@ -245,7 +246,11 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			case R.id.rlViewStatement:
 				Activity activity = getActivity();
 				if (activity != null) {
-					Intent openStatement = new Intent(getActivity(), EStatementActivity.class);
+					((WoolworthsApplication) WStoreCardFragment.this.getActivity().getApplication())
+							.getUserManager
+									().getAccounts();
+					Intent openStatement = new Intent(getActivity(), StatementActivity.class);
+					//Statement statement = new Statement(productOfferingId);
 					startActivity(openStatement);
 					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				}

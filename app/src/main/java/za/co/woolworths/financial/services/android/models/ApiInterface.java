@@ -7,6 +7,7 @@ import retrofit.http.DELETE;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.Headers;
+import retrofit.http.PATCH;
 import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Path;
@@ -19,7 +20,6 @@ import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRespo
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.CLICreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
-import za.co.woolworths.financial.services.android.models.dto.CliPoiOriginResponse;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
@@ -38,11 +38,11 @@ import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
-import za.co.woolworths.financial.services.android.models.dto.POIDocumentUploadResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
+import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
@@ -624,4 +624,39 @@ public interface ApiInterface {
 			@Header("os") String os,
 			@Header("osVersion") String osVersion,
 			@Header("sessionToken") String sessionToken);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@GET("/user/statements")
+	StatementResponse getStatements(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("userAgent") String userAgent,
+			@Header("userAgentVersion") String userAgentVersion,
+			@Header("sessionToken") String sessionToken,
+			@Query("productOfferingId") String productOfferingId,
+			@Query("accountNumber") String accountNumber,
+			@Query("startDate") String startDate,
+			@Query("endDate") String endDate);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@GET("/user/statements/{docId}")
+	StatementResponse getPDF(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("userAgent") String userAgent,
+			@Header("userAgentVersion") String userAgentVersion,
+			@Header("sessionToken") String sessionToken,
+			@Path("docId") String docId,
+			@Query("productOfferingId") String productOfferingId,
+			@Query("accno") String accno);
 }

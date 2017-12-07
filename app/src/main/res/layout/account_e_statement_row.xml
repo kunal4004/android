@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/statement_line_drawable"
-    android:paddingBottom="@dimen/twenty_nine_dp"
-    android:paddingEnd="@dimen/sixteen_dp"
-    android:paddingStart="@dimen/sixteen_dp"
-    android:paddingTop="@dimen/thirty_one_dp">
+    android:paddingBottom="@dimen/twenty_eight_dp"
+    android:paddingEnd="@dimen/twenty_four_dp"
+    android:paddingStart="@dimen/twenty_four_dp"
+    android:paddingTop="@dimen/thirty_dp">
 
     <ImageView
         android:id="@+id/imCheckItem"
@@ -42,11 +42,13 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/tvStatementName"
         android:gravity="center_vertical"
-        android:letterSpacing="0.17"
+        android:letterSpacing="0.2"
+        android:lineSpacingMultiplier="1.08"
         android:text="@string/view"
         android:textAllCaps="true"
-        android:textColor="@color/black"
+        android:textColor="@color/view_statement_black"
         android:textSize="12sp"
         app:WTextView_font="medium"/>
+
 
 </RelativeLayout>
