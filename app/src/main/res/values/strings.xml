@@ -573,4 +573,7 @@
     <string name="proof_of_income_popup_desc">Your credit limit increase is subject to the condition that proof of income is provided within 30 (thirty) days from the date of accepting the credit limit increase. Submission outside this period will result in the lapse of the offer.\n\nIf your proof of income is lower than the amount you disclosed, we will re-calculate your credit limit increase amount and notify you accordingly. You will only have access to the credit limit increase once proof of income is received.</string>
     <string name="proof_of_income">PROOF OF INCOME</string>
     <string name="account_type_info_desc">I agree that Woolworths Financial Services may request  my latest 3 months bank statements directly from my bank.</string>
+    <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
+    <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>
+    <string name="cli_create_application_error_message">Unfortunately we cannot proceed with your application</string>
 </resources>

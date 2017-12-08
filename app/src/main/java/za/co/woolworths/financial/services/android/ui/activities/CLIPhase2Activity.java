@@ -191,6 +191,10 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 		imBack.setImageResource(R.drawable.close_24);
 	}
 
+	public void performClicked() {
+		imBack.performClick();
+	}
+
 	public void actionBarBackIcon() {
 		setCloseButtonEnabled(false);
 		imBack.setImageResource(R.drawable.back24);

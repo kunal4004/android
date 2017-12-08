@@ -173,6 +173,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 										sbSlideAmount.setProgress(busStation.getNumber());
 									}
 								});
+							} else if (object instanceof CustomPopUpWindow) {
+								if (mCliPhase2Activity != null)
+									mCliPhase2Activity.performClicked();
 							}
 						}
 					}));
@@ -222,9 +225,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					default:
-						hideDeclineButton();
-						hideView(llNextButtonLayout);
-						mErrorHandlerView.responseError(view, "");
+						displayMessageError();
 						break;
 				}
 				loadSuccess();
@@ -265,9 +266,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					default:
-						hideDeclineButton();
-						hideView(llNextButtonLayout);
-						mErrorHandlerView.responseError(view, "");
+						displayMessageError();
 						break;
 				}
 				onLoadComplete();
@@ -578,13 +577,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	}
 
 	public CreateOfferRequest createOffer
-			(OfferActive offerActive, HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
-		boolean maxCreditRequested = false;
-		if (offerActive.application != null) {
-			maxCreditRequested = offerActive.application.maxCreditRequested;
-		}
+			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
 		return new CreateOfferRequest(
-				maxCreditRequested,
 				WoolworthsApplication.getProductOfferingId(),
 				Integer.valueOf(hashIncomeDetail.get("GROSS_MONTHLY_INCOME")),
 				Integer.valueOf(hashIncomeDetail.get("NET_MONTHLY_INCOME")),
@@ -598,29 +592,57 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	}
 
 	public void displayApplication(OfferActive mObjOffer) {
-		showDeclineButton();
 		if (mObjOffer != null) {
-			Offer offer = mObjOffer.offer;
-			mCurrentCredit = offer.currCredit + INCREASE_PROGRESS_BY;
-			String nextStep = mObjOffer.nextStep;
-			if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_offer))
-					|| nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required))) {
-				mCreditRequestMax = offer.creditRequestMax;
-				int mDifferenceCreditLimit = (mCreditRequestMax - mCurrentCredit);
-				mCLiId = mObjOffer.cliId;
-				sbSlideAmount.setMax(mDifferenceCreditLimit);
-				sbSlideAmount.incrementProgressBy(INCREASE_PROGRESS_BY);
-				animSeekBarToMaximum();
-				tvCurrentCreditLimitAmount.setText(formatAmount(mCurrentCredit - INCREASE_PROGRESS_BY));
-				tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
-				tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
-				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
-				mGlobalState.setDecisionDeclineOffer(new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, false));
-				onLoadComplete();
-			} else {
-				finishActivity(mObjOffer);
+			showDeclineButton();
+			switch (mObjOffer.httpCode) {
+				case 200:
+					Offer offer = mObjOffer.offer;
+					mCurrentCredit = offer.currCredit + INCREASE_PROGRESS_BY;
+					String nextStep = mObjOffer.nextStep;
+					if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_offer))
+							|| nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required))) {
+						mCreditRequestMax = offer.creditRequestMax;
+						int mDifferenceCreditLimit = (mCreditRequestMax - mCurrentCredit);
+						mCLiId = mObjOffer.cliId;
+						sbSlideAmount.setMax(mDifferenceCreditLimit);
+						sbSlideAmount.incrementProgressBy(INCREASE_PROGRESS_BY);
+						animSeekBarToMaximum();
+						tvCurrentCreditLimitAmount.setText(formatAmount(mCurrentCredit - INCREASE_PROGRESS_BY));
+						tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
+						tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
+						int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
+						mGlobalState.setDecisionDeclineOffer(new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, false));
+						onLoadComplete();
+					} else if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_decline))){
+						declineMessage();
+					}
+					else {
+						displayMessageError();
+					}
+					break;
+				case 440:
+					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
+					break;
+
+				default:
+					displayMessageError();
+					break;
 			}
 		}
+	}
+
+	private void displayMessageError() {
+		if (mCliPhase2Activity != null)
+			mCliPhase2Activity.hideCloseIcon();
+		onLoadComplete();
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, getString(R.string.cli_create_application_error_message));
+	}
+
+	private void declineMessage() {
+		if (mCliPhase2Activity != null)
+			mCliPhase2Activity.hideCloseIcon();
+		onLoadComplete();
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_DECLINE, getString(R.string.cli_declined_popup_title),getString(R.string.cli_declined_popup_description));
 	}
 
 	public void setInvisibleView(View invisibleView) {
@@ -727,11 +749,11 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	public void cliApplicationRequest(EventStatus eventStatus) {
 		switch (eventStatus) {
 			case CREATE_APPLICATION:
-				cliCreateApplication(createOffer(mObjOffer, mHashIncomeDetail, mHashExpenseDetail));
+				cliCreateApplication(createOffer(mHashIncomeDetail, mHashExpenseDetail));
 				break;
 
 			case UPDATE_APPLICATION:
-				cliUpdateApplication(createOffer(mObjOffer, mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mCLiId));
+				cliUpdateApplication(createOffer(mHashIncomeDetail, mHashExpenseDetail), String.valueOf(mCLiId));
 				break;
 			default:
 				displayApplication(mObjOffer);

@@ -78,13 +78,24 @@ public class IncreaseLimitController {
 		editTextView.setSelection(editTextView.getText().length());
 	}
 
+	public void cliDefaultView(LinearLayout llCommonLayer, WTextView tvIncreaseLimitDescription){
+		hideView(llCommonLayer);
+		hideView(tvIncreaseLimitDescription);
+	}
+
 	public void accountCLIStatus(LinearLayout llCommonLayer, WTextView tvIncreaseLimit, WTextView tvApplyNowIncreaseLimit, WTextView tvIncreaseLimitDescription, ImageView logoIncreaseLimit, OfferActive offerActive) {
-		String nextStep = offerActive.nextStep;
-		String messageSummary = offerActive.messageSummary;
-		String messageDetail = offerActive.messageDetail;
-		setNextStep(nextStep);
+		tvIncreaseLimit.setText(getString(R.string.increase_limit));
+		hideView(llCommonLayer);
+		hideView(tvIncreaseLimitDescription);
 		boolean activeOffer = false;
+		String nextStep = "";
+		String messageSummary = "";
+		String messageDetail = "";
 		if (offerActive != null) {
+			nextStep = offerActive.nextStep;
+			messageSummary = offerActive.messageSummary;
+			messageDetail = offerActive.messageDetail;
+			setNextStep(nextStep);
 			if (offerActive.offerActive != null) {
 				activeOffer = offerActive.offerActive;
 			}
@@ -92,6 +103,8 @@ public class IncreaseLimitController {
 				messageSummary = "";
 				messageDetail = "";
 			}
+		} else {
+			return;
 		}
 		setOfferActive(activeOffer);
 		if (messageSummary.equalsIgnoreCase(getString(R.string.status_apply_now))) {
@@ -378,7 +391,7 @@ public class IncreaseLimitController {
 		Context context = mContext;
 		Activity activity = (Activity) context;
 		if (activity != null) {
-			int screenHeight = getScreenHeight(activity);
+			int screenHeight = getScreenHeight(activity) / 4;
 			view.setPadding(0, 0, 0, screenHeight);
 		}
 	}
