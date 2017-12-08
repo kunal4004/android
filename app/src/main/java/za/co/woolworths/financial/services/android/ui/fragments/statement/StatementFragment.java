@@ -1,14 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.fragments.statement;
 
-
 import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,19 +18,17 @@ import com.awfs.coordination.R;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
-import retrofit.mime.TypedByteArray;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.statement.PDF;
 import za.co.woolworths.financial.services.android.models.dto.statement.Statement;
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.rest.GetStatements;
@@ -43,6 +38,7 @@ import za.co.woolworths.financial.services.android.ui.adapters.StatementAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -58,6 +54,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	private ConstraintLayout ccProgressLayout;
 	private ErrorHandlerView mErrorHandlerView;
 	private WButton mBtnRetry;
+	private PDF mPdfFile;
 
 	public StatementFragment() {
 	}
@@ -145,8 +142,11 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	}
 
 	@Override
-	public void onViewClicked(View v, int position) {
+	public void onViewClicked(View v, Statement statement) {
 		Activity activity = getActivity();
+
+		mPdfFile = new PDF(statement.docId, String.valueOf(WoolworthsApplication.getProductOfferingId()), "6007850115578203");
+		//(String docId, String productOfferingId, String accno
 		if (activity instanceof StatementActivity) {
 			StatementActivity statementActivity = (StatementActivity) activity;
 			statementActivity.checkPermission();
@@ -233,6 +233,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
 			@Override
 			public void onFailure(String e) {
+				Log.e("eee", e.toString());
 				onLoadComplete();
 				mErrorHandlerView.networkFailureHandler(e);
 			}
@@ -271,79 +272,57 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
 	public void getPDFFile() {
 		WoolworthsApplication mWoolWorthsApplication = ((WoolworthsApplication) StatementFragment.this.getActivity().getApplication());
-
-		mWoolWorthsApplication.getAsyncApi().getPDFResponse(new Callback<String>() {
+		mWoolWorthsApplication.getAsyncApi().getPDFResponse(mPdfFile, new Callback<String>() {
 
 			@Override
 			public void success(String responseBody, retrofit.client.Response response) {
+				switch (response.getStatus()) {
+					case 200:
+						try {
+							InputStream is = response.getBody().in();
+							File folderDir = null;
+							folderDir = new File(getActivity().getExternalFilesDir("woolworth") + "/Files");
+							File file = new File(folderDir, "statement.pdf");
+							if (file.exists()) {
+								file.delete();
+							}
+							if ((folderDir.mkdirs() || folderDir.isDirectory())) {
+								BufferedInputStream bufferedInputStream = null;
 
-				try {
-					//you can now get your file in the InputStream
-					InputStream is = response.getBody().in();
+								bufferedInputStream = new BufferedInputStream(is,
+										1024 * 5);
 
-					File folderDir = null;
-					folderDir = new File(getActivity().getExternalFilesDir("woolworth") + "/Files");
-
-					File file = new File(folderDir, "statement.pdf");
-
-					if (file.exists()) {
-						file.delete();
-					}
-
-					if ((folderDir.mkdirs() || folderDir.isDirectory())) {
-						BufferedInputStream bufferedInputStream = null;
-
-						bufferedInputStream = new BufferedInputStream(is,
-								1024 * 5);
-
-						FileOutputStream fileOutputStream = new FileOutputStream(
-								folderDir + "/" + "statement.pdf");
-						byte[] buffer = new byte[1024];
-						int len1 = 0;
-						while ((len1 = is.read(buffer)) != -1) {
-							fileOutputStream.write(buffer, 0, len1);
+								FileOutputStream fileOutputStream = new FileOutputStream(
+										folderDir + "/" + "statement.pdf");
+								byte[] buffer = new byte[1024];
+								int len1 = 0;
+								while ((len1 = is.read(buffer)) != -1) {
+									fileOutputStream.write(buffer, 0, len1);
+								}
+								bufferedInputStream.close();
+								fileOutputStream.close();
+								is.close();
+							}
+						} catch (IOException e) {
+							e.printStackTrace();
 						}
-						bufferedInputStream.close();
-						fileOutputStream.close();
-						is.close();
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
+
+						PreviewStatement previewStatement = new PreviewStatement();
+						FragmentUtils fragmentUtils = new FragmentUtils(getActivity());
+						FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+						fragmentUtils.nextFragment(fragmentManager,
+								previewStatement, R.id.flEStatement);
+
+
+						break;
+
+					case 440:
+
+						break;
+					default:
+						break;
+
 				}
-
-				File file = new File(getActivity().getExternalFilesDir("woolworth")+ "/Files/" + "statement.pdf");
-				Intent intent = new Intent(Intent.ACTION_VIEW);
-				intent.setDataAndType(Uri.fromFile(file),"application/pdf");
-				intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-				startActivity(intent);
-//				byte[] bytes = ((TypedByteArray) response.getBody()).getBytes();
-//
-//
-//				File dir = Environment.getExternalStorageDirectory();
-//
-//				File assist = new File("/mnt/sdcard/Sample.pdf");
-//				if (assist.exists())
-//					assist.mkdir();
-//				try {
-//					InputStream fis = new FileInputStream(assist);
-//
-//					long length = assist.length();
-//					if (length > Integer.MAX_VALUE) {
-//						Log.e("Soileoo.", "cannnottt   readddd");
-//					}
-//					int offset = 0;
-//					int numRead = 0;
-//					while (offset < bytes.length && (numRead = fis.read(bytes, offset, bytes.length - offset)) >= 0) {
-//						offset += numRead;
-//					}
-//
-//					File data = new File(dir, "mydemo.pdf");
-//					OutputStream op = new FileOutputStream(data);
-//					op.write(bytes);
-//				} catch (Exception ex) {
-//					ex.printStackTrace();
-//				}
-
 			}
 
 			@Override

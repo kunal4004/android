@@ -20,7 +20,7 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 	public interface StatementListener {
 		void onItemClicked(View v, int position);
 
-		void onViewClicked(View v, int position);
+		void onViewClicked(View v, Statement statement);
 	}
 
 	private StatementListener statementListener;
@@ -86,7 +86,8 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 		holder.tvViewStatement.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				statementListener.onViewClicked(v, holder.getAdapterPosition());
+
+				statementListener.onViewClicked(v, mItems.get(holder.getAdapterPosition()));
 			}
 		});
 	}

@@ -44,8 +44,8 @@ public class RetrofitAsyncClient {
 				.create(ApiInterface.class);
 	}
 
-	public void getPDFResponse(Callback<String> callback) {
-		mApiInterface.getPDF(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), "19941_9326", "1", "6007851103269565", callback);
+	public void getPDFResponse(PDF pdf, Callback<String> callback) {
+		mApiInterface.getPDF(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), pdf.getDocId(), pdf.getProductOfferingId(), pdf.getAccno(), callback);
 	}
 
 	public String getSessionToken() {

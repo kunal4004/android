@@ -2,6 +2,7 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:sothree="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -23,17 +24,45 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rclEStatement"
+            <za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
+                android:id="@+id/sliding_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/fifty_eight_dp"
-                android:layout_marginTop="@dimen/sixteen_dp"
-                android:background="@color/white"
+
+                android:gravity="bottom"
                 app:layout_constraintBottom_toTopOf="@+id/llEmailStatement"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/vSpaceView"/>
+                app:layout_constraintTop_toBottomOf="@+id/vSpaceView"
+                sothree:umanoDragView="@+id/detailsView"
+                sothree:umanoFadeColor="@android:color/transparent"
+                sothree:umanoOverlay="false"
+                sothree:umanoPanelHeight="0dp"
+                sothree:umanoParallaxOffset="100dp"
+                sothree:umanoScrollableView="@+id/scrollProduct"
+                sothree:umanoShadowHeight="20dp">
+
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rclEStatement"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/fifty_eight_dp"
+                    android:layout_marginTop="@dimen/sixteen_dp"
+                    android:background="@color/white"
+                    />
+
+
+                <LinearLayout
+                    android:id="@+id/linProductList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/green"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+
+            </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
 
             <LinearLayout
                 android:id="@+id/llEmailStatement"
