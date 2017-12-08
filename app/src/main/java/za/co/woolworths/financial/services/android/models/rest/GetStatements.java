@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.models.dto.statement.Statemen
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 
-public class CLIGetStatements extends HttpAsyncTask<String, String, StatementResponse> {
+public class GetStatements extends HttpAsyncTask<String, String, StatementResponse> {
 
 	private WoolworthsApplication mWoolworthsApp;
 	private OnEventListener<StatementResponse> mCallBack;
@@ -18,7 +18,7 @@ public class CLIGetStatements extends HttpAsyncTask<String, String, StatementRes
 	private String mException;
 	private Statement statement;
 
-	public CLIGetStatements(Context context, Statement statement, OnEventListener callback) {
+	public GetStatements(Context context, Statement statement, OnEventListener callback) {
 		this.mContext = context;
 		this.statement = statement;
 		this.mCallBack = callback;

@@ -1,43 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/WTextView"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/twelve_dp"
-        android:layout_marginEnd="@dimen/thirty_two_dp"
-        android:layout_marginStart="@dimen/thirty_two_dp"
-        android:layout_marginTop="@dimen/thirty_three_dp"
-        android:letterSpacing="0.1"
-        android:lineSpacingMultiplier="1.08"
-        android:text="@string/alternative_email_adress"
-        android:textAllCaps="true"
-        android:textColor="#30000000"
-        android:textSize="@dimen/twelve_sp"
-        app:WTextView_font="medium"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:layout_height="match_parent">
 
-    <za.co.woolworths.financial.services.android.ui.views.WEditTextView
-        android:id="@+id/etAlternativeEmailAddress"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/underline_drawable"
-        android:ems="10"
-        android:textCursorDrawable="@drawable/black_cursor"
-        android:inputType="textEmailAddress"
-        android:paddingBottom="5dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/WTextView"/>
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/WTextView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/twelve_dp"
+            android:layout_marginEnd="@dimen/thirty_two_dp"
+            android:layout_marginStart="@dimen/thirty_two_dp"
+            android:layout_marginTop="@dimen/thirty_three_dp"
+            android:letterSpacing="0.1"
+            android:lineSpacingMultiplier="1.08"
+            android:text="@string/alternative_email_adress"
+            android:textAllCaps="true"
+            android:textColor="#30000000"
+            android:textSize="@dimen/twelve_sp"
+            app:WTextView_font="medium"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-</android.support.constraint.ConstraintLayout>
+        <za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView
+            android:id="@+id/etAlternativeEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/underline_drawable"
+            android:ems="10"
+            android:inputType="textEmailAddress"
+            android:paddingBottom="5dp"
+            android:textCursorDrawable="@drawable/black_cursor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/WTextView"/>
+
+
+        <RelativeLayout
+            android:id="@+id/relEmailStatement"
+            style="@style/blackButtonStyle"
+            android:layout_marginBottom="@dimen/eight_dp"
+            android:layout_marginEnd="@dimen/eight_dp"
+            android:layout_marginStart="@dimen/eight_dp"
+            android:background="@drawable/button_disable_color"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ProgressBar
+                android:id="@+id/mWoolworthsProgressBar"
+                style="@style/progress_button_style"/>
+
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:id="@+id/btnSendEmail"
+                style="@style/blackButtonStyle"
+                android:background="@drawable/button_disable_color"
+                android:gravity="center"
+                android:text="@string/email_statement"
+                android:textColor="@color/text_color_selector"
+                app:WButton_font="medium_bold"/>
+        </RelativeLayout>
+
+    </android.support.constraint.ConstraintLayout>
+</RelativeLayout>

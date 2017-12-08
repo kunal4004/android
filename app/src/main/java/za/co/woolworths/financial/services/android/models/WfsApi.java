@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
 
+import retrofit.Callback;
 import okhttp3.OkHttpClient;
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
@@ -66,7 +67,6 @@ public class WfsApi {
 		httpBuilder.addInterceptor(new WfsApiInterceptor(mContext));
 		httpBuilder.readTimeout(45, TimeUnit.SECONDS);
 		httpBuilder.connectTimeout(45, TimeUnit.SECONDS);
-
 		mApiInterface = new RestAdapter.Builder()
 				.setClient((new Ok3Client(httpBuilder.build())))
 				.setEndpoint(WoolworthsApplication.getBaseURL())
@@ -231,6 +231,7 @@ public class WfsApi {
 	public StatementResponse getStatementResponse(Statement statement) {
 		return mApiInterface.getStatements(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), statement.getProductOfferingId(), statement.getAccountNumber(), statement.getStartDate(), statement.getEndDate());
 	}
+
 
 	public String getOsVersion() {
 		String osVersion = Util.getOsVersion();

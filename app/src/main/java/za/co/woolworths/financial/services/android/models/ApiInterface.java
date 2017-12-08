@@ -7,7 +7,7 @@ import retrofit.http.DELETE;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.Headers;
-import retrofit.http.PATCH;
+import okhttp3.ResponseBody;
 import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Path;
@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
+import za.co.woolworths.financial.services.android.models.dto.statement.PDF;
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
@@ -645,7 +646,7 @@ public interface ApiInterface {
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@GET("/user/statements/{docId}")
-	StatementResponse getPDF(
+	void getPDF(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,
@@ -658,5 +659,6 @@ public interface ApiInterface {
 			@Header("sessionToken") String sessionToken,
 			@Path("docId") String docId,
 			@Query("productOfferingId") String productOfferingId,
-			@Query("accno") String accno);
+			@Query("accno") String accno,
+			Callback<String> callback);
 }
