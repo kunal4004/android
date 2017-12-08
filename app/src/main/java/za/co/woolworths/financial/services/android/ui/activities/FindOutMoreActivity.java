@@ -64,7 +64,7 @@ public class FindOutMoreActivity extends AppCompatActivity implements SelectedIt
 			dots = new ImageView[dotsCount];
 			for (int i = 0; i < dotsCount; i++) {
 				dots[i] = new ImageView(FindOutMoreActivity.this);
-				dots[i].setImageDrawable(ContextCompat.getDrawable(FindOutMoreActivity.this, R.drawable.selected_dot));
+				dots[i].setImageDrawable(ContextCompat.getDrawable(FindOutMoreActivity.this, R.drawable.unselected_dot));
 				LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 						LinearLayout.LayoutParams.WRAP_CONTENT,
 						LinearLayout.LayoutParams.WRAP_CONTENT
@@ -72,7 +72,7 @@ public class FindOutMoreActivity extends AppCompatActivity implements SelectedIt
 				params.setMargins(10, 0, 10, 0);
 				pager_indicator.addView(dots[i], params);
 			}
-			dots[0].setImageDrawable(ContextCompat.getDrawable(FindOutMoreActivity.this, R.drawable.unselected_dot));
+			dots[0].setImageDrawable(ContextCompat.getDrawable(FindOutMoreActivity.this, R.drawable.selected_dot));
 		} catch (Exception ignored) {
 		}
 	}
@@ -90,9 +90,9 @@ public class FindOutMoreActivity extends AppCompatActivity implements SelectedIt
 	@Override
 	public void onPageSelected(int position) {
 		for (int i = 0; i < dotsCount; i++) {
-			dots[i].setImageDrawable(ContextCompat.getDrawable(FindOutMoreActivity.this, R.drawable.selected_dot));
+			dots[i].setImageDrawable(ContextCompat.getDrawable(FindOutMoreActivity.this, R.drawable.unselected_dot));
 		}
-		dots[position].setImageDrawable(ContextCompat.getDrawable(FindOutMoreActivity.this, R.drawable.unselected_dot));
+		dots[position].setImageDrawable(ContextCompat.getDrawable(FindOutMoreActivity.this, R.drawable.selected_dot));
 	}
 
 	@Override
