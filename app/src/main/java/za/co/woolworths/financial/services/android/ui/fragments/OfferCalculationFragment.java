@@ -40,7 +40,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest
 import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.rest.CLIApplication;
+import za.co.woolworths.financial.services.android.models.rest.CLICreateApplication;
 import za.co.woolworths.financial.services.android.models.rest.CLIUpdateApplication;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
@@ -92,7 +92,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private LinearLayout llEmptyLayout;
 	private EventStatus mEventStatus;
 	private CLIUpdateApplication cliUpdateApplication;
-	private CLIApplication createOfferTask;
+	private CLICreateApplication createOfferTask;
 	private za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision cliAcceptOfferDecision;
 	private LoadState loadState;
 	private final CompositeDisposable disposables = new CompositeDisposable();
@@ -211,12 +211,13 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		onLoad();
 		showView(llNextButtonLayout);
 		latestBackgroundTask(LATEST_BACKGROUND_CALL.CREATE_OFFER);
-		createOfferTask = new CLIApplication(getActivity(), createOfferRequest, new OnEventListener() {
+		createOfferTask = new CLICreateApplication(getActivity(), createOfferRequest, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				mObjOffer = ((OfferActive) object);
 				switch (mObjOffer.httpCode) {
 					case 200:
+						enableDeclineButton();
 						displayApplication(mObjOffer);
 						break;
 
@@ -258,6 +259,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				mObjOffer = ((OfferActive) object);
 				switch (mObjOffer.httpCode) {
 					case 200:
+						enableDeclineButton();
 						displayApplication(mObjOffer);
 						break;
 
@@ -424,6 +426,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		progressColorFilter(cpCurrentCreditLimit, Color.BLACK);
 		progressColorFilter(cpAdditionalCreditLimit, Color.BLACK);
 		progressColorFilter(cpNewCreditAmount, Color.BLACK);
+		mCliPhase2Activity.disableDeclineButton();
 	}
 
 	private void onLoadComplete() {
@@ -613,10 +616,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
 						mGlobalState.setDecisionDeclineOffer(new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, false));
 						onLoadComplete();
-					} else if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_decline))){
+					} else if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_decline))) {
 						declineMessage();
-					}
-					else {
+					} else {
 						displayMessageError();
 					}
 					break;
@@ -642,7 +644,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		if (mCliPhase2Activity != null)
 			mCliPhase2Activity.hideCloseIcon();
 		onLoadComplete();
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_DECLINE, getString(R.string.cli_declined_popup_title),getString(R.string.cli_declined_popup_description));
+		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_DECLINE, getString(R.string.cli_declined_popup_title), getString(R.string.cli_declined_popup_description));
 	}
 
 	public void setInvisibleView(View invisibleView) {
@@ -806,5 +808,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				httpAsyncTask.cancel(true);
 			}
 		}
+	}
+
+	private void enableDeclineButton() {
+		mCliPhase2Activity.enableDeclineButton();
 	}
 }
