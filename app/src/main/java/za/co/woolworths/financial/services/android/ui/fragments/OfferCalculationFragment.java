@@ -427,6 +427,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		progressColorFilter(cpAdditionalCreditLimit, Color.BLACK);
 		progressColorFilter(cpNewCreditAmount, Color.BLACK);
 		mCliPhase2Activity.disableDeclineButton();
+		hideDeclineButton();
 	}
 
 	private void onLoadComplete() {
@@ -446,6 +447,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		hideView(flCircularProgressSpinner);
 		enableView(btnContinue);
 		enableView(llNextButtonLayout);
+		showDeclineButton();
 	}
 
 	private void getCLIText(WTextView wTextView, int id) {
@@ -599,6 +601,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			showDeclineButton();
 			switch (mObjOffer.httpCode) {
 				case 200:
+					enableDeclineButton();
 					Offer offer = mObjOffer.offer;
 					mCurrentCredit = offer.currCredit + INCREASE_PROGRESS_BY;
 					String nextStep = mObjOffer.nextStep;
