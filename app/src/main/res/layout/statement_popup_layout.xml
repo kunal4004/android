@@ -60,7 +60,9 @@
 
                 <ProgressBar
                     android:id="@+id/mWoolworthsProgressBar"
-                    style="@style/progress_button_style"/>
+                    style="@style/progress_button_style"
+                    android:indeterminateTint="@color/white"
+                    android:visibility="gone"/>
 
                 <za.co.woolworths.financial.services.android.ui.views.WButton
                     android:id="@+id/btnConfirmEmail"
@@ -72,11 +74,12 @@
                     android:text="@string/confirm_email"
                     android:textColor="@color/text_color_selector"
                     android:textSize="@dimen/twelve_sp"
+                    android:visibility="visible"
                     app:WButton_font="medium_bold"/>
             </RelativeLayout>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                android:id="@+id/tvSendDifferentEmail"
+                android:id="@+id/tvAlternativeEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/thirty_four_dot_five_dp"

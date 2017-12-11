@@ -5,13 +5,10 @@ public class PDF {
 
 	private String docId;
 	private String productOfferingId;
-	private String accno;
 
-
-	public PDF(String docId, String productOfferingId, String accno) {
+	public PDF(String docId, String productOfferingId) {
 		this.docId = docId;
 		this.productOfferingId = productOfferingId;
-		this.accno = accno;
 	}
 
 	public String getDocId() {
@@ -20,9 +17,5 @@ public class PDF {
 
 	public String getProductOfferingId() {
 		return productOfferingId;
-	}
-
-	public String getAccno() {
-		return accno;
 	}
 }

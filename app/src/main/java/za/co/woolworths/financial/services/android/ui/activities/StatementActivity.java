@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.awfs.coordination.R;
@@ -23,6 +25,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.AlternativeEmailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailStatementFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment;
+import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
@@ -35,6 +38,8 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 	private WTextView mToolbarText;
 	private PermissionUtils permissionUtils;
 	ArrayList<String> permissions;
+	private Menu mMenu;
+	private ActionBar actionBar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +53,6 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 		permissionUtils = new PermissionUtils(this, this);
 		permissions = new ArrayList<>();
 		permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
 		disposables.add(((WoolworthsApplication) StatementActivity.this.getApplication())
 				.bus()
 				.toObservable()
@@ -58,12 +62,12 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 					@Override
 					public void accept(Object object) throws Exception {
 						if (object instanceof AlternativeEmailFragment) {
-							setTitle(getString(R.string.email_statements));
+							showEmailStatementButton();
 							AlternativeEmailFragment alternativeEmailFragment = new AlternativeEmailFragment();
 							FragmentUtils fragmentUtils = new FragmentUtils(StatementActivity.this);
 							fragmentUtils.nextFragment(StatementActivity.this, getSupportFragmentManager().beginTransaction(), alternativeEmailFragment, R.id.flEStatement);
 						} else if (object instanceof EmailStatementFragment) {
-							setTitle(getString(R.string.email_statements));
+							showEmailStatementButton();
 							EmailStatementFragment emailStatementFragment = new EmailStatementFragment();
 							FragmentUtils fragmentUtils = new FragmentUtils(StatementActivity.this);
 							fragmentUtils.nextFragment(StatementActivity.this, getSupportFragmentManager().beginTransaction(), emailStatementFragment, R.id.flEStatement);
@@ -75,13 +79,42 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 	private void actionBar() {
 		Toolbar mToolbar = (Toolbar) findViewById(R.id.mToolbar);
 		setSupportActionBar(mToolbar);
-		ActionBar actionBar = getSupportActionBar();
+		actionBar = getSupportActionBar();
 		if (actionBar != null) {
 			actionBar.setDisplayHomeAsUpEnabled(true);
 			actionBar.setDisplayShowTitleEnabled(false);
 			actionBar.setDisplayUseLogoEnabled(false);
 			actionBar.setHomeAsUpIndicator(R.drawable.back24);
 		}
+
+	}
+
+	public void showHomeButton() {
+		if (actionBar != null) {
+			actionBar.setDisplayHomeAsUpEnabled(true);
+		}
+		setTitle(getString(R.string.statement));
+		setGravity(Gravity.LEFT);
+		hideCloseIcon();
+	}
+
+	public void showEmailStatementButton() {
+		if (actionBar != null) {
+			actionBar.setDisplayHomeAsUpEnabled(true);
+		}
+		setTitle(getString(R.string.email_statements));
+		setGravity(Gravity.LEFT);
+		hideCloseIcon();
+
+	}
+
+	public void showAccountStatementButton() {
+		if (actionBar != null) {
+			actionBar.setDisplayHomeAsUpEnabled(false);
+		}
+		setTitle(getString(R.string.account_statement));
+		setGravity(Gravity.CENTER);
+		showCloseIcon();
 	}
 
 	private void initUI() {
@@ -92,9 +125,14 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 		mToolbarText.setText(title);
 	}
 
+	public void setGravity(int gravity) {
+		mToolbarText.setGravity(gravity);
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+			case R.id.itmIconClose:
 			case android.R.id.home:
 				onBack();
 				return true;
@@ -121,10 +159,25 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 	}
 
 	private void onBack() {
-		if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-			getSupportFragmentManager().popBackStack();
+		FragmentManager fm = getSupportFragmentManager();
+		Fragment fragmentId = fm.findFragmentById(R.id.flEStatement);
+		if (fragmentId instanceof StatementFragment) {
+			StatementFragment statementFragment = ((StatementFragment) fragmentId);
+			if (statementFragment.isSlideUpPanelEnabled() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+				statementFragment.hideSlideUpPanel();
+			} else {
+				if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+					getSupportFragmentManager().popBackStack();
+				} else {
+					finishActivity();
+				}
+			}
 		} else {
-			finishActivity();
+			if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+				getSupportFragmentManager().popBackStack();
+			} else {
+				finishActivity();
+			}
 		}
 	}
 
@@ -143,7 +196,8 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 	}
 
 	@Override
-	public void PartialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
+	public void PartialPermissionGranted(int request_code, ArrayList<
+			String> granted_permissions) {
 
 	}
 
@@ -158,7 +212,8 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 	}
 
 	@Override
-	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+										   @NonNull int[] grantResults) {
 		// redirects to utils
 		permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
 	}
@@ -166,4 +221,29 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 	public void checkPermission() {
 		permissionUtils.check_permission(permissions, "Explain here why the app needs permissions", 1);
 	}
+
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.statement_menu_item, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		this.mMenu = menu;
+		return true;
+	}
+
+	public void hideCloseIcon() {
+		MenuItem menuItem = mMenu.findItem(R.id.itmIconClose);
+		menuItem.setVisible(false);
+	}
+
+	public void showCloseIcon() {
+		MenuItem menuItem = mMenu.findItem(R.id.itmIconClose);
+		menuItem.setVisible(true);
+	}
+
 }

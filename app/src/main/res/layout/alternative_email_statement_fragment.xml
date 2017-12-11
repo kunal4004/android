@@ -31,14 +31,17 @@
             android:id="@+id/etAlternativeEmailAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="@dimen/thirty_two_dp"
+            android:layout_marginEnd="@dimen/thirty_two_dp"
+            android:layout_marginStart="@dimen/thirty_two_dp"
+            android:layout_marginTop="@dimen/seventeen_dp"
             android:background="@drawable/underline_drawable"
             android:ems="10"
-            android:inputType="textEmailAddress"
-            android:paddingBottom="5dp"
+            android:inputType="textEmailAddress|textNoSuggestions"
+            android:paddingBottom="@dimen/seventeen_dp"
             android:textCursorDrawable="@drawable/black_cursor"
+            android:textSize="@dimen/fifteen_sp"
+            app:WEditTextView_font="myriadpro_regular"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/WTextView"/>
@@ -58,7 +61,8 @@
 
             <ProgressBar
                 android:id="@+id/mWoolworthsProgressBar"
-                style="@style/progress_button_style"/>
+                style="@style/progress_button_style"
+                android:indeterminateTint="@color/white"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
                 android:id="@+id/btnSendEmail"

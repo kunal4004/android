@@ -32,23 +32,39 @@
         android:textAllCaps="true"
         android:textColor="@color/black"
         android:textSize="@dimen/twelve_sp"
-        app:WTextView_font="medium_bold"/>
+        app:WTextView_font="medium"/>
 
-    <za.co.woolworths.financial.services.android.ui.views.WTextView
-        android:id="@+id/tvViewStatement"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/tvStatementName"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/tvStatementName"
-        android:gravity="center_vertical"
-        android:letterSpacing="0.2"
-        android:lineSpacingMultiplier="1.08"
-        android:text="@string/view"
-        android:textAllCaps="true"
-        android:textColor="@color/view_statement_black"
-        android:textSize="12sp"
-        app:WTextView_font="medium"/>
+        android:gravity="end">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvViewStatement"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:letterSpacing="0.2"
+            android:lineSpacingMultiplier="1.08"
+            android:paddingStart="10dp"
+            android:text="@string/view"
+            android:textAllCaps="true"
+            android:textColor="@color/view_statement_black"
+            android:textSize="12sp"
+            android:visibility="visible"
+            app:WTextView_font="medium"/>
+
+        <ProgressBar
+            android:id="@+id/pbLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/black"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
 
 
 </RelativeLayout>

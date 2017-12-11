@@ -7,97 +7,105 @@
     android:layout_height="match_parent">
 
     <FrameLayout
+        android:id="@+id/flStatementContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/ccRecyclerViewContainer"
+        <za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
+            android:id="@+id/sliding_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/default_background">
+            android:gravity="bottom"
+            app:layout_constraintBottom_toTopOf="@+id/llEmailStatement"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:umanoPanelHeight="0dp"
+            app:umanoParallaxOffset="0dp"
+            sothree:umanoDragView="@+id/detailsView"
+            sothree:umanoFadeColor="@android:color/transparent"
+            sothree:umanoOverlay="false"
+            sothree:umanoScrollableView="@+id/scrollProduct"
+            sothree:umanoShadowHeight="0dp">
 
-            <View
-                android:id="@+id/vSpaceView"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sixteen_dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-
-            <za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
-                android:id="@+id/sliding_layout"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/ccRecyclerViewContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-
-                android:gravity="bottom"
-                app:layout_constraintBottom_toTopOf="@+id/llEmailStatement"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/vSpaceView"
-                sothree:umanoDragView="@+id/detailsView"
-                sothree:umanoFadeColor="@android:color/transparent"
-                sothree:umanoOverlay="false"
-                sothree:umanoPanelHeight="0dp"
-                sothree:umanoParallaxOffset="100dp"
-                sothree:umanoScrollableView="@+id/scrollProduct"
-                sothree:umanoShadowHeight="20dp">
-
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rclEStatement"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="@dimen/fifty_eight_dp"
-                    android:layout_marginTop="@dimen/sixteen_dp"
-                    android:background="@color/white"
-                    />
-
+                android:background="@color/default_background">
 
                 <LinearLayout
-                    android:id="@+id/linProductList"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/green"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical">
+
+                    <View
+                        android:id="@+id/vSpaceView"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sixteen_dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rclEStatement"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="@dimen/fifty_eight_dp"
+                        android:background="@color/white"
+                        />
 
                 </LinearLayout>
 
-            </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
+                <LinearLayout
+                    android:id="@+id/llEmailStatement"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <RelativeLayout
+                        android:id="@+id/relNextButton"
+                        style="@style/blackButtonStyle"
+                        android:layout_marginBottom="@dimen/eight_dp"
+                        android:layout_marginEnd="@dimen/eight_dp"
+                        android:layout_marginStart="@dimen/eight_dp"
+                        android:background="@drawable/button_disable_color"
+                        android:gravity="center"
+                        android:paddingEnd="@dimen/eight_dp"
+                        android:paddingStart="@dimen/eight_dp">
+
+                        <za.co.woolworths.financial.services.android.ui.views.WButton
+                            android:id="@+id/btnEmailStatement"
+                            style="@style/blackButtonStyle"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
+                            android:background="@android:color/transparent"
+                            android:gravity="center"
+                            android:text="@string/email_statement"
+                            android:textColor="@color/text_color_selector"
+                            app:WButton_font="medium_bold"/>
+                    </RelativeLayout>
+                </LinearLayout>
+
+            </android.support.constraint.ConstraintLayout>
 
             <LinearLayout
-                android:id="@+id/llEmailStatement"
+                android:id="@+id/detailsView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                android:layout_height="match_parent"
+                android:background="@color/white">
 
-                <RelativeLayout
-                    android:id="@+id/relNextButton"
-                    style="@style/blackButtonStyle"
-                    android:layout_marginBottom="@dimen/eight_dp"
-                    android:layout_marginEnd="@dimen/eight_dp"
-                    android:layout_marginStart="@dimen/eight_dp"
-                    android:background="@drawable/button_disable_color"
-                    android:gravity="center"
-                    android:paddingEnd="@dimen/eight_dp"
-                    android:paddingStart="@dimen/eight_dp">
+                <FrameLayout
+                    android:id="@+id/flAccountStatement"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
 
-                    <za.co.woolworths.financial.services.android.ui.views.WButton
-                        android:id="@+id/btnEmailStatement"
-                        style="@style/blackButtonStyle"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:background="@android:color/transparent"
-                        android:gravity="center"
-                        android:text="@string/email_statement"
-                        android:textColor="@color/text_color_selector"
-                        app:WButton_font="medium_bold"/>
-                </RelativeLayout>
             </LinearLayout>
 
-        </android.support.constraint.ConstraintLayout>
+        </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
 
         <include layout="@layout/circular_progress_layout"/>
 

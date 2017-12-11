@@ -1,7 +1,5 @@
 package za.co.woolworths.financial.services.android.models.dto.statement;
 
-import android.icu.util.Calendar;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -34,8 +32,15 @@ public class Statement {
 	private boolean selectedByUser = false;
 	private boolean rowContainHeader = false;
 	private boolean hideView = false;
+	private boolean viewIsLoading = false;
 
 	public Statement() {
+	}
+
+	public Statement(String productOfferingId, String startDate, String endDate) {
+		this.productOfferingId = productOfferingId;
+		this.startDate = startDate;
+		this.endDate = endDate;
 	}
 
 	public Statement(String productOfferingId, String accountNumber, String startDate, String endDate) {
@@ -43,6 +48,14 @@ public class Statement {
 		this.accountNumber = accountNumber;
 		this.startDate = startDate;
 		this.endDate = endDate;
+	}
+
+	public Statement(String docType, String docId, String size, String docDesc, boolean viewIsLoading) {
+		this.docType = docType;
+		this.docId = docId;
+		this.size = size;
+		this.endDate = docDesc;
+		this.viewIsLoading = viewIsLoading;
 	}
 
 	public String getProductOfferingId() {
@@ -80,5 +93,13 @@ public class Statement {
 
 	public boolean getStatementView() {
 		return hideView;
+	}
+
+	public boolean viewIsLoading() {
+		return viewIsLoading;
+	}
+
+	public void setViewIsLoading(boolean viewIsLoading) {
+		this.viewIsLoading = viewIsLoading;
 	}
 }

@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import android.view.LayoutInflater;
+import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
@@ -20,13 +21,14 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 	public interface StatementListener {
 		void onItemClicked(View v, int position);
 
-		void onViewClicked(View v, Statement statement);
+		void onViewClicked(View v, int position, Statement statement);
 	}
 
 	private StatementListener statementListener;
 	private final static int HEADER_VIEW = 0;
 	private final static int CONTENT_VIEW = 1;
 	private final ArrayList<Statement> mItems;
+	private boolean viewWasClicked = true;
 
 	public StatementAdapter(StatementListener statementListener) {
 		this.statementListener = statementListener;
@@ -67,8 +69,8 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 				break;
 			case CONTENT_VIEW:
 				holder.populateMonth(statement, holder.tvStatementName);
-				holder.updateCheckStatementUI(statement, holder.imCheckItem);
-				holder.updateViewStatementUI(statement, holder.tvViewStatement);
+				holder.showLoading(statement, holder.imCheckItem, holder.pbLoading, holder.tvViewStatement);
+				holder.updateViewStatementUI(statement, holder.tvViewStatement, holder.pbLoading);
 				onClickListener(holder);
 				break;
 			default:
@@ -80,14 +82,20 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if (!viewClicked()) {  // disable click
+					return;
+				}
 				statementListener.onItemClicked(v, holder.getAdapterPosition());
 			}
 		});
 		holder.tvViewStatement.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
-				statementListener.onViewClicked(v, mItems.get(holder.getAdapterPosition()));
+				if (!viewClicked()) {  // disable click
+					return;
+				}
+				int position = holder.getAdapterPosition();
+				statementListener.onViewClicked(v, position, mItems.get(position));
 			}
 		});
 	}
@@ -98,6 +106,7 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 	}
 
 	public class StatementViewHolder extends RecyclerView.ViewHolder {
+		private final ProgressBar pbLoading;
 		private WTextView tvStatementName, tvViewStatement;
 		private ImageView imCheckItem;
 
@@ -106,25 +115,41 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 			tvStatementName = (WTextView) itemView.findViewById(R.id.tvStatementName);
 			tvViewStatement = (WTextView) itemView.findViewById(R.id.tvViewStatement);
 			imCheckItem = (ImageView) itemView.findViewById(R.id.imCheckItem);
+			pbLoading = (ProgressBar) itemView.findViewById(R.id.pbLoading);
 		}
 
 		public void populateMonth(Statement statement, WTextView view) {
-			view.setText(statement.docDesc);
+			view.setText("statement.docDesc");
 		}
 
-		public void updateCheckStatementUI(Statement statement, final ImageView view) {
-			if (statement.selectedByUser()) {
-				view.setImageResource(R.drawable.checked_item);
-			} else {
-				view.setImageResource(R.drawable.uncheck_item);
+
+		public void updateViewStatementUI(Statement statement, WTextView view, ProgressBar pbLoading) {
+			if (statement.getStatementView()) {
+				hideView(view);
+				hideView(pbLoading);
 			}
 		}
 
-		public void updateViewStatementUI(Statement statement, WTextView view) {
+		public void showLoading(Statement statement, ImageView im, ProgressBar pb, WTextView tv) {
 			if (statement.getStatementView()) {
-				view.setVisibility(View.GONE);
+				hideView(pb);
+				hideView(tv);
 			} else {
-				view.setVisibility(View.VISIBLE);
+				showView(pb);
+				showView(tv);
+			}
+
+			if (statement.selectedByUser()) { // show checked item
+				im.setImageResource(R.drawable.checked_item);
+			} else {
+				im.setImageResource(R.drawable.uncheck_item);//show unchecked item
+				if (statement.viewIsLoading()) { // check to verify is progressbar loading
+					hideView(tv);
+					showView(pb);
+				} else {
+					hideView(pb);
+					showView(tv);
+				}
 			}
 		}
 	}
@@ -149,5 +174,31 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 			refreshBlockOverlay(index);
 			index++;
 		}
+	}
+
+	public void onViewClicked(int position, boolean viewIsLoading) {
+		if (viewIsLoading){
+			viewWasClicked(false);
+		}else {
+			viewWasClicked(true);
+		}
+		mItems.get(position).setViewIsLoading(viewIsLoading);
+		notifyItemChanged(position);
+	}
+
+	public void showView(View v) {
+		v.setVisibility(View.VISIBLE);
+	}
+
+	public void hideView(View v) {
+		v.setVisibility(View.GONE);
+	}
+
+	public void viewWasClicked(boolean viewIsClickable) {
+		this.viewWasClicked = viewIsClickable;
+	}
+
+	public boolean viewClicked() {
+		return viewWasClicked;
 	}
 }

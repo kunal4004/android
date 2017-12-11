@@ -659,6 +659,5 @@ public interface ApiInterface {
 			@Header("sessionToken") String sessionToken,
 			@Path("docId") String docId,
 			@Query("productOfferingId") String productOfferingId,
-			@Query("accno") String accno,
 			Callback<String> callback);
 }

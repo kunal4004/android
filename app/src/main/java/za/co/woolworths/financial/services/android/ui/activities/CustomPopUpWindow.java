@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
@@ -25,18 +28,29 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.dto.statement.Statement;
+import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
+import za.co.woolworths.financial.services.android.models.rest.GetStatements;
+import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.AlternativeEmailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailStatementFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener {
+public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener, NetworkChangeListener {
 
 	public RelativeLayout mRelRootContainer;
 	public Animation mPopEnterAnimation;
@@ -45,6 +59,13 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	public static final int ANIM_DOWN_DURATION = 800;
 	public WoolworthsApplication woolworthsApplication;
 	public WGlobalState mWGlobalState;
+	private ProgressBar mWoolworthsProgressBar;
+	private WButton mBtnConfirmEmail;
+	private WTextView tvAlternativeEmail;
+	private StatementUtils mStatementUtils;
+	private GetStatements cliGetStatements;
+	private BroadcastReceiver mConnectionBroadcast;
+	private LoadState loadState;
 
 	public enum MODAL_LAYOUT {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
@@ -66,7 +87,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 		woolworthsApplication = (WoolworthsApplication) CustomPopUpWindow.this.getApplication();
 		mWGlobalState = woolworthsApplication.getWGlobalState();
-
+		mStatementUtils = new StatementUtils(CustomPopUpWindow.this);
 		Intent intent = getIntent();
 		Bundle mBundle = intent.getExtras();
 		if (mBundle != null) {
@@ -79,6 +100,11 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		}
 
 		mWGlobalState = woolworthsApplication.getWGlobalState();
+
+		loadState = new LoadState();
+		loadSuccess();
+		mConnectionBroadcast = Utils.connectionBroadCast(this, this);
+
 	}
 
 	@Override
@@ -96,7 +122,11 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		if (mStatementUtils != null) {
+			mStatementUtils.cancelRequest(cliGetStatements);
+		}
 		runningActivityState(false);
+
 	}
 
 	private void displayView(MODAL_LAYOUT current_view) {
@@ -375,12 +405,13 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				setContentView(R.layout.statement_popup_layout);
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
-				WButton btnConfirmEmail = (WButton) findViewById(R.id.btnConfirmEmail);
-				WTextView tvSendDifferentEmail = (WTextView) findViewById(R.id.tvSendDifferentEmail);
+				mBtnConfirmEmail = (WButton) findViewById(R.id.btnConfirmEmail);
+				tvAlternativeEmail = (WTextView) findViewById(R.id.tvAlternativeEmail);
 				WTextView tvSendEmail = (WTextView) findViewById(R.id.tvSendEmail);
+				mWoolworthsProgressBar = (ProgressBar) findViewById(R.id.mWoolworthsProgressBar);
 				populateDocument(tvSendEmail);
-				tvSendDifferentEmail.setOnClickListener(this);
-				btnConfirmEmail.setOnClickListener(this);
+				tvAlternativeEmail.setOnClickListener(this);
+				mBtnConfirmEmail.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
 			default:
 				break;
@@ -656,12 +687,12 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				finish();
 				break;
 
-			case R.id.tvSendDifferentEmail:
+			case R.id.tvAlternativeEmail:
 				exitStatementAnimation();
 				break;
 
 			case R.id.btnConfirmEmail:
-				exitStatementConfirmAnimation();
+				sendStatement();
 				break;
 		}
 	}
@@ -793,5 +824,99 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 	private String getText(String text) {
 		return TextUtils.isEmpty(text) ? "" : text;
+	}
+
+	public void sendStatement() {
+		onLoad();
+		Statement statement = new Statement(String.valueOf(WoolworthsApplication.getProductOfferingId()), "6007851103269565", "2017-01-01", "2017-11-27");
+		cliGetStatements = new GetStatements(CustomPopUpWindow.this, statement, new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				StatementResponse statementResponse = (StatementResponse) object;
+				if (statementResponse != null) {
+					Response response = statementResponse.response;
+					switch (statementResponse.httpCode) {
+						case 200:
+							exitStatementConfirmAnimation();
+							break;
+						case 440:
+							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(CustomPopUpWindow.this, response.stsParams);
+							break;
+						default:
+							break;
+					}
+				}
+				loadSuccess();
+				onLoadComplete();
+			}
+
+			@Override
+			public void onFailure(String e) {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						ErrorHandlerView errorHandlerView = new ErrorHandlerView(CustomPopUpWindow.this);
+						errorHandlerView.showToast();
+						loadFailure();
+						onLoadComplete();
+					}
+				});
+			}
+		});
+
+		cliGetStatements.execute();
+	}
+
+	public void onLoad() {
+		mWoolworthsProgressBar.setVisibility(View.VISIBLE);
+		mBtnConfirmEmail.setVisibility(View.GONE);
+		tvAlternativeEmail.setEnabled(false);
+	}
+
+	public void onLoadComplete() {
+		mBtnConfirmEmail.setVisibility(View.VISIBLE);
+		mWoolworthsProgressBar.setVisibility(View.GONE);
+		tvAlternativeEmail.setEnabled(true);
+	}
+
+
+	private void loadSuccess() {
+		loadState.setLoadComplete(true);
+	}
+
+	private void loadFailure() {
+		loadState.setLoadComplete(false);
+	}
+
+
+	private void retryConnect() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (new ConnectionDetector().isOnline(CustomPopUpWindow.this)) {
+					if (!loadState.onLoanCompleted()) {
+						sendStatement();
+					}
+				}
+			}
+		});
+	}
+
+
+	@Override
+	public void onConnectionChanged() {
+		retryConnect();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		unregisterReceiver(mConnectionBroadcast);
 	}
 }

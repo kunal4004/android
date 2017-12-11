@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.statement;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -8,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +17,7 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,19 +29,23 @@ import za.co.woolworths.financial.services.android.models.dto.statement.PDF;
 import za.co.woolworths.financial.services.android.models.dto.statement.Statement;
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.rest.GetStatements;
+import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StatementAdapter;
+import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 
-public class StatementFragment extends Fragment implements StatementAdapter.StatementListener, View.OnClickListener {
+public class StatementFragment extends Fragment implements StatementAdapter.StatementListener, View.OnClickListener, NetworkChangeListener {
 
 	private WButton mBtnEmailStatement;
 	private StatementAdapter mStatementAdapter;
@@ -55,6 +56,13 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	private ErrorHandlerView mErrorHandlerView;
 	private WButton mBtnRetry;
 	private PDF mPdfFile;
+	private SlidingUpPanelLayout mSlideUpPanelLayout;
+	private int mViewIsLoadingPosition = -1;
+	private GetStatements cliGetStatements;
+	private BroadcastReceiver mConnectionBroadcast;
+	private LoadState loadState;
+	private SlidingUpPanelLayout.PanelState panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
+
 
 	public StatementFragment() {
 	}
@@ -68,11 +76,27 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		slideUpPanel(view);
 		init(view);
 		listener();
 		setAdapter();
-		resetAdapter();
+		setRecyclerView(rclEStatement);
 		disableButton();
+		slideUpPanelListener();
+		loadState = new LoadState();
+		loadSuccess();
+		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
+
+	}
+
+	private void slideUpPanel(View v) {
+		mSlideUpPanelLayout = (SlidingUpPanelLayout) v.findViewById(R.id.sliding_layout);
+	}
+
+	private void showSlideUpPanel() {
+		mSlideUpPanelLayout.setAnchorPoint(1.0f);
+		mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
+		//mSlideUpPanelLayout.setScrollableViewHelper(new NestedScrollableViewHelper(mScrollProductDetail));
 	}
 
 	private void setAdapter() {
@@ -80,6 +104,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 		Statement datum = new Statement();
 		datum.setHeader(true);
 		mStatementAdapter.add(datum);
+		rclEStatement.setAdapter(mStatementAdapter);
 	}
 
 	private void listener() {
@@ -88,7 +113,6 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	}
 
 	private void init(View view) {
-
 		ctNoResultFound = (ConstraintLayout) view.findViewById(R.id.ctNoResultFound);
 		ccProgressLayout = (ConstraintLayout) view.findViewById(R.id.ccProgressLayout);
 		rclEStatement = (RecyclerView) view.findViewById(R.id.rclEStatement);
@@ -100,7 +124,6 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 		mErrorHandlerView = new ErrorHandlerView(getActivity()
 				, relativeLayout);
 		mErrorHandlerView.setMargin(relativeLayout, 0, 0, 0, 0);
-		setRecyclerView(rclEStatement);
 	}
 
 	private void setRecyclerView(RecyclerView rclEStatement) {
@@ -111,6 +134,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
 	@Override
 	public void onItemClicked(View v, int position) {
+		this.mViewIsLoadingPosition = position;
 		ArrayList<Statement> arrStatement = mStatementAdapter.getStatementList();
 		Statement statement = arrStatement.get(position);
 		boolean selectedByUser = statement.selectedByUser();
@@ -118,6 +142,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 		  true - previously selected by user
 		  set to false
 		 */
+
 		if (selectedByUser) {
 			statement.setSelectedByUser(false);
 		} else {
@@ -130,6 +155,8 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 				arrayContainTrue = true;
 			}
 		}
+
+		hideViewProgress();
 		mStatementAdapter.updateStatementViewState(arrayContainTrue);
 
 		if (arrayContainTrue) {
@@ -142,11 +169,10 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	}
 
 	@Override
-	public void onViewClicked(View v, Statement statement) {
+	public void onViewClicked(View v, int position, Statement statement) {
+		this.mViewIsLoadingPosition = position;
 		Activity activity = getActivity();
-
-		mPdfFile = new PDF(statement.docId, String.valueOf(WoolworthsApplication.getProductOfferingId()), "6007850115578203");
-		//(String docId, String productOfferingId, String accno
+		mPdfFile = new PDF(statement.docId, String.valueOf(WoolworthsApplication.getProductOfferingId()));
 		if (activity instanceof StatementActivity) {
 			StatementActivity statementActivity = (StatementActivity) activity;
 			statementActivity.checkPermission();
@@ -182,50 +208,42 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 		mBtnEmailStatement.setEnabled(true);
 	}
 
-	private void resetAdapter() {
-		rclEStatement.setAdapter(mStatementAdapter);
-	}
-
 	public void getStatement() {
 		onLoad();
-//		Statement statement = new Statement(String.valueOf(WoolworthsApplication.getProductOfferingId()), "6007850115578203", Utils.getDate(6), Utils.getDate(0));
-		Statement statement = new Statement(String.valueOf(WoolworthsApplication.getProductOfferingId()), "6007850115578203", "2017-01-01", "2017-11-27");
-
-		GetStatements cliGetStatements = new GetStatements(getActivity(), statement, new OnEventListener() {
+		Statement statement1 = new Statement(String.valueOf(WoolworthsApplication.getProductOfferingId()), Utils.getDate(6), Utils.getDate(0));
+		cliGetStatements = new GetStatements(getActivity(), statement1, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				StatementResponse statementResponse = (StatementResponse) object;
 				if (statementResponse != null) {
 					Response response = statementResponse.response;
-					if (statementResponse != null) {
-						switch (statementResponse.httpCode) {
-							case 200:
-								List<Statement> statement = statementResponse.data;
-								if (statement.size() == 0) {
-									showView(ctNoResultFound);
-								} else {
-									hideView(ctNoResultFound);
-									int index = 0;
-									for (Statement d : statement) {
-										mStatementAdapter.add(d);
-										mStatementAdapter.refreshBlockOverlay(index);
-										index++;
-									}
+					switch (statementResponse.httpCode) {
+						case 200:
+							List<Statement> statement = statementResponse.data;
+							if (statement.size() == 0) {
+								showView(ctNoResultFound);
+							} else {
+								hideView(ctNoResultFound);
+								int index = 0;
+								for (Statement d : statement) {
+									mStatementAdapter.add(d);
+									mStatementAdapter.refreshBlockOverlay(index);
+									index++;
 								}
-								break;
+							}
+							break;
 
-							case 440:
-								SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.stsParams);
-								break;
+						case 440:
+							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.stsParams);
+							break;
 
-							default:
-								if (response != null) {
-									Utils.displayValidationMessage(getActivity(),
-											CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-											response.desc);
-								}
-								break;
-						}
+						default:
+							if (response != null) {
+								Utils.displayValidationMessage(getActivity(),
+										CustomPopUpWindow.MODAL_LAYOUT.ERROR,
+										response.desc);
+							}
+							break;
 					}
 				}
 				onLoadComplete();
@@ -233,23 +251,11 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
 			@Override
 			public void onFailure(String e) {
-				Log.e("eee", e.toString());
 				onLoadComplete();
 				mErrorHandlerView.networkFailureHandler(e);
 			}
 		});
-
 		cliGetStatements.execute();
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		Activity activity = getActivity();
-		if (activity instanceof StatementActivity) {
-			StatementActivity statementActivity = (StatementActivity) getActivity();
-			statementActivity.setTitle(getString(R.string.statement));
-		}
 	}
 
 	public void hideView(View view) {
@@ -272,64 +278,170 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
 	public void getPDFFile() {
 		WoolworthsApplication mWoolWorthsApplication = ((WoolworthsApplication) StatementFragment.this.getActivity().getApplication());
+		showViewProgress();
+
 		mWoolWorthsApplication.getAsyncApi().getPDFResponse(mPdfFile, new Callback<String>() {
 
 			@Override
 			public void success(String responseBody, retrofit.client.Response response) {
+				showSlideUpPanel();
+
 				switch (response.getStatus()) {
 					case 200:
+						StatementUtils statementUtils = new StatementUtils(getActivity());
 						try {
-							InputStream is = response.getBody().in();
-							File folderDir = null;
-							folderDir = new File(getActivity().getExternalFilesDir("woolworth") + "/Files");
-							File file = new File(folderDir, "statement.pdf");
-							if (file.exists()) {
-								file.delete();
-							}
-							if ((folderDir.mkdirs() || folderDir.isDirectory())) {
-								BufferedInputStream bufferedInputStream = null;
-
-								bufferedInputStream = new BufferedInputStream(is,
-										1024 * 5);
-
-								FileOutputStream fileOutputStream = new FileOutputStream(
-										folderDir + "/" + "statement.pdf");
-								byte[] buffer = new byte[1024];
-								int len1 = 0;
-								while ((len1 = is.read(buffer)) != -1) {
-									fileOutputStream.write(buffer, 0, len1);
-								}
-								bufferedInputStream.close();
-								fileOutputStream.close();
-								is.close();
-							}
+							statementUtils.savePDF(response.getBody().in());
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
-
 						PreviewStatement previewStatement = new PreviewStatement();
 						FragmentUtils fragmentUtils = new FragmentUtils(getActivity());
 						FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
 						fragmentUtils.nextFragment(fragmentManager,
-								previewStatement, R.id.flEStatement);
-
-
-						break;
-
-					case 440:
-
+								previewStatement, R.id.flAccountStatement);
+						showSlideUpPanel();
 						break;
 					default:
 						break;
-
 				}
+				loadSuccess();
+				hideViewProgress();
 			}
 
 			@Override
 			public void failure(RetrofitError error) {
-
+				if (error.getKind().name().equalsIgnoreCase("NETWORK")) {
+					mErrorHandlerView.showToast();
+					loadFailure();
+				}
+				hideViewProgress();
 			}
 		});
+	}
 
+	private void slideUpPanelListener() {
+		mSlideUpPanelLayout.setFadeOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+			}
+		});
+		mSlideUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+			@Override
+			public void onPanelSlide(View panel, float slideOffset) {
+				if (slideOffset == 0.0) {
+					mSlideUpPanelLayout.setAnchorPoint(1.0f);
+				}
+			}
+
+			@Override
+			public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState,
+											SlidingUpPanelLayout.PanelState newState) {
+				Activity activity = getActivity();
+				if (activity != null) {
+					StatementActivity statementActivity = (StatementActivity) activity;
+					switch (newState) {
+						case COLLAPSED:
+							panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
+							statementActivity.showHomeButton();
+							break;
+
+						case DRAGGING:
+							panelIsCollapsed = SlidingUpPanelLayout.PanelState.DRAGGING;
+							break;
+
+						case EXPANDED:
+							panelIsCollapsed = SlidingUpPanelLayout.PanelState.EXPANDED;
+							statementActivity.showAccountStatementButton();
+							break;
+						default:
+							break;
+					}
+				}
+			}
+		});
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		Activity activity = getActivity();
+		if (activity != null) {
+			StatementUtils statementUtils = new StatementUtils(activity);
+			statementUtils.cancelRequest(cliGetStatements);
+		}
+	}
+
+	@Override
+	public void onConnectionChanged() {
+		retryConnect();
+	}
+
+	private void retryConnect() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if (new ConnectionDetector().isOnline(getActivity())) {
+						if (!loadState.onLoanCompleted()) {
+							getPDFFile();
+						}
+					}
+				}
+			});
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Activity activity = getActivity();
+		if (activity instanceof StatementActivity) {
+			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+			((StatementActivity) activity).setTitle(getString(R.string.statement));
+		}
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.unregisterReceiver(mConnectionBroadcast);
+		}
+	}
+
+	public SlidingUpPanelLayout.PanelState isSlideUpPanelEnabled() {
+		return panelIsCollapsed;
+	}
+
+	public void hideSlideUpPanel() {
+		switch (panelIsCollapsed) {
+			case EXPANDED:
+				mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+				break;
+
+			case DRAGGING:
+				break;
+			default:
+				break;
+		}
+	}
+
+	private void loadSuccess() {
+		loadState.setLoadComplete(true);
+	}
+
+	private void loadFailure() {
+		loadState.setLoadComplete(false);
+	}
+
+	public void showViewProgress() {
+		mStatementAdapter.onViewClicked(mViewIsLoadingPosition, true);
+	}
+
+	public void hideViewProgress() {
+		mStatementAdapter.onViewClicked(mViewIsLoadingPosition, false);
 	}
 }

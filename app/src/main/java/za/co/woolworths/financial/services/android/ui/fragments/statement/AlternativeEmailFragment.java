@@ -1,33 +1,56 @@
 package za.co.woolworths.financial.services.android.ui.fragments.statement;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.dto.statement.Statement;
+import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
+import za.co.woolworths.financial.services.android.models.rest.GetStatements;
+import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
+import za.co.woolworths.financial.services.android.util.Utils;
 
-public class AlternativeEmailFragment extends Fragment implements View.OnClickListener {
+public class AlternativeEmailFragment extends Fragment implements View.OnClickListener, NetworkChangeListener {
 
 	private WLoanEditTextView etAlternativeEmailAddress;
 	private WButton btnSendEmail;
 	private RelativeLayout relEmailStatement;
-	private StatementUtils statmentUtils;
+	private StatementUtils mStatementUtils;
+	private BroadcastReceiver mConnectionBroadcast;
+	private LoadState loadState;
+	private GetStatements cliGetStatements;
+	private ProgressBar mWoolworthsProgressBar;
 
 	@Nullable
 	@Override
@@ -38,20 +61,26 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		statmentUtils = new StatementUtils(getActivity());
+		mStatementUtils = new StatementUtils(getActivity());
 		initView(view);
 		disableButton();
 	}
 
 	private void initView(View view) {
 		etAlternativeEmailAddress = (WLoanEditTextView) view.findViewById(R.id.etAlternativeEmailAddress);
+		etAlternativeEmailAddress.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
 		relEmailStatement = (RelativeLayout) view.findViewById(R.id.relEmailStatement);
 		btnSendEmail = (WButton) view.findViewById(R.id.btnSendEmail);
-
+		mWoolworthsProgressBar = (ProgressBar) view.findViewById(R.id.mWoolworthsProgressBar);
 		showKeyboard();
 		onTextChangeListener();
 		listener();
+		loadState = new LoadState();
+		loadSuccess();
+		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 	}
+
 
 	private void listener() {
 		btnSendEmail.setOnClickListener(this);
@@ -93,15 +122,13 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 	}
 
 	private void enableButton() {
-		statmentUtils.enableView(relEmailStatement);
-		statmentUtils.enableView(btnSendEmail);
-		statmentUtils.showView(relEmailStatement);
+		mStatementUtils.enableView(relEmailStatement);
+		mStatementUtils.enableView(btnSendEmail);
 	}
 
 	private void disableButton() {
-		statmentUtils.disableView(relEmailStatement);
-		statmentUtils.disableView(btnSendEmail);
-		statmentUtils.invisibleView(relEmailStatement);
+		mStatementUtils.disableView(relEmailStatement);
+		mStatementUtils.disableView(btnSendEmail);
 	}
 
 	@Override
@@ -134,16 +161,134 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 		switch (v.getId()) {
 			case R.id.btnSendEmail:
 				String alternativeEmail = etAlternativeEmailAddress.getText().toString();
-				if (statmentUtils.validateEmail(alternativeEmail)) {
-					hideKeyboard();
-					FragmentUtils fragmentUtils = new FragmentUtils();
-					EmailStatementFragment emailStatementFragment = new EmailStatementFragment();
-					fragmentUtils.nextFragment((AppCompatActivity) AlternativeEmailFragment.this.getActivity(), getFragmentManager().beginTransaction(), emailStatementFragment, R.id.flEStatement);
+				if (mStatementUtils.validateEmail(alternativeEmail)) {
+					Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
+					etAlternativeEmailAddress.setCompoundDrawablesWithIntrinsicBounds(null, null, transparentDrawable, null);
+					sendStatement();
+				} else {
+					Drawable img = getContext().getResources().getDrawable(R.drawable.validation_error_drawable);
+					etAlternativeEmailAddress.setCompoundDrawablesWithIntrinsicBounds(null, null, img, null);
+					ErrorHandlerView errorHandlerView = new ErrorHandlerView(getActivity());
+					errorHandlerView.showToast(getString(R.string.email_validation_error_message));
 				}
 				break;
 
 			default:
 				break;
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		Activity activity = getActivity();
+		if (activity instanceof StatementActivity) {
+			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+		}
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.unregisterReceiver(mConnectionBroadcast);
+		}
+	}
+
+	@Override
+	public void onConnectionChanged() {
+		retryConnect();
+	}
+
+
+	private void loadSuccess() {
+		loadState.setLoadComplete(true);
+	}
+
+	private void loadFailure() {
+		loadState.setLoadComplete(false);
+	}
+
+
+	private void retryConnect() {
+		final Activity activity = getActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if (new ConnectionDetector().isOnline(activity)) {
+						if (!loadState.onLoanCompleted()) {
+							btnSendEmail.performClick();
+						}
+					}
+				}
+			});
+		}
+	}
+
+	public void sendStatement() {
+		onLoad();
+		Statement statement = new Statement(String.valueOf(WoolworthsApplication.getProductOfferingId()), "6007851103269565", "2017-01-01", "2017-11-27");
+		cliGetStatements = new GetStatements(getActivity(), statement, new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				StatementResponse statementResponse = (StatementResponse) object;
+				if (statementResponse != null) {
+					Response response = statementResponse.response;
+					switch (statementResponse.httpCode) {
+						case 200:
+							hideKeyboard();
+							FragmentUtils fragmentUtils = new FragmentUtils();
+							EmailStatementFragment emailStatementFragment = new EmailStatementFragment();
+							fragmentUtils.nextFragment((AppCompatActivity) AlternativeEmailFragment.this.getActivity(), getFragmentManager().beginTransaction(), emailStatementFragment, R.id.flEStatement);
+							break;
+						case 440:
+							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.stsParams);
+							break;
+						default:
+							break;
+					}
+				}
+				loadSuccess();
+				onLoadComplete();
+			}
+
+			@Override
+			public void onFailure(String e) {
+				final Activity activity = getActivity();
+				if (activity != null) {
+					activity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							ErrorHandlerView errorHandlerView = new ErrorHandlerView(activity);
+							errorHandlerView.showToast();
+							loadFailure();
+							onLoadComplete();
+						}
+					});
+				}
+			}
+		});
+		cliGetStatements.execute();
+	}
+
+
+	public void onLoad() {
+		mWoolworthsProgressBar.setVisibility(View.VISIBLE);
+		btnSendEmail.setVisibility(View.GONE);
+	}
+
+	public void onLoadComplete() {
+		btnSendEmail.setVisibility(View.VISIBLE);
+		mWoolworthsProgressBar.setVisibility(View.GONE);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (mStatementUtils != null) {
+			mStatementUtils.cancelRequest(cliGetStatements);
 		}
 	}
 }
