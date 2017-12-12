@@ -135,10 +135,11 @@ public class EditSlideAmountFragment extends CLIFragment {
 	private void forceKeyboard(WLoanEditTextView etAmount) {
 		Activity activity = getActivity();
 		if (activity != null) {
+			etAmount.requestFocus();
 			InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
 			assert imm != null;
-			imm.showSoftInput(etAmount, InputMethodManager.SHOW_IMPLICIT);
-			activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+			activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+			imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 		}
 	}
 
