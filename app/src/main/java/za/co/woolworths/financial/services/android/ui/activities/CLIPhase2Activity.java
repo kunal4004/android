@@ -191,6 +191,10 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 		imBack.setImageResource(R.drawable.close_24);
 	}
 
+	public void performClicked() {
+		imBack.performClick();
+	}
+
 	public void actionBarBackIcon() {
 		setCloseButtonEnabled(false);
 		imBack.setImageResource(R.drawable.back24);
@@ -204,6 +208,16 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	public void hideDeclineOffer() {
 		tvDeclineOffer.setVisibility(View.GONE);
 		pbDecline.setVisibility(View.GONE);
+	}
+
+	public void disableDeclineButton() {
+		tvDeclineOffer.setAlpha(0.5f);
+		tvDeclineOffer.setEnabled(false);
+	}
+
+	public void enableDeclineButton() {
+		tvDeclineOffer.setAlpha(1.0f);
+		tvDeclineOffer.setEnabled(true);
 	}
 
 	public void showDeclineProgressBar() {

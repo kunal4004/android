@@ -496,8 +496,6 @@
     <string name="enter_account_number">enter account number</string>
 
     <string name="select_your_bank_desc">As responsible lenders, we need to verify the info you have provided.
-        Your credit limit increase is subject to the condition that you provide us with your proof of income within 30 (thirty) days from the date of accepting the credit limit increase. \n\nIf your proof of income shows a lower income to the amount that you disclosed to us, we will re-calculate your credit limit increase amount and notify you of your new credit limit increase and instalment.\n\nYou will not have access to your credit limit increase until we receive your proof of income
-If we do not receive your proof of income within 30 (thirty) days from the date of acceptance of the credit limit increase, the credit limit increase will lapse and you will have to submit a new application.
     </string>
     <string name="increase_limit_desc">You can apply for a limit increase whenever you need to xxxxx xxxx</string>
 
@@ -574,7 +572,6 @@ If we do not receive your proof of income within 30 (thirty) days from the date 
     <string name="status_complete">complete</string>
     <string name="proof_of_income_popup_desc">Your credit limit increase is subject to the condition that proof of income is provided within 30 (thirty) days from the date of accepting the credit limit increase. Submission outside this period will result in the lapse of the offer.\n\nIf your proof of income is lower than the amount you disclosed, we will re-calculate your credit limit increase amount and notify you accordingly. You will only have access to the credit limit increase once proof of income is received.</string>
     <string name="proof_of_income">PROOF OF INCOME</string>
-
     <string name="email_validation_error_message"><b>OOPS</b>, TRY AGAIN. INCORRECT EMAIL FORMATTING</string>
 
     <!-- E-Statement -->
@@ -591,4 +588,8 @@ If we do not receive your proof of income within 30 (thirty) days from the date 
     <string name="no_statements">No Statements</string>
     <string name="no_statements_desc">We have no data for the current period.</string>
     <string name="account_statement">account statement</string>
+    <string name="account_type_info_desc">I agree that Woolworths Financial Services may request  my latest 3 months bank statements directly from my bank.</string>
+    <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
+    <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>
+    <string name="cli_create_application_error_message">Unfortunately we cannot proceed with your application</string>
 </resources>

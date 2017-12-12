@@ -65,7 +65,7 @@
                         android:background="@android:color/transparent"
                         android:gravity="center"
                         android:letterSpacing="0.0"
-                        android:text="45 000"
+                        android:text="R0"
                         android:textColor="@color/overview_color"
                         android:textSize="55dp"
                         app:WEditTextView_font="medium"/>
@@ -159,7 +159,7 @@
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             android:id="@+id/tvCurrentCreditLimitAmount"
                             style="@style/offer_relative_rowtype_value_style"
-                            android:text="R 30 000"/>
+                            android:text="R 0"/>
 
                     </LinearLayout>
                 </RelativeLayout>
@@ -187,7 +187,7 @@
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             android:id="@+id/tvAdditionalCreditLimitAmount"
                             style="@style/offer_relative_rowtype_value_style"
-                            android:text="R 30 000"/>
+                            android:text="R 0"/>
 
 
                     </LinearLayout>
@@ -216,7 +216,7 @@
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             android:id="@+id/tvNewCreditLimitAmount"
                             style="@style/offer_relative_rowtype_value_style"
-                            android:text="R 30 000"
+                            android:text="R 0"
                             app:WTextView_font="medium_bold"/>
 
                     </LinearLayout>

@@ -72,7 +72,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
 		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
 		CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
-		STATEMENT_SENT_TO
+		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR;
 	}
 
 	MODAL_LAYOUT current_view;
@@ -192,6 +192,28 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					mDescriptionOverlay.setText(description);
 				mBtnOverlay.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
+				break;
+
+			case CLI_ERROR:
+				setContentView(R.layout.error_popup);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				WButton btnOverlay = (WButton) findViewById(R.id.btnOverlay);
+				WTextView descriptionOverlay = (WTextView) findViewById(R.id.overlayDescription);
+				if (description != null)
+					descriptionOverlay.setText(description);
+				btnOverlay.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						cliExitAnimation();
+					}
+				});
+				mRelPopContainer.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						cliExitAnimation();
+					}
+				});
 				break;
 
 			case EMAIL:
@@ -400,7 +422,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelPopContainer.setOnClickListener(this);
 				btnOk.setOnClickListener(this);
 				break;
-
 			case STATEMENT_SENT_TO:
 				setContentView(R.layout.statement_popup_layout);
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
@@ -413,6 +434,30 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				tvAlternativeEmail.setOnClickListener(this);
 				mBtnConfirmEmail.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
+			case CLI_DECLINE:
+				setContentView(R.layout.lw_too_high_error);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				WButton mCLIDeclineOk = (WButton) findViewById(R.id.btnLoanHighOk);
+				WTextView mCLIDeclineTitle = (WTextView) findViewById(R.id.title);
+				WTextView mCLIDeclineDesc = (WTextView) findViewById(R.id.textProofIncome);
+				if (description != null)
+					mCLIDeclineDesc.setText(description);
+				if (title != null)
+					mCLIDeclineTitle.setText(title);
+				mCLIDeclineOk.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						cliExitAnimation();
+					}
+				});
+				mRelPopContainer.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						cliExitAnimation();
+					}
+				});
+				break;
 			default:
 				break;
 		}

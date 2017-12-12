@@ -10,7 +10,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 
-public class CLIApplication extends HttpAsyncTask<String, String, OfferActive> {
+public class CLICreateApplication extends HttpAsyncTask<String, String, OfferActive> {
 
 	private CreateOfferRequest mCreateOfferRequest;
 	private WoolworthsApplication mWoolworthsApp;
@@ -18,7 +18,7 @@ public class CLIApplication extends HttpAsyncTask<String, String, OfferActive> {
 	private Context mContext;
 	public String mException;
 
-	public CLIApplication(Context context, CreateOfferRequest createOfferRequest, OnEventListener callback) {
+	public CLICreateApplication(Context context, CreateOfferRequest createOfferRequest, OnEventListener callback) {
 		this.mCallBack = callback;
 		this.mContext = context;
 		this.mWoolworthsApp = ((WoolworthsApplication) ((AppCompatActivity) mContext).getApplication());
@@ -27,7 +27,7 @@ public class CLIApplication extends HttpAsyncTask<String, String, OfferActive> {
 
 	@Override
 	protected OfferActive httpDoInBackground(String... params) {
-		return mWoolworthsApp.getApi().cliApplication(mCreateOfferRequest);
+		return mWoolworthsApp.getApi().cliCreateApplication(mCreateOfferRequest);
 	}
 
 	@Override
