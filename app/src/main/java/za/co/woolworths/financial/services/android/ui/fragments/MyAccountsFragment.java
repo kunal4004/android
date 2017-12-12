@@ -71,7 +71,6 @@ import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-
 public class MyAccountsFragment extends BaseFragment implements View.OnClickListener, ViewPager.OnPageChangeListener {
 
 	private HideActionBar hideActionBar;
@@ -80,12 +79,12 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	ImageView openShoppingList;
 	RelativeLayout contactUs;
 
-	LinearLayout applyCreditCardView;
-	LinearLayout applyStoreCardView;
-	LinearLayout applyPersonalCardView;
-	LinearLayout linkedCreditCardView;
-	LinearLayout linkedStoreCardView;
-	LinearLayout linkedPersonalCardView;
+	RelativeLayout applyCreditCardView;
+	RelativeLayout applyStoreCardView;
+	RelativeLayout applyPersonalCardView;
+	RelativeLayout linkedCreditCardView;
+	RelativeLayout linkedStoreCardView;
+	RelativeLayout linkedPersonalCardView;
 	LinearLayout linkedAccountsLayout;
 	LinearLayout applyNowAccountsLayout;
 	LinearLayout loggedOutHeaderLayout;
@@ -106,10 +105,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	WTextView userInitials;
 
 	private ProgressDialogFragment mGetAccountsProgressDialog;
-	private ProgressBar scProgressBar;
-	private ProgressBar ccProgressBar;
-	private ProgressBar plProgressBar;
-
 	private ImageView imgCreditCard;
 
 	Map<String, Account> accounts;
@@ -129,6 +124,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	private boolean loadMessageCounter = false;
 	private String TAG = "MyAccountsFragment";
 	private MenuNavigationInterface mNavigationInterface;
+	private RelativeLayout storeLocator;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -162,12 +158,12 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		openMessageActivity = (ImageView) view.findViewById(R.id.openMessageActivity);
 		openShoppingList = (ImageView) view.findViewById(R.id.openShoppingList);
 		contactUs = (RelativeLayout) view.findViewById(R.id.contactUs);
-		applyStoreCardView = (LinearLayout) view.findViewById(R.id.applyStoreCard);
-		applyCreditCardView = (LinearLayout) view.findViewById(R.id.applyCrediCard);
-		applyPersonalCardView = (LinearLayout) view.findViewById(R.id.applyPersonalLoan);
-		linkedCreditCardView = (LinearLayout) view.findViewById(R.id.linkedCrediCard);
-		linkedStoreCardView = (LinearLayout) view.findViewById(R.id.linkedStoreCard);
-		linkedPersonalCardView = (LinearLayout) view.findViewById(R.id.linkedPersonalLoan);
+		applyStoreCardView = (RelativeLayout) view.findViewById(R.id.applyStoreCard);
+		applyCreditCardView = (RelativeLayout) view.findViewById(R.id.applyCrediCard);
+		applyPersonalCardView = (RelativeLayout) view.findViewById(R.id.applyPersonalLoan);
+		linkedCreditCardView = (RelativeLayout) view.findViewById(R.id.linkedCrediCard);
+		linkedStoreCardView = (RelativeLayout) view.findViewById(R.id.linkedStoreCard);
+		linkedPersonalCardView = (RelativeLayout) view.findViewById(R.id.linkedPersonalLoan);
 		linkedAccountsLayout = (LinearLayout) view.findViewById(R.id.linkedLayout);
 		mScrollView = (NestedScrollView) view.findViewById(R.id.nest_scrollview);
 		applyNowAccountsLayout = (LinearLayout) view.findViewById(R.id.applyNowLayout);
@@ -183,9 +179,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		cc_available_funds = (WTextView) view.findViewById(R.id.cc_available_funds);
 		pl_available_funds = (WTextView) view.findViewById(R.id.pl_available_funds);
 		ImageView mImageView = (ImageView) view.findViewById(R.id.imgBurgerButton);
-		scProgressBar = (ProgressBar) view.findViewById(R.id.scProgressBar);
-		ccProgressBar = (ProgressBar) view.findViewById(R.id.ccProgressBar);
-		plProgressBar = (ProgressBar) view.findViewById(R.id.plProgressBar);
 		mToolbar = (Toolbar) view.findViewById(R.id.mToolbar);
 		messageCounter = (WTextView) view.findViewById(R.id.messageCounter);
 		userName = (WTextView) view.findViewById(R.id.user_name);
@@ -193,6 +186,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		imgCreditCard = (ImageView) view.findViewById(R.id.imgCreditCard);
 		relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
+		storeLocator=(RelativeLayout) view.findViewById(R.id.storeLocator);
 		openMessageActivity.setOnClickListener(this);
 		contactUs.setOnClickListener(this);
 		applyPersonalCardView.setOnClickListener(this);
@@ -206,6 +200,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		myDetailBtn.setOnClickListener(this);
 		mImageView.setOnClickListener(this);
 		relFAQ.setOnClickListener(this);
+		storeLocator.setOnClickListener(this);
 
 		updateNavigationDrawer = (UpdateNavigationDrawer) getActivity();
 		adapter = new MyAccountOverViewPagerAdapter(getActivity());
@@ -291,7 +286,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 					linkedStoreCardView.setVisibility(View.VISIBLE);
 					applyStoreCardView.setVisibility(View.GONE);
 					sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-					scProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
 					break;
 				case "CC":
 					linkedCreditCardView.setVisibility(View.VISIBLE);
@@ -306,14 +300,12 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 					}
 
 					cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-					ccProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
 					break;
 				case "PL":
 					linkedPersonalCardView.setVisibility(View.VISIBLE);
 					applyPersonalCardView.setVisibility(View.GONE);
 
 					pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-					plProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
 					break;
 			}
 		}
@@ -345,6 +337,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 		contactUs.setVisibility(View.VISIBLE);
 		relFAQ.setVisibility(View.VISIBLE);
+		storeLocator.setVisibility(View.VISIBLE);
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
 
@@ -364,7 +357,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 					linkedStoreCardView.setVisibility(View.VISIBLE);
 					applyStoreCardView.setVisibility(View.GONE);
 					sc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-					scProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
 					break;
 				case "CC":
 					linkedCreditCardView.setVisibility(View.VISIBLE);
@@ -379,14 +371,12 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 					}
 
 					cc_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-					ccProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
 					break;
 				case "PL":
 					linkedPersonalCardView.setVisibility(View.VISIBLE);
 					applyPersonalCardView.setVisibility(View.GONE);
 
 					pl_available_funds.setText(removeNegativeSymbol(FontHyperTextParser.getSpannable(WFormatter.formatAmount(account.availableFunds), 1, getActivity())));
-					plProgressBar.setProgress(getAvailableFundsPercentage(account.availableFunds, account.creditLimit));
 					break;
 			}
 		}
@@ -418,6 +408,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 		contactUs.setVisibility(View.VISIBLE);
 		relFAQ.setVisibility(View.VISIBLE);
+		storeLocator.setVisibility(View.VISIBLE);
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
 	}
@@ -472,6 +463,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		contactUs.setVisibility(View.GONE);
 		relFAQ.setVisibility(View.GONE);
 		unlinkedLayout.setVisibility(View.GONE);
+		storeLocator.setVisibility(View.GONE);
 	}
 
 	private void setUiPageViewController() {
