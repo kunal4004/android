@@ -166,18 +166,18 @@
     </string-array>
 
     <string-array name="cli_carousel_title">
-        <item>@string/credit_bureau</item>
         <item>@string/txt_proof_of_income</item>
+        <item>@string/credit_bureau</item>
     </string-array>
 
     <string-array name="cli_carousel_desc">
-        <item>@string/credit_bureau_desc</item>
         <item>@string/txt_proof_of_income_desc</item>
+        <item>@string/credit_bureau_desc</item>
     </string-array>
 
     <integer-array name="cli_carousel_image">
-        <item>@drawable/cli_walkthrough_creditbureau</item>
         <item>@drawable/cli_walkthrough_proofofincome</item>
+        <item>@drawable/cli_walkthrough_creditbureau</item>
     </integer-array>
 
 
