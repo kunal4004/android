@@ -211,7 +211,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private void cliCreateApplication(CreateOfferRequest createOfferRequest) {
 		onLoad();
 		showView(llNextButtonLayout);
-		latestBackgroundTask(LATEST_BACKGROUND_CALL.CREATE_OFFER);
 		createOfferTask = new CLICreateApplication(getActivity(), createOfferRequest, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -239,6 +238,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
+						latestBackgroundTask(LATEST_BACKGROUND_CALL.CREATE_OFFER);
 						hideView(llNextButtonLayout);
 						loadFailure();
 						hideDeclineButton();
@@ -253,7 +253,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private void cliUpdateApplication(CreateOfferRequest createOfferRequest, String cliId) {
 		onLoad();
 		showView(llNextButtonLayout);
-		latestBackgroundTask(LATEST_BACKGROUND_CALL.UPDATE_APPLICATION);
 		cliUpdateApplication = new CLIUpdateApplication(getActivity(), createOfferRequest, cliId, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -281,6 +280,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
+						latestBackgroundTask(LATEST_BACKGROUND_CALL.UPDATE_APPLICATION);
 						loadFailure();
 						hideView(llNextButtonLayout);
 						hideDeclineButton();
@@ -293,7 +293,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	}
 
 	private void cliDelcineOfferRequest(CLIOfferDecision createOfferDecision) {
-		latestBackgroundTask(LATEST_BACKGROUND_CALL.DECLINE_OFFER);
 		declineOfferInterface.onLoad();
 		za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision cliOfferDecision = new za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision(getActivity(), createOfferDecision, String.valueOf(mObjOffer.cliId), new OnEventListener() {
 
@@ -323,6 +322,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					activity.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
+							latestBackgroundTask(LATEST_BACKGROUND_CALL.DECLINE_OFFER);
 							loadFailure();
 							declineOfferInterface.onLoadComplete();
 						}
@@ -504,7 +504,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		switch (v.getId()) {
 			case R.id.btnContinue:
 				onAcceptOfferLoad();
-				latestBackgroundTask(LATEST_BACKGROUND_CALL.ACCEPT_OFFER);
 				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
 				CLIOfferDecision createOfferDecision = new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, true);
 				cliAcceptOfferDecision =
@@ -543,6 +542,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 								getActivity().runOnUiThread(new Runnable() {
 									@Override
 									public void run() {
+										latestBackgroundTask(LATEST_BACKGROUND_CALL.ACCEPT_OFFER);
 										loadFailure();
 										onAcceptOfferCompleted();
 									}
@@ -608,8 +608,8 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					currentCredit = mCurrentCredit;
 					mCurrentCredit -= mCurrentCredit % 100;
 					String nextStep = mObjOffer.nextStep;
-					if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_offer))
-							|| nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required))) {
+					if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_offer).toLowerCase())
+							|| nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required).toLowerCase())) {
 						mCreditRequestMax = offer.creditRequestMax;
 						int mDifferenceCreditLimit = (mCreditRequestMax - mCurrentCredit);
 						mCLiId = mObjOffer.cliId;
@@ -743,7 +743,6 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				int animProgress = (Integer) animation.getAnimatedValue();
 				sbSlideAmount.setProgress(animProgress);
 			}
-
 		});
 		anim.addListener(new AnimatorListenerAdapter() {
 			@Override
