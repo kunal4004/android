@@ -4,12 +4,6 @@ public class CreateOfferRequest {
 
 	private String channel = "WWOneApp";
 	private boolean maxCreditRequested = true;
-	private boolean debtDisclosed = true;
-	private boolean canObtainCreditInfo = true;
-	private boolean canObtainBankStatements = true;
-	private boolean applicationInfoIsCorrect = true;
-	private boolean staffMember = false;
-	private boolean automaticCreditIncrease = true;
 	private int productOfferingId;
 	private int grossMonthlyIncome;
 	private int netMonthlyIncome;

@@ -98,6 +98,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private int mCreditRequestMax;
 	public RelativeLayout relConnectionLayout;
+	private int currentCredit;
 
 	private enum LATEST_BACKGROUND_CALL {CREATE_OFFER, DECLINE_OFFER, UPDATE_APPLICATION, ACCEPT_OFFER}
 
@@ -202,7 +203,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				String amount = tvSlideToEditAmount.getText().toString();
 				tvNewCreditLimitAmount.setText(amount);
 				mGlobalState.setCreditLimit(amount);
-				tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
+				tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(currentCredit, tvNewCreditLimitAmount.getText().toString())));
 			}
 		});
 	}
@@ -427,6 +428,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		progressColorFilter(cpAdditionalCreditLimit, Color.BLACK);
 		progressColorFilter(cpNewCreditAmount, Color.BLACK);
 		mCliPhase2Activity.disableDeclineButton();
+		hideDeclineButton();
 	}
 
 	private void onLoadComplete() {
@@ -446,6 +448,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		hideView(flCircularProgressSpinner);
 		enableView(btnContinue);
 		enableView(llNextButtonLayout);
+		showDeclineButton();
 	}
 
 	private void getCLIText(WTextView wTextView, int id) {
@@ -599,8 +602,11 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 			showDeclineButton();
 			switch (mObjOffer.httpCode) {
 				case 200:
+					enableDeclineButton();
 					Offer offer = mObjOffer.offer;
 					mCurrentCredit = offer.currCredit + INCREASE_PROGRESS_BY;
+					currentCredit = mCurrentCredit;
+					mCurrentCredit -= mCurrentCredit % 100;
 					String nextStep = mObjOffer.nextStep;
 					if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_offer))
 							|| nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_poi_required))) {
@@ -610,9 +616,9 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						sbSlideAmount.setMax(mDifferenceCreditLimit);
 						sbSlideAmount.incrementProgressBy(INCREASE_PROGRESS_BY);
 						animSeekBarToMaximum();
-						tvCurrentCreditLimitAmount.setText(formatAmount(mCurrentCredit - INCREASE_PROGRESS_BY));
+						tvCurrentCreditLimitAmount.setText(formatAmount(currentCredit - INCREASE_PROGRESS_BY));
 						tvNewCreditLimitAmount.setText(tvSlideToEditAmount.getText().toString());
-						tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(mCurrentCredit, tvNewCreditLimitAmount.getText().toString())));
+						tvAdditionalCreditLimitAmount.setText(additionalAmountSignSum(calculateAdditionalAmount(currentCredit, tvNewCreditLimitAmount.getText().toString())));
 						int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
 						mGlobalState.setDecisionDeclineOffer(new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, false));
 						onLoadComplete();

@@ -342,11 +342,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onResume() {
 		super.onResume();
-		mSharePreferenceHelper.removeValue("lw_installment_amount");
-		mSharePreferenceHelper.removeValue("lwf_drawDownAmount");
-		mSharePreferenceHelper.removeValue("lw_months");
-		mSharePreferenceHelper.removeValue("lw_product_offering_id");
-		mSharePreferenceHelper.removeValue("lw_amount_drawn_cent");
+		try {
+			mSharePreferenceHelper.removeValue("lw_installment_amount");
+			mSharePreferenceHelper.removeValue("lwf_drawDownAmount");
+			mSharePreferenceHelper.removeValue("lw_months");
+			mSharePreferenceHelper.removeValue("lw_product_offering_id");
+			mSharePreferenceHelper.removeValue("lw_amount_drawn_cent");
+		} catch (Exception ex) {
+		}
 	}
 
 	@Override

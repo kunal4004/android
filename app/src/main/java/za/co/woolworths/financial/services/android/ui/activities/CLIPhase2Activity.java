@@ -203,11 +203,15 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	public void showDeclineOffer() {
 		tvDeclineOffer.setVisibility(View.VISIBLE);
 		pbDecline.setVisibility(View.GONE);
+		tvDeclineOffer.setAlpha(1.0f);
+		pbDecline.setAlpha(1.0f);
 	}
 
 	public void hideDeclineOffer() {
 		tvDeclineOffer.setVisibility(View.GONE);
 		pbDecline.setVisibility(View.GONE);
+		tvDeclineOffer.setAlpha(0.0f);
+		pbDecline.setAlpha(0.0f);
 	}
 
 	public void disableDeclineButton() {
