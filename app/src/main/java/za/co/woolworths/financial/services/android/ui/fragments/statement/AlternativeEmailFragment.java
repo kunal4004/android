@@ -25,7 +25,7 @@ import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.statement.Statement;
+import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.rest.GetStatements;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
@@ -229,7 +229,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 
 	public void sendStatement() {
 		onLoad();
-		Statement statement = new Statement(String.valueOf(WoolworthsApplication.getProductOfferingId()), "6007851103269565", "2017-01-01", "2017-11-27");
+		UserStatement statement = new UserStatement(String.valueOf(WoolworthsApplication.getProductOfferingId()), "6007851103269565", "2017-01-01", "2017-11-27");
 		cliGetStatements = new GetStatements(getActivity(), statement, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {

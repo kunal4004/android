@@ -3,7 +3,7 @@ package za.co.woolworths.financial.services.android.models.dto.statement;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Statement {
+public class UserStatement {
 
 	/*
 		Request body params
@@ -34,23 +34,23 @@ public class Statement {
 	private boolean hideView = false;
 	private boolean viewIsLoading = false;
 
-	public Statement() {
+	public UserStatement() {
 	}
 
-	public Statement(String productOfferingId, String startDate, String endDate) {
+	public UserStatement(String productOfferingId, String startDate, String endDate) {
 		this.productOfferingId = productOfferingId;
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
 
-	public Statement(String productOfferingId, String accountNumber, String startDate, String endDate) {
+	public UserStatement(String productOfferingId, String accountNumber, String startDate, String endDate) {
 		this.productOfferingId = productOfferingId;
 		this.accountNumber = accountNumber;
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
 
-	public Statement(String docType, String docId, String size, String docDesc, boolean viewIsLoading) {
+	public UserStatement(String docType, String docId, String size, String docDesc, boolean viewIsLoading) {
 		this.docType = docType;
 		this.docId = docId;
 		this.size = size;

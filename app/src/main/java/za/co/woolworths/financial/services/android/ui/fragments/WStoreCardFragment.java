@@ -251,7 +251,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 							.getUserManager
 									().getAccounts();
 					Intent openStatement = new Intent(getActivity(), StatementActivity.class);
-					//Statement statement = new Statement(productOfferingId);
+					//UserStatement statement = new UserStatement(productOfferingId);
 					startActivity(openStatement);
 					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				}

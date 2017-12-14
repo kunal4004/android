@@ -5,20 +5,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
-import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 
-public class GetStatements extends HttpAsyncTask<String, String, StatementResponse> {
+public class SendUserStatement extends HttpAsyncTask<String, String, SendUserStatementResponse> {
 
 	private WoolworthsApplication mWoolworthsApp;
-	private OnEventListener<StatementResponse> mCallBack;
+	private OnEventListener<SendUserStatementResponse> mCallBack;
 	private Context mContext;
 	private String mException;
 	private UserStatement statement;
 
-	public GetStatements(Context context, UserStatement statement, OnEventListener callback) {
+	public SendUserStatement(Context context, UserStatement statement, OnEventListener callback) {
 		this.mContext = context;
 		this.statement = statement;
 		this.mCallBack = callback;
@@ -26,28 +26,28 @@ public class GetStatements extends HttpAsyncTask<String, String, StatementRespon
 	}
 
 	@Override
-	protected StatementResponse httpDoInBackground(String... params) {
-		return mWoolworthsApp.getApi().getStatementResponse(statement);
+	protected SendUserStatementResponse httpDoInBackground(String... params) {
+		return mWoolworthsApp.getApi().sendStatementRequest(statement);
 	}
 
 	@Override
-	protected StatementResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+	protected SendUserStatementResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
 		this.mException = errorMessage;
 		mCallBack.onFailure(errorMessage);
-		return new StatementResponse();
+		return new SendUserStatementResponse();
 	}
 
 	@Override
-	protected Class<StatementResponse> httpDoInBackgroundReturnType() {
-		return StatementResponse.class;
+	protected Class<SendUserStatementResponse> httpDoInBackgroundReturnType() {
+		return SendUserStatementResponse.class;
 	}
 
 	@Override
-	protected void onPostExecute(StatementResponse statementResponse) {
-		super.onPostExecute(statementResponse);
+	protected void onPostExecute(SendUserStatementResponse sendUserStatementResponse) {
+		super.onPostExecute(sendUserStatementResponse);
 		if (mCallBack != null) {
 			if (TextUtils.isEmpty(mException)) {
-				mCallBack.onSuccess(statementResponse);
+				mCallBack.onSuccess(sendUserStatementResponse);
 			}
 		}
 	}

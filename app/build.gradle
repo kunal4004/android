@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
 
     def major = "5"
-    def minor = "5"
+    def minor = "3"
     def fix = "0"
     def env = System.getenv()
     def job = env['BUILD_NUMBER']

@@ -12,7 +12,7 @@ import com.awfs.coordination.R;
 
 import java.util.ArrayList;
 
-import za.co.woolworths.financial.services.android.models.dto.statement.Statement;
+import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.StatementViewHolder> {
@@ -21,13 +21,13 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 	public interface StatementListener {
 		void onItemClicked(View v, int position);
 
-		void onViewClicked(View v, int position, Statement statement);
+		void onViewClicked(View v, int position, UserStatement statement);
 	}
 
 	private StatementListener statementListener;
 	private final static int HEADER_VIEW = 0;
 	private final static int CONTENT_VIEW = 1;
-	private final ArrayList<Statement> mItems;
+	private final ArrayList<UserStatement> mItems;
 	private boolean viewWasClicked = true;
 
 	public StatementAdapter(StatementListener statementListener) {
@@ -63,7 +63,7 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 
 	@Override
 	public void onBindViewHolder(StatementViewHolder holder, int position) {
-		Statement statement = mItems.get(position);
+		UserStatement statement = mItems.get(position);
 		switch (getItemViewType(position)) {
 			case HEADER_VIEW:
 				break;
@@ -118,19 +118,19 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 			pbLoading = (ProgressBar) itemView.findViewById(R.id.pbLoading);
 		}
 
-		public void populateMonth(Statement statement, WTextView view) {
+		public void populateMonth(UserStatement statement, WTextView view) {
 			view.setText("statement.docDesc");
 		}
 
 
-		public void updateViewStatementUI(Statement statement, WTextView view, ProgressBar pbLoading) {
+		public void updateViewStatementUI(UserStatement statement, WTextView view, ProgressBar pbLoading) {
 			if (statement.getStatementView()) {
 				hideView(view);
 				hideView(pbLoading);
 			}
 		}
 
-		public void showLoading(Statement statement, ImageView im, ProgressBar pb, WTextView tv) {
+		public void showLoading(UserStatement statement, ImageView im, ProgressBar pb, WTextView tv) {
 			if (statement.getStatementView()) {
 				hideView(pb);
 				hideView(tv);
@@ -154,12 +154,12 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 		}
 	}
 
-	public void add(Statement item) {
+	public void add(UserStatement item) {
 		mItems.add(item);
 		notifyItemInserted(mItems.size() - 1);
 	}
 
-	public ArrayList<Statement> getStatementList() {
+	public ArrayList<UserStatement> getStatementList() {
 		return mItems;
 	}
 
@@ -169,7 +169,7 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 
 	public void updateStatementViewState(boolean value) {
 		int index = 0;
-		for (Statement statement : mItems) {
+		for (UserStatement statement : mItems) {
 			statement.showStatementView(value);
 			refreshBlockOverlay(index);
 			index++;

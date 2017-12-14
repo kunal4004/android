@@ -26,7 +26,7 @@ import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.statement.PDF;
-import za.co.woolworths.financial.services.android.models.dto.statement.Statement;
+import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.rest.GetStatements;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
@@ -101,7 +101,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
 	private void setAdapter() {
 		mStatementAdapter = new StatementAdapter(this);
-		Statement datum = new Statement();
+		UserStatement datum = new UserStatement();
 		datum.setHeader(true);
 		mStatementAdapter.add(datum);
 		rclEStatement.setAdapter(mStatementAdapter);
@@ -135,8 +135,8 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	@Override
 	public void onItemClicked(View v, int position) {
 		this.mViewIsLoadingPosition = position;
-		ArrayList<Statement> arrStatement = mStatementAdapter.getStatementList();
-		Statement statement = arrStatement.get(position);
+		ArrayList<UserStatement> arrStatement = mStatementAdapter.getStatementList();
+		UserStatement statement = arrStatement.get(position);
 		boolean selectedByUser = statement.selectedByUser();
 		/*
 		  true - previously selected by user
@@ -150,7 +150,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 		}
 
 		boolean arrayContainTrue = false;
-		for (Statement s : arrStatement) {
+		for (UserStatement s : arrStatement) {
 			if (s.selectedByUser()) {
 				arrayContainTrue = true;
 			}
@@ -169,10 +169,10 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	}
 
 	@Override
-	public void onViewClicked(View v, int position, Statement statement) {
+	public void onViewClicked(View v, int position, UserStatement statement) {
 		this.mViewIsLoadingPosition = position;
 		Activity activity = getActivity();
-		mPdfFile = new PDF(statement.docId, String.valueOf(WoolworthsApplication.getProductOfferingId()));
+		mPdfFile = new PDF(statement.docId, String.valueOf(WoolworthsApplication.getProductOfferingId()), statement.docDesc);
 		if (activity instanceof StatementActivity) {
 			StatementActivity statementActivity = (StatementActivity) activity;
 			statementActivity.checkPermission();
@@ -210,7 +210,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
 	public void getStatement() {
 		onLoad();
-		Statement statement1 = new Statement(String.valueOf(WoolworthsApplication.getProductOfferingId()), Utils.getDate(6), Utils.getDate(0));
+		UserStatement statement1 = new UserStatement(String.valueOf(WoolworthsApplication.getProductOfferingId()), Utils.getDate(6), Utils.getDate(0));
 		cliGetStatements = new GetStatements(getActivity(), statement1, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -219,13 +219,13 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 					Response response = statementResponse.response;
 					switch (statementResponse.httpCode) {
 						case 200:
-							List<Statement> statement = statementResponse.data;
+							List<UserStatement> statement = statementResponse.data;
 							if (statement.size() == 0) {
 								showView(ctNoResultFound);
 							} else {
 								hideView(ctNoResultFound);
 								int index = 0;
-								for (Statement d : statement) {
+								for (UserStatement d : statement) {
 									mStatementAdapter.add(d);
 									mStatementAdapter.refreshBlockOverlay(index);
 									index++;

@@ -10,7 +10,6 @@ import com.jakewharton.retrofit.Ok3Client;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
@@ -45,7 +44,7 @@ public class RetrofitAsyncClient {
 	}
 
 	public void getPDFResponse(PDF pdf, Callback<String> callback) {
-		mApiInterface.getPDF(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), pdf.getDocId(), pdf.getProductOfferingId(), callback);
+		mApiInterface.getStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), pdf.getDocId(), pdf.getProductOfferingId(), pdf.getDocDesc(), callback);
 	}
 
 	public String getSessionToken() {

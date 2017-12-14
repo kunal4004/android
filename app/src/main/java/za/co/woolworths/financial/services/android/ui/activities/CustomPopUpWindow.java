@@ -30,7 +30,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.dto.statement.Statement;
+import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.rest.GetStatements;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
@@ -873,7 +873,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 	public void sendStatement() {
 		onLoad();
-		Statement statement = new Statement(String.valueOf(WoolworthsApplication.getProductOfferingId()), "6007851103269565", "2017-01-01", "2017-11-27");
+		UserStatement statement = new UserStatement(String.valueOf(WoolworthsApplication.getProductOfferingId()), "6007851103269565", "2017-01-01", "2017-11-27");
 		cliGetStatements = new GetStatements(CustomPopUpWindow.this, statement, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {

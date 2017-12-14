@@ -574,7 +574,7 @@
     <string name="proof_of_income">PROOF OF INCOME</string>
     <string name="email_validation_error_message"><b>OOPS</b>, TRY AGAIN. INCORRECT EMAIL FORMATTING</string>
 
-    <!-- E-Statement -->
+    <!--UserStatementment -->
     <string name="statement">statements</string>
     <string name="select_to_email_statement">select to email your statements</string>
     <string name="view">View</string>
