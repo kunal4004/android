@@ -54,7 +54,7 @@ public class UserStatement {
 		this.docType = docType;
 		this.docId = docId;
 		this.size = size;
-		this.endDate = docDesc;
+		this.docDesc = docDesc;
 		this.viewIsLoading = viewIsLoading;
 	}
 

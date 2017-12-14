@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
@@ -49,6 +50,7 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.models.rest.SendUserStatement;
 
 public interface ApiInterface {
 
@@ -674,8 +676,5 @@ public interface ApiInterface {
 			@Header("userAgent") String userAgent,
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sessionToken") String sessionToken,
-			@Query("productOfferingId") String productOfferingId,
-			@Query("docId") String docId,
-			@Query("email") String email,
-			@Query("docDesc") String docDesc);
+			@Body SendUserStatementRequest sendUserStatementRequest);
 }

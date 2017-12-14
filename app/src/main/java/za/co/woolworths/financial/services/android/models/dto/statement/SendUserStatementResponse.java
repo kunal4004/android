@@ -14,7 +14,7 @@ public class SendUserStatementResponse {
 	public Response response;
 	@SerializedName("data")
 	@Expose
-	public List<SendUserStatementResponse> data = null;
+	public List<EmailStatementResponse> data = null;
 	@SerializedName("httpCode")
 	@Expose
 	public Integer httpCode;

@@ -121,6 +121,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						}
 					}));
 		}
+
 	}
 
 	private void init(View view) {

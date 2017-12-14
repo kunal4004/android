@@ -3,8 +3,7 @@ package za.co.woolworths.financial.services.android.models.dto.statement;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class SendUserSatementData {
-
+public class EmailStatementResponse {
 	@SerializedName("docId")
 	@Expose
 	public String docId;

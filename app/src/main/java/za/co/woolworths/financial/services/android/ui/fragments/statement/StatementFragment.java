@@ -25,7 +25,10 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.statement.PDF;
+import za.co.woolworths.financial.services.android.models.dto.statement.GetStatement;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
+import za.co.woolworths.financial.services.android.models.dto.statement.USDocument;
+import za.co.woolworths.financial.services.android.models.dto.statement.USDocuments;
 import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
 import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.rest.GetStatements;
@@ -44,7 +47,6 @@ import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-
 public class StatementFragment extends Fragment implements StatementAdapter.StatementListener, View.OnClickListener, NetworkChangeListener {
 
 	private WButton mBtnEmailStatement;
@@ -55,7 +57,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	private ConstraintLayout ccProgressLayout;
 	private ErrorHandlerView mErrorHandlerView;
 	private WButton mBtnRetry;
-	private PDF mPdfFile;
+	private GetStatement mGetStatementFile;
 	private SlidingUpPanelLayout mSlideUpPanelLayout;
 	private int mViewIsLoadingPosition = -1;
 	private GetStatements cliGetStatements;
@@ -172,7 +174,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	public void onViewClicked(View v, int position, UserStatement statement) {
 		this.mViewIsLoadingPosition = position;
 		Activity activity = getActivity();
-		mPdfFile = new PDF(statement.docId, String.valueOf(WoolworthsApplication.getProductOfferingId()), statement.docDesc);
+		mGetStatementFile = new GetStatement(statement.docId, String.valueOf(WoolworthsApplication.getProductOfferingId()), statement.docDesc);
 		if (activity instanceof StatementActivity) {
 			StatementActivity statementActivity = (StatementActivity) activity;
 			statementActivity.checkPermission();
@@ -183,7 +185,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.btnEmailStatement:
-				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_SENT_TO);
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_SENT_TO, createUserStatementRequest());
 				break;
 
 			case R.id.btnRetry:
@@ -220,6 +222,23 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 					switch (statementResponse.httpCode) {
 						case 200:
 							List<UserStatement> statement = statementResponse.data;
+
+							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 JUN 2017", false));
+							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 JLY 2017", false));
+
+							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 AUT 2017", false));
+
+							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 SEP 2017", false));
+
+							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 OCT 2017", false));
+
+							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 NOV 2017", false));
+
+							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 DEC 2017", false));
+
+							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 JAN 2017", false));
+
+
 							if (statement.size() == 0) {
 								showView(ctNoResultFound);
 							} else {
@@ -239,9 +258,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
 						default:
 							if (response != null) {
-								Utils.displayValidationMessage(getActivity(),
-										CustomPopUpWindow.MODAL_LAYOUT.ERROR,
-										response.desc);
+								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
 							}
 							break;
 					}
@@ -280,7 +297,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 		WoolworthsApplication mWoolWorthsApplication = ((WoolworthsApplication) StatementFragment.this.getActivity().getApplication());
 		showViewProgress();
 
-		mWoolWorthsApplication.getAsyncApi().getPDFResponse(mPdfFile, new Callback<String>() {
+		mWoolWorthsApplication.getAsyncApi().getPDFResponse(mGetStatementFile, new Callback<String>() {
 
 			@Override
 			public void success(String responseBody, retrofit.client.Response response) {
@@ -444,4 +461,22 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	public void hideViewProgress() {
 		mStatementAdapter.onViewClicked(mViewIsLoadingPosition, false);
 	}
+
+	public SendUserStatementRequest createUserStatementRequest() {
+		SendUserStatementRequest sendUserStatementRequest = new SendUserStatementRequest();
+		List<USDocument> documents = new ArrayList<>();
+		for (UserStatement us : mStatementAdapter.getStatementList()) {
+			if (us.selectedByUser()) {
+				documents.add(new USDocument(us.docType, us.docId, us.docDesc));
+			}
+		}
+		USDocuments usDocuments = new USDocuments();
+		usDocuments.document = documents;
+		sendUserStatementRequest.documents = usDocuments;
+		sendUserStatementRequest.productOfferingId = String.valueOf(WoolworthsApplication.getProductOfferingId());
+		return sendUserStatementRequest;
+	}
 }
+
+
+

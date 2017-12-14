@@ -1,13 +1,13 @@
 package za.co.woolworths.financial.services.android.models.dto.statement;
 
 
-public class PDF {
+public class GetStatement {
 
 	private String docId;
 	private String docDesc;
 	private String productOfferingId;
 
-	public PDF(String docId, String productOfferingId, String docDesc) {
+	public GetStatement(String docId, String productOfferingId, String docDesc) {
 		this.docId = docId;
 		this.productOfferingId = productOfferingId;
 		this.docDesc = docDesc;

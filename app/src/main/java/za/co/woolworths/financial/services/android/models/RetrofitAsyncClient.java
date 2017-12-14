@@ -14,7 +14,7 @@ import retrofit.Callback;
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.statement.PDF;
+import za.co.woolworths.financial.services.android.models.dto.statement.GetStatement;
 import za.co.woolworths.financial.services.android.util.StringConverter;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -43,8 +43,8 @@ public class RetrofitAsyncClient {
 				.create(ApiInterface.class);
 	}
 
-	public void getPDFResponse(PDF pdf, Callback<String> callback) {
-		mApiInterface.getStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), pdf.getDocId(), pdf.getProductOfferingId(), pdf.getDocDesc(), callback);
+	public void getPDFResponse(GetStatement getStatement, Callback<String> callback) {
+		mApiInterface.getStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), getStatement.getDocId(), getStatement.getProductOfferingId(), getStatement.getDocDesc(), callback);
 	}
 
 	public String getSessionToken() {

@@ -119,7 +119,7 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 		}
 
 		public void populateMonth(UserStatement statement, WTextView view) {
-			view.setText("statement.docDesc");
+			view.setText(statement.docDesc);
 		}
 
 
@@ -177,9 +177,9 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 	}
 
 	public void onViewClicked(int position, boolean viewIsLoading) {
-		if (viewIsLoading){
+		if (viewIsLoading) {
 			viewWasClicked(false);
-		}else {
+		} else {
 			viewWasClicked(true);
 		}
 		mItems.get(position).setViewIsLoading(viewIsLoading);

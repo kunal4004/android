@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -16,9 +17,9 @@ public class SendUserStatement extends HttpAsyncTask<String, String, SendUserSta
 	private OnEventListener<SendUserStatementResponse> mCallBack;
 	private Context mContext;
 	private String mException;
-	private UserStatement statement;
+	private SendUserStatementRequest statement;
 
-	public SendUserStatement(Context context, UserStatement statement, OnEventListener callback) {
+	public SendUserStatement(Context context, SendUserStatementRequest statement, OnEventListener callback) {
 		this.mContext = context;
 		this.statement = statement;
 		this.mCallBack = callback;
