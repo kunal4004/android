@@ -64,7 +64,9 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	private BroadcastReceiver mConnectionBroadcast;
 	private LoadState loadState;
 	private SlidingUpPanelLayout.PanelState panelIsCollapsed = SlidingUpPanelLayout.PanelState.COLLAPSED;
+	private boolean viewWasCreated = false;
 
+	View view;
 
 	public StatementFragment() {
 	}
@@ -72,23 +74,29 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.statement_fragment, container, false);
+		if (view == null) {
+			view = inflater.inflate(R.layout.statement_fragment, container, false);
+		}
+
+		return view;
 	}
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		slideUpPanel(view);
-		init(view);
-		listener();
-		setAdapter();
-		setRecyclerView(rclEStatement);
-		disableButton();
-		slideUpPanelListener();
-		loadState = new LoadState();
-		loadSuccess();
-		mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
-
+		if (savedInstanceState == null & !viewWasCreated) {
+			slideUpPanel(view);
+			init(view);
+			listener();
+			setAdapter();
+			setRecyclerView(rclEStatement);
+			disableButton();
+			slideUpPanelListener();
+			loadState = new LoadState();
+			loadSuccess();
+			mConnectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
+			viewWasCreated = true;
+		}
 	}
 
 	private void slideUpPanel(View v) {
@@ -222,23 +230,6 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 					switch (statementResponse.httpCode) {
 						case 200:
 							List<UserStatement> statement = statementResponse.data;
-
-							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 JUN 2017", false));
-							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 JLY 2017", false));
-
-							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 AUT 2017", false));
-
-							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 SEP 2017", false));
-
-							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 OCT 2017", false));
-
-							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 NOV 2017", false));
-
-							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 DEC 2017", false));
-
-							statement.add(new UserStatement("pdf", "527118_13520", "300kb", "07 JAN 2017", false));
-
-
 							if (statement.size() == 0) {
 								showView(ctNoResultFound);
 							} else {
