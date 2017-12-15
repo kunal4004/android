@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.models.dto.statement.EmailSta
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
 import za.co.woolworths.financial.services.android.models.rest.SendUserStatement;
+import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.AlternativeEmailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailStatementFragment;
@@ -99,7 +100,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			current_view = (MODAL_LAYOUT) mBundle.getSerializable("key");
 			title = getText(mBundle.getString("title"));
 			description = getText(mBundle.getString("description"));
-			userStatement = mBundle.getString("SEND_USER_STATEMENT");
+			userStatement = mBundle.getString(StatementActivity.SEND_USER_STATEMENT);
 			displayView(current_view);
 		} else {
 			finish();
@@ -881,7 +882,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				public void onAnimationEnd(Animation animation) {
 					woolworthsApplication
 							.bus()
-							.send(new AlternativeEmailFragment());
+							.send(new BusStation(userStatement));
 					dismissLayout();
 				}
 			});

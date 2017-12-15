@@ -22,13 +22,17 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
 
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import java.util.List;
+
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
-import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
-import za.co.woolworths.financial.services.android.models.rest.GetStatements;
+import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
+import za.co.woolworths.financial.services.android.models.rest.SendUserStatement;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
@@ -49,8 +53,10 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 	private StatementUtils mStatementUtils;
 	private BroadcastReceiver mConnectionBroadcast;
 	private LoadState loadState;
-	private GetStatements cliGetStatements;
+	private SendUserStatement sendUserStatement;
 	private ProgressBar mWoolworthsProgressBar;
+	private SendUserStatementRequest mSendUserStatementRequest;
+	private String mUserStatement;
 
 	@Nullable
 	@Override
@@ -62,8 +68,13 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		mStatementUtils = new StatementUtils(getActivity());
+		Bundle argument = getArguments();
+		if (argument != null) {
+			mUserStatement = argument.getString(StatementActivity.SEND_USER_STATEMENT);
+		}
 		initView(view);
 		disableButton();
+		mSendUserStatementRequest = new Gson().fromJson(mUserStatement, SendUserStatementRequest.class);
 	}
 
 	private void initView(View view) {
@@ -164,6 +175,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 				if (mStatementUtils.validateEmail(alternativeEmail)) {
 					Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
 					etAlternativeEmailAddress.setCompoundDrawablesWithIntrinsicBounds(null, null, transparentDrawable, null);
+					mSendUserStatementRequest.to = etAlternativeEmailAddress.getText().toString();
 					sendStatement();
 				} else {
 					Drawable img = getContext().getResources().getDrawable(R.drawable.validation_error_drawable);
@@ -183,6 +195,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 		super.onResume();
 		Activity activity = getActivity();
 		if (activity instanceof StatementActivity) {
+			showKeyboard();
 			activity.registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
 		}
 	}
@@ -227,21 +240,28 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 		}
 	}
 
+
 	public void sendStatement() {
 		onLoad();
-		UserStatement statement = new UserStatement(String.valueOf(WoolworthsApplication.getProductOfferingId()), "6007851103269565", "2017-01-01", "2017-11-27");
-		cliGetStatements = new GetStatements(getActivity(), statement, new OnEventListener() {
+		sendUserStatement = new SendUserStatement(getActivity(), mSendUserStatementRequest, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
-				StatementResponse statementResponse = (StatementResponse) object;
+				SendUserStatementResponse statementResponse = (SendUserStatementResponse) object;
 				if (statementResponse != null) {
 					Response response = statementResponse.response;
 					switch (statementResponse.httpCode) {
 						case 200:
-							hideKeyboard();
-							FragmentUtils fragmentUtils = new FragmentUtils();
-							EmailStatementFragment emailStatementFragment = new EmailStatementFragment();
-							fragmentUtils.nextFragment((AppCompatActivity) AlternativeEmailFragment.this.getActivity(), getFragmentManager().beginTransaction(), emailStatementFragment, R.id.flEStatement);
+							List<EmailStatementResponse> data = statementResponse.data;
+							EmailStatementResponse emailResponse = data.get(0);
+							if (emailResponse.sent) {
+								hideKeyboard();
+								FragmentUtils fragmentUtils = new FragmentUtils();
+								EmailStatementFragment emailStatementFragment = new EmailStatementFragment();
+								fragmentUtils.nextFragment((AppCompatActivity) AlternativeEmailFragment.this.getActivity(), getFragmentManager().beginTransaction(), emailStatementFragment, R.id.flEStatement);
+							} else {
+								hideKeyboard();
+								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, emailResponse.error);
+							}
 							break;
 						case 440:
 							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.stsParams);
@@ -270,9 +290,9 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 				}
 			}
 		});
-		cliGetStatements.execute();
-	}
 
+		sendUserStatement.execute();
+	}
 
 	public void onLoad() {
 		mWoolworthsProgressBar.setVisibility(View.VISIBLE);
@@ -288,7 +308,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 	public void onDestroy() {
 		super.onDestroy();
 		if (mStatementUtils != null) {
-			mStatementUtils.cancelRequest(cliGetStatements);
+			mStatementUtils.cancelRequest(sendUserStatement);
 		}
 	}
 }

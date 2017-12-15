@@ -22,6 +22,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.AlternativeEmailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailStatementFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment;
@@ -40,6 +41,7 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 	ArrayList<String> permissions;
 	private Menu mMenu;
 	private ActionBar actionBar;
+	public static final String SEND_USER_STATEMENT="SEND_USER_STATEMENT";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +63,13 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 				.subscribe(new Consumer<Object>() {
 					@Override
 					public void accept(Object object) throws Exception {
-						if (object instanceof AlternativeEmailFragment) {
+						if (object instanceof BusStation) {
+							BusStation busStation = (BusStation) object;
 							showEmailStatementButton();
+							Bundle alternativeEmailBundle = new Bundle();
+							alternativeEmailBundle.putString(SEND_USER_STATEMENT, busStation.getString());
 							AlternativeEmailFragment alternativeEmailFragment = new AlternativeEmailFragment();
+							alternativeEmailFragment.setArguments(alternativeEmailBundle);
 							FragmentUtils fragmentUtils = new FragmentUtils(StatementActivity.this);
 							fragmentUtils.nextFragment(StatementActivity.this, getSupportFragmentManager().beginTransaction(), alternativeEmailFragment, R.id.flEStatement);
 						} else if (object instanceof EmailStatementFragment) {

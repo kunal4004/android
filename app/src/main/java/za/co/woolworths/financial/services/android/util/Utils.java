@@ -74,6 +74,7 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionParentO
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
@@ -457,7 +458,7 @@ public class Utils {
 		args.putSerializable("key", key);
 		args.putString("description", "");
 		String strSendUserStatement = new Gson().toJson(susr);
-		args.putString("SEND_USER_STATEMENT", strSendUserStatement);
+		args.putString(StatementActivity.SEND_USER_STATEMENT, strSendUserStatement);
 		openMsg.putExtras(args);
 		context.startActivity(openMsg);
 		((AppCompatActivity) context).overridePendingTransition(0, 0);

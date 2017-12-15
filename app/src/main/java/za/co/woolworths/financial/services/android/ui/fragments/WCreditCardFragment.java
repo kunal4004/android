@@ -363,19 +363,22 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	}
 
 	private void offerActiveResult(OfferActive offerActive) {
-		String messageSummary = TextUtils.isEmpty(offerActive.messageSummary) ? "" : offerActive.messageSummary;
-		if (controllerNotNull()) {
-			if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
-				mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
-				mIncreaseLimitController.disableView(llIncreaseLimitContainer);
-				mIncreaseLimitController.disableView(tvIncreaseLimit);
-			} else {
-				mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
-				mIncreaseLimitController.enableView(llIncreaseLimitContainer);
-				mIncreaseLimitController.enableView(tvIncreaseLimit);
-			}
+		try {
+			String messageSummary = TextUtils.isEmpty(offerActive.messageSummary) ? "" : offerActive.messageSummary;
+			if (controllerNotNull()) {
+				if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
+					mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
+					mIncreaseLimitController.disableView(llIncreaseLimitContainer);
+					mIncreaseLimitController.disableView(tvIncreaseLimit);
+				} else {
+					mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
+					mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+					mIncreaseLimitController.enableView(tvIncreaseLimit);
+				}
 
-			cliOfferStatus(offerActive);
+				cliOfferStatus(offerActive);
+			}
+		} catch (IllegalStateException ignored) {
 		}
 	}
 
