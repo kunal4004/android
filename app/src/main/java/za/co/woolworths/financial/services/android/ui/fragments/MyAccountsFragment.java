@@ -24,7 +24,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
@@ -75,7 +74,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 	private HideActionBar hideActionBar;
 
-	ImageView openMessageActivity;
+	RelativeLayout openMessageActivity;
 	ImageView openShoppingList;
 	RelativeLayout contactUs;
 
@@ -89,8 +88,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	LinearLayout applyNowAccountsLayout;
 	LinearLayout loggedOutHeaderLayout;
 	LinearLayout loggedInHeaderLayout;
-	LinearLayout unlinkedLayout;
-	WButton linkAccountsBtn;
+	RelativeLayout unlinkedLayout;
 	RelativeLayout signOutBtn;
 	RelativeLayout myDetailBtn;
 	ViewPager viewPager;
@@ -125,6 +123,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	private String TAG = "MyAccountsFragment";
 	private MenuNavigationInterface mNavigationInterface;
 	private RelativeLayout storeLocator;
+	private LinearLayout allUserOptionsLayout;
+	private LinearLayout loginUserOptionsLayout;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -155,7 +155,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 		wGlobalState = woolworthsApplication.getWGlobalState();
 		mNavigationInterface = (MenuNavigationInterface) getActivity();
-		openMessageActivity = (ImageView) view.findViewById(R.id.openMessageActivity);
+		openMessageActivity = (RelativeLayout) view.findViewById(R.id.openMessageActivity);
 		openShoppingList = (ImageView) view.findViewById(R.id.openShoppingList);
 		contactUs = (RelativeLayout) view.findViewById(R.id.contactUs);
 		applyStoreCardView = (RelativeLayout) view.findViewById(R.id.applyStoreCard);
@@ -169,8 +169,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		applyNowAccountsLayout = (LinearLayout) view.findViewById(R.id.applyNowLayout);
 		loggedOutHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedOutHeaderLayout);
 		loggedInHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedInHeaderLayout);
-		unlinkedLayout = (LinearLayout) view.findViewById(R.id.llUnlinkedAccount);
-		linkAccountsBtn = (WButton) view.findViewById(R.id.linkAccountsBtn);
+		unlinkedLayout = (RelativeLayout) view.findViewById(R.id.llUnlinkedAccount);
 		signOutBtn = (RelativeLayout) view.findViewById(R.id.signOutBtn);
 		myDetailBtn = (RelativeLayout) view.findViewById(R.id.rlMyDetails);
 		viewPager = (ViewPager) view.findViewById(R.id.pager);
@@ -187,6 +186,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
 		storeLocator=(RelativeLayout) view.findViewById(R.id.storeLocator);
+		allUserOptionsLayout =(LinearLayout)view.findViewById(R.id.parentOptionsLayout);
+		loginUserOptionsLayout=(LinearLayout)view.findViewById(R.id.loginUserOptionsLayout);
 		openMessageActivity.setOnClickListener(this);
 		contactUs.setOnClickListener(this);
 		applyPersonalCardView.setOnClickListener(this);
@@ -209,7 +210,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 		view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
 		view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
-		view.findViewById(R.id.linkAccountsBtn).setOnClickListener(this.btnLinkAccounts_onClick);
+		view.findViewById(R.id.llUnlinkedAccount).setOnClickListener(this.btnLinkAccounts_onClick);
 		showViews();
 		//hide all views, load accounts may occur
 		this.initialize();
@@ -335,9 +336,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			applyNowAccountsLayout.setVisibility(View.VISIBLE);
 		}
 
-		contactUs.setVisibility(View.VISIBLE);
-		relFAQ.setVisibility(View.VISIBLE);
-		storeLocator.setVisibility(View.VISIBLE);
+		allUserOptionsLayout.setVisibility(View.VISIBLE);
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
 
@@ -406,9 +405,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			applyNowAccountsLayout.setVisibility(View.VISIBLE);
 		}
 
-		contactUs.setVisibility(View.VISIBLE);
-		relFAQ.setVisibility(View.VISIBLE);
-		storeLocator.setVisibility(View.VISIBLE);
+		allUserOptionsLayout.setVisibility(View.VISIBLE);
 		viewPager.setAdapter(adapter);
 		viewPager.setCurrentItem(0);
 	}
@@ -432,6 +429,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				userInitials.setText(initials);
 				signOutBtn.setVisibility(View.VISIBLE);
 				myDetailBtn.setVisibility(View.VISIBLE);
+				loginUserOptionsLayout.setVisibility(View.VISIBLE);
 				if (jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
 					//user is linked and signed in
 					linkedAccountsLayout.setVisibility(View.VISIBLE);
@@ -460,10 +458,9 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		myDetailBtn.setVisibility(View.GONE);
 		linkedAccountsLayout.setVisibility(View.GONE);
 		applyNowAccountsLayout.setVisibility(View.GONE);
-		contactUs.setVisibility(View.GONE);
-		relFAQ.setVisibility(View.GONE);
+		allUserOptionsLayout.setVisibility(View.GONE);
 		unlinkedLayout.setVisibility(View.GONE);
-		storeLocator.setVisibility(View.GONE);
+		loginUserOptionsLayout.setVisibility(View.GONE);
 	}
 
 	private void setUiPageViewController() {
@@ -610,7 +607,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				loadMessageCounter = false;
 				mErrorHandlerView.hideErrorHandlerLayout();
 				mScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
-				relFAQ.setVisibility(View.GONE);
 				showViews();
 			}
 
@@ -670,7 +666,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 							break;
 						default:
 							if (accountsResponse.response != null) {
-								relFAQ.setVisibility(View.GONE);
 								Utils.alertErrorMessage(getActivity(), accountsResponse.response.desc);
 							}
 
@@ -760,7 +755,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	private void dismissProgress() {
 		if (getActivity() != null) {
 			mScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.white));
-			relFAQ.setVisibility(View.VISIBLE);
 			if (mGetAccountsProgressDialog != null && mGetAccountsProgressDialog.isVisible()) {
 				mGetAccountsProgressDialog.dismiss();
 			}
@@ -835,6 +829,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		linkedAccountsLayout.setVisibility(View.GONE);
 		myDetailBtn.setVisibility(View.GONE);
 		signOutBtn.setVisibility(View.GONE);
+		loginUserOptionsLayout.setVisibility(View.GONE);
 	}
 
 	public HttpAsyncTask<String, String, VoucherResponse> getVouchers() {
