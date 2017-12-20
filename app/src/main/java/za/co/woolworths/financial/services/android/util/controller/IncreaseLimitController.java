@@ -200,12 +200,14 @@ public class IncreaseLimitController {
 	}
 
 	private void setCLITag(String messageSummary, String nextStepColour, WTextView tvApplyNowIncreaseLimit) {
+		tvApplyNowIncreaseLimit.setVisibility(View.VISIBLE);
 		setStatusText(messageSummary, tvApplyNowIncreaseLimit);
 		roundCornerDrawable(tvApplyNowIncreaseLimit, nextStepColour);
 		tvApplyNowIncreaseLimit.setText(messageSummary);
 	}
 
 	private void setCLITag(String messageSummary, int nextStepColour, WTextView tvApplyNowIncreaseLimit) {
+		tvApplyNowIncreaseLimit.setVisibility(View.VISIBLE);
 		setStatusText(messageSummary, tvApplyNowIncreaseLimit);
 		tvApplyNowIncreaseLimit.setBackground(ContextCompat.getDrawable(tvApplyNowIncreaseLimit.getContext(), nextStepColour));
 		tvApplyNowIncreaseLimit.setText(messageSummary);
