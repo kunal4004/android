@@ -301,7 +301,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				OfferActive mObjOffer = ((OfferActive) object);
 				switch (mObjOffer.httpCode) {
 					case 200:
-						finishActivity(mObjOffer);
+						finishActivity();
 						break;
 					case 440:
 						SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
@@ -523,7 +523,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 											FragmentUtils fragmentUtils = new FragmentUtils();
 											fragmentUtils.nextFragment((AppCompatActivity) OfferCalculationFragment.this.getActivity(), getFragmentManager().beginTransaction(), documentFragment, R.id.cli_steps_container);
 										} else {
-											finishActivity(mObjOffer);
+											finishActivity();
 										}
 										break;
 									case 440:
@@ -778,13 +778,13 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		cancelRequest(cliAcceptOfferDecision);
 	}
 
-	public void finishActivity(OfferActive offerActive) {
+	public void finishActivity() {
 		Activity activity = getActivity();
 		if (activity != null) {
 			if (woolworthsApplication != null) {
 				woolworthsApplication
 						.bus()
-						.send(new BusStation(offerActive));
+						.send(new BusStation(true));
 			}
 			activity.finish();
 			activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);

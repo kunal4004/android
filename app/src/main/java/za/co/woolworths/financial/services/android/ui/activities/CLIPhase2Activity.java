@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -49,6 +51,12 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 	WoolworthsApplication woolworthsApplication;
 	public EventStatus eventStatus = EventStatus.NONE;
 	public ImageView imBack;
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
