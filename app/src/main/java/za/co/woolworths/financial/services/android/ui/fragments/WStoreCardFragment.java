@@ -205,6 +205,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		onLoadComplete();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
 		viewWasCreated = true;
+		if (!new ConnectionDetector().isOnline(getActivity()))
+				mErrorHandlerView.showToast();
 	}
 
 	@Override
@@ -297,7 +299,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		llIncreaseLimitContainer.setEnabled(true);
 		mRelIncreaseMyLimit.setEnabled(true);
 		mProgressCreditLimit.setVisibility(View.GONE);
-		tvApplyNowIncreaseLimit.setVisibility(View.VISIBLE);
 		tvIncreaseLimit.setVisibility(View.VISIBLE);
 	}
 

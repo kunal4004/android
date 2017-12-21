@@ -162,6 +162,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		AccountsResponse temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		onLoadComplete();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
+		if (!new ConnectionDetector().isOnline(getActivity()))
+			mErrorHandlerView.showToast();
 		if (temp != null)
 			bindData(temp);
 
@@ -319,7 +321,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mRelIncreaseMyLimit.setEnabled(true);
 		mProgressCreditLimit.getIndeterminateDrawable().setColorFilter(null);
 		mProgressCreditLimit.setVisibility(View.GONE);
-		tvApplyNowIncreaseLimit.setVisibility(View.VISIBLE);
 		tvIncreaseLimit.setVisibility(View.VISIBLE);
 	}
 
