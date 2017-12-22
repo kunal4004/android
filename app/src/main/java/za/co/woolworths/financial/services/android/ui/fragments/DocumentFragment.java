@@ -174,7 +174,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		onLoad(pbDeaBank);
 		cliDeaBankRequest();
 		loadPOIDocumentsSubmitTypeView();
-		showOneTimePopup();
+		showProofOfIncomePopup();
 	}
 
 	private void connectionBroadcast() {
@@ -237,13 +237,9 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		cliGetDeaBank.execute();
 	}
 
-	public void showOneTimePopup() {
+	public void showProofOfIncomePopup() {
 		try {
-			String firstTime = Utils.getSessionDaoValue(getActivity(), SessionDao.KEY.PROOF_OF_INCOME);
-			if (firstTime == null) {
 				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.PROOF_OF_INCOME, "");
-				Utils.sessionDaoSave(getActivity(), SessionDao.KEY.PROOF_OF_INCOME, "1");
-			}
 		} catch (NullPointerException ignored) {
 		}
 
