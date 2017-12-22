@@ -133,7 +133,7 @@ public class IncreaseLimitController {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
-			hideView(tvIncreaseLimitDescription);
+			displayDescription(tvIncreaseLimitDescription, messageDetail);
 			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 		} else if (nextStep.equalsIgnoreCase(getString(R.string.decline))) {
 			showView(logoIncreaseLimit);
