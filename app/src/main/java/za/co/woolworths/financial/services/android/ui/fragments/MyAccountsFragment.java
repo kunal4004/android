@@ -54,6 +54,7 @@ import za.co.woolworths.financial.services.android.ui.activities.ShoppingListAct
 import za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WStoreLocatorActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -559,6 +560,10 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				Intent openMyDetail = new Intent(getActivity(), UserDetailActivity.class);
 				startActivity(openMyDetail);
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				break;
+			case R.id.storeLocator:
+				startActivity(new Intent(getActivity(), WStoreLocatorActivity.class));
+				getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 				break;
 			default:
 				break;
