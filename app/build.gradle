@@ -70,7 +70,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 133
+            versionCode 134
             versionName("5.5.0")
         }
 
