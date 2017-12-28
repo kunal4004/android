@@ -92,7 +92,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 		Bundle bundle = getIntent().getExtras();
 		if (bundle != null) {
 			if (!TextUtils.isEmpty(bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT))) {
-				displayView(4);
+				displayView(3);
 			} else {
 				if (bundle != null) {
 					int mOpenProduct = bundle.getInt("myAccount");
@@ -128,18 +128,18 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 				fragment = new WProductFragment();
 				title = getString(R.string.nav_item_products);
 				break;
-			case 2:
+			/*case 2:
 				fragment = new StoresNearbyFragment1();
 				title = getString(R.string.screen_title_store);
-				break;
-			case 3:
+				break;*/
+			case 2:
 				mWGlobalState.setFragmentIsReward(true);
 				mWGlobalState.resetStsParams();
 				isRewardFragment = true;
 				fragment = new WRewardsFragment();
 				title = getString(R.string.wrewards);
 				break;
-			case 4:
+			case 3:
 				mWGlobalState.resetStsParams();
 				mWGlobalState.setFragmentIsReward(false);
 				fragment = new MyAccountsFragment();
