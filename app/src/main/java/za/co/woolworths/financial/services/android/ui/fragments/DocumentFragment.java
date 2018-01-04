@@ -174,7 +174,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 		onLoad(pbDeaBank);
 		cliDeaBankRequest();
 		loadPOIDocumentsSubmitTypeView();
-		showProofOfIncomePopup();
 	}
 
 	private void connectionBroadcast() {
@@ -532,6 +531,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 			}
 		});
 		showView(rlSubmitCli);
+		showProofOfIncomePopup();
 		setButtonProceed();
 	}
 
