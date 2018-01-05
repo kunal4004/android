@@ -40,7 +40,7 @@
     <string name="google_maps">GOOGLE MAPS</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="km">km</string>
-    <string name="linked_cards">LINKED CARDS</string>
+    <string name="linked_cards">linked accounts</string>
     <string name="contact_us">Contact us</string>
     <string name="submit_query">Submit Query</string>
     <string name="faqs">FAQs</string>
@@ -576,4 +576,9 @@
     <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
     <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>
     <string name="cli_create_application_error_message">Unfortunately we cannot proceed with your application</string>
+    <string name="store_locator">Store Locator</string>
+    <string name="my_lists">My Lists</string>
+    <string name="messages">Messages</string>
+    <string name="order_history">Order History</string>
+    <string name="link_your_woolies_card_today">Link Your Woolies Card Today</string>
 </resources>

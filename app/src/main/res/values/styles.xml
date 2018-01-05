@@ -240,10 +240,10 @@
 
     <style name="listStyle" parent="android:Theme">
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:background">@drawable/list_bg</item>
-        <item name="android:minHeight">50dp</item>
-        <item name="android:paddingLeft">16dp</item>
+        <item name="android:minHeight">70dp</item>
+        <item name="android:paddingLeft">24dp</item>
         <item name="android:paddingRight">16dp</item>
     </style>
 
@@ -1026,6 +1026,42 @@
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">@dimen/cli_sixteen_sp</item>
+    </style>
+
+    <style name="accountsCardStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:minHeight">70dp</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:layout_marginTop">1dp</item>
+    </style>
+
+    <style name="accountCardsTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:minHeight">50dp</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="accountsItem">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="WTextView_font">myriadpro_regular</item>
     </style>
 
 </resources>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -34,14 +33,13 @@
                     android:background="@color/white"
                     android:focusableInTouchMode="false"
                     android:orientation="vertical"
-                    android:paddingBottom="16dp"
                     android:visibility="visible">
 
                     <android.support.v4.view.ViewPager
                         android:id="@+id/pager"
                         android:layout_width="match_parent"
                         android:layout_height="360dp"
-                        android:nestedScrollingEnabled="false"/>
+                        android:nestedScrollingEnabled="false" />
 
                     <LinearLayout
                         android:id="@+id/viewPagerCountDots"
@@ -49,7 +47,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="32dp"
                         android:gravity="center"
-                        android:orientation="horizontal"/>
+                        android:orientation="horizontal" />
 
                     <LinearLayout
                         android:id="@+id/loginRegisterBtnLayout"
@@ -70,7 +68,7 @@
                             android:layout_weight="1"
                             android:letterSpacing="0.2"
                             android:text="@string/log_in"
-                            app:WButton_font="medium_bold"/>
+                            app:WButton_font="medium_bold" />
 
                         <za.co.woolworths.financial.services.android.ui.views.WButton
                             android:id="@+id/registerAccount"
@@ -78,156 +76,191 @@
                             android:layout_marginLeft="4dp"
                             android:letterSpacing="0.2"
                             android:text="register"
-                            app:WButton_font="medium_bold"/>
+                            app:WButton_font="medium_bold" />
                     </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@color/recent_search_bg" />
                 </LinearLayout>
 
                 <include
                     layout="@layout/my_account_fragment_header_logged_in"
-                    android:visibility="visible"/>
+                    android:visibility="visible" />
 
                 <include
                     layout="@layout/account_linked_layout"
-                    android:visibility="visible"/>
+                    android:visibility="visible" />
 
                 <include
                     layout="@layout/account_apply_layout"
-                    android:visibility="visible"/>
+                    android:visibility="visible" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/parentOptionsLayout"
                     android:orientation="vertical"
                     android:visibility="visible">
 
                     <RelativeLayout
-                        android:id="@+id/relFAQ"
-                        style="@style/listStyle"
-                        android:background="@drawable/stores_details_background">
-
-                        <ImageView
-                            android:id="@+id/imgFaqQuery"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/signout_24_copy"/>
-
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="32dp"
-                            android:layout_toRightOf="@+id/imgFaqQuery"
-                            android:text="@string/drawer_faq"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            app:WTextView_font="myriadpro_regular"/>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/ic_caret_black"/>
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:id="@+id/contactUs"
-                        style="@style/listStyle"
-                        android:background="@drawable/stores_details_background">
-
-                        <ImageView
-                            android:id="@+id/imgCall"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/ic_call24"/>
-
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="32dp"
-                            android:layout_toRightOf="@+id/imgCall"
-                            android:text="@string/contact_us"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            app:WTextView_font="myriadpro_regular"/>
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/ic_caret_black"/>
-                    </RelativeLayout>
-
-                    <RelativeLayout
+                        android:id="@+id/llUnlinkedAccount"
                         style="@style/listStyle"
                         android:background="@drawable/stores_details_background"
-                        android:visibility="gone">
-
-                        <ImageView
-                            android:id="@+id/imgSubmitQuery"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/signout_24"/>
+                        android:layout_marginBottom="16dp"
+                        android:visibility="gone"
+                        >
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="32dp"
-                            android:layout_toRightOf="@+id/imgSubmitQuery"
-                            android:text="@string/submit_query"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/acc_fifteen_dp"
-                            app:WTextView_font="myriadpro_regular"/>
+                            style="@style/accountsItem"
+                            android:drawableLeft="@drawable/ic_call24"
+                            android:text="@string/link_your_woolies_card_today" />
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
-                            android:background="@drawable/ic_caret_black"/>
+                            android:background="@drawable/ic_caret_black" />
                     </RelativeLayout>
 
-                    <RelativeLayout
-                        style="@style/listStyle"
-                        android:background="@drawable/stores_details_background"
-                        android:visibility="gone">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/loginUserOptionsLayout"
+                        android:orientation="vertical"
+                        android:visibility="visible"
+                        android:layout_marginBottom="16dp"
+                        >
 
-                        <ImageView
-                            android:id="@+id/imgFaq"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/ic_maps_w"/>
+                        <RelativeLayout
+                            android:id="@+id/myLists"
+                            style="@style/listStyle"
+                            android:background="@drawable/stores_details_background">
 
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="32dp"
-                            android:layout_toRightOf="@+id/imgFaq"
-                            android:text="@string/faqs"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            app:WTextView_font="myriadpro_regular"/>
+                            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                style="@style/accountsItem"
+                                android:drawableLeft="@drawable/signout_24_copy"
+                                android:text="@string/my_lists" />
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:background="@drawable/ic_caret_black"/>
-                    </RelativeLayout>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:background="@drawable/ic_caret_black" />
+                        </RelativeLayout>
 
+                        <RelativeLayout
+                            android:id="@+id/openMessageActivity"
+                            style="@style/listStyle"
+                            android:background="@drawable/stores_details_background">
+
+                            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                style="@style/accountsItem"
+                                android:drawableLeft="@drawable/message_24"
+                                android:text="@string/messages" />
+
+                            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                android:id="@+id/messageCounter"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:background="@drawable/message_counter_background"
+                                android:gravity="center"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="8dp"
+                                android:textColor="@color/white"
+                                android:textSize="10sp"
+                                android:visibility="gone"
+                                app:WTextView_font="medium_bold" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/orderHistory"
+                            style="@style/listStyle"
+                            android:background="@drawable/stores_details_background">
+
+                            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                style="@style/accountsItem"
+                                android:drawableLeft="@drawable/ic_call24"
+                                android:text="@string/order_history" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:background="@drawable/ic_caret_black" />
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/allUserOptionsLayout"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <RelativeLayout
+                            android:id="@+id/storeLocator"
+                            style="@style/listStyle"
+                            android:background="@drawable/stores_details_background">
+
+                            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                style="@style/accountsItem"
+                                android:drawableLeft="@drawable/signout_24_copy"
+                                android:text="@string/store_locator" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:background="@drawable/ic_caret_black" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/relFAQ"
+                            style="@style/listStyle"
+                            android:background="@drawable/stores_details_background">
+
+                            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                style="@style/accountsItem"
+                                android:drawableLeft="@drawable/signout_24_copy"
+                                android:text="@string/drawer_faq" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:background="@drawable/ic_caret_black" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/contactUs"
+                            style="@style/listStyle"
+                            android:background="@drawable/stores_details_background">
+
+                            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                                style="@style/accountsItem"
+                                android:drawableLeft="@drawable/ic_call24"
+                                android:text="@string/contact_us" />
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:background="@drawable/ic_caret_black" />
+                        </RelativeLayout>
+
+                    </LinearLayout>
                 </LinearLayout>
 
                 <RelativeLayout
@@ -237,31 +270,17 @@
                     android:background="@drawable/stores_details_background"
                     android:visibility="visible">
 
-                    <ImageView
-                        android:id="@+id/imMyDetails"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
-                        android:background="@drawable/signout_24_copy_3"/>
-
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="32dp"
-                        android:layout_toRightOf="@+id/imMyDetails"
-                        android:text="@string/acc_my_detail"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        app:WTextView_font="myriadpro_regular"/>
+                        style="@style/accountsItem"
+                        android:drawableLeft="@drawable/signout_24_copy_3"
+                        android:text="@string/acc_my_detail" />
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/ic_caret_black"/>
+                        android:background="@drawable/ic_caret_black" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -270,31 +289,17 @@
                     android:background="@drawable/stores_details_background"
                     android:visibility="visible">
 
-                    <ImageView
-                        android:id="@+id/imgSignOut"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
-                        android:background="@drawable/signout_25"/>
-
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="32dp"
-                        android:layout_toRightOf="@+id/imgSignOut"
-                        android:text="@string/sign_out"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        app:WTextView_font="myriadpro_regular"/>
+                        style="@style/accountsItem"
+                        android:drawableLeft="@drawable/signout_25"
+                        android:text="@string/sign_out" />
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/ic_caret_black"/>
+                        android:background="@drawable/ic_caret_black" />
                 </RelativeLayout>
             </LinearLayout>
 
@@ -311,7 +316,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/bank_spacing_width"
-                android:src="@drawable/ic_drawer_menu"/>
+                android:src="@drawable/ic_drawer_menu" />
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/toolbarText"
@@ -322,9 +327,9 @@
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                app:WTextView_font="medium_bold"/>
+                app:WTextView_font="medium_bold" />
         </android.support.v7.widget.Toolbar>
     </RelativeLayout>
 
-    <include layout="@layout/no_connection_handler"/>
+    <include layout="@layout/no_connection_handler" />
 </FrameLayout>
