@@ -162,6 +162,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		bindData(accountsResponse);
 		onLoadComplete();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
+		if (!new ConnectionDetector().isOnline(getActivity()))
+			mErrorHandlerView.showToast();
 	}
 
 	//To remove negative signs from negative balance and add "CR" after the negative balance
@@ -282,7 +284,6 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 		llIncreaseLimitContainer.setEnabled(true);
 		mRelIncreaseMyLimit.setEnabled(true);
 		mProgressCreditLimit.setVisibility(View.GONE);
-		tvApplyNowIncreaseLimit.setVisibility(View.VISIBLE);
 		tvIncreaseLimit.setVisibility(View.VISIBLE);
 	}
 

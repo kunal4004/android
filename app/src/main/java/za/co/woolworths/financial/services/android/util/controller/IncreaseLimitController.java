@@ -103,67 +103,70 @@ public class IncreaseLimitController {
 				messageSummary = "";
 				messageDetail = "";
 			}
+			if (TextUtils.isEmpty(nextStep)) {
+				nextStep = "";
+			}
 		} else {
 			return;
 		}
 		setOfferActive(activeOffer);
-		if (messageSummary.equalsIgnoreCase(getString(R.string.status_apply_now))) {
+		if (nextStep.equalsIgnoreCase(getString(R.string.status_consents))) {
 			hideView(logoIncreaseLimit);
 			showView(llCommonLayer);
 			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 			tvIncreaseLimit.setText(getString(R.string.cli_credit_limit_increase));
 			displayDescription(tvIncreaseLimitDescription, messageDetail);
-		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_offer_available))) {
+		} else if (nextStep.equalsIgnoreCase(getString(R.string.status_i_n_e))) {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			displayDescription(tvIncreaseLimitDescription, messageDetail);
 			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
-		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_retry))) {
+		} else if (nextStep.equalsIgnoreCase(getString(R.string.status_offer))) {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			displayDescription(tvIncreaseLimitDescription, messageDetail);
 			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 
-		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_poi_required))) {
+		} else if (nextStep.equalsIgnoreCase(getString(R.string.status_poi_required))) {
+			showView(logoIncreaseLimit);
+			cliIcon(logoIncreaseLimit);
+			hideView(llCommonLayer);
+			displayDescription(tvIncreaseLimitDescription, messageDetail);
+			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
+		} else if (nextStep.equalsIgnoreCase(getString(R.string.decline))) {
+			showView(logoIncreaseLimit);
+			cliIcon(logoIncreaseLimit);
+			hideView(llCommonLayer);
+			displayDescription(tvIncreaseLimitDescription, messageDetail);
+			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
+		} else if (nextStep.equalsIgnoreCase(getString(R.string.status_contact_us))) {
+			showView(logoIncreaseLimit);
+			cliIcon(logoIncreaseLimit);
+			hideView(llCommonLayer);
+			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
+			displayDescription(tvIncreaseLimitDescription, messageDetail);
+		} /*else if (nextStep.equalsIgnoreCase(getString(R.string.status_poi_problem))) {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			hideView(tvIncreaseLimitDescription);
 			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
-		} else if (messageSummary.equalsIgnoreCase(getString(R.string.decline))) {
-			showView(logoIncreaseLimit);
-			cliIcon(logoIncreaseLimit);
-			hideView(llCommonLayer);
-			displayDescription(tvIncreaseLimitDescription, messageDetail);
-			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
-		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_contact_us))) {
-			showView(logoIncreaseLimit);
-			cliIcon(logoIncreaseLimit);
-			hideView(llCommonLayer);
-			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
-			displayDescription(tvIncreaseLimitDescription, messageDetail);
-		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_poi_problem))) {
-			showView(logoIncreaseLimit);
-			cliIcon(logoIncreaseLimit);
-			hideView(llCommonLayer);
-			hideView(tvIncreaseLimitDescription);
-			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
-		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_in_progress))) {
+		}*/ else if (nextStep.equalsIgnoreCase(getString(R.string.status_in_progress))) {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
 			hideView(tvIncreaseLimitDescription);
 			hideView(llCommonLayer);
 			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 			displayDescription(tvIncreaseLimitDescription, messageDetail);
-		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_document_required))) {
+		} /*else if (messageSummary.equalsIgnoreCase(getString(R.string.status_document_required))) {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
 			setCLITag(messageSummary, offerActive.nextStepColour, tvApplyNowIncreaseLimit);
 			displayDescription(tvIncreaseLimitDescription, messageDetail);
-		} else if (messageSummary.equalsIgnoreCase(getString(R.string.status_complete))) {
+		}*/ else if (nextStep.equalsIgnoreCase(getString(R.string.status_complete))) {
 			showView(logoIncreaseLimit);
 			cliIcon(logoIncreaseLimit);
 			hideView(llCommonLayer);
@@ -197,12 +200,14 @@ public class IncreaseLimitController {
 	}
 
 	private void setCLITag(String messageSummary, String nextStepColour, WTextView tvApplyNowIncreaseLimit) {
+		tvApplyNowIncreaseLimit.setVisibility(View.VISIBLE);
 		setStatusText(messageSummary, tvApplyNowIncreaseLimit);
 		roundCornerDrawable(tvApplyNowIncreaseLimit, nextStepColour);
 		tvApplyNowIncreaseLimit.setText(messageSummary);
 	}
 
 	private void setCLITag(String messageSummary, int nextStepColour, WTextView tvApplyNowIncreaseLimit) {
+		tvApplyNowIncreaseLimit.setVisibility(View.VISIBLE);
 		setStatusText(messageSummary, tvApplyNowIncreaseLimit);
 		tvApplyNowIncreaseLimit.setBackground(ContextCompat.getDrawable(tvApplyNowIncreaseLimit.getContext(), nextStepColour));
 		tvApplyNowIncreaseLimit.setText(messageSummary);

@@ -198,7 +198,9 @@
                     android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textSize="12sp"
-                    app:WTextView_font="medium"/>
+                    app:WTextView_font="medium"
+                    android:visibility="gone"
+                    />
 
                 <ProgressBar
                     android:id="@+id/progressCreditLimit"
