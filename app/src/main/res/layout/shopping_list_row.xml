@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cardLayout"
-    android:focusable="false"
-    android:focusableInTouchMode="false"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/light_gray">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/cardLayout"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/light_gray"
+              android:focusable="false"
+              android:focusableInTouchMode="false">
 
     <com.daimajia.swipe.SwipeLayout
         android:id="@+id/swipe"
@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:padding="15dp"
-                android:src="@drawable/delete_24" />
+                android:src="@drawable/delete_24"/>
         </RelativeLayout>
 
         <LinearLayout
@@ -55,10 +55,10 @@
                         android:paddingRight="@dimen/default_margin">
 
                         <ImageView
-                            android:id="@+id/checkedItem"
+                            android:id="@+id/imCheckItem"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:src="@drawable/tickerinactive" />
+                            android:src="@drawable/ticker_inactive"/>
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             android:id="@+id/productName"
@@ -72,7 +72,7 @@
                             android:text="@string/app_name"
                             android:textColor="@color/black"
                             android:textSize="14sp"
-                            app:WTextView_font="medium_bold" />
+                            app:WTextView_font="medium_bold"/>
 
                     </LinearLayout>
 

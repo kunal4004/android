@@ -329,6 +329,34 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rlViewStatement"
+        style="@style/card_item_click_style"
+        >
+
+        <ImageView
+            android:id="@+id/imViewStatementLogo"
+            style="@style/style_loan_logo_img"
+            android:src="@drawable/view_statement_logo"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvViewStatement"
+            style="@style/style_loan_title"
+            android:layout_alignBottom="@+id/imViewStatementLogo"
+            android:layout_alignTop="@+id/imViewStatementLogo"
+            android:layout_toEndOf="@+id/imViewStatementLogo"
+            android:text="@string/view_statements"/>
+
+
+        <ImageView
+            android:id="@+id/imgViewStatementArrow"
+            style="@style/style_loan_img"
+            />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
         android:id="@+id/relBalanceProtection"
         style="@style/card_item_click_style"
         >

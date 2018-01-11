@@ -572,6 +572,22 @@
     <string name="status_complete">complete</string>
     <string name="proof_of_income_popup_desc">Your credit limit increase is subject to the condition that proof of income is provided within 30 (thirty) days from the date of accepting the credit limit increase. Submission outside this period will result in the lapse of the offer.\n\nIf your proof of income is lower than the amount you disclosed, we will re-calculate your credit limit increase amount and notify you accordingly. You will only have access to the credit limit increase once proof of income is received.</string>
     <string name="proof_of_income">PROOF OF INCOME</string>
+    <string name="email_validation_error_message"><b>OOPS</b>, TRY AGAIN. INCORRECT EMAIL FORMATTING</string>
+
+    <!--UserStatementment -->
+    <string name="statement">statements</string>
+    <string name="select_to_email_statement">select to email your statements</string>
+    <string name="view">View</string>
+    <string name="email_statement">email statement</string>
+    <string name="email_statements">email statements</string>
+    <string name="statement_sent_to_title">Statement will be sent to:</string>
+    <string name="confirm_email">confirm email</string>
+    <string name="or_send_to_different_email">or sent to different email</string>
+    <string name="follow_instruction">Please follow the instructions we\'ve sent to your email.  If you didn\'t receive the email, please check your spam folder or click "send to a new email address" below.</string>
+    <string name="alternative_email_adress">alternative email address:</string>
+    <string name="no_statements">No Statements</string>
+    <string name="no_statements_desc">We have no data for the current period.</string>
+    <string name="account_statement">account statement</string>
     <string name="account_type_info_desc">I agree that Woolworths Financial Services may request  my latest 3 months bank statements directly from my bank.</string>
     <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
     <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>

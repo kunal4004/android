@@ -124,6 +124,18 @@ public class ErrorHandlerView {
 				.show();
 	}
 
+	public void showToast(String message) {
+		int toastDurationInMilliSeconds = 3000;
+		Alerter.create((Activity) mContext)
+				.setTitle("")
+				.setText(message)
+				.setContentGravity(Gravity.CENTER)
+				.setBackgroundColor(R.color.header_red)
+				.setDuration(toastDurationInMilliSeconds)
+				.setIcon(null)
+				.show();
+	}
+
 	public void webViewBlankPage(WebView view) {
 		view.loadUrl("about:blank");
 	}

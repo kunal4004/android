@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ctNoResultFound"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_background"
+    android:visibility="gone">
+
+    <ImageView
+        android:id="@+id/imNoStatementIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="75dp"
+        android:layout_marginBottom="28dp"
+        android:contentDescription="@string/no_statements"
+        android:src="@drawable/no_statement_icon"
+        app:layout_constraintBottom_toTopOf="@+id/tvNoStatementTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvNoStatementTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:letterSpacing="0.03"
+        android:lineSpacingExtra="2sp"
+        android:text="@string/no_statements"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="@dimen/sixteen_sp"
+        app:WTextView_font="medium_bold"
+        app:layout_constraintBottom_toTopOf="@+id/tvNoStatementDesc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvNoStatementDesc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="5sp"
+        android:text="@string/no_statements_desc"
+        android:textColor="@color/black_50"
+        android:textSize="@dimen/fifteen_sp"
+        app:WTextView_font="myriadpro_regular"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+</android.support.constraint.ConstraintLayout>

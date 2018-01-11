@@ -30,5 +30,6 @@
     <color name="poi_problem">#ff7000</color>
     <color name="tooltip_bg_color">#e5242424</color>
     <color name="account_label_color">#7f030303</color>
+    <color name="statement_title">#80000000</color>
 
 </resources>
