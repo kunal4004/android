@@ -13,6 +13,12 @@ android {
 
     def buildNumber = major + "." + minor + "." + fix
 
+    dataBinding {
+        enabled = true
+    }
+
+    flavorDimensions "default"
+
     signingConfigs {
         woneappDev {
             keyAlias 'woneapp_dev'
@@ -49,7 +55,7 @@ android {
     }
 
     compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '26.0.3'
     buildTypes {
         debug {
             debuggable true
@@ -108,7 +114,6 @@ repositories {
     mavenCentral()
 }
 
-
 dependencies {
 
     compile files('libs/YouTubeAndroidPlayerApi.jar')
@@ -143,5 +148,9 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.android.gms:play-services-tagmanager:11.0.2'
     compile 'com.facebook.android:facebook-android-sdk:4.26.0'
+    //Viewmodel
+    compile "android.arch.lifecycle:extensions:1.0.0"
+    annotationProcessor "android.arch.lifecycle:compiler:1.0.0"
+
 }
 apply plugin: 'com.google.gms.google-services'
