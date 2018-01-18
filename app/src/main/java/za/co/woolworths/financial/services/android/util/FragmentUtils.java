@@ -36,6 +36,12 @@ public class FragmentUtils {
 				.replace(fragmentId, nextFragment).commit();
 	}
 
+
+	public void openFragment(FragmentManager fragmentManager, Fragment nextFragment, int fragmentId) {
+		fragmentManager.beginTransaction()
+				.replace(fragmentId, nextFragment).commit();
+	}
+
 	public void currentFragment(AppCompatActivity activity, FragmentManager fm, Fragment newFragment, int fragmentId) {
 		FragmentManager fragmentManager = activity.getSupportFragmentManager();
 		fragmentManager.beginTransaction().replace(fragmentId, newFragment).commit();
