@@ -35,10 +35,10 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
+import za.co.woolworths.financial.services.android.models.dto.statement.USDocuments;
 import za.co.woolworths.financial.services.android.models.rest.SendUserStatement;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
-import za.co.woolworths.financial.services.android.ui.fragments.statement.AlternativeEmailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailStatementFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -71,6 +71,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	private BroadcastReceiver mConnectionBroadcast;
 	private LoadState loadState;
 	private SendUserStatementRequest mSendUserStatementRequest;
+	protected WTextView mTvStatementSendTo;
 
 	public enum MODAL_LAYOUT {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
@@ -436,13 +437,13 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
 				mBtnConfirmEmail = (WButton) findViewById(R.id.btnConfirmEmail);
 				tvAlternativeEmail = (WTextView) findViewById(R.id.tvAlternativeEmail);
+				mTvStatementSendTo = (WTextView) findViewById(R.id.tvStatementSendTo);
 				WTextView tvSendEmail = (WTextView) findViewById(R.id.tvSendEmail);
 				mWoolworthsProgressBar = (ProgressBar) findViewById(R.id.mWoolworthsProgressBar);
 				populateDocument(tvSendEmail);
-
 				mSendUserStatementRequest = new Gson().fromJson(userStatement, SendUserStatementRequest.class);
 				mSendUserStatementRequest.to = userEmailAddress();
-
+				statementSendToTitle(mTvStatementSendTo, mSendUserStatementRequest.documents);
 				tvAlternativeEmail.setOnClickListener(this);
 				mBtnConfirmEmail.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
@@ -475,6 +476,14 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 		}
 		setAnimation();
+	}
+
+	private void statementSendToTitle(WTextView tvStatementSendTo, USDocuments documents) {
+		if (documents.document.size() > 1) {
+			tvStatementSendTo.setText(getString(R.string.statement_sent_to_title).replace("Statement", "Statements"));
+		} else {
+			tvStatementSendTo.setText(getString(R.string.statement_sent_to_title));
+		}
 	}
 
 	private void startExitAnimation() {
@@ -851,7 +860,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	}
 
 	private void populateDocument(WTextView textView) {
-		textView.setText(userEmailAddress());
+		String email = userEmailAddress();
+		String domain = email.substring(email.indexOf("@"), email.length());
+		String maskedEmail = "****" + domain;
+		textView.setText(maskedEmail);
 	}
 
 	public String userEmailAddress() {
