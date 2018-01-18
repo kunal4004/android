@@ -119,7 +119,9 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 		}
 
 		public void populateMonth(UserStatement statement, WTextView view) {
-			view.setText(statement.docDesc);
+			String docDesc = statement.docDesc;
+			String removeDate = docDesc.substring(docDesc.indexOf(" "), docDesc.length());
+			view.setText(removeDate);
 		}
 
 
