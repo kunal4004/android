@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/imCheckItem"
         android:layout_alignTop="@+id/imCheckItem"
-        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_marginStart="@dimen/thirteen_dp"
         android:layout_toEndOf="@+id/imCheckItem"
         android:gravity="center_vertical"
         android:letterSpacing="0.04"
