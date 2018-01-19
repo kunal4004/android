@@ -10,6 +10,8 @@ import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
@@ -119,9 +121,7 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 		}
 
 		public void populateMonth(UserStatement statement, WTextView view) {
-			String docDesc = statement.docDesc;
-			String removeDate = docDesc.substring(docDesc.indexOf(" "), docDesc.length());
-			view.setText(removeDate);
+			view.setText(formatDate(statement.docDesc));
 		}
 
 
@@ -202,5 +202,13 @@ public class StatementAdapter extends RecyclerView.Adapter<StatementAdapter.Stat
 
 	public boolean viewClicked() {
 		return viewWasClicked;
+	}
+
+	public String formatDate(String _Date) {
+		try {
+			return new SimpleDateFormat("MMMM yyyy").format(new SimpleDateFormat("dd MMM yyyy").parse(_Date));
+		} catch (ParseException pe) {
+			return "";
+		}
 	}
 }

@@ -29,7 +29,6 @@
         android:gravity="center_vertical"
         android:letterSpacing="0.17"
         android:text="june 2016"
-        android:textAllCaps="true"
         android:textColor="@color/black"
         android:textSize="@dimen/twelve_sp"
         app:WTextView_font="medium"/>
