@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/statement_line_drawable"
+    android:paddingBottom="@dimen/twenty_eight_dp"
+    android:paddingEnd="@dimen/twenty_four_dp"
+    android:paddingStart="@dimen/twenty_four_dp"
+    android:paddingTop="@dimen/thirty_dp">
+
+    <ImageView
+        android:id="@+id/imCheckItem"
+        android:layout_width="@dimen/twenty_four_dp"
+        android:layout_height="@dimen/twenty_four_dp"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/uncheck_item"
+        />
+
+    <za.co.woolworths.financial.services.android.ui.views.WTextView
+        android:id="@+id/tvStatementName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imCheckItem"
+        android:layout_alignTop="@+id/imCheckItem"
+        android:layout_marginStart="@dimen/sixteen_dp"
+        android:layout_toEndOf="@+id/imCheckItem"
+        android:gravity="center_vertical"
+        android:letterSpacing="0.17"
+        android:text="june 2016"
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="@dimen/twelve_sp"
+        app:WTextView_font="medium"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvStatementName"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/tvStatementName"
+        android:gravity="end">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/tvViewStatement"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:letterSpacing="0.2"
+            android:lineSpacingMultiplier="1.08"
+            android:paddingStart="10dp"
+            android:text="@string/view"
+            android:textAllCaps="true"
+            android:textColor="@color/view_statement_black"
+            android:textSize="12sp"
+            android:visibility="visible"
+            app:WTextView_font="medium"/>
+
+        <ProgressBar
+            android:id="@+id/pbLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/black"
+            android:visibility="gone"/>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

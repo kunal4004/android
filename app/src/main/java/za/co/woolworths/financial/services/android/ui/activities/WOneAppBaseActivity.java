@@ -106,7 +106,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 				}
 			}
 		}
-
 		initGetVouchersCall();
 	}
 
@@ -116,7 +115,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	}
 
 	private void displayView(int position) {
-		boolean isRewardFragment = false;
 		Fragment fragment = null;
 		String title = getString(R.string.app_name);
 		switch (position) {
@@ -135,7 +133,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 			case 3:
 				mWGlobalState.setFragmentIsReward(true);
 				mWGlobalState.resetStsParams();
-				isRewardFragment = true;
 				fragment = new WRewardsFragment();
 				title = getString(R.string.wrewards);
 				break;

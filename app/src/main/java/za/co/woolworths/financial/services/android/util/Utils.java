@@ -53,11 +53,13 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
@@ -70,7 +72,9 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
@@ -448,6 +452,18 @@ public class Utils {
 		return historyList;
 	}
 
+	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, SendUserStatementRequest susr) {
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("description", "");
+		String strSendUserStatement = new Gson().toJson(susr);
+		args.putString(StatementActivity.SEND_USER_STATEMENT, strSendUserStatement);
+		openMsg.putExtras(args);
+		context.startActivity(openMsg);
+		((AppCompatActivity) context).overridePendingTransition(0, 0);
+	}
+
 	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description) {
 		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
 		Bundle args = new Bundle();
@@ -552,9 +568,7 @@ public class Utils {
 		try {
 			String firstTime = Utils.getSessionDaoValue(context, key);
 			if (firstTime == null) {
-				Utils.displayValidationMessage(context,
-						message_key,
-						"");
+				Utils.displayValidationMessage(context, message_key, "");
 				Utils.sessionDaoSave(context, key, "1");
 			}
 		} catch (NullPointerException ignored) {
@@ -816,5 +830,16 @@ public class Utils {
 				+ "?subject=" + "" + "&body=" + "");
 		intent.setData(data);
 		activity.startActivity(intent);
+	}
+
+	private static Calendar getCurrentInstance() {
+		return Calendar.getInstance(Locale.ENGLISH);
+	}
+
+	public static String getDate(int month) {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		cal.add(Calendar.MONTH, -month);
+		return sdf.format(cal.getTime());
 	}
 }

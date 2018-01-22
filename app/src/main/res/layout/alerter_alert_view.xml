@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:id="@+id/flClickShield"
-             xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
              xmlns:tools="http://schemas.android.com/tools"
+             android:id="@+id/flClickShield"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:background="@android:color/transparent"
-             android:clickable="false"
-             xmlns:app="http://schemas.android.com/apk/res-auto">
+             android:clickable="false">
 
     <FrameLayout
         android:id="@+id/flAlertBackground"
@@ -36,9 +36,9 @@
                 android:layout_centerVertical="true"
                 android:maxHeight="@dimen/alerter_alert_icn_size"
                 android:maxWidth="@dimen/alerter_alert_icn_size"
-                android:visibility="gone"
                 android:src="@drawable/alerter_ic_notifications"
-                android:tint="@android:color/white"/>
+                android:tint="@android:color/white"
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:id="@+id/llAlertTextContainer"
@@ -70,15 +70,16 @@
                     android:id="@+id/tvText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:letterSpacing="0.17"
                     android:paddingBottom="@dimen/alerter_padding_small"
                     android:paddingTop="@dimen/alerter_padding_small"
                     android:textAppearance="@style/AlertTextAppearance.Text"
                     android:textColor="@android:color/white"
+                    android:textSize="11sp"
                     android:visibility="gone"
-                    android:letterSpacing="0.17"
-                    tools:text="Text"
-                    android:textSize="12sp"
                     app:WTextView_font="medium_bold"
+                    tools:text="Text"
                     tools:visibility="visible"/>
 
             </LinearLayout>

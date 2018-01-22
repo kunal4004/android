@@ -55,4 +55,5 @@
     <color name="offer_active_desc">#7f030303</color>
     <color name="status_in_progress">#74afda</color>
     <color name="account_amount_color">#030303</color>
+    <color name="view_statement_black">#1F1F1F</color>
 </resources>
