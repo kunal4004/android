@@ -34,7 +34,8 @@ public class PreviewStatement extends Fragment {
 				.enableDoubletap(true)
 				.defaultPage(0)
 				.scrollHandle(null)
-				.enableAntialiasing(true)
+				.enableAnnotationRendering(false)
+				.enableAntialiasing(false)
 				.spacing(0)
 				.load();
 	}
