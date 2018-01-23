@@ -24,7 +24,7 @@ import java.util.Map;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.service.event.BusStation;
+import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
@@ -688,7 +688,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 	private void clearHistory() {
 		mWGlobalState.setOnBackPressed(false);
-		Intent i = new Intent(CustomPopUpWindow.this, WOneAppBaseActivity.class);
+		Intent i = new Intent(CustomPopUpWindow.this, BottomNavigationActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

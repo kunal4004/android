@@ -33,6 +33,7 @@ import za.co.woolworths.financial.services.android.models.dto.DeleteMessageRespo
 import za.co.woolworths.financial.services.android.models.dto.FAQ;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse;
+import za.co.woolworths.financial.services.android.models.dto.LoadProduct;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.LoginRequest;
 import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
@@ -130,8 +131,8 @@ public class WfsApi {
 		return mApiInterface.cliCreateApplication(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), offerRequest);
 	}
 
-	public OfferActive cliUpdateApplication(CreateOfferRequest offerRequest,String cliId) {
-		return mApiInterface.cliUpdateApplication(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), cliId,offerRequest);
+	public OfferActive cliUpdateApplication(CreateOfferRequest offerRequest, String cliId) {
+		return mApiInterface.cliUpdateApplication(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), cliId, offerRequest);
 	}
 
 	public OfferActive createOfferDecision(CLIOfferDecision createOfferDecision, String cliId) {
@@ -195,6 +196,17 @@ public class WfsApi {
 			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), pageSize, pageNumber, product_id);
 		}
 	}
+
+
+	public ProductView productViewRequest(LoadProduct lp) {
+		getMyLocation();
+		if (Utils.isLocationEnabled(mContext)) {
+			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), lp.getPageOffset(),lp.getPageSize(), lp.getProductId());
+		} else {
+			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(),lp.getPageOffset(), lp.getPageSize(), lp.getProductId());
+		}
+	}
+
 
 	public ProductView getProductSearchList(String search_item, boolean isBarcode, int pageSize, int pageNumber) {
 		getMyLocation();
