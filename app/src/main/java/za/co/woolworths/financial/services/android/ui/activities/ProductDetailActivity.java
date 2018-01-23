@@ -56,6 +56,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
@@ -357,7 +358,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		mTextSelectSize = (WTextView) findViewById(R.id.textSelectSize);
 		mTextColour = (WTextView) findViewById(R.id.textColour);
 		WTextView mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
-		mTextTitle = (WTextView) findViewById(R.id.textTitle);
+		mTextTitle = (WTextView) findViewById(R.id.tvProductName);
 		mTextActualPrice = (WTextView) findViewById(R.id.textActualPrice);
 		mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
 		mTextPrice = (WTextView) findViewById(R.id.textPrice);
@@ -443,9 +444,19 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		}
 	}
 
+//	@Override
+//	public void onSelectedProduct(View v, int position) {
+//		selectedProduct(position);
+//	}
+
+	@Override
+	public void onSelectedProduct(ProductList productList) {
+
+	}
+
 	@Override
 	public void onSelectedProduct(View v, int position) {
-		selectedProduct(position);
+
 	}
 
 	@Override
@@ -583,7 +594,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				"<meta charset=\"UTF-8\">" +
 				"<style>" +
 				"@font-face {font-family: 'myriad-pro-regular';src: url('file://"
-				+ this.getFilesDir().getAbsolutePath() + "/fonts/MyriadPro-Regular.otf');}" +
+				+ this.getFilesDir().getAbsolutePath() + "/fonts/myriadpro_regular.otf');}" +
 				"body {" +
 				"line-height: 110%;" +
 				"font-size: 92% !important;" +

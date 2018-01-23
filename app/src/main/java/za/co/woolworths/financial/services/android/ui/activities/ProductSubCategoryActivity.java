@@ -24,6 +24,7 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.PSSubCategoryAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -44,8 +45,8 @@ public class ProductSubCategoryActivity extends AppCompatActivity implements Vie
 	private ProductSubCategoryActivity mContext;
 	private WTextView mTextNoProductFound;
 	private int mCatStep;
-	private String mRootCategoryName;
 	private String mRootCategoryId;
+	private String mRootCategoryName;
 	private String mSubCategoriesName;
 	private PopWindowValidationMessage mPopWindowValidationMessage;
 	private ProgressBar mProgressBar;
@@ -55,13 +56,13 @@ public class ProductSubCategoryActivity extends AppCompatActivity implements Vie
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Utils.updateStatusBarBackground(this);
-		setContentView(R.layout.product_search_sub_category);
+		setContentView(R.layout.fragment_sub_category);
 		mContext = this;
 		Bundle bundleSubCategory = getIntent().getExtras();
 		if (bundleSubCategory != null) {
+			mCatStep = bundleSubCategory.getInt("catStep");
 			mRootCategoryId = bundleSubCategory.getString("root_category_id");
 			mRootCategoryName = bundleSubCategory.getString("root_category_name");
-			mCatStep = bundleSubCategory.getInt("catStep");
 			mSubCategoriesName = bundleSubCategory.getString("sub_category_name");
 		}
 		mPopWindowValidationMessage = new PopWindowValidationMessage(this);
@@ -77,10 +78,10 @@ public class ProductSubCategoryActivity extends AppCompatActivity implements Vie
 		ImageView mImBurgerButtonPressed = (ImageView) findViewById(R.id.imBurgerButtonPressed);
 		RelativeLayout searchStore = (RelativeLayout) findViewById(R.id.search_store_activity);
 		mProgressBar = (ProgressBar) findViewById(R.id.mProgressBar);
-		ImageView mImSearch = (ImageView) findViewById(R.id.imSearch);
+		//ImageView mImSearch = (ImageView) findViewById(R.id.imSearch);
 		mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		recyclerView.setLayoutManager(new LinearLayoutManager(this));
-		mImSearch.setOnClickListener(this);
+		//mImSearch.setOnClickListener(this);
 		mImBurgerButtonPressed.setOnClickListener(this);
 		if (mCatStep == 0)
 			mToolBarTitle.setText(mRootCategoryName);
@@ -106,11 +107,11 @@ public class ProductSubCategoryActivity extends AppCompatActivity implements Vie
 				onBackPressed();
 				overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 				break;
-			case R.id.imSearch:
-				Intent openSearchActivity = new Intent(this, ProductSearchActivity.class);
-				startActivity(openSearchActivity);
-				overridePendingTransition(0, 0);
-				break;
+//			case R.id.imSearch:
+//				Intent openSearchActivity = new Intent(this, ProductSearchActivity.class);
+//				startActivity(openSearchActivity);
+//				overridePendingTransition(0, 0);
+//				break;
 		}
 	}
 

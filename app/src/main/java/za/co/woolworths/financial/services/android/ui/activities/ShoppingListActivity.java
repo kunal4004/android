@@ -27,6 +27,7 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingListCheckedAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ShoppingUnCheckedListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
@@ -72,7 +73,7 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(ShoppingListActivity.this.getApplicationContext(),
-						WOneAppBaseActivity.class);
+						BottomNavigationActivity.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				intent.putExtra("myAccount", 1);
 				startActivity(intent);

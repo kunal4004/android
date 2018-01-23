@@ -724,7 +724,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mTextSelectSize = (WTextView) findViewById(R.id.textSelectSize);
 		mTextColour = (WTextView) findViewById(R.id.textColour);
 		WTextView mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
-		mTextTitle = (WTextView) findViewById(R.id.textTitle);
+		mTextTitle = (WTextView) findViewById(R.id.tvProductName);
 		mTextActualPrice = (WTextView) findViewById(R.id.textActualPrice);
 		mViewPagerProduct = (ViewPager) findViewById(R.id.mProductDetailPager);
 		mTextPrice = (WTextView) findViewById(R.id.textPrice);
@@ -811,7 +811,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 				"<meta charset=\"UTF-8\">" +
 				"<style>" +
 				"@font-face {font-family: 'myriad-pro-regular';src: url('file://"
-				+ this.getFilesDir().getAbsolutePath() + "/fonts/MyriadPro-Regular.otf');}" +
+				+ this.getFilesDir().getAbsolutePath() + "/fonts/myriadpro_regular.otf');}" +
 				"body {" +
 				"line-height: 110%;" +
 				"font-size: 92% !important;" +
@@ -1318,6 +1318,11 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 				mDefaultSize = otherSku.size;
 			}
 		}
+	}
+
+	@Override
+	public void onSelectedProduct(ProductList productList) {
+
 	}
 
 	@Override

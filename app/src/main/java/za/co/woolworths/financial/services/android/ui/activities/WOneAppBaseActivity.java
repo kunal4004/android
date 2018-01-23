@@ -30,13 +30,12 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Voucher;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.ui.fragments.MenuNavigationInterface;
+import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayNavigator;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
-import za.co.woolworths.financial.services.android.ui.fragments.WProductFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.WRewardsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.WTodayFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -48,8 +47,8 @@ import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
-		, WProductFragment.HideActionBarComponent, HideActionBar, UpdateNavDrawerTitle,
-		WRewardsFragment.HideActionBarComponent, MenuNavigationInterface, UpdateNavigationDrawer {
+	, HideActionBar, UpdateNavDrawerTitle,
+		WRewardsFragment.HideActionBarComponent, WTodayNavigator, UpdateNavigationDrawer {
 
 	public static Toolbar mToolbar;
 	private WFragmentDrawer drawerFragment;
@@ -125,7 +124,7 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 				title = getString(R.string.nw_today_title);
 				break;
 			case 1:
-				fragment = new WProductFragment();
+				fragment = new CategoryFragment();
 				title = getString(R.string.nav_item_products);
 				break;
 			/*case 2:
@@ -237,11 +236,11 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 			ScreenManager.presentSSOLogout(WOneAppBaseActivity.this);
 		}
 	};
-
-	@Override
-	public void switchToView(int position) {
-		displayView(position);
-	}
+//
+//	@Override
+//	public void switchToFragment(int position) {
+//		displayView(position);
+//	}
 
 	public void initGetVouchersCall() {
 		JWTDecodedModel jwtDecodedModel = getJWTDecoded();

@@ -62,7 +62,6 @@ import java.util.Map;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
@@ -72,7 +71,10 @@ import za.co.woolworths.financial.services.android.models.dto.TransactionParentO
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
+import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
+import za.co.woolworths.financial.services.android.ui.views.badgeview.QBadgeView;
 import za.co.woolworths.financial.services.android.util.tooltip.TooltipHelper;
 import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
 
@@ -816,5 +818,38 @@ public class Utils {
 				+ "?subject=" + "" + "&body=" + "");
 		intent.setData(data);
 		activity.startActivity(intent);
+	}
+
+	public static Badge addBadgeAt(Context context, WBottomNavigationView mBottomNav, int position, int number) {
+		return new QBadgeView(context)
+				.setBadgeNumber(number)
+				.setGravityOffset(15, 2, true)
+				.bindTarget(mBottomNav.getBottomNavigationItemView(position))
+				.setOnDragStateChangedListener(new Badge.OnDragStateChangedListener() {
+					@Override
+					public void onDragStateChanged(int dragState, Badge badge, View targetView) {
+//						if (Badge.OnDragStateChangedListener.STATE_SUCCEED == dragState)
+					}
+				});
+	}
+
+	public static void updateStatusBar(Activity activity, int color) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			Window window = activity.getWindow();
+			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+			window.setStatusBarColor(activity.getResources().getColor(color));
+		}
+	}
+
+	public static void showOneTimePopup(Context context) {
+		try {
+			String firstTime = Utils.getSessionDaoValue(context, SessionDao.KEY.PRODUCTS_ONE_TIME_POPUP);
+			if (firstTime == null) {
+				Utils.displayValidationMessage(context, CustomPopUpWindow.MODAL_LAYOUT.INFO, context.getResources().getString(R.string.products_onetime_popup_text));
+				Utils.sessionDaoSave(context, SessionDao.KEY.PRODUCTS_ONE_TIME_POPUP, "1");
+			}
+		} catch (NullPointerException ignored) {
+		}
 	}
 }

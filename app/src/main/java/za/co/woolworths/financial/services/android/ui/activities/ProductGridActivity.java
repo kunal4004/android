@@ -58,8 +58,10 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridNavigator;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -78,7 +80,7 @@ import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ProductGridActivity extends WProductDetailActivity implements SelectedProductView,
-		View.OnClickListener, NetworkChangeListener, PermissionResultCallback {
+		View.OnClickListener, NetworkChangeListener, PermissionResultCallback, GridNavigator {
 	private Toolbar mToolbar;
 	private WTextView mToolBarTitle;
 	private String productId;
@@ -125,6 +127,81 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	private boolean mProductHasSize;
 	private boolean mProductHasOneColour;
 	private boolean mProductHasOneSize;
+
+	@Override
+	public void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData) {
+
+	}
+
+	@Override
+	public void unhandledResponseCode(Response response) {
+
+	}
+
+	@Override
+	public void failureResponseHandler(String e) {
+
+	}
+
+	@Override
+	public void onLoadStart() {
+
+	}
+
+	@Override
+	public void cancelAPIRequest() {
+
+	}
+
+	@Override
+	public void setTotalNumberOfItem() {
+
+	}
+
+	@Override
+	public void bindRecyclerViewWithUI(List<ProductList> productList) {
+
+	}
+
+	@Override
+	public void onGridItemSelected(ProductList productList) {
+
+	}
+
+	@Override
+	public void onBottomReached() {
+
+	}
+
+	@Override
+	public void startProductRequest() {
+
+	}
+
+	@Override
+	public void loadMoreData(List<ProductList> productLists) {
+
+	}
+
+	@Override
+	public void showProgressBarCentered() {
+
+	}
+
+	@Override
+	public void dismissProgressBarCentered() {
+
+	}
+
+	@Override
+	public void showProgressBarAtBottom() {
+
+	}
+
+	@Override
+	public void dismissProgressBarAtBottom() {
+
+	}
 
 	private enum RUN_BACKGROUND_TASK {
 		SEARCH_PRODUCT, SEARCH_MORE_PRODUCT, LOAD_PRODUCT, LOAD_MORE_PRODUCT
@@ -349,13 +426,18 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		});
 	}
 
+//	@Override
+//	public void onSelectedProduct(View v, int position) {
+//		selectProductDetail = true;
+//		mSelectedProduct = mProduct.get(position);
+//		mSkuId = mSelectedProduct.otherSkus.get(0).sku;
+//		mProductId = mSelectedProduct.productId;
+//		onCallback(mProductId, mSkuId, false);
+//	}
+
 	@Override
-	public void onSelectedProduct(View v, int position) {
-		selectProductDetail = true;
-		mSelectedProduct = mProduct.get(position);
-		mSkuId = mSelectedProduct.otherSkus.get(0).sku;
-		mProductId = mSelectedProduct.productId;
-		onCallback(mProductId, mSkuId, false);
+	public void onSelectedProduct(ProductList productList) {
+
 	}
 
 	@Override

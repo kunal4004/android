@@ -5,5 +5,5 @@
         android:id="@+id/action_search"
         android:icon="@drawable/close_24"
         android:title=""
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
 </menu>

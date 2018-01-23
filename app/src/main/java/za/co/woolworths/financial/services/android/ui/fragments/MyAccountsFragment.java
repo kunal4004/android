@@ -12,7 +12,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -42,8 +41,6 @@ import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.Voucher;
-import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.FAQActivity;
@@ -56,24 +53,20 @@ import za.co.woolworths.financial.services.android.ui.activities.WContactUsActiv
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WStoreLocatorActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayNavigator;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
-import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseFragment;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
-import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
-import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class MyAccountsFragment extends BaseFragment implements View.OnClickListener, ViewPager.OnPageChangeListener {
-
-	private HideActionBar hideActionBar;
 
 	RelativeLayout openMessageActivity;
 	ImageView openShoppingList;
@@ -117,12 +110,11 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	private Toolbar mToolbar;
 	private RelativeLayout relFAQ;
 	private ErrorHandlerView mErrorHandlerView;
-	private UpdateNavigationDrawer updateNavigationDrawer;
 	private WGlobalState wGlobalState;
 	private MyAccountsFragment mContext;
 	private boolean loadMessageCounter = false;
 	private String TAG = "MyAccountsFragment";
-	private MenuNavigationInterface mNavigationInterface;
+	private WTodayNavigator mNavigationInterface;
 	private RelativeLayout storeLocator;
 	private LinearLayout allUserOptionsLayout;
 	private LinearLayout loginUserOptionsLayout;
@@ -142,7 +134,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		mContext = this;
 
 		//Trigger Firebase Tag.
-		JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity) getActivity()).getJWTDecoded();
+		JWTDecodedModel jwtDecodedModel = Utils.getJWTDecoded(getActivity());
 		Map<String, String> arguments = new HashMap<>();
 		arguments.put("c2_id", (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
 		Utils.triggerFireBaseEvents(getActivity(), "accounts_event_appeared", arguments);
@@ -155,7 +147,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		super.onViewCreated(view, savedInstanceState);
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 		wGlobalState = woolworthsApplication.getWGlobalState();
-		mNavigationInterface = (MenuNavigationInterface) getActivity();
+	//	mNavigationInterface = (WTodayNavigator) getActivity();
 		openMessageActivity = (RelativeLayout) view.findViewById(R.id.openMessageActivity);
 		openShoppingList = (ImageView) view.findViewById(R.id.openShoppingList);
 		contactUs = (RelativeLayout) view.findViewById(R.id.contactUs);
@@ -186,9 +178,9 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		imgCreditCard = (ImageView) view.findViewById(R.id.imgCreditCard);
 		relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
-		storeLocator=(RelativeLayout) view.findViewById(R.id.storeLocator);
-		allUserOptionsLayout =(LinearLayout)view.findViewById(R.id.parentOptionsLayout);
-		loginUserOptionsLayout=(LinearLayout)view.findViewById(R.id.loginUserOptionsLayout);
+		storeLocator = (RelativeLayout) view.findViewById(R.id.storeLocator);
+		allUserOptionsLayout = (LinearLayout) view.findViewById(R.id.parentOptionsLayout);
+		loginUserOptionsLayout = (LinearLayout) view.findViewById(R.id.loginUserOptionsLayout);
 		openMessageActivity.setOnClickListener(this);
 		contactUs.setOnClickListener(this);
 		applyPersonalCardView.setOnClickListener(this);
@@ -204,7 +196,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		relFAQ.setOnClickListener(this);
 		storeLocator.setOnClickListener(this);
 
-		updateNavigationDrawer = (UpdateNavigationDrawer) getActivity();
 		adapter = new MyAccountOverViewPagerAdapter(getActivity());
 		viewPager.addOnPageChangeListener(this);
 		setUiPageViewController();
@@ -248,7 +239,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 
 		JWTDecodedModel jwtDecodedModel;
 		try {
-			jwtDecodedModel = ((WOneAppBaseActivity) getActivity()).getJWTDecoded();
+			jwtDecodedModel = Utils.getJWTDecoded(getActivity());
 		} catch (NullPointerException ignored) {
 			jwtDecodedModel = null;
 		}
@@ -263,7 +254,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			this.configureView();
 			if (!wGlobalState.getRewardSignInState() || wGlobalState.rewardHasExpired()) {
 				//Remove voucher count on Navigation drawer
-				updateNavigationDrawer.updateVoucherCount(0);
+				//updateNavigationDrawer.updateVoucherCount(0);
 			}
 		}
 	}
@@ -553,9 +544,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			case R.id.signOutBtn:
 				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.SIGN_OUT, "");
 				break;
-			case R.id.imgBurgerButton:
-				hideActionBar.onBurgerButtonPressed();
-				break;
+
 			case R.id.rlMyDetails:
 				Intent openMyDetail = new Intent(getActivity(), UserDetailActivity.class);
 				startActivity(openMyDetail);
@@ -776,24 +765,16 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	@Override
 	public void onStart() {
 		super.onStart();
-		((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+		//((AppCompatActivity) getActivity()).getSupportActionBar().hide();
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		dismissProgress();
-		((AppCompatActivity) getActivity()).getSupportActionBar().show();
+		//((AppCompatActivity) getActivity()).getSupportActionBar().show();
 	}
 
-	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-		try {
-			hideActionBar = (HideActionBar) getActivity();
-		} catch (ClassCastException ignored) {
-		}
-	}
 
 	private void hideViews() {
 		mToolbar.animate().translationY(-mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
@@ -836,64 +817,64 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		signOutBtn.setVisibility(View.GONE);
 		loginUserOptionsLayout.setVisibility(View.GONE);
 	}
-
-	public HttpAsyncTask<String, String, VoucherResponse> getVouchers() {
-		return new HttpAsyncTask<String, String, VoucherResponse>() {
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-
-			}
-
-			@Override
-			protected VoucherResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getVouchers();
-			}
-
-			@Override
-
-			protected Class<VoucherResponse> httpDoInBackgroundReturnType() {
-				return VoucherResponse.class;
-			}
-
-			@Override
-			protected VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				return new VoucherResponse();
-			}
-
-			@Override
-			protected void onPostExecute(VoucherResponse voucherResponse) {
-				super.onPostExecute(voucherResponse);
-				if (voucherResponse.httpCode == 200 && voucherResponse.voucherCollection.vouchers != null)
-					updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
-
-				int httpCode = voucherResponse.httpCode;
-				switch (httpCode) {
-					case 200:
-						wGlobalState.setRewardSignInState(true);
-						List<Voucher> vouchers = voucherResponse.voucherCollection.vouchers;
-						if (vouchers != null) {
-							updateNavigationDrawer.updateVoucherCount(vouchers.size());
-						} else {
-							updateNavigationDrawer.updateVoucherCount(0);
-						}
-						break;
-
-					case 440:
-						updateNavigationDrawer.updateVoucherCount(0);
-						wGlobalState.setRewardHasExpired(true);
-						wGlobalState.setRewardSignInState(false);
-						break;
-
-					default:
-						updateNavigationDrawer.updateVoucherCount(0);
-						wGlobalState.setRewardSignInState(false);
-						break;
-				}
-
-			}
-		};
-	}
+//
+//	public HttpAsyncTask<String, String, VoucherResponse> getVouchers() {
+//		return new HttpAsyncTask<String, String, VoucherResponse>() {
+//			@Override
+//			protected void onPreExecute() {
+//				super.onPreExecute();
+//
+//			}
+//
+//			@Override
+//			protected VoucherResponse httpDoInBackground(String... params) {
+//				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getVouchers();
+//			}
+//
+//			@Override
+//
+//			protected Class<VoucherResponse> httpDoInBackgroundReturnType() {
+//				return VoucherResponse.class;
+//			}
+//
+//			@Override
+//			protected VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+//				return new VoucherResponse();
+//			}
+//
+//			@Override
+//			protected void onPostExecute(VoucherResponse voucherResponse) {
+//				super.onPostExecute(voucherResponse);
+//				if (voucherResponse.httpCode == 200 && voucherResponse.voucherCollection.vouchers != null)
+//					//updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
+//
+//				int httpCode = voucherResponse.httpCode;
+//				switch (httpCode) {
+//					case 200:
+//						wGlobalState.setRewardSignInState(true);
+//						List<Voucher> vouchers = voucherResponse.voucherCollection.vouchers;
+//						if (vouchers != null) {
+//						//	updateNavigationDrawer.updateVoucherCount(vouchers.size());
+//						} else {
+//							//updateNavigationDrawer.updateVoucherCount(0);
+//						}
+//						break;
+//
+//					case 440:
+//						//updateNavigationDrawer.updateVoucherCount(0);
+//						wGlobalState.setRewardHasExpired(true);
+//						wGlobalState.setRewardSignInState(false);
+//						break;
+//
+//					default:
+//						//updateNavigationDrawer.updateVoucherCount(0);
+//						wGlobalState.setRewardSignInState(false);
+//						break;
+//				}
+//
+//			}
+//		};
+//	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -904,7 +885,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				messageCounterRequest();
 			} else {
 				initialize();
-				getVouchers().execute();
+				//getVouchers().execute();
 				if (getActivity() != null)
 					new WRewardsCardDetails(getActivity()).execute();
 			}
@@ -914,7 +895,6 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			showLogOutScreen();
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
 			try {
-				updateNavigationDrawer.updateVoucherCount(0);
 				wGlobalState.setAccountSignInState(false);
 				wGlobalState.setRewardSignInState(false);
 				SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
@@ -979,7 +959,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 					&& (wGlobalState.getPressState().equalsIgnoreCase
 					(WGlobalState.ON_SIGN_IN))) {
 				accountExpiredState();
-				mNavigationInterface.switchToView(4);
+				//mNavigationInterface.switchToFragment(4);
 			} else {
 			}
 		}

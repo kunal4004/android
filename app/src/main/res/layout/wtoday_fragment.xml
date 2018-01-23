@@ -1,21 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:clickable="true"
+        tools:context="za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment">
 
-    <LinearLayout
+    <data>
+
+        <import type="android.view.View"/>
+
+        <variable
+            name="handlers"
+            type="za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment"/>
+
+        <variable
+            name="viewModel"
+            type="za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment"/>
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <WebView
             android:id="@+id/wtoday_fragment_webview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            ></WebView>
+            android:scrollbars="none"
+            />
 
-    </LinearLayout>
-
-    <include layout="@layout/no_connection_handler"/>
-</FrameLayout>
+        <include
+            android:id="@+id/incNoConnectionHandler"
+            layout="@layout/no_connection_handler"/>
+    </FrameLayout>
+</layout>
