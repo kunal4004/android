@@ -455,9 +455,9 @@
     <string name="color">color</string>
     <string name="size">size</string>
     <string name="not_found">Unfortunately not found</string>
-    <string name="stock_available_product">Stores in this area are out of your item (or have very little stock).  How about searching our online store ?</string>
+    <string name="stock_available_product">Stores in this area are out of your item (or have very little stock). How about searching our online store</string>
     <string name="back_to_product">back to products</string>
-    <string name="no_stock_title">NO PRODUCT FOUND</string>
+    <string name="no_stock_title">UNFORTUNATELY NOT FOUND</string>
     <string name="location_disable_title">Location Services</string>
     <string name="location_disable_desc">This feature cannot be used without Location Services.</string>
     <string name="downloaing_text">Downloading File</string>
