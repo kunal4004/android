@@ -41,7 +41,7 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 	ArrayList<String> permissions;
 	private Menu mMenu;
 	private ActionBar actionBar;
-	public static final String SEND_USER_STATEMENT="SEND_USER_STATEMENT";
+	public static final String SEND_USER_STATEMENT = "SEND_USER_STATEMENT";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +77,8 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 							EmailStatementFragment emailStatementFragment = new EmailStatementFragment();
 							FragmentUtils fragmentUtils = new FragmentUtils(StatementActivity.this);
 							fragmentUtils.nextFragment(StatementActivity.this, getSupportFragmentManager().beginTransaction(), emailStatementFragment, R.id.flEStatement);
+						} else if (object instanceof StatementFragment) {
+							finishActivity();
 						}
 					}
 				}));

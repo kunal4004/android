@@ -249,7 +249,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
 						default:
 							if (response != null) {
-								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_ERROR, response.desc);
 							}
 							break;
 					}
