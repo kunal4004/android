@@ -214,7 +214,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/WTransaction"/>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CLI"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible"/>
@@ -308,9 +308,9 @@
             android:screenOrientation="portrait"
             android:theme="@style/StoreSearch"/>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.bottom_navigation.BottomNavigationActivity"
-            android:theme="@style/bottomNavigationStyle"
-        android:label="@string/title_activity_bottom_navigation">
+            android:name="za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity"
+            android:label="@string/title_activity_bottom_navigation"
+            android:theme="@style/bottomNavigationStyle">
         </activity>
     </application>
 
