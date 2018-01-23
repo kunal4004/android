@@ -3,35 +3,50 @@ package za.co.woolworths.financial.services.android.ui.fragments.wtoday;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.RelativeLayout;
 
+import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
+import com.awfs.coordination.databinding.WtodayFragmentBinding;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.WebAppInterface;
 
-public class WTodayFragment extends Fragment {
+public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayViewModel> implements WTodayNavigator {
+
+	private WTodayViewModel wTodayViewModel;
 	WebView webView;
 	ErrorHandlerView mErrorHandlerView;
-	WTodayNavigator mWTodayNavigator;
 
-	@Nullable
 	@Override
-	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		setRetainInstance(true);
-		return inflater.inflate(R.layout.wtoday_fragment, container, false);
+	public WTodayViewModel getViewModel() {
+		return wTodayViewModel;
+	}
+
+	@Override
+	public int getBindingVariable() {
+		return BR.viewModel;
+	}
+
+	@Override
+	public int getLayoutId() {
+		return R.layout.wtoday_fragment;
+	}
+
+	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		wTodayViewModel = ViewModelProviders.of(this).get(WTodayViewModel.class);
+		wTodayViewModel.setNavigator(this);
 	}
 
 	@Override
@@ -39,8 +54,9 @@ public class WTodayFragment extends Fragment {
 		super.onViewCreated(view, savedInstanceState);
 		Activity activity = getActivity();
 		if (activity != null) {
-			mWTodayNavigator = (WTodayNavigator) activity;
-			mErrorHandlerView = new ErrorHandlerView(activity, (RelativeLayout) view.findViewById(R.id.no_connection_layout));
+			hideToolbar();
+			mErrorHandlerView = new ErrorHandlerView(activity, getViewDataBinding().incNoConnectionHandler.noConnectionLayout);
+			mErrorHandlerView.setMargin(getViewDataBinding().incNoConnectionHandler.noConnectionLayout,0,0,0,0);
 			initWebView(view);
 			retryConnect(view);
 		}
@@ -73,7 +89,6 @@ public class WTodayFragment extends Fragment {
 				mErrorHandlerView.webViewBlankPage(webView);
 				mErrorHandlerView.networkFailureHandler(description);
 			}
-
 		});
 	}
 
@@ -81,8 +96,9 @@ public class WTodayFragment extends Fragment {
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(getActivity())) {
-					mWTodayNavigator.switchToFragment(0);
+				if (isNetworkConnected()) {
+					mErrorHandlerView.hideErrorHandler();
+					webView.loadUrl(WoolworthsApplication.getWwTodayURI());
 				}
 			}
 		});
