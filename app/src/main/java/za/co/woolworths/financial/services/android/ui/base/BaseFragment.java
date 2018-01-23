@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,10 @@ import android.view.ViewGroup;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigator;
-import za.co.woolworths.financial.services.android.ui.base.back_press_impl.BackFragment;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseViewModel> extends BackFragment {
+public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseViewModel> extends Fragment {
 
 	public final int PERMS_REQUEST_CODE = 123;
 
