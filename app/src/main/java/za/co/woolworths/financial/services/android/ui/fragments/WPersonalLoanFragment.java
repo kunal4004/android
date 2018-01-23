@@ -109,10 +109,11 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 							if (object instanceof BusStation) {
 								BusStation busStation = (BusStation) object;
 								OfferActive offerActive = busStation.getOfferActive();
-								hideCLIView();
 								if (offerActive != null) {
+									hideCLIView();
 									cliOfferStatus(offerActive);
 								} else if (busStation.makeApiCall()) {
+									hideCLIView();
 									personalWasAlreadyRunOnce = false;
 									retryConnect();
 								} else {
