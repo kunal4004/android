@@ -8,7 +8,7 @@ android {
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
-        job = "136";
+        job = "137";
     }
 
     def buildNumber = major + "." + minor + "." + fix
@@ -70,7 +70,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 136
+            versionCode 137
         }
 
         staging {
