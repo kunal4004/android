@@ -258,9 +258,14 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 			}
 
 			@Override
-			public void onFailure(String e) {
-				onLoadComplete();
-				mErrorHandlerView.networkFailureHandler(e);
+			public void onFailure(final String e) {
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						onLoadComplete();
+						mErrorHandlerView.networkFailureHandler(e);
+					}
+				});
 			}
 		});
 		cliGetStatements.execute();

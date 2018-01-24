@@ -3,12 +3,14 @@ package za.co.woolworths.financial.services.android.ui.fragments.statement;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.listener.OnErrorListener;
 
 import java.io.File;
 
@@ -37,6 +39,12 @@ public class PreviewStatement extends Fragment {
 				.enableAnnotationRendering(false)
 				.enableAntialiasing(false)
 				.spacing(0)
+				.onError(new OnErrorListener() {
+					@Override
+					public void onError(Throwable t) {
+						Log.e("onError", t.toString());
+					}
+				})
 				.load();
 	}
 }
