@@ -27,7 +27,7 @@ import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
@@ -259,7 +259,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					return true;
 
 				case R.id.navigation_cart:
-					setToolbarTitle(getString(R.string.bottom_title_product));
+					setToolbarTitle(getString(R.string.bottom_title_cart));
 					mNavController.switchTab(INDEX_CART);
 					showToolbar();
 					return true;
@@ -321,7 +321,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			case INDEX_SHOP:
 				return new CategoryFragment();
 			case INDEX_CART:
-				return new ShopFragment();
+				return new CartFragment();
 			case INDEX_REWARD:
 				return new WRewardsFragment();
 			case INDEX_ACCOUNT:

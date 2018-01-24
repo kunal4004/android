@@ -293,6 +293,8 @@
     <string name="product_size">Size</string>
     <string name="shop_online_woolies">Shop online</string>
     <string name="add_to_shopping_list">Add to shopping list</string>
+    <string name="add_to_list">ADD TO LIST</string>
+    <string name="checkout">CHECKOUT</string>
     <string name="product_code">Product Code</string>
     <string name="product_colour">Colour</string>
     <string name="unlinked_account_copy">We see that your Woolies Card is not yet linked. To conveniently view your available funds, next payment due, recent transactions and so much more, please link your Woolies Card now.</string>
