@@ -115,10 +115,11 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 							if (object instanceof BusStation) {
 								BusStation busStation = (BusStation) object;
 								OfferActive offerActive = busStation.getOfferActive();
-								hideCLIView();
 								if (offerActive != null) {
+									hideCLIView();
 									cliOfferStatus(offerActive);
 								} else if (busStation.makeApiCall()) {
+									hideCLIView();
 									storeWasAlreadyRunOnce = false;
 									retryConnect();
 								} else {

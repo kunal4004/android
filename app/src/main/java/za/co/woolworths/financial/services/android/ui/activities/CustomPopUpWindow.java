@@ -35,11 +35,12 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
+import za.co.woolworths.financial.services.android.models.dto.statement.USDocuments;
 import za.co.woolworths.financial.services.android.models.rest.SendUserStatement;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
-import za.co.woolworths.financial.services.android.ui.fragments.statement.AlternativeEmailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailStatementFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -71,13 +72,14 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	private BroadcastReceiver mConnectionBroadcast;
 	private LoadState loadState;
 	private SendUserStatementRequest mSendUserStatementRequest;
+	protected WTextView mTvStatementSendTo;
 
 	public enum MODAL_LAYOUT {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
 		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
 		CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
-		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR
+		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, STATEMENT_ERROR
 	}
 
 	MODAL_LAYOUT current_view;
@@ -215,10 +217,25 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 						cliExitAnimation();
 					}
 				});
+
+			case STATEMENT_ERROR:
+				setContentView(R.layout.statement_error);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				WButton btnStatement = (WButton) findViewById(R.id.btnCloseStatement);
+				WTextView statementOverlay = (WTextView) findViewById(R.id.overlayDescription);
+				if (description != null)
+					statementOverlay.setText(description);
+				btnStatement.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						closeStatementAnimation();
+					}
+				});
 				mRelPopContainer.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						cliExitAnimation();
+						closeStatementAnimation();
 					}
 				});
 				break;
@@ -436,13 +453,13 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
 				mBtnConfirmEmail = (WButton) findViewById(R.id.btnConfirmEmail);
 				tvAlternativeEmail = (WTextView) findViewById(R.id.tvAlternativeEmail);
+				mTvStatementSendTo = (WTextView) findViewById(R.id.tvStatementSendTo);
 				WTextView tvSendEmail = (WTextView) findViewById(R.id.tvSendEmail);
 				mWoolworthsProgressBar = (ProgressBar) findViewById(R.id.mWoolworthsProgressBar);
 				populateDocument(tvSendEmail);
-
 				mSendUserStatementRequest = new Gson().fromJson(userStatement, SendUserStatementRequest.class);
 				mSendUserStatementRequest.to = userEmailAddress();
-
+				statementSendToTitle(mTvStatementSendTo, mSendUserStatementRequest.documents);
 				tvAlternativeEmail.setOnClickListener(this);
 				mBtnConfirmEmail.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
@@ -475,6 +492,14 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 		}
 		setAnimation();
+	}
+
+	private void statementSendToTitle(WTextView tvStatementSendTo, USDocuments documents) {
+		if (documents.document.size() > 1) {
+			tvStatementSendTo.setText(getString(R.string.statement_sent_to_title).replace("Statement", "Statements"));
+		} else {
+			tvStatementSendTo.setText(getString(R.string.statement_sent_to_title));
+		}
 	}
 
 	private void startExitAnimation() {
@@ -523,6 +548,35 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					woolworthsApplication
 							.bus()
 							.send(new CLIOfferDecision());
+					dismissLayout();
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
+		}
+	}
+
+
+	private void closeStatementAnimation() {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					woolworthsApplication
+							.bus()
+							.send(new StatementFragment());
 					dismissLayout();
 				}
 			});
@@ -851,7 +905,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	}
 
 	private void populateDocument(WTextView textView) {
-		textView.setText(userEmailAddress());
+		String email = userEmailAddress();
+		String domain = email.substring(email.indexOf("@"), email.length());
+		String maskedEmail = "****" + domain;
+		textView.setText(maskedEmail);
 	}
 
 	public String userEmailAddress() {

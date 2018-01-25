@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,6 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -249,7 +249,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
 						default:
 							if (response != null) {
-								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.STATEMENT_ERROR, response.desc);
 							}
 							break;
 					}
@@ -292,22 +292,19 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
 			@Override
 			public void success(String responseBody, retrofit.client.Response response) {
-				showSlideUpPanel();
-
 				switch (response.getStatus()) {
 					case 200:
-						StatementUtils statementUtils = new StatementUtils(getActivity());
 						try {
+							StatementUtils statementUtils = new StatementUtils(getActivity());
 							statementUtils.savePDF(response.getBody().in());
-						} catch (IOException e) {
-							e.printStackTrace();
+							PreviewStatement previewStatement = new PreviewStatement();
+							FragmentUtils fragmentUtils = new FragmentUtils(getActivity());
+							FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+							fragmentUtils.openFragment(fragmentManager,
+									previewStatement, R.id.flAccountStatement);
+							showSlideUpPanel();
+						} catch (Exception ignored) {
 						}
-						PreviewStatement previewStatement = new PreviewStatement();
-						FragmentUtils fragmentUtils = new FragmentUtils(getActivity());
-						FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-						fragmentUtils.nextFragment(fragmentManager,
-								previewStatement, R.id.flAccountStatement);
-						showSlideUpPanel();
 						break;
 					default:
 						break;
@@ -318,6 +315,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
 			@Override
 			public void failure(RetrofitError error) {
+				Log.e("errorfail", error.toString());
 				if (error.getKind().name().equalsIgnoreCase("NETWORK")) {
 					mErrorHandlerView.showToast();
 					loadFailure();
