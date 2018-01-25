@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +17,22 @@ import za.co.woolworths.financial.services.android.util.StatementUtils;
 
 public class EmailStatementFragment extends Fragment implements View.OnClickListener {
 
-	private WButton btnBackToMyAccount;
+	private String mAlternativeEmail;
+
+
+	@Override
+	public void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		Bundle bundle = getArguments();
+		if (bundle != null) {
+			mAlternativeEmail = bundle.getString("alternativeEmail");
+		}
+	}
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.estatement_confirmation_layout, container, false);
-		return view;
+		return inflater.inflate(R.layout.estatement_confirmation_layout, container, false);
 	}
 
 	@Override
@@ -32,10 +42,14 @@ public class EmailStatementFragment extends Fragment implements View.OnClickList
 	}
 
 	private void initView(View view) {
-		btnBackToMyAccount = (WButton) view.findViewById(R.id.btnBackToMyAccount);
+		WButton btnBackToMyAccount = (WButton) view.findViewById(R.id.btnBackToMyAccount);
 		WTextView tvUserEmailAddress = (WTextView) view.findViewById(R.id.tvUserEmailAddress);
 		StatementUtils statementUtils = new StatementUtils(getActivity());
-		statementUtils.populateDocument(tvUserEmailAddress);
+		if (TextUtils.isEmpty(mAlternativeEmail)) {
+			statementUtils.populateDocument(tvUserEmailAddress);
+		} else {
+			tvUserEmailAddress.setText(mAlternativeEmail);
+		}
 		btnBackToMyAccount.setOnClickListener(this);
 	}
 

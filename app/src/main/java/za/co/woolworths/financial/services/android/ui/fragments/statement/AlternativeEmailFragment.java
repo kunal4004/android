@@ -57,6 +57,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 	private ProgressBar mWoolworthsProgressBar;
 	private SendUserStatementRequest mSendUserStatementRequest;
 	private String mUserStatement;
+	private String mAlternativeEmail;
 
 	@Nullable
 	@Override
@@ -171,8 +172,8 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.btnSendEmail:
-				String alternativeEmail = etAlternativeEmailAddress.getText().toString();
-				if (mStatementUtils.validateEmail(alternativeEmail)) {
+				mAlternativeEmail = etAlternativeEmailAddress.getText().toString();
+				if (mStatementUtils.validateEmail(mAlternativeEmail)) {
 					Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
 					etAlternativeEmailAddress.setCompoundDrawablesWithIntrinsicBounds(null, null, transparentDrawable, null);
 					mSendUserStatementRequest.to = etAlternativeEmailAddress.getText().toString();
@@ -256,7 +257,10 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 							if (emailResponse.sent) {
 								hideKeyboard();
 								FragmentUtils fragmentUtils = new FragmentUtils();
+								Bundle bundle = new Bundle();
+								bundle.putString("alternativeEmail", mAlternativeEmail);
 								EmailStatementFragment emailStatementFragment = new EmailStatementFragment();
+								emailStatementFragment.setArguments(bundle);
 								fragmentUtils.nextFragment((AppCompatActivity) AlternativeEmailFragment.this.getActivity(), getFragmentManager().beginTransaction(), emailStatementFragment, R.id.flEStatement);
 							} else {
 								hideKeyboard();
