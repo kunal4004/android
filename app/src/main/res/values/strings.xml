@@ -588,7 +588,7 @@
     <string name="no_statements">No Statements</string>
     <string name="no_statements_desc">We have no data for the current period.</string>
     <string name="account_statement">account statement</string>
-    <string name="account_type_info_desc">I agree that Woolworths Financial Services may request my latest 3 months bank statements directly from my bank.</string>
+    <string name="account_type_info_desc">I agree that Woolworths Financial Services may request my latest 3 months bank statement directly from my bank.</string>
     <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
     <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>
     <string name="cli_create_application_error_message">Unfortunately we cannot proceed with your application</string>
