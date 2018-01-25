@@ -89,7 +89,7 @@
 
                         <za.co.woolworths.financial.services.android.ui.views.WTextView
                             style="@style/cli_permission_description_text"
-                            android:text="We are able to make it this easy for you by requesting your latest 3 months statement directly from your bank with no cost to you."
+                            android:text="@string/lets_make_it_easy_for_you"
                             android:textColor="@color/black"/>
 
                         <View
