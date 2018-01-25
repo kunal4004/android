@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.Manifest;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -48,6 +49,8 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.account_e_statement_activity);
 		Utils.updateStatusBarBackground(this);
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		StrictMode.setThreadPolicy(policy);
 		actionBar();
 		initUI();
 		StatementFragment statementFragment = new StatementFragment();
@@ -196,11 +199,16 @@ public class StatementActivity extends AppCompatActivity implements PermissionRe
 
 	@Override
 	public void PermissionGranted(int request_code) {
-		FragmentManager fm = getSupportFragmentManager();
-		Fragment fragmentId = fm.findFragmentById(R.id.flEStatement);
-		if (fragmentId instanceof StatementFragment) {
-			((StatementFragment) fragmentId).getPDFFile();
-		}
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				FragmentManager fm = getSupportFragmentManager();
+				Fragment fragmentId = fm.findFragmentById(R.id.flEStatement);
+				if (fragmentId instanceof StatementFragment) {
+					((StatementFragment) fragmentId).getPDFFile();
+				}
+			}
+		});
 	}
 
 	@Override
