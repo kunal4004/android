@@ -834,7 +834,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 						dismissLayout();
 					} else {                    //show popalert error
 						dismissLayout();
-						Utils.displayValidationMessage(CustomPopUpWindow.this, MODAL_LAYOUT.ERROR, response.error);
+						Utils.displayValidationMessage(CustomPopUpWindow.this, MODAL_LAYOUT.ERROR, getString(R.string.statement_send_email_false_desc));
 					}
 				}
 			});
