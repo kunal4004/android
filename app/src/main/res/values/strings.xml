@@ -538,9 +538,9 @@
 
     <!-- Cli carousel: Find Out More -->
     <string name="credit_bureau">Credit bureau</string>
-    <string name="credit_bureau_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.</string>
+    <string name="credit_bureau_desc">We will try our best to ensure that you can afford the increased instalments of your new your credit limit. As such we obtain your credit information from various credit bureaus, who maintains the personal details related to your credit history (repayment behaviour, amount of credit you have available, outstanding debt collections and other).</string>
     <string name="txt_proof_of_income">Proof of income</string>
-    <string name="txt_proof_of_income_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.</string>
+    <string name="txt_proof_of_income_desc">With all credit applications, we are required verify your income. To do so, we need to obtain your three latest pay slips or your last three months’ bank statements (that reflects you income).</string>
 
     <!-- Cli carousel: Complete process title -->
     <string name="process_complete_title">Thank you, Your application is being processed.</string>
@@ -592,6 +592,6 @@
     <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
     <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>
     <string name="cli_create_application_error_message">Unfortunately we cannot proceed with your application</string>
-
+    <string name="lets_make_it_easy_for_you">Let us make it easy for you - we can request your latest 3 months bank statements directly from your bank, at no cost to you.</string>
     <string name="statement_send_email_false_desc">Oops, There seems to be a problem. Please try again later. </string>
 </resources>
