@@ -260,7 +260,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 								fragmentUtils.nextFragment((AppCompatActivity) AlternativeEmailFragment.this.getActivity(), getFragmentManager().beginTransaction(), emailStatementFragment, R.id.flEStatement);
 							} else {
 								hideKeyboard();
-								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, emailResponse.error);
+								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.statement_send_email_false_desc));
 							}
 							break;
 						case 440:
