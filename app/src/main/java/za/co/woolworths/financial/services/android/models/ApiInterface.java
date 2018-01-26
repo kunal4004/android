@@ -11,6 +11,7 @@ import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Path;
 import retrofit.http.Query;
+import retrofit.http.Streaming;
 import retrofit.mime.MultipartTypedOutput;
 import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
@@ -40,6 +41,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
@@ -647,6 +649,7 @@ public interface ApiInterface {
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@GET("/user/statements/{docId}")
+	@Streaming
 	void getStatement(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
@@ -661,7 +664,7 @@ public interface ApiInterface {
 			@Path("docId") String docId,
 			@Query("productOfferingId") String productOfferingId,
 			@Query("docDesc") String docDesc,
-			Callback<String> callback);
+			Callback<retrofit.client.Response> callback);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/user/statements")

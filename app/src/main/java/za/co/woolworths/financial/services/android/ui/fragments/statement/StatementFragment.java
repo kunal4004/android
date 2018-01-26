@@ -288,15 +288,15 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 		WoolworthsApplication mWoolWorthsApplication = ((WoolworthsApplication) StatementFragment.this.getActivity().getApplication());
 		showViewProgress();
 
-		mWoolWorthsApplication.getAsyncApi().getPDFResponse(mGetStatementFile, new Callback<String>() {
+		mWoolWorthsApplication.getAsyncApi().getPDFResponse(mGetStatementFile, new Callback<retrofit.client.Response>() {
 
 			@Override
-			public void success(String responseBody, retrofit.client.Response response) {
+			public void success(retrofit.client.Response response, retrofit.client.Response response2) {
 				switch (response.getStatus()) {
 					case 200:
 						try {
 							StatementUtils statementUtils = new StatementUtils(getActivity());
-							statementUtils.savePDF(response.getBody().in());
+							statementUtils.savePDF(response2.getBody().in());
 							PreviewStatement previewStatement = new PreviewStatement();
 							FragmentUtils fragmentUtils = new FragmentUtils(getActivity());
 							FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -315,7 +315,6 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 
 			@Override
 			public void failure(RetrofitError error) {
-				Log.e("errorfail", error.toString());
 				if (error.getKind().name().equalsIgnoreCase("NETWORK")) {
 					mErrorHandlerView.showToast();
 					loadFailure();

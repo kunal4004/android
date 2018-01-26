@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import retrofit.Callback;
 import retrofit.RestAdapter;
+import retrofit.client.Response;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.statement.GetStatement;
@@ -43,7 +44,7 @@ public class RetrofitAsyncClient {
 				.create(ApiInterface.class);
 	}
 
-	public void getPDFResponse(GetStatement getStatement, Callback<String> callback) {
+	public void getPDFResponse(GetStatement getStatement, Callback<Response> callback) {
 		mApiInterface.getStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), getStatement.getDocId(), getStatement.getProductOfferingId(), getStatement.getDocDesc(), callback);
 	}
 

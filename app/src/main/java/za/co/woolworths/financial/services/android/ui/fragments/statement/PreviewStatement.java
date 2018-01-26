@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.statement;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,11 @@ import com.github.barteksc.pdfviewer.PDFView;
 
 import java.io.File;
 
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class PreviewStatement extends Fragment {
+
+	private File mFile;
 
 	@Nullable
 	@Override
@@ -28,9 +32,9 @@ public class PreviewStatement extends Fragment {
 	}
 
 	private void initView(View view) {
-		File file = new File(getActivity().getExternalFilesDir("woolworth") + "/Files/" + "statement.pdf");
+		mFile = new File(getActivity().getExternalFilesDir("woolworth") + "/Files/" + "statement.pdf");
 		PDFView pdfView = (PDFView) view.findViewById(R.id.pdfView);
-		pdfView.fromFile(file)
+		pdfView.fromFile(mFile)
 				.enableDoubletap(true)
 				.defaultPage(0)
 				.scrollHandle(null)
@@ -38,5 +42,15 @@ public class PreviewStatement extends Fragment {
 				.enableAntialiasing(false)
 				.spacing(0)
 				.load();
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		try {
+			Utils.deleteDirectory(mFile);
+		} catch (Exception ex) {
+			Log.d("deleteDirectoryErr", ex.toString());
+		}
 	}
 }
