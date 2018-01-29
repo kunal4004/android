@@ -27,24 +27,24 @@ public class FragmentUtils {
 	public void currentFragment(AppCompatActivity activity, Fragment nextFragment, int fragmentId) {
 		FragmentManager fragmentManager = activity.getSupportFragmentManager();
 		fragmentManager.beginTransaction()
-				.replace(fragmentId, nextFragment).commit();
+				.replace(fragmentId, nextFragment).commitAllowingStateLoss();
 	}
 
 	public void nextFragment(FragmentManager fragmentManager, Fragment nextFragment, int fragmentId) {
 		fragmentManager.beginTransaction()
 				.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_up)
-				.replace(fragmentId, nextFragment).commit();
+				.replace(fragmentId, nextFragment).commitAllowingStateLoss();
 	}
 
 
 	public void openFragment(FragmentManager fragmentManager, Fragment nextFragment, int fragmentId) {
 		fragmentManager.beginTransaction()
-				.replace(fragmentId, nextFragment).commit();
+				.replace(fragmentId, nextFragment).commitAllowingStateLoss();
 	}
 
 	public void currentFragment(AppCompatActivity activity, FragmentManager fm, Fragment newFragment, int fragmentId) {
 		FragmentManager fragmentManager = activity.getSupportFragmentManager();
-		fragmentManager.beginTransaction().replace(fragmentId, newFragment).commit();
+		fragmentManager.beginTransaction().replace(fragmentId, newFragment).commitAllowingStateLoss();
 	}
 
 
@@ -53,11 +53,11 @@ public class FragmentUtils {
 		if (animate) {
 			fragmentTransaction
 					.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
-					.replace(fragmentId, fragment).addToBackStack(fragment.getClass().getSimpleName()).commit();
+					.replace(fragmentId, fragment).addToBackStack(fragment.getClass().getSimpleName()).commitAllowingStateLoss();
 		} else {
 			fragmentTransaction
 					.setTransition(FragmentTransaction.TRANSIT_NONE)
-					.replace(fragmentId, fragment).addToBackStack(fragment.getClass().getSimpleName()).commit();
+					.replace(fragmentId, fragment).addToBackStack(fragment.getClass().getSimpleName()).commitAllowingStateLoss();
 		}
 		fragmentManager.executePendingTransactions();
 	}
@@ -65,7 +65,7 @@ public class FragmentUtils {
 	public void nextFragment(AppCompatActivity activity, FragmentManager fragmentManager, Fragment fragment, int fragmentId) {
 		fragmentManager.beginTransaction()
 				.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
-				.replace(fragmentId, fragment).addToBackStack(fragment.getClass().getSimpleName()).commit();
+				.replace(fragmentId, fragment).addToBackStack(fragment.getClass().getSimpleName()).commitAllowingStateLoss();
 		fragmentManager.executePendingTransactions();
 	}
 
