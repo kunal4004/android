@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 
 import java.io.File;
 
@@ -37,9 +38,9 @@ public class PreviewStatement extends Fragment {
 		pdfView.fromFile(mFile)
 				.enableDoubletap(true)
 				.defaultPage(0)
-				.scrollHandle(null)
-				.enableAnnotationRendering(false)
-				.enableAntialiasing(false)
+				.scrollHandle(new DefaultScrollHandle(getActivity()))
+				.enableAnnotationRendering(true)
+				.enableAntialiasing(true)
 				.spacing(0)
 				.load();
 	}
