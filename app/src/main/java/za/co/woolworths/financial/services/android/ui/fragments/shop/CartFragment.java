@@ -93,6 +93,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         Log.i("CartFragment", "Item #" + position + " clicked!");
     }
 
+    @Override
+    public void onItemDeleteClick(CartProductAdapter.CartProductItemRow itemRow) {
+        Log.i("CartFragment", "Item " + itemRow.productItem.productName + " delete button clicked!");
+
+        // TODO: Make API call to remove item + show loading before removing from list
+        cartProductAdapter.removeItem(itemRow);
+    }
+
     public boolean toggleEditMode() {
         boolean isEditMode = cartProductAdapter.toggleEditMode();
         btnAddToCart.setVisibility(isEditMode ? View.GONE : View.VISIBLE);

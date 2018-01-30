@@ -33,6 +33,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 	public interface OnItemClick {
 		void onItemClick(View view, int position);
+		void onItemDeleteClick(CartProductItemRow itemRow);
 	}
 
 	private OnItemClick onItemClick;
@@ -62,7 +63,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 	@Override
 	public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
-		CartProductItemRow itemRow = getItemTypeAtPosition(position);
+		final CartProductItemRow itemRow = getItemTypeAtPosition(position);
 
 		if(itemRow.rowType == CartRowType.HEADER) {
 			CartHeaderViewHolder cartHeaderViewHolder = ((CartHeaderViewHolder) holder);
@@ -70,9 +71,18 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			cartHeaderViewHolder.tvHeaderTitle.setText(productItems.size() + " " + itemRow.category.toUpperCase() + " ITEMS");
 		} else if(itemRow.rowType == CartRowType.PRODUCT) {
 			CartItemViewHolder cartItemViewHolder = ((CartItemViewHolder) holder);
-			ProductList productItem = itemRow.productItem;
+			final ProductList productItem = itemRow.productItem;
 			cartItemViewHolder.tvTitle.setText(productItem.productName);
 			cartItemViewHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
+
+			if(this.editMode) {
+				cartItemViewHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						onItemClick.onItemDeleteClick(itemRow);
+					}
+				});
+			}
 
 			cartItemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -152,6 +162,11 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		return editMode;
 	}
 
+	public void removeItem(CartProductItemRow itemRow) {
+		productCategoryItems.get(itemRow.category).remove(itemRow.productItem);
+		notifyDataSetChanged();
+	}
+
 	private class CartHeaderViewHolder extends RecyclerView.ViewHolder {
 		private WTextView tvHeaderTitle;
 
@@ -193,10 +208,10 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		}
 	}
 
-	private class CartProductItemRow {
-		CartRowType rowType;
-		String category;
-		ProductList productItem;
+	public class CartProductItemRow {
+		public CartRowType rowType;
+		public String category;
+		public ProductList productItem;
 
 		CartProductItemRow (CartRowType rowType, String category, ProductList productItem) {
 			this.rowType = rowType;
