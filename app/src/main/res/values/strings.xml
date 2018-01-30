@@ -42,6 +42,7 @@
     <string name="km">km</string>
     <string name="linked_cards">linked accounts</string>
     <string name="contact_us">Contact us</string>
+    <string name="cart">Cart</string>
     <string name="submit_query">Submit Query</string>
     <string name="faqs">FAQs</string>
     <string name="sign_out">Sign Out</string>
@@ -294,6 +295,9 @@
     <string name="shop_online_woolies">Shop online</string>
     <string name="add_to_shopping_list">Add to shopping list</string>
     <string name="add_to_list">ADD TO LIST</string>
+    <string name="edit">EDIT</string>
+    <string name="done">DONE</string>
+    <string name="remove_all">REMOVE ALL</string>
     <string name="checkout">CHECKOUT</string>
     <string name="product_code">Product Code</string>
     <string name="product_colour">Colour</string>
@@ -593,5 +597,6 @@
     <string name="bottom_title_cart">Cart</string>
     <string name="bottom_title_reward">WRewards</string>
     <string name="bottom_title_account">Accounts</string>
+    <string name="title_activity_cart">Cart</string>
 
 </resources>

@@ -5,7 +5,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -19,11 +23,13 @@ import java.util.Random;
 import za.co.woolworths.financial.services.android.models.dto.CartPriceValues;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WButton;
 
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick {
 
     private RecyclerView rvCartList;
+    private WButton btnAddToCart;
 
     private CartProductAdapter cartProductAdapter;
 
@@ -40,7 +46,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        rvCartList = (RecyclerView) view.findViewById(R.id.cartList);
+        rvCartList = view.findViewById(R.id.cartList);
+        btnAddToCart = view.findViewById(R.id.btnAddToCart);
 
         CartPriceValues prices = new CartPriceValues(13,1185, 50, -36.56, -100, -18, -25, 1199);
         cartProductAdapter = new CartProductAdapter(getCartProductItems(), prices, this);
@@ -83,6 +90,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     @Override
     public void onItemClick(View view, int position) {
+        Log.i("CartFragment", "Item #" + position + " clicked!");
+    }
 
+    public boolean toggleEditMode() {
+        boolean isEditMode = cartProductAdapter.toggleEditMode();
+        btnAddToCart.setVisibility(isEditMode ? View.GONE : View.VISIBLE);
+        return isEditMode;
     }
 }

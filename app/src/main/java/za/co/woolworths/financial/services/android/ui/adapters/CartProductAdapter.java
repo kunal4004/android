@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -37,6 +38,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	private OnItemClick onItemClick;
 	private HashMap<String, ArrayList<ProductList>> productCategoryItems;
 	private CartPriceValues cartPriceValues;
+	private boolean editMode = false;
 
 	public CartProductAdapter(HashMap<String, ArrayList<ProductList>> productCategoryItems, CartPriceValues cartPriceValues, OnItemClick onItemClick) {
 		this.productCategoryItems = productCategoryItems;
@@ -70,6 +72,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			CartItemViewHolder cartItemViewHolder = ((CartItemViewHolder) holder);
 			ProductList productItem = itemRow.productItem;
 			cartItemViewHolder.tvTitle.setText(productItem.productName);
+			cartItemViewHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
 
 			cartItemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -106,8 +109,13 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		for (ArrayList<ProductList> collection : productCategoryItems.values()) {
 			size += collection.size();
 		}
-		// returns sum of headers + product items + last row for prices
-		return size + 1;
+		if(editMode) {
+			// returns sum of headers + product items
+			return size;
+		} else {
+			// returns sum of headers + product items + last row for prices
+			return size + 1;
+		}
 	}
 
 	@Override
@@ -138,24 +146,31 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		return new CartProductItemRow(CartRowType.PRICES, null, null);
 	}
 
+	public boolean toggleEditMode() {
+		editMode = !editMode;
+		notifyDataSetChanged();
+		return editMode;
+	}
+
 	private class CartHeaderViewHolder extends RecyclerView.ViewHolder {
 		private WTextView tvHeaderTitle;
 
 
 		public CartHeaderViewHolder(View view) {
 			super(view);
-			tvHeaderTitle = (WTextView) view.findViewById(R.id.tvHeaderTitle);
+			tvHeaderTitle = view.findViewById(R.id.tvHeaderTitle);
 		}
 	}
 
 	private class CartItemViewHolder extends RecyclerView.ViewHolder {
 		private WTextView tvTitle, tvDescription;
-
+		private ImageView btnDeleteRow;
 
 		public CartItemViewHolder(View view) {
 			super(view);
-			tvTitle = (WTextView) view.findViewById(R.id.tvTitle);
-			tvDescription = (WTextView) view.findViewById(R.id.tvDescription);
+			tvTitle = view.findViewById(R.id.tvTitle);
+			tvDescription = view.findViewById(R.id.tvDescription);
+			btnDeleteRow = view.findViewById(R.id.btnDeleteRow);
 		}
 	}
 
@@ -167,14 +182,14 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 		public CartPricesViewHolder(View view) {
 			super(view);
-			txtBasketCount = (WTextView) view.findViewById(R.id.txtBasketCount);
-			txtPriceBasketItems = (WTextView) view.findViewById(R.id.txtPriceBasketItems);
-			txtPriceEstimatedDelivery = (WTextView) view.findViewById(R.id.txtPriceEstimatedDelivery);
-			txtPriceDiscounts = (WTextView) view.findViewById(R.id.txtPriceDiscounts);
-			txtPriceCompanyDiscount = (WTextView) view.findViewById(R.id.txtPriceCompanyDiscount);
-			txtPriceWRewardsSavings = (WTextView) view.findViewById(R.id.txtPriceWRewardsSavings);
-			txtPriceOtherDiscount = (WTextView) view.findViewById(R.id.txtPriceOtherDiscount);
-			txtPriceTotal = (WTextView) view.findViewById(R.id.txtPriceTotal);
+			txtBasketCount = view.findViewById(R.id.txtBasketCount);
+			txtPriceBasketItems = view.findViewById(R.id.txtPriceBasketItems);
+			txtPriceEstimatedDelivery = view.findViewById(R.id.txtPriceEstimatedDelivery);
+			txtPriceDiscounts = view.findViewById(R.id.txtPriceDiscounts);
+			txtPriceCompanyDiscount = view.findViewById(R.id.txtPriceCompanyDiscount);
+			txtPriceWRewardsSavings = view.findViewById(R.id.txtPriceWRewardsSavings);
+			txtPriceOtherDiscount = view.findViewById(R.id.txtPriceOtherDiscount);
+			txtPriceTotal = view.findViewById(R.id.txtPriceTotal);
 		}
 	}
 

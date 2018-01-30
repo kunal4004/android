@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.activities.bottom_menu;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -23,6 +24,8 @@ import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
+import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
+import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
@@ -259,10 +262,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					return true;
 
 				case R.id.navigation_cart:
-					setToolbarTitle(getString(R.string.bottom_title_cart));
-					mNavController.switchTab(INDEX_CART);
-					showToolbar();
-					return true;
+//					setToolbarTitle(getString(R.string.bottom_title_cart));
+//					mNavController.switchTab(INDEX_CART);
+//					showToolbar();
+					openCartActivity();
+					return false;
 
 				case R.id.navigation_reward:
 					setToolbarTitle(getString(R.string.nav_item_wrewards));
@@ -279,6 +283,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			return false;
 		}
 	};
+
+	private void openCartActivity() {
+		startActivity(new Intent(this, CartActivity.class));
+		overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+	}
 
 	@Override
 	public void onBackPressed() {
