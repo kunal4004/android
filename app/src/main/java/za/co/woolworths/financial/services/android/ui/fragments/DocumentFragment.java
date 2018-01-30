@@ -31,7 +31,6 @@ import com.google.gson.Gson;
 import java.util.List;
 import java.util.Random;
 
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Bank;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountType;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
@@ -238,7 +237,7 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	public void showProofOfIncomePopup() {
 		try {
-				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.PROOF_OF_INCOME, "");
+			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.PROOF_OF_INCOME, "");
 		} catch (NullPointerException ignored) {
 		}
 
