@@ -237,7 +237,6 @@ public class DocumentFragment extends CLIFragment implements DocumentAdapter.OnI
 
 	public void showProofOfIncomePopup() {
 		try {
-			Utils.hideSoftKeyboard(getActivity());
 			Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.PROOF_OF_INCOME, "");
 		} catch (NullPointerException ignored) {
 		}

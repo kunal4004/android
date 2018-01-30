@@ -523,7 +523,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					Utils.hideSoftKeyboard(CustomPopUpWindow.this);
 					dismissLayout();
 				}
 			});
