@@ -10,7 +10,7 @@ import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 
 import com.awfs.coordination.R;
-import com.crittercism.app.Crittercism;
+//import com.crittercism.app.Crittercism;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -217,7 +217,7 @@ public class WoolworthsApplication extends Application {
 		WoolworthsApplication.context = this.getApplicationContext();
 		// set app context
 		mContextApplication = getApplicationContext();
-		Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
+//		Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
 		CalligraphyConfig.initDefault("fonts/WFutura-medium.ttf", R.attr.fontPath);
 		getTracker();
 		bus = new RxBus();
