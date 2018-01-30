@@ -21,7 +21,7 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/tvAddToList"
-            style="@style/style_loan_desc"
+            style="@style/style_cart_header_add_to_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -30,7 +30,7 @@
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/tvHeaderTitle"
-            style="@style/style_loan_desc"
+            style="@style/style_cart_header_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"

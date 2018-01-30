@@ -64,12 +64,12 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 		if(itemRow.rowType == CartRowType.HEADER) {
 			CartHeaderViewHolder cartHeaderViewHolder = ((CartHeaderViewHolder) holder);
-			cartHeaderViewHolder.tvHeaderTitle.setText(itemRow.category);
+			ArrayList<ProductList> productItems = productCategoryItems.get(itemRow.category);
+			cartHeaderViewHolder.tvHeaderTitle.setText(productItems.size() + " " + itemRow.category.toUpperCase() + " ITEMS");
 		} else if(itemRow.rowType == CartRowType.PRODUCT) {
 			CartItemViewHolder cartItemViewHolder = ((CartItemViewHolder) holder);
 			ProductList productItem = itemRow.productItem;
 			cartItemViewHolder.tvTitle.setText(productItem.productName);
-			cartItemViewHolder.tvDescription.setText(productItem.productId);
 
 			cartItemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
 				@Override

@@ -14,6 +14,7 @@ import com.awfs.coordination.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Random;
 
 import za.co.woolworths.financial.services.android.models.dto.CartPriceValues;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -56,14 +57,25 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         for (int idxProductCategory = 0; idxProductCategory < 3; idxProductCategory++) {
             ArrayList<ProductList> productItems = new ArrayList<>();
 
-            for (int idxProductItem = 0; idxProductItem < 5; idxProductItem++) {
+            int count = new Random().nextInt(4) + 2;
+            for (int idxProductItem = 0; idxProductItem < count; idxProductItem++) {
                 ProductList dummyProductItem = new ProductList();
-                dummyProductItem.productName = "Item #" + (idxProductItem + 1) + " from category #" + (idxProductCategory + 1);
+                dummyProductItem.productName = "Product Name";
                 dummyProductItem.productId = idxProductItem + "";
                 productItems.add(dummyProductItem);
             }
 
-            productCategoryItems.put("Category #" + (idxProductCategory + 1), productItems);
+            switch (idxProductCategory) {
+                case 0:
+                    productCategoryItems.put("Food", productItems);
+                    break;
+                case 1:
+                    productCategoryItems.put("Clothing", productItems);
+                    break;
+                case 2:
+                    productCategoryItems.put("Home", productItems);
+                    break;
+            }
         }
 
         return productCategoryItems;

@@ -583,6 +583,7 @@
     <string name="messages">Messages</string>
     <string name="order_history">Order History</string>
     <string name="link_your_woolies_card_today">Link Your Woolies Card Today</string>
+    <string name="cart_free_delivery_first_order">You\'ll Receive <b>Free Delivery</b> For Your First Order</string>
 
     <!-- Bottom navigation activity -->
 
