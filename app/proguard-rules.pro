@@ -24,3 +24,15 @@
 -keep class android.** {
     *;
 }
+
+-keep class org.apache.http.**
+
+-keep interface org.apache.http.**
+
+-dontwarn okio.**
+-dontwarn javax.annotation.**
+-dontwarn com.squareup.okhttp3.**
+-keep class com.squareup.okhttp3.** { *; }
+-keep interface com.squareup.okhttp3.* { *; }
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault
