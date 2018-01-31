@@ -3,7 +3,6 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:sothree="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:fitsSystemWindows="true"
         tools:context="za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity">
 
     <data>
@@ -32,20 +31,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout
-                android:id="@+id/relFragContainer"
+            <FrameLayout
+                android:id="@+id/frag_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/wBottomNavigation"
-                android:layout_below="@+id/incToolbar">
-
-                <FrameLayout
-                    android:id="@+id/frag_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    />
-
-            </RelativeLayout>
+                android:layout_alignParentTop="true"
+                android:layout_below="@+id/incToolbar"
+                android:fitsSystemWindows="true"
+                />
 
             <za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView
                 android:id="@+id/wBottomNavigation"

@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities.bottom_menu;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -23,6 +22,7 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ActivityBottomNavigationBinding;
 import com.google.gson.Gson;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
@@ -140,7 +140,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		addBadge(INDEX_REWARD, WoolworthsApplication.getInstance().getWGlobalState().getVoucherSize());
 	}
 
-	@SuppressLint("RestrictedApi")
 	@Override
 	public void bottomNavConfig() {
 		Typeface tfMyriadProT = Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Regular.otf");
