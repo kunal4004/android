@@ -329,7 +329,8 @@
             android:layout_width="@dimen/twenty_four_dp"
             android:layout_height="@dimen/twenty_four_dp"
             android:layout_gravity="center"
-            android:indeterminateTint="@color/black"/>
+            android:indeterminateTint="@color/black"
+            android:visibility="gone"/>
 
 
         <include layout="@layout/no_connection_handler"/>

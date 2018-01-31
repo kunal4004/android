@@ -159,7 +159,6 @@ public class DetailFragment extends BaseFragment<ProductViewDetailBinding, Detai
 		// load product info
 		setText(getViewDataBinding().productCode, getString(R.string.loading_product_info));
 
-
 	}
 
 	@Override
