@@ -845,10 +845,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 						unreadCount = 0;
 					Utils.setBadgeCounter(getActivity(), unreadCount);
 					messageCounter.setText(String.valueOf(unreadCount));
-					getBottomNavigator().addBadge(BottomNavigationActivity.INDEX_REWARD, unreadCount);
+					getBottomNavigator().addBadge(BottomNavigationActivity.INDEX_ACCOUNT, unreadCount);
 				} else {
 					Utils.removeBadgeCounter(getActivity());
-					getBottomNavigator().addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
+					getBottomNavigator().addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
 					messageCounter.setVisibility(View.GONE);
 				}
 			}
