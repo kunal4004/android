@@ -6,7 +6,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 public class BusStation {
 
 	private String mObject;
-	private int intValue;
+	private Integer intValue;
 	private OfferActive offerActive;
 	private boolean makeApiCall;
 
@@ -26,7 +26,7 @@ public class BusStation {
 		mObject = object;
 	}
 
-	public int getNumber() {
+	public Integer getNumber() {
 		return intValue;
 	}
 

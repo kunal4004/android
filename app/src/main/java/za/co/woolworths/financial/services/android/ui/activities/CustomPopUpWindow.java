@@ -217,6 +217,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 						cliExitAnimation();
 					}
 				});
+				break;
 
 			case STATEMENT_ERROR:
 				setContentView(R.layout.statement_error);
@@ -232,12 +233,13 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 						closeStatementAnimation();
 					}
 				});
-				mRelPopContainer.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						closeStatementAnimation();
-					}
-				});
+				mRelPopContainer.setOnClickListener(
+						new View.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								closeStatementAnimation();
+							}
+						});
 				break;
 
 			case EMAIL:
@@ -527,7 +529,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		}
 	}
 
-	private void cliExitAnimation() {
+	private void cliDeclineAnimation() {
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
@@ -555,6 +557,34 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		}
 	}
 
+
+	private void cliExitAnimation() {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					woolworthsApplication
+							.bus()
+							.send(new BusStation(getString(R.string.decline)));
+					dismissLayout();
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
+		}
+	}
 
 	private void closeStatementAnimation() {
 		if (!viewWasClicked) { // prevent more than one click
@@ -783,7 +813,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 
 			case R.id.btnConfirmDecline:
-				cliExitAnimation();
+				cliDeclineAnimation();
 				break;
 
 			case R.id.btnSESignIn:
@@ -906,9 +936,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 	private void populateDocument(WTextView textView) {
 		String email = userEmailAddress();
-		String domain = email.substring(email.indexOf("@"), email.length());
-		String maskedEmail = "****" + domain;
-		textView.setText(maskedEmail);
+		textView.setText(email);
 	}
 
 	public String userEmailAddress() {
