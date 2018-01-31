@@ -105,7 +105,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private RelativeLayout relFAQ;
 	private ErrorHandlerView mErrorHandlerView;
 	private WGlobalState wGlobalState;
-	private MyAccountsFragment mContext;
 	private boolean loadMessageCounter = false;
 	private String TAG = "MyAccountsFragment";
 	private RelativeLayout storeLocator;
@@ -580,6 +579,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				loadMessageCounter = false;
 				mErrorHandlerView.hideErrorHandlerLayout();
 				mScrollView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.recent_search_bg));
+				showProgressBar();
 			}
 
 			@Override
@@ -646,7 +646,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
-				dismissProgress();
+				hideProgressBar();
 			}
 		};
 	}
@@ -684,9 +684,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		}
 	}
 
-	private void dismissProgress() {
-	}
-
 	public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -697,7 +694,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		dismissProgress();
+		hideProgressBar();
 	}
 
 	public int getAvailableFundsPercentage(int availableFund, int creditLimit) {
@@ -715,7 +712,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			@Override
 			public void run() {
 				try {
-					dismissProgress();
+					hideProgressBar();
 				} catch (Exception ex) {
 				}
 			}
@@ -858,5 +855,14 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				mErrorHandlerView.networkFailureHandler(errorMessage);
 			}
 		});
+	}
+
+	public void showProgressBar() {
+		getViewDataBinding().pbAccount.bringToFront();
+		showView(getViewDataBinding().pbAccount);
+	}
+
+	public void hideProgressBar() {
+		hideView(getViewDataBinding().pbAccount);
 	}
 }

@@ -324,6 +324,14 @@
             </android.support.v4.widget.NestedScrollView>
         </RelativeLayout>
 
+        <ProgressBar
+            android:id="@+id/pbAccount"
+            android:layout_width="@dimen/twenty_four_dp"
+            android:layout_height="@dimen/twenty_four_dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/black"/>
+
+
         <include layout="@layout/no_connection_handler"/>
     </FrameLayout>
 </layout>
