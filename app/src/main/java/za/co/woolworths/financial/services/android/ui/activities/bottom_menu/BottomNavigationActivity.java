@@ -3,7 +3,6 @@ package za.co.woolworths.financial.services.android.ui.activities.bottom_menu;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,17 +33,17 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
-import za.co.woolworths.financial.services.android.ui.views.StatusBarUtils;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.frag_nav.FragNavController;
@@ -292,6 +291,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					Intent openCardActivity = new Intent(BottomNavigationActivity.this, ShoppingListActivity.class);
 					startActivity(openCardActivity);
 					overridePendingTransition(0, 0);
+					openCartActivity();
 					return false;
 
 				case R.id.navigation_reward:
@@ -311,6 +311,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			return false;
 		}
 	};
+
+	private void openCartActivity() {
+		startActivity(new Intent(this, CartActivity.class));
+		overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+	}
 
 	@Override
 	public void onBackPressed() {
@@ -357,7 +362,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			case INDEX_SHOP:
 				return new CategoryFragment();
 			case INDEX_CART:
-				return new ShopFragment();
+				return new CartFragment();
 			case INDEX_REWARD:
 				return new WRewardsFragment();
 			case INDEX_ACCOUNT:

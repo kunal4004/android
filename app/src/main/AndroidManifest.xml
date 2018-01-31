@@ -149,6 +149,7 @@
             android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalSuccessActivity"
             android:screenOrientation="portrait"
             android:theme="@style/LoanWithdrawal"/>
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalConfirmActivity"
             android:screenOrientation="portrait"
@@ -303,8 +304,12 @@
         </activity>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListActivity"
-            android:label="@string/title_activity_main">
-        </activity>
+            android:label="@string/title_activity_main"
+            android:theme="@style/bottomNavigationStyle"/>
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.CartActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Cart"></activity>
     </application>
 
 </manifest>
