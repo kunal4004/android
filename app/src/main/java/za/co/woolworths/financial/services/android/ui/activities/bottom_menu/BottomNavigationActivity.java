@@ -137,7 +137,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		bottomNavConfig();
 		getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 		slideUpPanelListener();
-		addBadge(INDEX_REWARD, WoolworthsApplication.getInstance().getWGlobalState().getVoucherSize());
 	}
 
 	@Override
