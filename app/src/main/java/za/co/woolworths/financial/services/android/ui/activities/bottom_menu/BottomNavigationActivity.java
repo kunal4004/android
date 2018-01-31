@@ -23,7 +23,6 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ActivityBottomNavigationBinding;
 import com.google.gson.Gson;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
@@ -138,6 +137,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		bottomNavConfig();
 		getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 		slideUpPanelListener();
+		addBadge(INDEX_REWARD, WoolworthsApplication.getInstance().getWGlobalState().getVoucherSize());
 	}
 
 	@SuppressLint("RestrictedApi")
@@ -295,7 +295,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					setToolbarBackgroundColor(R.color.white);
 					setToolbarTitle(getString(R.string.nav_item_accounts));
 					mNavController.switchTab(INDEX_ACCOUNT);
-					showToolbar();
 					return true;
 			}
 			return false;
@@ -377,6 +376,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public void showBottomNavigationMenu() {
 		showView(getBottomNavigationById());
+	}
+
+	@Override
+	public void displayToolbar() {
+		showToolbar();
+	}
+
+	@Override
+	public void removeToolbar() {
+		hideToolbar();
 	}
 
 	@Override

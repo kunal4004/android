@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 
@@ -44,6 +45,10 @@ public interface BottomNavigator {
 	void hideBottomNavigationMenu();
 
 	void showBottomNavigationMenu();
+
+	void displayToolbar();
+
+	void removeToolbar();
 
 	void addRelativeLayoutAlignTopRule();
 

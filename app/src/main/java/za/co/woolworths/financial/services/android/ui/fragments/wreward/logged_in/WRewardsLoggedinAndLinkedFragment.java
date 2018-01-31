@@ -24,6 +24,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.rest.reward.GetVoucher;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
@@ -33,7 +34,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewards
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -51,13 +51,13 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	private ErrorHandlerView mErrorHandlerView;
 	private RelativeLayout mRlConnect;
 	private WGlobalState mWGlobalState;
-	private HttpAsyncTask<String, String, VoucherResponse> asyncTaskReward;
 	public static final int DEFAULT_VOUCHER_COUNT = 0;
 	public boolean isWrewardsCalled;
 	public boolean isCardDetailsCalled;
 	public CardDetailsResponse cardDetailsResponse;
 	public VoucherResponse voucherResponse;
 	private WRewardLoggedInViewModel wRewardViewModel;
+	private GetVoucher getVoucherAsync;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -126,7 +126,6 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			setupTabIcons(DEFAULT_VOUCHER_COUNT);
 	}
 
-
 	private void setupTabIcons(int activeVoucherCount) {
 		String[] tabTitle = {getActivity().getString(R.string.overview), getActivity().getString(R.string.vouchers), getActivity().getString(R.string.savings)};
 
@@ -152,41 +151,22 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	}
 
 	private void loadReward() {
-		asyncTaskReward = getWRewards();
-		asyncTaskReward.execute();
+		getVoucherAsync = getWRewards();
+		getVoucherAsync.execute();
 	}
 
-	public HttpAsyncTask<String, String, VoucherResponse> getWRewards() {
-		return new HttpAsyncTask<String, String, VoucherResponse>() {
+	private GetVoucher getWRewards() {
+		return new GetVoucher(new OnEventListener() {
 			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-				progressBar.setVisibility(View.VISIBLE);
-				mErrorHandlerView.hideErrorHandlerLayout();
+			public void onSuccess(Object object) {
+				handleVoucherResponse(((VoucherResponse) object));
 			}
 
 			@Override
-			protected VoucherResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getVouchers();
-			}
-
-			@Override
-			protected Class<VoucherResponse> httpDoInBackgroundReturnType() {
-				return VoucherResponse.class;
-			}
-
-			@Override
-			protected VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+			public void onFailure(String errorMessage) {
 				mErrorHandlerView.networkFailureHandler(errorMessage);
-				return new VoucherResponse();
 			}
-
-			@Override
-			protected void onPostExecute(VoucherResponse response) {
-				super.onPostExecute(response);
-				handleVoucherResponse(response);
-			}
-		};
+		});
 	}
 
 	public void handleVoucherResponse(VoucherResponse response) {
@@ -196,10 +176,8 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 					mWGlobalState.setRewardSignInState(true);
 					mWGlobalState.setRewardHasExpired(false);
 					if (response.voucherCollection.vouchers != null) {
-
-					}
-					//updateNavigationDrawer.updateVoucherCount(response.voucherCollection.vouchers.size());
-					else {
+						getBottomNavigator().addBadge(3, response.voucherCollection.vouchers.size());
+					} else {
 						clearVoucherCounter();
 					}
 					voucherResponse = response;
@@ -214,7 +192,6 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 					mWGlobalState.setRewardSignInState(false);
 					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.response.stsParams);
 					Utils.setBadgeCounter(getActivity(), 0);
-					//updateNavigationDrawer.updateVoucherCount(0);
 					Intent intent = new Intent();
 					WRewardsFragment mParentFragment = (WRewardsFragment) getParentFragment();
 					if (mParentFragment != null) {
@@ -258,7 +235,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	}
 
 	public void clearVoucherCounter() {
-		//updateNavigationDrawer.updateVoucherCount(0);
+		getBottomNavigator().addBadge(3, 0);
 	}
 
 	public void loadCardDetails() {
@@ -284,5 +261,10 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			fragmentView.setVisibility(View.VISIBLE);
 			setupViewPager(viewPager, voucherResponse, cardDetailsResponse);
 		}
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
 	}
 }

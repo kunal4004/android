@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_cart"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="za.co.woolworths.financial.services.android.ui.activities.CartActivity">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/activity_cart"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context="za.co.woolworths.financial.services.android.ui.activities.CartActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -33,7 +33,7 @@
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                app:WTextView_font="medium" />
+                app:WTextView_font="medium"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/toolbarText"
@@ -45,7 +45,7 @@
                 android:textAllCaps="true"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                app:WTextView_font="medium_bold" />
+                app:WTextView_font="medium_bold"/>
 
             <ImageView
                 android:id="@+id/btnCloseCart"
@@ -54,7 +54,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="16dp"
-                android:src="@drawable/close_24" />
+                android:src="@drawable/close_24"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:id="@+id/btnClearCart"
@@ -66,21 +66,21 @@
                 android:letterSpacing="0.2"
                 android:text="@string/remove_all"
                 android:textAllCaps="true"
-                android:visibility="gone"
                 android:textColor="@color/black"
                 android:textSize="12sp"
-                app:WTextView_font="medium" />
+                android:visibility="gone"
+                app:WTextView_font="medium"/>
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="#1a000000" />
+        android:background="#1a000000"/>
 
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

@@ -43,10 +43,9 @@ import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsA
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WStoreLocatorActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
+import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_list.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.faq.FAQFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -151,7 +150,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		setTitle(getString(R.string.my_accounts));
+		hideToolbar();
 		setToolbarBackgroundColor(R.color.white);
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 		wGlobalState = woolworthsApplication.getWGlobalState();
@@ -246,7 +245,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			this.configureView();
 			if (!wGlobalState.getRewardSignInState() || wGlobalState.rewardHasExpired()) {
 				//Remove voucher count on Navigation drawer
-				//updateNavigationDrawer.updateVoucherCount(0);
+				//updateNavigationDrawer.onSuccess(0);
 			}
 		}
 	}
@@ -774,64 +773,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		signOutBtn.setVisibility(View.GONE);
 		loginUserOptionsLayout.setVisibility(View.GONE);
 	}
-//
-//	public HttpAsyncTask<String, String, VoucherResponse> getVouchers() {
-//		return new HttpAsyncTask<String, String, VoucherResponse>() {
-//			@Override
-//			protected void onPreExecute() {
-//				super.onPreExecute();
-//
-//			}
-//
-//			@Override
-//			protected VoucherResponse httpDoInBackground(String... params) {
-//				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getVouchers();
-//			}
-//
-//			@Override
-//
-//			protected Class<VoucherResponse> httpDoInBackgroundReturnType() {
-//				return VoucherResponse.class;
-//			}
-//
-//			@Override
-//			protected VoucherResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-//				return new VoucherResponse();
-//			}
-//
-//			@Override
-//			protected void onPostExecute(VoucherResponse voucherResponse) {
-//				super.onPostExecute(voucherResponse);
-//				if (voucherResponse.httpCode == 200 && voucherResponse.voucherCollection.vouchers != null)
-//					//updateNavigationDrawer.updateVoucherCount(voucherResponse.voucherCollection.vouchers.size());
-//
-//				int httpCode = voucherResponse.httpCode;
-//				switch (httpCode) {
-//					case 200:
-//						wGlobalState.setRewardSignInState(true);
-//						List<Voucher> vouchers = voucherResponse.voucherCollection.vouchers;
-//						if (vouchers != null) {
-//						//	updateNavigationDrawer.updateVoucherCount(vouchers.size());
-//						} else {
-//							//updateNavigationDrawer.updateVoucherCount(0);
-//						}
-//						break;
-//
-//					case 440:
-//						//updateNavigationDrawer.updateVoucherCount(0);
-//						wGlobalState.setRewardHasExpired(true);
-//						wGlobalState.setRewardSignInState(false);
-//						break;
-//
-//					default:
-//						//updateNavigationDrawer.updateVoucherCount(0);
-//						wGlobalState.setRewardSignInState(false);
-//						break;
-//				}
-//
-//			}
-//		};
-//	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -864,6 +805,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 						try {
 							new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_SEARCH).delete();
 							new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_LAST_LOCATION).delete();
+							getBottomNavigator().addBadge(3, 0);
 						} catch (Exception pE) {
 							pE.printStackTrace();
 						}

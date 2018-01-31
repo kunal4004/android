@@ -109,7 +109,7 @@
             android:value="@string/facebook_app_id"/>
 
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.WSplashScreenActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.splash.WSplashScreenActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>

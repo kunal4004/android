@@ -37,10 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/wBottomNavigation"
-                android:layout_alignParentTop="true"
-                android:layout_below="@+id/incToolbar"
-                android:clipToPadding="true">
-
+                android:layout_below="@+id/incToolbar">
 
                 <FrameLayout
                     android:id="@+id/frag_container"
