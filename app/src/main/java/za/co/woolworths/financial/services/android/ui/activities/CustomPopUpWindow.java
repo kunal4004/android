@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -937,9 +936,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 	private void populateDocument(WTextView textView) {
 		String email = userEmailAddress();
-		String domain = email.substring(email.indexOf("@"), email.length());
-		String maskedEmail = "****" + domain;
-		textView.setText(maskedEmail);
+		textView.setText(email);
 	}
 
 	public String userEmailAddress() {
