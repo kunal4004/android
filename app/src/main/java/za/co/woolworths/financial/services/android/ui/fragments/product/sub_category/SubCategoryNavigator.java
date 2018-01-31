@@ -11,4 +11,8 @@ public interface SubCategoryNavigator {
 	void unhandledResponseHandler(Response response);
 
 	void onFailureResponse(String e);
+
+	void onLoad();
+
+	void onLoadComplete();
 }

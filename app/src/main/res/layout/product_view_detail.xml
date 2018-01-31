@@ -124,7 +124,7 @@
                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="@dimen/default_margin"
+                                android:layout_marginBottom="@dimen/eight_dp"
                                 android:layout_marginStart="@dimen/default_margin"
                                 android:orientation="horizontal">
 
@@ -161,7 +161,7 @@
                             </LinearLayout>
 
                             <za.co.woolworths.financial.services.android.ui.views.WTextView
-                                android:id="@+id/textPromo"
+                                android:id="@+id/tvSaveText"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentStart="true"
@@ -191,7 +191,7 @@
                                 android:id="@+id/imNewImage"
                                 android:layout_width="15dp"
                                 android:layout_height="15dp"
-                                android:layout_marginLeft="8dp"
+                                android:layout_marginLeft="2dp"
                                 android:contentDescription="@string/app_name"
                                 fresco:viewAspectRatio="1.0"/>
 
@@ -199,7 +199,7 @@
                                 android:id="@+id/imSave"
                                 android:layout_width="15dp"
                                 android:layout_height="15dp"
-                                android:layout_marginLeft="8dp"
+                                android:layout_marginLeft="2dp"
                                 android:contentDescription="@string/app_name"
                                 fresco:viewAspectRatio="1.0"/>
 
@@ -207,7 +207,7 @@
                                 android:id="@+id/imReward"
                                 android:layout_width="15dp"
                                 android:layout_height="15dp"
-                                android:layout_marginLeft="8dp"
+                                android:layout_marginLeft="2dp"
                                 android:contentDescription="@string/app_name"
                                 fresco:viewAspectRatio="1.0"/>
 
@@ -215,7 +215,7 @@
                                 android:id="@+id/imVitality"
                                 android:layout_width="15dp"
                                 android:layout_height="15dp"
-                                android:layout_marginLeft="8dp"
+                                android:layout_marginLeft="2dp"
                                 android:contentDescription="@string/app_name"
                                 fresco:viewAspectRatio="1.0"/>
 
@@ -224,7 +224,7 @@
                     </RelativeLayout>
 
                     <include
-                        android:id="@+id/colorView"
+                        android:id="@+id/incProductColorTopLine"
                         layout="@layout/line"
                         android:layout_width="match_parent"
                         android:layout_height="0.4dp"
@@ -232,9 +232,13 @@
                         android:layout_marginLeft="@dimen/default_margin"
                         android:layout_marginRight="@dimen/default_margin"/>
 
-                    <include layout="@layout/product_color_row"/>
+                    <include
+                        android:id="@+id/incProductColor"
+                        layout="@layout/product_color_row"/>
 
-                    <include layout="@layout/line"/>
+                    <include
+                        android:id="@+id/incProductColorBottomLine"
+                        layout="@layout/line"/>
 
                     <LinearLayout
                         android:id="@+id/llLoadingColorSize"
@@ -392,7 +396,6 @@
                 android:layout_marginLeft="@dimen/default_margin"
                 android:layout_marginTop="@dimen/default_margin"
                 android:contentDescription="@string/app_name"
-                android:onClick="@{handlers::closeView}"
                 android:src="@drawable/closecircle"/>
 
             <LinearLayout

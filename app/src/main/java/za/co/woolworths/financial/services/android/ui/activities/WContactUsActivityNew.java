@@ -8,7 +8,7 @@ import android.view.MenuItem;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.fragments.ContactUsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_list.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.ContactUsFragmentChange;

@@ -1,15 +1,25 @@
 package za.co.woolworths.financial.services.android.ui.activities.bottom_menu;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
@@ -23,15 +33,18 @@ import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
+import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.ShopFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
+import za.co.woolworths.financial.services.android.ui.views.StatusBarUtils;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.frag_nav.FragNavController;
@@ -46,10 +59,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int INDEX_CART = FragNavController.TAB3;
 	public static final int INDEX_REWARD = FragNavController.TAB4;
 	public static final int INDEX_ACCOUNT = FragNavController.TAB5;
+	public static Toolbar mToolbar;
+
+	private final CompositeDisposable mDisposables = new CompositeDisposable();
 
 	private BottomNavigationViewModel bottomNavigationViewModel;
 	private FragNavController mNavController;
-	private final CompositeDisposable mDisposables = new CompositeDisposable();
 
 	@Override
 	public int getLayoutId() {
@@ -74,6 +89,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 	}
 
+	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -84,27 +100,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				.switchController(new FragNavSwitchController() {
 					@Override
 					public void switchTab(int index, FragNavTransactionOptions transactionOptions) {
-						getBottomNavigationById().setCurrentItem(index);
+						if (index != 2) {
+							getBottomNavigationById().setCurrentItem(index);
+						}
 					}
 				})
 				.build();
 
 		renderUI();
-	}
-
-	@Override
-	public void renderUI() {
-		Utils.updateStatusBarBackground(this);
-		setActionBar();
-		hideToolbar();
-		bottomNavigationViewModel = ViewModelProviders.of(this).get(BottomNavigationViewModel.class);
-		bottomNavigationViewModel.setNavigator(this);
-		bottomNavConfig();
-		addBadge(2, 3);
-		addBadge(3, 17);
-		addBadge(3, 100);
-		getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-		slideUpPanelListener();
 
 		mDisposables.add(WoolworthsApplication.getInstance()
 				.bus()
@@ -114,15 +117,45 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				.subscribe(new Consumer<Object>() {
 					@Override
 					public void accept(Object object) throws Exception {
-						if (object instanceof BusStation) {
-
+						String searchProduct = ((BusStation) object).getSearchProductBrand();
+						if (!TextUtils.isEmpty((searchProduct))) {
+							GridFragment gridFragment = new GridFragment();
+							Bundle bundle = new Bundle();
+							bundle.putString("sub_category_id", "categoryId");
+							bundle.putString("sub_category_name", "categoryName");
+							bundle.putString("str_search_product", searchProduct);
+							gridFragment.setArguments(bundle);
+							pushFragment(gridFragment);
 						}
 					}
 				}));
 	}
 
 	@Override
+	public void renderUI() {
+		//Utils.updateStatusBarBackground(this);
+		mToolbar = getToolbar();
+		setActionBar();
+		hideToolbar();
+		bottomNavigationViewModel = ViewModelProviders.of(this).get(BottomNavigationViewModel.class);
+		bottomNavigationViewModel.setNavigator(this);
+		bottomNavConfig();
+//		addBadge(2, 3);
+//		addBadge(3, 17);
+//		addBadge(3, 100);
+		getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+		slideUpPanelListener();
+	}
+
+	@SuppressLint("RestrictedApi")
+	@Override
 	public void bottomNavConfig() {
+		Typeface tfMyriadProT = Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Regular.otf");
+		getBottomNavigationById().setTypeface(tfMyriadProT);
+		getBottomNavigationById().setTextSize(12);
+		// set icon size
+		int iconSize = 28;
+		getBottomNavigationById().setIconSize(iconSize, iconSize);
 		getBottomNavigationById().enableAnimation(false);
 		getBottomNavigationById().enableShiftingMode(false);
 		getBottomNavigationById().enableItemShiftingMode(false);
@@ -195,15 +228,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void openProductDetailFragment(String productName, ProductList productList) {
-		DetailFragment gridFragment = new DetailFragment();
+		DetailFragment detailFragment = new DetailFragment();
 		Gson gson = new Gson();
 		String strProductList = gson.toJson(productList);
 		Bundle bundle = new Bundle();
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
-		gridFragment.setArguments(bundle);
+		detailFragment.setArguments(bundle);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.fragment_bottom_container, gridFragment).commit();
+		transaction.replace(R.id.fragment_bottom_container, detailFragment).commit();
 	}
 
 	@Override
@@ -244,33 +277,32 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 			statusBarColor(R.color.white);
 			switch (item.getItemId()) {
-
 				case R.id.navigation_today:
-					//hideToolbar();
+					setToolbarBackgroundColor(R.color.white);
 					mNavController.switchTab(INDEX_TODAY);
 					return true;
 
 				case R.id.navigation_shop:
-					//slideUpBottomView();
-					//hideToolbar();
-					statusBarColor(R.color.recent_search_bg);
 					mNavController.switchTab(INDEX_SHOP);
 					Utils.showOneTimePopup(BottomNavigationActivity.this);
 					return true;
 
 				case R.id.navigation_cart:
-					setToolbarTitle(getString(R.string.bottom_title_product));
-					mNavController.switchTab(INDEX_CART);
-					showToolbar();
-					return true;
+					Toast.makeText(BottomNavigationActivity.this, "add", Toast.LENGTH_SHORT).show();
+					Intent openCardActivity = new Intent(BottomNavigationActivity.this, ShoppingListActivity.class);
+					startActivity(openCardActivity);
+					overridePendingTransition(0, 0);
+					return false;
 
 				case R.id.navigation_reward:
+					setToolbarBackgroundColor(R.color.white);
 					setToolbarTitle(getString(R.string.nav_item_wrewards));
 					mNavController.switchTab(INDEX_REWARD);
 					showToolbar();
 					return true;
 
 				case R.id.navigation_account:
+					setToolbarBackgroundColor(R.color.white);
 					setToolbarTitle(getString(R.string.nav_item_accounts));
 					mNavController.switchTab(INDEX_ACCOUNT);
 					showToolbar();
@@ -299,6 +331,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void onTabTransaction(Fragment fragment, int index) {
+
+		if (index == 2) {
+			return;
+		}
 		// If we have a backstack, show the back button
 		if (getSupportActionBar() != null && mNavController != null) {
 			getSupportActionBar().setDisplayHomeAsUpEnabled(!mNavController.isRootFragment());
@@ -335,6 +371,42 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		super.onDestroy();
 		if (!mDisposables.isDisposed()) {
 			mDisposables.clear();
+		}
+	}
+
+	@Override
+	public void hideBottomNavigationMenu() {
+		hideView(getBottomNavigationById());
+	}
+
+	@Override
+	public void showBottomNavigationMenu() {
+		showView(getBottomNavigationById());
+	}
+
+	@Override
+	public void addRelativeLayoutAlignTopRule() {
+		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) getViewDataBinding().fragContainer.getLayoutParams();
+		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+		getViewDataBinding().fragContainer.setLayoutParams(params);
+	}
+
+	@Override
+	public void removeRelativeLayoutTopRule() {
+		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) getViewDataBinding().fragContainer.getLayoutParams();
+		params.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
+		getViewDataBinding().fragContainer.setLayoutParams(params);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (mNavController.getCurrentFrag() instanceof WRewardsFragment) {
+			mNavController.getCurrentFrag().onActivityResult(requestCode, resultCode, data);
+		}
+
+		if (mNavController.getCurrentFrag() instanceof MyAccountsFragment) {
+			mNavController.getCurrentFrag().onActivityResult(requestCode, resultCode, data);
 		}
 	}
 }

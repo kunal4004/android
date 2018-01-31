@@ -55,7 +55,8 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.ui.activities.SearchStoresActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WStoreLocatorActivity;
+import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.adapters.CardsOnMapAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -126,6 +127,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	MenuItem searchMenu;
 	private boolean isSearchMenuEnabled = true;
 	public boolean isLocationServiceButtonClicked = false;
+	private BottomNavigator mBottomNavigator;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -160,8 +162,16 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		btnOnLocationService = (WButton) v.findViewById(R.id.buttonLocationOn);
 		progressBar = (ProgressBar) v.findViewById(R.id.storesProgressBar);
 		progressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+		RelativeLayout relNoConnectionLayout= (RelativeLayout) v.findViewById(R.id.no_connection_layout);
 		mErrorHandlerView = new ErrorHandlerView(getActivity()
-				, (RelativeLayout) v.findViewById(R.id.no_connection_layout));
+				,relNoConnectionLayout);
+		mErrorHandlerView.setMargin(relNoConnectionLayout,0,0,0,0);
+		try {
+			mBottomNavigator = (BottomNavigator) getActivity();
+			mBottomNavigator.setTitle(getString(R.string.stores_nearby));
+			mBottomNavigator.showBackNavigationIcon(true);
+		} catch (ClassCastException ex) {
+		}
 		try {
 			unSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.unselected_pin);
 			selectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_pin);
@@ -201,25 +211,37 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 
 			@Override
 			public void onPanelStateChanged(final View panel, SlidingUpPanelLayout.PanelState previousState, final SlidingUpPanelLayout.PanelState newState) {
-				Log.i(TAG, "onPanelStateChanged " + newState);
-
-				if (newState != SlidingUpPanelLayout.PanelState.COLLAPSED) {
-					/*
+				switch (newState) {
+					case COLLAPSED:
+							/*
 					 * Previous result: Application would exit completely when back button is pressed
                      * New result: Panel just returns to its previous position (Panel collapses)
                      */
-					mLayout.setFocusableInTouchMode(true);
-					mLayout.setOnKeyListener(new View.OnKeyListener() {
-						@Override
-						public boolean onKey(View v, int keyCode, KeyEvent event) {
-							if (keyCode == KeyEvent.KEYCODE_BACK) {
-								mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-								mLayout.setFocusable(false);
+						mLayout.setFocusableInTouchMode(true);
+						mLayout.setOnKeyListener(new View.OnKeyListener() {
+							@Override
+							public boolean onKey(View v, int keyCode, KeyEvent event) {
+								if (keyCode == KeyEvent.KEYCODE_BACK) {
+									mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+									mLayout.setFocusable(false);
+									return true;
+								}
 								return true;
 							}
-							return true;
-						}
-					});
+						});
+						mBottomNavigator.showBottomNavigationMenu();
+						break;
+
+					case DRAGGING:
+						mBottomNavigator.hideBottomNavigationMenu();
+						break;
+
+					case ANCHORED:
+
+						break;
+					default:
+						break;
+
 				}
 			}
 		});
@@ -361,7 +383,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	public void backToAllStoresPage(int position) {
 		googleMap.getUiSettings().setScrollGesturesEnabled(true);
 		googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(markers.get(position).getPosition(), 13), 500, null);
-		WStoreLocatorActivity.mToolbar.animate().translationY(WStoreLocatorActivity.mToolbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
+		BottomNavigationActivity.mToolbar.animate().translationY(BottomNavigationActivity.mToolbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
 		showAllMarkers(markers);
 
 	}
@@ -377,7 +399,7 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 		googleMap.animateCamera(centerCam, CAMERA_ANIMATION_SPEED, null);
 		googleMap.getUiSettings().setScrollGesturesEnabled(false);
 		if (mLayout.getAnchorPoint() == 1.0f) {
-			WStoreLocatorActivity.mToolbar.animate().translationY(-WStoreLocatorActivity.mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
+			BottomNavigationActivity.mToolbar.animate().translationY(-BottomNavigationActivity.mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
 			mLayout.setAnchorPoint(0.7f);
 			mLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
 

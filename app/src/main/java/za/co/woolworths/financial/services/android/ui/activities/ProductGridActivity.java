@@ -60,7 +60,6 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridNavigator;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -143,10 +142,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
 	}
 
-	@Override
-	public void onLoadStart() {
-
-	}
 
 	@Override
 	public void cancelAPIRequest() {
@@ -184,22 +179,17 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	@Override
-	public void showProgressBarCentered() {
+	public void setProductBody() {
 
 	}
 
 	@Override
-	public void dismissProgressBarCentered() {
+	public void onLoadStart(boolean isLoadMore) {
 
 	}
 
 	@Override
-	public void showProgressBarAtBottom() {
-
-	}
-
-	@Override
-	public void dismissProgressBarAtBottom() {
+	public void onLoadComplete(boolean isLoadMore) {
 
 	}
 
@@ -448,9 +438,9 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		String productName = mShopListProduct.productName;
 		String externalImageRef = getImageByWidth(mShopListProduct.externalImageRef);
 		android.app.FragmentManager fm = mContext.getFragmentManager();
-		AddToShoppingListFragment mAddToShoppingListFragment =
-				AddToShoppingListFragment.newInstance(productId, productName, externalImageRef);
-		mAddToShoppingListFragment.show(fm, "addToShop");
+//		AddToShoppingListFragment mAddToShoppingListFragment =
+//				AddToShoppingListFragment.newInstance(productId, productName, externalImageRef);
+//		mAddToShoppingListFragment.show(fm, "addToShop");
 	}
 
 	@Override

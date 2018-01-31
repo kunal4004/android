@@ -354,7 +354,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 
 	private void initUI() {
 		mScrollProductDetail = (NestedScrollView) findViewById(R.id.scrollProductDetail);
-		mColorView = findViewById(R.id.colorView);
+		mColorView = findViewById(R.id.incProductColor);
 		mTextSelectSize = (WTextView) findViewById(R.id.textSelectSize);
 		mTextColour = (WTextView) findViewById(R.id.textColour);
 		WTextView mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
@@ -364,7 +364,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 		mTextPrice = (WTextView) findViewById(R.id.textPrice);
 		mLinIngredient = (LinearLayout) findViewById(R.id.linIngredient);
 		mIngredientList = (WTextView) findViewById(R.id.ingredientList);
-		mTextPromo = (WTextView) findViewById(R.id.textPromo);
+		mTextPromo = (WTextView) findViewById(R.id.tvSaveText);
 		tvBtnFinder = (WTextView) findViewById(R.id.tvBtnFinder);
 		mTextSelectColor = (WTextView) findViewById(R.id.textSelectColour);
 		mProductCode = (WTextView) findViewById(R.id.product_code);

@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface DetailNavigator {
 
+	void renderView();
+
 	void closeView(View view);
 
 	void nestedScrollViewHelper();
@@ -16,6 +18,12 @@ public interface DetailNavigator {
 	void defaultProduct();
 
 	void setProductName();
+
+	void onLoadStart();
+
+	void onLoadComplete();
+
+	void addToShoppingList();
 
 	String getImageByWidth(String imageUrl, Context context);
 

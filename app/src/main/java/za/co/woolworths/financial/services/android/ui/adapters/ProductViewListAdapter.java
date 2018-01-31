@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 
 import android.app.Activity;
-import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -21,9 +20,9 @@ import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridNavigator;
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
-import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewListAdapter.SimpleViewHolder> {
 
@@ -93,7 +92,7 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 			}
 
 			String fromPrice = String.valueOf(productItem.fromPrice);
-			productPriceList(holder.tvAmount, holder.tvWasPrice,
+			ProductUtils.gridPriceList(holder.tvAmount, holder.tvWasPrice,
 					fromPrice, wasPrice);
 
 			productImage(holder.imProductImage, externalImageRef);
@@ -124,23 +123,6 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 	@Override
 	public int getItemCount() {
 		return mProductList.size();
-	}
-
-	private void productPriceList(WTextView wPrice, WTextView WwasPrice,
-								  String price, String wasPrice) {
-		if (TextUtils.isEmpty(wasPrice)) {
-			wPrice.setText(WFormatter.formatAmount(price));
-			WwasPrice.setText("");
-		} else {
-			if (wasPrice.equalsIgnoreCase(price)) { //wasPrice equals currentPrice
-				wPrice.setText(WFormatter.formatAmount(price));
-				WwasPrice.setText("");
-			} else {
-				wPrice.setText(WFormatter.formatAmount(wasPrice));
-				wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-				WwasPrice.setText(WFormatter.formatAmount(price));
-			}
-		}
 	}
 
 	private void productImage(final SimpleDraweeView image, String imgUrl) {

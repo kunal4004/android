@@ -31,26 +31,19 @@
             android:background="@color/default_background"
             android:orientation="vertical">
 
-            <RelativeLayout
-                android:id="@+id/rlCenteredProgressBar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:visibility="gone">
-
-                <ProgressBar
-                    android:id="@+id/pbCentered"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:backgroundTint="@color/black"/>
-
-            </RelativeLayout>
+            <include
+                android:id="@+id/incCenteredProgress"
+                layout="@layout/progress_layout"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:visibility="gone"/>
 
             <android.support.v4.widget.NestedScrollView
                 android:id="@+id/scrollProduct"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
                 android:layout_below="@+id/toolbar"
                 android:adjustViewBounds="true"
                 android:clipToPadding="false"
@@ -103,16 +96,27 @@
                         android:nestedScrollingEnabled="false"
                         android:paddingLeft="4dp"
                         android:paddingRight="4dp"/>
+
+                    <RelativeLayout
+                        android:id="@+id/relLoadMoreProduct"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center|bottom"
+                        android:visibility="gone"
+                        >
+
+                        <ProgressBar
+                            android:id="@+id/pbLoadMore"
+                            style="?android:attr/progressBarStyleLarge"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_marginBottom="@dimen/sixteen_dp"
+                            android:layout_marginTop="@dimen/sixteen_dp"
+                            android:indeterminateTint="@color/black"/>
+                    </RelativeLayout>
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
 
-            <ProgressBar
-                android:id="@+id/pbLoadMore"
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_below="@id/scrollProduct"
-                android:visibility="gone"/>
         </RelativeLayout>
 
         <include

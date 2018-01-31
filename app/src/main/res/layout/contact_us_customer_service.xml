@@ -4,7 +4,7 @@
               android:layout_height="match_parent"
               android:orientation="vertical"
               android:background="@color/grey_bg"
-              tools:context="za.co.woolworths.financial.services.android.ui.fragments.ContactUsFragment">
+              tools:context="za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_list.ContactUsFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"

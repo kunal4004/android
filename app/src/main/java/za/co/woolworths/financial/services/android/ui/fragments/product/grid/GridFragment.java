@@ -1,13 +1,17 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 
-
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.GridLayoutManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
@@ -17,10 +21,13 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.models.rest.product.LoadProductRequest;
+import za.co.woolworths.financial.services.android.models.rest.product.SearchProductRequest;
+import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel> implements GridNavigator {
 
@@ -28,8 +35,12 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	private ErrorHandlerView mErrorHandlerView;
 	private String mSubCategoryId;
 	private String mSubCategoryName;
+	private String mSearchProduct;
 	private ProductViewListAdapter mProductAdapter;
 	private List<ProductList> mProductList;
+	private ProgressBar mProgressLimitStart;
+	private RelativeLayout mRelLoadMoreProduct;
+	private GridLayoutManager mRecyclerViewLayoutManager;
 
 	@Override
 	public GridViewModel getViewModel() {
@@ -57,28 +68,40 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		if (bundle != null) {
 			mSubCategoryId = bundle.getString("sub_category_id");
 			mSubCategoryName = bundle.getString("sub_category_name");
+			mSearchProduct = bundle.getString("str_search_product");
 		}
-
-		getViewModel().setProductRequestBody(false, mSubCategoryId);
+		setProductBody();
 	}
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		showToolbar();
+		showBackNavigationIcon(true);
+		mProgressLimitStart = getViewDataBinding().incCenteredProgress.progressCreditLimit;
+		mRelLoadMoreProduct = getViewDataBinding().relLoadMoreProduct;
+
+		assert getViewDataBinding().incNoConnectionHandler != null;
 		mErrorHandlerView = new ErrorHandlerView(getActivity()
 				, getViewDataBinding().incNoConnectionHandler.noConnectionLayout);
-		setTitle(mSubCategoryName);
+		if (isEmpty(mSearchProduct)) {
+			setTitle(mSubCategoryName);
+		} else {
+			setTitle(mSearchProduct);
+		}
 		startProductRequest();
 		onBottomReached();
 	}
 
 	@Override
 	public void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData) {
-		setTotalNumberOfItem();
-		if (!loadMoreData) {
-			bindRecyclerViewWithUI(productLists);
-		} else {
-			loadMoreData(productLists);
+		if (productLists.size() > 0) {
+			setTotalNumberOfItem();
+			if (!loadMoreData) {
+				bindRecyclerViewWithUI(productLists);
+			} else {
+				loadMoreData(productLists);
+			}
 		}
 	}
 
@@ -93,14 +116,17 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	}
 
 	@Override
-	public void onLoadStart() {
-		mErrorHandlerView.hideErrorHandler();
-	}
-
-	@Override
 	public void cancelAPIRequest() {
 		if (mGridViewModel != null) {
-			mGridViewModel.cancelRequest(mGridViewModel.getLoadProductRequest());
+			LoadProductRequest loadProductRequest = mGridViewModel.getLoadProductRequest();
+			if (loadProductRequest != null) {
+				mGridViewModel.cancelRequest(loadProductRequest);
+			}
+
+			SearchProductRequest searchProductRequest = mGridViewModel.getSearchProductRequest();
+			if (searchProductRequest != null) {
+				mGridViewModel.cancelRequest(searchProductRequest);
+			}
 		}
 	}
 
@@ -113,7 +139,7 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 	public void bindRecyclerViewWithUI(List<ProductList> productList) {
 		this.mProductList = productList;
 		mProductAdapter = new ProductViewListAdapter(getActivity(), mProductList, this);
-		GridLayoutManager mRecyclerViewLayoutManager = new GridLayoutManager(getActivity(), 2);
+		mRecyclerViewLayoutManager = new GridLayoutManager(getActivity(), 2);
 		getViewDataBinding().productList.setLayoutManager(mRecyclerViewLayoutManager);
 		getViewDataBinding().productList.setNestedScrollingEnabled(false);
 		getViewDataBinding().productList.setAdapter(mProductAdapter);
@@ -127,23 +153,45 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 
 	@Override
 	public void onGridItemSelected(ProductList productList) {
-		((BottomNavigationActivity) getActivity()).getViewModel().getNavigator().openProductDetailFragment(mSubCategoryName, productList);
+		if (!isEmpty(mSearchProduct)) {
+			mSubCategoryName = mSearchProduct;
+		}
+		getBottomNavigator().openProductDetailFragment(mSubCategoryName, productList);
 	}
 
 	@Override
 	public void onBottomReached() {
 		final NestedScrollView scroll = getViewDataBinding().scrollProduct;
-		scroll.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+
+		scroll.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
 			@Override
-			public void onScrollChanged() {
-				View view = scroll.getChildAt(scroll.getChildCount() - 1);
-
-				int reachedBottom = (view.getBottom() - (scroll.getHeight() + scroll
-						.getScrollY()));
-
-				if (reachedBottom == 0) {
-					if (getViewModel().getLoadMoreData()) {
-						startProductRequest();
+			public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+				if (v.getChildAt(v.getChildCount() - 1) != null) {
+					if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight())) &&
+							scrollY > oldScrollY) {
+						//code to fetch more data for endless scrolling
+						getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								try {
+									int visibleItemCount = mRecyclerViewLayoutManager.getChildCount();
+									int totalItemCount = mRecyclerViewLayoutManager.getItemCount();
+									int firstVisibleItemPosition = mRecyclerViewLayoutManager.findFirstVisibleItemPosition();
+									if (!getViewModel().isLoading() && !getViewModel().isLastPage()) {
+										if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+												&& firstVisibleItemPosition >= 0
+												&& totalItemCount >= Utils.PAGE_SIZE) {
+											if (mProductList.size() < getViewModel().getNumItemsInTotal()) {
+												startProductRequest();
+											}
+										}
+									} else {
+										onLoadComplete(true);
+									}
+								} catch (NullPointerException ignored) {
+								}
+							}
+						});
 					}
 				}
 			}
@@ -152,7 +200,11 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 
 	@Override
 	public void startProductRequest() {
-		getViewModel().executeLoadProduct(getActivity(), getViewModel().getProductRequestBody());
+		if (isEmpty(mSearchProduct)) {
+			getViewModel().executeLoadProduct(getActivity(), getViewModel().getProductRequestBody());
+		} else {
+			getViewModel().executeSearchProduct(getActivity(), getViewModel().getProductRequestBody());
+		}
 	}
 
 	@Override
@@ -160,27 +212,58 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		int actualSize = mProductList.size() + 1;
 		mProductList.addAll(productLists);
 		int sizeOfList = mProductList.size();
-		mProductAdapter.notifyItemRangeChanged(actualSize, sizeOfList);
+		mProductAdapter.notifyItemChanged(actualSize, sizeOfList);
 		getViewModel().canLoadMore(getViewModel().getNumItemsInTotal(), sizeOfList);
 	}
 
 	@Override
-	public void showProgressBarCentered() {
-		showView(getViewDataBinding().rlCenteredProgressBar);
+	public void setProductBody() {
+		if (isEmpty(mSearchProduct)) {
+			getViewModel().setProductRequestBody(false, mSubCategoryId);
+		} else {
+			getViewModel().setProductRequestBody(mSearchProduct, false);
+		}
 	}
 
 	@Override
-	public void dismissProgressBarCentered() {
-		hideView(getViewDataBinding().rlCenteredProgressBar);
+	public void onLoadStart(boolean isLoadMore) {
+		getViewModel().setIsLoading(true);
+		if (isLoadMore) {
+			showView(mRelLoadMoreProduct);
+		} else {
+			showView(mProgressLimitStart);
+			mProgressLimitStart.bringToFront();
+		}
 	}
 
 	@Override
-	public void showProgressBarAtBottom() {
-		showView(getViewDataBinding().pbLoadMore);
+	public void onLoadComplete(boolean isLoadMore) {
+		getViewModel().setIsLoading(false);
+		if (isLoadMore) {
+			hideView(mRelLoadMoreProduct);
+		} else {
+			hideView(mProgressLimitStart);
+		}
 	}
 
 	@Override
-	public void dismissProgressBarAtBottom() {
-		hideView(getViewDataBinding().pbLoadMore);
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		menu.clear();
+		inflater.inflate(R.menu.drill_down_category_menu, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.action_drill_search:
+				Intent openSearchActivity = new Intent(getBaseActivity(), ProductSearchActivity.class);
+				startActivity(openSearchActivity);
+				getBaseActivity().overridePendingTransition(0, 0);
+				return true;
+			default:
+				break;
+		}
+		return false;
 	}
 }

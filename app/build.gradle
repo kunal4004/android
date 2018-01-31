@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
 
     def major = "5"
-    def minor = "5"
+    def minor = "3"
     def fix = "0"
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
@@ -140,10 +140,10 @@ dependencies {
     compile 'za.co.wigroup.android:Logger:1'
     compile 'com.daimajia.swipelayout:library:1.2.0'
     compile 'me.leolin:ShortcutBadger:1.1.13@aar'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'io.reactivex.rxjava2:rxjava:2.1.7'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'com.github.thepacific:mvc:0.0.2'
-    compile 'com.facebook.fresco:fresco:1.5.0'
+    compile 'com.facebook.fresco:fresco:1.8.0'
     compile 'com.facebook.fresco:animated-gif:1.5.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.android.gms:play-services-tagmanager:11.0.2'

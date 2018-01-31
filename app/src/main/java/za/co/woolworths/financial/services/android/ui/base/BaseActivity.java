@@ -6,6 +6,7 @@ import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -73,6 +74,14 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 		}
 	}
 
+	public void showView(View view) {
+		view.setVisibility(View.VISIBLE);
+	}
+
+	public void hideView(View view) {
+		view.setVisibility(View.GONE);
+	}
+
 	public Toolbar getToolbar() {
 		return findViewById(R.id.incToolbar);
 	}
@@ -87,6 +96,14 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 
 	public void hideToolbar() {
 		getToolbar().setVisibility(View.GONE);
+	}
+
+	public void setToolbarBackgroundColor(int colorId) {
+		getToolbar().setBackgroundColor(ContextCompat.getColor(this, colorId));
+	}
+
+	public void setToolbarBackgroundDrawable(int drawableId) {
+		getToolbar().setBackground(ContextCompat.getDrawable(this, drawableId));
 	}
 
 	public void showToolbar() {

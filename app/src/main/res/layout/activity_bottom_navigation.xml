@@ -3,6 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:sothree="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:fitsSystemWindows="true"
         tools:context="za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity">
 
     <data>
@@ -18,7 +19,6 @@
         android:id="@+id/slideUpPanel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
         android:gravity="bottom"
         app:umanoPanelHeight="0dp"
         app:umanoParallaxOffset="0dp"
@@ -32,12 +32,23 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <FrameLayout
-                android:id="@+id/frag_container"
+            <RelativeLayout
+                android:id="@+id/relFragContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/wBottomNavigation"
-                android:layout_below="@+id/incToolbar"/>
+                android:layout_alignParentTop="true"
+                android:layout_below="@+id/incToolbar"
+                android:clipToPadding="true">
+
+
+                <FrameLayout
+                    android:id="@+id/frag_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
+
+            </RelativeLayout>
 
             <za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView
                 android:id="@+id/wBottomNavigation"

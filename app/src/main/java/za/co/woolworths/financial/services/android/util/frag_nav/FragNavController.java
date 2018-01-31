@@ -253,7 +253,6 @@ public class FragNavController {
 	public void pushFragment(@Nullable Fragment fragment, @Nullable FragNavTransactionOptions transactionOptions) {
 		if (fragment != null && mSelectedTabIndex != NO_TAB) {
 			FragmentTransaction ft = createTransactionWithOptions(transactionOptions, false);
-			ft.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right);
 			detachCurrentFragment(ft);
 			ft.add(mContainerId, fragment, generateTag(fragment));
 			commitTransaction(ft, transactionOptions);
@@ -743,7 +742,8 @@ public class FragNavController {
 		if (transactionOptions != null && transactionOptions.allowStateLoss) {
 			fragmentTransaction.commitAllowingStateLoss();
 		} else {
-			fragmentTransaction.commit();
+			fragmentTransaction.commitAllowingStateLoss();
+			//fragmentTransaction.commit();
 		}
 	}
 

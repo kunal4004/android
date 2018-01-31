@@ -60,6 +60,9 @@
         <item name="android:fitsSystemWindows">true</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
     <style name="LoanWithdrawal" parent="Theme.AppCompat.Light.NoActionBar">
@@ -1072,5 +1075,17 @@
         <item name="android:gravity">center_vertical</item>
         <item name="WTextView_font">myriadpro_regular</item>
     </style>
+
+
+    <!-- Base application theme. -->
+    <style name="bottomAppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:windowActionBar">false</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
 
 </resources>

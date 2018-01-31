@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:clickable="true"
+        android:focusable="true"
+        tools:context="za.co.woolworths.financial.services.android.ui.fragments.CategoryFragment">
+
+    <data>
+
+        <import type="android.view.View"/>
+
+        <variable
+            name="handlers"
+            type="za.co.woolworths.financial.services.android.ui.fragments.faq.FAQFragment"/>
+
+        <variable
+            name="viewModel"
+            type="za.co.woolworths.financial.services.android.ui.fragments.faq.FAQViewModel"/>
+    </data>
+
+    <FrameLayout
+        android:id="@+id/search_store_activity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/recent_search_bg"
+            android:orientation="vertical"
+            >
+
+            <android.support.v4.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/default_margin"/>
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/textNotFound"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/bank_spacing_width"
+                        android:layout_marginRight="@dimen/bank_spacing_width"
+                        android:layout_marginTop="@dimen/bank_spacing_width"
+                        android:text="@string/no_faq_found"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        android:visibility="gone"
+                        app:WTextView_font="myriadpro_regular"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/faqList"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:nestedScrollingEnabled="false"
+                        android:scrollbars="none"/>
+
+                    <android.support.v4.widget.Space
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/default_margin"/>
+
+                </LinearLayout>
+            </android.support.v4.widget.NestedScrollView>
+
+        </LinearLayout>
+
+        <include
+            android:id="@+id/incProgressBar"
+            layout="@layout/progress_layout"/>
+
+        <include
+            android:id="@+id/incConnectionHandler"
+            layout="@layout/no_connection_handler"/>
+    </FrameLayout>
+</layout>

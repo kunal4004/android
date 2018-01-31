@@ -29,8 +29,6 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
-import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
-import za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
@@ -121,6 +119,7 @@ public class ProductSearchActivity extends AppCompatActivity
 					.send(new BusStation(searchProductBrand));
 			mEditSearchProduct.setText("");
 			finish();
+			overridePendingTransition(0, 0);
 		}
 	}
 

@@ -133,7 +133,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		mGlobalState = ((WoolworthsApplication) WProductDetailActivity.this.getApplication()).getWGlobalState();
 		mScrollProductDetail = (NestedScrollView) findViewById(R.id.scrollProductDetail);
 		mSizeProgressBar = (ProgressBar) findViewById(R.id.mWoolworthsProgressBar);
-		vColorSizeHorizontalLine = findViewById(R.id.colorView);
+		vColorSizeHorizontalLine = findViewById(R.id.incProductColorBottomLine);
 		mTextSelectSize = (WTextView) findViewById(R.id.textSelectSize);
 		mTextColour = (WTextView) findViewById(R.id.textColour);
 		mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
@@ -143,7 +143,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		mTextPrice = (WTextView) findViewById(R.id.textPrice);
 		mLinIngredient = (LinearLayout) findViewById(R.id.linIngredient);
 		mIngredientList = (WTextView) findViewById(R.id.ingredientList);
-		mTextPromo = (WTextView) findViewById(R.id.textPromo);
+		mTextPromo = (WTextView) findViewById(R.id.tvSaveText);
 		mTextSelectColor = (WTextView) findViewById(R.id.textSelectColour);
 		mProductCode = (WTextView) findViewById(R.id.product_code);
 		llColorSizeContainer = (LinearLayout) findViewById(R.id.linProductContainer);

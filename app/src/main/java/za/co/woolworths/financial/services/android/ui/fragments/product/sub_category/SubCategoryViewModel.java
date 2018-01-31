@@ -32,7 +32,7 @@ public class SubCategoryViewModel extends BaseViewModel<SubCategoryNavigator> {
 	}
 
 	private ProductSubCategoryRequest subCategoryRequest(Context context, String category_id) {
-		setIsLoading(true);
+		getNavigator().onLoad();
 		return new ProductSubCategoryRequest(context, category_id, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -49,12 +49,12 @@ public class SubCategoryViewModel extends BaseViewModel<SubCategoryNavigator> {
 						}
 						break;
 				}
-				setIsLoading(false);
+				getNavigator().onLoadComplete();
 			}
 
 			@Override
 			public void onFailure(String e) {
-				setIsLoading(false);
+				getNavigator().onLoadComplete();
 				getNavigator().onFailureResponse(e);
 			}
 		});

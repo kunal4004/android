@@ -19,74 +19,73 @@ import za.co.woolworths.financial.services.android.util.binder.DataBinder;
 
 public class FAQTypeBinder extends DataBinder<FAQTypeBinder.ViewHolder> {
 
+	public interface SelectedQuestion {
+		void onQuestionSelected(FAQDetail faqDetail);
+	}
 
-    public interface SelectedQuestion {
-        void onQuestionSelected(View v, int position);
-    }
+	private SelectedQuestion mSelectQuestion;
+	private List<FAQDetail> mDataSet = new ArrayList<>();
+	private int selectedPosition = -1;
 
-    private SelectedQuestion mSelectQuestion;
-    private List<FAQDetail> mDataSet = new ArrayList<>();
-    private int selectedPosition = -1;
+	public FAQTypeBinder(DataBindAdapter dataBindAdapter, SelectedQuestion selectedQuestion) {
+		super(dataBindAdapter);
+		this.mSelectQuestion = selectedQuestion;
+	}
 
-    public FAQTypeBinder(DataBindAdapter dataBindAdapter, SelectedQuestion selectedQuestion) {
-        super(dataBindAdapter);
-        this.mSelectQuestion = selectedQuestion;
-    }
+	@Override
+	public ViewHolder newViewHolder(ViewGroup parent) {
+		View view = LayoutInflater.from(parent.getContext()).inflate(
+				R.layout.faq_row, parent, false);
+		return new ViewHolder(view);
+	}
 
-    @Override
-    public ViewHolder newViewHolder(ViewGroup parent) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.faq_row, parent, false);
-        return new ViewHolder(view);
-    }
+	@Override
+	public void bindViewHolder(final ViewHolder holder, int position) {
+		final FAQDetail faqDetail = mDataSet.get(position);
+		if (faqDetail != null) {
+			holder.mFAQName.setText(faqDetail.question);
+		}
 
-    @Override
-    public void bindViewHolder(final ViewHolder holder, int position) {
-        FAQDetail faqDetail = mDataSet.get(position);
-        if (faqDetail != null) {
-            holder.mFAQName.setText(faqDetail.question);
-        }
+		if (selectedPosition == position) {
+			holder.mRelFAQRow.setBackground(ContextCompat.getDrawable(holder.mFAQName.getContext(), R.drawable.pressed_bg));
+		} else {
+			holder.mRelFAQRow.setBackground(ContextCompat.getDrawable(holder.mFAQName.getContext(), R.drawable.top_border));
+		}
 
-        if (selectedPosition == position) {
-            holder.mRelFAQRow.setBackground(ContextCompat.getDrawable(holder.mFAQName.getContext(),R.drawable.pressed_bg));
-        } else {
-            holder.mRelFAQRow.setBackground(ContextCompat.getDrawable(holder.mFAQName.getContext(),R.drawable.top_border));
-        }
+		holder.mRelFAQRow.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				selectedPosition = holder.getAdapterPosition();
+				notifyBinderDataSetChanged();
+				mSelectQuestion.onQuestionSelected(mDataSet.get(selectedPosition));
+			}
+		});
+	}
 
-        holder.mRelFAQRow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectedPosition = holder.getAdapterPosition();
-                notifyBinderDataSetChanged();
-                mSelectQuestion.onQuestionSelected(view, holder.getAdapterPosition());
-            }
-        });
-    }
+	@Override
+	public int getItemCount() {
+		return mDataSet.size();
+	}
 
-    @Override
-    public int getItemCount() {
-        return mDataSet.size();
-    }
+	public void addAll(List<FAQDetail> dataSet) {
+		mDataSet.addAll(dataSet);
+		notifyBinderDataSetChanged();
+	}
 
-    public void addAll(List<FAQDetail> dataSet) {
-        mDataSet.addAll(dataSet);
-        notifyBinderDataSetChanged();
-    }
+	public void clear() {
+		mDataSet.clear();
+		notifyBinderDataSetChanged();
+	}
 
-    public void clear() {
-        mDataSet.clear();
-        notifyBinderDataSetChanged();
-    }
+	public class ViewHolder extends RecyclerView.ViewHolder {
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+		WTextView mFAQName;
+		private RelativeLayout mRelFAQRow;
 
-        WTextView mFAQName;
-        private RelativeLayout mRelFAQRow;
-
-        public ViewHolder(View view) {
-            super(view);
-            mFAQName = (WTextView) view.findViewById(R.id.name);
-            mRelFAQRow = (RelativeLayout) view.findViewById(R.id.relFAQRow);
-        }
-    }
+		public ViewHolder(View view) {
+			super(view);
+			mFAQName = (WTextView) view.findViewById(R.id.name);
+			mRelFAQRow = (RelativeLayout) view.findViewById(R.id.relFAQRow);
+		}
+	}
 }

@@ -14,13 +14,13 @@
 
     <item
         android:id="@+id/navigation_cart"
-        android:icon="@drawable/ic_notifications_black_24dp"
+        android:icon="@drawable/cart_icon"
         android:title="@string/bottom_title_cart"/>
 
 
     <item
         android:id="@+id/navigation_reward"
-        android:icon="@drawable/ic_bottom_wrewards_24dp"
+        android:icon="@drawable/icon_wreward"
         android:title="@string/bottom_title_reward"/>
 
 

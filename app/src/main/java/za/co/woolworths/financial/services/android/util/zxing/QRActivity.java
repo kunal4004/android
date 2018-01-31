@@ -720,7 +720,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
 	protected void initProductDetailUI() {
 		mScrollProductDetail = (NestedScrollView) findViewById(R.id.scrollProductDetail);
-		mColorView = findViewById(R.id.colorView);
+		mColorView = findViewById(R.id.incProductColorBottomLine);
 		mTextSelectSize = (WTextView) findViewById(R.id.textSelectSize);
 		mTextColour = (WTextView) findViewById(R.id.textColour);
 		WTextView mTextProductSize = (WTextView) findViewById(R.id.textProductSize);
@@ -730,7 +730,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mTextPrice = (WTextView) findViewById(R.id.textPrice);
 		mLinIngredient = (LinearLayout) findViewById(R.id.linIngredient);
 		mIngredientList = (WTextView) findViewById(R.id.ingredientList);
-		mTextPromo = (WTextView) findViewById(R.id.textPromo);
+		mTextPromo = (WTextView) findViewById(R.id.tvSaveText);
 		mTextSelectColor = (WTextView) findViewById(R.id.textSelectColour);
 		mProductCode = (WTextView) findViewById(R.id.product_code);
 		llColorSizeContainer = (LinearLayout) findViewById(R.id.linProductContainer);
