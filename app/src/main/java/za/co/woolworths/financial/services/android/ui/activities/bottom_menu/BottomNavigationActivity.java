@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
@@ -32,7 +31,6 @@ import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
-import za.co.woolworths.financial.services.android.ui.activities.product.shop.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
@@ -132,16 +130,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void renderUI() {
-		//Utils.updateStatusBarBackground(this);
 		mToolbar = getToolbar();
 		setActionBar();
 		hideToolbar();
 		bottomNavigationViewModel = ViewModelProviders.of(this).get(BottomNavigationViewModel.class);
 		bottomNavigationViewModel.setNavigator(this);
 		bottomNavConfig();
-//		addBadge(2, 3);
-//		addBadge(3, 17);
-//		addBadge(3, 100);
 		getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 		slideUpPanelListener();
 	}
@@ -287,10 +281,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					return true;
 
 				case R.id.navigation_cart:
-					Toast.makeText(BottomNavigationActivity.this, "add", Toast.LENGTH_SHORT).show();
-					Intent openCardActivity = new Intent(BottomNavigationActivity.this, ShoppingListActivity.class);
-					startActivity(openCardActivity);
-					overridePendingTransition(0, 0);
 					openCartActivity();
 					return false;
 

@@ -53,7 +53,6 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
 	private ErrorHandlerView mErrorHandlerView;
 	private WButton mBtnGoProducts;
 
-
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
