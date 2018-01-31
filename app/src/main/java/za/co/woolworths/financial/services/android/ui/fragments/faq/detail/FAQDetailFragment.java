@@ -41,6 +41,7 @@ public class FAQDetailFragment extends BaseFragment<FaqDetailBinding, FAQDetailV
 		setToolbarBackgroundDrawable(R.drawable.appbar_background);
 		showBackNavigationIcon(true);
 		setTitle(getString(R.string.drawer_faq));
+		showToolbar();
 		populateTextView();
 	}
 

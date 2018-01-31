@@ -46,6 +46,7 @@ public class FAQFragment extends BaseFragment<FaqFragmentBinding, FAQViewModel> 
 		showBackNavigationIcon(true);
 		setToolbarBackgroundDrawable(R.drawable.appbar_background);
 		setTitle(getString(R.string.drawer_faq));
+		showToolbar();
 		Activity activity = getBaseActivity();
 		if (activity != null) {
 			mErrorHandlerView = new ErrorHandlerView(activity, getViewDataBinding().incConnectionHandler.noConnectionLayout);

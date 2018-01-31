@@ -44,6 +44,7 @@ public class ContactUsFragment extends BaseFragment<FragmentContactUsBinding, Co
 		setTitle(getString(R.string.contact_us));
 		showBackNavigationIcon(true);
 		setToolbarBackgroundDrawable(R.drawable.appbar_background);
+		showToolbar();
 
 		fsLayout = getViewDataBinding().financialService;
 		csLayout = getViewDataBinding().customerService;

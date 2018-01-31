@@ -50,9 +50,9 @@ public class WebFragment extends BaseFragment<ActivityFaqdetailsWebBinding, FAQV
 		setToolbarBackgroundDrawable(R.drawable.appbar_background);
 		showBackNavigationIcon(true);
 		setTitle(getString(R.string.drawer_faq));
+		showToolbar();
 		bindDateWithUI();
 	}
-
 
 	public void bindDateWithUI() {
 		getViewDataBinding().faqWeb.getSettings().setJavaScriptEnabled(true);

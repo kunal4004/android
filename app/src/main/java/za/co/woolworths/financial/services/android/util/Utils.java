@@ -825,13 +825,11 @@ public class Utils {
 		return new QBadgeView(context)
 				.setBadgeNumber(number)
 				.setGravityOffset(15, 2, true)
-				.bindTarget(mBottomNav.getBottomNavigationItemView(position))
-				.setOnDragStateChangedListener(new Badge.OnDragStateChangedListener() {
-					@Override
-					public void onDragStateChanged(int dragState, Badge badge, View targetView) {
-//						if (Badge.OnDragStateChangedListener.STATE_SUCCEED == dragState)
-					}
-				});
+				.bindTarget(mBottomNav.getBottomNavigationItemView(position));
+	}
+
+	public static Badge addBadgeAt(Context context, View view, int number) {
+		return new QBadgeView(context).setBadgeNumber(number).bindTarget(view);
 	}
 //
 //	public static void updateStatusBar(Activity activity, int color) {
