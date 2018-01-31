@@ -35,14 +35,15 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.rest.message.CLIGetMessageResponse;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity;
+import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
@@ -53,6 +54,7 @@ import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -660,48 +662,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 	}
 
-	public void messageCounterRequest() {
-		new HttpAsyncTask<String, String, MessageResponse>() {
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-			}
-
-			@Override
-			protected MessageResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getMessagesResponse(5, 1);
-			}
-
-			@Override
-			protected Class<MessageResponse> httpDoInBackgroundReturnType() {
-				return MessageResponse.class;
-			}
-
-			@Override
-			protected MessageResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				MessageResponse messageResponse = new MessageResponse();
-				messageResponse.response = new Response();
-				return messageResponse;
-			}
-
-			@Override
-			protected void onPostExecute(MessageResponse messageResponse) {
-				super.onPostExecute(messageResponse);
-				if (messageResponse.unreadCount > 0) {
-					messageCounter.setVisibility(View.VISIBLE);
-					int unreadCount = messageResponse.unreadCount;
-					if (TextUtils.isEmpty(String.valueOf(unreadCount)))
-						unreadCount = 0;
-					Utils.setBadgeCounter(getActivity(), unreadCount);
-					messageCounter.setText(String.valueOf(unreadCount));
-				} else {
-					Utils.removeBadgeCounter(getActivity());
-					messageCounter.setVisibility(View.GONE);
-				}
-			}
-		}.execute();
-	}
-
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -867,5 +827,36 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private void accountExpiredState() {
 		wGlobalState.setAccountHasExpired(false);
 		wGlobalState.setPressState("");
+	}
+
+	private void messageCounterRequest() {
+		getMessageResponse().execute();
+	}
+
+	private CLIGetMessageResponse getMessageResponse() {
+		return new CLIGetMessageResponse(new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				MessageResponse messageResponse = (MessageResponse) object;
+				if (messageResponse.unreadCount > 0) {
+					messageCounter.setVisibility(View.VISIBLE);
+					int unreadCount = messageResponse.unreadCount;
+					if (TextUtils.isEmpty(String.valueOf(unreadCount)))
+						unreadCount = 0;
+					Utils.setBadgeCounter(getActivity(), unreadCount);
+					messageCounter.setText(String.valueOf(unreadCount));
+					getBottomNavigator().addBadge(BottomNavigationActivity.INDEX_REWARD, unreadCount);
+				} else {
+					Utils.removeBadgeCounter(getActivity());
+					getBottomNavigator().addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
+					messageCounter.setVisibility(View.GONE);
+				}
+			}
+
+			@Override
+			public void onFailure(String errorMessage) {
+				mErrorHandlerView.networkFailureHandler(errorMessage);
+			}
+		});
 	}
 }
