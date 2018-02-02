@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFra
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
+import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.frag_nav.FragNavController;
 import za.co.woolworths.financial.services.android.util.frag_nav.FragNavSwitchController;
@@ -279,6 +280,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					return true;
 
 				case R.id.navigation_cart:
+					MultiClickPreventer.preventMultiClick(getViewDataBinding().wBottomNavigation);
 					openCartActivity();
 					return false;
 
@@ -301,7 +303,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	private void openCartActivity() {
 		startActivity(new Intent(this, CartActivity.class));
-		overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+		overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay);
 	}
 
 	@Override

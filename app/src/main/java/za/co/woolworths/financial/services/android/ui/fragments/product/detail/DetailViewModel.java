@@ -47,8 +47,6 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 		return defaultProduct;
 	}
 
-
-
 //	public void productDetailPriceList(WTextView wPrice, WTextView WwasPrice,
 //									   String price, String wasPrice, String productType) {
 //		switch (productType) {
