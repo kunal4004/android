@@ -58,9 +58,9 @@ android {
             // Set to null to override default debug keystore and defer to the product flavor.
         }
         release {
-            shrinkResources true
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-fresco.pro'
         }
     }
     productFlavors {

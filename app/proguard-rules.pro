@@ -41,16 +41,16 @@
 
 #The proguard exclusions for JJWT & Jackson
 
--keepnames class com.fasterxml.jackson.databind.** { ; }
+-keepnames class com.fasterxml.jackson.databind.** { *; }
 -dontwarn com.fasterxml.jackson.databind.*
 -keepattributes InnerClasses
 
--keep class org.bouncycastle.** { ; }
--keepnames class org.bouncycastle.* { ; }
+-keep class org.bouncycastle.** { *; }
+-keepnames class org.bouncycastle.* { *; }
 -dontwarn org.bouncycastle.*
 
--keep class io.jsonwebtoken.** { ; }
--keepnames class io.jsonwebtoken.* { ; }
+-keep class io.jsonwebtoken.** { *; }
+-keepnames class io.jsonwebtoken.* { *; }
 -keepnames interface io.jsonwebtoken.* { *; }
 
 -dontwarn javax.xml.bind.DatatypeConverter
@@ -59,7 +59,27 @@
 -keepnames class com.fasterxml.jackson.** { * ; }
 -keepnames interface com.fasterxml.jackson.** { *; }
 
--keepclassmembers class * extends de.greenrobot.event.util.ThrowableFailureEvent {
-    (java.lang.Throwable);
+# Proguard configuration for Jackson 2.x (fasterxml package instead of codehaus package)
+-keep class com.fasterxml.jackson.databind.ObjectMapper {
+    public <methods>;
+    protected <methods>;
 }
+-keep class com.fasterxml.jackson.databind.ObjectWriter {
+    public ** writeValueAsString(**);
+}
+-keepnames class com.fasterxml.jackson.** { *; }
+-dontwarn com.fasterxml.jackson.databind.**
 
+-dontwarn android.databinding.**
+-keep class android.databinding.** { *; }
+
+#GSON
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class sun.misc.Unsafe { *; }
+
+-ignorewarnings
+
+-keep class * {
+    public private *;
+}
