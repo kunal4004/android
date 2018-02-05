@@ -1,18 +1,15 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.fragments.shop.CartFragment;
-import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -79,6 +76,6 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             super.onBackPressed();
         }
-        overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+        overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
     }
 }

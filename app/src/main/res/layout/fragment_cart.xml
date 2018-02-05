@@ -16,9 +16,11 @@
             android:orientation="vertical">
 
             <RelativeLayout
+                android:id="@+id/locationSelectedLayout"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@color/white">
+                android:background="@color/white"
+                >
 
                 <ImageView
                     android:id="@+id/iconMap"

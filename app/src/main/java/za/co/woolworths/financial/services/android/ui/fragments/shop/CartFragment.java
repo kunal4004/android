@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,11 +23,13 @@ import java.util.Random;
 
 import za.co.woolworths.financial.services.android.models.dto.CartPriceValues;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
+import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 
 
-public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick {
+public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener {
 
     private RecyclerView rvCartList;
     private WButton btnAddToCart;
@@ -48,6 +51,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         super.onViewCreated(view, savedInstanceState);
         rvCartList = view.findViewById(R.id.cartList);
         btnAddToCart = view.findViewById(R.id.btnAddToCart);
+
+        view.findViewById(R.id.locationSelectedLayout).setOnClickListener(this);
 
         CartPriceValues prices = new CartPriceValues(13,1185, 50, -36.56, -100, -18, -25, 1199);
         cartProductAdapter = new CartProductAdapter(getCartProductItems(), prices, this);
@@ -89,6 +94,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     }
 
     @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.locationSelectedLayout:
+                locationSelectionClicked();
+                break;
+        }
+    }
+
+    @Override
     public void onItemClick(View view, int position) {
         Log.i("CartFragment", "Item #" + position + " clicked!");
     }
@@ -105,5 +119,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         boolean isEditMode = cartProductAdapter.toggleEditMode();
         btnAddToCart.setVisibility(isEditMode ? View.GONE : View.VISIBLE);
         return isEditMode;
+    }
+
+    private void locationSelectionClicked() {
+        startActivity(new Intent(this.getContext(), DeliveryLocationSelectionActivity.class));
+        this.getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
     }
 }

@@ -1,0 +1,106 @@
+package za.co.woolworths.financial.services.android.ui.fragments.shop;
+
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.awfs.coordination.R;
+
+import java.util.ArrayList;
+
+import za.co.woolworths.financial.services.android.models.dto.DeliveryLocation;
+import za.co.woolworths.financial.services.android.ui.adapters.DeliveryLocationAdapter;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
+
+
+public class DeliveryLocationSelectionFragment extends Fragment implements DeliveryLocationAdapter.OnItemClick, View.OnClickListener {
+
+    private RecyclerView deliveryLocationHistoryList;
+    private WTextView tvCurrentLocationTitle, tvCurrentLocationDescription;
+
+    private DeliveryLocationAdapter deliveryLocationAdapter;
+
+    public DeliveryLocationSelectionFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_delivery_location_selection, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        deliveryLocationHistoryList = view.findViewById(R.id.deliveryLocationHistoryList);
+        tvCurrentLocationTitle = view.findViewById(R.id.tvCurrentLocationTitle);
+        tvCurrentLocationDescription = view.findViewById(R.id.tvCurrentLocationDescription);
+
+        view.findViewById(R.id.currentLocationLayout).setOnClickListener(this);
+
+        configureCurrentLocation();
+        configureLocationHistory();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.currentLocationLayout:
+                onCurrentLocationClicked();
+                break;
+        }
+    }
+
+    private void configureCurrentLocation() {
+        // TODO: make API request & show loading before setting the current location, if needed
+
+        DeliveryLocation currentLocation = getCurrentDeliveryLocation();
+        tvCurrentLocationTitle.setText(currentLocation.title);
+        tvCurrentLocationDescription.setText(currentLocation.description);
+    }
+
+    private void configureLocationHistory() {
+        // TODO: make API request & show loading before setting the list
+
+        deliveryLocationAdapter = new DeliveryLocationAdapter(getDeliveryLocationHistory(), this);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        deliveryLocationHistoryList.setLayoutManager(mLayoutManager);
+        deliveryLocationHistoryList.setAdapter(deliveryLocationAdapter);
+    }
+
+    private DeliveryLocation getCurrentDeliveryLocation() {
+        DeliveryLocation location = new DeliveryLocation();
+        location.title = "Current Location";
+        location.description = "Lorem ipsum";
+        return location;
+    }
+
+    private ArrayList<DeliveryLocation> getDeliveryLocationHistory() {
+        ArrayList<DeliveryLocation> locations = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            DeliveryLocation location = new DeliveryLocation();
+            location.title = "Location #" + (i + 1);
+            location.description = "Lorem ipsum";
+            locations.add(location);
+        }
+        return locations;
+    }
+
+    private void onCurrentLocationClicked() {
+        Log.i("DeliveryLocation", "Current location clicked");
+        // TODO: Open province list
+    }
+
+    @Override
+    public void onItemClick(DeliveryLocation location) {
+        Log.i("DeliveryLocation", "Location selected: " + location.title);
+    }
+}
