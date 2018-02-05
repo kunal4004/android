@@ -1,8 +1,10 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,10 +19,12 @@ import java.util.ArrayList;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocation;
 import za.co.woolworths.financial.services.android.ui.adapters.DeliveryLocationAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
 
 
 public class DeliveryLocationSelectionFragment extends Fragment implements DeliveryLocationAdapter.OnItemClick, View.OnClickListener {
 
+    public DeliveryLocationSelectionFragmentChange deliveryLocationSelectionFragmentChange;
     private RecyclerView deliveryLocationHistoryList;
     private WTextView tvCurrentLocationTitle, tvCurrentLocationDescription;
 
@@ -95,12 +99,36 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
     }
 
     private void onCurrentLocationClicked() {
-        Log.i("DeliveryLocation", "Current location clicked");
-        // TODO: Open province list
+        // Open province list
+        openFragment(new ProvinceSelectionFragment());
     }
 
     @Override
     public void onItemClick(DeliveryLocation location) {
         Log.i("DeliveryLocation", "Location selected: " + location.title);
+    }
+
+    public void openFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+        fragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
+                .replace(R.id.content_frame, fragment).addToBackStack(null).commit();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            deliveryLocationSelectionFragmentChange = (DeliveryLocationSelectionFragmentChange) getActivity();
+        } catch (ClassCastException ex) {
+            Log.e("Interface", ex.toString());
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        deliveryLocationSelectionFragmentChange.onFragmentChanged(getActivity().getResources().getString(R.string.delivery_location), false);
     }
 }

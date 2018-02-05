@@ -9,11 +9,15 @@ import android.view.View;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.fragments.shop.DeliveryLocationSelectionFragment;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
 
-public class DeliveryLocationSelectionActivity extends AppCompatActivity implements View.OnClickListener {
+public class DeliveryLocationSelectionActivity extends AppCompatActivity implements View.OnClickListener, DeliveryLocationSelectionFragmentChange {
 
     private Toolbar toolbar;
+    private WTextView toolbarText;
+    private View btnBack, btnClose;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,8 +26,13 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
         Utils.updateStatusBarBackground(this);
 
         toolbar = findViewById(R.id.toolbar);
+        toolbarText = findViewById(R.id.toolbarText);
 
-        findViewById(R.id.btnClose).setOnClickListener(this);
+        btnClose = findViewById(R.id.btnClose);
+        btnClose.setOnClickListener(this);
+
+        btnBack = findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(this);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -37,6 +46,7 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnClose:
+            case R.id.btnBack:
                 onBackPressed();
                 break;
         }
@@ -52,4 +62,10 @@ public class DeliveryLocationSelectionActivity extends AppCompatActivity impleme
         overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
     }
 
+    @Override
+    public void onFragmentChanged(String title, boolean showBackButton) {
+        toolbarText.setText(title);
+        btnBack.setVisibility(showBackButton ? View.VISIBLE : View.GONE);
+        btnClose.setVisibility(showBackButton ? View.GONE : View.VISIBLE);
+    }
 }
