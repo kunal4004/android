@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -22,10 +23,13 @@ import com.awfs.coordination.databinding.WrewardsLoggedinAndLinkedFragmentBindin
 import za.co.woolworths.financial.services.android.models.WRewardsCardDetails;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
+import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.rest.message.CLIGetMessageResponse;
 import za.co.woolworths.financial.services.android.models.rest.reward.GetVoucher;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
+import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.WRewardsFragmentPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsOverviewFragment;
@@ -105,6 +109,8 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 				}
 			}
 		});
+
+		getMessageResponse().execute();
 	}
 
 	private void setupViewPager(ViewPager viewPager, VoucherResponse voucherResponse, CardDetailsResponse cardResponse) {
@@ -266,5 +272,31 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	@Override
 	public void onDetach() {
 		super.onDetach();
+	}
+
+	private CLIGetMessageResponse getMessageResponse() {
+		return new CLIGetMessageResponse(new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				try {
+					MessageResponse messageResponse = (MessageResponse) object;
+					if (messageResponse.unreadCount > 0) {
+						int unreadCount = messageResponse.unreadCount;
+						if (TextUtils.isEmpty(String.valueOf(unreadCount)))
+							unreadCount = 0;
+						Utils.setBadgeCounter(getActivity(), unreadCount);
+						getBottomNavigator().addBadge(BottomNavigationActivity.INDEX_ACCOUNT, unreadCount);
+					} else {
+						Utils.removeBadgeCounter(getActivity());
+						getBottomNavigator().addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
+					}
+				} catch (Exception ignored) {
+				}
+			}
+
+			@Override
+			public void onFailure(String errorMessage) {
+			}
+		});
 	}
 }

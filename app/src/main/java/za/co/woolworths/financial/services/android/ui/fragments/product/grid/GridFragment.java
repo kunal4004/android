@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,15 +22,13 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.rest.product.LoadProductRequest;
-import za.co.woolworths.financial.services.android.models.rest.product.SearchProductRequest;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel> implements GridNavigator {
+public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel> implements GridNavigator, View.OnClickListener {
 
 	private GridViewModel mGridViewModel;
 	private ErrorHandlerView mErrorHandlerView;
@@ -80,10 +79,10 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		showBackNavigationIcon(true);
 		mProgressLimitStart = getViewDataBinding().incCenteredProgress.progressCreditLimit;
 		mRelLoadMoreProduct = getViewDataBinding().relLoadMoreProduct;
-
+		RelativeLayout relNoConnectionLayout = getViewDataBinding().incNoConnectionHandler.noConnectionLayout;
 		assert getViewDataBinding().incNoConnectionHandler != null;
-		mErrorHandlerView = new ErrorHandlerView(getActivity()
-				, getViewDataBinding().incNoConnectionHandler.noConnectionLayout);
+		mErrorHandlerView = new ErrorHandlerView(getActivity(), relNoConnectionLayout);
+		mErrorHandlerView.setMargin(relNoConnectionLayout, 0, 0, 0, 0);
 		if (isEmpty(mSearchProduct)) {
 			setTitle(mSubCategoryName);
 		} else {
@@ -91,11 +90,17 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		}
 		startProductRequest();
 		onBottomReached();
+		getViewDataBinding().incNoConnectionHandler.btnRetry.setOnClickListener(this);
 	}
 
 	@Override
 	public void onLoadProductSuccess(List<ProductList> productLists, boolean loadMoreData) {
-		if (productLists.size() > 0) {
+		if (productLists.isEmpty()) {
+
+		} else if (productLists.size() == 1) {
+			onGridItemSelected(productLists.get(0));
+			popFragment();
+		} else {
 			setTotalNumberOfItem();
 			if (!loadMoreData) {
 				bindRecyclerViewWithUI(productLists);
@@ -107,26 +112,26 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 
 	@Override
 	public void unhandledResponseCode(Response response) {
-
 	}
 
 	@Override
-	public void failureResponseHandler(String e) {
-		mErrorHandlerView.networkFailureHandler(e);
+	public void failureResponseHandler(final String e) {
+		Activity activity = getBaseActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					mErrorHandlerView.networkFailureHandler(e);
+				}
+			});
+		}
 	}
 
 	@Override
 	public void cancelAPIRequest() {
 		if (mGridViewModel != null) {
-			LoadProductRequest loadProductRequest = mGridViewModel.getLoadProductRequest();
-			if (loadProductRequest != null) {
-				mGridViewModel.cancelRequest(loadProductRequest);
-			}
-
-			SearchProductRequest searchProductRequest = mGridViewModel.getSearchProductRequest();
-			if (searchProductRequest != null) {
-				mGridViewModel.cancelRequest(searchProductRequest);
-			}
+			mGridViewModel.cancelRequest(mGridViewModel.getLoadProductRequest());
+			mGridViewModel.cancelRequest(mGridViewModel.getSearchProductRequest());
 		}
 	}
 
@@ -265,5 +270,17 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 				break;
 		}
 		return false;
+	}
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.btnRetry:
+				if (isNetworkConnected()) {
+					mErrorHandlerView.hideErrorHandler();
+					startProductRequest();
+				}
+				break;
+		}
 	}
 }

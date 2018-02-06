@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.grid;
 
+import android.app.Activity;
 import android.content.Context;
 
 import java.util.List;
@@ -94,7 +95,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
 		return mSearchProductRequest;
 	}
 
-	public LoadProductRequest loadProduct(Context context, final LoadProduct loadProduct) {
+	public LoadProductRequest loadProduct(final Context context, final LoadProduct loadProduct) {
 		getNavigator().onLoadStart(getLoadMoreData());
 		return new LoadProductRequest(context, loadProduct, new OnEventListener() {
 			@Override
@@ -122,9 +123,19 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
 			}
 
 			@Override
-			public void onFailure(String e) {
-				getNavigator().onLoadComplete(getLoadMoreData());
-				getNavigator().failureResponseHandler(e);
+			public void onFailure(final String e) {
+				if (context != null) {
+					Activity activity = (Activity) context;
+					if (activity != null) {
+						activity.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								getNavigator().failureResponseHandler(e);
+								getNavigator().onLoadComplete(getLoadMoreData());
+							}
+						});
+					}
+				}
 			}
 		});
 	}
@@ -164,7 +175,7 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
 		getProductRequestBody().setPageOffset(pageOffset);
 	}
 
-	public SearchProductRequest searchProduct(Context context, final LoadProduct loadProduct) {
+	public SearchProductRequest searchProduct(final Context context, final LoadProduct loadProduct) {
 		getNavigator().onLoadStart(getLoadMoreData());
 		return new SearchProductRequest(context, loadProduct, new OnEventListener() {
 			@Override
@@ -192,9 +203,19 @@ public class GridViewModel extends BaseViewModel<GridNavigator> {
 			}
 
 			@Override
-			public void onFailure(String e) {
-				getNavigator().onLoadComplete(getLoadMoreData());
-				getNavigator().failureResponseHandler(e);
+			public void onFailure(final String e) {
+				if (context != null) {
+					Activity activity = (Activity) context;
+					if (activity != null) {
+						activity.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								getNavigator().failureResponseHandler(e);
+								getNavigator().onLoadComplete(getLoadMoreData());
+							}
+						});
+					}
+				}
 			}
 		});
 	}

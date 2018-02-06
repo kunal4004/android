@@ -6,10 +6,6 @@ import android.view.View;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 
-import java.util.Collections;
-import java.util.List;
-
-import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
@@ -18,9 +14,13 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 public class ProductUtils {
 
 	public static void gridPriceList(WTextView wPrice, WTextView WwasPrice,
-									 String fromPrice, String wasPrice) {
+									 String fromPrice, String wasPrice) throws NumberFormatException,NullPointerException {
 		if (TextUtils.isEmpty(wasPrice)) {
-			wPrice.setText(WFormatter.formatAmount(fromPrice));
+			if (!TextUtils.isEmpty(fromPrice)){
+				wPrice.setText(WFormatter.formatAmount(fromPrice));
+			}else {
+				wPrice.setText("");
+			}
 			WwasPrice.setText("");
 		} else {
 			if (wasPrice.equalsIgnoreCase(fromPrice)) { //wasPrice equals currentPrice
@@ -32,11 +32,6 @@ public class ProductUtils {
 				WwasPrice.setText(WFormatter.formatAmount(fromPrice));
 			}
 		}
-	}
-
-	public static String maxWasPrice(List<OtherSkus> otherSku) {
-		OtherSkus maxWasPrice = Collections.max(otherSku);
-		return maxWasPrice.wasPrice;
 	}
 
 	public static void showPromotionalImages(SimpleDraweeView imSave, SimpleDraweeView imReward,

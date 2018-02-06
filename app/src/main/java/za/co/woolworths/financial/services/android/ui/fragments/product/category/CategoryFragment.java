@@ -9,10 +9,12 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -159,6 +161,13 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+
+		Log.e("resume", "fragmentWasResumed");
+	}
+
+	@Override
 	public void bindCategory(List<RootCategory> rootCategoryList) {
 		if (rootCategoryList != null) {
 			bindViewWithUI(rootCategoryList, getViewDataBinding().llCustomViews);
@@ -174,10 +183,15 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	}
 
 	@Override
-	public void onCategoryItemClicked(RootCategory rootCategory) {
-		if (getBottomNavigator() != null) {
-			getBottomNavigator().pushFragment(getViewModel().enterNextFragment(rootCategory));
-		}
+	public void onCategoryItemClicked(final RootCategory rootCategory) {
+		getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (getBottomNavigator() != null) {
+					getBottomNavigator().pushFragment(getViewModel().enterNextFragment(rootCategory));
+				}
+			}
+		});
 	}
 
 	@Override
@@ -221,8 +235,10 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
 		this.mScrollY = scrollY;
 		if (scrollY < searchContainerHeight()) {
+			getGlobalState().setToolbarIsDisplayed(false);
 			hideProductToolbar();
 		} else {
+			getGlobalState().setToolbarIsDisplayed(true);
 			showProductToolbar();
 		}
 	}
@@ -304,5 +320,21 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 			position++;
 			llAddView.addView(view);
 		}
+	}
+
+	@Override
+	public void onHiddenChanged(final boolean hidden) {
+		super.onHiddenChanged(hidden);
+		Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				if (!hidden) {
+					//do when hidden
+					fadeOutToolbar(R.color.recent_search_bg);
+					showBackNavigationIcon(false);
+				}
+			}
+		}, 10);
 	}
 }

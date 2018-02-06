@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.FragmentLifecycle;
+import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 
 /**

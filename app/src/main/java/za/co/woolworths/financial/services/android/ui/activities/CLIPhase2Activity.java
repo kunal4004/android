@@ -31,11 +31,11 @@ import za.co.woolworths.financial.services.android.ui.fragments.CLIPOIProblemFra
 import za.co.woolworths.financial.services.android.ui.fragments.DocumentFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.OfferCalculationFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.SupplyIncomeDetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragmentChange;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.DeclineOfferInterface;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.binder.ContactUsFragmentChange;
 import za.co.woolworths.financial.services.android.util.controller.CLIStepIndicatorListener;
 import za.co.woolworths.financial.services.android.util.controller.EventStatus;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;

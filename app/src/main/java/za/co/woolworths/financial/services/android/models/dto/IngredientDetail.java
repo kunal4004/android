@@ -3,20 +3,16 @@ package za.co.woolworths.financial.services.android.models.dto;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Ingredient {
+import java.util.List;
 
-    @SerializedName("ingredientQuantity")
-    @Expose
-    public String ingredientQuantity;
-    @SerializedName("ingredientUOM")
-    @Expose
-    public String ingredientUOM;
+public class IngredientDetail {
+
     @SerializedName("displayName")
     @Expose
     public String displayName;
-    @SerializedName("ingredient")
+    @SerializedName("products")
     @Expose
-    public IngredientDetail ingredient;
+    public List<ProductIngredient> products = null;
     @SerializedName("id")
     @Expose
     public String id;

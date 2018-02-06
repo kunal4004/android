@@ -320,7 +320,7 @@
                             app:WTextView_font="myriadpro_regular"/>
 
                         <za.co.woolworths.financial.services.android.ui.views.LoadingDots
-                            android:id="@+id/loadingDots"
+                            android:id="@+id/product_load_dot"
                             android:layout_width="wrap_content"
                             android:layout_height="5dp"
                             android:layout_marginBottom="2dp"
@@ -386,11 +386,12 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/red"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true">
 
             <ImageView
-                android:id="@+id/imCloseProduct"
+                android:id="@+id/imClose"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_marginLeft="@dimen/default_margin"
@@ -456,11 +457,8 @@
                         android:layout_width="35dp"
                         android:layout_height="35dp"
                         android:visibility="gone"/>
-
-
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
     </RelativeLayout>
-
 </layout>

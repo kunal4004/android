@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.base;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
@@ -19,6 +20,8 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -44,7 +47,7 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
+							 Bundle savedInstanceState) {            // Inflate and populate
 		mViewDataBinding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false);
 		mRootView = mViewDataBinding.getRoot();
 		Activity activity = getActivity();
@@ -191,7 +194,9 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public void hideView(View view) {
-		view.setVisibility(View.GONE);
+		if (view != null) {
+			view.setVisibility(View.GONE);
+		}
 	}
 
 	public void slideBottomPanel() {
@@ -219,6 +224,10 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		}
 	}
 
+	public void fadeOutToolbar(int color) {
+		getBottomNavigator().fadeOutToolbar(color);
+	}
+
 	/**
 	 * Overrides the pending Activity transition by performing the "Enter" animation.
 	 */
@@ -239,5 +248,13 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 				httpAsyncTask.cancel(true);
 			}
 		}
+	}
+
+	public void popFragment() {
+		getBottomNavigator().popFragment();
+	}
+
+	public WGlobalState getGlobalState() {
+		return WoolworthsApplication.getInstance().getWGlobalState();
 	}
 }

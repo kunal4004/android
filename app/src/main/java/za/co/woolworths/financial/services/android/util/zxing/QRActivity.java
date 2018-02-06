@@ -74,11 +74,11 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
-import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
@@ -86,11 +86,10 @@ import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.EnterBarcodeActivity;
-import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailNavigator;
 import za.co.woolworths.financial.services.android.ui.views.LoadingDots;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -104,7 +103,6 @@ import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
@@ -112,7 +110,7 @@ import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecorat
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class QRActivity extends Activity<QRModel> implements View.OnClickListener, SelectedProductView, ProductViewPagerAdapter.MultipleImageInterface, PermissionResultCallback {
+public class QRActivity extends Activity<QRModel> implements View.OnClickListener, SelectedProductView, ProductViewPagerAdapter.MultipleImageInterface, PermissionResultCallback, DetailNavigator {
 
 	public final int IMAGE_QUALITY = 85;
 	public static final int CODE_PICK_IMAGE = 0x100;
@@ -130,14 +128,14 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	private WTextView mTextPrice;
 	private LinearLayout llColorSizeContainer;
 	private WTextView mProductCode;
-	private List<OtherSku> mOtherSKU;
+	private List<OtherSkus> mOtherSKU;
 	private WTextView mTextSelectColor;
 	private PopupWindow mPColourWindow;
 	private PopupWindow mPSizeWindow;
 	private boolean productIsColored = false;
-	private ArrayList<OtherSku> uniqueColorList;
+	private ArrayList<OtherSkus> uniqueColorList;
 	public RecyclerView mColorRecycleSize;
-	public ArrayList<OtherSku> uniqueSizeList;
+	public ArrayList<OtherSkus> uniqueSizeList;
 	public ViewPager mViewPagerProduct;
 	public ImageView mImCloseProduct;
 	public RelativeLayout mLinSize;
@@ -195,8 +193,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	private boolean mProductHasSize;
 	private boolean mProductHasOneColour;
 	private boolean mProductHasOneSize;
-	private ArrayList<OtherSku> mSizePopUpList;
-	private OtherSku mDefaultSKUModel;
+	private ArrayList<OtherSkus> mSizePopUpList;
+	private OtherSkus mDefaultSKUModel;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -319,7 +317,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mTextInfo = (TextView) findViewById(R.id.textInfo);
 		llStoreFinder = (LinearLayout) findViewById(R.id.llStoreFinder);
 		llStoreFinder.setOnClickListener(this);
-		LoadingDots mLoadingDot = (LoadingDots) findViewById(R.id.loadingDots);
+		LoadingDots mLoadingDot = (LoadingDots) findViewById(R.id.product_load_dot);
 		llLoadingColorSize = (LinearLayout) findViewById(R.id.llLoadingColorSize);
 		loadingColorDivider = findViewById(R.id.loadingColorDivider);
 		tvBtnFinder = (WTextView) findViewById(R.id.tvBtnFinder);
@@ -501,7 +499,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 						= (LayoutInflater) getBaseContext()
 						.getSystemService(LAYOUT_INFLATER_SERVICE);
 				View mPopWindow = mSlideUpPanelLayoutInflater.inflate(R.layout.product_size_row, null);
-				mColorRecycleSize = (RecyclerView) mPopWindow.findViewById(R.id.recyclerviewSize);
+				mColorRecycleSize = (RecyclerView) mPopWindow.findViewById(R.id.rclSize);
 				bindWithUI(mOtherSKU, true);
 				mPColourWindow = new PopupWindow(
 						mPopWindow,
@@ -530,7 +528,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 						= (LayoutInflater) getBaseContext()
 						.getSystemService(LAYOUT_INFLATER_SERVICE);
 				View popupView = layoutInflater.inflate(R.layout.product_size_row, null);
-				mRecyclerviewSize = (RecyclerView) popupView.findViewById(R.id.recyclerviewSize);
+				mRecyclerviewSize = (RecyclerView) popupView.findViewById(R.id.rclSize);
 				LinearLayout mPopLinContainer = (LinearLayout) popupView.findViewById(R.id.linPopUpContainer);
 
 				String selectedColor = mTextColour.getText().toString();
@@ -553,7 +551,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 
 				break;
 
-			case R.id.imCloseProduct:
+			case R.id.imClose:
 				if (mPanelState == SlidingUpPanelLayout.PanelState.EXPANDED) {
 					mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
 				} else {
@@ -738,7 +736,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mLinSize = (RelativeLayout) findViewById(R.id.linSize);
 		mBtnShopOnlineWoolies = (WButton) findViewById(R.id.btnShopOnlineWoolies);
 		ImageView mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
-		mImCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
+		mImCloseProduct = (ImageView) findViewById(R.id.imClose);
 		mImSelectedColor = (SimpleDraweeView) findViewById(R.id.imSelectedColor);
 		mLlPagerDots = (LinearLayout) findViewById(R.id.pager_dots);
 		ImageView mImColorArrow = (ImageView) findViewById(R.id.imColorArrow);
@@ -879,7 +877,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 				if (TextUtils.isEmpty(wasPrice)) {
 					if (Utils.isLocationEnabled(QRActivity.this)) {
 						ArrayList<Double> priceList = new ArrayList<>();
-						for (OtherSku os : mObjProductDetail.otherSkus) {
+						for (OtherSkus os : mObjProductDetail.otherSkus) {
 							if (!TextUtils.isEmpty(os.price)) {
 								priceList.add(Double.valueOf(os.price));
 							}
@@ -894,7 +892,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 				} else {
 					if (Utils.isLocationEnabled(QRActivity.this)) {
 						ArrayList<Double> priceList = new ArrayList<>();
-						for (OtherSku os : mObjProductDetail.otherSkus) {
+						for (OtherSkus os : mObjProductDetail.otherSkus) {
 							if (!TextUtils.isEmpty(os.price)) {
 								priceList.add(Double.valueOf(os.price));
 							}
@@ -938,7 +936,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		retrieveJson(colour);
 	}
 
-	protected void setIngredients(String ingredients) {
+	public void setIngredients(String ingredients) {
 		if (TextUtils.isEmpty(ingredients)) {
 			mLinIngredient.setVisibility(View.GONE);
 			ingredientLine.setVisibility(View.GONE);
@@ -949,8 +947,73 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		}
 	}
 
+	@Override
+	public void setProductCode(String productCode) {
+
+	}
+
+	@Override
+	public void setProductDescription(String productDescription) {
+
+	}
+
+	@Override
+	public void setSelectedSize(OtherSkus size) {
+
+	}
+
+	@Override
+	public void setPrice(OtherSkus otherSkus) {
+
+	}
+
+	@Override
+	public void setAuxiliaryImages(ArrayList<String> auxiliaryImages) {
+
+	}
+
+	@Override
+	public void setSelectedTextColor(OtherSkus otherSkus) {
+
+	}
+
+	@Override
+	public void removeAllDots() {
+
+	}
+
+	@Override
+	public void setupPagerIndicatorDots(int size) {
+
+	}
+
+	@Override
+	public void colorSizeContainerVisibility(int size) {
+
+	}
+
+	@Override
+	public void setColorList(List<OtherSkus> skuList) {
+
+	}
+
+	@Override
+	public void setSizeList(List<OtherSkus> skuList) {
+
+	}
+
+	@Override
+	public void onSizeItemClicked(OtherSkus otherSkus) {
+
+	}
+
+	@Override
+	public void onColourItemClicked(OtherSkus otherSkus) {
+
+	}
+
 	protected void colorParams(int position) {
-		OtherSku otherSku = uniqueColorList.get(position);
+		OtherSkus otherSku = uniqueColorList.get(position);
 		String colour = otherSku.colour;
 		String defaultUrl = otherSku.externalColourRef;
 		if (TextUtils.isEmpty(colour)) {
@@ -980,8 +1043,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	public String getSkuExternalImageRef(String colour) {
 		if (mOtherSKU != null) {
 			if (mOtherSKU.size() > 0) {
-				List<OtherSku> otherSku = mOtherSKU;
-				for (OtherSku sku : otherSku) {
+				List<OtherSkus> otherSku = mOtherSKU;
+				for (OtherSkus sku : otherSku) {
 					if (sku.colour.equalsIgnoreCase(colour)) {
 						return getImageByWidth(sku.externalImageRef);
 					}
@@ -994,8 +1057,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	public void getSKUDefaultSize(String colour) {
 		if (mOtherSKU != null) {
 			if (mOtherSKU.size() > 0) {
-				List<OtherSku> otherSku = mOtherSKU;
-				for (OtherSku sku : otherSku) {
+				List<OtherSkus> otherSku = mOtherSKU;
+				for (OtherSkus sku : otherSku) {
 					if (sku.colour.equalsIgnoreCase(colour)) {
 						if (!TextUtils.isEmpty(sku.size))
 							setSelectedTextSize(sku.size);
@@ -1120,7 +1183,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 				}
 			}
 			if (mSizePopUpList != null) {
-				OtherSku otherSku = mSizePopUpList.get(position);
+				OtherSkus otherSku = mSizePopUpList.get(position);
 				mDefaultSKUModel = otherSku;
 				String selectedSize = otherSku.size;
 				mTextSelectSize.setText(selectedSize);
@@ -1139,7 +1202,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		}
 	}
 
-	protected void bindWithUI(List<OtherSku> otherSkus, boolean productIsColored) {
+	protected void bindWithUI(List<OtherSkus> otherSkus, boolean productIsColored) {
 		this.productIsColored = productIsColored;
 		LinearLayoutManager mSlideUpPanelLayoutManager = new LinearLayoutManager(this);
 		ProductSizeAdapter productSizeAdapter;
@@ -1270,8 +1333,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		}
 	}
 
-	private boolean colourValueExist(ArrayList<OtherSku> list, String name) {
-		for (OtherSku item : list) {
+	private boolean colourValueExist(ArrayList<OtherSkus> list, String name) {
+		for (OtherSkus item : list) {
 			if (item.colour.equals(name)) {
 				return true;
 			}
@@ -1279,8 +1342,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		return false;
 	}
 
-	private boolean sizeValueExist(ArrayList<OtherSku> list, String name) {
-		for (OtherSku item : list) {
+	private boolean sizeValueExist(ArrayList<OtherSkus> list, String name) {
+		for (OtherSkus item : list) {
 			if (item.size.equals(name)) {
 				return true;
 			}
@@ -1309,8 +1372,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		return imageUrl + "?w=" + width + "&q=" + IMAGE_QUALITY;
 	}
 
-	protected void getDefaultColor(List<OtherSku> otherSkus, String skuId) {
-		for (OtherSku otherSku : otherSkus) {
+	protected void getDefaultColor(List<OtherSkus> otherSkus, String skuId) {
+		for (OtherSkus otherSku : otherSkus) {
 			if (skuId.equalsIgnoreCase(otherSku.sku)) {
 				mDefaultColor = otherSku.colour;
 				mDefaultSKUModel = otherSku;
@@ -1345,7 +1408,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		String price = "";
 		if (mOtherSKU != null) {
 			if (mOtherSKU.size() > 0) {
-				for (OtherSku option : mOtherSKU) {
+				for (OtherSkus option : mOtherSKU) {
 					if (colour.equalsIgnoreCase(option.colour) &&
 							size.equalsIgnoreCase(option.size)) {
 						return option.price;
@@ -1360,7 +1423,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		String wasPrice = "";
 		if (mOtherSKU != null) {
 			if (mOtherSKU.size() > 0) {
-				for (OtherSku option : mOtherSKU) {
+				for (OtherSkus option : mOtherSKU) {
 					if (colour.equalsIgnoreCase(option.colour) &&
 							size.equalsIgnoreCase(option.size)) {
 						return option.wasPrice;
@@ -1375,14 +1438,14 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	public String highestSKUWasPrice() {
 		String wasPrice = "";
 		ArrayList<Double> priceList = new ArrayList<>();
-		for (OtherSku os : mObjProductDetail.otherSkus) {
+		for (OtherSkus os : mObjProductDetail.otherSkus) {
 			if (!TextUtils.isEmpty(os.wasPrice)) {
 				priceList.add(Double.valueOf(os.wasPrice));
 			}
 		}
 		if (priceList.size() > 0) {
 			wasPrice = String.valueOf(Collections.max(priceList));
-			for (OtherSku os : mObjProductDetail.otherSkus) {
+			for (OtherSkus os : mObjProductDetail.otherSkus) {
 				if (wasPrice.equalsIgnoreCase(os.wasPrice)) {
 					setSelectedTextSize(os.size);
 				}
@@ -1395,14 +1458,14 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	public String highestSKUPrice() {
 		String price = "";
 		ArrayList<Double> priceList = new ArrayList<>();
-		for (OtherSku os : mObjProductDetail.otherSkus) {
+		for (OtherSkus os : mObjProductDetail.otherSkus) {
 			if (!TextUtils.isEmpty(os.price)) {
 				priceList.add(Double.valueOf(os.price));
 			}
 		}
 		if (priceList.size() > 0) {
 			price = String.valueOf(Collections.max(priceList));
-			for (OtherSku os : mObjProductDetail.otherSkus) {
+			for (OtherSkus os : mObjProductDetail.otherSkus) {
 				if (price.equalsIgnoreCase(os.price)) {
 					setSelectedTextSize(os.size);
 				}
@@ -1410,15 +1473,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 			return price;
 		}
 		return price;
-	}
-
-	@Override
-	public void SelectedImage(int position, View view) {
-		Intent openMultipleImage = new Intent(this, MultipleImageActivity.class);
-		openMultipleImage.putExtra("position", position);
-		openMultipleImage.putExtra("auxiliaryImages", mAuxiliaryImages);
-		startActivity(openMultipleImage);
-		overridePendingTransition(0, 0);
 	}
 
 	@Override
@@ -1508,9 +1562,84 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		startLocationUpdates();
 	}
 
-	private void disableStoreFinder() {
+	@Override
+	public void renderView() {
+
+	}
+
+	@Override
+	public void closeView(View view) {
+
+	}
+
+	@Override
+	public void nestedScrollViewHelper() {
+
+	}
+
+	@Override
+	public void setUpImageViewPager() {
+
+	}
+
+	@Override
+	public void defaultProduct() {
+
+	}
+
+	@Override
+	public void setProductName() {
+
+	}
+
+	@Override
+	public void onLoadStart() {
+
+	}
+
+	@Override
+	public void onLoadComplete() {
+
+	}
+
+	@Override
+	public void addToShoppingList() {
+
+	}
+
+	@Override
+	public String getImageByWidth(String imageUrl, Context context) {
+		return null;
+	}
+
+	@Override
+	public List<String> getAuxiliaryImage() {
+		return null;
+	}
+
+	@Override
+	public void onSuccessResponse(WProduct strProduct) {
+
+	}
+
+	@Override
+	public void onFailureResponse(String s) {
+
+	}
+
+	public void disableStoreFinder() {
 		setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
 		llStoreFinder.setVisibility(View.GONE);
+	}
+
+	@Override
+	public void responseFailureHandler(Response response) {
+
+	}
+
+	@Override
+	public void enableFindInStoreButton(WProductDetail productList) {
+
 	}
 
 	private void productIsActive(WProductDetail productList) {
@@ -1530,16 +1659,16 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		return new Gson().toJson(jsonObject);
 	}
 
-	private ArrayList<OtherSku> getColorList() {
-		Collections.sort(mOtherSKU, new Comparator<OtherSku>() {
+	private ArrayList<OtherSkus> getColorList() {
+		Collections.sort(mOtherSKU, new Comparator<OtherSkus>() {
 			@Override
-			public int compare(OtherSku lhs, OtherSku rhs) {
+			public int compare(OtherSkus lhs, OtherSkus rhs) {
 				return lhs.colour.compareToIgnoreCase(rhs.colour);
 			}
 		});
 
-		ArrayList<OtherSku> commonColorSku = new ArrayList<>();
-		for (OtherSku sku : mOtherSKU) {
+		ArrayList<OtherSkus> commonColorSku = new ArrayList<>();
+		for (OtherSkus sku : mOtherSKU) {
 			if (!colourValueExist(commonColorSku, sku.colour)) {
 				commonColorSku.add(sku);
 			}
@@ -1547,16 +1676,16 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		return commonColorSku;
 	}
 
-	private ArrayList<OtherSku> getSizeList() {
-		Collections.sort(mOtherSKU, new Comparator<OtherSku>() {
+	private ArrayList<OtherSkus> getSizeList() {
+		Collections.sort(mOtherSKU, new Comparator<OtherSkus>() {
 			@Override
-			public int compare(OtherSku lhs, OtherSku rhs) {
+			public int compare(OtherSkus lhs, OtherSkus rhs) {
 				return lhs.size.compareToIgnoreCase(rhs.size);
 			}
 		});
 
-		ArrayList<OtherSku> commonColorSku = new ArrayList<>();
-		for (OtherSku sku : mOtherSKU) {
+		ArrayList<OtherSkus> commonColorSku = new ArrayList<>();
+		for (OtherSkus sku : mOtherSKU) {
 			if (!colourValueExist(commonColorSku, sku.size)) {
 				commonColorSku.add(sku);
 			}
@@ -1588,7 +1717,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 			if (mProductHasOneColour) {
 				// one colour only
 				String skuColour = getColorList().get(0).colour;
-				ArrayList<OtherSku> getSize;
+				ArrayList<OtherSkus> getSize;
 				if (!TextUtils.isEmpty(skuColour)) {
 					getSize = Utils.commonSizeList(skuColour, productHasColour(), mOtherSKU);
 
@@ -1613,7 +1742,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		} else {
 			if (mProductHasSize) {
 				if (mProductHasOneSize) { //one size
-					ArrayList<OtherSku> getSize = getSizeList();
+					ArrayList<OtherSkus> getSize = getSizeList();
 					mSkuId = getSize.get(0).sku;
 					noSizeColorIntent();
 				} else { // more sizes
@@ -1640,8 +1769,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 			boolean colorWasPopUp = mGlobalState.colorWasPopup();
 			boolean sizeWasPopUp = mGlobalState.sizeWasPopup();
 
-			OtherSku popupColorSKu = mGlobalState.getColorPickerSku();
-			OtherSku popupSizeSKu = mGlobalState.getSizePickerSku();
+			OtherSkus popupColorSKu = mGlobalState.getColorPickerSku();
+			OtherSkus popupSizeSKu = mGlobalState.getSizePickerSku();
 
 			/*
 			color | size
@@ -1704,7 +1833,7 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		LocalBroadcastManager.getInstance(QRActivity.this).unregisterReceiver(mLocationUpdated);
 	}
 
-	private void showFindInStoreProgress() {
+	public void showFindInStoreProgress() {
 		llStoreFinder.setEnabled(false);
 		tvBtnFinder.setVisibility(View.GONE);
 		mButtonProgress.getIndeterminateDrawable().setColorFilter(Color.WHITE,
@@ -1712,10 +1841,25 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mButtonProgress.setVisibility(View.VISIBLE);
 	}
 
-	private void dismissFindInStoreProgress() {
+	public void dismissFindInStoreProgress() {
 		llStoreFinder.setEnabled(true);
 		tvBtnFinder.setVisibility(View.VISIBLE);
 		mButtonProgress.setVisibility(View.GONE);
+	}
+
+	@Override
+	public void onLocationItemSuccess(List<StoreDetails> location) {
+
+	}
+
+	@Override
+	public void noStockAvailable() {
+
+	}
+
+	@Override
+	public void onPermissionGranted() {
+
 	}
 
 	private BroadcastReceiver mLocationUpdated = new BroadcastReceiver() {
@@ -1734,45 +1878,6 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	};
 
 	private void callbackInStoreFinder() {
-		locationItemTask = new LocationItemTask(QRActivity.this, new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				if (object != null) {
-					List<StoreDetails> location = ((LocationResponse) object).Locations;
-					if (location != null && location.size() > 0) {
-						Utils.removeObjectFromArrayList(QRActivity.this, location);
-						if (location.size() > 0) {
-
-							mGlobalState.setStoreDetailsArrayList(location);
-							Intent intentInStoreFinder = new Intent(QRActivity.this, WStockFinderActivity.class);
-							intentInStoreFinder.putExtra("PRODUCT_NAME", mObjProductDetail.productName);
-							startActivity(intentInStoreFinder);
-							overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-						} else {
-							Utils.displayValidationMessage(QRActivity.this, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
-						}
-					} else {
-						//no stock error message
-						Utils.displayValidationMessage(QRActivity.this, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
-					}
-				}
-				dismissFindInStoreProgress();
-			}
-
-			@Override
-			public void onFailure(final String e) {
-				QRActivity.this.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						dismissFindInStoreProgress();
-						Log.e("callbackInStoreFinder", "error " + e);
-						if (e.contains("Connect")) {
-							//mErrorHandlerView.showToast();
-						}
-					}
-				});
-			}
-		});
 		locationItemTask.execute();
 	}
 
@@ -1786,8 +1891,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	}
 
 
-	private void displayColor(OtherSku otherSku) {
-		ArrayList<OtherSku> colorList = commonColorList(otherSku.size);
+	private void displayColor(OtherSkus otherSku) {
+		ArrayList<OtherSkus> colorList = commonColorList(otherSku.size);
 		if (colorList != null) {
 			int colorListSize = colorList.size();
 			if (colorListSize > 0) {
@@ -1811,8 +1916,8 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		}
 	}
 
-	private void sizeOnlyIntent(OtherSku otherSku) {
-		ArrayList<OtherSku> sizeList = Utils.commonSizeList(otherSku.colour, productHasColour(), mOtherSKU);
+	private void sizeOnlyIntent(OtherSkus otherSku) {
+		ArrayList<OtherSkus> sizeList = Utils.commonSizeList(otherSku.colour, productHasColour(), mOtherSKU);
 		int sizeListSize = sizeList.size();
 		if (sizeListSize > 0) {
 			if (sizeListSize == 1) {
@@ -1831,28 +1936,28 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 	}
 
 
-	private ArrayList<OtherSku> commonColorList(String size) {
-		List<OtherSku> otherSkus = mOtherSKU;
-		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+	private ArrayList<OtherSkus> commonColorList(String size) {
+		List<OtherSkus> otherSkus = mOtherSKU;
+		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
 
 		if (productHasColour()) { //product has color
 			// filter by colour
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : otherSkus) {
+			ArrayList<OtherSkus> sizeList = new ArrayList<>();
+			for (OtherSkus sku : otherSkus) {
 				if (sku.size.equalsIgnoreCase(size)) {
 					sizeList.add(sku);
 				}
 			}
 
 			//remove duplicates
-			for (OtherSku os : sizeList) {
+			for (OtherSkus os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.colour)) {
 					commonSizeList.add(os);
 				}
 			}
 		} else { // no color found
 			//remove duplicates
-			for (OtherSku os : otherSkus) {
+			for (OtherSkus os : otherSkus) {
 				if (!sizeValueExist(commonSizeList, os.size)) {
 					commonSizeList.add(os);
 				}
@@ -1867,18 +1972,18 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		mGlobalState.setSizeWasPopup(false);
 	}
 
-	public ArrayList<OtherSku> sizePopUpList(String colour) {
-		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+	public ArrayList<OtherSkus> sizePopUpList(String colour) {
+		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
 		if (mOtherSKU != null) {
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : mOtherSKU) {
+			ArrayList<OtherSkus> sizeList = new ArrayList<>();
+			for (OtherSkus sku : mOtherSKU) {
 				if (sku.colour.equalsIgnoreCase(colour)) {
 					sizeList.add(sku);
 				}
 			}
 
 			//remove duplicates
-			for (OtherSku os : sizeList) {
+			for (OtherSkus os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.size)) {
 					commonSizeList.add(os);
 				}
@@ -1887,24 +1992,29 @@ public class QRActivity extends Activity<QRModel> implements View.OnClickListene
 		return commonSizeList;
 	}
 
-	public ArrayList<OtherSku> commonColorList(OtherSku otherSku) {
-		List<OtherSku> otherSkus = mObjProductDetail.otherSkus;
-		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+	public ArrayList<OtherSkus> commonColorList(OtherSkus otherSku) {
+		List<OtherSkus> otherSkus = mObjProductDetail.otherSkus;
+		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
 
 		// filter by colour
-		ArrayList<OtherSku> sizeList = new ArrayList<>();
-		for (OtherSku sku : otherSkus) {
+		ArrayList<OtherSkus> sizeList = new ArrayList<>();
+		for (OtherSkus sku : otherSkus) {
 			if (sku.size.equalsIgnoreCase(otherSku.size)) {
 				sizeList.add(sku);
 			}
 		}
 
 		//remove duplicates
-		for (OtherSku os : sizeList) {
+		for (OtherSkus os : sizeList) {
 			if (!sizeValueExist(commonSizeList, os.colour)) {
 				commonSizeList.add(os);
 			}
 		}
 		return commonSizeList;
+	}
+
+	@Override
+	public void SelectedImage(String otherSkus) {
+
 	}
 }

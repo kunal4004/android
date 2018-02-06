@@ -5,6 +5,8 @@ import android.databinding.ObservableBoolean;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import com.awfs.coordination.R;
+
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
@@ -12,6 +14,7 @@ import za.co.woolworths.financial.services.android.models.rest.product.ProductSu
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.frag_nav.FragNavTransactionOptions;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
 public class SubCategoryViewModel extends BaseViewModel<SubCategoryNavigator> {

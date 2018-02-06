@@ -27,7 +27,7 @@
             android:imeOptions="actionDone"
             android:inputType="textNoSuggestions"
             android:maxLength="100"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textColorHint="@color/product_search_hint"
             android:textCursorDrawable="@drawable/cursor_custom_color"
             android:textSize="16sp"

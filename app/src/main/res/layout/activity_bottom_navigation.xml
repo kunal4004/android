@@ -35,6 +35,7 @@
                 android:id="@+id/frag_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/horizontal_drw"
                 android:layout_above="@+id/wBottomNavigation"
                 android:layout_alignParentTop="true"
                 android:layout_below="@+id/incToolbar"
@@ -46,8 +47,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:background="@color/white"
                 app:elevation="0dp"
+                android:background="@color/white"
                 app:itemIconTint="@color/selector_item_gray_color"
                 app:itemTextColor="@color/selector_item_gray_color"
                 app:menu="@menu/menu_navigation"/>

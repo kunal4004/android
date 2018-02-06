@@ -23,9 +23,8 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.faq.detail.FAQDetailFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.binder.view.FAQTypeBinder;
 
-public class FAQFragment extends BaseFragment<FaqFragmentBinding, FAQViewModel> implements FAQNavigator, FAQTypeBinder.SelectedQuestion {
+public class FAQFragment extends BaseFragment<FaqFragmentBinding, FAQViewModel> implements FAQNavigator, FAQAdapter.SelectedQuestion {
 
 	private FAQViewModel faqViewModel;
 	private FAQRequest mFAQRequest;
@@ -96,7 +95,6 @@ public class FAQFragment extends BaseFragment<FaqFragmentBinding, FAQViewModel> 
 				getViewDataBinding().faqList.setLayoutManager(mLayoutManager);
 				getViewDataBinding().faqList.setNestedScrollingEnabled(false);
 				getViewDataBinding().faqList.setAdapter(mFAQAdapter);
-				mFAQAdapter.setCLIContent();
 				getViewDataBinding().textNotFound.setVisibility(View.GONE);
 				getViewDataBinding().faqList.setVisibility(View.VISIBLE);
 			} else {

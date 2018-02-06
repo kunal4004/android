@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -33,7 +34,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -41,16 +41,19 @@ import java.util.Set;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
+import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductColorAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailNavigator;
 import za.co.woolworths.financial.services.android.ui.views.LoadingDots;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -64,7 +67,7 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class WProductDetailActivity extends AppCompatActivity implements
 		SelectedProductView,
-		ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener {
+		ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, DetailNavigator {
 
 	public WTextView mTextSelectSize;
 	public RecyclerView mRecyclerviewSize;
@@ -73,14 +76,14 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	private WTextView mTextPrice;
 	private LinearLayout llColorSizeContainer;
 	private WTextView mProductCode;
-	public List<OtherSku> otherSkusList;
+	public List<OtherSkus> otherSkusList;
 	public WTextView mTextSelectColor;
 	public PopupWindow mPColourWindow;
 	public PopupWindow mPSizeWindow;
 	private boolean productIsColored = true;
-	private ArrayList<OtherSku> uniqueColorList;
+	private ArrayList<OtherSkus> uniqueColorList;
 	public RecyclerView mColorRecycleSize;
-	public ArrayList<OtherSku> uniqueSizeList;
+	public ArrayList<OtherSkus> uniqueSizeList;
 	public ViewPager mViewPagerProduct;
 	public ImageView mImCloseProduct;
 	public RelativeLayout mLinSize;
@@ -117,7 +120,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	private ProgressBar mSizeProgressBar;
 	private ProductViewPagerAdapter mProductViewPagerAdapter;
 	private String currentSKUId;
-	private OtherSku mDefaultSKUModel;
+	private OtherSkus mDefaultSKUModel;
 	private ImageView mImColorArrow;
 	private ImageView mColorArrow;
 	private WTextView mTextProductSize;
@@ -127,7 +130,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	public View loadingColorDivider;
 	private RelativeLayout mLinColor;
 	private WGlobalState mGlobalState;
-	public ArrayList<OtherSku> mSizePopUpList;
+	public ArrayList<OtherSkus> mSizePopUpList;
 
 	protected void initProductDetailUI() {
 		mGlobalState = ((WoolworthsApplication) WProductDetailActivity.this.getApplication()).getWGlobalState();
@@ -152,7 +155,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		mBtnAddShoppingList = (WButton) findViewById(R.id.btnAddShoppingList);
 		mBtnShopOnlineWoolies = (WButton) findViewById(R.id.btnShopOnlineWoolies);
 		mColorArrow = (ImageView) findViewById(R.id.mColorArrow);
-		mImCloseProduct = (ImageView) findViewById(R.id.imCloseProduct);
+		mImCloseProduct = (ImageView) findViewById(R.id.imClose);
 		mImSelectedColor = (SimpleDraweeView) findViewById(R.id.imSelectedColor);
 		mLlPagerDots = (LinearLayout) findViewById(R.id.pager_dots);
 		llLoadingColorSize = (LinearLayout) findViewById(R.id.llLoadingColorSize);
@@ -164,7 +167,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		mImSave = (SimpleDraweeView) findViewById(R.id.imSave);
 		mImReward = (SimpleDraweeView) findViewById(R.id.imReward);
 		mVitalityView = (SimpleDraweeView) findViewById(R.id.imVitality);
-		mLoadingDot = (LoadingDots) findViewById(R.id.loadingDots);
+		mLoadingDot = (LoadingDots) findViewById(R.id.product_load_dot);
 		mTextSelectColor.setOnClickListener(this);
 		mTextSelectSize.setOnClickListener(this);
 		mImColorArrow.setOnClickListener(this);
@@ -316,7 +319,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		});
 	}
 
-	protected void setIngredients(String ingredients) {
+	public void setIngredients(String ingredients) {
 		if (TextUtils.isEmpty(ingredients)) {
 			mLinIngredient.setVisibility(View.GONE);
 			ingredientLine.setVisibility(View.GONE);
@@ -327,9 +330,109 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		}
 	}
 
+	@Override
+	public void setProductCode(String productCode) {
+
+	}
+
+	@Override
+	public void setProductDescription(String productDescription) {
+
+	}
+
+	@Override
+	public void setSelectedSize(OtherSkus size) {
+
+	}
+
+	@Override
+	public void setPrice(OtherSkus otherSkus) {
+
+	}
+
+	@Override
+	public void setAuxiliaryImages(ArrayList<String> auxiliaryImages) {
+
+	}
+
+	@Override
+	public void setSelectedTextColor(OtherSkus otherSkus) {
+
+	}
+
+	@Override
+	public void removeAllDots() {
+
+	}
+
+	@Override
+	public void setupPagerIndicatorDots(int size) {
+
+	}
+
+	@Override
+	public void colorSizeContainerVisibility(int size) {
+
+	}
+
+	@Override
+	public void setColorList(List<OtherSkus> skuList) {
+
+	}
+
+	@Override
+	public void setSizeList(List<OtherSkus> skuList) {
+
+	}
+
+	@Override
+	public void onSizeItemClicked(OtherSkus otherSkus) {
+
+	}
+
+	@Override
+	public void onColourItemClicked(OtherSkus otherSkus) {
+
+	}
+
+	@Override
+	public void startLocationUpdates() {
+
+	}
+
+	@Override
+	public void stopLocationUpdate() {
+
+	}
+
+	@Override
+	public void showFindInStoreProgress() {
+
+	}
+
+	@Override
+	public void dismissFindInStoreProgress() {
+
+	}
+
+	@Override
+	public void onLocationItemSuccess(List<StoreDetails> location) {
+
+	}
+
+	@Override
+	public void noStockAvailable() {
+
+	}
+
+	@Override
+	public void onPermissionGranted() {
+
+	}
+
 	protected void colorParams(int position) {
 		mPosition = position;
-		OtherSku otherSku = uniqueColorList.get(position);
+		OtherSkus otherSku = uniqueColorList.get(position);
 		String colour = otherSku.colour;
 		String defaultUrl = otherSku.externalColourRef;
 		if (TextUtils.isEmpty(colour)) {
@@ -460,7 +563,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 				}
 			}
 			if (mSizePopUpList.size() > 0) {
-				OtherSku otherSku = mSizePopUpList.get(position);
+				OtherSkus otherSku = mSizePopUpList.get(position);
 				mDefaultSKUModel = otherSku;
 				String selectedSize = otherSku.size;
 				mTextSelectSize.setText(selectedSize);
@@ -479,25 +582,11 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		}
 	}
 
-	protected void bindWithUI(List<OtherSku> otherSkus, boolean productIsColored) {
+	protected void bindWithUI(List<OtherSkus> otherSkus, boolean productIsColored) {
 		this.productIsColored = productIsColored;
 		LinearLayoutManager mSlideUpPanelLayoutManager = new LinearLayoutManager(this);
 		mSlideUpPanelLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		if (!productIsColored) {
-			//sort ascending
-			Collections.sort(otherSkus, new Comparator<OtherSku>() {
-				@Override
-				public int compare(OtherSku lhs, OtherSku rhs) {
-					return lhs.size.compareToIgnoreCase(rhs.size);
-				}
-			});
-			//remove duplicates
-			uniqueSizeList = new ArrayList<>();
-			for (OtherSku os : otherSkus) {
-				if (!sizeValueExist(uniqueSizeList, os.size)) {
-					uniqueSizeList.add(os);
-				}
-			}
 			mProductSizeAdapter = new ProductSizeAdapter(uniqueSizeList, this);
 			mRecyclerviewSize.addItemDecoration(new SimpleDividerItemDecoration(this));
 			mRecyclerviewSize.setLayoutManager(new LinearLayoutManager(this));
@@ -773,17 +862,17 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		}
 	}
 
-	public OtherSku getDefaultSKUModel() {
+	public OtherSkus getDefaultSKUModel() {
 		if (otherSkusList != null) {
 			if (otherSkusList.size() > 0) {
-				for (OtherSku option : otherSkusList) {
+				for (OtherSkus option : otherSkusList) {
 					if (option.sku.equalsIgnoreCase(currentSKUId)) {
 						return option;
 					}
 				}
 			}
 		}
-		return new OtherSku();
+		return new OtherSkus();
 	}
 
 	public void updateHeroImage() {
@@ -885,8 +974,8 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	public String getSkuExternalImageRef(String colour) {
 		if (otherSkusList != null) {
 			if (otherSkusList.size() > 0) {
-				List<OtherSku> otherSku = otherSkusList;
-				for (OtherSku sku : otherSku) {
+				List<OtherSkus> otherSku = otherSkusList;
+				for (OtherSkus sku : otherSku) {
 					if (sku.colour.equalsIgnoreCase(colour)) {
 						return getImageByWidth(sku.externalImageRef);
 					}
@@ -899,8 +988,8 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	public void getSKUDefaultSize(String colour) {
 		if (otherSkusList != null) {
 			if (otherSkusList.size() > 0) {
-				List<OtherSku> otherSku = otherSkusList;
-				for (OtherSku sku : otherSku) {
+				List<OtherSkus> otherSku = otherSkusList;
+				for (OtherSkus sku : otherSku) {
 					if (sku.colour.equalsIgnoreCase(colour)) {
 						if (!TextUtils.isEmpty(sku.size))
 							setSelectedTextSize(sku.size);
@@ -913,18 +1002,18 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		}
 	}
 
-	public ArrayList<OtherSku> sizePopUpList(String colour) {
-		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+	public ArrayList<OtherSkus> sizePopUpList(String colour) {
+		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
 		if (otherSkusList != null) {
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : otherSkusList) {
+			ArrayList<OtherSkus> sizeList = new ArrayList<>();
+			for (OtherSkus sku : otherSkusList) {
 				if (sku.colour.equalsIgnoreCase(colour)) {
 					sizeList.add(sku);
 				}
 			}
 
 			//remove duplicates
-			for (OtherSku os : sizeList) {
+			for (OtherSkus os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.size)) {
 					commonSizeList.add(os);
 				}
@@ -968,7 +1057,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 				if (TextUtils.isEmpty(wasPrice)) {
 					if (Utils.isLocationEnabled(WProductDetailActivity.this)) {
 						ArrayList<Double> priceList = new ArrayList<>();
-						for (OtherSku os : mObjProductDetail.otherSkus) {
+						for (OtherSkus os : mObjProductDetail.otherSkus) {
 							if (!TextUtils.isEmpty(os.price)) {
 								priceList.add(Double.valueOf(os.price));
 							}
@@ -983,7 +1072,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 				} else {
 					if (Utils.isLocationEnabled(WProductDetailActivity.this)) {
 						ArrayList<Double> priceList = new ArrayList<>();
-						for (OtherSku os : mObjProductDetail.otherSkus) {
+						for (OtherSkus os : mObjProductDetail.otherSkus) {
 							if (!TextUtils.isEmpty(os.price)) {
 								priceList.add(Double.valueOf(os.price));
 							}
@@ -1010,7 +1099,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		String price = "";
 		if (otherSkusList != null) {
 			if (otherSkusList.size() > 0) {
-				for (OtherSku option : otherSkusList) {
+				for (OtherSkus option : otherSkusList) {
 					if (colour.equalsIgnoreCase(option.colour) &&
 							size.equalsIgnoreCase(option.size)) {
 						return option.price;
@@ -1025,7 +1114,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		String wasPrice = "";
 		if (otherSkusList != null) {
 			if (otherSkusList.size() > 0) {
-				for (OtherSku option : otherSkusList) {
+				for (OtherSkus option : otherSkusList) {
 					if (colour.equalsIgnoreCase(option.colour) &&
 							size.equalsIgnoreCase(option.size)) {
 						return option.wasPrice;
@@ -1037,9 +1126,9 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	}
 
 	public void highestSKUPrice(String fromPrice) {
-		List<OtherSku> objPrice = mObjProductDetail.otherSkus;
+		List<OtherSkus> objPrice = mObjProductDetail.otherSkus;
 		if (objPrice.size() > 0) {
-			for (OtherSku os : mObjProductDetail.otherSkus) {
+			for (OtherSkus os : mObjProductDetail.otherSkus) {
 				if (fromPrice.equalsIgnoreCase(os.price)) {
 					setSelectedTextSize(os.size);
 					String wasPrice = os.wasPrice;
@@ -1055,12 +1144,83 @@ public class WProductDetailActivity extends AppCompatActivity implements
 	}
 
 	@Override
-	public void SelectedImage(int position, View v) {
-		Intent openMultipleImage = new Intent(this, MultipleImageActivity.class);
-		openMultipleImage.putExtra("position", position);
-		openMultipleImage.putExtra("auxiliaryImages", mAuxiliaryImages);
-		startActivity(openMultipleImage);
-		overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+	public void renderView() {
+
+	}
+
+	@Override
+	public void closeView(View view) {
+
+	}
+
+	@Override
+	public void nestedScrollViewHelper() {
+
+	}
+
+	@Override
+	public void setUpImageViewPager() {
+
+	}
+
+	@Override
+	public void defaultProduct() {
+
+	}
+
+	@Override
+	public void setProductName() {
+
+	}
+
+	@Override
+	public void onLoadStart() {
+
+	}
+
+	@Override
+	public void onLoadComplete() {
+
+	}
+
+	@Override
+	public void addToShoppingList() {
+
+	}
+
+	@Override
+	public String getImageByWidth(String imageUrl, Context context) {
+		return null;
+	}
+
+	@Override
+	public List<String> getAuxiliaryImage() {
+		return null;
+	}
+
+	@Override
+	public void onSuccessResponse(WProduct strProduct) {
+
+	}
+
+	@Override
+	public void onFailureResponse(String s) {
+
+	}
+
+	@Override
+	public void disableStoreFinder() {
+
+	}
+
+	@Override
+	public void responseFailureHandler(Response response) {
+
+	}
+
+	@Override
+	public void enableFindInStoreButton(WProductDetail productList) {
+
 	}
 
 	public void setLayoutWeight(View v, float weight) {
@@ -1072,8 +1232,8 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		v.setLayoutParams(params);
 	}
 
-	public boolean sizeValueExist(ArrayList<OtherSku> list, String name) {
-		for (OtherSku item : list) {
+	public boolean sizeValueExist(ArrayList<OtherSkus> list, String name) {
+		for (OtherSkus item : list) {
 			if (item.size.equals(name)) {
 				return true;
 			}
@@ -1081,8 +1241,8 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		return false;
 	}
 
-	public boolean colourValueExist(ArrayList<OtherSku> list, String name) {
-		for (OtherSku item : list) {
+	public boolean colourValueExist(ArrayList<OtherSkus> list, String name) {
+		for (OtherSkus item : list) {
 			if (item.colour.equals(name)) {
 				return true;
 			}
@@ -1100,20 +1260,20 @@ public class WProductDetailActivity extends AppCompatActivity implements
 
 	}
 
-	public ArrayList<OtherSku> commonColorList(OtherSku otherSku) {
-		List<OtherSku> otherSkus = mObjProductDetail.otherSkus;
-		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+	public ArrayList<OtherSkus> commonColorList(OtherSkus otherSku) {
+		List<OtherSkus> otherSkus = mObjProductDetail.otherSkus;
+		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
 
 		// filter by colour
-		ArrayList<OtherSku> sizeList = new ArrayList<>();
-		for (OtherSku sku : otherSkus) {
+		ArrayList<OtherSkus> sizeList = new ArrayList<>();
+		for (OtherSkus sku : otherSkus) {
 			if (sku.size.equalsIgnoreCase(otherSku.size)) {
 				sizeList.add(sku);
 			}
 		}
 
 		//remove duplicates
-		for (OtherSku os : sizeList) {
+		for (OtherSkus os : sizeList) {
 			if (!sizeValueExist(commonSizeList, os.colour)) {
 				commonSizeList.add(os);
 			}
@@ -1122,6 +1282,10 @@ public class WProductDetailActivity extends AppCompatActivity implements
 		return commonSizeList;
 	}
 
+	@Override
+	public void SelectedImage(String otherSkus) {
+
+	}
 }
 
 

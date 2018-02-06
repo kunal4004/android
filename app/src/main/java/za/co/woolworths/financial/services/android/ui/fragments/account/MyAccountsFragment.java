@@ -35,8 +35,12 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
+import za.co.woolworths.financial.services.android.models.dto.Voucher;
+import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
+import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.message.CLIGetMessageResponse;
+import za.co.woolworths.financial.services.android.models.rest.reward.GetVoucher;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -151,74 +155,78 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		hideToolbar();
-		setToolbarBackgroundColor(R.color.white);
-		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
-		wGlobalState = woolworthsApplication.getWGlobalState();
-		openMessageActivity = (RelativeLayout) view.findViewById(R.id.openMessageActivity);
-		openShoppingList = (ImageView) view.findViewById(R.id.openShoppingList);
-		contactUs = (RelativeLayout) view.findViewById(R.id.contactUs);
-		applyStoreCardView = (RelativeLayout) view.findViewById(R.id.applyStoreCard);
-		applyCreditCardView = (RelativeLayout) view.findViewById(R.id.applyCrediCard);
-		applyPersonalCardView = (RelativeLayout) view.findViewById(R.id.applyPersonalLoan);
-		linkedCreditCardView = (RelativeLayout) view.findViewById(R.id.linkedCrediCard);
-		linkedStoreCardView = (RelativeLayout) view.findViewById(R.id.linkedStoreCard);
-		linkedPersonalCardView = (RelativeLayout) view.findViewById(R.id.linkedPersonalLoan);
-		linkedAccountsLayout = (LinearLayout) view.findViewById(R.id.linkedLayout);
-		mScrollView = (NestedScrollView) view.findViewById(R.id.nest_scrollview);
-		applyNowAccountsLayout = (LinearLayout) view.findViewById(R.id.applyNowLayout);
-		loggedOutHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedOutHeaderLayout);
-		loggedInHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedInHeaderLayout);
-		unlinkedLayout = (RelativeLayout) view.findViewById(R.id.llUnlinkedAccount);
-		signOutBtn = (RelativeLayout) view.findViewById(R.id.signOutBtn);
-		myDetailBtn = (RelativeLayout) view.findViewById(R.id.rlMyDetails);
-		viewPager = (ViewPager) view.findViewById(R.id.pager);
-		pager_indicator = (LinearLayout) view.findViewById(R.id.viewPagerCountDots);
-		sc_available_funds = (WTextView) view.findViewById(R.id.sc_available_funds);
-		cc_available_funds = (WTextView) view.findViewById(R.id.cc_available_funds);
-		pl_available_funds = (WTextView) view.findViewById(R.id.pl_available_funds);
-		messageCounter = (WTextView) view.findViewById(R.id.messageCounter);
-		userName = (WTextView) view.findViewById(R.id.user_name);
-		userInitials = (WTextView) view.findViewById(R.id.initials);
-		imgCreditCard = (ImageView) view.findViewById(R.id.imgCreditCard);
-		relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
-		mErrorHandlerView = new ErrorHandlerView(getActivity(), (RelativeLayout) view.findViewById(R.id.no_connection_layout));
-		storeLocator = (RelativeLayout) view.findViewById(R.id.storeLocator);
-		allUserOptionsLayout = (LinearLayout) view.findViewById(R.id.parentOptionsLayout);
-		loginUserOptionsLayout = (LinearLayout) view.findViewById(R.id.loginUserOptionsLayout);
-		openMessageActivity.setOnClickListener(this);
-		contactUs.setOnClickListener(this);
-		applyPersonalCardView.setOnClickListener(this);
-		applyStoreCardView.setOnClickListener(this);
-		applyCreditCardView.setOnClickListener(this);
-		linkedStoreCardView.setOnClickListener(this);
-		linkedCreditCardView.setOnClickListener(this);
-		linkedPersonalCardView.setOnClickListener(this);
-		openShoppingList.setOnClickListener(this);
-		signOutBtn.setOnClickListener(this);
-		myDetailBtn.setOnClickListener(this);
-		relFAQ.setOnClickListener(this);
-		storeLocator.setOnClickListener(this);
+		if (savedInstanceState == null) {
+			hideToolbar();
+			setToolbarBackgroundColor(R.color.white);
+			woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
+			wGlobalState = woolworthsApplication.getWGlobalState();
+			openMessageActivity = (RelativeLayout) view.findViewById(R.id.openMessageActivity);
+			openShoppingList = (ImageView) view.findViewById(R.id.openShoppingList);
+			contactUs = (RelativeLayout) view.findViewById(R.id.contactUs);
+			applyStoreCardView = (RelativeLayout) view.findViewById(R.id.applyStoreCard);
+			applyCreditCardView = (RelativeLayout) view.findViewById(R.id.applyCrediCard);
+			applyPersonalCardView = (RelativeLayout) view.findViewById(R.id.applyPersonalLoan);
+			linkedCreditCardView = (RelativeLayout) view.findViewById(R.id.linkedCrediCard);
+			linkedStoreCardView = (RelativeLayout) view.findViewById(R.id.linkedStoreCard);
+			linkedPersonalCardView = (RelativeLayout) view.findViewById(R.id.linkedPersonalLoan);
+			linkedAccountsLayout = (LinearLayout) view.findViewById(R.id.linkedLayout);
+			mScrollView = (NestedScrollView) view.findViewById(R.id.nest_scrollview);
+			applyNowAccountsLayout = (LinearLayout) view.findViewById(R.id.applyNowLayout);
+			loggedOutHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedOutHeaderLayout);
+			loggedInHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedInHeaderLayout);
+			unlinkedLayout = (RelativeLayout) view.findViewById(R.id.llUnlinkedAccount);
+			signOutBtn = (RelativeLayout) view.findViewById(R.id.signOutBtn);
+			myDetailBtn = (RelativeLayout) view.findViewById(R.id.rlMyDetails);
+			viewPager = (ViewPager) view.findViewById(R.id.pager);
+			pager_indicator = (LinearLayout) view.findViewById(R.id.viewPagerCountDots);
+			sc_available_funds = (WTextView) view.findViewById(R.id.sc_available_funds);
+			cc_available_funds = (WTextView) view.findViewById(R.id.cc_available_funds);
+			pl_available_funds = (WTextView) view.findViewById(R.id.pl_available_funds);
+			messageCounter = (WTextView) view.findViewById(R.id.messageCounter);
+			userName = (WTextView) view.findViewById(R.id.user_name);
+			userInitials = (WTextView) view.findViewById(R.id.initials);
+			imgCreditCard = (ImageView) view.findViewById(R.id.imgCreditCard);
+			relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
+			RelativeLayout relNoConnectionLayout = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
+			mErrorHandlerView = new ErrorHandlerView(getActivity(), relNoConnectionLayout);
+			mErrorHandlerView.setMargin(relNoConnectionLayout, 0, 0, 0, 0);
+			storeLocator = (RelativeLayout) view.findViewById(R.id.storeLocator);
+			allUserOptionsLayout = (LinearLayout) view.findViewById(R.id.parentOptionsLayout);
+			loginUserOptionsLayout = (LinearLayout) view.findViewById(R.id.loginUserOptionsLayout);
+			openMessageActivity.setOnClickListener(this);
+			contactUs.setOnClickListener(this);
+			applyPersonalCardView.setOnClickListener(this);
+			applyStoreCardView.setOnClickListener(this);
+			applyCreditCardView.setOnClickListener(this);
+			linkedStoreCardView.setOnClickListener(this);
+			linkedCreditCardView.setOnClickListener(this);
+			linkedPersonalCardView.setOnClickListener(this);
+			openShoppingList.setOnClickListener(this);
+			signOutBtn.setOnClickListener(this);
+			myDetailBtn.setOnClickListener(this);
+			relFAQ.setOnClickListener(this);
+			storeLocator.setOnClickListener(this);
 
-		adapter = new MyAccountOverViewPagerAdapter(getActivity());
-		viewPager.addOnPageChangeListener(this);
-		setUiPageViewController();
+			adapter = new MyAccountOverViewPagerAdapter(getActivity());
+			viewPager.addOnPageChangeListener(this);
+			setUiPageViewController();
 
-		view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
-		view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
-		view.findViewById(R.id.llUnlinkedAccount).setOnClickListener(this.btnLinkAccounts_onClick);
-		//hide all views, load accounts may occur
-		this.initialize();
+			view.findViewById(R.id.loginAccount).setOnClickListener(this.btnSignin_onClick);
+			view.findViewById(R.id.registerAccount).setOnClickListener(this.btnRegister_onClick);
+			view.findViewById(R.id.llUnlinkedAccount).setOnClickListener(this.btnLinkAccounts_onClick);
+			//hide all views, load accounts may occur
+			this.initialize();
 
-		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (new ConnectionDetector().isOnline(getActivity())) {
-					loadAccounts();
+			view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (new ConnectionDetector().isOnline(getActivity())) {
+						loadAccounts();
+					}
 				}
-			}
 
-		});
+			});
+		}
 	}
 
 	private void initialize() {
@@ -828,6 +836,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 	private void messageCounterRequest() {
 		getMessageResponse().execute();
+		getWRewards().execute();
 	}
 
 	private CLIGetMessageResponse getMessageResponse() {
@@ -857,6 +866,34 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		});
 	}
 
+	private GetVoucher getWRewards() {
+		return new GetVoucher(new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				try {
+					if (object != null) {
+						VoucherResponse voucherResponse = ((VoucherResponse) object);
+						if (voucherResponse != null) {
+							VoucherCollection voucherCollection = voucherResponse.voucherCollection;
+							if (voucherCollection != null) {
+								List<Voucher> voucher = voucherCollection.vouchers;
+								if (!voucher.isEmpty()) {
+									getBottomNavigator().addBadge(BottomNavigationActivity.INDEX_REWARD, voucher.size());
+								}
+							}
+						}
+					}
+				} catch (IllegalStateException ignored) {
+				}
+			}
+
+			@Override
+			public void onFailure(String errorMessage) {
+			}
+		});
+	}
+
+
 	public void showProgressBar() {
 		getViewDataBinding().pbAccount.bringToFront();
 		showView(getViewDataBinding().pbAccount);
@@ -864,5 +901,16 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 	public void hideProgressBar() {
 		hideView(getViewDataBinding().pbAccount);
+	}
+
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			//do when hidden
+			hideToolbar();
+			setToolbarBackgroundColor(R.color.white);
+		}
 	}
 }

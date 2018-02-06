@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.base;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
@@ -15,6 +17,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -58,6 +62,10 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 		}
 	}
 
+	public WoolworthsApplication woolworthsApplication() {
+		return WoolworthsApplication.getInstance();
+	}
+
 	public void setBackNavigationIcon(boolean visibility) {
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
@@ -96,7 +104,7 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public void hideToolbar() {
-		getToolbar().setVisibility(View.GONE);
+		hideView(getToolbar());
 	}
 
 	public void setToolbarBackgroundColor(int colorId) {
@@ -108,7 +116,17 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public void showToolbar() {
-		getToolbar().setVisibility(View.VISIBLE);
+		final Toolbar toolbar = getToolbar();
+		toolbar.animate()
+				.alpha(1.0f)
+				.setDuration(0)
+				.setListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						super.onAnimationEnd(animation);
+						showView(toolbar);
+					}
+				});
 	}
 
 	public void hideKeyboard() {
@@ -118,6 +136,10 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 					getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 		}
+	}
+
+	public WGlobalState getGlobalState() {
+		return WoolworthsApplication.getInstance().getWGlobalState();
 	}
 
 	public void cancelRequest(HttpAsyncTask httpAsyncTask) {

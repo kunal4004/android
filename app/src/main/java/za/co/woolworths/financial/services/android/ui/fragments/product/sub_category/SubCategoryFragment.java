@@ -30,13 +30,14 @@ import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class SubCategoryFragment extends BaseFragment<FragmentSubCategoryBinding, SubCategoryViewModel> implements SubCategoryNavigator, SubCategoryAdapter.SubCategoryClick {
+public class SubCategoryFragment extends BaseFragment<FragmentSubCategoryBinding, SubCategoryViewModel> implements SubCategoryNavigator {
 
 	private ErrorHandlerView mErrorHandlerView;
 
 	private String mRootCategoryName;
 	private String mRootCategoryId;
 	private SubCategoryViewModel mSubCategoryViewModel;
+	private SubCategoryAdapter mSubCategoryAdapter;
 
 	@Override
 	public SubCategoryViewModel getViewModel() {
@@ -158,7 +159,7 @@ public class SubCategoryFragment extends BaseFragment<FragmentSubCategoryBinding
 	}
 
 	private void setUpList(List<SubCategory> subCategoryList) {
-		SubCategoryAdapter subCategoryAdapter = new SubCategoryAdapter(subCategoryList, this);
+		mSubCategoryAdapter = new SubCategoryAdapter(subCategoryList, this);
 		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		getViewDataBinding().productSearchList.setLayoutManager(mLayoutManager);
@@ -166,7 +167,7 @@ public class SubCategoryFragment extends BaseFragment<FragmentSubCategoryBinding
 		if (activity != null) {
 			getViewDataBinding().productSearchList.addItemDecoration(new SimpleDividerItemDecoration(activity));
 			getViewDataBinding().productSearchList.setItemAnimator(new DefaultItemAnimator());
-			getViewDataBinding().productSearchList.setAdapter(subCategoryAdapter);
+			getViewDataBinding().productSearchList.setAdapter(mSubCategoryAdapter);
 		}
 	}
 
@@ -174,6 +175,16 @@ public class SubCategoryFragment extends BaseFragment<FragmentSubCategoryBinding
 	public void onItemClick(SubCategory subCategory) {
 		if (getBottomNavigator() != null) {
 			getBottomNavigator().pushFragment(getViewModel().enterNextFragment(subCategory));
+		}
+	}
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			if (mSubCategoryAdapter != null) {
+				mSubCategoryAdapter.resetAdapter();
+			}
 		}
 	}
 }

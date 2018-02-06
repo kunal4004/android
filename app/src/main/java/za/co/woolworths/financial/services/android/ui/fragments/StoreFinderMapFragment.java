@@ -45,7 +45,7 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.StoreOfferings;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
+import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MapWindowAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderCardsOnMapAdapter;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -311,7 +311,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 
 	public void backToAllStoresPage(int position) {
 		googleMap.getUiSettings().setScrollGesturesEnabled(true);
-		WOneAppBaseActivity.mToolbar.animate().translationY(WOneAppBaseActivity.mToolbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
+		BottomNavigationActivity.mToolbar.animate().translationY(BottomNavigationActivity.mToolbar.getTop()).setInterpolator(new AccelerateInterpolator()).start();
 		showAllMarkers(markers);
 	}
 
@@ -326,7 +326,7 @@ public class StoreFinderMapFragment extends Fragment implements OnMapReadyCallba
 		googleMap.animateCamera(centerCam, CAMERA_ANIMATION_SPEED, null);
 		googleMap.getUiSettings().setScrollGesturesEnabled(false);
 		if (mLayout.getAnchorPoint() == 1.0f) {
-			WOneAppBaseActivity.mToolbar.animate().translationY(-WOneAppBaseActivity.mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
+			BottomNavigationActivity.mToolbar.animate().translationY(-BottomNavigationActivity.mToolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
 			mLayout.setAnchorPoint(0.7f);
 			mLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
 

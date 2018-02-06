@@ -14,7 +14,7 @@ import com.awfs.coordination.R;
 import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderSizeColorAdapter;
@@ -27,7 +27,7 @@ public class ColorFragmentDialog extends Fragment implements StockFinderSizeColo
 	public RecyclerView mRecyclerColorList;
 	private ColorFragmentDialog mContext;
 	private WGlobalState wGlobalState;
-	private ArrayList<OtherSku> colorSKUList;
+	private ArrayList<OtherSkus> colorSKUList;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class ColorFragmentDialog extends Fragment implements StockFinderSizeColo
 	}
 
 	@Override
-	public void onUpdate(final ArrayList<OtherSku> otherSkuList, final String viewType) {
+	public void onUpdate(final ArrayList<OtherSkus> otherSkuList, final String viewType) {
 
 	}
 }

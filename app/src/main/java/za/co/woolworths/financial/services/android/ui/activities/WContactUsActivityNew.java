@@ -8,14 +8,14 @@ import android.view.MenuItem;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.ui.fragments.contact_us.ContactUsFragmentChange;
 import za.co.woolworths.financial.services.android.ui.fragments.contact_us.main_list.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.binder.ContactUsFragmentChange;
 
 
 
-public class WContactUsActivityNew extends AppCompatActivity implements ContactUsFragmentChange{
+public class WContactUsActivityNew extends AppCompatActivity implements ContactUsFragmentChange {
 
     public Toolbar toolbar;
     public WTextView toolbarText;
