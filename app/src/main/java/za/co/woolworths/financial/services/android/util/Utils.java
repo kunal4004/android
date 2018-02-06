@@ -67,6 +67,9 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.Account;
+import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
+import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSku;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
@@ -858,5 +861,24 @@ public class Utils {
 			}
 		}
 		return (path.delete());
+	}
+
+	public static String getProductOfferingId(AccountsResponse accountResponse, String productGroupCode) {
+		List<Account> accountList = accountResponse.accountList;
+		if (accountList != null) {
+			for (Account account : accountList) {
+				if (account.productGroupCode.equalsIgnoreCase(productGroupCode)) {
+					int productOfferingId = account.productOfferingId;
+					setProductOfferingId(productOfferingId);
+					return String.valueOf(productOfferingId);
+				}
+			}
+		}
+		setProductOfferingId(0);
+		return "0";
+	}
+
+	private static void setProductOfferingId(int productOfferingId) {
+		WoolworthsApplication.getInstance().setProductOfferingId(productOfferingId);
 	}
 }
