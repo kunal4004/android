@@ -18,7 +18,6 @@ import com.awfs.coordination.databinding.WtodayFragmentBinding;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
-import za.co.woolworths.financial.services.android.ui.views.StatusBarUtils;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -104,5 +103,14 @@ public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayVi
 				}
 			}
 		});
+	}
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			//do when hidden
+			hideToolbar();
+		}
 	}
 }
