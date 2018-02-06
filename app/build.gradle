@@ -115,14 +115,13 @@ repositories {
 }
 
 dependencies {
-
-    compile files('libs/YouTubeAndroidPlayerApi.jar')
-    compile 'com.google.android.gms:play-services:11.0.2'
-    compile 'com.google.firebase:firebase-messaging:11.0.2'
+    compile 'com.google.android.gms:play-services-maps:11.8.0'
+    compile 'com.google.android.gms:play-services-location:11.8.0'
+    compile 'com.google.firebase:firebase-messaging:11.8.0'
     compile 'com.google.zxing:core:3.3.0'
     compile 'com.google.android:flexbox:0.2.5'
-    compile 'com.google.firebase:firebase-crash:11.0.2'
-    compile 'com.google.firebase:firebase-core:11.0.2'
+    compile 'com.google.firebase:firebase-crash:11.8.0'
+    compile 'com.google.firebase:firebase-core:11.8.0'
     //noinspection GradleCompatible
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support:design:26.1.0'
@@ -131,9 +130,9 @@ dependencies {
     compile 'com.android.support:support-annotations:27.0.2'
     compile 'com.android.support:recyclerview-v7:26.1.0'
     compile 'io.jsonwebtoken:jjwt:0.7.0'
-    compile 'com.crittercism:crittercism-android-agent:+'
+    compile 'com.crittercism:crittercism-android-agent:5.8.7'
     compile 'za.co.wigroup.android:utils:1.1.8'
-    compile 'uk.co.chrisjenx:calligraphy:1.2.0'
+    compile 'uk.co.chrisjenx:calligraphy:2.2.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.jakewharton.retrofit:retrofit1-okhttp3-client:1.1.0'
     compile 'com.squareup.okhttp3:okhttp:3.9.1'
@@ -146,11 +145,11 @@ dependencies {
     compile 'com.facebook.fresco:fresco:1.8.0'
     compile 'com.facebook.fresco:animated-gif:1.5.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.google.android.gms:play-services-tagmanager:11.0.2'
+    compile 'com.google.android.gms:play-services-tagmanager:11.8.0'
     compile 'com.facebook.android:facebook-android-sdk:4.26.0'
     //Viewmodel
-    compile "android.arch.lifecycle:extensions:1.0.0"
-    annotationProcessor "android.arch.lifecycle:compiler:1.0.0"
+    compile "android.arch.lifecycle:extensions:1.1.0"
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.0"
 
 }
 apply plugin: 'com.google.gms.google-services'
