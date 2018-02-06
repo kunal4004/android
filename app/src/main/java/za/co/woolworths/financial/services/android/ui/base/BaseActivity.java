@@ -1,11 +1,14 @@
 package za.co.woolworths.financial.services.android.ui.base;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,8 +17,11 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 
 public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseViewModel> extends AppCompatActivity implements BaseFragment.Callback {
 
@@ -56,6 +62,10 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 		}
 	}
 
+	public WoolworthsApplication woolworthsApplication() {
+		return WoolworthsApplication.getInstance();
+	}
+
 	public void setBackNavigationIcon(boolean visibility) {
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
@@ -73,6 +83,14 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 		}
 	}
 
+	public void showView(View view) {
+		view.setVisibility(View.VISIBLE);
+	}
+
+	public void hideView(View view) {
+		view.setVisibility(View.GONE);
+	}
+
 	public Toolbar getToolbar() {
 		return findViewById(R.id.incToolbar);
 	}
@@ -86,11 +104,29 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public void hideToolbar() {
-		getToolbar().setVisibility(View.GONE);
+		hideView(getToolbar());
+	}
+
+	public void setToolbarBackgroundColor(int colorId) {
+		getToolbar().setBackgroundColor(ContextCompat.getColor(this, colorId));
+	}
+
+	public void setToolbarBackgroundDrawable(int drawableId) {
+		getToolbar().setBackground(ContextCompat.getDrawable(this, drawableId));
 	}
 
 	public void showToolbar() {
-		getToolbar().setVisibility(View.VISIBLE);
+		final Toolbar toolbar = getToolbar();
+		toolbar.animate()
+				.alpha(1.0f)
+				.setDuration(0)
+				.setListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						super.onAnimationEnd(animation);
+						showView(toolbar);
+					}
+				});
 	}
 
 	public void hideKeyboard() {
@@ -99,6 +135,18 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 			InputMethodManager imm = (InputMethodManager)
 					getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+		}
+	}
+
+	public WGlobalState getGlobalState() {
+		return WoolworthsApplication.getInstance().getWGlobalState();
+	}
+
+	public void cancelRequest(HttpAsyncTask httpAsyncTask) {
+		if (httpAsyncTask != null) {
+			if (!httpAsyncTask.isCancelled()) {
+				httpAsyncTask.cancel(true);
+			}
 		}
 	}
 

@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.base;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
@@ -12,14 +13,19 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigator;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseViewModel> extends Fragment {
@@ -41,7 +47,7 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
+							 Bundle savedInstanceState) {            // Inflate and populate
 		mViewDataBinding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false);
 		mRootView = mViewDataBinding.getRoot();
 		Activity activity = getActivity();
@@ -154,6 +160,7 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	@LayoutRes
 	int getLayoutId();
 
+
 	public int getToolBarHeight() {
 		int[] attrs = new int[]{R.attr.actionBarSize};
 		TypedArray ta = getContext().obtainStyledAttributes(attrs);
@@ -170,6 +177,14 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		bottomNavigator.setTitle(title);
 	}
 
+	public void setToolbarBackgroundDrawable(int drawable) {
+		mActivity.setToolbarBackgroundDrawable(drawable);
+	}
+
+	public void setToolbarBackgroundColor(int color) {
+		mActivity.setToolbarBackgroundColor(color);
+	}
+
 	public BottomNavigator getBottomNavigator() {
 		return bottomNavigator;
 	}
@@ -179,10 +194,67 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	}
 
 	public void hideView(View view) {
-		view.setVisibility(View.GONE);
+		if (view != null) {
+			view.setVisibility(View.GONE);
+		}
 	}
 
 	public void slideBottomPanel() {
 		bottomNavigator.slideUpBottomView();
+	}
+
+	public boolean isEmpty(String value) {
+		return TextUtils.isEmpty(value);
+	}
+
+	public void pushFragment(Fragment fragment) {
+		getBottomNavigator().pushFragment(fragment);
+	}
+
+	public void setText(WTextView tv, String text) {
+		tv.setText(text);
+	}
+
+	public void setText(String text, WTextView tv) {
+		if (isEmpty(text)) {
+			hideView(tv);
+		} else {
+			tv.setText(text);
+			showView(tv);
+		}
+	}
+
+	public void fadeOutToolbar(int color) {
+		getBottomNavigator().fadeOutToolbar(color);
+	}
+
+	/**
+	 * Overrides the pending Activity transition by performing the "Enter" animation.
+	 */
+	protected void overridePendingTransitionEnter() {
+		getActivity().overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+	}
+
+	/**
+	 * Overrides the pending Activity transition by performing the "Exit" animation.
+	 */
+	protected void overridePendingTransitionExit() {
+		getActivity().overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+	}
+
+	public void cancelRequest(HttpAsyncTask httpAsyncTask) {
+		if (httpAsyncTask != null) {
+			if (!httpAsyncTask.isCancelled()) {
+				httpAsyncTask.cancel(true);
+			}
+		}
+	}
+
+	public void popFragment() {
+		getBottomNavigator().popFragment();
+	}
+
+	public WGlobalState getGlobalState() {
+		return WoolworthsApplication.getInstance().getWGlobalState();
 	}
 }

@@ -13,6 +13,7 @@ import java.util.List;
  *
  */
 
+
 public class FragNavTransactionOptions {
     List<Pair<View, String>> sharedElements;
     @FragNavController.Transit
@@ -29,7 +30,6 @@ public class FragNavTransactionOptions {
     int transitionStyle = 0;
     String breadCrumbTitle;
     String breadCrumbShortTitle;
-    boolean allowStateLoss;
 
     private FragNavTransactionOptions(Builder builder) {
         sharedElements = builder.sharedElements;
@@ -41,7 +41,6 @@ public class FragNavTransactionOptions {
         popExitAnimation = builder.popExitAnimation;
         breadCrumbTitle = builder.breadCrumbTitle;
         breadCrumbShortTitle = builder.breadCrumbShortTitle;
-        allowStateLoss = builder.allowStateLoss;
     }
 
     public static Builder newBuilder() {
@@ -58,7 +57,6 @@ public class FragNavTransactionOptions {
         private int popExitAnimation;
         private String breadCrumbTitle;
         private String breadCrumbShortTitle;
-        private boolean allowStateLoss = false;
 
         private Builder() {
         }
@@ -106,11 +104,6 @@ public class FragNavTransactionOptions {
 
         public Builder breadCrumbShortTitle(String val) {
             breadCrumbShortTitle = val;
-            return this;
-        }
-
-        public Builder allowStateLoss(boolean allow) {
-            allowStateLoss = allow;
             return this;
         }
 

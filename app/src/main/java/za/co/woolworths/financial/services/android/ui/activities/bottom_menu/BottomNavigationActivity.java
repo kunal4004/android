@@ -1,13 +1,20 @@
 package za.co.woolworths.financial.services.android.ui.activities.bottom_menu;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -17,42 +24,49 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ActivityBottomNavigationBinding;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.shop.CartFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
+import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
+import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
+import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.frag_nav.FragNavController;
-import za.co.woolworths.financial.services.android.util.frag_nav.FragNavSwitchController;
 import za.co.woolworths.financial.services.android.util.frag_nav.FragNavTransactionOptions;
-import za.co.woolworths.financial.services.android.util.frag_nav.tab_history.FragNavTabHistoryController;
+import za.co.woolworths.financial.services.android.util.frag_nav.FragmentHistory;
 
-public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener {
+public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback {
 
 	public static final int INDEX_TODAY = FragNavController.TAB1;
 	public static final int INDEX_SHOP = FragNavController.TAB2;
 	public static final int INDEX_CART = FragNavController.TAB3;
 	public static final int INDEX_REWARD = FragNavController.TAB4;
 	public static final int INDEX_ACCOUNT = FragNavController.TAB5;
+	public static Toolbar mToolbar;
 
+	private final CompositeDisposable mDisposables = new CompositeDisposable();
+	private PermissionUtils permissionUtils;
+	private ArrayList<String> permissions;
 	private BottomNavigationViewModel bottomNavigationViewModel;
 	private FragNavController mNavController;
-	private final CompositeDisposable mDisposables = new CompositeDisposable();
+	private FragmentHistory fragmentHistory;
 
 	@Override
 	public int getLayoutId() {
@@ -77,39 +91,20 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 	}
 
+	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mNavController = FragNavController.newBuilder(savedInstanceState, getSupportFragmentManager(), R.id.frag_container)
 				.transactionListener(this)
 				.rootFragmentListener(this, 5)
-				.popStrategy(FragNavTabHistoryController.UNIQUE_TAB_HISTORY)
-				.switchController(new FragNavSwitchController() {
-					@Override
-					public void switchTab(int index, FragNavTransactionOptions transactionOptions) {
-						getBottomNavigationById().setCurrentItem(index);
-					}
-				})
 				.build();
 
+		fragmentHistory = new FragmentHistory();
+
 		renderUI();
-	}
 
-	@Override
-	public void renderUI() {
-		Utils.updateStatusBarBackground(this);
-		setActionBar();
-		hideToolbar();
-		bottomNavigationViewModel = ViewModelProviders.of(this).get(BottomNavigationViewModel.class);
-		bottomNavigationViewModel.setNavigator(this);
-		bottomNavConfig();
-		addBadge(2, 3);
-		addBadge(3, 17);
-		addBadge(3, 100);
-		getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-		slideUpPanelListener();
-
-		mDisposables.add(WoolworthsApplication.getInstance()
+		mDisposables.add(woolworthsApplication()
 				.bus()
 				.toObservable()
 				.subscribeOn(Schedulers.io())
@@ -118,14 +113,42 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					@Override
 					public void accept(Object object) throws Exception {
 						if (object instanceof BusStation) {
-
+							String searchProduct = ((BusStation) object).getSearchProductBrand();
+							if (!TextUtils.isEmpty((searchProduct))) {
+								GridFragment gridFragment = new GridFragment();
+								Bundle bundle = new Bundle();
+								bundle.putString("sub_category_id", "categoryId");
+								bundle.putString("sub_category_name", "categoryName");
+								bundle.putString("str_search_product", searchProduct);
+								gridFragment.setArguments(bundle);
+								pushFragment(gridFragment);
+							}
 						}
 					}
 				}));
 	}
 
 	@Override
+	public void renderUI() {
+		mToolbar = getToolbar();
+		setActionBar();
+		hideToolbar();
+		bottomNavigationViewModel = ViewModelProviders.of(this).get(BottomNavigationViewModel.class);
+		bottomNavigationViewModel.setNavigator(this);
+		bottomNavConfig();
+		getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+		slideUpPanelListener();
+		setUpRuntimePermission();
+	}
+
+	@Override
 	public void bottomNavConfig() {
+		Typeface tfMyriadProT = Typeface.createFromAsset(getAssets(), "fonts/MyriadPro-Regular.otf");
+		getBottomNavigationById().setTypeface(tfMyriadProT);
+		getBottomNavigationById().setTextSize(12);
+		// set icon size
+		int iconSize = 28;
+		getBottomNavigationById().setIconSize(iconSize, iconSize);
 		getBottomNavigationById().enableAnimation(false);
 		getBottomNavigationById().enableShiftingMode(false);
 		getBottomNavigationById().enableItemShiftingMode(false);
@@ -198,15 +221,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void openProductDetailFragment(String productName, ProductList productList) {
-		DetailFragment gridFragment = new DetailFragment();
+		DetailFragment detailFragment = new DetailFragment();
 		Gson gson = new Gson();
 		String strProductList = gson.toJson(productList);
 		Bundle bundle = new Bundle();
 		bundle.putString("strProductList", strProductList);
 		bundle.putString("strProductCategory", productName);
-		gridFragment.setArguments(bundle);
+		detailFragment.setArguments(bundle);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.fragment_bottom_container, gridFragment).commit();
+		transaction.replace(R.id.fragment_bottom_container, detailFragment).commit();
 	}
 
 	@Override
@@ -225,9 +248,32 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
+	public void fadeOutToolbar(final int color) {
+		final Toolbar mToolbar = getToolbar();
+		mToolbar.animate()
+				.alpha(0.0f)
+				.setDuration(300)
+				.translationYBy(0f)
+				.setListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						super.onAnimationEnd(animation);
+						if (getGlobalState().setToolbarIsShown()) {
+							statusBarColor(R.color.white);
+						} else {
+							statusBarColor(R.color.recent_search_bg);
+						}
+						hideView(mToolbar);
+					}
+				});
+	}
+
+	@Override
 	public void pushFragment(Fragment fragment) {
 		if (mNavController != null) {
-			mNavController.pushFragment(fragment);
+			FragNavTransactionOptions fragNavTransactionOptions = FragNavTransactionOptions.newBuilder()
+					.customAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left).build();
+			mNavController.pushFragment(fragment, fragNavTransactionOptions);
 		}
 	}
 
@@ -245,39 +291,41 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			= new BottomNavigationView.OnNavigationItemSelectedListener() {
 		@Override
 		public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
 			statusBarColor(R.color.white);
 			switch (item.getItemId()) {
-
 				case R.id.navigation_today:
-					//hideToolbar();
+					setToolbarBackgroundColor(R.color.white);
 					mNavController.switchTab(INDEX_TODAY);
+					fragmentHistory.push(INDEX_TODAY);
 					return true;
 
 				case R.id.navigation_shop:
-					//slideUpBottomView();
-					//hideToolbar();
-					statusBarColor(R.color.recent_search_bg);
 					mNavController.switchTab(INDEX_SHOP);
+					fragmentHistory.push(INDEX_SHOP);
 					Utils.showOneTimePopup(BottomNavigationActivity.this);
 					return true;
 
 				case R.id.navigation_cart:
-//					setToolbarTitle(getString(R.string.bottom_title_cart));
-//					mNavController.switchTab(INDEX_CART);
-//					showToolbar();
+					MultiClickPreventer.preventMultiClick(getViewDataBinding().wBottomNavigation);
 					openCartActivity();
+					fragmentHistory.push(INDEX_CART);
+
 					return false;
 
 				case R.id.navigation_reward:
+					setToolbarBackgroundColor(R.color.white);
 					setToolbarTitle(getString(R.string.nav_item_wrewards));
 					mNavController.switchTab(INDEX_REWARD);
+					fragmentHistory.push(INDEX_REWARD);
 					showToolbar();
 					return true;
 
 				case R.id.navigation_account:
+					setToolbarBackgroundColor(R.color.white);
 					setToolbarTitle(getString(R.string.nav_item_accounts));
 					mNavController.switchTab(INDEX_ACCOUNT);
-					showToolbar();
+					fragmentHistory.push(INDEX_ACCOUNT);
 					return true;
 			}
 			return false;
@@ -286,13 +334,36 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	private void openCartActivity() {
 		startActivity(new Intent(this, CartActivity.class));
-		overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+		overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay);
 	}
 
 	@Override
 	public void onBackPressed() {
-		if (!mNavController.popFragment()) {
-			mNavController.popFragment();
+		switch (getSlidingLayout().getPanelState()) {
+
+			case EXPANDED:
+				closeSlideUpPanel();
+				return;
+		}
+
+		if (!mNavController.isRootFragment()) {
+			mNavController.popFragment(FragNavTransactionOptions.newBuilder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build());
+		} else {
+
+			if (fragmentHistory.isEmpty()) {
+				super.onBackPressed();
+			} else {
+				if (fragmentHistory.getStackSize() > 1) {
+					int position = fragmentHistory.popPrevious();
+					mNavController.switchTab(position);
+					getBottomNavigationById().setCurrentItem(position);
+
+				} else {
+					mNavController.switchTab(INDEX_TODAY);
+					getBottomNavigationById().setCurrentItem(0);
+					fragmentHistory.emptyStack();
+				}
+			}
 		}
 	}
 
@@ -300,7 +371,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case android.R.id.home:
-				mNavController.popFragment();
+				onBackPressed();
 				return true;
 		}
 		return false;
@@ -308,6 +379,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void onTabTransaction(Fragment fragment, int index) {
+
+		if (index == 2) {
+			return;
+		}
 		// If we have a backstack, show the back button
 		if (getSupportActionBar() != null && mNavController != null) {
 			getSupportActionBar().setDisplayHomeAsUpEnabled(!mNavController.isRootFragment());
@@ -344,6 +419,91 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		super.onDestroy();
 		if (!mDisposables.isDisposed()) {
 			mDisposables.clear();
+		}
+	}
+
+	@Override
+	public void hideBottomNavigationMenu() {
+		hideView(getBottomNavigationById());
+	}
+
+	@Override
+	public void showBottomNavigationMenu() {
+		showView(getBottomNavigationById());
+	}
+
+	@Override
+	public void displayToolbar() {
+		showToolbar();
+	}
+
+	@Override
+	public void removeToolbar() {
+		hideToolbar();
+	}
+
+	@Override
+	public void setUpRuntimePermission() {
+		permissionUtils = new PermissionUtils(this, this);
+		permissions = new ArrayList<>();
+	}
+
+	@Override
+	public PermissionUtils getRuntimePermission() {
+		return permissionUtils;
+	}
+
+	@Override
+	public ArrayList<String> getPermissionType(String type) {
+		if (!permissions.isEmpty())
+			permissions.clear();
+		permissions.add(type);
+		return permissions;
+	}
+
+	@Override
+	public void popFragment() {
+		onBackPressed();
+	}
+
+
+	@Override
+	public void PermissionGranted(int request_code) {
+		woolworthsApplication()
+				.bus()
+				.send(new DetailFragment());
+	}
+
+	@Override
+	public void PartialPermissionGranted(int request_code, ArrayList<String> granted_permissions) {
+
+	}
+
+	@Override
+	public void PermissionDenied(int request_code) {
+
+	}
+
+	@Override
+	public void NeverAskAgain(int request_code) {
+
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		// redirects to utils
+		permissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (mNavController.getCurrentFrag() instanceof WRewardsFragment) {
+			mNavController.getCurrentFrag().onActivityResult(requestCode, resultCode, data);
+		}
+
+		if (mNavController.getCurrentFrag() instanceof MyAccountsFragment) {
+			mNavController.getCurrentFrag().onActivityResult(requestCode, resultCode, data);
 		}
 	}
 }

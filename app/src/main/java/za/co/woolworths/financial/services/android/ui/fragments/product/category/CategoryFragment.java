@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.category;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -8,15 +9,14 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -45,11 +45,16 @@ import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding, CategoryViewModel>
 		implements CategoryNavigator, ObservableScrollViewCallbacks {
 
+	private static final float HIDE_ALPHA_VALUE = 0;
+	private static final float SHOW_ALPHA_VALUE = 1;
+	private final int ANIMATION_DURATION = 300;
+
 	private ErrorHandlerView mErrorHandlerView;
 
 	private int mScrollY;
 	private List<RootCategory> mRootCategories;
 	private Toolbar mProductToolbar;
+	private CategoryViewModel mViewModel;
 
 	@Override
 	public int getLayoutId() {
@@ -58,7 +63,7 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 
 	@Override
 	public CategoryViewModel getViewModel() {
-		return ViewModelProviders.of(this).get(CategoryViewModel.class);
+		return mViewModel;
 	}
 
 	@Override
@@ -69,31 +74,39 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(false);// TO do:: set to true and manage toolbar view
+		mViewModel = ViewModelProviders.of(this).get(CategoryViewModel.class);
+		setHasOptionsMenu(false);
 		getViewModel().setNavigator(this);
 	}
 
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		getViewDataBinding().setHandlers(this);
-		Utils.updateStatusBar(getActivity(), R.color.recent_search_bg);
-		hideToolbar();
-		mProductToolbar = getViewDataBinding().productToolbar;
-		showBackNavigationIcon(false);
-		renderUI();
+		if (savedInstanceState == null) {
+			getViewDataBinding().setHandlers(this);
+			toolbarState(false);
+			hideToolbar();
+			mProductToolbar = getViewDataBinding().productToolbar;
+			showBackNavigationIcon(false);
+			renderUI();
+			setUpConnectionError();
+			getViewDataBinding()
+					.incNoConnectionHandler
+					.btnRetry.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					onRetryConnectionClicked();
+				}
+			});
+
+			onRetryConnectionClicked();
+		}
+	}
+
+	private void setUpConnectionError() {
+		assert getViewDataBinding().incNoConnectionHandler != null;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), getViewDataBinding().incNoConnectionHandler.noConnectionLayout);
 		mErrorHandlerView.setMargin(getViewDataBinding().incNoConnectionHandler.noConnectionLayout, 0, 0, 0, 0);
-		getViewDataBinding()
-				.incNoConnectionHandler
-				.btnRetry.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				onRetryConnectionClicked();
-			}
-		});
-
-		onRetryConnectionClicked();
 	}
 
 	@Override
@@ -128,9 +141,9 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	@Override
 	public void toolbarState(boolean visibility) {
 		if (visibility) {
-			Utils.updateStatusBar(getActivity(), R.color.white);
+			Utils.updateStatusBarBackground(getActivity(), R.color.white);
 		} else {
-			Utils.updateStatusBar(getActivity(), R.color.recent_search_bg);
+			Utils.updateStatusBarBackground(getActivity(), R.color.recent_search_bg);
 		}
 	}
 
@@ -142,7 +155,16 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 			getViewModel()
 					.categoryRequest(getViewDataBinding()
 							.llCustomViews).execute();
+		} else {
+			mErrorHandlerView.networkFailureHandler("e");
 		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		Log.e("resume", "fragmentWasResumed");
 	}
 
 	@Override
@@ -161,10 +183,15 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	}
 
 	@Override
-	public void onCategoryItemClicked(RootCategory rootCategory) {
-		if (getBottomNavigator() != null) {
-			getBottomNavigator().pushFragment(getViewModel().enterNextFragment(rootCategory));
-		}
+	public void onCategoryItemClicked(final RootCategory rootCategory) {
+		getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (getBottomNavigator() != null) {
+					getBottomNavigator().pushFragment(getViewModel().enterNextFragment(rootCategory));
+				}
+			}
+		});
 	}
 
 	@Override
@@ -208,8 +235,10 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
 		this.mScrollY = scrollY;
 		if (scrollY < searchContainerHeight()) {
+			getGlobalState().setToolbarIsDisplayed(false);
 			hideProductToolbar();
 		} else {
+			getGlobalState().setToolbarIsDisplayed(true);
 			showProductToolbar();
 		}
 	}
@@ -222,30 +251,30 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	}
 
 	private void showProductToolbar() {
-		getViewDataBinding().relSearchRowLayout.setAlpha(0);
+		getViewDataBinding().relSearchRowLayout.setAlpha(HIDE_ALPHA_VALUE);
 		getViewDataBinding().productToolbar.setVisibility(View.VISIBLE);
-		mProductToolbar.animate().translationY(0)
-				.setDuration(300)
+		mProductToolbar.animate().translationY(HIDE_ALPHA_VALUE)
+				.setDuration(ANIMATION_DURATION)
 				.setInterpolator(new DecelerateInterpolator()).withStartAction(new Runnable() {
 
 			@Override
 			public void run() {
 				toolbarState(true);
-				mProductToolbar.setAlpha(1);
+				mProductToolbar.setAlpha(SHOW_ALPHA_VALUE);
 			}
 		});
 	}
 
 	private void hideProductToolbar() {
 		mProductToolbar.animate().translationY(-mProductToolbar.getBottom())
-				.setDuration(300)
+				.setDuration(ANIMATION_DURATION)
 				.setInterpolator(new AccelerateInterpolator()).withStartAction(new Runnable() {
 
 			@Override
 			public void run() {
 				toolbarState(false);
-				getViewDataBinding().relSearchRowLayout.setAlpha(1);
-				mProductToolbar.setAlpha(0);
+				getViewDataBinding().relSearchRowLayout.setAlpha(SHOW_ALPHA_VALUE);
+				mProductToolbar.setAlpha(HIDE_ALPHA_VALUE);
 			}
 		});
 	}
@@ -256,28 +285,16 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	}
 
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-		menu.clear();
-		inflater.inflate(R.menu.search_item, menu);
-	}
-
-	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
-		MenuItem menuItem = menu.findItem(R.id.action_search);
-	}
-
-	@Override
 	public void bindViewWithUI(final List<RootCategory> rootCategories, LinearLayout llAddView) {
 		mRootCategories = rootCategories;
 		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		int position = 0;
 		while (position < mRootCategories.size()) {
 			RootCategory rootCategory = rootCategories.get(position);
+			assert inflater != null;
+			@SuppressLint("InflateParams")
 			View view = inflater.inflate(R.layout.product_search_root_category_row, null, false);
 			LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
 			Resources r = getActivity().getResources();
 			int sixteenDp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, r.getDisplayMetrics());
 			layoutParams.setMargins(sixteenDp, 0, sixteenDp, sixteenDp);
@@ -305,51 +322,19 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 		}
 	}
 
-//	private void hideViews() {
-//		mRelSearchRowLayout.setAlpha(0);
-//		if (!actionBarIsHidden) {
-//			actionBarIsHidden = true;
-//			mProductToolbar.animate()
-//					.translationY(-mProductToolbar.getBottom())
-//					.setInterpolator(new AccelerateInterpolator())
-//					.withEndAction(new Runnable() {
-//						@Override
-//						public void run() {
-//							showBarcodeToolbar();
-//							mProductToolbar
-//									.animate()
-//									.translationY(0)
-//									.start();
-//						}
-//					}).start();
-//		}
-//	}
-//
-//	private void showViews() {
-//		if (actionBarIsHidden) {
-//			mProductToolbar.animate()
-//					.translationY(-mProductToolbar.getBottom())
-//					.setInterpolator(new DecelerateInterpolator())
-//					.withEndAction(new Runnable() {
-//						@Override
-//						public void run() {
-//							showAccountToolbar();
-//							mRelSearchRowLayout.setAlpha(1);
-//							mProductToolbar
-//									.animate()
-//									.translationY(0)
-//									.setInterpolator(new DecelerateInterpolator())
-//									.withEndAction(new Runnable() {
-//										@Override
-//										public void run() {
-//											showAccountToolbar();
-//										}
-//									})
-//									.start();
-//							actionBarIsHidden = false;
-//						}
-//					}).start();
-//		}
-//	}
-
+	@Override
+	public void onHiddenChanged(final boolean hidden) {
+		super.onHiddenChanged(hidden);
+		Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				if (!hidden) {
+					//do when hidden
+					fadeOutToolbar(R.color.recent_search_bg);
+					showBackNavigationIcon(false);
+				}
+			}
+		}, 10);
+	}
 }

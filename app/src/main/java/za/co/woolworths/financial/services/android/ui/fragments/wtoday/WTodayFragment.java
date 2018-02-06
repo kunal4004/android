@@ -19,7 +19,7 @@ import com.awfs.coordination.databinding.WtodayFragmentBinding;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.WebAppInterface;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayViewModel> implements WTodayNavigator {
 
@@ -52,11 +52,12 @@ public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayVi
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		Utils.updateStatusBarBackground(getActivity());
 		Activity activity = getActivity();
 		if (activity != null) {
 			hideToolbar();
 			mErrorHandlerView = new ErrorHandlerView(activity, getViewDataBinding().incNoConnectionHandler.noConnectionLayout);
-			mErrorHandlerView.setMargin(getViewDataBinding().incNoConnectionHandler.noConnectionLayout,0,0,0,0);
+			mErrorHandlerView.setMargin(getViewDataBinding().incNoConnectionHandler.noConnectionLayout, 0, 0, 0, 0);
 			initWebView(view);
 			retryConnect(view);
 		}
@@ -102,5 +103,14 @@ public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayVi
 				}
 			}
 		});
+	}
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			//do when hidden
+			hideToolbar();
+		}
 	}
 }

@@ -8,10 +8,16 @@ public class LoadProduct {
 	private boolean isBarcode;
 	private int pageOffset;
 	private String productId;
+	private String searchProduct;
 
 	public LoadProduct(boolean isBarcode, String productId) {
 		this.isBarcode = isBarcode;
 		this.productId = productId;
+	}
+
+	public LoadProduct(String searchProduct, boolean isBarcode) {
+		this.isBarcode = isBarcode;
+		this.searchProduct = searchProduct;
 	}
 
 	public boolean isBarcode() {
@@ -36,5 +42,9 @@ public class LoadProduct {
 
 	public void setBarcode(boolean barcode) {
 		isBarcode = barcode;
+	}
+
+	public String getSearchProduct() {
+		return searchProduct;
 	}
 }

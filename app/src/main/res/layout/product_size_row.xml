@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:id="@+id/linPopUpContainer"
-    android:layout_height="wrap_content"
-    android:background="@drawable/card_shadow"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:clickable="true"
+        android:focusable="true"
+        tools:context="za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerviewSize"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</LinearLayout>
+    <data>
+
+        <import type="android.view.View"/>
+    </data>
+
+    <FrameLayout
+        android:id="@+id/linPopUpContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/twenty_six_dp"
+        android:background="@color/white">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rclSize"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            />
+    </FrameLayout>
+</layout>

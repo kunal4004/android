@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.category;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
 

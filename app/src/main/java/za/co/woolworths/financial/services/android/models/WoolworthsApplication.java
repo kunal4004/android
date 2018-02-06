@@ -1,11 +1,8 @@
 package za.co.woolworths.financial.services.android.models;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
-import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 
@@ -23,7 +20,6 @@ import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.RxBus;
-import za.co.woolworths.financial.services.android.ui.activities.YoutubePlayerActivity;
 
 
 public class WoolworthsApplication extends Application {
@@ -218,49 +214,13 @@ public class WoolworthsApplication extends Application {
 		// set app context
 		mContextApplication = getApplicationContext();
 		Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
-		CalligraphyConfig.initDefault("fonts/WFutura-medium.ttf", R.attr.fontPath);
+		CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+				.setDefaultFontPath("fonts/WFutura-medium.ttf")
+				.setFontAttrId(R.attr.fontPath)
+				.build()
+		);
 		getTracker();
 		bus = new RxBus();
-		registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
-
-			@Override
-			public void onActivityCreated(Activity activity,
-										  Bundle savedInstanceState) {
-
-				// new activity created; force its orientation to portrait
-				if (!(activity instanceof YoutubePlayerActivity)) {
-					activity.setRequestedOrientation(
-							ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-				}
-
-			}
-
-			@Override
-			public void onActivityStarted(Activity activity) {
-			}
-
-			@Override
-			public void onActivityResumed(Activity activity) {
-			}
-
-			@Override
-			public void onActivityPaused(Activity activity) {
-			}
-
-			@Override
-			public void onActivityStopped(Activity activity) {
-			}
-
-			@Override
-			public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-			}
-
-			@Override
-			public void onActivityDestroyed(Activity activity) {
-			}
-
-
-		});
 	}
 
 	public UserManager getUserManager() {

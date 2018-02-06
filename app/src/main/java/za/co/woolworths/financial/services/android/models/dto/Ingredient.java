@@ -16,7 +16,7 @@ public class Ingredient {
     public String displayName;
     @SerializedName("ingredient")
     @Expose
-    public Ingredient_ ingredient;
+    public IngredientDetail ingredient;
     @SerializedName("id")
     @Expose
     public String id;

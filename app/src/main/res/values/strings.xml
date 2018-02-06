@@ -344,7 +344,7 @@
     <string name="wrewards_logout_tag_line">WRewards is our way of rewarding customers INSTANTLY. WRewards members save millions every week.</string>
 
     <string name="contact_us_no_email_error">In order for us to process your query, please send an email to email_address with \"subject_line\" entered in the subject line. Remember to include your ID number in the body of the email.</string>
-    <string name="loading_product_info">Loading product info</string>
+    <string name="loading_product_info">Loading info</string>
 
     <string name="services_unavailable">Services Unavailable</string>
     <string name="please_check_back_later">Please check back later.</string>
@@ -597,6 +597,8 @@
     <string name="bottom_title_cart">Cart</string>
     <string name="bottom_title_reward">WRewards</string>
     <string name="bottom_title_account">Accounts</string>
+    <string name="title_activity_main">ShoppingListActivity</string>
+    <string name="action_settings">Settings</string>
     <string name="title_activity_cart">Cart</string>
 
 </resources>

@@ -48,19 +48,16 @@ import java.util.List;
 
 import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
-import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Response;
-import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.product.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewListAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.AddToShoppingListFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridNavigator;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -73,7 +70,6 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
-import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.SelectedProductView;
@@ -114,7 +110,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	private boolean selectProductDetail = false;
 	private boolean productBackgroundFail = false;
 	private Button mBtnShopOnlineWoolies;
-	private List<OtherSku> mOtherSKU;
+	private List<OtherSkus> mOtherSKU;
 	private WGlobalState mGlobalState;
 	private LinearLayout llStoreFinder;
 	ArrayList<String> permissions;
@@ -143,10 +139,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 
 	}
 
-	@Override
-	public void onLoadStart() {
-
-	}
 
 	@Override
 	public void cancelAPIRequest() {
@@ -184,22 +176,17 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	@Override
-	public void showProgressBarCentered() {
+	public void setProductBody() {
 
 	}
 
 	@Override
-	public void dismissProgressBarCentered() {
+	public void onLoadStart(boolean isLoadMore) {
 
 	}
 
 	@Override
-	public void showProgressBarAtBottom() {
-
-	}
-
-	@Override
-	public void dismissProgressBarAtBottom() {
+	public void onLoadComplete(boolean isLoadMore) {
 
 	}
 
@@ -426,15 +413,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		});
 	}
 
-//	@Override
-//	public void onSelectedProduct(View v, int position) {
-//		selectProductDetail = true;
-//		mSelectedProduct = mProduct.get(position);
-//		mSkuId = mSelectedProduct.otherSkus.get(0).sku;
-//		mProductId = mSelectedProduct.productId;
-//		onCallback(mProductId, mSkuId, false);
-//	}
-
 	@Override
 	public void onSelectedProduct(ProductList productList) {
 
@@ -448,9 +426,9 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		String productName = mShopListProduct.productName;
 		String externalImageRef = getImageByWidth(mShopListProduct.externalImageRef);
 		android.app.FragmentManager fm = mContext.getFragmentManager();
-		AddToShoppingListFragment mAddToShoppingListFragment =
-				AddToShoppingListFragment.newInstance(productId, productName, externalImageRef);
-		mAddToShoppingListFragment.show(fm, "addToShop");
+//		AddToShoppingListFragment mAddToShoppingListFragment =
+//				AddToShoppingListFragment.newInstance(productId, productName, externalImageRef);
+//		mAddToShoppingListFragment.show(fm, "addToShop");
 	}
 
 	@Override
@@ -507,7 +485,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 				PorterDuff.Mode.MULTIPLY);
 	}
 
-	private void showFindInStoreProgress() {
+	public void showFindInStoreProgress() {
 		llStoreFinder.setEnabled(false);
 		tvBtnFinder.setVisibility(View.GONE);
 		mButtonProgress.getIndeterminateDrawable().setColorFilter(Color.WHITE,
@@ -515,10 +493,15 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		mButtonProgress.setVisibility(View.VISIBLE);
 	}
 
-	private void dismissFindInStoreProgress() {
+	public void dismissFindInStoreProgress() {
 		llStoreFinder.setEnabled(true);
 		tvBtnFinder.setVisibility(View.VISIBLE);
 		mButtonProgress.setVisibility(View.GONE);
+	}
+
+	@Override
+	public void onPermissionGranted() {
+
 	}
 
 	public void hideProgressBar() {
@@ -675,7 +658,6 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		productCanClose = closeActivity;
 		disableStoreFinder();
 		mWoolWorthsApplication.getAsyncApi().getProductDetail(productId, skuId, new CancelableCallback<String>() {
-
 			@Override
 			public void onSuccess(String strProduct, retrofit.client.Response response) {
 				WProduct wProduct = Utils.stringToJson(mContext, strProduct);
@@ -944,16 +926,16 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		return new Gson().toJson(jsonObject);
 	}
 
-	private ArrayList<OtherSku> getColorList() {
-		Collections.sort(mOtherSKU, new Comparator<OtherSku>() {
+	private ArrayList<OtherSkus> getColorList() {
+		Collections.sort(mOtherSKU, new Comparator<OtherSkus>() {
 			@Override
-			public int compare(OtherSku lhs, OtherSku rhs) {
+			public int compare(OtherSkus lhs, OtherSkus rhs) {
 				return lhs.colour.compareToIgnoreCase(rhs.colour);
 			}
 		});
 
-		ArrayList<OtherSku> commonColorSku = new ArrayList<>();
-		for (OtherSku sku : mOtherSKU) {
+		ArrayList<OtherSkus> commonColorSku = new ArrayList<>();
+		for (OtherSkus sku : mOtherSKU) {
 			if (!colourValueExist(commonColorSku, sku.colour)) {
 				commonColorSku.add(sku);
 			}
@@ -961,16 +943,16 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		return commonColorSku;
 	}
 
-	private ArrayList<OtherSku> getSizeList() {
-		Collections.sort(mOtherSKU, new Comparator<OtherSku>() {
+	private ArrayList<OtherSkus> getSizeList() {
+		Collections.sort(mOtherSKU, new Comparator<OtherSkus>() {
 			@Override
-			public int compare(OtherSku lhs, OtherSku rhs) {
+			public int compare(OtherSkus lhs, OtherSkus rhs) {
 				return lhs.size.compareToIgnoreCase(rhs.size);
 			}
 		});
 
-		ArrayList<OtherSku> commonColorSku = new ArrayList<>();
-		for (OtherSku sku : mOtherSKU) {
+		ArrayList<OtherSkus> commonColorSku = new ArrayList<>();
+		for (OtherSkus sku : mOtherSKU) {
 			if (!colourValueExist(commonColorSku, sku.size)) {
 				commonColorSku.add(sku);
 			}
@@ -1048,9 +1030,14 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		startLocationUpdates();
 	}
 
-	private void disableStoreFinder() {
+	public void disableStoreFinder() {
 		setLayoutWeight(mBtnShopOnlineWoolies, 1.0f);
 		llStoreFinder.setVisibility(View.GONE);
+	}
+
+	@Override
+	public void setPrice(OtherSkus otherSkus) {
+
 	}
 
 	private void productIsActive(WProductDetail productList) {
@@ -1082,7 +1069,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 								= (LayoutInflater) getBaseContext()
 								.getSystemService(LAYOUT_INFLATER_SERVICE);
 						View mPopWindow = mSlideUpPanelLayoutInflater.inflate(R.layout.product_size_row, null);
-						mColorRecycleSize = (RecyclerView) mPopWindow.findViewById(R.id.recyclerviewSize);
+						mColorRecycleSize = (RecyclerView) mPopWindow.findViewById(R.id.rclSize);
 						bindWithUI(otherSkusList, true);
 						mPColourWindow = new PopupWindow(
 								mPopWindow,
@@ -1112,7 +1099,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 								= (LayoutInflater) getBaseContext()
 								.getSystemService(LAYOUT_INFLATER_SERVICE);
 						View popupView = layoutInflater.inflate(R.layout.product_size_row, null);
-						mRecyclerviewSize = (RecyclerView) popupView.findViewById(R.id.recyclerviewSize);
+						mRecyclerviewSize = (RecyclerView) popupView.findViewById(R.id.rclSize);
 						LinearLayout mPopLinContainer = (LinearLayout) popupView.findViewById(R.id.linPopUpContainer);
 
 						String selectedColor = mTextColour.getText().toString();
@@ -1133,7 +1120,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 				}
 				break;
 
-			case R.id.imCloseProduct:
+			case R.id.imClose:
 				onBackPressed();
 				break;
 
@@ -1174,8 +1161,8 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 			boolean colorWasPopUp = mGlobalState.colorWasPopup();
 			boolean sizeWasPopUp = mGlobalState.sizeWasPopup();
 
-			OtherSku popupColorSKu = mGlobalState.getColorPickerSku();
-			OtherSku popupSizeSKu = mGlobalState.getSizePickerSku();
+			OtherSkus popupColorSKu = mGlobalState.getColorPickerSku();
+			OtherSkus popupSizeSKu = mGlobalState.getSizePickerSku();
 
 			/*
 			color | size
@@ -1212,7 +1199,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 			if (mProductHasOneColour) {
 				// one colour only
 				String skuColour = getColorList().get(0).colour;
-				ArrayList<OtherSku> getSize;
+				ArrayList<OtherSkus> getSize;
 				if (!TextUtils.isEmpty(skuColour)) {
 					getSize = commonSizeList(skuColour);
 				} else {
@@ -1236,7 +1223,7 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		} else {
 			if (mProductHasSize) {
 				if (mProductHasOneSize) { //one size
-					ArrayList<OtherSku> getSize = getSizeList();
+					ArrayList<OtherSkus> getSize = getSizeList();
 					mSkuId = getSize.get(0).sku;
 					noSizeColorIntent();
 				} else { // more sizes
@@ -1249,8 +1236,8 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		}
 	}
 
-	private void displayColor(OtherSku otherSku) {
-		ArrayList<OtherSku> colorList = commonColorList(otherSku.size);
+	private void displayColor(OtherSkus otherSku) {
+		ArrayList<OtherSkus> colorList = commonColorList(otherSku.size);
 		if (colorList != null) {
 			int colorListSize = colorList.size();
 			if (colorListSize > 0) {
@@ -1274,8 +1261,8 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		}
 	}
 
-	private void sizeOnlyIntent(OtherSku otherSku) {
-		ArrayList<OtherSku> sizeList = commonSizeList(otherSku.colour);
+	private void sizeOnlyIntent(OtherSkus otherSku) {
+		ArrayList<OtherSkus> sizeList = commonSizeList(otherSku.colour);
 		int sizeListSize = sizeList.size();
 		if (sizeListSize > 0) {
 			if (sizeListSize == 1) {
@@ -1294,72 +1281,36 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 	}
 
 	private void callbackInStoreFinder() {
-		locationItemTask = new LocationItemTask(ProductGridActivity.this, new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				if (object != null) {
-					List<StoreDetails> location = ((LocationResponse) object).Locations;
-					if ((location != null) && (location.size() > 0)) {
-						Utils.removeObjectFromArrayList(ProductGridActivity.this, location);
-						if (location.size() > 0) {
-							mGlobalState.setStoreDetailsArrayList(location);
-							Intent intentInStoreFinder = new Intent(ProductGridActivity.this, WStockFinderActivity.class);
-							intentInStoreFinder.putExtra("PRODUCT_NAME", mSelectedProduct.productName);
-							startActivity(intentInStoreFinder);
-							overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-						} else {
-							//no stock error message
-							Utils.displayValidationMessage(ProductGridActivity.this, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
-						}
-					} else {
-						//no stock error message
-						Utils.displayValidationMessage(ProductGridActivity.this, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
-					}
-				}
-				dismissFindInStoreProgress();
-			}
-
-			@Override
-			public void onFailure(final String e) {
-				ProductGridActivity.this.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						dismissFindInStoreProgress();
-						Log.e("callbackInStoreFinder", "error " + e);
-					}
-				});
-			}
-		});
 		locationItemTask.execute();
 	}
 
-	private ArrayList<OtherSku> commonSizeList(String colour) {
-		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+	private ArrayList<OtherSkus> commonSizeList(String colour) {
+		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
 
 		if (productHasColour()) { //product has color
 			// filter by colour
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : mOtherSKU) {
+			ArrayList<OtherSkus> sizeList = new ArrayList<>();
+			for (OtherSkus sku : mOtherSKU) {
 				if (sku.colour.equalsIgnoreCase(colour)) {
 					sizeList.add(sku);
 				}
 			}
 
 			//remove duplicates
-			for (OtherSku os : sizeList) {
+			for (OtherSkus os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.colour)) {
 					commonSizeList.add(os);
 				}
 			}
 		} else { // no color found
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : mOtherSKU) {
+			ArrayList<OtherSkus> sizeList = new ArrayList<>();
+			for (OtherSkus sku : mOtherSKU) {
 				if (sku.colour.contains(colour)) {
 					sizeList.add(sku);
 				}
 			}
 			//remove duplicates
-			for (OtherSku os : sizeList) {
+			for (OtherSkus os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.size)) {
 					commonSizeList.add(os);
 				}
@@ -1368,28 +1319,29 @@ public class ProductGridActivity extends WProductDetailActivity implements Selec
 		return commonSizeList;
 	}
 
-	private ArrayList<OtherSku> commonColorList(String size) {
-		List<OtherSku> otherSkus = mOtherSKU;
-		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+	private ArrayList<OtherSkus> commonColorList(String size) {
+		List<OtherSkus> otherSkus = mOtherSKU;
+		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
 
 		if (productHasColour()) { //product has color
 			// filter by colour
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : otherSkus) {
+			ArrayList<OtherSkus> sizeList = new ArrayList<>();
+			for (OtherSkus sku : otherSkus) {
 				if (sku.size.equalsIgnoreCase(size)) {
 					sizeList.add(sku);
 				}
 			}
 
 			//remove duplicates
-			for (OtherSku os : sizeList) {
+			for (OtherSkus os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.colour)) {
 					commonSizeList.add(os);
 				}
 			}
 		} else { // no color found
+
 			//remove duplicates
-			for (OtherSku os : otherSkus) {
+			for (OtherSkus os : otherSkus) {
 				if (!sizeValueExist(commonSizeList, os.size)) {
 					commonSizeList.add(os);
 				}

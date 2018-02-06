@@ -31,11 +31,11 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.awfs.coordination.R;
-import com.google.android.gms.iid.InstanceID;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.zxing.BarcodeFormat;
@@ -63,7 +63,7 @@ import java.util.Map;
 import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
@@ -246,6 +246,7 @@ public class Utils {
 			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 			window.setStatusBarColor(ContextCompat.getColor(activity, color));
+			decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 		}
 	}
 
@@ -654,7 +655,6 @@ public class Utils {
 		return listIterator;
 	}
 
-
 	public static String getString(Context context, int id) {
 		Resources resources = context.getResources();
 		return resources.getString(id);
@@ -681,33 +681,33 @@ public class Utils {
 		view.setVisibility(View.GONE);
 	}
 
-	public static ArrayList<OtherSku> commonSizeList(String colour, boolean productHasColor, List<OtherSku> mOtherSKU) {
-		ArrayList<OtherSku> commonSizeList = new ArrayList<>();
+	public static ArrayList<OtherSkus> commonSizeList(String colour, boolean productHasColor, List<OtherSkus> mOtherSKU) {
+		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
 		if (productHasColor) { //product has color
 			// filter by colour
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : mOtherSKU) {
+			ArrayList<OtherSkus> sizeList = new ArrayList<>();
+			for (OtherSkus sku : mOtherSKU) {
 				if (sku.colour.equalsIgnoreCase(colour)) {
 					sizeList.add(sku);
 				}
 			}
 
 			//remove duplicates
-			for (OtherSku os : sizeList) {
+			for (OtherSkus os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.colour)) {
 					commonSizeList.add(os);
 				}
 			}
 		} else { // no color found
-			ArrayList<OtherSku> sizeList = new ArrayList<>();
-			for (OtherSku sku : mOtherSKU) {
+			ArrayList<OtherSkus> sizeList = new ArrayList<>();
+			for (OtherSkus sku : mOtherSKU) {
 				if (sku.colour.contains(colour)) {
 					sizeList.add(sku);
 				}
 			}
 
 			//remove duplicates
-			for (OtherSku os : sizeList) {
+			for (OtherSkus os : sizeList) {
 				if (!sizeValueExist(commonSizeList, os.size)) {
 					commonSizeList.add(os);
 				}
@@ -716,8 +716,8 @@ public class Utils {
 		return commonSizeList;
 	}
 
-	public static boolean sizeValueExist(ArrayList<OtherSku> list, String name) {
-		for (OtherSku item : list) {
+	public static boolean sizeValueExist(ArrayList<OtherSkus> list, String name) {
+		for (OtherSkus item : list) {
 			if (item.size.equals(name)) {
 				return true;
 			}
@@ -738,7 +738,7 @@ public class Utils {
 		if (deviceID == null) {
 			deviceID = getSessionDaoValue(context, SessionDao.KEY.DEVICE_ID);
 			if (deviceID == null) {
-				deviceID = InstanceID.getInstance(context).getId();
+				deviceID = FirebaseInstanceId.getInstance().getToken();
 				sessionDaoSave(context, SessionDao.KEY.DEVICE_ID, deviceID);
 			}
 		}
@@ -824,23 +824,21 @@ public class Utils {
 		return new QBadgeView(context)
 				.setBadgeNumber(number)
 				.setGravityOffset(15, 2, true)
-				.bindTarget(mBottomNav.getBottomNavigationItemView(position))
-				.setOnDragStateChangedListener(new Badge.OnDragStateChangedListener() {
-					@Override
-					public void onDragStateChanged(int dragState, Badge badge, View targetView) {
-//						if (Badge.OnDragStateChangedListener.STATE_SUCCEED == dragState)
-					}
-				});
+				.bindTarget(mBottomNav.getBottomNavigationItemView(position));
 	}
 
-	public static void updateStatusBar(Activity activity, int color) {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			Window window = activity.getWindow();
-			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-			window.setStatusBarColor(activity.getResources().getColor(color));
-		}
+	public static Badge addBadgeAt(Context context, View view, int number) {
+		return new QBadgeView(context).setBadgeNumber(number).bindTarget(view);
 	}
+//
+//	public static void updateStatusBar(Activity activity, int color) {
+//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//			Window window = activity.getWindow();
+//			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//			window.setStatusBarColor(activity.getResources().getColor(color));
+//		}
+//	}
 
 	public static void showOneTimePopup(Context context) {
 		try {

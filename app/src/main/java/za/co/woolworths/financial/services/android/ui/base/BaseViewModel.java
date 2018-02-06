@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.base;
 
 import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableBoolean;
+import android.text.TextUtils;
 
 import io.reactivex.disposables.CompositeDisposable;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -49,6 +50,13 @@ public abstract class BaseViewModel<N> extends ViewModel {
 		mIsLoading.set(isLoading);
 	}
 
+	public String isEmpty(String value) {
+		if (TextUtils.isEmpty(value)) {
+			return "";
+		} else {
+			return value;
+		}
+	}
 	@Override
 	protected void onCleared() {
 		mCompositeDisposable.dispose();

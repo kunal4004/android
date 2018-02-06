@@ -2,11 +2,16 @@ package za.co.woolworths.financial.services.android.ui.activities.bottom_menu;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
-import android.widget.FrameLayout;
+
+import com.awfs.coordination.R;
+
+import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
+import za.co.woolworths.financial.services.android.util.PermissionUtils;
+import za.co.woolworths.financial.services.android.util.frag_nav.FragNavTransactionOptions;
 
 public interface BottomNavigator {
 
@@ -40,6 +45,23 @@ public interface BottomNavigator {
 
 	void hideStatusBar();
 
+	void fadeOutToolbar(int color);
+
 	void pushFragment(Fragment fragment);
 
+	void hideBottomNavigationMenu();
+
+	void showBottomNavigationMenu();
+
+	void displayToolbar();
+
+	void removeToolbar();
+
+	void setUpRuntimePermission();
+
+	PermissionUtils getRuntimePermission();
+
+	ArrayList<String> getPermissionType(String type);
+
+	void popFragment();
 }
