@@ -70,6 +70,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	private boolean viewWasCreated = false;
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private CLIGetOfferActive cliGetOfferActive;
+	private AccountsResponse accountsResponse;
 
 	@Nullable
 	@Override
@@ -156,7 +157,7 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	private void setAccountDetail() {
 		bolBroacastRegistred = true;
-		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+		accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		bindData(accountsResponse);
 		onLoadComplete();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
@@ -199,6 +200,9 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	@Override
 	public void onClick(View v) {
 		MultiClickPreventer.preventMultiClick(v);
+		if (accountsResponse != null) {
+			productOfferingId = Utils.getProductOfferingId(accountsResponse, "CC");
+		}
 		switch (v.getId()) {
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:

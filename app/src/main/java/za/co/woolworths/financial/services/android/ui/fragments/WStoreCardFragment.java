@@ -206,12 +206,15 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
 		viewWasCreated = true;
 		if (!new ConnectionDetector().isOnline(getActivity()))
-				mErrorHandlerView.showToast();
+			mErrorHandlerView.showToast();
 	}
 
 	@Override
 	public void onClick(View v) {
 		MultiClickPreventer.preventMultiClick(v);
+		if (accountsResponse != null) {
+			productOfferingId = Utils.getProductOfferingId(accountsResponse, "SC");
+		}
 		switch (v.getId()) {
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:
@@ -419,5 +422,4 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private void hideCLIView() {
 		mIncreaseLimitController.cliDefaultView(llCommonLayer, tvIncreaseLimitDescription);
 	}
-
 }

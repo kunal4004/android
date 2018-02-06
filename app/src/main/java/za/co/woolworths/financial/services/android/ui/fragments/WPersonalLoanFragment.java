@@ -54,7 +54,7 @@ import za.co.woolworths.financial.services.android.util.controller.IncreaseLimit
 public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
 	public WTextView tvIncreaseLimitDescription, availableBalance, creditLimit, dueDate, minAmountDue, currentBalance, tvViewTransaction, tvIncreaseLimit, tvProtectionInsurance;
-	String productOfferingId;
+	private String productOfferingId;
 	private WoolworthsApplication woolworthsApplication;
 	private ProgressBar mProgressCreditLimit;
 	private WTextView tvApplyNowIncreaseLimit;
@@ -75,7 +75,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private RelativeLayout relBalanceProtection, relViewTransactions;
 	private CLIGetOfferActive cliGetOfferActive;
 	private final CompositeDisposable disposables = new CompositeDisposable();
-
+	private RelativeLayout rlViewStatement;
+	private AccountsResponse accountsResponse;
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -159,13 +160,13 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private void setAccountDetails() {
 		boolBroadcastRegistered = true;
 		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-		AccountsResponse temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+		accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		onLoadComplete();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
 		if (!new ConnectionDetector().isOnline(getActivity()))
 			mErrorHandlerView.showToast();
-		if (temp != null)
-			bindData(temp);
+		if (accountsResponse != null)
+			bindData(accountsResponse);
 
 		{
 			if (controllerNotNull())
@@ -224,6 +225,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onClick(View v) {
 		MultiClickPreventer.preventMultiClick(v);
+		if (accountsResponse != null) {
+			productOfferingId = Utils.getProductOfferingId(accountsResponse, "PL");
+		}
 		switch (v.getId()) {
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:
