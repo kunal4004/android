@@ -46,6 +46,7 @@
     <string name="delivery_location">Delivery Location</string>
     <string name="previously_selected_locations">Previously Selected Locations</string>
     <string name="select_your_province">Select your Province</string>
+    <string name="select_your_suburb">Select your Suburb</string>
     <string name="submit_query">Submit Query</string>
     <string name="faqs">FAQs</string>
     <string name="sign_out">Sign Out</string>

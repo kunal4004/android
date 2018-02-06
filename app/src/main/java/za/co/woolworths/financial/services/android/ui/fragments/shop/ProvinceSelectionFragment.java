@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -70,6 +71,16 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
     @Override
     public void onItemClick(Province province) {
         Log.i("ProvinceSelection", "Province selected: " + province.title);
+        // Open suburb list
+        openFragment(new SuburbSelectionFragment());
+    }
+
+    public void openFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+        fragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
+                .replace(R.id.content_frame, fragment).addToBackStack(null).commit();
     }
 
     @Override
