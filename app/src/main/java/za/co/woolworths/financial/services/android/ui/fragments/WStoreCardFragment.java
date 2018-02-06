@@ -82,6 +82,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private CLIGetOfferActive cliGetOfferActive;
 
 	private final CompositeDisposable disposables = new CompositeDisposable();
+	private AccountsResponse accountsResponse;
 
 	@Nullable
 	@Override
@@ -200,7 +201,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		bolBroacastRegistred = true;
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
 		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+		accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		bindData(accountsResponse);
 		onLoadComplete();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
