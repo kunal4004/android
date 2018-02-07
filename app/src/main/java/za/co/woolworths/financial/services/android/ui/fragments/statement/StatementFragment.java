@@ -25,7 +25,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import es.voghdev.pdfviewpager.library.adapter.BasePDFPagerAdapter;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
@@ -111,7 +110,7 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 	private void showSlideUpPanel() {
 		mSlideUpPanelLayout.setAnchorPoint(1.0f);
 		mSlideUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
-		//mSlideUpPanelLayout.setScrollableViewHelper(new NestedScrollableViewHelper(mScrollProductDetail));
+		mSlideUpPanelLayout.setTouchEnabled(false);
 	}
 
 	private void setAdapter() {
