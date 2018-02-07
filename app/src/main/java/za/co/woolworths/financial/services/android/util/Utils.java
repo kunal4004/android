@@ -23,6 +23,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import com.google.android.gms.iid.InstanceID;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -32,7 +33,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.awfs.coordination.R;
-import com.google.android.gms.iid.InstanceID;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.VisibleRegion;

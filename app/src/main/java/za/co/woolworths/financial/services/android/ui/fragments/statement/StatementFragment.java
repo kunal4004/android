@@ -2,7 +2,10 @@ package za.co.woolworths.financial.services.android.ui.fragments.statement;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -10,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +21,7 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -296,19 +301,27 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 						try {
 							StatementUtils statementUtils = new StatementUtils(getActivity());
 							statementUtils.savePDF(response2.getBody().in());
-							PreviewStatement previewStatement = new PreviewStatement();
-							FragmentUtils fragmentUtils = new FragmentUtils(getActivity());
-							FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-							fragmentUtils.openFragment(fragmentManager,
-									previewStatement, R.id.flAccountStatement);
-							showSlideUpPanel();
+							if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+								// Call some material design APIs here
+								PreviewStatement previewStatement = new PreviewStatement();
+								FragmentUtils fragmentUtils = new FragmentUtils(getActivity());
+								FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+								fragmentUtils.openFragment(fragmentManager,
+										previewStatement, R.id.flAccountStatement);
+								showSlideUpPanel();
+							} else {
+								launchOpenPDFIntent();
+							}
 						} catch (Exception ignored) {
 						}
+
 						break;
 					default:
 						break;
 				}
+
 				loadSuccess();
+
 				hideViewProgress();
 			}
 
@@ -462,6 +475,24 @@ public class StatementFragment extends Fragment implements StatementAdapter.Stat
 		sendUserStatementRequest.documents = usDocuments;
 		sendUserStatementRequest.productOfferingId = String.valueOf(WoolworthsApplication.getProductOfferingId());
 		return sendUserStatementRequest;
+	}
+
+	private void launchOpenPDFIntent() {
+		File file = new File(getActivity().getExternalFilesDir("woolworth") + "/Files/" + "statement.pdf");
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+		intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+		startActivity(intent);
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		try {
+			Utils.deleteDirectory(new File(getActivity().getExternalFilesDir("woolworth") + "/Files/" + "statement.pdf"));
+		} catch (Exception ex) {
+			Log.d("deleteDirectoryErr", ex.toString());
+		}
 	}
 }
 

@@ -41,14 +41,13 @@ import za.co.woolworths.financial.services.android.util.SpannableMenuOption;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-import static com.google.android.gms.wearable.DataMap.TAG;
-
 public class StoreDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
 	private static final int REQUEST_CALL = 1;
 	GoogleMap googleMap;
 	public Toolbar toolbar;
 	StoreDetails storeDetails;
 
+	private String TAG = this.getClass().getSimpleName();
 	//Detail page Views
 	LinearLayout detailsLayout;
 	LinearLayout timeingsLayout;
