@@ -159,6 +159,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginEnd="@dimen/sixteen_dp"
+                android:alpha="0.3"
                 android:src="@drawable/icon_info"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
