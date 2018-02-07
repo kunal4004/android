@@ -229,7 +229,6 @@
     <string name="bullet">\u2022</string>
     <string name="sc_points_bring_following_while_collecting_1">A valid South African ID</string>
     <string name="sc_points_bring_following_while_collecting_2">Your latest three payslips or your last three months’ bank statements</string>
-
     <string name="sc_points_to_qualify_1">Be 18 or older</string>
     <string name="sc_points_to_qualify_2">Have a valid RSA ID number</string>
     <string name="sc_points_to_qualify_3">Earn a minimum of R2000 per month</string>
