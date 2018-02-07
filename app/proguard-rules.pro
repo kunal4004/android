@@ -78,6 +78,8 @@
 -keepattributes *Annotation*
 -keep class sun.misc.Unsafe { *; }
 
+-keep class com.facebook.all.All
+
 -ignorewarnings
 
 -keep class * {
