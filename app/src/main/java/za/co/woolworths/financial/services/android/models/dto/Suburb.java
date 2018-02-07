@@ -5,6 +5,8 @@ package za.co.woolworths.financial.services.android.models.dto;
  */
 
 public class Suburb {
+    public String id;
+    public String name;
+
     public boolean hasHeader = false;
-    public String title;
 }

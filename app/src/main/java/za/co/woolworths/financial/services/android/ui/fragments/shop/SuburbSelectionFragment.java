@@ -8,11 +8,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -22,14 +20,16 @@ import com.awfs.coordination.R;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 
-import za.co.woolworths.financial.services.android.models.dto.Province;
+import za.co.woolworths.financial.services.android.models.dto.RegionResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
-import za.co.woolworths.financial.services.android.ui.adapters.ProvinceSelectionAdapter;
+import za.co.woolworths.financial.services.android.models.rest.shop.GetRegions;
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbSelectionAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
 
 public class SuburbSelectionFragment extends Fragment implements SuburbSelectionAdapter.OnItemClick, TextWatcher {
@@ -40,6 +40,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
     private LinearLayout scrollbarLayout;
     private View searchSeparator;
     private SuburbSelectionAdapter suburbAdapter;
+    private GetRegions getRegionsAsync;
 
     public SuburbSelectionFragment() {
         // Required empty public constructor
@@ -63,19 +64,84 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
         WEditTextView etvSuburbFilter = view.findViewById(R.id.etvSuburbFilter);
         etvSuburbFilter.addTextChangedListener(this);
 
-        configureSuburbList();
+        loadSuburbItems();
     }
 
-    private void configureSuburbList() {
+    private void configureSuburbList(List<Suburb> suburbItems) {
         // TODO: make API request & show loading before setting the list
-
-        suburbAdapter = new SuburbSelectionAdapter(getSuburbItems(), this);
+        suburbAdapter = new SuburbSelectionAdapter(suburbItems, this);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         suburbList.setLayoutManager(mLayoutManager);
         suburbList.setAdapter(suburbAdapter);
 
         configureSectionScrollbar();
+    }
+
+
+
+    private void loadSuburbItems() {
+        getRegionsAsync = getRegions("2000030");
+        getRegionsAsync.execute();
+    }
+
+    private GetRegions getRegions(String locationId) {
+        return new GetRegions(locationId, new OnEventListener() {
+            @Override
+            public void onSuccess(Object object) {
+                handleVoucherResponse(((RegionResponse) object));
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+//                mErrorHandlerView.networkFailureHandler(errorMessage);
+            }
+        });
+    }
+
+    public void handleVoucherResponse(RegionResponse response) {
+        try {
+            switch (response.httpCode) {
+                case 200:
+//                    mWGlobalState.setRewardSignInState(true);
+//                    mWGlobalState.setRewardHasExpired(false);
+//                    if (response.voucherCollection.vouchers != null) {
+//                        getBottomNavigator().addBadge(3, response.voucherCollection.vouchers.size());
+//                    } else {
+//                        clearVoucherCounter();
+//                    }
+//                    voucherResponse = response;
+//                    isWrewardsCalled = true;
+//                    handleWrewardsAndCardDetailsResponse();
+
+                    configureSuburbList(response.suburbs);
+                    break;
+                case 440:
+//                    progressBar.setVisibility(View.GONE);
+//                    fragmentView.setVisibility(View.VISIBLE);
+//                    clearVoucherCounter();
+//                    mWGlobalState.setRewardHasExpired(true);
+//                    mWGlobalState.setRewardSignInState(false);
+//                    SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.response.stsParams);
+//                    Utils.setBadgeCounter(getActivity(), 0);
+//                    Intent intent = new Intent();
+//                    WRewardsFragment mParentFragment = (WRewardsFragment) getParentFragment();
+//                    if (mParentFragment != null) {
+//                        mParentFragment.onActivityResult(WRewardsFragment.FRAGMENT_CODE_2, Activity.RESULT_OK, intent);
+//                    }
+//                    getFragmentManager().popBackStack();
+//                    SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
+                    break;
+                default:
+//                    progressBar.setVisibility(View.GONE);
+//                    fragmentView.setVisibility(View.VISIBLE);
+//                    clearVoucherCounter();
+//                    mWGlobalState.setRewardSignInState(false);
+//                    setupErrorViewPager(viewPager);
+                    break;
+            }
+        } catch (Exception ignored) {
+        }
     }
 
     private void configureSectionScrollbar() {
@@ -102,13 +168,13 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
         String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         for (int i = 0; i < 40; i++) {
             Suburb suburb = new Suburb();
-            suburb.title = alphabet.charAt(r.nextInt(alphabet.length())) + " Suburb #" + (i + 1);
+            suburb.name = alphabet.charAt(r.nextInt(alphabet.length())) + " Suburb #" + (i + 1);
             suburbItems.add(suburb);
         }
         Collections.sort(suburbItems, new Comparator<Suburb>() {
             @Override
             public int compare(Suburb left, Suburb right) {
-                return left.title.compareTo(right.title);
+                return left.name.compareTo(right.name);
             }
         });
         return suburbItems;
@@ -116,7 +182,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 
     @Override
     public void onItemClick(Suburb suburb) {
-        Log.i("SuburbSelection", "Suburb selected: " + suburb.title);
+        Log.i("SuburbSelection", "Suburb selected: " + suburb.name);
     }
 
     @Override

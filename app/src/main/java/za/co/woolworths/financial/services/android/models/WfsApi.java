@@ -43,6 +43,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
+import za.co.woolworths.financial.services.android.models.dto.RegionResponse;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
@@ -186,6 +187,10 @@ public class WfsApi {
 
 	public SubCategories getSubCategory(String category_id) {
 		return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), "Android", category_id);
+	}
+
+	public RegionResponse getRegions(String locationId) {
+		return mApiInterface.getRegions(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), locationId);
 	}
 
 	public ProductView productViewRequest(boolean isBarcode, int pageSize, int pageNumber, String product_id) {

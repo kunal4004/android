@@ -14,7 +14,6 @@ import com.awfs.coordination.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
@@ -25,21 +24,21 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<SuburbSelection
 	}
 
 	private OnItemClick onItemClick;
-	private ArrayList<Suburb> suburbItems;
-	private ArrayList<Suburb> suburbItemsFiltered;
-	private ArrayList<HeaderPosition> headerItems = new ArrayList<>();
+	private List<Suburb> suburbItems;
+	private List<Suburb> suburbItemsFiltered;
+	private List<HeaderPosition> headerItems = new ArrayList<>();
 	private boolean isFiltering = false;
 
-	public SuburbSelectionAdapter(ArrayList<Suburb> suburbItems, OnItemClick onItemClick) {
+	public SuburbSelectionAdapter(List<Suburb> suburbItems, OnItemClick onItemClick) {
 		this.suburbItems = this.suburbItemsFiltered = configureHeaders(suburbItems);
 		this.onItemClick = onItemClick;
 	}
 
-	private ArrayList<Suburb> configureHeaders(ArrayList<Suburb> items) {
+	private List<Suburb> configureHeaders(List<Suburb> items) {
 		String lastFirstChar = null;
 		int idxSuburb = 0;
 		for (Suburb suburb : items) {
-			String currentFirstChar = Character.toString(suburb.title.charAt(0));
+			String currentFirstChar = Character.toString(suburb.name.charAt(0));
 			if(lastFirstChar == null || (lastFirstChar != null && !lastFirstChar.equalsIgnoreCase(currentFirstChar))) {
 				suburb.hasHeader = true;
 				headerItems.add(new HeaderPosition(currentFirstChar, idxSuburb));
@@ -59,10 +58,10 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<SuburbSelection
 	@Override
 	public void onBindViewHolder(final SuburbViewHolder holder, final int position) {
 		final Suburb suburb = suburbItemsFiltered.get(position);
-		holder.tvSuburbName.setText(suburb.title);
+		holder.tvSuburbName.setText(suburb.name);
 
 		if(suburb.hasHeader && !isFiltering) {
-			holder.tvSuburbHeader.setText(Character.toString(suburb.title.charAt(0)));
+			holder.tvSuburbHeader.setText(Character.toString(suburb.name.charAt(0)));
 			holder.headerLayout.setVisibility(View.VISIBLE);
 		} else {
 			holder.headerLayout.setVisibility(View.GONE);
@@ -88,15 +87,16 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<SuburbSelection
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
 				String charString = constraint.toString();
-				ArrayList<Suburb> filteredList = new ArrayList<>();
+				List<Suburb> filteredList = new ArrayList<>();
 
 				if (charString.isEmpty()) {
 					filteredList = suburbItems;
 					isFiltering = false;
 				} else {
+					// TODO: calculate processing time & find a more optimal solution
 					String lowercaseConstraint = charString.toLowerCase();
 					for (Suburb suburbItem : suburbItems) {
-						if (suburbItem.title.toLowerCase().contains(lowercaseConstraint)) {
+						if (suburbItem.name.toLowerCase().contains(lowercaseConstraint)) {
 							filteredList.add(suburbItem);
 						}
 					}
@@ -118,7 +118,7 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<SuburbSelection
 		};
 	}
 
-	public ArrayList<HeaderPosition> getHeaderItems() {
+	public List<HeaderPosition> getHeaderItems() {
 		return headerItems;
 	}
 

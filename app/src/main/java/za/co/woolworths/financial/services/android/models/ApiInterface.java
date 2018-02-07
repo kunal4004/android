@@ -42,6 +42,7 @@ import za.co.woolworths.financial.services.android.models.dto.POIDocumentUploadR
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
+import za.co.woolworths.financial.services.android.models.dto.RegionResponse;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
@@ -624,4 +625,20 @@ public interface ApiInterface {
 			@Header("os") String os,
 			@Header("osVersion") String osVersion,
 			@Header("sessionToken") String sessionToken);
+
+	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
+	@GET("/location/{locationId}")
+	RegionResponse getRegions(
+			@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("userAgent") String userAgent,
+			@Header("userAgentVersion") String userAgentVersion,
+			@Header("sessionToken") String sessionToken,
+			@Path("locationId") String locationId
+	);
 }
