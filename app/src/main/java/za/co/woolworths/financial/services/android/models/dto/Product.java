@@ -9,7 +9,7 @@ public class Product {
 
     @SerializedName("products")
     @Expose
-    public ArrayList<Product_> products = null;
+    public ArrayList<ProductDetail> products = null;
     @SerializedName("response")
     @Expose
     public Response response;

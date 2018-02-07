@@ -201,12 +201,27 @@ public class WfsApi {
 	public ProductView productViewRequest(LoadProduct lp) {
 		getMyLocation();
 		if (Utils.isLocationEnabled(mContext)) {
-			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), lp.getPageOffset(),lp.getPageSize(), lp.getProductId());
+			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), lp.getPageOffset(), lp.getPageSize(), lp.getProductId());
 		} else {
-			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(),lp.getPageOffset(), lp.getPageSize(), lp.getProductId());
+			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), lp.getPageOffset(), lp.getPageSize(), lp.getProductId());
 		}
 	}
 
+	public ProductView getProductSearchList(LoadProduct loadProduct) {
+		getMyLocation();
+		String search_item = "";
+		try {
+			search_item = URLEncoder.encode(loadProduct.getProductId(), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
+		if (Utils.isLocationEnabled(mContext)) {// should we implement location update here ?
+			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), loadProduct.isBarcode(), search_item, loadProduct.getPageOffset(), Utils.PAGE_SIZE);
+		} else {
+			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loadProduct.isBarcode(), search_item, loadProduct.getPageOffset(), Utils.PAGE_SIZE);
+		}
+	}
 
 	public ProductView getProductSearchList(String search_item, boolean isBarcode, int pageSize, int pageNumber) {
 		getMyLocation();

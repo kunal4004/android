@@ -9,54 +9,53 @@ import com.awfs.coordination.R;
 
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.SelectedProductView;
 
 public class ProductColorAdapter extends RecyclerView.Adapter<ProductColorAdapter.SimpleViewHolder> {
-    private List<OtherSku> mProductColorList;
-    private SelectedProductView mSelectedProductView;
+	private DetailNavigator mDetailNavigator;
+	private List<OtherSkus> mProductColorList;
 
-    public ProductColorAdapter(List<OtherSku> mProductColorList,
-                               SelectedProductView selectedProductView) {
-        this.mProductColorList = mProductColorList;
-        this.mSelectedProductView = selectedProductView;
-    }
+	public ProductColorAdapter(List<OtherSkus> mProductColorList,
+							   DetailNavigator detailNavigator) {
+		this.mProductColorList = mProductColorList;
+		this.mDetailNavigator = detailNavigator;
+	}
 
-    class SimpleViewHolder extends RecyclerView.ViewHolder {
+	class SimpleViewHolder extends RecyclerView.ViewHolder {
 
-        WTextView productName;
+		WTextView productName;
 
-        SimpleViewHolder(View view) {
-            super(view);
-            productName = (WTextView) view.findViewById(R.id.name);
-        }
-    }
+		SimpleViewHolder(View view) {
+			super(view);
+			productName = (WTextView) view.findViewById(R.id.name);
+		}
+	}
 
-    @Override
-    public void onBindViewHolder(final SimpleViewHolder holder, final int position) {
+	@Override
+	public void onBindViewHolder(final SimpleViewHolder holder, final int position) {
+		OtherSkus mProductColor = mProductColorList.get(position);
+		String colour = mProductColor.colour;
+		holder.productName.setText(colour);
+		holder.itemView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mDetailNavigator.onColourItemClicked(mProductColorList.get(holder.getAdapterPosition()));
+			}
+		});
+	}
 
-        OtherSku mProductColor = mProductColorList.get(position);
-        String colour = mProductColor.colour;
-        holder.productName.setText(colour);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSelectedProductView.onSelectedColor(v, holder.getAdapterPosition());
-            }
-        });
-    }
+	@Override
+	public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+		View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.color_row, parent, false);
+		return new SimpleViewHolder(view);
+	}
 
-    @Override
-    public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.color_row, parent, false);
-        return new SimpleViewHolder(view);
-    }
-
-    @Override
-    public int getItemCount() {
-        return mProductColorList.size();
-    }
+	@Override
+	public int getItemCount() {
+		return mProductColorList.size();
+	}
 
 
 }

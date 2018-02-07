@@ -10,7 +10,7 @@ import com.awfs.coordination.R;
 
 import java.util.ArrayList;
 
-import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class StockFinderSizeColorAdapter extends RecyclerView.Adapter<StockFinderSizeColorAdapter.SimpleViewHolder> {
@@ -22,9 +22,9 @@ public class StockFinderSizeColorAdapter extends RecyclerView.Adapter<StockFinde
 	}
 
 	private RecyclerViewClickListener mRecyclerViewClickListener;
-	private final ArrayList<OtherSku> mOtherSKu;
+	private final ArrayList<OtherSkus> mOtherSKu;
 
-	public StockFinderSizeColorAdapter(ArrayList<OtherSku> otherSkus, RecyclerViewClickListener recyclerViewClickListener, String filterType) {
+	public StockFinderSizeColorAdapter(ArrayList<OtherSkus> otherSkus, RecyclerViewClickListener recyclerViewClickListener, String filterType) {
 		this.mOtherSKu = otherSkus;
 		this.mRecyclerViewClickListener = recyclerViewClickListener;
 		this.mFilterType = filterType;

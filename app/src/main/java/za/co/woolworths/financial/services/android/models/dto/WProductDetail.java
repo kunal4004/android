@@ -24,7 +24,7 @@ public class WProductDetail {
     //@SerializedName("otherSkus")
     @SerializedName("otherSkus")
     @Expose
-    public List<OtherSku> otherSkus = null;
+    public List<OtherSkus> otherSkus = null;
     @SerializedName("promotionImages")
     @Expose
     public PromotionImages promotionImages;

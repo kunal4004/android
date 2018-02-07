@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +17,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.OtherSku;
+import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragmentAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.ColorFragmentDialog;
@@ -32,12 +31,11 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 	private LinearLayout mRelRootContainer, mRelPopContainer;
 	private ImageView mImCloseIcon, mImBackIcon;
-	private String mColorList, mOtherSKU, mProductName;
+	private String mColorList, mOtherSKU;
 	private static final int ANIM_DOWN_DURATION = 700;
 	private NonSwipeableViewPager mViewPager;
 	private WTextView tvTitle;
 	private String mSelectedColour;
-	private ArrayList<OtherSku> mOtherSizeSKU;
 	private boolean mProductHasColor, mProductHasSize, viewWasClicked;
 	private StockFinderFragmentAdapter mPagerAdapter;
 	private WGlobalState mGlobalState;
@@ -55,7 +53,6 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			mSelectedColour = mBundle.getString("SELECTED_COLOUR");
 			mColorList = mBundle.getString("COLOR_LIST");
 			mOtherSKU = mBundle.getString("OTHERSKU");
-			mProductName = mBundle.getString("PRODUCT_NAME");
 			mProductHasColor = mBundle.getBoolean("PRODUCT_HAS_COLOR");
 			mProductHasSize = mBundle.getBoolean("PRODUCT_HAS_SIZE");
 		}
@@ -79,18 +76,18 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	}
 
 	private void init() {
-		mRelRootContainer = (LinearLayout) findViewById(R.id.relContainerRootMessage);
-		mRelPopContainer = (LinearLayout) findViewById(R.id.relPopContainer);
-		tvTitle = (WTextView) findViewById(R.id.title);
-		mViewPager = (NonSwipeableViewPager) findViewById(R.id.viewPager);
+		mRelRootContainer =  findViewById(R.id.relContainerRootMessage);
+		mRelPopContainer =  findViewById(R.id.relPopContainer);
+		tvTitle =  findViewById(R.id.title);
+		mViewPager =  findViewById(R.id.viewPager);
 		mPagerAdapter = new StockFinderFragmentAdapter(getSupportFragmentManager());
 		mPagerAdapter.addFrag(new ColorFragmentDialog(), getString(R.string.color));
 		mPagerAdapter.addFrag(new SizeFragmentDialog(), getString(R.string.size));
 		mViewPager.setAdapter(mPagerAdapter);
 		mViewPager.addOnPageChangeListener(pageChangeListener);
 
-		mImCloseIcon = (ImageView) findViewById(R.id.imCloseIcon);
-		mImBackIcon = (ImageView) findViewById(R.id.imBackIcon);
+		mImCloseIcon = findViewById(R.id.imCloseIcon);
+		mImBackIcon =  findViewById(R.id.imBackIcon);
 	}
 
 	private void setAnimation() {
@@ -186,7 +183,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		if (filterType.equalsIgnoreCase(getString(R.string.color))) {
 			if (mProductHasSize) {
 				mSelectedColour = getOtherSKUList(mColorList).get(position).colour;
-				ArrayList<OtherSku> otherSkuList = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
+				ArrayList<OtherSkus> otherSkuList = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
 				if (otherSkuList.size() > 0) {
 					if (otherSkuList.size() == 1) {
 						String selectedSKU = otherSkuList.get(0).sku;
@@ -208,7 +205,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 				dismissSizeColorActivity();
 			}
 		} else {
-			ArrayList<OtherSku> mOtherSizeSKU = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
+			ArrayList<OtherSkus> mOtherSizeSKU = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
 			String selectedSKU = mOtherSizeSKU.get(position).sku;
 			mGlobalState.setSelectedSKUId(selectedSKU);
 			inStoreFinderUpdate();
@@ -221,22 +218,13 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	}
 
 	private void callInStoreFinder() {
-		Intent result = new Intent();
-		setResult(RESULT_OK, result);
+		WoolworthsApplication.getInstance().bus().send(new ConfirmColorSizeActivity());
 	}
 
-	private boolean sizeValueExist(ArrayList<OtherSku> list, String name) {
-		for (OtherSku item : list) {
-			if (item.size.equals(name)) {
-				return true;
-			}
-		}
-		return false;
-	}
 
-	private ArrayList<OtherSku> getOtherSKUList(String item) {
+	private ArrayList<OtherSkus> getOtherSKUList(String item) {
 		return new Gson().fromJson(item,
-				new TypeToken<ArrayList<OtherSku>>() {
+				new TypeToken<ArrayList<OtherSkus>>() {
 				}.getType());
 	}
 
@@ -262,7 +250,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		ColorInterface fragmentToShow = (ColorInterface) mPagerAdapter.getItem(position);
 		switch (position) {
 			case 0:
-				ArrayList<OtherSku> mOtherSKUList = getOtherSKUList(mColorList);
+				ArrayList<OtherSkus> mOtherSKUList = getOtherSKUList(mColorList);
 				hideBackIcon();
 				tvTitle.setText(getString(R.string.confirm_color_desc));
 				if (fragmentToShow != null) {
@@ -273,7 +261,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 			case 1:
 				showBackIcon();
 				tvTitle.setText(getString(R.string.confirm_size_desc));
-				mOtherSizeSKU = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
+				ArrayList<OtherSkus> mOtherSizeSKU = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
 				if (fragmentToShow != null) {
 					fragmentToShow.onUpdate(mOtherSizeSKU, getString(R.string.size));
 				}

@@ -13,6 +13,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 public class WGlobalState {
 
 	private final Context mContext;
+	private boolean toolbarIsDisplayed;
 
 	public WGlobalState(Context context) {
 		this.mContext = context;
@@ -31,8 +32,8 @@ public class WGlobalState {
 			FragmentIsReward, defaultPopupState, colorWasPopup, sizeWasPopup;
 	private String pressState, newSTSParams, storeLocatorJson, selectedSKUId, creditLimit;
 	private List<StoreDetails> storeDetailsArrayList;
-	private ArrayList<OtherSku> colourSKUArrayList;
-	private OtherSku colorPopUpValue, sizePopUpValue;
+	private ArrayList<OtherSkus> colourSKUArrayList;
+	private OtherSkus colorPopUpValue, sizePopUpValue;
 	public CLIOfferDecision mDeclineDecision;
 
 	public void setAccountSignInState(boolean accountSignInState) {
@@ -192,11 +193,11 @@ public class WGlobalState {
 		this.storeDetailsArrayList = storeDetailsArrayList;
 	}
 
-	public ArrayList<OtherSku> getColourSKUArrayList() {
+	public ArrayList<OtherSkus> getColourSKUArrayList() {
 		return colourSKUArrayList;
 	}
 
-	public void setColourSKUArrayList(ArrayList<OtherSku> colourSKUArrayList) {
+	public void setColourSKUArrayList(ArrayList<OtherSkus> colourSKUArrayList) {
 		this.colourSKUArrayList = colourSKUArrayList;
 	}
 
@@ -216,16 +217,16 @@ public class WGlobalState {
 		this.sizeWasPopup = sizeWasPopup;
 	}
 
-	public OtherSku getColorPickerSku() {
+	public OtherSkus getColorPickerSku() {
 		return colorPopUpValue;
 	}
 
-	public void setColorPickerSku(OtherSku colorPopUpValue) {
+	public void setColorPickerSku(OtherSkus colorPopUpValue) {
 		this.colorPopUpValue = colorPopUpValue;
 		this.mLatestSelectedPicker = 1;
 	}
 
-	public OtherSku getSizePickerSku() {
+	public OtherSkus getSizePickerSku() {
 		return sizePopUpValue;
 	}
 
@@ -233,7 +234,7 @@ public class WGlobalState {
 		return mLatestSelectedPicker;
 	}
 
-	public void setSizePickerSku(OtherSku sizePopUpValue) {
+	public void setSizePickerSku(OtherSkus sizePopUpValue) {
 		this.sizePopUpValue = sizePopUpValue;
 		this.mLatestSelectedPicker = 2;
 	}
@@ -252,5 +253,13 @@ public class WGlobalState {
 
 	public void setCreditLimit(String creditLimit) {
 		this.creditLimit = creditLimit;
+	}
+
+	public boolean setToolbarIsShown() {
+		return toolbarIsDisplayed;
+	}
+
+	public void setToolbarIsDisplayed(boolean toolbarIsDisplayed) {
+		this.toolbarIsDisplayed = toolbarIsDisplayed;
 	}
 }

@@ -12,8 +12,6 @@ public interface GridNavigator {
 
 	void failureResponseHandler(String e);
 
-	void onLoadStart();
-
 	void cancelAPIRequest();
 
 	void setTotalNumberOfItem();
@@ -28,11 +26,9 @@ public interface GridNavigator {
 
 	void loadMoreData(List<ProductList> productLists);
 
-	void showProgressBarCentered();
+	void setProductBody();
 
-	void dismissProgressBarCentered();
+	void onLoadStart(boolean isLoadMore);
 
-	void showProgressBarAtBottom();
-
-	void dismissProgressBarAtBottom();
+	void onLoadComplete(boolean isLoadMore);
 }

@@ -2,6 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:background="@color/white"
         android:clickable="true"
         android:focusable="true"
         tools:context="za.co.woolworths.financial.services.android.ui.fragments.CategoryFragment">
@@ -22,6 +23,7 @@
     <FrameLayout
         android:id="@+id/fragment_mainLayout"
         android:layout_width="match_parent"
+
         android:layout_height="match_parent">
 
         <RelativeLayout

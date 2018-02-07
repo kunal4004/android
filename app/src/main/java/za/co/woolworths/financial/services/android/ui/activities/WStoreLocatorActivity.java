@@ -10,7 +10,7 @@ import android.view.MenuItem;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.fragments.StoresNearbyFragment1;
+import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 

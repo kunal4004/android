@@ -128,6 +128,7 @@
     <dimen name="email_logo_height_240dp">240dp</dimen>
     <dimen name="hundred_dp">100dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="statusbar_view_height">0dp</dimen>
 
 </resources>
 

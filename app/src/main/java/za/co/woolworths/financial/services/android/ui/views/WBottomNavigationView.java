@@ -444,8 +444,8 @@ public class WBottomNavigationView extends BottomNavigationView {
 	 * @return index of item, start from 0.
 	 */
 	public int getCurrentItem() {
-        /*
-        1. get field in this class
+		/*
+		1. get field in this class
         private final BottomNavigationMenuView mMenuView;
 
         2. get field in mMenuView
@@ -960,7 +960,8 @@ public class WBottomNavigationView extends BottomNavigationView {
 			}
 //            Log.d("onNavigationItemSelecte", "position:"  + position);
 			// user listener
-			if (null != listener) {boolean bool = listener.onNavigationItemSelected(item);
+			if (null != listener) {
+				boolean bool = listener.onNavigationItemSelected(item);
 				// if the selected is invalid, no need change the view pager
 				if (!bool)
 					return false;

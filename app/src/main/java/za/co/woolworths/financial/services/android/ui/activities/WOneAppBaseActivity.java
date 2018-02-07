@@ -31,10 +31,10 @@ import za.co.woolworths.financial.services.android.models.dto.Voucher;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayNavigator;
-import za.co.woolworths.financial.services.android.ui.fragments.MyAccountsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.WFragmentDrawer;
 import za.co.woolworths.financial.services.android.ui.fragments.product.category.CategoryFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
@@ -47,8 +47,7 @@ import za.co.woolworths.financial.services.android.util.UpdateNavigationDrawer;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentDrawer.FragmentDrawerListener
-	, HideActionBar, UpdateNavDrawerTitle,
-		WRewardsFragment.HideActionBarComponent, WTodayNavigator, UpdateNavigationDrawer {
+		, HideActionBar, UpdateNavDrawerTitle, WTodayNavigator, UpdateNavigationDrawer {
 
 	public static Toolbar mToolbar;
 	private WFragmentDrawer drawerFragment;
@@ -208,16 +207,6 @@ public class WOneAppBaseActivity extends AppCompatActivity implements WFragmentD
 	@Override
 	public void onTitleUpdate(String value) {
 		mToolbarTitle.setText(value);
-	}
-
-	@Override
-	public void onWRewardsDrawerPressed() {
-		if (!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-			//drawer is open
-			mDrawerLayout.openDrawer(Gravity.LEFT); //OPEN Nav Drawer!
-		} else {
-			super.onBackPressed();
-		}
 	}
 
 	@Override
