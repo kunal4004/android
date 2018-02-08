@@ -29,7 +29,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.wigroup.logger.lib.WiGroupLogger;
-import za.co.woolworths.financial.services.android.FragmentLifecycle;
+import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
@@ -213,12 +213,15 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
 		viewWasCreated = true;
 		if (!new ConnectionDetector().isOnline(getActivity()))
-				mErrorHandlerView.showToast();
+			mErrorHandlerView.showToast();
 	}
 
 	@Override
 	public void onClick(View v) {
 		MultiClickPreventer.preventMultiClick(v);
+		if (accountsResponse != null) {
+			productOfferingId = Utils.getProductOfferingId(accountsResponse, "SC");
+		}
 		switch (v.getId()) {
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:
@@ -439,5 +442,4 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private void hideCLIView() {
 		mIncreaseLimitController.cliDefaultView(llCommonLayer, tvIncreaseLimitDescription);
 	}
-
 }
