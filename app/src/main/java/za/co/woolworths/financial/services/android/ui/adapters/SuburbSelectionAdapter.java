@@ -1,6 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,33 +18,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
+import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
-public class SuburbSelectionAdapter extends RecyclerView.Adapter<SuburbSelectionAdapter.SuburbViewHolder> implements Filterable {
+public class SuburbSelectionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable, TextWatcher {
 
-	public interface OnItemClick {
+	private static int ROW_SEARCH = 0, ROW_ITEM = 1;
+
+	public interface SuburbSelectionCallback {
 		void onItemClick(Suburb province);
+		void setScrollbarVisibility(boolean visible);
 	}
 
-	private OnItemClick onItemClick;
+	private SuburbSelectionCallback suburbSelectionCallback;
 	private List<Suburb> suburbItems;
 	private List<Suburb> suburbItemsFiltered;
 	private List<HeaderPosition> headerItems = new ArrayList<>();
 	private boolean isFiltering = false;
 
-	public SuburbSelectionAdapter(List<Suburb> suburbItems, OnItemClick onItemClick) {
-		this.suburbItems = this.suburbItemsFiltered = configureHeaders(suburbItems);
-		this.onItemClick = onItemClick;
+	private SearchBarViewHolder searchbarViewHolder;
+
+	public SuburbSelectionAdapter(List<Suburb> suburbItems, SuburbSelectionCallback suburbSelectionCallback) {
+		List<Suburb> suburbItemsWithHeader = configureHeaders(suburbItems);
+		this.suburbItems = this.suburbItemsFiltered = suburbItemsWithHeader;
+		this.suburbSelectionCallback = suburbSelectionCallback;
 	}
 
 	private List<Suburb> configureHeaders(List<Suburb> items) {
 		String lastFirstChar = null;
 		int idxSuburb = 0;
 		for (Suburb suburb : items) {
-			String currentFirstChar = Character.toString(suburb.name.charAt(0));
-			if(lastFirstChar == null || (lastFirstChar != null && !lastFirstChar.equalsIgnoreCase(currentFirstChar))) {
+			String currentFirstChar = Character.toString(suburb.name.charAt(0)).toUpperCase();
+			if(lastFirstChar == null || (lastFirstChar != null && !lastFirstChar.equals(currentFirstChar))) {
 				suburb.hasHeader = true;
-				headerItems.add(new HeaderPosition(currentFirstChar, idxSuburb));
+				headerItems.add(new HeaderPosition(currentFirstChar.toUpperCase(), idxSuburb + 1)); // index + 1 because of search bar
 			}
 			lastFirstChar = currentFirstChar;
 			idxSuburb++;
@@ -50,34 +60,54 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<SuburbSelection
 	}
 
 	@Override
-	public SuburbViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+	public int getItemViewType(int position) {
+		if(position == 0) {
+			return ROW_SEARCH;
+		}
+		return ROW_ITEM;
+	}
+
+	@Override
+	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+		if(viewType == ROW_SEARCH) {
+			return new SearchBarViewHolder(LayoutInflater.from(parent.getContext())
+					.inflate(R.layout.suburb_selection_searchbar_item, parent, false));
+		}
 		return new SuburbViewHolder(LayoutInflater.from(parent.getContext())
 					.inflate(R.layout.suburb_selection_item, parent, false));
 	}
 
 	@Override
-	public void onBindViewHolder(final SuburbViewHolder holder, final int position) {
-		final Suburb suburb = suburbItemsFiltered.get(position);
-		holder.tvSuburbName.setText(suburb.name);
-
-		if(suburb.hasHeader && !isFiltering) {
-			holder.tvSuburbHeader.setText(Character.toString(suburb.name.charAt(0)));
-			holder.headerLayout.setVisibility(View.VISIBLE);
+	public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+		if(position == 0) {
+			// search bar
+			searchbarViewHolder = (SearchBarViewHolder) holder;
+			searchbarViewHolder.etvSuburbFilter.addTextChangedListener(this);
 		} else {
-			holder.headerLayout.setVisibility(View.GONE);
-		}
+			SuburbViewHolder suburbViewHolder = (SuburbViewHolder) holder;
+			final Suburb suburb = suburbItemsFiltered.get(position - 1);
+			suburbViewHolder.tvSuburbName.setText(suburb.name);
 
-		holder.suburbItemLayout.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onItemClick.onItemClick(suburb);
+			if(suburb.hasHeader && !isFiltering) {
+				suburbViewHolder.tvSuburbHeader.setText(Character.toString(suburb.name.charAt(0)).toUpperCase());
+				suburbViewHolder.headerLayout.setVisibility(View.VISIBLE);
+			} else {
+				suburbViewHolder.headerLayout.setVisibility(View.GONE);
 			}
-		});
+
+			suburbViewHolder.suburbItemLayout.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					suburbSelectionCallback.onItemClick(suburb);
+				}
+			});
+		}
 	}
 
 	@Override
 	public int getItemCount() {
-		return suburbItemsFiltered.size();
+		// + 1 for search bar
+		return suburbItemsFiltered.size() + 1;
 	}
 
 	@Override
@@ -91,7 +121,6 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<SuburbSelection
 
 				if (charString.isEmpty()) {
 					filteredList = suburbItems;
-					isFiltering = false;
 				} else {
 					// TODO: calculate processing time & find a more optimal solution
 					String lowercaseConstraint = charString.toLowerCase();
@@ -100,7 +129,6 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<SuburbSelection
 							filteredList.add(suburbItem);
 						}
 					}
-					isFiltering = true;
 				}
 
 				FilterResults filterResults = new FilterResults();
@@ -118,6 +146,23 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<SuburbSelection
 		};
 	}
 
+	@Override
+	public void afterTextChanged(Editable s) {
+		// filter list
+		isFiltering = s.length() > 0;
+		suburbSelectionCallback.setScrollbarVisibility(!isFiltering);
+		getFilter().filter(s.toString());
+		if(searchbarViewHolder != null) {
+			searchbarViewHolder.searchSeparator.setVisibility(!isFiltering ? View.GONE : View.VISIBLE);
+		}
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+	@Override
+	public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
 	public List<HeaderPosition> getHeaderItems() {
 		return headerItems;
 	}
@@ -134,6 +179,17 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<SuburbSelection
 
 			headerLayout = view.findViewById(R.id.headerLayout);
 			tvSuburbHeader = view.findViewById(R.id.tvSuburbHeader);
+		}
+	}
+
+	private class SearchBarViewHolder extends RecyclerView.ViewHolder {
+		public WEditTextView etvSuburbFilter;
+		public View searchSeparator;
+
+		public SearchBarViewHolder(View view) {
+			super(view);
+			etvSuburbFilter = view.findViewById(R.id.etvSuburbFilter);
+			searchSeparator = view.findViewById(R.id.searchSeparator);
 		}
 	}
 
