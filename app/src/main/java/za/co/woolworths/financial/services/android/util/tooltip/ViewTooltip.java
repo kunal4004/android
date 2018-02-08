@@ -12,6 +12,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
@@ -259,7 +260,9 @@ public class ViewTooltip {
 			setWillNotDraw(false);
 
 			this.childView = new LetterSpacingTextView(context);
-			this.childView.setLetterSpacing(0.12f);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+				this.childView.setLetterSpacing(0.12f);
+			}
 			this.childView.setTextColor(Color.WHITE);
 			addView(childView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 			this.childView.setPadding(0, 0, 0, 0);
