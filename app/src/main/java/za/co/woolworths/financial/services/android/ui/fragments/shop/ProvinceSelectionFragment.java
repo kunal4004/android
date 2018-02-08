@@ -2,6 +2,8 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop;
 
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,67 +14,118 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Province;
+import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse;
+import za.co.woolworths.financial.services.android.models.rest.shop.GetProvinces;
 import za.co.woolworths.financial.services.android.ui.adapters.ProvinceSelectionAdapter;
+import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
 
 public class ProvinceSelectionFragment extends Fragment implements ProvinceSelectionAdapter.OnItemClick {
 
     public DeliveryLocationSelectionFragmentChange deliveryLocationSelectionFragmentChange;
 
+    private ProgressBar loadingProgressBar;
     private RecyclerView provinceList;
     private ProvinceSelectionAdapter provinceAdapter;
+    private GetProvinces getProvincesAsync;
 
     public ProvinceSelectionFragment() {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_province_selection, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        loadingProgressBar = view.findViewById(R.id.loadingProgressBar);
         provinceList = view.findViewById(R.id.provinceList);
 
-        configureProvinceList();
+        loadProvinceItems();
     }
 
-    private void configureProvinceList() {
-        // TODO: make API request & show loading before setting the list
+    private void toggleLoading(boolean show) {
+        provinceList.setVisibility(show ? View.GONE : View.VISIBLE);
+        if(show) {
+            // show progress
+            loadingProgressBar.getIndeterminateDrawable().setColorFilter(null);
+            loadingProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+            loadingProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            // hide progress
+            loadingProgressBar.setVisibility(View.GONE);
+            loadingProgressBar.getIndeterminateDrawable().setColorFilter(null);
+        }
+    }
 
-        provinceAdapter = new ProvinceSelectionAdapter(getProvinceItems(), this);
+    private void loadProvinceItems() {
+        toggleLoading(true);
+        getProvincesAsync = getProvinces();
+        getProvincesAsync.execute();
+    }
+
+    private GetProvinces getProvinces() {
+        return new GetProvinces(new OnEventListener() {
+            @Override
+            public void onSuccess(Object object) {
+                Log.i("ProvinceSelection", "getRegions Succeeded");
+                handleProvincesResponse(((ProvincesResponse) object));
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Log.e("SuburbSelectionFragment", "getRegions Error: " + errorMessage);
+                // TODO: show error message
+            }
+        });
+    }
+
+    public void handleProvincesResponse(ProvincesResponse response) {
+        try {
+            switch (response.httpCode) {
+                case 200:
+                    configureProvinceList(response.regions);
+                    break;
+                case 440:
+                    // TODO: do something about this
+                    break;
+                default:
+                    // TODO: do something about this
+                    break;
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void configureProvinceList(List<Province> items) {
+        provinceAdapter = new ProvinceSelectionAdapter(items, this);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         provinceList.setLayoutManager(mLayoutManager);
         provinceList.setAdapter(provinceAdapter);
-    }
 
-    private ArrayList<Province> getProvinceItems() {
-        ArrayList<Province> provinceItems = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            Province province = new Province();
-            province.title = "Province #" + (i + 1);
-            provinceItems.add(province);
-        }
-        return provinceItems;
+        toggleLoading(false);
     }
 
     @Override
     public void onItemClick(Province province) {
-        Log.i("ProvinceSelection", "Province selected: " + province.title);
+        Log.i("ProvinceSelection", "Province selected: " + province.name);
         // Open suburb list
-        openFragment(new SuburbSelectionFragment());
+        SuburbSelectionFragment suburbSelectionFragment = new SuburbSelectionFragment();
+        suburbSelectionFragment.selectedProvince = province;
+        openFragment(suburbSelectionFragment);
     }
 
     public void openFragment(Fragment fragment) {

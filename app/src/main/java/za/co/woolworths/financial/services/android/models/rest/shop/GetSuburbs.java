@@ -3,40 +3,40 @@ package za.co.woolworths.financial.services.android.models.rest.shop;
 import android.text.TextUtils;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.RegionResponse;
+import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 
-public class GetRegions extends HttpAsyncTask<String, String, RegionResponse> {
+public class GetSuburbs extends HttpAsyncTask<String, String, SuburbsResponse> {
 
 	private OnEventListener mCallBack;
 	private String mException;
 	private String locationId;
 
-	public GetRegions(String locationId, OnEventListener callback) {
+	public GetSuburbs(String locationId, OnEventListener callback) {
 		this.locationId = locationId;
 		mCallBack = callback;
 	}
 
 	@Override
-	protected RegionResponse httpDoInBackground(String... params) {
-		return WoolworthsApplication.getInstance().getApi().getRegions(locationId);
+	protected SuburbsResponse httpDoInBackground(String... params) {
+		return WoolworthsApplication.getInstance().getApi().getSuburbs(locationId);
 	}
 
 	@Override
-	protected RegionResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+	protected SuburbsResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
 		mException = errorMessage;
 		mCallBack.onFailure(errorMessage);
-		return new RegionResponse();
+		return new SuburbsResponse();
 	}
 
 	@Override
-	protected Class<RegionResponse> httpDoInBackgroundReturnType() {
-		return RegionResponse.class;
+	protected Class<SuburbsResponse> httpDoInBackgroundReturnType() {
+		return SuburbsResponse.class;
 	}
 
 	@Override
-	protected void onPostExecute(RegionResponse regionResponse) {
+	protected void onPostExecute(SuburbsResponse regionResponse) {
 		super.onPostExecute(regionResponse);
 		if (mCallBack != null) {
 			if (TextUtils.isEmpty(mException)) {

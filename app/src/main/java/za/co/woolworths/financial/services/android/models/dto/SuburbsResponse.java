@@ -6,7 +6,7 @@ import java.util.List;
  * Created by W7099877 on 12/10/2016.
  */
 
-public class RegionResponse {
+public class SuburbsResponse {
 
     public int httpCode;
     public Response response;

@@ -10,11 +10,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -23,22 +20,20 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
 
-import za.co.woolworths.financial.services.android.models.dto.RegionResponse;
+import za.co.woolworths.financial.services.android.models.dto.Province;
+import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
-import za.co.woolworths.financial.services.android.models.rest.shop.GetRegions;
+import za.co.woolworths.financial.services.android.models.rest.shop.GetSuburbs;
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbSelectionAdapter;
-import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
 
 public class SuburbSelectionFragment extends Fragment implements SuburbSelectionAdapter.SuburbSelectionCallback {
+
+    public Province selectedProvince;
 
     public DeliveryLocationSelectionFragmentChange deliveryLocationSelectionFragmentChange;
 
@@ -47,7 +42,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
     private RecyclerView suburbList;
     private LinearLayout scrollbarLayout;
     private SuburbSelectionAdapter suburbAdapter;
-    private GetRegions getRegionsAsync;
+    private GetSuburbs getSuburbsAsync;
 
     private SuburbAdapterAsyncTask listConfiguration;
 
@@ -97,16 +92,16 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 
     private void loadSuburbItems() {
         toggleLoading(true);
-        getRegionsAsync = getRegions("2000030");
-        getRegionsAsync.execute();
+        getSuburbsAsync = getSuburbs(selectedProvince.id);
+        getSuburbsAsync.execute();
     }
 
-    private GetRegions getRegions(String locationId) {
-        return new GetRegions(locationId, new OnEventListener() {
+    private GetSuburbs getSuburbs(String locationId) {
+        return new GetSuburbs(locationId, new OnEventListener() {
             @Override
             public void onSuccess(Object object) {
                 Log.i("SuburbSelectionFragment", "getRegions Succeeded");
-                handleVoucherResponse(((RegionResponse) object));
+                handleSuburbsResponse(((SuburbsResponse) object));
             }
 
             @Override
@@ -117,7 +112,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
         });
     }
 
-    public void handleVoucherResponse(RegionResponse response) {
+    public void handleSuburbsResponse(SuburbsResponse response) {
         try {
             switch (response.httpCode) {
                 case 200:
@@ -143,8 +138,6 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
             tvHeaderItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i("SuburbSelection", "Scroll header clicked: " + header.title + " at position: " + header.position);
-                    // TODO: fix scrolling issue, might not be working because of recyclerview inside of nestedscrollview
                     suburbList.scrollToPosition(header.position);
                 }
             });
@@ -154,7 +147,8 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 
     @Override
     public void onItemClick(Suburb suburb) {
-        Log.i("SuburbSelection", "Suburb selected: " + suburb.name);
+        Log.i("SuburbSelection", "Suburb selected: " + suburb.name + " for province: " + selectedProvince.name);
+        // TODO: perform set suburb API request, add to db, then go back to cart
     }
 
     @Override

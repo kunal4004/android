@@ -122,7 +122,6 @@ public class SuburbSelectionAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 				if (charString.isEmpty()) {
 					filteredList = suburbItems;
 				} else {
-					// TODO: calculate processing time & find a more optimal solution
 					String lowercaseConstraint = charString.toLowerCase();
 					for (Suburb suburbItem : suburbItems) {
 						if (suburbItem.name.toLowerCase().contains(lowercaseConstraint)) {

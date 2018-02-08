@@ -5,5 +5,6 @@ package za.co.woolworths.financial.services.android.models.dto;
  */
 
 public class Province {
-    public  String title;
+    public String id;
+    public String name;
 }

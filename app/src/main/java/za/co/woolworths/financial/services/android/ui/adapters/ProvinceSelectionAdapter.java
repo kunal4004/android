@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Province;
@@ -21,9 +22,9 @@ public class ProvinceSelectionAdapter extends RecyclerView.Adapter<ProvinceSelec
 	}
 
 	private OnItemClick onItemClick;
-	private ArrayList<Province> provinceItems;
+	private List<Province> provinceItems;
 
-	public ProvinceSelectionAdapter(ArrayList<Province> provinceItems, OnItemClick onItemClick) {
+	public ProvinceSelectionAdapter(List<Province> provinceItems, OnItemClick onItemClick) {
 		this.provinceItems = provinceItems;
 		this.onItemClick = onItemClick;
 	}
@@ -37,7 +38,7 @@ public class ProvinceSelectionAdapter extends RecyclerView.Adapter<ProvinceSelec
 	@Override
 	public void onBindViewHolder(final ProvinceViewHolder holder, final int position) {
 		final Province province = provinceItems.get(position);
-		holder.tvProvinceName.setText(province.title);
+		holder.tvProvinceName.setText(province.name);
 		holder.provinceItemLayout.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
