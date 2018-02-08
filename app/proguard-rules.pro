@@ -85,29 +85,3 @@
 -keep class * {
     public private *;
 }
-
-# fresco start------------------------
-# See http://sourceforge.net/p/proguard/bugs/466/
--keep,allowobfuscation @interface com.facebook.common.internal.DoNotStrip
-
--keep @com.facebook.common.internal.DoNotStrip class *
--keepclassmembers class * {
-    @com.facebook.common.internal.DoNotStrip *;
-}
-
-# Keep native methods
--keepclassmembers class * {
-    native <methods>;
-}
--keep class com.facebook.animated.gif.** {
-    *;
-}
-
--keep class com.facebook.** {
-    *;
-}
--dontwarn okio.**
--dontwarn javax.annotation.**
-# Keep native methods
--dontwarn com.android.volley.toolbox.**
-# fresco end ------------------------

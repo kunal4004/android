@@ -139,7 +139,7 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
     implementation 'com.github.thepacific:mvc:0.0.2'
     implementation 'com.facebook.fresco:fresco:1.8.0'
-    implementation 'com.facebook.fresco:animated-gif:1.8.0'
+    implementation 'com.facebook.fresco:animated-gif:1.5.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.google.android.gms:play-services-tagmanager:11.8.0'
     implementation 'com.facebook.android:facebook-android-sdk:4.26.0'

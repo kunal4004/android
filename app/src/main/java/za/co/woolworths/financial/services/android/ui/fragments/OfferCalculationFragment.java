@@ -752,10 +752,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		anim.addListener(new AnimatorListenerAdapter() {
 			@Override
 			public void onAnimationEnd(Animator animation) {
-				Activity activity = getActivity();
-				if (activity != null) {
-					Utils.showOneTimeTooltip(activity, SessionDao.KEY.CLI_SLIDE_EDIT_AMOUNT_TOOLTIP, sbSlideAmount, getString(R.string.slide_to_edit_amount));
-				}
+				Utils.showOneTimeTooltip(getActivity(), SessionDao.KEY.CLI_SLIDE_EDIT_AMOUNT_TOOLTIP, sbSlideAmount, getString(R.string.slide_to_edit_amount));
 			}
 		});
 		anim.start();
