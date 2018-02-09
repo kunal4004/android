@@ -102,6 +102,8 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 
 	private BroadcastReceiver mConnectionBroadcast;
 	private ErrorHandlerView mErrorHandlerView;
+	private boolean mFetchFromJson;
+	private String mDefaultProductResponse;
 
 	@Override
 	public DetailViewModel getViewModel() {
@@ -128,8 +130,9 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 		if (bundle != null) {
 			getViewModel().setDefaultProduct(bundle.getString("strProductList"));
 			mSubCategoryTitle = bundle.getString("strProductCategory");
+			mDefaultProductResponse = bundle.getString("productResponse");
+			mFetchFromJson = bundle.getBoolean("fetchFromJson");
 		}
-
 		mDisposables.add(WoolworthsApplication.getInstance()
 				.bus()
 				.toObservable()
@@ -142,7 +145,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 							onPermissionGranted();
 						} else if (object instanceof ConfirmColorSizeActivity) {
 							startLocationUpdates();
-						}else  if (object instanceof Product){
+						} else if (object instanceof Product) {
 
 						}
 					}
@@ -159,6 +162,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 	public void renderView() {
 		slideBottomPanel();
 		nestedScrollViewHelper();
+
 		defaultProduct();
 		setUpImageViewPager();
 		getViewDataBinding().imClose.setOnClickListener(this);
@@ -225,7 +229,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 			ProductUtils.gridPriceList(getViewDataBinding().textPrice,
 					getViewDataBinding().textActualPrice, String.valueOf(mDefaultProduct.fromPrice),
 					getViewModel().maxWasPrice(mDefaultProduct.otherSkus));
-		} catch (NullPointerException ex) {
+		} catch (Exception ex) {
 		}
 
 		//set promotional Images
@@ -233,7 +237,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 		if (promotionalImage != null) {
 			ProductUtils.showPromotionalImages(getViewDataBinding().imSave,
 					getViewDataBinding().imReward, getViewDataBinding().imVitality,
-					getViewDataBinding().imVitality, mDefaultProduct.promotionImages);
+					getViewDataBinding().imVitality, promotionalImage);
 		}
 
 		//set promotional text
@@ -241,7 +245,13 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 
 		getViewDataBinding().btnAddShoppingList.setOnClickListener(this);
 
-		getViewModel().getProductDetail(getBaseActivity(), mDefaultProduct.productId, mDefaultProduct.sku);
+		if (mFetchFromJson) { // display product through json string
+			getViewModel().setProduct(mDefaultProductResponse);
+			onSuccessResponse(Utils.stringToJson(getActivity(), mDefaultProductResponse));
+			onLoadComplete();
+		} else {
+			getViewModel().getProductDetail(getBaseActivity(), mDefaultProduct.productId, mDefaultProduct.sku);
+		}
 	}
 
 	private void setSubCategoryTitle() {
@@ -263,6 +273,9 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 					WProductDetail newProductList = product.product;
 					enableFindInStoreButton(newProductList);
 
+					if (mFetchFromJson) {
+						getViewModel().setProduct(product.product);
+					}
 					List<OtherSkus> otherSkuList = getViewModel().otherSkuList();
 
 					//display ingredient info
@@ -273,7 +286,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 					setProductDescription(getViewModel().getProductDescription(getBaseActivity()));
 
 					// use highest sku as default price
-					OtherSkus highestPriceSku = getViewModel().highestSKUPrice(product.product.fromPrice);
+					OtherSkus highestPriceSku = getViewModel().highestSKUPrice(newProductList.fromPrice);
 
 					setSelectedSize(highestPriceSku);
 
@@ -459,101 +472,109 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 
 	@Override
 	public void setSelectedSize(OtherSkus sku) {
-		String size = sku.size;
-		getGlobalState().setSizePickerSku(sku);
-		WTextView tvTextSize = getViewDataBinding().incProductColor.textProductSize;
-		setText(tvTextSize, size);
-		tvTextSize.setTextColor(Color.BLACK);
+		if (sku != null) {
+			String size = sku.size;
+			getGlobalState().setSizePickerSku(sku);
+			WTextView tvTextSize = getViewDataBinding().incProductColor.textProductSize;
+			setText(tvTextSize, size);
+			tvTextSize.setTextColor(Color.BLACK);
+		}
 	}
 
 	@Override
 	public void setPrice(OtherSkus otherSkus) {
-		String wasPrice = otherSkus.wasPrice;
-		if (isEmpty(wasPrice)) {
-			wasPrice = "";
-		}
-		String price = otherSkus.price;
-		WTextView tvPrice = getViewDataBinding().textPrice;
-		WTextView tvWasPrice = getViewDataBinding().textActualPrice;
-		switch (getViewModel().getProductType()) {
-			case CLOTHING_PRODUCT:
-				if (TextUtils.isEmpty(wasPrice)) {
-					setText(tvPrice, WFormatter.formatAmount(price));
-					tvPrice.setPaintFlags(0);
-					tvWasPrice.setText("");
-				} else {
-					if (wasPrice.equalsIgnoreCase(price)) {
-						//wasPrice equals currentPrice
+		if (otherSkus != null) {
+			String wasPrice = otherSkus.wasPrice;
+			if (isEmpty(wasPrice)) {
+				wasPrice = "";
+			}
+			String price = otherSkus.price;
+			WTextView tvPrice = getViewDataBinding().textPrice;
+			WTextView tvWasPrice = getViewDataBinding().textActualPrice;
+			switch (getViewModel().getProductType()) {
+				case CLOTHING_PRODUCT:
+					if (TextUtils.isEmpty(wasPrice)) {
 						setText(tvPrice, WFormatter.formatAmount(price));
-						setText(tvWasPrice, "");
 						tvPrice.setPaintFlags(0);
-					} else {
-						setText(tvPrice, WFormatter.formatAmount(wasPrice));
-						tvPrice.setPaintFlags(tvPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-						setText(tvWasPrice, WFormatter.formatAmount(price));
-					}
-				}
-				break;
-
-			default:
-				if (TextUtils.isEmpty(wasPrice)) {
-					if (Utils.isLocationEnabled(tvPrice.getContext())) {
-						ArrayList<Double> priceList = new ArrayList<>();
-						for (OtherSkus os : getViewModel().otherSkuList()) {
-							if (!TextUtils.isEmpty(os.price)) {
-								priceList.add(Double.valueOf(os.price));
-								priceList.add(Double.valueOf(os.price));
-							}
-						}
-						if (priceList.size() > 0) {
-							price = String.valueOf(Collections.max(priceList));
-						}
-					}
-					tvPrice.setText(WFormatter.formatAmount(price));
-					tvPrice.setPaintFlags(0);
-					tvWasPrice.setText("");
-				} else {
-					if (Utils.isLocationEnabled(tvPrice.getContext())) {
-						ArrayList<Double> priceList = new ArrayList<>();
-						for (OtherSkus os : getViewModel().otherSkuList()) {
-							if (!TextUtils.isEmpty(os.price)) {
-								priceList.add(Double.valueOf(os.price));
-							}
-						}
-						if (priceList.size() > 0) {
-							price = String.valueOf(Collections.max(priceList));
-						}
-					}
-
-					if (wasPrice.equalsIgnoreCase(price)) { //wasPrice equals currentPrice
-						tvPrice.setText(WFormatter.formatAmount(price));
 						tvWasPrice.setText("");
 					} else {
-						tvPrice.setText(WFormatter.formatAmount(wasPrice));
-						tvPrice.setPaintFlags(tvPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-						tvWasPrice.setText(WFormatter.formatAmount(price));
+						if (wasPrice.equalsIgnoreCase(price)) {
+							//wasPrice equals currentPrice
+							setText(tvPrice, WFormatter.formatAmount(price));
+							setText(tvWasPrice, "");
+							tvPrice.setPaintFlags(0);
+						} else {
+							setText(tvPrice, WFormatter.formatAmount(wasPrice));
+							tvPrice.setPaintFlags(tvPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+							setText(tvWasPrice, WFormatter.formatAmount(price));
+						}
 					}
-				}
-				break;
+					break;
+
+				default:
+					if (TextUtils.isEmpty(wasPrice)) {
+						if (Utils.isLocationEnabled(tvPrice.getContext())) {
+							ArrayList<Double> priceList = new ArrayList<>();
+							for (OtherSkus os : getViewModel().otherSkuList()) {
+								if (!TextUtils.isEmpty(os.price)) {
+									priceList.add(Double.valueOf(os.price));
+									priceList.add(Double.valueOf(os.price));
+								}
+							}
+							if (priceList.size() > 0) {
+								price = String.valueOf(Collections.max(priceList));
+							}
+						}
+						tvPrice.setText(WFormatter.formatAmount(price));
+						tvPrice.setPaintFlags(0);
+						tvWasPrice.setText("");
+					} else {
+						if (Utils.isLocationEnabled(tvPrice.getContext())) {
+							ArrayList<Double> priceList = new ArrayList<>();
+							for (OtherSkus os : getViewModel().otherSkuList()) {
+								if (!TextUtils.isEmpty(os.price)) {
+									priceList.add(Double.valueOf(os.price));
+								}
+							}
+							if (priceList.size() > 0) {
+								price = String.valueOf(Collections.max(priceList));
+							}
+						}
+
+						if (wasPrice.equalsIgnoreCase(price)) { //wasPrice equals currentPrice
+							tvPrice.setText(WFormatter.formatAmount(price));
+							tvWasPrice.setText("");
+						} else {
+							tvPrice.setText(WFormatter.formatAmount(wasPrice));
+							tvPrice.setPaintFlags(tvPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+							tvWasPrice.setText(WFormatter.formatAmount(price));
+						}
+					}
+					break;
+			}
 		}
 	}
 
 	@Override
 	public void setAuxiliaryImages(ArrayList<String> auxiliaryImages) {
-		mAuxiliaryImage = auxiliaryImages;
-		getViewModel().setAuxiliaryImage(mAuxiliaryImage);
-		setUpImageViewPager();
-		setupPagerIndicatorDots(auxiliaryImages.size());
+		if (!auxiliaryImages.isEmpty()) {
+			mAuxiliaryImage = auxiliaryImages;
+			getViewModel().setAuxiliaryImage(mAuxiliaryImage);
+			setUpImageViewPager();
+			setupPagerIndicatorDots(auxiliaryImages.size());
+		}
 	}
 
 	@Override
 	public void setSelectedTextColor(OtherSkus otherSkus) {
-		WTextView tvColour = getViewDataBinding().incProductColor.textColour;
-		selectedColor(otherSkus.externalColourRef);
-		if (!isEmpty(otherSkus.colour)) {
-			setText(tvColour, otherSkus.colour);
-		} else {
-			setText(tvColour, getString(R.string.product_colour));
+		if (otherSkus != null) {
+			WTextView tvColour = getViewDataBinding().incProductColor.textColour;
+			selectedColor(otherSkus.externalColourRef);
+			if (!isEmpty(otherSkus.colour)) {
+				setText(tvColour, otherSkus.colour);
+			} else {
+				setText(tvColour, getString(R.string.product_colour));
+			}
 		}
 	}
 
@@ -564,23 +585,25 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 
 	@Override
 	public void enableFindInStoreButton(WProductDetail productList) {
-		try {
-			LinearLayout llStoreFinder = getViewDataBinding().llStoreFinder;
-			WButton btnShopOnline = getViewDataBinding().btnShopOnlineWoolies;
-			String productType = productList.productType;
-			WGlobalState mcs = WoolworthsApplication.getInstance().getWGlobalState();
-			if ((productType.equalsIgnoreCase("clothingProducts") & mcs.clothingIsEnabled()) || (productType.equalsIgnoreCase("foodProducts") & mcs.isFoodProducts())) {
-				btnShopOnline.setAlpha(1f);
-				btnShopOnline.setEnabled(true);
-				setLayoutWeight(btnShopOnline, 0.5f);
-				setLayoutWeight(llStoreFinder, 0.5f);
-				showView(llStoreFinder);
-			} else {
-				setLayoutWeight(btnShopOnline, 1f);
-				hideView(llStoreFinder);
+		if (productList != null) {
+			try {
+				LinearLayout llStoreFinder = getViewDataBinding().llStoreFinder;
+				WButton btnShopOnline = getViewDataBinding().btnShopOnlineWoolies;
+				String productType = productList.productType;
+				WGlobalState mcs = WoolworthsApplication.getInstance().getWGlobalState();
+				if ((productType.equalsIgnoreCase("clothingProducts") & mcs.clothingIsEnabled()) || (productType.equalsIgnoreCase("foodProducts") & mcs.isFoodProducts())) {
+					btnShopOnline.setAlpha(1f);
+					btnShopOnline.setEnabled(true);
+					setLayoutWeight(btnShopOnline, 0.5f);
+					setLayoutWeight(llStoreFinder, 0.5f);
+					showView(llStoreFinder);
+				} else {
+					setLayoutWeight(btnShopOnline, 1f);
+					hideView(llStoreFinder);
+				}
+			} catch (IllegalStateException ex) {
+				Log.d(TAG, ex.toString());
 			}
-		} catch (IllegalStateException ex) {
-			Log.d(TAG, ex.toString());
 		}
 	}
 
@@ -632,62 +655,69 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 
 	@Override
 	public void setColorList(List<OtherSkus> skuList) {
-		LayoutInflater layoutInflater = (LayoutInflater) getBaseActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		assert layoutInflater != null;
-		View mpw = layoutInflater.inflate(R.layout.product_size_row, null);
-		ProductColorAdapter mProductColorAdapter = new ProductColorAdapter(skuList, this);
-		RecyclerView rlSizeList = mpw.findViewById(R.id.rclSize);
-		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-		rlSizeList.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
-		rlSizeList.setLayoutManager(mLayoutManager);
-		rlSizeList.setAdapter(mProductColorAdapter);
-		mPColourWindow = new PopupWindow(
-				mpw,
-				ViewGroup.LayoutParams.WRAP_CONTENT,
-				ViewGroup.LayoutParams.WRAP_CONTENT, false);
-		mPColourWindow.setTouchable(true);
-
+		if (!skuList.isEmpty()) {
+			LayoutInflater layoutInflater = (LayoutInflater) getBaseActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			assert layoutInflater != null;
+			View mpw = layoutInflater.inflate(R.layout.product_size_row, null);
+			ProductColorAdapter mProductColorAdapter = new ProductColorAdapter(skuList, this);
+			RecyclerView rlSizeList = mpw.findViewById(R.id.rclSize);
+			LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+			rlSizeList.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+			rlSizeList.setLayoutManager(mLayoutManager);
+			rlSizeList.setAdapter(mProductColorAdapter);
+			mPColourWindow = new PopupWindow(
+					mpw,
+					ViewGroup.LayoutParams.WRAP_CONTENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT, false);
+			mPColourWindow.setTouchable(true);
+		}
 	}
 
 	@Override
 	public void setSizeList(List<OtherSkus> skuList) {
-		LayoutInflater layoutInflater = (LayoutInflater) getBaseActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		assert layoutInflater != null;
-		View mpw = layoutInflater.inflate(R.layout.product_size_row, null);
-		ProductSizeAdapter mProductSizeAdapter = new ProductSizeAdapter(skuList, this);
-		RecyclerView rlSizeList = mpw.findViewById(R.id.rclSize);
-		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-		mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-		rlSizeList.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
-		rlSizeList.setLayoutManager(mLayoutManager);
-		rlSizeList.setAdapter(mProductSizeAdapter);
-		mPSizeWindow = new PopupWindow(
-				mpw,
-				ViewGroup.LayoutParams.WRAP_CONTENT,
-				ViewGroup.LayoutParams.WRAP_CONTENT, false);
-		mPSizeWindow.setTouchable(true);
+		if (!skuList.isEmpty()) {
+			LayoutInflater layoutInflater = (LayoutInflater) getBaseActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			assert layoutInflater != null;
+			View mpw = layoutInflater.inflate(R.layout.product_size_row, null);
+			ProductSizeAdapter mProductSizeAdapter = new ProductSizeAdapter(skuList, this);
+			RecyclerView rlSizeList = mpw.findViewById(R.id.rclSize);
+			LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+			rlSizeList.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+			rlSizeList.setLayoutManager(mLayoutManager);
+			rlSizeList.setAdapter(mProductSizeAdapter);
+			mPSizeWindow = new PopupWindow(
+					mpw,
+					ViewGroup.LayoutParams.WRAP_CONTENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT, false);
+			mPSizeWindow.setTouchable(true);
+		}
 	}
 
 	@Override
 	public void onSizeItemClicked(OtherSkus sku) {
-		WTextView tvSize = getViewDataBinding().incProductColor.textProductSize;
-		cancelPopWindow(mPSizeWindow);
-		setSelectedSize(sku);
-		getGlobalState().setSizeWasPopup(true);
-		setPrice(getViewModel().updatePrice(sku, tvSize.getText().toString()));
+		if (sku != null) {
+			WTextView tvSize = getViewDataBinding().incProductColor.textProductSize;
+			cancelPopWindow(mPSizeWindow);
+			setSelectedSize(sku);
+			getGlobalState().setSizeWasPopup(true);
+			setPrice(getViewModel().updatePrice(sku, tvSize.getText().toString()));
+		}
 	}
 
 	@Override
 	public void onColourItemClicked(OtherSkus otherSkus) {
-		WTextView tvSize = getViewDataBinding().incProductColor.textProductSize;
-		cancelPopWindow(mPColourWindow);
-		setSelectedTextColor(otherSkus);
-		setSizeList(getViewModel().commonSizeList(otherSkus));
-		setAuxiliaryImages(getViewModel().getAuxiliaryImageList(otherSkus));
-		getGlobalState().setColorWasPopup(true);
-		getGlobalState().setColorPickerSku(otherSkus);
-		setPrice(getViewModel().updatePrice(otherSkus, tvSize.getText().toString()));
+		if (otherSkus != null) {
+			WTextView tvSize = getViewDataBinding().incProductColor.textProductSize;
+			cancelPopWindow(mPColourWindow);
+			setSelectedTextColor(otherSkus);
+			setSizeList(getViewModel().commonSizeList(otherSkus));
+			setAuxiliaryImages(getViewModel().getAuxiliaryImageList(otherSkus));
+			getGlobalState().setColorWasPopup(true);
+			getGlobalState().setColorPickerSku(otherSkus);
+			setPrice(getViewModel().updatePrice(otherSkus, tvSize.getText().toString()));
+		}
 	}
 
 	@Override
@@ -835,6 +865,10 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 				noSizeColorIntent();
 			}
 		}
+	}
+
+	@Override
+	public void fetchFromJson() {
 	}
 
 	private boolean productHasColour() {

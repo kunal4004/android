@@ -79,7 +79,6 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 		WoolworthsApplication.getInstance().getAsyncApi().getProductDetail(productId, skuId, new CancelableCallback<String>() {
 			@Override
 			public void onSuccess(String strProduct, retrofit.client.Response response) {
-
 				setProduct(strProduct);
 				WProduct detailProduct = Utils.stringToJson(WoolworthsApplication.getAppContext(), strProduct);
 				if (detailProduct != null) {
@@ -151,7 +150,12 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 	}
 
 	public List<OtherSkus> otherSkuList() {
-		return getProduct().otherSkus;
+		if (getProduct() != null) {
+			if (!getProduct().otherSkus.isEmpty()) {
+				return getProduct().otherSkus;
+			}
+		}
+		return new ArrayList<>();
 	}
 
 	//set new product list
@@ -164,11 +168,20 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 	}
 
 	public JSONObject getProductJSON() throws JSONException {
-		return new JSONObject(mProductJson).getJSONObject(PRODUCT);
+		JSONObject jsonObject = new JSONObject(mProductJson);
+		if (jsonObject != null) {
+			if (jsonObject.has(PRODUCT)) {
+				return jsonObject.getJSONObject(PRODUCT);
+			}
+		}
+		return null;
 	}
 
 	public String getProductId() {
-		return getProduct().productId;
+		if (getProduct() != null) {
+			return getProduct().productId;
+		}
+		return null;
 	}
 
 	// return new product list
@@ -184,14 +197,16 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 	//return ingredient info
 	public void displayIngredient() {
 		try {
-			JSONObject jsProductList = getProductJSON();
-			if (jsProductList.has(INGREDIENTS)) {
-				getNavigator().setIngredients(jsProductList.getString(INGREDIENTS));
-			} else {
-				getNavigator().setIngredients("");
+			if (getProductJSON() != null) {
+				JSONObject jsProductList = getProductJSON();
+				if (jsProductList.has(INGREDIENTS)) {
+					getNavigator().setIngredients(jsProductList.getString(INGREDIENTS));
+				} else {
+					getNavigator().setIngredients("");
+				}
 			}
 		} catch (JSONException e) {
-			e.printStackTrace();
+			Log.d(TAG, e.toString());
 		}
 	}
 
@@ -212,19 +227,19 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 				"</head>";
 
 		String descriptionWithoutExtraTag = "";
-		if (!TextUtils.isEmpty(getProduct().longDescription)) {
-			descriptionWithoutExtraTag = getProduct().longDescription
-					.replaceAll("</ul>\n\n<ul>\n", " ")
-					.replaceAll("<p>&nbsp;</p>", "")
-					.replaceAll("<ul><p>&nbsp;</p></ul>", " ");
+		if (getProduct() != null) {
+			if (!TextUtils.isEmpty(getProduct().longDescription)) {
+				descriptionWithoutExtraTag = getProduct().longDescription
+						.replaceAll("</ul>\n\n<ul>\n", " ")
+						.replaceAll("<p>&nbsp;</p>", "")
+						.replaceAll("<ul><p>&nbsp;</p></ul>", " ");
+			}
 		}
-
 		String htmlData = "<!DOCTYPE html><html>"
 				+ head
 				+ "<body>"
 				+ isEmpty(descriptionWithoutExtraTag)
 				+ "</body></html>";
-
 		return htmlData;
 	}
 
