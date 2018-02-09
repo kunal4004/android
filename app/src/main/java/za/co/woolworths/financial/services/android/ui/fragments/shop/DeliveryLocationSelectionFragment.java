@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
+import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.DeliveryLocationAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -162,7 +164,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
             switch (response.httpCode) {
                 case 200:
                     // TODO: go back to cart if no items removed from cart, else go to list of removed items
-                    openFragment(new CartFragment());
+                    startActivity(new Intent(getContext(), CartActivity.class));
                     break;
                 case 440:
                     // TODO: do something about this
