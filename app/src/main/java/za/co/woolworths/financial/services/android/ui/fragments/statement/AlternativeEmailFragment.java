@@ -181,7 +181,7 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 				if (mStatementUtils.validateEmail(mAlternativeEmail)) {
 					Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
 					etAlternativeEmailAddress.setCompoundDrawablesWithIntrinsicBounds(null, null, transparentDrawable, null);
-					mSendUserStatementRequest.to = etAlternativeEmailAddress.getText().toString().trim();
+					mSendUserStatementRequest.to = mAlternativeEmail;
 					sendStatement();
 				} else {
 					Drawable img = getContext().getResources().getDrawable(R.drawable.validation_error_drawable);
