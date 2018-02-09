@@ -174,6 +174,9 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
                 if(viewIndex < scrollbarLayout.getChildCount()) {
                     View childView = scrollbarLayout.getChildAt(viewIndex);
                     int scrollPosition = (int) childView.getTag();
+                    if(scrollPosition == 1) {
+                        scrollPosition = 0;
+                    }
                     suburbList.scrollToPosition(scrollPosition);
                 }
             }
