@@ -6,27 +6,41 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Random;
 
+import retrofit.RetrofitError;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CartPriceValues;
+import za.co.woolworths.financial.services.android.models.dto.CartProduct;
+import za.co.woolworths.financial.services.android.models.dto.CartResponse;
+import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
+import za.co.woolworths.financial.services.android.models.dto.PriceInfo;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
+import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.CancelableCallback;
 
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener {
@@ -35,6 +49,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     private WButton btnAddToCart;
 
     private CartProductAdapter cartProductAdapter;
+    private WoolworthsApplication mWoolWorthsApplication;
+    private RelativeLayout parentLayout;
+    private ProgressBar pBar;
+    private WTextView txtEmptyStateDesc;
 
     public CartFragment() {
         // Required empty public constructor
@@ -51,46 +69,16 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
         super.onViewCreated(view, savedInstanceState);
         rvCartList = view.findViewById(R.id.cartList);
         btnAddToCart = view.findViewById(R.id.btnAddToCart);
+        parentLayout=view.findViewById(R.id.parentLayout);
+        pBar=view.findViewById(R.id.loadingBar);
+        txtEmptyStateDesc=view.findViewById(R.id.txtEmptyStateDesc);
+        mWoolWorthsApplication = ((WoolworthsApplication) getActivity().getApplication());
+        getActivity().findViewById(R.id.btnEditCart).setVisibility(View.GONE);
 
         view.findViewById(R.id.locationSelectedLayout).setOnClickListener(this);
 
-        CartPriceValues prices = new CartPriceValues(13,1185, 50, -36.56, -100, -18, -25, 1199);
-        cartProductAdapter = new CartProductAdapter(getCartProductItems(), prices, this);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        rvCartList.setLayoutManager(mLayoutManager);
-        rvCartList.setAdapter(cartProductAdapter);
-    }
 
-    private HashMap<String, ArrayList<ProductList>> getCartProductItems() {
-
-        LinkedHashMap<String, ArrayList<ProductList>> productCategoryItems = new LinkedHashMap<>();
-
-        for (int idxProductCategory = 0; idxProductCategory < 3; idxProductCategory++) {
-            ArrayList<ProductList> productItems = new ArrayList<>();
-
-            int count = new Random().nextInt(4) + 2;
-            for (int idxProductItem = 0; idxProductItem < count; idxProductItem++) {
-                ProductList dummyProductItem = new ProductList();
-                dummyProductItem.productName = "Product Name";
-                dummyProductItem.productId = idxProductItem + "";
-                productItems.add(dummyProductItem);
-            }
-
-            switch (idxProductCategory) {
-                case 0:
-                    productCategoryItems.put("Food", productItems);
-                    break;
-                case 1:
-                    productCategoryItems.put("Clothing", productItems);
-                    break;
-                case 2:
-                    productCategoryItems.put("Home", productItems);
-                    break;
-            }
-        }
-
-        return productCategoryItems;
+        loadShoppingCart();
     }
 
     @Override
@@ -109,7 +97,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
     @Override
     public void onItemDeleteClick(CartProductAdapter.CartProductItemRow itemRow) {
-        Log.i("CartFragment", "Item " + itemRow.productItem.productName + " delete button clicked!");
+       // Log.i("CartFragment", "Item " + itemRow.productItem.productName + " delete button clicked!");
 
         // TODO: Make API call to remove item + show loading before removing from list
         cartProductAdapter.removeItem(itemRow);
@@ -124,5 +112,130 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
     private void locationSelectionClicked() {
         startActivity(new Intent(this.getContext(), DeliveryLocationSelectionActivity.class));
         this.getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
+    }
+    public void loadShoppingCart()
+    {
+        pBar.setVisibility(View.VISIBLE);
+        parentLayout.setVisibility(View.GONE);
+        mWoolWorthsApplication.getAsyncApi().getShoppingCart(new CancelableCallback<String>() {
+            @Override
+            public void onSuccess(String s, retrofit.client.Response response) {
+                pBar.setVisibility(View.GONE);
+                Log.i("result ",s);
+                CartResponse cartResponse=convertResponseToCartResponseObject(s);
+                if(cartResponse!=null)
+                {
+                    switch (cartResponse.httpCode)
+                    {
+                        case 200:
+                            bindCartData(cartResponse);
+                            break;
+                        default:
+                            break;
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    public CartResponse convertResponseToCartResponseObject(String response)
+    {
+        CartResponse cartResponse = null;
+
+        if(TextUtils.isEmpty(response))
+            return null;
+
+        try {
+            JSONObject jsonObject=new JSONObject(response);
+            cartResponse=new CartResponse();
+            cartResponse.httpCode=jsonObject.getInt("httpCode");
+
+            JSONObject dataObject=jsonObject.getJSONArray("data").getJSONObject(0);
+            JSONObject itemsObject=dataObject.getJSONObject("items");
+            Iterator<String> keys=itemsObject.keys();
+            ArrayList<CartItemGroup> cartItemGroups=new ArrayList<>();
+            while ((keys.hasNext()))
+            {
+                CartItemGroup cartItemGroup=new CartItemGroup();
+                String key=keys.next();
+
+                if (key.contains("food"))
+                    cartItemGroup.setType("FOOD");
+                else if (key.contains("cloth"))
+                    cartItemGroup.setType("CLOTHING");
+                else if (key.contains("home"))
+                    cartItemGroup.setType("HOME");
+                else
+                    cartItemGroup.setType("OTHERS");
+
+                JSONArray productsArray=itemsObject.getJSONArray(key);
+                if(productsArray.length()>0) {
+                    ArrayList<CartProduct> productList = new ArrayList<>();
+                    for (int i=0;i<productsArray.length();i++)
+                    {
+                        JSONObject proObject=productsArray.getJSONObject(i);
+                        CartProduct cartProduct=new CartProduct();
+                        cartProduct.setQuantity(proObject.getInt("quantity"));
+                        cartProduct.setProductId(proObject.getString("productId"));
+                        cartProduct.setInternalImageURL(proObject.getString("internalImageURL"));
+                        cartProduct.setExternalImageURL(proObject.getString("externalImageURL"));
+                        cartProduct.setCatalogRefId(proObject.getString("catalogRefId"));
+                        cartProduct.setProductDisplayName(proObject.getString("productDisplayName"));
+
+                        PriceInfo  pInfo=new PriceInfo();
+                        pInfo.setAmount(proObject.getJSONObject("priceInfo").getDouble("amount"));
+                        pInfo.setListPrice(proObject.getJSONObject("priceInfo").getDouble("listPrice"));
+
+                        cartProduct.setPriceInfo(pInfo);
+
+                        productList.add(cartProduct);
+                    }
+                    cartItemGroup.setCartProducts(productList);
+                }
+                cartItemGroups.add(cartItemGroup);
+            }
+
+            cartResponse.cartItems=cartItemGroups;
+
+            OrderSummary orderSummary=new OrderSummary();
+            orderSummary.setBasketTotal(dataObject.getJSONObject("orderSummary").getDouble("basketTotal"));
+            orderSummary.setTotal(dataObject.getJSONObject("orderSummary").getDouble("total"));
+            orderSummary.setEstimatedDelivery(dataObject.getJSONObject("orderSummary").getDouble("estimatedDelivery"));
+            orderSummary.setTotalItemsCount(dataObject.getJSONObject("orderSummary").getInt("totalItemsCount"));
+
+            cartResponse.orderSummary=orderSummary;
+
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            cartResponse=null;
+            return cartResponse;
+        }
+
+        return cartResponse;
+    }
+
+    public void bindCartData(CartResponse cartResponse)
+    {
+        parentLayout.setVisibility(View.VISIBLE);
+        if(cartResponse.cartItems.size()>0) {
+            btnAddToCart.setVisibility(View.VISIBLE);
+            getActivity().findViewById(R.id.btnEditCart).setVisibility(View.VISIBLE);
+            cartProductAdapter = new CartProductAdapter(cartResponse.cartItems,this,cartResponse.orderSummary,getActivity());
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+            mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            rvCartList.setLayoutManager(mLayoutManager);
+            rvCartList.setAdapter(cartProductAdapter);
+        }else {
+            btnAddToCart.setVisibility(View.GONE);
+            txtEmptyStateDesc.setVisibility(View.VISIBLE);
+        }
     }
 }

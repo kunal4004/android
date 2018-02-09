@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.models;
 import android.content.Context;
 import android.location.Location;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.jakewharton.retrofit.Ok3Client;
 
@@ -12,6 +13,7 @@ import okhttp3.OkHttpClient;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.util.StringConverter;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -20,6 +22,7 @@ public class RetrofitAsyncClient {
     private ApiInterface mApiInterface;
     private Context mContext;
     private Location loc;
+    public static final String TAG = "RetrofitAsyncClient";
 
     public RetrofitAsyncClient(Context mContext) {
         this.mContext = mContext;
@@ -69,6 +72,18 @@ public class RetrofitAsyncClient {
         return WoolworthsApplication.getApiKey();
     }
 
+    public String getSessionToken() {
+        try {
+            SessionDao sessionDao = new SessionDao(mContext, SessionDao.KEY.USER_TOKEN).get();
+            if (sessionDao.value != null && !sessionDao.value.equals("")) {
+                return sessionDao.value;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
+        return "";
+    }
+
     public void getProductDetail(String productId, String skuId, Callback<String> callback) {
         getMyLocation();
         if (Utils.isLocationEnabled(mContext)) {
@@ -96,6 +111,10 @@ public class RetrofitAsyncClient {
                 loc.setLongitude(0);
 
         }
+    }
+
+    public void getShoppingCart(Callback<String> callback){
+        mApiInterface.getShoppingCart(getApiId(),getSha1Password(),getOsVersion(),getDeviceModel(),getNetworkCarrier(),getOS(),getOsVersion(),getSessionToken(),callback);
     }
 }
 
