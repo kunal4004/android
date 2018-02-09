@@ -22,6 +22,7 @@ import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
@@ -133,7 +134,7 @@ public class WebAppInterface {
 		((WoolworthsApplication) ((AppCompatActivity) mContext).getApplication()).getAsyncApi()
 				.getProductDetail(productId, skuId, new Callback<String>() {
 					@Override
-					public void success(String strProduct, retrofit.client.Response response) {
+					public void success(final String strProduct, retrofit.client.Response response) {
 						final WProduct wProduct = Utils.stringToJson(mContext, strProduct);
 						if (wProduct != null) {
 							switch (wProduct.httpCode) {
@@ -156,6 +157,8 @@ public class WebAppInterface {
 													Bundle bundle = new Bundle();
 													bundle.putString("strProductList", strProductList);
 													bundle.putString("strProductCategory", mProductList.get(0).productName);
+													bundle.putString("productResponse", strProduct);
+													bundle.putBoolean("fetchFromJson", true);
 													detailFragment.setArguments(bundle);
 													FragmentTransaction transaction = ((AppCompatActivity) mContext).getSupportFragmentManager().beginTransaction();
 													transaction.replace(R.id.fragment_bottom_container, detailFragment).commit();

@@ -110,6 +110,7 @@ public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayVi
 		super.onHiddenChanged(hidden);
 		if (!hidden) {
 			//do when hidden
+			setStatusBarColor(R.color.white);
 			hideToolbar();
 		}
 	}
