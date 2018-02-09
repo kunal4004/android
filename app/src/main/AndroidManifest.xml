@@ -151,24 +151,18 @@
             android:theme="@style/LoanWithdrawal"/>
 
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalConfirmActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/LoanWithdrawal"/>
-        <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MessagesActivity"
-            android:parentActivityName="za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Messages">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity"/>
+                android:value="za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity"/>
         </activity>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/OneAppBaseTheme"/>
 
+        <activity
+            android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalConfirmActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/LoanWithdrawal"/>
         <!-- Firebase Notifications -->
         <service android:name="za.co.woolworths.financial.services.android.util.WFirebaseMessagingService">
             <intent-filter>
@@ -220,27 +214,13 @@
             android:label="@string/app_name"
             android:theme="@style/MyAccountCards"/>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
-        <activity
             android:name="za.co.woolworths.financial.services.android.util.zxing.QRActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.ProductDetailActivity"
-            android:excludeFromRecents="true"
-            android:screenOrientation="portrait"
-            android:taskAffinity=""
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew"
-            android:screenOrientation="portrait"
-            android:theme="@style/ContactUs"/>
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity"
             android:screenOrientation="portrait"
@@ -273,10 +253,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/CLI"
             android:windowSoftInputMode="adjustPan"/>
-        <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.YoutubePlayerActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:theme="@style/CLI"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
