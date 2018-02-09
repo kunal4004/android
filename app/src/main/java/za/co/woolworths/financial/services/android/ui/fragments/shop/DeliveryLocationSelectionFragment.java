@@ -1,6 +1,8 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -23,19 +26,26 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.Province;
+import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
+import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.ui.adapters.DeliveryLocationAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
 
 
 public class DeliveryLocationSelectionFragment extends Fragment implements DeliveryLocationAdapter.OnItemClick, View.OnClickListener {
 
     public DeliveryLocationSelectionFragmentChange deliveryLocationSelectionFragmentChange;
+    private View selectionContentLayout;
+    private ProgressBar loadingProgressBar;
     private RecyclerView deliveryLocationHistoryList;
     private WTextView tvCurrentLocationTitle, tvCurrentLocationDescription;
 
     private DeliveryLocationAdapter deliveryLocationAdapter;
+
+    private SetDeliveryLocationSuburb setDeliveryLocationSuburb;
 
     public DeliveryLocationSelectionFragment() {
         // Required empty public constructor
@@ -50,6 +60,8 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        selectionContentLayout = view.findViewById(R.id.selectionContentLayout);
+        loadingProgressBar = view.findViewById(R.id.loadingProgressBar);
         deliveryLocationHistoryList = view.findViewById(R.id.deliveryLocationHistoryList);
         tvCurrentLocationTitle = view.findViewById(R.id.tvCurrentLocationTitle);
         tvCurrentLocationDescription = view.findViewById(R.id.tvCurrentLocationDescription);
@@ -122,7 +134,59 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
     @Override
     public void onItemClick(DeliveryLocationHistory location) {
         Log.i("DeliveryLocation", "Location selected: " + location.suburb.name);
-        // TODO: setSuburb API request
+        // TODO: confirm loading when doing this request
+        toggleLoading(true);
+
+        setDeliveryLocationSuburb = new SetDeliveryLocationSuburb(getActivity(), location.suburb.id, new OnEventListener() {
+            @Override
+            public void onSuccess(Object object) {
+                Log.i("SuburbSelectionFragment", "setSuburb Succeeded");
+                handleSetSuburbResponse((SetDeliveryLocationSuburbResponse) object);
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Log.e("SuburbSelectionFragment", "setSuburb Error: " + errorMessage);
+                // hide loading
+                toggleLoading(false);
+
+                // TODO: do something
+
+            }
+        });
+        setDeliveryLocationSuburb.execute();
+    }
+
+    private void handleSetSuburbResponse(SetDeliveryLocationSuburbResponse response) {
+        try {
+            switch (response.httpCode) {
+                case 200:
+                    // TODO: go back to cart if no items removed from cart, else go to list of removed items
+                    openFragment(new CartFragment());
+                    break;
+                case 440:
+                    // TODO: do something about this
+                    break;
+                default:
+                    // TODO: do something about this
+                    break;
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void toggleLoading(boolean show) {
+        selectionContentLayout.setVisibility(show ? View.GONE : View.VISIBLE);
+        if(show) {
+            // show progress
+            loadingProgressBar.getIndeterminateDrawable().setColorFilter(null);
+            loadingProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+            loadingProgressBar.setVisibility(View.VISIBLE);
+        } else {
+            // hide progress
+            loadingProgressBar.setVisibility(View.GONE);
+            loadingProgressBar.getIndeterminateDrawable().setColorFilter(null);
+        }
     }
 
     public void openFragment(Fragment fragment) {

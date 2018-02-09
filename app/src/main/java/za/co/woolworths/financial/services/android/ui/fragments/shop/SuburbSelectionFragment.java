@@ -194,8 +194,8 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
         try {
             switch (response.httpCode) {
                 case 200:
-                    // TODO: add to db, then go back to cart
                     saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb));
+                    // TODO: go back to cart if no items removed from cart, else go to list of removed items
                     openFragment(new CartFragment());
                     break;
                 case 440:
