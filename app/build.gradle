@@ -8,7 +8,7 @@ android {
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
-        job = "140";
+        job = "141";
     }
 
     flavorDimensions "default"
@@ -73,7 +73,7 @@ android {
         qa {
             applicationId "com.awfs.coordination.qa"
             signingConfig signingConfigs.woneappQa
-            versionCode 140
+            versionCode 141
         }
 
         staging {
