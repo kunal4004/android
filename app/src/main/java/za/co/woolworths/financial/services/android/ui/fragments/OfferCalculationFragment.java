@@ -40,6 +40,7 @@ import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
 import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.CLICreateApplication;
 import za.co.woolworths.financial.services.android.models.rest.CLIUpdateApplication;
@@ -231,7 +232,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					default:
-						displayMessageError();
+						displayMessageError(mObjOffer);
 						break;
 				}
 				loadSuccess();
@@ -273,7 +274,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					default:
-						displayMessageError();
+						displayMessageError(mObjOffer);
 						break;
 				}
 				onLoadComplete();
@@ -535,7 +536,12 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 										SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
 										break;
 									default:
-										Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.cli_create_application_error_message));
+										if (mObjOffer != null) {
+											Response response = mObjOffer.response;
+											if (response != null) {
+												Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+											}
+										}
 										break;
 								}
 								loadSuccess();
@@ -587,6 +593,15 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		}
 	}
 
+	private void displayServerResponse(OfferActive mObjOffer) {
+		if (mObjOffer != null) {
+			Response response = mObjOffer.response;
+			if (response != null) {
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+			}
+		}
+	}
+
 	public CreateOfferRequest createOffer
 			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
 		return new CreateOfferRequest(
@@ -630,7 +645,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					} else if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_decline))) {
 						declineMessage();
 					} else {
-						displayMessageError();
+						displayMessageError(mObjOffer);
 					}
 					break;
 				case 440:
@@ -638,17 +653,22 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					break;
 
 				default:
-					displayMessageError();
+					displayMessageError(mObjOffer);
 					break;
 			}
 		}
 	}
 
-	private void displayMessageError() {
+	private void displayMessageError(OfferActive offerActive) {
 		if (mCliPhase2Activity != null)
 			mCliPhase2Activity.hideCloseIcon();
 		onLoadComplete();
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, getString(R.string.cli_create_application_error_message));
+		if (offerActive != null) {
+			Response response = offerActive.response;
+			if (response != null) {
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, response.desc);
+			}
+		}
 	}
 
 	private void declineMessage() {
