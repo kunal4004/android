@@ -101,7 +101,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 				cartItemViewHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						onItemClick.onItemDeleteClick(itemRow);
+						//onItemClick.onItemDeleteClick(itemRow);
 					}
 				});
 			}
@@ -109,7 +109,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			cartItemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					onItemClick.onItemClick(v, holder.getAdapterPosition());
+					//onItemClick.onItemClick(v, holder.getAdapterPosition());
 				}
 			});
 		} else if(itemRow.rowType == CartRowType.PRICES) {
@@ -245,7 +245,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		if (imgUrl != null) {
 			try {
 				imgUrl = imgUrl + "?w=" + 85 + "&q=" + 85;
-				drawImage.displayImage(image, imgUrl);
+				drawImage.displayImage(image, "http://www-win-qa.woolworths.co.za/"+imgUrl);
 			} catch (IllegalArgumentException ignored) {
 			}
 		}
