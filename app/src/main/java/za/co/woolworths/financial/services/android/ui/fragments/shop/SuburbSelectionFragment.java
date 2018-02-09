@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.shop;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -12,7 +13,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -40,7 +43,7 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
 
-public class SuburbSelectionFragment extends Fragment implements SuburbSelectionAdapter.SuburbSelectionCallback {
+public class SuburbSelectionFragment extends Fragment implements SuburbSelectionAdapter.SuburbSelectionCallback, View.OnTouchListener {
 
     public Province selectedProvince;
 
@@ -55,6 +58,8 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
     private SetDeliveryLocationSuburb setDeliveryLocationSuburb;
 
     private SuburbAdapterAsyncTask listConfiguration;
+
+    private int scrollbarHeight, scrollbarItemHeight;
 
     public SuburbSelectionFragment() {
         // Required empty public constructor
@@ -149,15 +154,32 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
         for (final SuburbSelectionAdapter.HeaderPosition header : suburbAdapter.getHeaderItems()) {
             WTextView tvHeaderItem = (WTextView) getLayoutInflater().inflate(R.layout.suburb_scrollbar_item, null);
             tvHeaderItem.setText(header.title);
-            // TODO: scroll on touch/hover instead of click
-            tvHeaderItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    suburbList.scrollToPosition(header.position);
-                }
-            });
+            tvHeaderItem.setTag(header.position); // store position in view's tag
             scrollbarLayout.addView(tvHeaderItem);
         }
+
+        scrollbarLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        scrollbarHeight = scrollbarLayout.getMeasuredHeight() - 20; // 20 = top and bottom padding
+        scrollbarItemHeight = scrollbarHeight / suburbAdapter.getHeaderItems().size();
+        scrollbarLayout.setOnTouchListener(this);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if(v.getId() == R.id.scrollbarLayout) {
+            // Use the event's touch position to figure out the child view touched
+            // Then, get the child view's tag, which is the position, and scroll to that position
+            if(event.getY() > 0 && event.getY() <= scrollbarHeight) {
+                int viewIndex = (int) (event.getY() / scrollbarItemHeight);
+                if(viewIndex < scrollbarLayout.getChildCount()) {
+                    View childView = scrollbarLayout.getChildAt(viewIndex);
+                    int scrollPosition = (int) childView.getTag();
+                    suburbList.scrollToPosition(scrollPosition);
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -227,7 +249,6 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
             }
         } else {
             for (DeliveryLocationHistory item : history) {
-                Log.i("SuburbSelection", "Delivery Location in DB: " + item.suburb.name);
                 if (item.suburb.id.equals(historyItem.suburb.id)) {
                     isExist = true;
                 }
