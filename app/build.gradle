@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
 
@@ -143,13 +144,12 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'com.github.thepacific:mvc:0.0.2'
     compile 'com.facebook.fresco:fresco:1.8.0'
-    compile 'com.facebook.fresco:animated-gif:1.5.0'
+    compile 'com.facebook.fresco:animated-gif:1.8.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.android.gms:play-services-tagmanager:11.8.0'
     compile 'com.facebook.android:facebook-android-sdk:4.26.0'
-    //Viewmodel
     compile "android.arch.lifecycle:extensions:1.1.0"
     annotationProcessor "android.arch.lifecycle:compiler:1.1.0"
-
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 apply plugin: 'com.google.gms.google-services'
