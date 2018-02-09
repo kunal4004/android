@@ -124,6 +124,11 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 
 			@Override
 			public void afterTextChanged(Editable s) {
+				String result = s.toString().replaceAll(" ", "");
+				if (!s.toString().equals(result)) {
+					etAlternativeEmailAddress.setText(result);
+					etAlternativeEmailAddress.setSelection(result.length());
+				}
 				if (s.length() >= 5) {
 					enableButton();
 				} else {
@@ -172,11 +177,11 @@ public class AlternativeEmailFragment extends Fragment implements View.OnClickLi
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.btnSendEmail:
-				mAlternativeEmail = etAlternativeEmailAddress.getText().toString();
+				mAlternativeEmail = etAlternativeEmailAddress.getText().toString().trim();
 				if (mStatementUtils.validateEmail(mAlternativeEmail)) {
 					Drawable transparentDrawable = new ColorDrawable(Color.TRANSPARENT);
 					etAlternativeEmailAddress.setCompoundDrawablesWithIntrinsicBounds(null, null, transparentDrawable, null);
-					mSendUserStatementRequest.to = etAlternativeEmailAddress.getText().toString();
+					mSendUserStatementRequest.to = mAlternativeEmail;
 					sendStatement();
 				} else {
 					Drawable img = getContext().getResources().getDrawable(R.drawable.validation_error_drawable);
