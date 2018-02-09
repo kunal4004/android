@@ -91,5 +91,18 @@ public class ContactUsWRewardsFragment extends Fragment implements View.OnClickL
 							.replace("email_address", emailId).replace("subject_line", subject));
 		}
 	}
+
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			if (mBottomNavigator != null) {
+				mBottomNavigator.setTitle(getActivity().getResources().getString(R.string.wrewards));
+				mBottomNavigator.displayToolbar();
+				mBottomNavigator.showBackNavigationIcon(true);
+			}
+		}
+	}
 }
 
