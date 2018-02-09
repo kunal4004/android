@@ -84,7 +84,7 @@ public class ShoppingListActivity extends AppCompatActivity implements WOnItemCl
 	private void initUI() {
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		mUncheckedItem = (RecyclerView) findViewById(R.id.uncheckedItem);
-		mCheckItem = (RecyclerView) findViewById(R.id.checkedItem);
+		mCheckItem = (RecyclerView) findViewById(R.id.imCheckItem);
 		mCheckListTitle = (WTextView) findViewById(R.id.checkListTitle);
 		mNestedScroll = (NestedScrollView) findViewById(R.id.nestedScroll);
 		mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);

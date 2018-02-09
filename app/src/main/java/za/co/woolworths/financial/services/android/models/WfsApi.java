@@ -44,12 +44,17 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
+import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
+import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.models.rest.SendUserStatement;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WfsApi {
@@ -65,7 +70,6 @@ public class WfsApi {
 		httpBuilder.addInterceptor(new WfsApiInterceptor(mContext));
 		httpBuilder.readTimeout(45, TimeUnit.SECONDS);
 		httpBuilder.connectTimeout(45, TimeUnit.SECONDS);
-
 		mApiInterface = new RestAdapter.Builder()
 				.setClient((new Ok3Client(httpBuilder.build())))
 				.setEndpoint(WoolworthsApplication.getBaseURL())
@@ -251,6 +255,14 @@ public class WfsApi {
 
 	public CardDetailsResponse getCardDetails() {
 		return mApiInterface.getCardDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
+	}
+
+	public StatementResponse getStatementResponse(UserStatement statement) {
+		return mApiInterface.getUserStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), statement.getProductOfferingId(), statement.getAccountNumber(), statement.getStartDate(), statement.getEndDate());
+	}
+
+	public SendUserStatementResponse sendStatementRequest(SendUserStatementRequest statement) {
+		return mApiInterface.sendUserStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), statement);
 	}
 
 	public String getOsVersion() {

@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.DocumentFragment
 import za.co.woolworths.financial.services.android.ui.fragments.OfferCalculationFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.SupplyIncomeDetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ContactUsFragmentChange;
 import za.co.woolworths.financial.services.android.util.DeclineOfferInterface;
 import za.co.woolworths.financial.services.android.util.FragmentUtils;
 import za.co.woolworths.financial.services.android.util.Utils;

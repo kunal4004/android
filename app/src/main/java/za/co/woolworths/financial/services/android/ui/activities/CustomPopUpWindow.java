@@ -1,7 +1,9 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -11,29 +13,51 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
+import za.co.woolworths.financial.services.android.models.dto.statement.USDocuments;
+import za.co.woolworths.financial.services.android.models.rest.SendUserStatement;
+import za.co.woolworths.financial.services.android.models.service.event.BusStation;
+import za.co.woolworths.financial.services.android.models.service.event.LoadState;
+import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailStatementFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.statement.StatementFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
+import za.co.woolworths.financial.services.android.util.JWTHelper;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
+import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener {
+public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener, NetworkChangeListener {
 
 	public RelativeLayout mRelRootContainer;
 	public Animation mPopEnterAnimation;
@@ -42,16 +66,28 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	public static final int ANIM_DOWN_DURATION = 800;
 	public WoolworthsApplication woolworthsApplication;
 	public WGlobalState mWGlobalState;
+	private ProgressBar mWoolworthsProgressBar;
+	private WButton mBtnConfirmEmail;
+	private WTextView tvAlternativeEmail;
+	private StatementUtils mStatementUtils;
+	private SendUserStatement sendUserStatement;
+	private BroadcastReceiver mConnectionBroadcast;
+	private LoadState loadState;
+	private SendUserStatementRequest mSendUserStatementRequest;
+	protected WTextView mTvStatementSendTo;
 
 	public enum MODAL_LAYOUT {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
 		HIGH_LOAN_AMOUNT, LOW_LOAN_AMOUNT, STORE_LOCATOR_DIRECTION, SIGN_OUT, BARCODE_ERROR,
-		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO, CLI_ERROR, CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME, CLI_DECLINE
+		SHOPPING_LIST_INFO, SESSION_EXPIRED, INSTORE_AVAILABILITY, NO_STOCK, LOCATION_OFF, SUPPLY_DETAIL_INFO,
+		CLI_DANGER_ACTION_MESSAGE_VALIDATION, SELECT_FROM_DRIVE, AMOUNT_STOCK, UPLOAD_DOCUMENT_MODAL, PROOF_OF_INCOME,
+		STATEMENT_SENT_TO, CLI_DECLINE, CLI_ERROR, STATEMENT_ERROR
 	}
 
 	MODAL_LAYOUT current_view;
-	String description;
-	String title;
+	private String description;
+	private String title;
+	private String userStatement = "";
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,19 +97,25 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 		woolworthsApplication = (WoolworthsApplication) CustomPopUpWindow.this.getApplication();
 		mWGlobalState = woolworthsApplication.getWGlobalState();
-
+		mStatementUtils = new StatementUtils(CustomPopUpWindow.this);
 		Intent intent = getIntent();
 		Bundle mBundle = intent.getExtras();
 		if (mBundle != null) {
 			current_view = (MODAL_LAYOUT) mBundle.getSerializable("key");
 			title = getText(mBundle.getString("title"));
 			description = getText(mBundle.getString("description"));
+			userStatement = mBundle.getString(StatementActivity.SEND_USER_STATEMENT);
 			displayView(current_view);
 		} else {
 			finish();
 		}
 
 		mWGlobalState = woolworthsApplication.getWGlobalState();
+
+		loadState = new LoadState();
+		loadSuccess();
+		mConnectionBroadcast = Utils.connectionBroadCast(this, this);
+
 	}
 
 	@Override
@@ -91,7 +133,11 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		if (mStatementUtils != null) {
+			mStatementUtils.cancelRequest(sendUserStatement);
+		}
 		runningActivityState(false);
+
 	}
 
 	private void displayView(MODAL_LAYOUT current_view) {
@@ -170,15 +216,32 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				btnOverlay.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						exitCLIAnimation();
+						cliExitAnimation();
 					}
 				});
-				mRelPopContainer.setOnClickListener(new View.OnClickListener() {
+				break;
+
+			case STATEMENT_ERROR:
+				setContentView(R.layout.statement_error);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				WButton btnStatement = (WButton) findViewById(R.id.btnCloseStatement);
+				WTextView statementOverlay = (WTextView) findViewById(R.id.overlayDescription);
+				if (description != null)
+					statementOverlay.setText(description);
+				btnStatement.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						exitCLIAnimation();
+						closeStatementAnimation();
 					}
 				});
+				mRelPopContainer.setOnClickListener(
+						new View.OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								closeStatementAnimation();
+							}
+						});
 				break;
 
 			case EMAIL:
@@ -320,6 +383,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					e.printStackTrace();
 				}
 				for (Map.Entry<String, String> entry : supplyDetailMap.entrySet()) {
+					assert inflater != null;
 					View view = inflater.inflate(R.layout.supply_detail_row, null, false);
 					LinearLayout.LayoutParams layoutParams =
 							new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -387,6 +451,23 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelPopContainer.setOnClickListener(this);
 				btnOk.setOnClickListener(this);
 				break;
+			case STATEMENT_SENT_TO:
+				setContentView(R.layout.statement_popup_layout);
+				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
+				mRelPopContainer = (RelativeLayout) findViewById(R.id.relPopContainer);
+				mBtnConfirmEmail = (WButton) findViewById(R.id.btnConfirmEmail);
+				tvAlternativeEmail = (WTextView) findViewById(R.id.tvAlternativeEmail);
+				mTvStatementSendTo = (WTextView) findViewById(R.id.tvStatementSendTo);
+				WTextView tvSendEmail = (WTextView) findViewById(R.id.tvSendEmail);
+				mWoolworthsProgressBar = (ProgressBar) findViewById(R.id.mWoolworthsProgressBar);
+				populateDocument(tvSendEmail);
+				mSendUserStatementRequest = new Gson().fromJson(userStatement, SendUserStatementRequest.class);
+				mSendUserStatementRequest.to = userEmailAddress();
+				statementSendToTitle(mTvStatementSendTo, mSendUserStatementRequest.documents);
+				tvAlternativeEmail.setOnClickListener(this);
+				mBtnConfirmEmail.setOnClickListener(this);
+				mRelPopContainer.setOnClickListener(this);
+				break;
 			case CLI_DECLINE:
 				setContentView(R.layout.lw_too_high_error);
 				mRelRootContainer = (RelativeLayout) findViewById(R.id.relContainerRootMessage);
@@ -401,13 +482,13 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mCLIDeclineOk.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						exitCLIAnimation();
+						cliExitAnimation();
 					}
 				});
 				mRelPopContainer.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						exitCLIAnimation();
+						cliExitAnimation();
 					}
 				});
 				break;
@@ -415,6 +496,14 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 		}
 		setAnimation();
+	}
+
+	private void statementSendToTitle(WTextView tvStatementSendTo, USDocuments documents) {
+		if (documents.document.size() > 1) {
+			tvStatementSendTo.setText(getString(R.string.statement_sent_to_title).replace("Statement", "Statements"));
+		} else {
+			tvStatementSendTo.setText(getString(R.string.statement_sent_to_title));
+		}
 	}
 
 	private void startExitAnimation() {
@@ -442,7 +531,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		}
 	}
 
-	private void cliExitAnimation() {
+	private void cliDeclineAnimation() {
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
@@ -463,6 +552,63 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					woolworthsApplication
 							.bus()
 							.send(new CLIOfferDecision());
+					dismissLayout();
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
+		}
+	}
+
+
+	private void cliExitAnimation() {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					woolworthsApplication
+							.bus()
+							.send(new BusStation(getString(R.string.decline)));
+					dismissLayout();
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
+		}
+	}
+
+	private void closeStatementAnimation() {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					woolworthsApplication
+							.bus()
+							.send(new StatementFragment());
 					dismissLayout();
 				}
 			});
@@ -670,7 +816,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 
 			case R.id.btnConfirmDecline:
-				cliExitAnimation();
+				cliDeclineAnimation();
 				break;
 
 			case R.id.btnSESignIn:
@@ -685,6 +831,47 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				overridePendingTransition(0, 0);
 				finish();
 				break;
+
+			case R.id.tvAlternativeEmail:
+				exitStatementAnimation();
+				break;
+
+			case R.id.btnConfirmEmail:
+				sendStatement();
+				break;
+		}
+	}
+
+	private void exitStatementConfirmAnimation(final EmailStatementResponse response) {
+		if (!viewWasClicked) { // prevent more than one click
+			viewWasClicked = true;
+			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+			animation.setFillAfter(true);
+			animation.setDuration(ANIM_DOWN_DURATION);
+			animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+					if (response.sent) { //navigate to success screen
+						woolworthsApplication
+								.bus()
+								.send(new EmailStatementFragment());
+						dismissLayout();
+					} else {                    //show popalert error
+						dismissLayout();
+						Utils.displayValidationMessage(CustomPopUpWindow.this, MODAL_LAYOUT.ERROR, getString(R.string.statement_send_email_false_desc));
+					}
+				}
+			});
+			mRelRootContainer.startAnimation(animation);
 		}
 	}
 
@@ -738,7 +925,32 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 		}
 	}
 
-	private void exitCLIAnimation() {
+	public JWTDecodedModel getJWTDecoded() {
+		JWTDecodedModel result = new JWTDecodedModel();
+		try {
+			SessionDao sessionDao = new SessionDao(this, SessionDao.KEY.USER_TOKEN).get();
+			if (sessionDao.value != null && !sessionDao.value.equals("")) {
+				result = JWTHelper.decode(sessionDao.value);
+			}
+		} catch (Exception ignored) {
+		}
+		return result;
+	}
+
+	private void populateDocument(WTextView textView) {
+		String email = userEmailAddress();
+		textView.setText(email);
+	}
+
+	public String userEmailAddress() {
+		JWTDecodedModel userDetail = getJWTDecoded();
+		if (userDetail != null) {
+			return userDetail.email.get(0);
+		}
+		return "";
+	}
+
+	private void exitStatementAnimation() {
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
@@ -756,8 +968,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
+					woolworthsApplication
+							.bus()
+							.send(new BusStation(userStatement));
 					dismissLayout();
-					woolworthsApplication.bus().send(new CustomPopUpWindow());
 				}
 			});
 			mRelRootContainer.startAnimation(animation);
@@ -766,5 +980,99 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 	private String getText(String text) {
 		return TextUtils.isEmpty(text) ? "" : text;
+	}
+
+	public void sendStatement() {
+		onLoad();
+		sendUserStatement = new SendUserStatement(CustomPopUpWindow.this, mSendUserStatementRequest, new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				SendUserStatementResponse statementResponse = (SendUserStatementResponse) object;
+				if (statementResponse != null) {
+					Response response = statementResponse.response;
+					switch (statementResponse.httpCode) {
+						case 200:
+							List<EmailStatementResponse> data = statementResponse.data;
+							EmailStatementResponse emailResponse = data.get(0);
+							exitStatementConfirmAnimation(emailResponse);
+							break;
+						case 440:
+							SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(CustomPopUpWindow.this, response.stsParams);
+							break;
+						default:
+							break;
+					}
+				}
+				loadSuccess();
+				onLoadComplete();
+			}
+
+			@Override
+			public void onFailure(String e) {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						ErrorHandlerView errorHandlerView = new ErrorHandlerView(CustomPopUpWindow.this);
+						errorHandlerView.showToast();
+						loadFailure();
+						onLoadComplete();
+					}
+				});
+			}
+		});
+
+		sendUserStatement.execute();
+	}
+
+	public void onLoad() {
+		mWoolworthsProgressBar.setVisibility(View.VISIBLE);
+		mBtnConfirmEmail.setVisibility(View.GONE);
+		tvAlternativeEmail.setEnabled(false);
+	}
+
+	public void onLoadComplete() {
+		mBtnConfirmEmail.setVisibility(View.VISIBLE);
+		mWoolworthsProgressBar.setVisibility(View.GONE);
+		tvAlternativeEmail.setEnabled(true);
+	}
+
+
+	private void loadSuccess() {
+		loadState.setLoadComplete(true);
+	}
+
+	private void loadFailure() {
+		loadState.setLoadComplete(false);
+	}
+
+
+	private void retryConnect() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if (new ConnectionDetector().isOnline(CustomPopUpWindow.this)) {
+					if (!loadState.onLoanCompleted()) {
+						sendStatement();
+					}
+				}
+			}
+		});
+	}
+
+	@Override
+	public void onConnectionChanged() {
+		retryConnect();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		registerReceiver(mConnectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		unregisterReceiver(mConnectionBroadcast);
 	}
 }

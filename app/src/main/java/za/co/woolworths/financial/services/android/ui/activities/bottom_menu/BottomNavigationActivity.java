@@ -33,6 +33,7 @@ import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
+import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
@@ -115,8 +116,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				.subscribe(new Consumer<Object>() {
 					@Override
 					public void accept(Object object) throws Exception {
-						if (object instanceof BusStation) {
-							String searchProduct = ((BusStation) object).getSearchProductBrand();
+						if (object instanceof LoadState) {
+							String searchProduct = ((LoadState) object).getSearchProduct();
 							if (!TextUtils.isEmpty((searchProduct))) {
 								GridFragment gridFragment = new GridFragment();
 								Bundle bundle = new Bundle();

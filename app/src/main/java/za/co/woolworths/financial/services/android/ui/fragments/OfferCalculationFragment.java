@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
 import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.rest.CLICreateApplication;
 import za.co.woolworths.financial.services.android.models.rest.CLIUpdateApplication;
@@ -168,12 +170,16 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 								cliDelcineOfferRequest(mGlobalState.getDeclineDecision());
 							} else if (object instanceof BusStation) {
 								final BusStation busStation = (BusStation) object;
-								sbSlideAmount.post(new Runnable() {
-									@Override
-									public void run() {
-										sbSlideAmount.setProgress(busStation.getNumber());
-									}
-								});
+								if ((!TextUtils.isEmpty(busStation.getString()) && busStation.getString().equalsIgnoreCase(getString(R.string.decline)))) {
+									finishActivity();
+								} else if (busStation.getNumber() != null) {
+									sbSlideAmount.post(new Runnable() {
+										@Override
+										public void run() {
+											sbSlideAmount.setProgress(busStation.getNumber());
+										}
+									});
+								}
 							} else if (object instanceof CustomPopUpWindow) {
 								if (mCliPhase2Activity != null)
 									mCliPhase2Activity.performClicked();
@@ -226,7 +232,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					default:
-						displayMessageError();
+						displayMessageError(mObjOffer);
 						break;
 				}
 				loadSuccess();
@@ -268,7 +274,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 						break;
 
 					default:
-						displayMessageError();
+						displayMessageError(mObjOffer);
 						break;
 				}
 				onLoadComplete();
@@ -530,7 +536,12 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 										SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), mObjOffer.response.stsParams);
 										break;
 									default:
-										Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, getString(R.string.cli_create_application_error_message));
+										if (mObjOffer != null) {
+											Response response = mObjOffer.response;
+											if (response != null) {
+												Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+											}
+										}
 										break;
 								}
 								loadSuccess();
@@ -582,6 +593,15 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		}
 	}
 
+	private void displayServerResponse(OfferActive mObjOffer) {
+		if (mObjOffer != null) {
+			Response response = mObjOffer.response;
+			if (response != null) {
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, response.desc);
+			}
+		}
+	}
+
 	public CreateOfferRequest createOffer
 			(HashMap<String, String> hashIncomeDetail, HashMap<String, String> hashExpenseDetail) {
 		return new CreateOfferRequest(
@@ -625,7 +645,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					} else if (nextStep.toLowerCase().equalsIgnoreCase(getString(R.string.status_decline))) {
 						declineMessage();
 					} else {
-						displayMessageError();
+						displayMessageError(mObjOffer);
 					}
 					break;
 				case 440:
@@ -633,17 +653,22 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 					break;
 
 				default:
-					displayMessageError();
+					displayMessageError(mObjOffer);
 					break;
 			}
 		}
 	}
 
-	private void displayMessageError() {
+	private void displayMessageError(OfferActive offerActive) {
 		if (mCliPhase2Activity != null)
 			mCliPhase2Activity.hideCloseIcon();
 		onLoadComplete();
-		Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, getString(R.string.cli_create_application_error_message));
+		if (offerActive != null) {
+			Response response = offerActive.response;
+			if (response != null) {
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CLI_ERROR, response.desc);
+			}
+		}
 	}
 
 	private void declineMessage() {
@@ -747,7 +772,10 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 		anim.addListener(new AnimatorListenerAdapter() {
 			@Override
 			public void onAnimationEnd(Animator animation) {
-				Utils.showOneTimeTooltip(getActivity(), SessionDao.KEY.CLI_SLIDE_EDIT_AMOUNT_TOOLTIP, sbSlideAmount, getString(R.string.slide_to_edit_amount));
+				Activity activity = getActivity();
+				if (activity != null) {
+					Utils.showOneTimeTooltip(activity, SessionDao.KEY.CLI_SLIDE_EDIT_AMOUNT_TOOLTIP, sbSlideAmount, getString(R.string.slide_to_edit_amount));
+				}
 			}
 		});
 		anim.start();

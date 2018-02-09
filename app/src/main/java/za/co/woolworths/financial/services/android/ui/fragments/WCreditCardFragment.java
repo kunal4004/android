@@ -103,10 +103,11 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 							if (object instanceof BusStation) {
 								BusStation busStation = (BusStation) object;
 								OfferActive offerActive = busStation.getOfferActive();
-								hideCLIView();
 								if (offerActive != null) {
+									hideCLIView();
 									cliOfferStatus(offerActive);
 								} else if (busStation.makeApiCall()) {
+									hideCLIView();
 									creditWasAlreadyRunOnce = false;
 									retryConnect();
 								} else {
@@ -119,6 +120,8 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 
 	private void init(View view) {
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
+		RelativeLayout rlViewStatement = (RelativeLayout) view.findViewById(R.id.rlViewStatement);
+		rlViewStatement.setVisibility(View.GONE);
 		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
 		dueDate = (WTextView) view.findViewById(R.id.dueDate);
 		minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
@@ -366,19 +369,22 @@ public class WCreditCardFragment extends MyAccountCardsActivity.MyAccountCardsFr
 	}
 
 	private void offerActiveResult(OfferActive offerActive) {
-		String messageSummary = TextUtils.isEmpty(offerActive.messageSummary) ? "" : offerActive.messageSummary;
-		if (controllerNotNull()) {
-			if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
-				mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
-				mIncreaseLimitController.disableView(llIncreaseLimitContainer);
-				mIncreaseLimitController.disableView(tvIncreaseLimit);
-			} else {
-				mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
-				mIncreaseLimitController.enableView(llIncreaseLimitContainer);
-				mIncreaseLimitController.enableView(tvIncreaseLimit);
-			}
+		try {
+			String messageSummary = TextUtils.isEmpty(offerActive.messageSummary) ? "" : offerActive.messageSummary;
+			if (controllerNotNull()) {
+				if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
+					mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
+					mIncreaseLimitController.disableView(llIncreaseLimitContainer);
+					mIncreaseLimitController.disableView(tvIncreaseLimit);
+				} else {
+					mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
+					mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+					mIncreaseLimitController.enableView(tvIncreaseLimit);
+				}
 
-			cliOfferStatus(offerActive);
+				cliOfferStatus(offerActive);
+			}
+		} catch (IllegalStateException ignored) {
 		}
 	}
 

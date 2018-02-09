@@ -4,10 +4,10 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 
 public class BusStation {
 
-	private int intValue;
+	private String mObject;
+	private Integer intValue;
 	private OfferActive offerActive;
 	private boolean makeApiCall;
-	private String searchProductBrand;
 
 	public BusStation(int intValue) {
 		this.intValue = intValue;
@@ -21,15 +21,11 @@ public class BusStation {
 		this.offerActive = offerActive;
 	}
 
-	public BusStation(String searchProductBrand) {
-		this.searchProductBrand = searchProductBrand;
+	public BusStation(String object) {
+		mObject = object;
 	}
 
-	public String getSearchProductBrand() {
-		return searchProductBrand;
-	}
-
-	public int getNumber() {
+	public Integer getNumber() {
 		return intValue;
 	}
 
@@ -39,5 +35,9 @@ public class BusStation {
 
 	public boolean makeApiCall() {
 		return makeApiCall;
+	}
+
+	public String getString() {
+		return mObject;
 	}
 }
