@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@color/default_background"
     android:orientation="vertical">
+
     <RelativeLayout
         android:id="@+id/currentLocationLayout"
         android:layout_width="match_parent"
@@ -18,7 +19,8 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:src="@drawable/ic_search" />
+            android:src="@drawable/ic_search"
+            android:alpha="0.2" />
 
         <za.co.woolworths.financial.services.android.ui.views.WEditTextView
             android:id="@+id/etvSuburbFilter"
@@ -36,6 +38,6 @@
         android:id="@+id/searchSeparator"
         android:layout_width="match_parent"
         android:layout_height="16dp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </LinearLayout>

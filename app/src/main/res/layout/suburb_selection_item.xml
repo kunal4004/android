@@ -36,14 +36,15 @@
         android:layout_height="50dp"
         android:background="@color/white">
 
-        <ImageView
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/iconMap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
-            android:src="@drawable/mapview" />
+            android:src="@drawable/mapview"
+            android:alpha="0.2" />
 
         <za.co.woolworths.financial.services.android.ui.views.WTextView
             android:id="@+id/tvSuburbName"

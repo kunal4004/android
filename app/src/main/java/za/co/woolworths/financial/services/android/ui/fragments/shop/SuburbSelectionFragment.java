@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,9 +24,11 @@ import com.awfs.coordination.R;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.Province;
+import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.rest.shop.GetSuburbs;
+import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbSelectionAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -43,6 +46,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
     private LinearLayout scrollbarLayout;
     private SuburbSelectionAdapter suburbAdapter;
     private GetSuburbs getSuburbsAsync;
+    private SetDeliveryLocationSuburb setDeliveryLocationSuburb;
 
     private SuburbAdapterAsyncTask listConfiguration;
 
@@ -148,12 +152,62 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
     @Override
     public void onItemClick(Suburb suburb) {
         Log.i("SuburbSelection", "Suburb selected: " + suburb.name + " for province: " + selectedProvince.name);
-        // TODO: perform set suburb API request, add to db, then go back to cart
+        setSuburbRequest(selectedProvince, suburb);
+    }
+
+    private void setSuburbRequest(final Province province, final Suburb suburb) {
+        // TODO: confirm loading when doing this request
+        toggleLoading(true);
+
+        setDeliveryLocationSuburb = new SetDeliveryLocationSuburb(getActivity(), suburb.id, new OnEventListener() {
+            @Override
+            public void onSuccess(Object object) {
+                Log.i("SuburbSelectionFragment", "setSuburb Succeeded");
+                handleSetSuburbResponse((SetDeliveryLocationSuburbResponse) object, province, suburb);
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Log.e("SuburbSelectionFragment", "setSuburb Error: " + errorMessage);
+                // hide loading
+                toggleLoading(false);
+
+                // TODO: do something
+
+            }
+        });
+        setDeliveryLocationSuburb.execute();
+    }
+
+    private void handleSetSuburbResponse(SetDeliveryLocationSuburbResponse response, Province province, Suburb suburb) {
+        try {
+            switch (response.httpCode) {
+                case 200:
+                    // TODO: add to db, then go back to cart
+                    openFragment(new CartFragment());
+                    break;
+                case 440:
+                    // TODO: do something about this
+                    break;
+                default:
+                    // TODO: do something about this
+                    break;
+            }
+        } catch (Exception ignored) {
+        }
     }
 
     @Override
     public void setScrollbarVisibility(boolean visible) {
         scrollbarLayout.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    public void openFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+        fragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
+                .replace(R.id.content_frame, fragment).addToBackStack(null).commit();
     }
 
     @Override
