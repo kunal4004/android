@@ -3,6 +3,7 @@ package za.co.woolworths.financial.services.android.ui.fragments.shop;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
@@ -38,6 +39,7 @@ import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.rest.shop.GetSuburbs;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
+import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbSelectionAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
@@ -221,7 +223,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
                 case 200:
                     saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb));
                     // TODO: go back to cart if no items removed from cart, else go to list of removed items
-                    openFragment(new CartFragment());
+                    startActivity(new Intent(getContext(), CartActivity.class));
                     break;
                 case 440:
                     // TODO: do something about this
@@ -287,14 +289,6 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
             Log.e("TAG", e.getMessage());
         }
         return history;
-    }
-
-    public void openFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-
-        fragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
-                .replace(R.id.content_frame, fragment).addToBackStack(null).commit();
     }
 
     @Override
