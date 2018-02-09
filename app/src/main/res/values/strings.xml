@@ -576,7 +576,6 @@
     <string name="account_type_info_desc">I agree that Woolworths Financial Services may request my latest 3 months bank statement directly from my bank.</string>
     <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
     <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>
-    <string name="cli_create_application_error_message">Unfortunately we cannot proceed with your application</string>
     <string name="lets_make_it_easy_for_you">Let us make it easy for you - we can request your latest 3 months bank statements directly from your bank, at no cost to you.</string>
     <string name="statement_send_email_false_desc">Oops, There seems to be a problem. Please try again later. </string>
 </resources>
