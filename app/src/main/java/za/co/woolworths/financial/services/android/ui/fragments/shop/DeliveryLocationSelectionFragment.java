@@ -13,10 +13,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocation;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.Province;
+import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.ui.adapters.DeliveryLocationAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
@@ -65,9 +72,9 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
     private void configureCurrentLocation() {
         // TODO: make API request & show loading before setting the current location, if needed
 
-        DeliveryLocation currentLocation = getCurrentDeliveryLocation();
-        tvCurrentLocationTitle.setText(currentLocation.title);
-        tvCurrentLocationDescription.setText(currentLocation.description);
+        DeliveryLocationHistory currentLocation = getCurrentDeliveryLocation();
+        tvCurrentLocationTitle.setText(currentLocation.suburb.name);
+        tvCurrentLocationDescription.setText(currentLocation.province.name);
     }
 
     private void configureLocationHistory() {
@@ -80,22 +87,31 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
         deliveryLocationHistoryList.setAdapter(deliveryLocationAdapter);
     }
 
-    private DeliveryLocation getCurrentDeliveryLocation() {
-        DeliveryLocation location = new DeliveryLocation();
-        location.title = "Current Location";
-        location.description = "Lorem ipsum";
+    private DeliveryLocationHistory getCurrentDeliveryLocation() {
+        Province province = new Province();
+        province.name = "Current province here";
+        Suburb suburb = new Suburb();
+        suburb.name = "Current suburb here";
+        DeliveryLocationHistory location = new DeliveryLocationHistory(province, suburb);
         return location;
     }
 
-    private ArrayList<DeliveryLocation> getDeliveryLocationHistory() {
-        ArrayList<DeliveryLocation> locations = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            DeliveryLocation location = new DeliveryLocation();
-            location.title = "Location #" + (i + 1);
-            location.description = "Lorem ipsum";
-            locations.add(location);
+    private List<DeliveryLocationHistory> getDeliveryLocationHistory() {
+        List<DeliveryLocationHistory> history = null;
+        try {
+            SessionDao sessionDao = new SessionDao(getContext(), SessionDao.KEY.DELIVERY_LOCATION_HISTORY).get();
+            if (sessionDao.value == null) {
+                history = new ArrayList<>();
+            } else {
+                Gson gson = new Gson();
+                Type type = new TypeToken<List<DeliveryLocationHistory>>() {
+                }.getType();
+                history = gson.fromJson(sessionDao.value, type);
+            }
+        } catch (Exception e) {
+            Log.e("TAG", e.getMessage());
         }
-        return locations;
+        return history;
     }
 
     private void onCurrentLocationClicked() {
@@ -104,8 +120,9 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
     }
 
     @Override
-    public void onItemClick(DeliveryLocation location) {
-        Log.i("DeliveryLocation", "Location selected: " + location.title);
+    public void onItemClick(DeliveryLocationHistory location) {
+        Log.i("DeliveryLocation", "Location selected: " + location.suburb.name);
+        // TODO: setSuburb API request
     }
 
     public void openFragment(Fragment fragment) {

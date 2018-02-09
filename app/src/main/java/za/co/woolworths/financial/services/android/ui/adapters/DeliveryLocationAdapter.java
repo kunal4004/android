@@ -4,30 +4,25 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dto.CartPriceValues;
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocation;
-import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
 public class DeliveryLocationAdapter extends RecyclerView.Adapter<DeliveryLocationAdapter.DeliveryLocationViewHolder> {
 
 	public interface OnItemClick {
-		void onItemClick(DeliveryLocation location);
+		void onItemClick(DeliveryLocationHistory location);
 	}
 
 	private OnItemClick onItemClick;
-	private ArrayList<DeliveryLocation> deliveryLocationItems;
+	private List<DeliveryLocationHistory> deliveryLocationItems;
 
-	public DeliveryLocationAdapter(ArrayList<DeliveryLocation> deliveryLocationItems, OnItemClick onItemClick) {
+	public DeliveryLocationAdapter(List<DeliveryLocationHistory> deliveryLocationItems, OnItemClick onItemClick) {
 		this.deliveryLocationItems = deliveryLocationItems;
 		this.onItemClick = onItemClick;
 	}
@@ -40,9 +35,9 @@ public class DeliveryLocationAdapter extends RecyclerView.Adapter<DeliveryLocati
 
 	@Override
 	public void onBindViewHolder(final DeliveryLocationViewHolder holder, final int position) {
-		final DeliveryLocation location = deliveryLocationItems.get(position);
-		holder.tvTitle.setText(location.title);
-		holder.tvDescription.setText(location.description);
+		final DeliveryLocationHistory location = deliveryLocationItems.get(position);
+		holder.tvTitle.setText(location.suburb.name);
+		holder.tvDescription.setText(location.province.name);
 		holder.deliveryLocationItemLayout.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

@@ -20,9 +20,15 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
@@ -92,6 +98,11 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
             loadingProgressBar.setVisibility(View.GONE);
             loadingProgressBar.getIndeterminateDrawable().setColorFilter(null);
         }
+    }
+
+    @Override
+    public void setScrollbarVisibility(boolean visible) {
+        scrollbarLayout.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     private void loadSuburbItems() {
@@ -184,6 +195,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
             switch (response.httpCode) {
                 case 200:
                     // TODO: add to db, then go back to cart
+                    saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb));
                     openFragment(new CartFragment());
                     break;
                 case 440:
@@ -197,9 +209,60 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
         }
     }
 
-    @Override
-    public void setScrollbarVisibility(boolean visible) {
-        scrollbarLayout.setVisibility(visible ? View.VISIBLE : View.GONE);
+    private void saveRecentDeliveryLocation(DeliveryLocationHistory historyItem) {
+        List<DeliveryLocationHistory> history = getRecentDeliveryLocations();
+        SessionDao sessionDao = new SessionDao(getContext());
+        sessionDao.key = SessionDao.KEY.DELIVERY_LOCATION_HISTORY;
+        Gson gson = new Gson();
+        boolean isExist = false;
+        if (history == null) {
+            history = new ArrayList<>();
+            history.add(0, historyItem);
+            String json = gson.toJson(history);
+            sessionDao.value = json;
+            try {
+                sessionDao.save();
+            } catch (Exception e) {
+                Log.e("TAG", e.getMessage());
+            }
+        } else {
+            for (DeliveryLocationHistory item : history) {
+                Log.i("SuburbSelection", "Delivery Location in DB: " + item.suburb.name);
+                if (item.suburb.id.equals(historyItem.suburb.id)) {
+                    isExist = true;
+                }
+            }
+            if (!isExist) {
+                history.add(0, historyItem);
+                if (history.size() > 5)
+                    history.remove(5);
+
+                sessionDao.value = gson.toJson(history);
+                try {
+                    sessionDao.save();
+                } catch (Exception e) {
+                    Log.e("TAG", e.getMessage());
+                }
+            }
+        }
+    }
+
+    private List<DeliveryLocationHistory> getRecentDeliveryLocations() {
+        List<DeliveryLocationHistory> history = null;
+        try {
+            SessionDao sessionDao = new SessionDao(getContext(), SessionDao.KEY.DELIVERY_LOCATION_HISTORY).get();
+            if (sessionDao.value == null) {
+                history = new ArrayList<>();
+            } else {
+                Gson gson = new Gson();
+                Type type = new TypeToken<List<DeliveryLocationHistory>>() {
+                }.getType();
+                history = gson.fromJson(sessionDao.value, type);
+            }
+        } catch (Exception e) {
+            Log.e("TAG", e.getMessage());
+        }
+        return history;
     }
 
     public void openFragment(Fragment fragment) {

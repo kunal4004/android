@@ -8,10 +8,8 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dto.DeliveryLocation;
 import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
