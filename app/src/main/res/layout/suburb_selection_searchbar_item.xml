@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/default_background"
@@ -19,8 +20,8 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:src="@drawable/ic_search"
-            android:alpha="0.2" />
+            android:alpha="0.2"
+            android:src="@drawable/ic_search" />
 
         <za.co.woolworths.financial.services.android.ui.views.WEditTextView
             android:id="@+id/etvSuburbFilter"
@@ -30,7 +31,13 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_toRightOf="@+id/iconSearch"
-            android:hint="Search Location" />
+            android:background="@android:color/transparent"
+            android:hint="Search Location"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textCursorDrawable="@null"
+            android:textSize="15sp"
+            app:WTextView_font="myriadpro_regular" />
 
     </RelativeLayout>
 
