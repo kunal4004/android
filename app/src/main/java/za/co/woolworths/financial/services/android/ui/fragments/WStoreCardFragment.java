@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -36,6 +37,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -82,6 +84,8 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private CLIGetOfferActive cliGetOfferActive;
 
 	private final CompositeDisposable disposables = new CompositeDisposable();
+	private RelativeLayout rlViewStatement;
+	private AccountsResponse accountsResponse;
 
 	@Nullable
 	@Override
@@ -111,13 +115,13 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 							if (object instanceof BusStation) {
 								BusStation busStation = (BusStation) object;
 								OfferActive offerActive = busStation.getOfferActive();
-								hideCLIView();
 								if (offerActive != null) {
+									hideCLIView();
 									cliOfferStatus(offerActive);
 								} else if (busStation.makeApiCall()) {
+									hideCLIView();
 									storeWasAlreadyRunOnce = false;
 									retryConnect();
-								} else {
 								}
 							}
 						}
@@ -129,6 +133,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
 		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
+		rlViewStatement = (RelativeLayout) view.findViewById(R.id.rlViewStatement);
 		dueDate = (WTextView) view.findViewById(R.id.dueDate);
 		minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
 		currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
@@ -164,6 +169,7 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		llIncreaseLimitContainer.setOnClickListener(this);
 		mRelIncreaseMyLimit.setOnClickListener(this);
 		mRelFindOutMore.setOnClickListener(this);
+		rlViewStatement.setOnClickListener(this);
 	}
 
 	public void bindData(AccountsResponse response) {
@@ -200,18 +206,21 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 		bolBroacastRegistred = true;
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), networkChangeListener);
 		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-		AccountsResponse accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+		accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		bindData(accountsResponse);
 		onLoadComplete();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
 		viewWasCreated = true;
 		if (!new ConnectionDetector().isOnline(getActivity()))
-				mErrorHandlerView.showToast();
+			mErrorHandlerView.showToast();
 	}
 
 	@Override
 	public void onClick(View v) {
 		MultiClickPreventer.preventMultiClick(v);
+		if (accountsResponse != null) {
+			productOfferingId = Utils.getProductOfferingId(accountsResponse, "SC");
+		}
 		switch (v.getId()) {
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:
@@ -238,6 +247,19 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 			case R.id.relFindOutMore:
 				if (controllerNotNull())
 					mIncreaseLimitController.intentFindOutMore(getActivity(), offerActive);
+				break;
+
+			case R.id.rlViewStatement:
+				Activity activity = getActivity();
+				if (activity != null) {
+					((WoolworthsApplication) WStoreCardFragment.this.getActivity().getApplication())
+							.getUserManager
+									().getAccounts();
+					Intent openStatement = new Intent(getActivity(), StatementActivity.class);
+					//UserStatement statement = new UserStatement(productOfferingId);
+					startActivity(openStatement);
+					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				}
 				break;
 			default:
 				break;
@@ -419,5 +441,4 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 	private void hideCLIView() {
 		mIncreaseLimitController.cliDefaultView(llCommonLayer, tvIncreaseLimitDescription);
 	}
-
 }

@@ -47,18 +47,11 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/detailsView"
+
+        <FrameLayout
+            android:id="@+id/barcode_fragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:clickable="true"
-            android:focusable="false"
-            android:orientation="vertical">
-
-            <include layout="@layout/product_view_detail"/>
-
-        </LinearLayout>
+            android:layout_height="match_parent"/>
     </za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
 
 

@@ -72,6 +72,7 @@ public class SubCategoryFragment extends BaseFragment<FragmentSubCategoryBinding
 		super.onViewCreated(view, savedInstanceState);
 		showToolbar();
 		setTitle(mRootCategoryName);
+		setStatusBarColor(R.color.white);
 		setToolbarBackgroundDrawable(R.drawable.appbar_background);
 		showBackNavigationIcon(true);
 		RelativeLayout relNoConnectionLayout = getViewDataBinding().incNoConnectionHandler.noConnectionLayout;
@@ -183,6 +184,10 @@ public class SubCategoryFragment extends BaseFragment<FragmentSubCategoryBinding
 		super.onHiddenChanged(hidden);
 		if (!hidden) {
 			if (mSubCategoryAdapter != null) {
+				setStatusBarColor(R.color.white);
+				showToolbar();
+				setToolbarBackgroundDrawable(R.drawable.appbar_background);
+				setTitle(mRootCategoryName);
 				mSubCategoryAdapter.resetAdapter();
 			}
 		}

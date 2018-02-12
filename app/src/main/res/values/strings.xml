@@ -179,7 +179,7 @@
     <string name="cli_solvency_error">All fields are mandatory.\nIf not applicable, please enter R0.</string>
 
     <string name="cli_pop_confidential_title">UNFORTUNATELY WE CANNOT PROCEED</string>
-    <string name="cli_pop_confidential_desc">You may only apply for a limit increase if your credit profile is in good standing</string>
+    <string name="cli_pop_confidential_desc">We can only continue with your application once you’ve granted us permission to access your consumer credit information.</string>
 
     <string name="cli_pop_insolvency_title">SORRY, WE CANNOT PROCEED WITH YOUR APPLICATION</string>
     <string name="cli_pop_insolvency_desc">Unfortunately we can’t proceed until you no longer have any of these conditions in place.</string>
@@ -234,7 +234,6 @@
     <string name="bullet">\u2022</string>
     <string name="sc_points_bring_following_while_collecting_1">A valid South African ID</string>
     <string name="sc_points_bring_following_while_collecting_2">Your latest three payslips or your last three months’ bank statements</string>
-
     <string name="sc_points_to_qualify_1">Be 18 or older</string>
     <string name="sc_points_to_qualify_2">Have a valid RSA ID number</string>
     <string name="sc_points_to_qualify_3">Earn a minimum of R2000 per month</string>
@@ -465,9 +464,9 @@
     <string name="color">color</string>
     <string name="size">size</string>
     <string name="not_found">Unfortunately not found</string>
-    <string name="stock_available_product">Stores in this area are out of your item (or have very little stock).  How about searching our online store ?</string>
+    <string name="stock_available_product">Stores in this area are out of your item (or have very little stock). How about searching our online store</string>
     <string name="back_to_product">back to products</string>
-    <string name="no_stock_title">NO PRODUCT FOUND</string>
+    <string name="no_stock_title">UNFORTUNATELY NOT FOUND</string>
     <string name="location_disable_title">Location Services</string>
     <string name="location_disable_desc">This feature cannot be used without Location Services.</string>
     <string name="downloaing_text">Downloading File</string>
@@ -510,8 +509,6 @@
     <string name="increase_limit_desc">You can apply for a limit increase whenever you need to xxxxx xxxx</string>
 
     <string name="status_in_progress">In Progress</string>
-    <string name="status_offer_available">Offer Available</string>
-    <string name="status_please_try_again">please try again</string>
     <string name="status_poi_required">POI Required</string>
     <string name="status_poi_problem">POI Problem</string>
     <string name="decline">Decline</string>
@@ -519,15 +516,11 @@
     <string name="decline_desc">Are you sure you would like to decline the offer of  #R?</string>
     <string name="find_out_more">Find Out More</string>
     <string name="status_unavailable">unavailable</string>
-    <string name="status_retry">Retry</string>
-    <string name="status_poi">POI</string>
     <string name="status_i_n_e">I \u0026 E</string>
     <string name="status_offer">Offer</string>
     <string name="status_consents">Consents</string>
     <string name="status_decline">Decline</string>
     <string name="status_contact_us">Contact Us</string>
-    <string name="select_from_gallery">select from gallery</string>
-    <string name="status_apply_now">Apply Now</string>
     <string name="poi_income_detail_problem">There is a problem with the income details you submitted.</string>
     <string name="poi_problem_phone_no">+27 21 411 5000</string>
     <string name="request_loan_amount">Current Credit Limit:</string>
@@ -542,27 +535,21 @@
     <string name="uploading_name_address">Name and address must be visible</string>
     <string name="uploading_statement_period">Statement period must be visible</string>
     <string name="uploading_older_month">Can’t be older than 3 months</string>
-    <string name="from_camera">Camera</string>
-    <string name="drawer_open">Open</string>
-    <string name="drawer_close">Close</string>
 
     <!-- Cli carousel: Find Out More -->
     <string name="credit_bureau">Credit bureau</string>
-    <string name="credit_bureau_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.</string>
+    <string name="credit_bureau_desc">We will try our best to ensure that you can afford the increased instalments of your new your credit limit. As such we obtain your credit information from various credit bureaus, who maintains the personal details related to your credit history (repayment behaviour, amount of credit you have available, outstanding debt collections and other).</string>
     <string name="txt_proof_of_income">Proof of income</string>
-    <string name="txt_proof_of_income_desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium.</string>
+    <string name="txt_proof_of_income_desc">With all credit applications, we are required to verify your income. To do so, we need to obtain your three latest pay slips or your last three months’ bank statements (that reflects your income).</string>
 
     <!-- Cli carousel: Complete process title -->
     <string name="process_complete_title">Thank you, Your application is being processed.</string>
     <string name="process_complete_desc">We will be in contact with you within
         two working days. Please watch the app for updates on the progress of your application.</string>
     <string name="process_complete_back_account">back to my account</string>
-    <string name="status_document_required">Documents Required</string>
     <string name="back_to_my_account">back to my account</string>
     <string name="account_type">### account type</string>
     <string name="account_saving_title">### savings account</string>
-    <string name="cli_poi_email_decription">Please submit POI documents to the email address listed below.</string>
-    <string name="cli_poi_email_id">poi@woolworths.co.za</string>
 
     <string name="no_internet_title">OOPS. SOMETHING WENT WRONG!</string>
     <string name="no_internet_subtitle">Please try again.</string>
@@ -576,13 +563,27 @@
     <string name="cli_proceed_description">Don’t have the required documents right now or need more detailed instructions?  Simply click below and we will send an email to you, so you can complete the process</string>
     <string name="cli_email_sent_document_title">documents sent to:</string>
     <string name="cli_email_sent_description">Please follow the instructions we’ve sent to your email. If you didn’t receive the email, please check your spam folder.</string>
-    <string name="read_more">Read more...</string>
-    <string name="read_less">\n\nLess.</string>
     <string name="proceed">proceed</string>
     <string name="status_complete">complete</string>
     <string name="proof_of_income_popup_desc">Your credit limit increase is subject to the condition that proof of income is provided within 30 (thirty) days from the date of accepting the credit limit increase. Submission outside this period will result in the lapse of the offer.\n\nIf your proof of income is lower than the amount you disclosed, we will re-calculate your credit limit increase amount and notify you accordingly. You will only have access to the credit limit increase once proof of income is received.</string>
     <string name="proof_of_income">PROOF OF INCOME</string>
-    <string name="account_type_info_desc">I agree that Woolworths Financial Services may request  my latest 3 months bank statements directly from my bank.</string>
+    <string name="email_validation_error_message"><b>OOPS</b>, TRY AGAIN. INCORRECT EMAIL FORMATTING</string>
+
+    <!--UserStatementment -->
+    <string name="statement">statements</string>
+    <string name="select_to_email_statement">select to email your statements</string>
+    <string name="view">View</string>
+    <string name="email_statement">email statement</string>
+    <string name="email_statements">email statements</string>
+    <string name="statement_sent_to_title">Statement will be sent to:</string>
+    <string name="confirm_email">confirm email</string>
+    <string name="or_send_to_different_email">or send to different email</string>
+    <string name="follow_instruction">Please follow the instructions we\'ve sent to your email.  If you didn\'t receive the email, please check your spam folder or click "send to a new email address" below.</string>
+    <string name="alternative_email_adress">alternative email address:</string>
+    <string name="no_statements">No Statements</string>
+    <string name="no_statements_desc">We have no data for the current period.</string>
+    <string name="account_statement">account statement</string>
+    <string name="account_type_info_desc">I agree that Woolworths Financial Services may request my latest 3 months bank statement directly from my bank.</string>
     <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
     <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>
     <string name="cli_create_application_error_message">Unfortunately we cannot proceed with your application</string>
@@ -604,5 +605,6 @@
     <string name="title_activity_main">ShoppingListActivity</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_cart">Cart</string>
-
+    <string name="lets_make_it_easy_for_you">Let us make it easy for you - we can request your latest 3 months bank statements directly from your bank, at no cost to you.</string>
+    <string name="statement_send_email_false_desc">Oops, There seems to be a problem. Please try again later. </string>
 </resources>

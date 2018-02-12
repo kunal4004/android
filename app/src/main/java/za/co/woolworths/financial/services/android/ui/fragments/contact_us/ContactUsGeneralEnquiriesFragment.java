@@ -46,6 +46,7 @@ public class ContactUsGeneralEnquiriesFragment extends Fragment implements View.
 		}
 		return view;
 	}
+
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -91,6 +92,19 @@ public class ContactUsGeneralEnquiriesFragment extends Fragment implements View.
 					getActivity().getResources().getString(R.string.contact_us_no_email_error)
 							.replace("email_address", emailId).replace("subject_line", subject));
 
+		}
+	}
+
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			if (mBottomNavigator != null) {
+				mBottomNavigator.setTitle(getActivity().getResources().getString(R.string.txt_general_enquiry));
+				mBottomNavigator.displayToolbar();
+				mBottomNavigator.showBackNavigationIcon(true);
+			}
 		}
 	}
 }

@@ -4,8 +4,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.contact_us.main
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -29,7 +27,6 @@ public class ContactUsFragment extends BaseFragment<FragmentContactUsBinding, Co
 	public ContactUsFragment() {
 		// Required empty public constructor
 	}
-
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,21 +69,22 @@ public class ContactUsFragment extends BaseFragment<FragmentContactUsBinding, Co
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.financialService:
-				openFragment(new ContactUsFinancialServiceFragment());
+				pushFragment(new ContactUsFinancialServiceFragment());
 				break;
 			case R.id.customerService:
-				openFragment(new ContactUsCustomerServiceFragment());
+				pushFragment(new ContactUsCustomerServiceFragment());
 				break;
 		}
 	}
 
-	public void openFragment(Fragment fragment) {
-		FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-
-		fragmentManager.beginTransaction()
-				.setCustomAnimations(R.anim.slide_from_right, R.anim.slide_to_left, R.anim.slide_from_left, R.anim.slide_to_right)
-				.replace(R.id.frag_container, fragment).addToBackStack(null).commit();
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			setTitle(getString(R.string.contact_us));
+			showBackNavigationIcon(true);
+			setToolbarBackgroundDrawable(R.drawable.appbar_background);
+			showToolbar();
+		}
 	}
-
-
 }

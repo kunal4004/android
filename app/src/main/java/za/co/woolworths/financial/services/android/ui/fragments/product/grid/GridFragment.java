@@ -77,20 +77,25 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 		super.onViewCreated(view, savedInstanceState);
 		showToolbar();
 		showBackNavigationIcon(true);
+		setToolbarBackgroundDrawable(R.drawable.appbar_background);
 		mProgressLimitStart = getViewDataBinding().incCenteredProgress.progressCreditLimit;
 		mRelLoadMoreProduct = getViewDataBinding().relLoadMoreProduct;
 		RelativeLayout relNoConnectionLayout = getViewDataBinding().incNoConnectionHandler.noConnectionLayout;
 		assert getViewDataBinding().incNoConnectionHandler != null;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), relNoConnectionLayout);
 		mErrorHandlerView.setMargin(relNoConnectionLayout, 0, 0, 0, 0);
+		setTitle();
+		startProductRequest();
+		onBottomReached();
+		getViewDataBinding().incNoConnectionHandler.btnRetry.setOnClickListener(this);
+	}
+
+	private void setTitle() {
 		if (isEmpty(mSearchProduct)) {
 			setTitle(mSubCategoryName);
 		} else {
 			setTitle(mSearchProduct);
 		}
-		startProductRequest();
-		onBottomReached();
-		getViewDataBinding().incNoConnectionHandler.btnRetry.setOnClickListener(this);
 	}
 
 	@Override
@@ -281,6 +286,17 @@ public class GridFragment extends BaseFragment<GridLayoutBinding, GridViewModel>
 					startProductRequest();
 				}
 				break;
+		}
+	}
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			showToolbar();
+			showBackNavigationIcon(true);
+			setToolbarBackgroundDrawable(R.drawable.appbar_background);
+			setTitle();
 		}
 	}
 }

@@ -23,12 +23,16 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+
+import com.google.android.gms.iid.InstanceID;
+
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -53,23 +57,30 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
+import za.co.woolworths.financial.services.android.models.dto.Account;
+import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -451,6 +462,18 @@ public class Utils {
 		return historyList;
 	}
 
+	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, SendUserStatementRequest susr) {
+		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
+		Bundle args = new Bundle();
+		args.putSerializable("key", key);
+		args.putString("description", "");
+		String strSendUserStatement = new Gson().toJson(susr);
+		args.putString(StatementActivity.SEND_USER_STATEMENT, strSendUserStatement);
+		openMsg.putExtras(args);
+		context.startActivity(openMsg);
+		((AppCompatActivity) context).overridePendingTransition(0, 0);
+	}
+
 	public static void displayValidationMessage(Context context, CustomPopUpWindow.MODAL_LAYOUT key, String description) {
 		Intent openMsg = new Intent(context, CustomPopUpWindow.class);
 		Bundle args = new Bundle();
@@ -555,9 +578,7 @@ public class Utils {
 		try {
 			String firstTime = Utils.getSessionDaoValue(context, key);
 			if (firstTime == null) {
-				Utils.displayValidationMessage(context,
-						message_key,
-						"");
+				Utils.displayValidationMessage(context, message_key, "");
 				Utils.sessionDaoSave(context, key, "1");
 			}
 		} catch (NullPointerException ignored) {
@@ -827,10 +848,6 @@ public class Utils {
 				.bindTarget(mBottomNav.getBottomNavigationItemView(position));
 	}
 
-	public static Badge addBadgeAt(Context context, View view, int number) {
-		return new QBadgeView(context).setBadgeNumber(number).bindTarget(view);
-	}
-//
 //	public static void updateStatusBar(Activity activity, int color) {
 //		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //			Window window = activity.getWindow();
@@ -851,5 +868,49 @@ public class Utils {
 		}
 	}
 
+	private static Calendar getCurrentInstance() {
+		return Calendar.getInstance(Locale.ENGLISH);
+	}
 
+	public static String getDate(int month) {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		cal.add(Calendar.MONTH, -month);
+		return sdf.format(cal.getTime());
+	}
+
+
+	public static boolean deleteDirectory(File path) {
+		// TODO Auto-generated method stub
+		if (path.exists()) {
+			File[] files = path.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isDirectory()) {
+					deleteDirectory(files[i]);
+				} else {
+					files[i].delete();
+				}
+			}
+		}
+		return (path.delete());
+	}
+
+	public static String getProductOfferingId(AccountsResponse accountResponse, String productGroupCode) {
+		List<Account> accountList = accountResponse.accountList;
+		if (accountList != null) {
+			for (Account account : accountList) {
+				if (account.productGroupCode.equalsIgnoreCase(productGroupCode)) {
+					int productOfferingId = account.productOfferingId;
+					setProductOfferingId(productOfferingId);
+					return String.valueOf(productOfferingId);
+				}
+			}
+		}
+		setProductOfferingId(0);
+		return "0";
+	}
+
+	private static void setProductOfferingId(int productOfferingId) {
+		WoolworthsApplication.getInstance().setProductOfferingId(productOfferingId);
+	}
 }

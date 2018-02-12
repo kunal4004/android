@@ -90,4 +90,6 @@ public interface DetailNavigator {
 	void noStockAvailable();
 
 	void onPermissionGranted();
+
+	void fetchFromJson();
 }

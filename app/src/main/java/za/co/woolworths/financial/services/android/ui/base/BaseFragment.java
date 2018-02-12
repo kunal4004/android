@@ -257,4 +257,12 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	public WGlobalState getGlobalState() {
 		return WoolworthsApplication.getInstance().getWGlobalState();
 	}
+
+	public void setStatusBarColor(int color) {
+		getBottomNavigator().statusBarColor(color);
+	}
+
+	public void addBadge(int position, int count) {
+		getBottomNavigator().addBadge(position, count);
+	}
 }

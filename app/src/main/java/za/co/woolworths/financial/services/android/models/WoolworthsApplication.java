@@ -7,11 +7,12 @@ import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 
 import com.awfs.coordination.R;
-import com.crittercism.app.Crittercism;
+import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.FirebaseApp;
 
 import org.json.JSONObject;
 
@@ -204,16 +205,18 @@ public class WoolworthsApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		mInstance = this;
-		Fresco.initialize(this);
-		AppEventsLogger.activateApp(this);
 		StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 		StrictMode.setVmPolicy(builder.build());
+		Fresco.initialize(this);
+		FirebaseApp.initializeApp(WoolworthsApplication.this);
+		FacebookSdk.sdkInitialize(WoolworthsApplication.this);
+		AppEventsLogger.activateApp(WoolworthsApplication.this);
 		mWGlobalState = new WGlobalState(WoolworthsApplication.this);
 		updateBankDetail = new UpdateBankDetail();
 		WoolworthsApplication.context = this.getApplicationContext();
 		// set app context
 		mContextApplication = getApplicationContext();
-		Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
+		//Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
 		CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
 				.setDefaultFontPath("fonts/WFutura-medium.ttf")
 				.setFontAttrId(R.attr.fontPath)

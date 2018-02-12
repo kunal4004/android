@@ -76,10 +76,10 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	}
 
 	private void init() {
-		mRelRootContainer =  findViewById(R.id.relContainerRootMessage);
-		mRelPopContainer =  findViewById(R.id.relPopContainer);
-		tvTitle =  findViewById(R.id.title);
-		mViewPager =  findViewById(R.id.viewPager);
+		mRelRootContainer = findViewById(R.id.relContainerRootMessage);
+		mRelPopContainer = findViewById(R.id.relPopContainer);
+		tvTitle = findViewById(R.id.title);
+		mViewPager = findViewById(R.id.viewPager);
 		mPagerAdapter = new StockFinderFragmentAdapter(getSupportFragmentManager());
 		mPagerAdapter.addFrag(new ColorFragmentDialog(), getString(R.string.color));
 		mPagerAdapter.addFrag(new SizeFragmentDialog(), getString(R.string.size));
@@ -87,7 +87,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		mViewPager.addOnPageChangeListener(pageChangeListener);
 
 		mImCloseIcon = findViewById(R.id.imCloseIcon);
-		mImBackIcon =  findViewById(R.id.imBackIcon);
+		mImBackIcon = findViewById(R.id.imBackIcon);
 	}
 
 	private void setAnimation() {

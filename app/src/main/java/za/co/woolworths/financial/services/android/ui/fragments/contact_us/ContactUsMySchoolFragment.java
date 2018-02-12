@@ -26,8 +26,6 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 public class ContactUsMySchoolFragment extends Fragment implements View.OnClickListener {
 	public BottomNavigator mBottomNavigator;
-	private static final int REQUEST_CALL = 1;
-	Intent callIntent;
 
 	@Nullable
 	@Override
@@ -41,7 +39,7 @@ public class ContactUsMySchoolFragment extends Fragment implements View.OnClickL
 			mBottomNavigator = (BottomNavigator) getActivity();
 			mBottomNavigator.setTitle(getActivity().getResources().getString(R.string.contact_us_myschool));
 		} catch (ClassCastException ex) {
-			Log.e("Interface", ex.toString());
+			Log.d("Interface", ex.toString());
 		}
 		return view;
 	}
@@ -81,5 +79,18 @@ public class ContactUsMySchoolFragment extends Fragment implements View.OnClickL
 							.replace("email_address", emailId).replace("subject_line", subject));
 		}
 	}
-}
 
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			if (mBottomNavigator != null) {
+				mBottomNavigator.setTitle(getActivity().getResources().getString(R.string.contact_us_myschool));
+				mBottomNavigator.displayToolbar();
+				mBottomNavigator.showBackNavigationIcon(true);
+			}
+		}
+	}
+
+}
