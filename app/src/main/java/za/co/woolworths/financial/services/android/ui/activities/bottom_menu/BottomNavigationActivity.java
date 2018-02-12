@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -93,9 +94,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		if (mNavController != null) {
-			mNavController.onSaveInstanceState(outState);
-		}
 	}
 
 	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -107,9 +105,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				R.id.frag_container)
 				.fragmentHideStrategy(FragNavController.HIDE)
 				.transactionListener(this)
-				.switchController(FragNavTabHistoryController.UNLIMITED_TAB_HISTORY, new FragNavSwitchController() {
+				.switchController(FragNavTabHistoryController.Companion.UNLIMITED_TAB_HISTORY, new FragNavSwitchController() {
 					@Override
 					public void switchTab(int index, @Nullable FragNavTransactionOptions transactionOptions) {
+						Log.e("switchTab", "switch " + index);
 						getBottomNavigationById().setCurrentItem(index);
 					}
 				})
@@ -145,11 +144,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					}
 				}));
 
-		try {
-			switchTab(INDEX_ACCOUNT);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
 // Bundle bundle = getIntent().getExtras();
 // if (bundle != null) {
 //			if (!TextUtils.isEmpty(bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT))) {

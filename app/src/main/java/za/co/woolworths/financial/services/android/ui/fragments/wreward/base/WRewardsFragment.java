@@ -103,7 +103,6 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		try {
 			WRewardsFragment fragment = (WRewardsFragment)
 					getFragmentManager().findFragmentById(R.id.frag_container);
-
 			getFragmentManager().beginTransaction()
 					.detach(fragment)
 					.attach(fragment)
@@ -138,8 +137,8 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		WRewardsLoggedOutFragment fragmentChild = new WRewardsLoggedOutFragment();
 		childFragTrans.add(R.id.content_frame, fragmentChild);
 		childFragTrans.commit();
-		addBadge(BottomNavigationActivity.INDEX_ACCOUNT,0);
-		addBadge(BottomNavigationActivity.INDEX_REWARD,0);
+		addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
+		addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
 	}
 
 	private void replaceFragment(JWTDecodedModel jwtDecodedModel) {
@@ -214,6 +213,7 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		super.onHiddenChanged(hidden);
 		if (!hidden) {
 			hideToolbar();
+		} else {
 			reloadFragment();
 		}
 	}

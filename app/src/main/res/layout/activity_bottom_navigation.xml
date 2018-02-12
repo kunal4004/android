@@ -38,6 +38,7 @@
                 android:layout_above="@+id/bottom_line"
                 android:layout_alignParentTop="true"
                 android:layout_below="@+id/incToolbar"
+                android:background="@color/white"
                 android:fitsSystemWindows="true"
                 />
 
