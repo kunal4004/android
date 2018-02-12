@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,8 +9,7 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.FragmentLifecycle;
-import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
+import za.co.woolworths.financial.services.android.util.FragmentLifecycle;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 
 /**

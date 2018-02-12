@@ -152,5 +152,4 @@
         <attr name="startAngle" format="integer"/>
         <attr name="textProgressEnable" format="boolean"/>
     </declare-styleable>
-
 </resources>

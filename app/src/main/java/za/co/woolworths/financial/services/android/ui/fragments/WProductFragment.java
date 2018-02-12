@@ -49,10 +49,9 @@ import za.co.woolworths.financial.services.android.util.ObservableScrollView;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.binder.view.RootCategoryBinder;
 import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 
-public class WProductFragment extends Fragment implements RootCategoryBinder.OnClickListener, View.OnClickListener,
+public class WProductFragment extends Fragment implements View.OnClickListener,
 		AppBarLayout.OnOffsetChangedListener, ObservableScrollViewCallbacks {
 
 	public interface HideActionBarComponent {
@@ -163,10 +162,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 		mTextTBProductSearch.setOnClickListener(this);
 		mTBBarcodeScanner.setOnClickListener(this);
 		mNestedScrollview.setScrollViewCallbacks(this);
-	}
-
-	@Override
-	public void onClick(View v, int position) {
 	}
 
 	@Override

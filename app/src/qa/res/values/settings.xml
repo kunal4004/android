@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="rewards_terms_and_conditions_url">http://www.woolworths.co.za/store/fragments/corporate/corporate-index.jsp?content=corporate-content&amp;contentId=cmp205288</string>
-    <string name="login_terms_and_conditions_url">http://m.wfs.co.za/ramp_wfs/http/wng/tandc?back=landing</string>
-    <string name="settings_faq_url">http://qa.wigroup.co/wigroup/wfs/mobi/Index.php?url=FAQ</string>
     <string name="app_label">Q Woolworths</string>
-    <string name="api_endpoint">http://qa.wigroup.co:8080/wfs/app/v2</string>
-    <string name="api_id">ANDROID</string>
-    <string name="sha1_password">a94a8fe5ccb19ba61c4c0873d391e987982fbbd3</string>
-    <string name="mint_id">87e1e034</string>
     <string name="crittercism_app_id">55dd9d7cbddd3f0e009c4013</string>
     <integer name="account_time_to_live">600000</integer>
 </resources>

@@ -24,7 +24,7 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
-import za.co.woolworths.financial.services.android.ui.adapters.PSSubCategoryAdapter;
+import za.co.woolworths.financial.services.android.ui.adapters.SubCategoryAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
@@ -32,15 +32,13 @@ import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.binder.view.SubCategoryBinder;
 
 public class ProductSubCategoryActivity extends AppCompatActivity implements View.OnClickListener,
-		SubCategoryBinder.OnClickListener {
+		SubCategoryAdapter.SubCategoryNavigator {
 
 	private RecyclerView recyclerView;
 	private List<SubCategory> mSubCategories;
 	private LinearLayoutManager mLayoutManager;
-	private PSSubCategoryAdapter mPSRootCategoryAdapter;
 	private ProductSubCategoryActivity mContext;
 	private WTextView mTextNoProductFound;
 	private int mCatStep;
@@ -50,6 +48,7 @@ public class ProductSubCategoryActivity extends AppCompatActivity implements Vie
 	private PopWindowValidationMessage mPopWindowValidationMessage;
 	private ProgressBar mProgressBar;
 	private ErrorHandlerView mErrorHandlerView;
+	private SubCategoryAdapter subCategoryAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -171,14 +170,13 @@ public class ProductSubCategoryActivity extends AppCompatActivity implements Vie
 						case 200:
 							if (subCategories.subCategories != null && subCategories.subCategories.size() != 0) {
 								mSubCategories = subCategories.subCategories;
-								mPSRootCategoryAdapter = new PSSubCategoryAdapter(subCategories.subCategories, mContext);
+								subCategoryAdapter = new SubCategoryAdapter(mSubCategories, mContext);
 								mLayoutManager = new LinearLayoutManager(ProductSubCategoryActivity.this);
 								mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 								recyclerView.setLayoutManager(mLayoutManager);
 								recyclerView.addItemDecoration(new SimpleDividerItemDecoration(mContext));
 								recyclerView.setNestedScrollingEnabled(false);
-								recyclerView.setAdapter(mPSRootCategoryAdapter);
-								mPSRootCategoryAdapter.setCLIContent();
+								recyclerView.setAdapter(subCategoryAdapter);
 								hideNoProductFound();
 							} else {
 								showNoProductFound();
@@ -251,8 +249,8 @@ public class ProductSubCategoryActivity extends AppCompatActivity implements Vie
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (mPSRootCategoryAdapter != null)
-			mPSRootCategoryAdapter.resetSelectedIndex();
+		if (subCategoryAdapter != null)
+			subCategoryAdapter.resetAdapter();
 	}
 
 	@Override

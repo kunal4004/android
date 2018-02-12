@@ -67,7 +67,7 @@ public class CLIEligibilityAndPermissionFragment extends Fragment implements Vie
 				eligibilityYes.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.black));
 				eligibilityYes.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
 				permissionView.setVisibility(View.GONE);
-				Utils.displayValidationMessage(CLIEligibilityAndPermissionFragment.this.getActivity(), CustomPopUpWindow.MODAL_LAYOUT.CONFIDENTIAL, "");
+				Utils.displayValidationMessage(CLIEligibilityAndPermissionFragment.this.getActivity(), CustomPopUpWindow.MODAL_LAYOUT.INSOLVENCY, "");
 				break;
 			case R.id.eligibilityNo:
 				eligibilityYes.setBackgroundColor(ContextCompat.getColor(getActivity(), android.R.color.transparent));
