@@ -68,6 +68,11 @@
 
             </RelativeLayout>
 
+            <LinearLayout android:id="@+id/layoutPreviousSelectedLocations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 style="@style/style_cart_header_title"
                 android:layout_width="match_parent"
@@ -89,6 +94,8 @@
                 android:layout_height="match_parent"
                 android:nestedScrollingEnabled="false"
                 android:scrollbars="none" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

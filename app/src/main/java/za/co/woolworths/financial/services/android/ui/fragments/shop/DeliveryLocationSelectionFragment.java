@@ -40,7 +40,7 @@ import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationS
 public class DeliveryLocationSelectionFragment extends Fragment implements DeliveryLocationAdapter.OnItemClick, View.OnClickListener {
 
     public DeliveryLocationSelectionFragmentChange deliveryLocationSelectionFragmentChange;
-    private View selectionContentLayout;
+    private View selectionContentLayout, layoutPreviousSelectedLocations;
     private ProgressBar loadingProgressBar;
     private RecyclerView deliveryLocationHistoryList;
     private WTextView tvCurrentLocationTitle, tvCurrentLocationDescription;
@@ -63,6 +63,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         selectionContentLayout = view.findViewById(R.id.selectionContentLayout);
+        layoutPreviousSelectedLocations = view.findViewById(R.id.layoutPreviousSelectedLocations);
         loadingProgressBar = view.findViewById(R.id.loadingProgressBar);
         deliveryLocationHistoryList = view.findViewById(R.id.deliveryLocationHistoryList);
         tvCurrentLocationTitle = view.findViewById(R.id.tvCurrentLocationTitle);
@@ -93,12 +94,16 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 
     private void configureLocationHistory() {
         // TODO: make API request & show loading before setting the list
-
-        deliveryLocationAdapter = new DeliveryLocationAdapter(getDeliveryLocationHistory(), this);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        deliveryLocationHistoryList.setLayoutManager(mLayoutManager);
-        deliveryLocationHistoryList.setAdapter(deliveryLocationAdapter);
+        List<DeliveryLocationHistory> history = getDeliveryLocationHistory();
+        if(history != null && history.size() > 0) {
+            deliveryLocationAdapter = new DeliveryLocationAdapter(history, this);
+            LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+            mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            deliveryLocationHistoryList.setLayoutManager(mLayoutManager);
+            deliveryLocationHistoryList.setAdapter(deliveryLocationAdapter);
+        } else {
+            layoutPreviousSelectedLocations.setVisibility(View.GONE);
+        }
     }
 
     private DeliveryLocationHistory getCurrentDeliveryLocation() {
