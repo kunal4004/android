@@ -103,7 +103,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		mNavController = FragNavController.newBuilder(savedInstanceState,
 				getSupportFragmentManager(),
 				R.id.frag_container)
-				.fragmentHideStrategy(FragNavController.HIDE)
+				.fragmentHideStrategy(FragNavController.DETACH_ON_NAVIGATE_HIDE_ON_SWITCH)
 				.transactionListener(this)
 				.switchController(FragNavTabHistoryController.Companion.UNLIMITED_TAB_HISTORY, new FragNavSwitchController() {
 					@Override

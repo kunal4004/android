@@ -213,6 +213,7 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		super.onHiddenChanged(hidden);
 		if (!hidden) {
 			hideToolbar();
+			reloadFragment();
 		} else {
 			reloadFragment();
 		}
