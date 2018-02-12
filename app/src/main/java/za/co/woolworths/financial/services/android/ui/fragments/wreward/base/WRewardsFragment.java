@@ -217,5 +217,6 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		} else {
 			reloadFragment();
 		}
+		setTitle(getString(R.string.wrewards));
 	}
 }
