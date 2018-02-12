@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 import android.app.DialogFragment;
-
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -17,7 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.Utils;
@@ -94,7 +93,7 @@ public class AddToShoppingListFragment extends BlurDialogFragment implements Vie
                         productName, false));
 
                 Utils.displayValidationMessage(getActivity(),
-                        CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
+                        CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_LIST_INFO,
                         "viewShoppingList");
                 dismiss();
                 break;

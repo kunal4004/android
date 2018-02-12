@@ -104,7 +104,7 @@ public abstract class HttpAsyncTask<Params, Progress, Result> extends AsyncTask<
                     }
                 }
             } else {
-                throw new RuntimeException("Retrofit Error not being handled!");
+                throw new SocketTimeoutException("SocketTimeoutException");
             }
         }
         return result;

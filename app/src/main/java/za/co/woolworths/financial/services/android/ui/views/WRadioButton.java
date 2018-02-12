@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.widget.Button;
 import android.widget.RadioButton;
 
 import com.awfs.coordination.R;

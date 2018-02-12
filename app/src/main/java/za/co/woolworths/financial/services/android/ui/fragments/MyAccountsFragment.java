@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
 
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -47,22 +46,22 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.Voucher;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.FAQActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
 import za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WContactUsActivityNew;
 import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
-import za.co.woolworths.financial.services.android.util.ConnectionDetector;
-import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.ui.views.ProgressDialogFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.BaseFragment;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.FontHyperTextParser;
 import za.co.woolworths.financial.services.android.util.HideActionBar;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -148,8 +147,8 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		//Trigger Firebase Tag.
 		JWTDecodedModel jwtDecodedModel = ((WOneAppBaseActivity) getActivity()).getJWTDecoded();
 		Map<String, String> arguments = new HashMap<>();
-		arguments.put("c2_id", (jwtDecodedModel.C2Id != null)? jwtDecodedModel.C2Id : "");
-		Utils.triggerFireBaseEvents(getActivity(),"accounts_event_appeared",arguments);
+		arguments.put("c2_id", (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
+		Utils.triggerFireBaseEvents(getActivity(), "accounts_event_appeared", arguments);
 
 		return inflater.inflate(R.layout.my_accounts_fragment, container, false);
 	}
@@ -562,7 +561,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 			case R.id.signOutBtn:
-				Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.SIGN_OUT, "");
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.SIGN_OUT, "");
 				break;
 			case R.id.imgBurgerButton:
 				hideActionBar.onBurgerButtonPressed();
@@ -693,9 +692,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 	}
 
 	public void redirectToMyAccountsCardsActivity(int position) {
-		woolworthsApplication.setCliCardPosition(position);
 		Intent intent = new Intent(getActivity(), MyAccountCardsActivity.class);
-
 		intent.putExtra("position", position);
 		if (accountsResponse != null) {
 			intent.putExtra("accounts", Utils.objectToJson(accountsResponse));
@@ -829,7 +826,10 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				dismissProgress();
+				try {
+					dismissProgress();
+				} catch (Exception ex) {
+				}
 			}
 		});
 	}
@@ -913,7 +913,7 @@ public class MyAccountsFragment extends BaseFragment implements View.OnClickList
 			} else {
 				initialize();
 				getVouchers().execute();
-				if(getActivity() != null)
+				if (getActivity() != null)
 					new WRewardsCardDetails(getActivity()).execute();
 			}
 		} else if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()) {

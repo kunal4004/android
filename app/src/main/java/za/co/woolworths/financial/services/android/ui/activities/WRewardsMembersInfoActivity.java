@@ -1,22 +1,18 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.TabLayout;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.awfs.coordination.R;
@@ -27,8 +23,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.WRewardsValuedMe
 import za.co.woolworths.financial.services.android.ui.fragments.WRewardsVipMembersInfoFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
-
-import static za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity.mToolbar;
 
 public class WRewardsMembersInfoActivity extends AppCompatActivity {
 

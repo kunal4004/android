@@ -4,7 +4,6 @@ import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.SubCategory;
 import za.co.woolworths.financial.services.android.util.binder.EnumMapBindAdapter;
-import za.co.woolworths.financial.services.android.util.binder.view.RootCategoryBinder;
 import za.co.woolworths.financial.services.android.util.binder.view.SubCategoryBinder;
 
 public class PSSubCategoryAdapter extends EnumMapBindAdapter<PSSubCategoryAdapter.SampleViewType> {

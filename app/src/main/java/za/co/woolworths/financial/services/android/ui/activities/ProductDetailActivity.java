@@ -28,15 +28,29 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -68,22 +82,6 @@ import za.co.woolworths.financial.services.android.util.SelectedProductView;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
-import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
-
-import android.view.ViewGroup.LayoutParams;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 public class ProductDetailActivity extends BaseActivity implements SelectedProductView, View.OnClickListener, ProductViewPagerAdapter.MultipleImageInterface, PermissionResultCallback, NetworkChangeListener {
 
@@ -702,7 +700,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 				if (Utils.isLocationEnabled(ProductDetailActivity.this)) {
 					permissionUtils.check_permission(permissions, "Explain here why the app needs permissions", 1);
 				} else {
-					Utils.displayValidationMessage(ProductDetailActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.LOCATION_OFF, "");
+					Utils.displayValidationMessage(ProductDetailActivity.this, CustomPopUpWindow.MODAL_LAYOUT.LOCATION_OFF, "");
 				}
 				break;
 		}
@@ -1206,6 +1204,7 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 	public void startLocationUpdates() {
 		showFindInStoreProgress();
 		FusedLocationSingleton.getInstance().startLocationUpdates();
+
 		// register observer for location updates
 		LocalBroadcastManager.getInstance(ProductDetailActivity.this).registerReceiver(mLocationUpdated,
 				new IntentFilter(FusedLocationSingleton.INTENT_FILTER_LOCATION_UPDATE));
@@ -1263,11 +1262,11 @@ public class ProductDetailActivity extends BaseActivity implements SelectedProdu
 							overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 						} else {
 							//no stock error message
-							Utils.displayValidationMessage(ProductDetailActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");
+							Utils.displayValidationMessage(ProductDetailActivity.this, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 						}
 					} else {
 						//no stock error message
-						Utils.displayValidationMessage(ProductDetailActivity.this, CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.NO_STOCK, "");
+						Utils.displayValidationMessage(ProductDetailActivity.this, CustomPopUpWindow.MODAL_LAYOUT.NO_STOCK, "");
 					}
 				}
 				dismissFindInStoreProgress();

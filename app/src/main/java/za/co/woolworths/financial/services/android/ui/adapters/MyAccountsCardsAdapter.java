@@ -2,12 +2,10 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 

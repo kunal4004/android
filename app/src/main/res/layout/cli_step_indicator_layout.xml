@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="16dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <FrameLayout
+                android:id="@+id/indicator1"
+                style="@style/cli_step_indicator_circle">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/indicatorText1"
+                    style="@style/cli_step_indicator_number_textview"
+                    android:text="1" />
+            </FrameLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <View style="@style/cli_step_indicator_line" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <FrameLayout
+                android:id="@+id/indicator2"
+                style="@style/cli_step_indicator_circle">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/indicatorText2"
+                    style="@style/cli_step_indicator_number_textview"
+                    android:text="2" />
+            </FrameLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <View style="@style/cli_step_indicator_line" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <FrameLayout
+                android:id="@+id/indicator3"
+                style="@style/cli_step_indicator_circle">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/indicatorText3"
+                    style="@style/cli_step_indicator_number_textview"
+                    android:text="3" />
+            </FrameLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <View style="@style/cli_step_indicator_line" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <FrameLayout
+                android:id="@+id/indicator4"
+                style="@style/cli_step_indicator_circle">
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/indicatorText4"
+                    style="@style/cli_step_indicator_number_textview"
+                    android:text="4" />
+            </FrameLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="18dp"
+        android:layout_marginRight="10dp">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/cli_step_indicator_text"
+            android:id="@+id/incomeText"
+            android:text="@string/cli_step_indicator_income"
+            android:paddingLeft="5dp"
+            app:WTextView_font="medium" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/cli_step_indicator_text"
+            android:id="@+id/expenseText"
+            android:gravity="left"
+            android:paddingLeft="10dp"
+            android:text="@string/cli_step_indicator_expense" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/cli_step_indicator_text"
+            android:id="@+id/offerText"
+            android:gravity="center_horizontal"
+            android:text="@string/cli_step_indicator_offer" />
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            style="@style/cli_step_indicator_text"
+            android:id="@+id/documentText"
+            android:gravity="end"
+            android:text="@string/cli_step_indicator_documents" />
+    </LinearLayout>
+
+</LinearLayout>

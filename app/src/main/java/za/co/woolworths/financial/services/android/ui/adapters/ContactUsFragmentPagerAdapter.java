@@ -7,14 +7,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.ui.fragments.ContactUsCustomerServiceFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.ContactUsMySchoolFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.ContactUsOnlineFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.ContactUsWRewardsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.WCreditCardFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.WPersonalLoanFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.WStoreCardFragment;
-
 /**
  * Created by W7099877 on 01/12/2016.
  */

@@ -13,9 +13,6 @@ import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
-import static com.awfs.coordination.R.id.boardingImage;
-import static com.awfs.coordination.R.id.myaccountsCard;
-
 /**
  * Created by W7099877 on 09/12/2016.
  */
