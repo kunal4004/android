@@ -54,7 +54,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 				toggleCartMode();
 				break;
 			case R.id.btnCloseCart:
-				onBackPressed();
+				finishActivity();
 				break;
 			case R.id.btnClearCart:
 
@@ -74,8 +74,9 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 		if (getFragmentManager().getBackStackEntryCount() > 0) {
 			getFragmentManager().popBackStack();
 		} else {
-			finishActivity();
+			super.onBackPressed();
 		}
+		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 	}
 
 	public void finishActivity() {

@@ -305,8 +305,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.CartActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Cart"
-            android:noHistory="true" />
+            android:theme="@style/Cart" />
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity"
             android:screenOrientation="portrait"

@@ -164,7 +164,7 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
             switch (response.httpCode) {
                 case 200:
                     // TODO: go back to cart if no items removed from cart, else go to list of removed items
-                    startActivity(new Intent(getContext(), CartActivity.class));
+                    getActivity().finish();
                     break;
                 case 440:
                     // TODO: do something about this

@@ -223,7 +223,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
                 case 200:
                     saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb));
                     // TODO: go back to cart if no items removed from cart, else go to list of removed items
-                    startActivity(new Intent(getContext(), CartActivity.class));
+                    getActivity().finish();
                     break;
                 case 440:
                     // TODO: do something about this
