@@ -856,4 +856,16 @@ public class StoresNearbyFragment1 extends Fragment implements OnMapReadyCallbac
 	private boolean activityIsNull() {
 		return getActivity() != null;
 	}
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			if (mBottomNavigator != null) {
+				mBottomNavigator.setTitle(getString(R.string.stores_nearby));
+				mBottomNavigator.showBackNavigationIcon(true);
+				mBottomNavigator.displayToolbar();
+			}
+		}
+	}
 }
