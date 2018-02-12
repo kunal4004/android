@@ -1,70 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="fontPath" format="string" />
+    <attr name="fontPath" format="string"/>
     <declare-styleable name="WBalanceView">
-        <attr name="OuterCircleColor" format="color" />
-        <attr name="SpentEmptyColor" format="color" />
-        <attr name="SpentFullColor" format="color" />
-        <attr name="CenterCircleColor" format="color" />
-        <attr name="TextColor" format="color" />
-        <attr name="OuterCircleWidth" format="dimension" />
-        <attr name="MiddleCircleWidth" format="dimension" />
-        <attr name="LabelTextSize" format="dimension" />
-        <attr name="AmountTextSize" format="dimension" />
-        <attr name="Font" format="string" />
+        <attr name="OuterCircleColor" format="color"/>
+        <attr name="SpentEmptyColor" format="color"/>
+        <attr name="SpentFullColor" format="color"/>
+        <attr name="CenterCircleColor" format="color"/>
+        <attr name="TextColor" format="color"/>
+        <attr name="OuterCircleWidth" format="dimension"/>
+        <attr name="MiddleCircleWidth" format="dimension"/>
+        <attr name="LabelTextSize" format="dimension"/>
+        <attr name="AmountTextSize" format="dimension"/>
+        <attr name="Font" format="string"/>
     </declare-styleable>
     <declare-styleable name="WTextView">
         <attr name="WTextView_font" format="enum">
-            <enum name="light" value="0" />
-            <enum name="medium" value="1" />
-            <enum name="medium_bold" value="2" />
-            <enum name="bold" value="3" />
-            <enum name="myriadpro_regular" value="4" />
-            <enum name="myriadpro_semibold" value="5" />
+            <enum name="light" value="0"/>
+            <enum name="medium" value="1"/>
+            <enum name="medium_bold" value="2"/>
+            <enum name="bold" value="3"/>
+            <enum name="myriadpro_regular" value="4"/>
+            <enum name="myriadpro_semibold" value="5"/>
         </attr>
-        <attr name="WTextView_spannable_text" format="string" />
+        <attr name="WTextView_spannable_text" format="string"/>
     </declare-styleable>
     <declare-styleable name="WEditTextView">
         <attr name="WEditTextView_font" format="enum">
-            <enum name="light" value="0" />
-            <enum name="medium" value="1" />
-            <enum name="medium_bold" value="2" />
-            <enum name="bold" value="3" />
-            <enum name="myriadpro_regular" value="4" />
-            <enum name="myriadpro_semibold" value="5" />
+            <enum name="light" value="0"/>
+            <enum name="medium" value="1"/>
+            <enum name="medium_bold" value="2"/>
+            <enum name="bold" value="3"/>
+            <enum name="myriadpro_regular" value="4"/>
+            <enum name="myriadpro_semibold" value="5"/>
         </attr>
-        <attr name="WEditTextView_spannable_text" format="string" />
+        <attr name="WEditTextView_spannable_text" format="string"/>
     </declare-styleable>
     <declare-styleable name="WButton">
         <attr name="WButton_font" format="enum">
-            <enum name="light" value="0" />
-            <enum name="medium" value="1" />
-            <enum name="medium_bold" value="2" />
-            <enum name="bold" value="3" />
-            <enum name="myriadpro_regular" value="4" />
-            <enum name="myriadpro_semibold" value="5" />
+            <enum name="light" value="0"/>
+            <enum name="medium" value="1"/>
+            <enum name="medium_bold" value="2"/>
+            <enum name="bold" value="3"/>
+            <enum name="myriadpro_regular" value="4"/>
+            <enum name="myriadpro_semibold" value="5"/>
         </attr>
-        <attr name="WButton_spannable_text" format="string" />
+        <attr name="WButton_spannable_text" format="string"/>
     </declare-styleable>
 
     <declare-styleable name="SlidingUpPanelLayout">
-        <attr name="umanoPanelHeight" format="dimension" />
-        <attr name="umanoShadowHeight" format="dimension" />
-        <attr name="umanoParallaxOffset" format="dimension" />
-        <attr name="umanoFadeColor" format="color" />
-        <attr name="umanoFlingVelocity" format="integer" />
-        <attr name="umanoDragView" format="reference" />
-        <attr name="umanoScrollableView" format="reference" />
-        <attr name="umanoOverlay" format="boolean" />
-        <attr name="umanoClipPanel" format="boolean" />
-        <attr name="umanoAnchorPoint" format="float" />
+        <attr name="umanoPanelHeight" format="dimension"/>
+        <attr name="umanoShadowHeight" format="dimension"/>
+        <attr name="umanoParallaxOffset" format="dimension"/>
+        <attr name="umanoFadeColor" format="color"/>
+        <attr name="umanoFlingVelocity" format="integer"/>
+        <attr name="umanoDragView" format="reference"/>
+        <attr name="umanoScrollableView" format="reference"/>
+        <attr name="umanoOverlay" format="boolean"/>
+        <attr name="umanoClipPanel" format="boolean"/>
+        <attr name="umanoAnchorPoint" format="float"/>
         <attr name="umanoInitialState" format="enum">
-            <enum name="expanded" value="0" />
-            <enum name="collapsed" value="1" />
-            <enum name="anchored" value="2" />
-            <enum name="hidden" value="3" />
+            <enum name="expanded" value="0"/>
+            <enum name="collapsed" value="1"/>
+            <enum name="anchored" value="2"/>
+            <enum name="hidden" value="3"/>
         </attr>
-        <attr name="umanoScrollInterpolator" format="reference" />
+        <attr name="umanoScrollInterpolator" format="reference"/>
     </declare-styleable>
 
     <!-- Declare custom theme attributes that allow changing which styles are
@@ -72,37 +72,37 @@
          ?android:attr/buttonBarStyle is new as of API 11 so this is
          necessary to support previous API levels. -->
     <declare-styleable name="ButtonBarContainerTheme">
-        <attr name="metaButtonBarStyle" format="reference" />
-        <attr name="metaButtonBarButtonStyle" format="reference" />
+        <attr name="metaButtonBarStyle" format="reference"/>
+        <attr name="metaButtonBarButtonStyle" format="reference"/>
     </declare-styleable>
     <declare-styleable name="StepIndicator">
-        <attr name="siDefaultBackground" format="integer" />
-        <attr name="siStepCount" format="integer" />
-        <attr name="siRadius" format="dimension" />
-        <attr name="siStrokeWidth" format="dimension" />
-        <attr name="siStepColor" format="color" />
-        <attr name="siCurrentStepColor" format="color" />
-        <attr name="siBackgroundColor" format="color" />
-        <attr name="siTextColor" format="color" />
-        <attr name="siSecondaryTextColor" format="color" />
+        <attr name="siDefaultBackground" format="integer"/>
+        <attr name="siStepCount" format="integer"/>
+        <attr name="siRadius" format="dimension"/>
+        <attr name="siStrokeWidth" format="dimension"/>
+        <attr name="siStepColor" format="color"/>
+        <attr name="siCurrentStepColor" format="color"/>
+        <attr name="siBackgroundColor" format="color"/>
+        <attr name="siTextColor" format="color"/>
+        <attr name="siSecondaryTextColor" format="color"/>
     </declare-styleable>
 
     <declare-styleable name="SwipeStack">
         <attr name="allowed_swipe_directions" format="integer">
-            <enum name="only_left" value="1" />
-            <enum name="only_right" value="2" />
-            <enum name="only_top" value="3" />
-            <enum name="only_bottom" value="4" />
-            <enum name="both" value="0" />
+            <enum name="only_left" value="1"/>
+            <enum name="only_right" value="2"/>
+            <enum name="only_top" value="3"/>
+            <enum name="only_bottom" value="4"/>
+            <enum name="both" value="0"/>
         </attr>
-        <attr name="animation_duration" format="integer" />
-        <attr name="stack_size" format="integer" />
-        <attr name="stack_spacing" format="dimension" />
-        <attr name="stack_rotation" format="integer" />
-        <attr name="swipe_rotation" format="float" />
-        <attr name="swipe_opacity" format="float" />
-        <attr name="scale_factor" format="float" />
-        <attr name="disable_hw_acceleration" format="boolean" />
+        <attr name="animation_duration" format="integer"/>
+        <attr name="stack_size" format="integer"/>
+        <attr name="stack_spacing" format="dimension"/>
+        <attr name="stack_rotation" format="integer"/>
+        <attr name="swipe_rotation" format="float"/>
+        <attr name="swipe_opacity" format="float"/>
+        <attr name="scale_factor" format="float"/>
+        <attr name="disable_hw_acceleration" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="QRCodeView">
@@ -117,17 +117,16 @@
         <attr name="cornerOffsetBottom" format="dimension"></attr>
     </declare-styleable>
 
-
     <declare-styleable name="LoadingDots">
-        <attr name="LoadingDots_auto_play" format="boolean" />
-        <attr name="LoadingDots_dots_color" format="color" />
-        <attr name="LoadingDots_dots_count" format="integer" />
-        <attr name="LoadingDots_dots_size" format="dimension" />
-        <attr name="LoadingDots_dots_space" format="dimension" />
-        <attr name="LoadingDots_loop_duration" format="integer" />
-        <attr name="LoadingDots_loop_start_delay" format="integer" />
-        <attr name="LoadingDots_jump_duration" format="integer" />
-        <attr name="LoadingDots_jump_height" format="dimension" />
+        <attr name="LoadingDots_auto_play" format="boolean"/>
+        <attr name="LoadingDots_dots_color" format="color"/>
+        <attr name="LoadingDots_dots_count" format="integer"/>
+        <attr name="LoadingDots_dots_size" format="dimension"/>
+        <attr name="LoadingDots_dots_space" format="dimension"/>
+        <attr name="LoadingDots_loop_duration" format="integer"/>
+        <attr name="LoadingDots_loop_start_delay" format="integer"/>
+        <attr name="LoadingDots_jump_duration" format="integer"/>
+        <attr name="LoadingDots_jump_height" format="dimension"/>
     </declare-styleable>
 
     <declare-styleable name="Alerter">
@@ -141,4 +140,16 @@
         <attr name="alertText" format="string"/>
     </declare-styleable>
 
+    <declare-styleable name="CircleProgressBar">
+        <attr name="circleWidth" format="dimension"/>
+        <attr name="maxProgress" format="integer"/>
+        <attr name="initProgress" format="integer"/>
+        <attr name="centreColor" format="color"/>
+        <attr name="circleColor" format="color"/>
+        <attr name="progressColor" format="color"/>
+        <attr name="textColor" format="color"/>
+        <attr name="textSize" format="dimension"/>
+        <attr name="startAngle" format="integer"/>
+        <attr name="textProgressEnable" format="boolean"/>
+    </declare-styleable>
 </resources>

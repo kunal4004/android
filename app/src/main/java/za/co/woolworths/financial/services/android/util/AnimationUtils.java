@@ -17,23 +17,38 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.animation.Animator;
+import android.content.Context;
+import android.view.View;
+import android.view.animation.Animation;
+
+import com.awfs.coordination.R;
 
 public class AnimationUtils {
 
-    public static abstract class AnimationEndListener implements Animator.AnimatorListener {
-        @Override
-        public void onAnimationStart(Animator animation) {
-            // Do nothing
-        }
+	public static abstract class AnimationEndListener implements Animator.AnimatorListener {
+		@Override
+		public void onAnimationStart(Animator animation) {
+			// Do nothing
+		}
 
-        @Override
-        public void onAnimationCancel(Animator animation) {
-            // Do nothing
-        }
+		@Override
+		public void onAnimationCancel(Animator animation) {
+			// Do nothing
+		}
 
-        @Override
-        public void onAnimationRepeat(Animator animation) {
-            // Do nothing
-        }
-    }
+		@Override
+		public void onAnimationRepeat(Animator animation) {
+			// Do nothing
+		}
+	}
+
+	public static void startFadeInAnimation(Context context, View view) {
+		Animation startAnimation = android.view.animation.AnimationUtils.loadAnimation(context, R.anim.fade_in_anim);
+		view.startAnimation(startAnimation);
+	}
+
+	public static void startFadeOutAnimation(Context context, View view) {
+		Animation startAnimation = android.view.animation.AnimationUtils.loadAnimation(context, R.anim.fade_out);
+		view.startAnimation(startAnimation);
+	}
 }

@@ -8,13 +8,12 @@ import android.util.Log;
 
 import com.jakewharton.retrofit.Ok3Client;
 
-import okhttp3.OkHttpClient;
-import retrofit.RestAdapter;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.OkHttpClient;
+import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
@@ -25,8 +24,8 @@ import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
+import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
-import za.co.woolworths.financial.services.android.models.dto.CreateOfferResponse;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeaBanks;
@@ -44,12 +43,17 @@ import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
+import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
+import za.co.woolworths.financial.services.android.models.dto.statement.UserStatement;
+import za.co.woolworths.financial.services.android.models.dto.statement.StatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.SubCategories;
 import za.co.woolworths.financial.services.android.models.dto.TransactionHistoryResponse;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.models.rest.SendUserStatement;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 public class WfsApi {
@@ -65,7 +69,6 @@ public class WfsApi {
 		httpBuilder.addInterceptor(new WfsApiInterceptor(mContext));
 		httpBuilder.readTimeout(45, TimeUnit.SECONDS);
 		httpBuilder.connectTimeout(45, TimeUnit.SECONDS);
-
 		mApiInterface = new RestAdapter.Builder()
 				.setClient((new Ok3Client(httpBuilder.build())))
 				.setEndpoint(WoolworthsApplication.getBaseURL())
@@ -117,9 +120,9 @@ public class WfsApi {
 		getMyLocation();
 		if (startRadius != null && startRadius.equals("")) {
 			//This should never happen for now
-			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), sku, startRadius, endRadius,true);
+			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), sku, startRadius, endRadius, true);
 		} else {
-			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), sku, startRadius, endRadius,true);
+			return mApiInterface.getStoresLocationItem(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", String.valueOf(loc.getLatitude()), String.valueOf(loc.getLongitude()), sku, startRadius, endRadius, true);
 		}
 	}
 
@@ -127,8 +130,16 @@ public class WfsApi {
 		return mApiInterface.getMessages(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), pageSize, pageNumber);
 	}
 
-	public CreateOfferResponse createOfferRequest(CreateOfferRequest offerRequest) {
-		return mApiInterface.createOfferRequest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), offerRequest);
+	public OfferActive cliCreateApplication(CreateOfferRequest offerRequest) {
+		return mApiInterface.cliCreateApplication(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), offerRequest);
+	}
+
+	public OfferActive cliUpdateApplication(CreateOfferRequest offerRequest, String cliId) {
+		return mApiInterface.cliUpdateApplication(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), cliId, offerRequest);
+	}
+
+	public OfferActive createOfferDecision(CLIOfferDecision createOfferDecision, String cliId) {
+		return mApiInterface.createOfferDecision(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), cliId, createOfferDecision);
 	}
 
 	public DeaBanks getDeaBanks() {
@@ -152,7 +163,7 @@ public class WfsApi {
 	}
 
 	public CLIEmailResponse cliEmailResponse() {
-		return mApiInterface.cliSendEmailRquest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), "");
+		return mApiInterface.cliSendEmailRquest(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
 	}
 
 
@@ -216,10 +227,18 @@ public class WfsApi {
 	}
 
 	public CardDetailsResponse getCardDetails() {
-		return mApiInterface.getCardDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(),getSessionToken());
+		return mApiInterface.getCardDetails(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
 	}
 
-	private String getOsVersion() {
+	public StatementResponse getStatementResponse(UserStatement statement) {
+		return mApiInterface.getUserStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), statement.getProductOfferingId(), statement.getAccountNumber(), statement.getStartDate(), statement.getEndDate());
+	}
+
+	public SendUserStatementResponse sendStatementRequest(SendUserStatementRequest statement) {
+		return mApiInterface.sendUserStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), statement);
+	}
+
+	public String getOsVersion() {
 		String osVersion = Util.getOsVersion();
 		if (TextUtils.isEmpty(osVersion)) {
 			String myVersion = android.os.Build.VERSION.RELEASE; // e.g. myVersion := "1.6"
@@ -229,28 +248,28 @@ public class WfsApi {
 		return osVersion;
 	}
 
-	private String getOS() {
+	public String getOS() {
 		return "Android";
 	}
 
-	private String getNetworkCarrier() {
+	public String getNetworkCarrier() {
 		String networkCarrier = Util.getNetworkCarrier(mContext);
 		return networkCarrier.isEmpty() ? "Unavailable" : Utils.removeUnicodesFromString(networkCarrier);
 	}
 
-	private String getDeviceModel() {
+	public String getDeviceModel() {
 		return Util.getDeviceModel();
 	}
 
-	private String getDeviceManufacturer() {
+	public String getDeviceManufacturer() {
 		return Util.getDeviceManufacturer();
 	}
 
-	private String getSha1Password() {
+	public String getSha1Password() {
 		return WoolworthsApplication.getSha1Password();
 	}
 
-	private String getApiId() {
+	public String getApiId() {
 		return WoolworthsApplication.getApiKey();
 	}
 
@@ -262,7 +281,7 @@ public class WfsApi {
 		}
 	}
 
-	private String getSessionToken() {
+	public String getSessionToken() {
 		try {
 			SessionDao sessionDao = new SessionDao(mContext, SessionDao.KEY.USER_TOKEN).get();
 			if (sessionDao.value != null && !sessionDao.value.equals("")) {

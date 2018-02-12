@@ -5,7 +5,6 @@ package za.co.woolworths.financial.services.android.ui.views;
  */
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;

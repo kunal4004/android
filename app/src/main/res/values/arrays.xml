@@ -8,18 +8,6 @@
         <item>fonts/MyriadPro-Regular.otf</item>
         <item>fonts/MyriadPro-Semibold.otf</item>
     </string-array>
-    <integer-array name="months_default">
-        <item>12</item>
-        <item>24</item>
-        <item>36</item>
-    </integer-array>
-    <integer-array name="months_max">
-        <item>12</item>
-        <item>24</item>
-        <item>36</item>
-        <item>48</item>
-        <item>60</item>
-    </integer-array>
     <!-- navigation drawer item labels  -->
     <string-array name="nav_drawer_labels">
         <item>@string/nav_item_today</item>
@@ -55,48 +43,6 @@
         <item>@drawable/ic_drw_wrewards</item>
         <item>@drawable/ic_drw_accounts</item>
     </integer-array>
-    <string-array name="cl_amount">
-        <item></item>
-        <item></item>
-        <item></item>
-        <item></item>
-        <item></item>
-        <item></item>
-        <item></item>
-        <item></item>
-    </string-array>
-    <string-array name="cl_label">
-        <item>@string/cli_monthly_income</item>
-        <item>@string/cli_net_monthly_income</item>
-        <item>@string/cli_additional_monthly_income</item>
-        <item>@string/cli_mortgage_payments</item>
-        <item>@string/cli_rental_payments</item>
-        <item>@string/cli_maintenance_expenses</item>
-        <item>@string/cli_monthly_credit_payment</item>
-        <item>@string/cli_other_expenses</item>
-    </string-array>
-    <string-array name="cl_overlay_label">
-        <item>@string/cli_overlay_monthly_income</item>
-        <item>@string/cli_overlay_gross_income</item>
-        <item>@string/cli_overlay_per_income</item>
-        <item>@string/cli_overlay_monthly_home</item>
-        <item>@string/cli_overlay_rental_payment</item>
-        <item>@string/cli_overlay_monthly_obliged</item>
-        <item>@string/cli_overlay_monthly_installment</item>
-        <item>@string/cli_overlay_other_expenses</item>
-    </string-array>
-    <string-array name="cli_option">
-        <item>@string/cli_option_one</item>
-        <item>@string/cli_option_two</item>
-    </string-array>
-    <string-array name="cli_option_desc">
-        <item>@string/cli_option_one_desc</item>
-        <item>@string/cli_option_two_desc</item>
-    </string-array>
-    <array name="cli_drawable">
-        <item>@drawable/icon_paperclip</item>
-        <item>@drawable/icon_fax</item>
-    </array>
 
     <integer-array name="empty_state_icon">
         <item>@drawable/emptyvouchers</item>
@@ -191,4 +137,48 @@
         <item>@string/certified_id</item>
         <item>@string/investigation_results_from_doctor</item>
     </string-array>
+
+
+    <string-array name="supply_info_income_title">
+        <item>@string/income_gross_monthly_title</item>
+        <item>@string/income_net_monthly_title</item>
+        <item>@string/income_additional_monthly_title</item>
+    </string-array>
+    <string-array name="supply_info_income_desc">
+        <item>@string/income_gross_monthly_desc</item>
+        <item>@string/income_net_monthly_desc</item>
+        <item>@string/income_additional_monthly_desc</item>
+    </string-array>
+
+    <string-array name="supply_info_expenses_title">
+        <item>@string/expenses_mortgage_payment</item>
+        <item>@string/expenses_rental_payment</item>
+        <item>@string/expenses_maintenance_payment</item>
+        <item>@string/expense_monthly_credit_payment</item>
+        <item>@string/cli_other_expenses</item>
+    </string-array>
+    <string-array name="supply_info_expenses_desc">
+        <item>@string/expenses_mortgage_payment_desc</item>
+        <item>@string/expenses_rental_payment_desc</item>
+        <item>@string/expenses_maintenance_payment_desc</item>
+        <item>@string/expense_monthly_credit_payment_desc</item>
+        <item>@string/cli_overlay_all_expenses</item>
+    </string-array>
+
+    <string-array name="cli_carousel_title">
+        <item>@string/txt_proof_of_income</item>
+        <item>@string/credit_bureau</item>
+    </string-array>
+
+    <string-array name="cli_carousel_desc">
+        <item>@string/txt_proof_of_income_desc</item>
+        <item>@string/credit_bureau_desc</item>
+    </string-array>
+
+    <integer-array name="cli_carousel_image">
+        <item>@drawable/cli_walkthrough_proofofincome</item>
+        <item>@drawable/cli_walkthrough_creditbureau</item>
+    </integer-array>
+
+
 </resources>

@@ -1,7 +1,6 @@
 package za.co.woolworths.financial.services.android.util;
 
 import android.util.Base64;
-import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -10,16 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.crypto.MacProvider;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
-
-import java.security.Key;
-
-import static android.R.attr.data;
 
 /**
  * Created by eesajacobs on 2016/12/01.

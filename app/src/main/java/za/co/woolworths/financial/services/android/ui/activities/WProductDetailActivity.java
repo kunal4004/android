@@ -300,7 +300,7 @@ public class WProductDetailActivity extends AppCompatActivity implements
 						mSelectedProduct.productId,
 						mSelectedProduct.productName, false));
 				Utils.displayValidationMessage(WProductDetailActivity.this,
-						CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.SHOPPING_LIST_INFO,
+						CustomPopUpWindow.MODAL_LAYOUT.SHOPPING_LIST_INFO,
 						"viewShoppingList");
 			}
 		});
@@ -389,7 +389,10 @@ public class WProductDetailActivity extends AppCompatActivity implements
 			String auxiliaryImages = jsProductList.getString("auxiliaryImages");
 			JSONObject jsAuxiliaryImages = new JSONObject(auxiliaryImages);
 			Iterator<String> keysIterator = jsAuxiliaryImages.keys();
-			colour = colour.replace(" ", "");
+			String[] arrColour = colour.split(" ");
+			if (arrColour.length > 1) {
+				colour = arrColour[0].substring(0, 1) + arrColour[1];
+			}
 			while (keysIterator.hasNext()) {
 				String keyStr = keysIterator.next();
 				if (keyStr.toLowerCase().contains(colour.toLowerCase())) {
@@ -809,6 +812,10 @@ public class WProductDetailActivity extends AppCompatActivity implements
 			Iterator<String> keysIterator = jsAuxiliaryImages.keys();
 			String colour = mDefaultSKUModel.colour;
 			if (colour != null) {
+				String[] arrColour = colour.split(" ");
+				if (arrColour.length > 1) {
+					colour = arrColour[0].substring(0, 1) + arrColour[1];
+				}
 				selectedColor(mDefaultSKUModel.externalColourRef);
 				mTextColour.setText(colour);
 				colour = colour.toLowerCase().replaceAll("\\s+", "");

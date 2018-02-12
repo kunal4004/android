@@ -260,7 +260,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 
 	private void errorScanCode() {
 		Utils.displayValidationMessage(this,
-				CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.BARCODE_ERROR, "");
+				CustomPopUpWindow.MODAL_LAYOUT.BARCODE_ERROR, "");
 	}
 
 	private void getProductDetail(final String productId, final String skuId) {

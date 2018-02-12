@@ -1,22 +1,20 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.fragments.ContactUsFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ContactUsFragmentChange;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.binder.ContactUsFragmentChange;
 
 
-
-public class WContactUsActivityNew extends AppCompatActivity implements ContactUsFragmentChange{
+public class WContactUsActivityNew extends AppCompatActivity implements ContactUsFragmentChange {
 
     public Toolbar toolbar;
     public WTextView toolbarText;

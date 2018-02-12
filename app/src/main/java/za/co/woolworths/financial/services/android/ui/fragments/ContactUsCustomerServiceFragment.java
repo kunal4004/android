@@ -13,9 +13,7 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.util.binder.ContactUsFragmentChange;
-
-import static com.awfs.coordination.R.style.ContactUs;
+import za.co.woolworths.financial.services.android.util.ContactUsFragmentChange;
 
 /**
  * Created by W7099877 on 01/12/2016.

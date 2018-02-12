@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/flTopLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_background">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <View
+                    style="@style/top_view_style"/>
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/tvCalculatingYourOffer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/bank_spacing_width"
+                    android:gravity="center"
+                    android:letterSpacing="0.08"
+                    android:lineSpacingExtra="0.8sp"
+                    android:text="@string/calculating_your_offer"
+                    android:textAllCaps="true"
+                    android:textColor="@color/offer_title"
+                    android:textSize="12sp"
+                    app:WTextView_font="medium_bold"/>
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/tvLoadTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:lineSpacingExtra="0.8sp"
+                    android:text="@string/amount_of_time_info"
+                    android:textColor="@color/black_50"
+                    android:textSize="13sp"
+                    app:WTextView_font="myriadpro_regular"/>
+
+                <LinearLayout
+                    android:id="@+id/llSlideToEditContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/tvSlideToEditAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="50dp"
+                        android:background="@android:color/transparent"
+                        android:gravity="center"
+                        android:letterSpacing="0.0"
+                        android:text="R0"
+                        android:textColor="@color/overview_color"
+                        android:textSize="55dp"
+                        app:WEditTextView_font="medium"/>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/tvSlideToEditSeekInfo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginTop="2dp"
+                            android:background="@color/black"
+                            android:letterSpacing="0.01"
+                            android:paddingBottom="6dp"
+                            android:paddingLeft="25dp"
+                            android:paddingRight="24dp"
+                            android:paddingTop="6dp"
+                            android:text="@string/slide_to_edit_amount"
+                            android:textAllCaps="true"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            app:WTextView_font="medium"/>
+                    </RelativeLayout>
+
+                    <SeekBar
+                        android:id="@+id/sbSlideAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/twenty_three_dp"
+                        android:layout_marginTop="@dimen/seventeen_dp"
+                        android:maxHeight="6dip"
+                        android:minHeight="6dip"
+                        android:paddingEnd="@dimen/bank_spacing_width"
+                        android:paddingStart="@dimen/bank_spacing_width"
+                        android:progressDrawable="@drawable/seekbar_style"
+                        android:thumb="@drawable/custom_thumb"/>
+
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/flCircularProgressSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/thirty_dp"
+                    android:layout_marginTop="@dimen/acc_fifteen_dp">
+
+                    <ProgressBar
+                        android:id="@+id/circleView"
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
+                        android:layout_gravity="center"
+                        android:indeterminateDrawable="@drawable/circular"
+                        android:max="100"
+                        android:progress="20"
+                        />
+
+                    <com.facebook.drawee.view.SimpleDraweeView
+                        android:id="@+id/imOfferTime"
+                        android:layout_width="38dp"
+                        android:layout_height="54dp"
+                        android:layout_gravity="center"
+                        />
+                </FrameLayout>
+
+                <View style="@style/bottom_line"/>
+
+                <RelativeLayout
+                    android:id="@+id/relCurrentCreditLimit"
+                    style="@style/offer_relative_rowtype_style">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/tvCurrentCreditLimit"
+                        style="@style/offer_relative_rowtype_key_style"
+                        android:layout_toStartOf="@+id/llCPCurrentCreditLimit"
+                        android:text="@string/request_loan_amount"/>
+
+                    <LinearLayout
+                        android:id="@+id/llCPCurrentCreditLimit"
+                        style="@style/circularProgressBarStyleContainer"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentTop="true">
+
+                        <ProgressBar
+                            android:id="@+id/cpCurrentCreditLimit"
+                            style="@style/cliCircularProgressBarStyle"/>
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/tvCurrentCreditLimitAmount"
+                            style="@style/offer_relative_rowtype_value_style"
+                            android:text="R 0"/>
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <View style="@style/bottom_line_with_margin"/>
+
+                <RelativeLayout
+                    android:id="@+id/relAdditionalCreditLimit"
+                    style="@style/offer_relative_rowtype_style">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/tvAdditionalCreditLimit"
+                        style="@style/offer_relative_rowtype_key_style"
+                        android:layout_toStartOf="@+id/llCPAdditionalCreditLimit"
+                        android:text="@string/approximate_repayments"/>
+
+                    <LinearLayout
+                        android:id="@+id/llCPAdditionalCreditLimit"
+                        style="@style/circularProgressBarStyleContainer">
+
+                        <ProgressBar
+                            android:id="@+id/cpAdditionalCreditLimit"
+                            style="@style/cliCircularProgressBarStyle"/>
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/tvAdditionalCreditLimitAmount"
+                            style="@style/offer_relative_rowtype_value_style"
+                            android:text="R 0"/>
+
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <View style="@style/bottom_line_with_margin"/>
+
+                <RelativeLayout
+                    android:id="@+id/relNewCreditlimit"
+                    style="@style/offer_relative_rowtype_style">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/tvNewCreditLimit"
+                        style="@style/offer_relative_rowtype_key_style"
+                        android:layout_toStartOf="@+id/llCPNewCreditLimit"
+                        android:text="@string/term"/>
+
+                    <LinearLayout
+                        android:id="@+id/llCPNewCreditLimit"
+                        style="@style/circularProgressBarStyleContainer">
+
+                        <ProgressBar
+                            android:id="@+id/cpNewCreditAmount"
+                            style="@style/cliCircularProgressBarStyle"/>
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/tvNewCreditLimitAmount"
+                            style="@style/offer_relative_rowtype_value_style"
+                            android:text="R 0"
+                            app:WTextView_font="medium_bold"/>
+
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/llEmptyLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/default_background"
+                    android:orientation="vertical"/>
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+
+        <include layout="@layout/no_connection_layout"/>
+    </FrameLayout>
+
+    <include
+        layout="@layout/cli_next_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"/>
+
+</FrameLayout>

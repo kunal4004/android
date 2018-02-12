@@ -36,7 +36,7 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.RootCategory;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpDialogManager;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.ProductGridActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSearchActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ProductSubCategoryActivity;
@@ -49,10 +49,9 @@ import za.co.woolworths.financial.services.android.util.ObservableScrollView;
 import za.co.woolworths.financial.services.android.util.ObservableScrollViewCallbacks;
 import za.co.woolworths.financial.services.android.util.ScrollState;
 import za.co.woolworths.financial.services.android.util.Utils;
-import za.co.woolworths.financial.services.android.util.binder.view.RootCategoryBinder;
 import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 
-public class WProductFragment extends Fragment implements RootCategoryBinder.OnClickListener, View.OnClickListener,
+public class WProductFragment extends Fragment implements View.OnClickListener,
 		AppBarLayout.OnOffsetChangedListener, ObservableScrollViewCallbacks {
 
 	public interface HideActionBarComponent {
@@ -163,10 +162,6 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 		mTextTBProductSearch.setOnClickListener(this);
 		mTBBarcodeScanner.setOnClickListener(this);
 		mNestedScrollview.setScrollViewCallbacks(this);
-	}
-
-	@Override
-	public void onClick(View v, int position) {
 	}
 
 	@Override
@@ -403,7 +398,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 		try {
 			String firstTime = Utils.getSessionDaoValue(getActivity(), SessionDao.KEY.PRODUCTS_ONE_TIME_POPUP);
 			if (firstTime == null) {
-				Utils.displayValidationMessage(getActivity(), CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.INFO, getActivity().getResources().getString(R.string.products_onetime_popup_text));
+				Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.INFO, getActivity().getResources().getString(R.string.products_onetime_popup_text));
 				Utils.sessionDaoSave(getActivity(), SessionDao.KEY.PRODUCTS_ONE_TIME_POPUP, "1");
 			}
 		} catch (NullPointerException ignored) {
@@ -454,7 +449,7 @@ public class WProductFragment extends Fragment implements RootCategoryBinder.OnC
 						default:
 							if (!TextUtils.isEmpty(rootCategories.response.desc)) {
 								Utils.displayValidationMessage(getActivity(),
-										CustomPopUpDialogManager.VALIDATION_MESSAGE_LIST.ERROR,
+										CustomPopUpWindow.MODAL_LAYOUT.ERROR,
 										rootCategories.response.desc);
 							}
 							break;
