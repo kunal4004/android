@@ -160,39 +160,39 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			setToolbarBackgroundColor(R.color.white);
 			woolworthsApplication = (WoolworthsApplication) getActivity().getApplication();
 			wGlobalState = woolworthsApplication.getWGlobalState();
-			openMessageActivity = (RelativeLayout) view.findViewById(R.id.openMessageActivity);
-			openShoppingList = (ImageView) view.findViewById(R.id.openShoppingList);
-			contactUs = (RelativeLayout) view.findViewById(R.id.contactUs);
-			applyStoreCardView = (RelativeLayout) view.findViewById(R.id.applyStoreCard);
-			applyCreditCardView = (RelativeLayout) view.findViewById(R.id.applyCrediCard);
-			applyPersonalCardView = (RelativeLayout) view.findViewById(R.id.applyPersonalLoan);
-			linkedCreditCardView = (RelativeLayout) view.findViewById(R.id.linkedCrediCard);
-			linkedStoreCardView = (RelativeLayout) view.findViewById(R.id.linkedStoreCard);
-			linkedPersonalCardView = (RelativeLayout) view.findViewById(R.id.linkedPersonalLoan);
-			linkedAccountsLayout = (LinearLayout) view.findViewById(R.id.linkedLayout);
-			mScrollView = (NestedScrollView) view.findViewById(R.id.nest_scrollview);
-			applyNowAccountsLayout = (LinearLayout) view.findViewById(R.id.applyNowLayout);
-			loggedOutHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedOutHeaderLayout);
-			loggedInHeaderLayout = (LinearLayout) view.findViewById(R.id.loggedInHeaderLayout);
-			unlinkedLayout = (RelativeLayout) view.findViewById(R.id.llUnlinkedAccount);
-			signOutBtn = (RelativeLayout) view.findViewById(R.id.signOutBtn);
-			myDetailBtn = (RelativeLayout) view.findViewById(R.id.rlMyDetails);
-			viewPager = (ViewPager) view.findViewById(R.id.pager);
-			pager_indicator = (LinearLayout) view.findViewById(R.id.viewPagerCountDots);
-			sc_available_funds = (WTextView) view.findViewById(R.id.sc_available_funds);
-			cc_available_funds = (WTextView) view.findViewById(R.id.cc_available_funds);
-			pl_available_funds = (WTextView) view.findViewById(R.id.pl_available_funds);
-			messageCounter = (WTextView) view.findViewById(R.id.messageCounter);
-			userName = (WTextView) view.findViewById(R.id.user_name);
-			userInitials = (WTextView) view.findViewById(R.id.initials);
-			imgCreditCard = (ImageView) view.findViewById(R.id.imgCreditCard);
-			relFAQ = (RelativeLayout) view.findViewById(R.id.relFAQ);
-			RelativeLayout relNoConnectionLayout = (RelativeLayout) view.findViewById(R.id.no_connection_layout);
+			openMessageActivity = view.findViewById(R.id.openMessageActivity);
+			openShoppingList = view.findViewById(R.id.openShoppingList);
+			contactUs = view.findViewById(R.id.contactUs);
+			applyStoreCardView = view.findViewById(R.id.applyStoreCard);
+			applyCreditCardView = view.findViewById(R.id.applyCrediCard);
+			applyPersonalCardView = view.findViewById(R.id.applyPersonalLoan);
+			linkedCreditCardView = view.findViewById(R.id.linkedCrediCard);
+			linkedStoreCardView = view.findViewById(R.id.linkedStoreCard);
+			linkedPersonalCardView = view.findViewById(R.id.linkedPersonalLoan);
+			linkedAccountsLayout = view.findViewById(R.id.linkedLayout);
+			mScrollView = view.findViewById(R.id.nest_scrollview);
+			applyNowAccountsLayout = view.findViewById(R.id.applyNowLayout);
+			loggedOutHeaderLayout = view.findViewById(R.id.loggedOutHeaderLayout);
+			loggedInHeaderLayout = view.findViewById(R.id.loggedInHeaderLayout);
+			unlinkedLayout = view.findViewById(R.id.llUnlinkedAccount);
+			signOutBtn = view.findViewById(R.id.signOutBtn);
+			myDetailBtn = view.findViewById(R.id.rlMyDetails);
+			viewPager = view.findViewById(R.id.pager);
+			pager_indicator = view.findViewById(R.id.viewPagerCountDots);
+			sc_available_funds = view.findViewById(R.id.sc_available_funds);
+			cc_available_funds = view.findViewById(R.id.cc_available_funds);
+			pl_available_funds = view.findViewById(R.id.pl_available_funds);
+			messageCounter = view.findViewById(R.id.messageCounter);
+			userName = view.findViewById(R.id.user_name);
+			userInitials = view.findViewById(R.id.initials);
+			imgCreditCard = view.findViewById(R.id.imgCreditCard);
+			relFAQ = view.findViewById(R.id.relFAQ);
+			RelativeLayout relNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
 			mErrorHandlerView = new ErrorHandlerView(getActivity(), relNoConnectionLayout);
 			mErrorHandlerView.setMargin(relNoConnectionLayout, 0, 0, 0, 0);
-			storeLocator = (RelativeLayout) view.findViewById(R.id.storeLocator);
-			allUserOptionsLayout = (LinearLayout) view.findViewById(R.id.parentOptionsLayout);
-			loginUserOptionsLayout = (LinearLayout) view.findViewById(R.id.loginUserOptionsLayout);
+			storeLocator = view.findViewById(R.id.storeLocator);
+			allUserOptionsLayout = view.findViewById(R.id.parentOptionsLayout);
+			loginUserOptionsLayout = view.findViewById(R.id.loginUserOptionsLayout);
 			openMessageActivity.setOnClickListener(this);
 			contactUs.setOnClickListener(this);
 			applyPersonalCardView.setOnClickListener(this);
@@ -756,6 +756,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			wGlobalState.setAccountSignInState(false);
 			initialize();
 			showLogOutScreen();
+			addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
+			addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
 			try {
 				wGlobalState.setAccountSignInState(false);
@@ -763,6 +765,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
 				sessionDao.value = "";
 				sessionDao.save();
+				addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
+				addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
 				new HttpAsyncTask<Void, Void, Void>() {
 
 					@Override
@@ -770,7 +774,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 						try {
 							new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_SEARCH).delete();
 							new SessionDao(getActivity(), SessionDao.KEY.STORES_USER_LAST_LOCATION).delete();
-							getBottomNavigator().addBadge(3, 0);
 						} catch (Exception pE) {
 							pE.printStackTrace();
 						}
@@ -792,6 +795,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			}
 			initialize();
 		} else {
+			addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
+			addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
 			//user not signed in
 			if (!wGlobalState.getAccountSignInState()) {
 				this.accounts.clear();
