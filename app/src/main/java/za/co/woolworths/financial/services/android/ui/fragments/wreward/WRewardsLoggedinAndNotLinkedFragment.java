@@ -33,7 +33,7 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
 	public WTextView wRewardsTagLine;
 	public String TAG = this.getClass().getSimpleName();
 
-	private BottomNavigator bottomNavigator;
+	private BottomNavigator mBottomNavigator;
 
 	@Nullable
 	@Override
@@ -42,7 +42,8 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
 		View view = inflater.inflate(R.layout.wrewards_loggedout_loggedin_notlinked, container, false);
 		view.findViewById(R.id.layoutLoginLogout).setVisibility(View.GONE);
 		try {
-			bottomNavigator = (BottomNavigator) getActivity();
+			mBottomNavigator = (BottomNavigator) getActivity();
+			mBottomNavigator.removeToolbar();
 		} catch (IllegalStateException ex) {
 			Log.d(TAG, ex.toString());
 		}
@@ -97,8 +98,8 @@ public class WRewardsLoggedinAndNotLinkedFragment extends Fragment implements Vi
 	public void onHiddenChanged(boolean hidden) {
 		super.onHiddenChanged(hidden);
 		if (!hidden) {
-			if (bottomNavigator != null)
-				bottomNavigator.removeToolbar();
+			if (mBottomNavigator != null)
+				mBottomNavigator.removeToolbar();
 		}
 	}
 
