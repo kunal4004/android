@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -24,8 +25,9 @@ import za.co.woolworths.financial.services.android.util.Utils;
 public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayViewModel> implements WTodayNavigator {
 
 	private WTodayViewModel wTodayViewModel;
-	WebView webView;
-	ErrorHandlerView mErrorHandlerView;
+	private WebView webView;
+	private ErrorHandlerView mErrorHandlerView;
+	private String TAG = this.getClass().getSimpleName();
 
 	@Override
 	public WTodayViewModel getViewModel() {
@@ -47,6 +49,11 @@ public class WTodayFragment extends BaseFragment<WtodayFragmentBinding, WTodayVi
 		super.onCreate(savedInstanceState);
 		wTodayViewModel = ViewModelProviders.of(this).get(WTodayViewModel.class);
 		wTodayViewModel.setNavigator(this);
+		try {
+			hideToolbar();
+		} catch (NullPointerException ex) {
+			Log.e(TAG, ex.toString());
+		}
 	}
 
 	@Override
