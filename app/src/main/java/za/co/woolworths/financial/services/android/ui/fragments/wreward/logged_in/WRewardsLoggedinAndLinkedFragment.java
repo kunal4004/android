@@ -87,7 +87,8 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		showToolbar();
+		hideToolbar();
+		setTitle(getString(R.string.nav_item_wrewards));
 		mWGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
 		viewPager = getViewDataBinding().viewpager;
 		progressBar = getViewDataBinding().progressBar;
@@ -285,10 +286,10 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 						if (TextUtils.isEmpty(String.valueOf(unreadCount)))
 							unreadCount = 0;
 						Utils.setBadgeCounter(getActivity(), unreadCount);
-						getBottomNavigator().addBadge(BottomNavigationActivity.INDEX_ACCOUNT, unreadCount);
+						addBadge(BottomNavigationActivity.INDEX_ACCOUNT, unreadCount);
 					} else {
 						Utils.removeBadgeCounter(getActivity());
-						getBottomNavigator().addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
+						addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
 					}
 				} catch (Exception ignored) {
 				}
@@ -298,5 +299,14 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			public void onFailure(String errorMessage) {
 			}
 		});
+	}
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			setTitle(getString(R.string.nav_item_wrewards));
+			//showToolbar();
+		}
 	}
 }
