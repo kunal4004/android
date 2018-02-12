@@ -51,6 +51,7 @@ import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
@@ -632,7 +633,7 @@ public class SSOActivity extends WebViewActivity {
 
 	private void clearHistory() {
 		mGlobalState.setOnBackPressed(false);
-		Intent i = new Intent(SSOActivity.this, WOneAppBaseActivity.class);
+		Intent i = new Intent(SSOActivity.this, BottomNavigationActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

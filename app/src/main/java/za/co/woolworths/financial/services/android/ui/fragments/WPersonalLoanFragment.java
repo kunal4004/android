@@ -80,7 +80,6 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private RelativeLayout rlViewStatement;
 	private AccountsResponse accountsResponse;
 
-
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

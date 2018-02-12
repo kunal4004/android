@@ -40,8 +40,9 @@
     <string name="google_maps">GOOGLE MAPS</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="km">km</string>
-    <string name="linked_cards">LINKED CARDS</string>
+    <string name="linked_cards">linked accounts</string>
     <string name="contact_us">Contact us</string>
+    <string name="cart">Cart</string>
     <string name="submit_query">Submit Query</string>
     <string name="faqs">FAQs</string>
     <string name="sign_out">Sign Out</string>
@@ -292,6 +293,11 @@
     <string name="product_size">Size</string>
     <string name="shop_online_woolies">Shop online</string>
     <string name="add_to_shopping_list">Add to shopping list</string>
+    <string name="add_to_list">ADD TO LIST</string>
+    <string name="edit">EDIT</string>
+    <string name="done">DONE</string>
+    <string name="remove_all">REMOVE ALL</string>
+    <string name="checkout">CHECKOUT</string>
     <string name="product_code">Product Code</string>
     <string name="product_colour">Colour</string>
     <string name="unlinked_account_copy">We see that your Woolies Card is not yet linked. To conveniently view your available funds, next payment due, recent transactions and so much more, please link your Woolies Card now.</string>
@@ -337,7 +343,7 @@
     <string name="wrewards_logout_tag_line">WRewards is our way of rewarding customers INSTANTLY. WRewards members save millions every week.</string>
 
     <string name="contact_us_no_email_error">In order for us to process your query, please send an email to email_address with \"subject_line\" entered in the subject line. Remember to include your ID number in the body of the email.</string>
-    <string name="loading_product_info">Loading product info</string>
+    <string name="loading_product_info">Loading info</string>
 
     <string name="services_unavailable">Services Unavailable</string>
     <string name="please_check_back_later">Please check back later.</string>
@@ -576,6 +582,25 @@
     <string name="account_type_info_desc">I agree that Woolworths Financial Services may request my latest 3 months bank statement directly from my bank.</string>
     <string name="cli_declined_popup_title">APPLICATION DECLINED</string>
     <string name="cli_declined_popup_description">Oh no - your limit increase application has been declined at this time. Feel free to apply again.</string>
+    <string name="cli_create_application_error_message">Unfortunately we cannot proceed with your application</string>
+    <string name="store_locator">Store Locator</string>
+    <string name="my_lists">My Lists</string>
+    <string name="messages">Messages</string>
+    <string name="order_history">Order History</string>
+    <string name="link_your_woolies_card_today">Link Your Woolies Card Today</string>
+    <string name="cart_free_delivery_first_order">You\'ll Receive <b>Free Delivery</b> For Your First Order</string>
+
+    <!-- Bottom navigation activity -->
+
+    <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
+    <string name="bottom_title_today">Today</string>
+    <string name="bottom_title_product">Products</string>
+    <string name="bottom_title_cart">Cart</string>
+    <string name="bottom_title_reward">WRewards</string>
+    <string name="bottom_title_account">Accounts</string>
+    <string name="title_activity_main">ShoppingListActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_cart">Cart</string>
     <string name="lets_make_it_easy_for_you">Let us make it easy for you - we can request your latest 3 months bank statements directly from your bank, at no cost to you.</string>
     <string name="statement_send_email_false_desc">Oops, There seems to be a problem. Please try again later. </string>
 </resources>

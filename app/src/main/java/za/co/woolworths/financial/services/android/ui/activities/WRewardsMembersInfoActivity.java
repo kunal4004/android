@@ -18,9 +18,9 @@ import android.widget.TextView;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.ui.adapters.ContactUsFragmentPagerAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.WRewardsLoyalMembersInfoFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.WRewardsValuedMembersInfoFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.WRewardsVipMembersInfoFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoyalMembersInfoFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsValuedMembersInfoFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVipMembersInfoFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 

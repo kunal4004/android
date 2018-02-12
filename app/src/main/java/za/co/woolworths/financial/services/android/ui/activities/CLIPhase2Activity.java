@@ -40,7 +40,7 @@ import za.co.woolworths.financial.services.android.util.controller.CLIStepIndica
 import za.co.woolworths.financial.services.android.util.controller.EventStatus;
 import za.co.woolworths.financial.services.android.util.controller.IncreaseLimitController;
 
-public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFragmentChange, View.OnClickListener, DeclineOfferInterface {
+public class CLIPhase2Activity extends AppCompatActivity implements View.OnClickListener, DeclineOfferInterface {
 
 	private WTextView tvDeclineOffer;
 	private ProgressBar pbDecline;
@@ -86,13 +86,13 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 
 	private void init() {
 		woolworthsApplication = (WoolworthsApplication) CLIPhase2Activity.this.getApplication();
-		tvDeclineOffer = (WTextView) findViewById(R.id.tvDeclineOffer);
-		pbDecline = (ProgressBar) findViewById(R.id.pbDecline);
-		imBack = (ImageView) findViewById(R.id.imBack);
+		tvDeclineOffer = findViewById(R.id.tvDeclineOffer);
+		pbDecline = findViewById(R.id.pbDecline);
+		imBack = findViewById(R.id.imBack);
 	}
 
 	private void actionBar() {
-		Toolbar mToolbar = (Toolbar) findViewById(R.id.mToolbar);
+		Toolbar mToolbar = findViewById(R.id.mToolbar);
 		setSupportActionBar(mToolbar);
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
@@ -318,11 +318,6 @@ public class CLIPhase2Activity extends AppCompatActivity implements ContactUsFra
 				showDeclineOffer();
 			}
 		});
-	}
-
-	@Override
-	public void onFragmentChanged(String title) {
-		//contact us change title listener
 	}
 
 	public void hideBurgerButton() {

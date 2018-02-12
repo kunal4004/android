@@ -14,69 +14,70 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dto.FAQDetail;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 
-public class FAQAdapter extends RecyclerView.Adapter<FAQAdapter.MyViewHolder> {
-
-	private int row_index = -1;
+public class FAQAdapter extends RecyclerView.Adapter<FAQAdapter.SimpleViewHolder> {
 	public interface SelectedQuestion {
-		void onQuestionSelected(View v, int position);
+		void onQuestionSelected(FAQDetail faqDetail);
 	}
 
 	private SelectedQuestion mSelectedQuestion;
-	private List<FAQDetail> faqDetails;
+	private int selectedIndex = -1;
+	private List<FAQDetail> mDataSet;
 
-	public FAQAdapter(List<FAQDetail> faq, SelectedQuestion onClickListener) {
-		this.faqDetails = faq;
-		this.mSelectedQuestion = onClickListener;
+	public FAQAdapter(List<FAQDetail> userDetail,
+					  SelectedQuestion selectedQuestion) {
+		this.mDataSet = userDetail;
+		this.mSelectedQuestion = selectedQuestion;
 	}
 
-	public class MyViewHolder extends RecyclerView.ViewHolder {
-		private WTextView mFaqName;
-		private RelativeLayout mRelFAQRow;
+	class SimpleViewHolder extends RecyclerView.ViewHolder {
+		WTextView mFAQName;
+		RelativeLayout mRelFAQRow;
 
-		public MyViewHolder(View view) {
+		SimpleViewHolder(View view) {
 			super(view);
-			mFaqName = (WTextView) view.findViewById(R.id.name);
-			mRelFAQRow = (RelativeLayout) view.findViewById(R.id.relFAQRow);
-
+			mFAQName = view.findViewById(R.id.name);
+			mRelFAQRow = view.findViewById(R.id.relFAQRow);
 		}
 	}
 
 	@Override
-	public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		return new MyViewHolder(LayoutInflater.from(parent.getContext())
-				.inflate(R.layout.faq_row, parent, false));
-	}
-
-	@Override
-	public void onBindViewHolder(final MyViewHolder holder, final int position) {
-		FAQDetail faqDetail = faqDetails.get(position);
-		if (faqDetail != null) {
-			holder.mFaqName.setText(faqDetail.question);
-		}
-
-		if (row_index == position) {
-			holder.mRelFAQRow.setBackground(ContextCompat.getDrawable(holder.mFaqName.getContext(), R.drawable.pressed_bg));
-		} else {
-			holder.mRelFAQRow.setBackground(ContextCompat.getDrawable(holder.mFaqName.getContext(), R.drawable.top_border));
-		}
-
-		holder.mFaqName.setOnClickListener(new View.OnClickListener() {
+	public void onBindViewHolder(final SimpleViewHolder holder, final int position) {
+		final FAQDetail faqDetail = mDataSet.get(position);
+		holder.mFAQName.setText(faqDetail.question);
+		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onClick(View view) {
-				row_index = holder.getAdapterPosition();
-				mSelectedQuestion.onQuestionSelected(view, holder.getAdapterPosition());
+			public void onClick(View v) {
+				selectedIndex = position;
+				mSelectedQuestion.onQuestionSelected(mDataSet.get(holder.getAdapterPosition()));
 				notifyDataSetChanged();
 			}
 		});
+
+		if (selectedIndex == position) {
+			backgroundDrawable(holder, R.drawable.pressed_bg);
+		} else {
+			backgroundDrawable(holder, R.drawable.stores_details_background);
+		}
+	}
+
+	@Override
+	public SimpleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+		View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.faq_row,
+				parent, false);
+		return new SimpleViewHolder(view);
 	}
 
 	@Override
 	public int getItemCount() {
-		return faqDetails.size();
+		return mDataSet.size();
 	}
 
-	public void resetAdapter() {
-		row_index = -1;
+	public void resetIndex() {
+		selectedIndex = -1;
 		notifyDataSetChanged();
+	}
+
+	private void backgroundDrawable(SimpleViewHolder holder, int id) {
+		holder.mRelFAQRow.setBackground(ContextCompat.getDrawable(holder.mRelFAQRow.getContext(), id));
 	}
 }

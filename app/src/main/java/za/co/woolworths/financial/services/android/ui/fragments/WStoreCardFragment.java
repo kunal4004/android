@@ -122,7 +122,6 @@ public class WStoreCardFragment extends MyAccountCardsActivity.MyAccountCardsFra
 									hideCLIView();
 									storeWasAlreadyRunOnce = false;
 									retryConnect();
-								} else {
 								}
 							}
 						}

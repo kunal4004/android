@@ -1,13 +1,13 @@
 package za.co.woolworths.financial.services.android.ui.activities;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -38,6 +38,8 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
+import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -56,6 +58,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 
 	private WButton mBtnBarcodeConfirm;
 	private ErrorHandlerView mErrorHandlerView;
+	private SlidingUpPanelLayout mSlideUpPanel;
 
 	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 	@Override
@@ -65,6 +68,7 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 		mContext = this;
 		setContentView(R.layout.enter_barcode_activity);
 		initUI();
+		slideUpPanelListener();
 		setActionBar();
 		mErrorHandlerView = new ErrorHandlerView(this
 				, (RelativeLayout) findViewById(R.id.no_connection_layout));
@@ -89,7 +93,6 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 				return handled;
 			}
 		});
-
 
 		mEditBarcodeNumber.addTextChangedListener(new TextWatcher() {
 			@Override
@@ -125,12 +128,18 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 	}
 
 	private void initUI() {
-		mToolbar = (Toolbar) findViewById(R.id.mToolbar);
-		mEditBarcodeNumber = (WLoanEditTextView) findViewById(R.id.editBarcodeNumber);
-		mBtnBarcodeConfirm = (WButton) findViewById(R.id.btnBarcodeConfirm);
-		mProgressBar = (ProgressBar) findViewById(R.id.mProgressBar);
+		mToolbar = findViewById(R.id.mToolbar);
+		mSlideUpPanel = findViewById(R.id.slideUpPanel);
+		mEditBarcodeNumber = findViewById(R.id.editBarcodeNumber);
+		mBtnBarcodeConfirm = findViewById(R.id.btnBarcodeConfirm);
+		mProgressBar = findViewById(R.id.mProgressBar);
 		mProgressBar.getIndeterminateDrawable().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
-		mTextInfo = (WTextView) findViewById(R.id.textInfo);
+		mTextInfo = findViewById(R.id.textInfo);
+	}
+
+	private void slidePanelUp() {
+		mSlideUpPanel.setAnchorPoint(1.0f);
+		mSlideUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
 	}
 
 	private void setActionBar() {
@@ -271,29 +280,35 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 							public void success(String strProduct, retrofit.client.Response response) {
 								hideProgressBar();
 								WProduct wProduct = Utils.stringToJson(mContext, strProduct);
-								if (wProduct != null) {
-									switch (wProduct.httpCode) {
-										case 200:
-											hideSoftKeyboard();
-											ArrayList<WProductDetail> mProductList;
-											WProductDetail productList = wProduct.product;
-											mProductList = new ArrayList<>();
-											if (productList != null) {
-												mProductList.add(productList);
-											}
+								if (wProduct != null) switch (wProduct.httpCode) {
+									case 200:
+										hideSoftKeyboard();
+										ArrayList<WProductDetail> mProductList;
+										WProductDetail productList = wProduct.product;
+										mProductList = new ArrayList<>();
+										if (productList != null) {
+											mProductList.add(productList);
+										}
+										if (mProductList.size() > 0 && mProductList.get(0).productId != null) {
 											GsonBuilder builder = new GsonBuilder();
 											Gson gson = builder.create();
-											Intent openDetailView = new Intent(mContext, ProductDetailActivity.class);
-											openDetailView.putExtra("product_name", mProductList.get(0).productName);
-											openDetailView.putExtra("product_detail", gson.toJson(mProductList));
-											startActivity(openDetailView);
-											overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
-											break;
+											DetailFragment detailFragment = new DetailFragment();
+											String strProductList = gson.toJson(mProductList.get(0));
+											Bundle bundle = new Bundle();
+											bundle.putString("strProductList", strProductList);
+											bundle.putString("strProductCategory", mProductList.get(0).productName);
+											bundle.putString("productResponse", strProduct);
+											bundle.putBoolean("fetchFromJson", true);
+											detailFragment.setArguments(bundle);
+											FragmentTransaction transaction = mContext.getSupportFragmentManager().beginTransaction();
+											transaction.replace(R.id.barcode_fragment, detailFragment).commit();
+											slidePanelUp();
+										}
+										break;
 
-										default:
-											handleError();
-											break;
-									}
+									default:
+										handleError();
+										break;
 								}
 							}
 
@@ -316,4 +331,46 @@ public class EnterBarcodeActivity extends AppCompatActivity {
 			getProductRequest(mEditBarcodeNumber.getText().toString()).execute();
 		}
 	}
+
+	public void slideUpPanelListener() {
+		mSlideUpPanel.setFadeOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				mSlideUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+			}
+		});
+		mSlideUpPanel.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+			@Override
+			public void onPanelSlide(View panel, float slideOffset) {
+				if (slideOffset == 0.0) {
+					mSlideUpPanel.setAnchorPoint(1.0f);
+				}
+			}
+
+			@Override
+			public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState,
+											SlidingUpPanelLayout.PanelState newState) {
+				switch (newState) {
+					case COLLAPSED:
+						showStatusBar();
+						break;
+
+					case EXPANDED:
+						hideStatusBar();
+						break;
+					default:
+						break;
+				}
+			}
+		});
+	}
+
+	private void hideStatusBar() {
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	}
+
+	private void showStatusBar() {
+		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	}
+
 }

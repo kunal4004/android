@@ -32,6 +32,8 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
+import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.models.dto.statement.EmailStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
@@ -662,8 +664,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					Intent intent = new Intent("logOutReceiver");
-					sendBroadcast(intent);
+					WoolworthsApplication.getInstance()
+							.bus()
+							.send(new AuthenticationState(AuthenticationState.SIGN_OUT));
 					dismissLayout();
 				}
 			});
@@ -874,7 +877,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 	private void clearHistory() {
 		mWGlobalState.setOnBackPressed(false);
-		Intent i = new Intent(CustomPopUpWindow.this, WOneAppBaseActivity.class);
+		Intent i = new Intent(CustomPopUpWindow.this, BottomNavigationActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

@@ -216,8 +216,7 @@ public class WoolworthsApplication extends Application {
 		WoolworthsApplication.context = this.getApplicationContext();
 		// set app context
 		mContextApplication = getApplicationContext();
-//		Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
-
+		//Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
 		CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
 				.setDefaultFontPath("fonts/WFutura-medium.ttf")
 				.setFontAttrId(R.attr.fontPath)

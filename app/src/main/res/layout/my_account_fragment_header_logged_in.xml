@@ -1,134 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-    android:focusableInTouchMode="false"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/loggedInHeaderLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:focusable="false"
-              android:layout_height="wrap_content"
-              android:id="@+id/loggedInHeaderLayout"
-    >
+    android:focusableInTouchMode="false"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusableInTouchMode="false"
-        android:focusable="false"
         android:background="@color/white"
-        android:orientation="vertical"
-        >
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:orientation="vertical">
 
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:minHeight="80dp"
-            android:focusableInTouchMode="false"
+            android:minHeight="90dp"
             android:focusable="false"
-            android:paddingLeft="52dp"
-            android:paddingRight="52dp"
+            android:focusableInTouchMode="false"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             >
-           <FrameLayout
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
-               android:layout_alignParentLeft="true"
-               android:layout_centerVertical="true"
-               >
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/openMessageActivity"
-                android:focusableInTouchMode="false"
-                android:focusable="false"
-                android:background="@drawable/messages"
-                />
-
-              <za.co.woolworths.financial.services.android.ui.views.WTextView
-                  android:layout_width="wrap_content"
-                  android:layout_height="match_parent"
-                  android:id="@+id/messageCounter"
-                  android:background="@drawable/message_counter_background"
-                  android:gravity="center"
-                  android:layout_gravity="end"
-                  android:textSize="10sp"
-                  android:paddingLeft="8dp"
-                  android:focusableInTouchMode="false"
-                  android:focusable="false"
-                  android:paddingRight="8dp"
-                  android:textColor="@color/white"
-                  android:visibility="gone"
-                  app:WTextView_font="medium_bold"
-                  />
-
-           </FrameLayout>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/openShoppingList"
-                android:layout_alignParentRight="true"
-                android:focusableInTouchMode="false"
-                android:focusable="false"
-                android:layout_centerVertical="true"
-                android:background="@drawable/shoppinglist"
-                />
 
             <FrameLayout
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/oval"
-                android:layout_alignParentTop="true"
-                android:focusableInTouchMode="false"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/messages"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false" />
+
+                <!--<za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/messageCounter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:background="@drawable/message_counter_background"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:gravity="center"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:visibility="gone"
+                    app:WTextView_font="medium_bold" />-->
+
+            </FrameLayout>
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/openShoppingList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/shoppinglist"
                 android:focusable="false"
-                android:layout_centerHorizontal="true">
+                android:focusableInTouchMode="false" />
+
+            <FrameLayout
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/initialLayout"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/oval"
+                android:focusable="false"
+                android:focusableInTouchMode="false">
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/initials"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:id="@+id/initials"
-                    android:textColor="@color/white"
-                    android:focusableInTouchMode="false"
                     android:focusable="false"
-                    android:textSize="23sp"
-                    app:WTextView_font="medium_bold"
-                    />
+                    android:focusableInTouchMode="false"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    app:WTextView_font="medium_bold" />
             </FrameLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/initialLayout"
+                android:layout_marginRight="10dp"
+                android:orientation="vertical"
+                >
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:letterSpacing="0.1"
+                    android:text="@string/welcome_back"
+                    android:textAllCaps="true"
+                    android:textColor="#999999"
+                    android:textSize="12sp"
+                    app:WTextView_font="medium" />
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    app:WTextView_font="medium_bold" />
+            </LinearLayout>
 
         </RelativeLayout>
-
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="6dp"
-            android:layout_marginTop="34dp"
-            android:text="@string/welcome_back"
-            android:focusableInTouchMode="false"
-            android:focusable="false"
-            android:letterSpacing="0.1"
-            android:textAllCaps="true"
-            android:textColor="#999999"
-            android:textSize="12sp"
-            app:WTextView_font="medium"
-            />
-        <za.co.woolworths.financial.services.android.ui.views.WTextView
-            android:id="@+id/user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="39dp"
-            android:focusableInTouchMode="false"
-            android:focusable="false"
-            android:textAllCaps="true"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            app:WTextView_font="medium_bold"
-            />
         <LinearLayout
-            android:id="@+id/llUnlinkedAccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -137,36 +135,39 @@
             <za.co.woolworths.financial.services.android.ui.views.WTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_marginBottom="36dp"
                 android:layout_marginLeft="@dimen/unlinked_account_copy_padding_left_right"
                 android:layout_marginRight="@dimen/unlinked_account_copy_padding_left_right"
-                android:layout_marginBottom="36dp"
-                android:text="@string/unlinked_account_copy"
+                android:gravity="center"
                 android:lineSpacingExtra="4sp"
-                app:WTextView_font="myriadpro_regular"
+                android:text="@string/unlinked_account_copy"
+                android:textColor="@color/black_50"
                 android:textSize="15sp"
-                android:textColor="@color/black_50"/>
+                app:WTextView_font="myriadpro_regular" />
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:id="@+id/linkAccountsBtn"
+                style="@style/whiteWButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:id="@+id/linkAccountsBtn"
-                android:text="@string/link_account"
-                android:textAllCaps="true"
-                android:gravity="center"
-                android:focusableInTouchMode="false"
-                style="@style/whiteWButtonStyle"
-                android:focusable="false"
-                android:letterSpacing="0.2"
-                app:WButton_font="medium_bold"
-                android:textSize="12sp"
+                android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginBottom="16dp"
-                />
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:gravity="center"
+                android:letterSpacing="0.2"
+                android:minHeight="48dp"
+                android:text="@string/link_account"
+                android:textAllCaps="true"
+                android:textSize="12sp"
+                app:WButton_font="medium_bold" />
         </LinearLayout>
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:background="@color/recent_search_bg" />
 
 </LinearLayout>

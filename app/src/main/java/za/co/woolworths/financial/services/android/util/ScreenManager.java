@@ -13,7 +13,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.OnBoardingActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-import za.co.woolworths.financial.services.android.ui.activities.WOneAppBaseActivity;
+import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity;
 
 /**
  * Created by eesajacobs on 2016/11/30.
@@ -23,7 +23,7 @@ public class ScreenManager {
 
 	public static void presentMain(Activity activity, String notificationUtils) {
 
-		Intent intent = new Intent(activity, WOneAppBaseActivity.class);
+		Intent intent = new Intent(activity, BottomNavigationActivity.class);
 		intent.putExtra(NotificationUtils.PUSH_NOTIFICATION_INTENT, notificationUtils);
 		activity.startActivityForResult(intent, 0);
 		activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
