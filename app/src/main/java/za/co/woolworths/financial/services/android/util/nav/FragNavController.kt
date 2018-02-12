@@ -607,32 +607,37 @@ class FragNavController internal constructor(builder: Builder, savedInstanceStat
     @SuppressLint("CommitTransaction")
     @CheckResult
     private fun createTransactionWithOptions(transactionOptions: FragNavTransactionOptions?, isPopping: Boolean): FragmentTransaction {
-        return fragmentManger.beginTransaction().apply {
-            transactionOptions ?: defaultTransactionOptions?.also { options ->
-                if (isPopping) {
-                    setCustomAnimations(options.popEnterAnimation, options.popExitAnimation)
-                } else {
-                    setCustomAnimations(options.enterAnimation, options.exitAnimation)
-                }
+        var transactionOptions = transactionOptions
+        val ft = fragmentManger.beginTransaction()
+        if (transactionOptions == null) {
+            transactionOptions = defaultTransactionOptions
+        }
+        if (transactionOptions != null) {
 
-                setTransitionStyle(options.transitionStyle)
+            ft.setCustomAnimations(transactionOptions.enterAnimation, transactionOptions.exitAnimation, transactionOptions.popEnterAnimation, transactionOptions.popExitAnimation)
+            ft.setTransitionStyle(transactionOptions.transitionStyle)
 
-                setTransition(options.transition)
+            ft.setTransition(transactionOptions.transition)
 
-                options.sharedElements.forEach { sharedElement ->
-                    addSharedElement(
-                            sharedElement.first,
-                            sharedElement.second
-                    )
-                }
 
-                when {
-                    options.breadCrumbTitle != null -> setBreadCrumbTitle(options.breadCrumbTitle)
-                    options.breadCrumbShortTitle != null -> setBreadCrumbShortTitle(options.breadCrumbShortTitle)
+            if (transactionOptions.sharedElements != null) {
+                for (sharedElement in transactionOptions.sharedElements) {
+                    ft.addSharedElement(sharedElement.first, sharedElement.second)
                 }
             }
+
+            if (transactionOptions.breadCrumbTitle != null) {
+                ft.setBreadCrumbTitle(transactionOptions.breadCrumbTitle)
+            }
+
+            if (transactionOptions.breadCrumbShortTitle != null) {
+                ft.setBreadCrumbShortTitle(transactionOptions.breadCrumbShortTitle)
+
+            }
         }
+        return ft
     }
+
 
     /**
      * Helper function to commit fragment transaction with transaction option - allowStateLoss
