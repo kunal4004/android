@@ -41,8 +41,6 @@ public interface BottomNavigator {
 
 	void showStatusBar();
 
-	void setCurrentItem(int position);
-
 	void hideStatusBar();
 
 	void fadeOutToolbar(int color);

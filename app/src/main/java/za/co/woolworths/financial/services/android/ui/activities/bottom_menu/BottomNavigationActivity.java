@@ -24,6 +24,8 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.ActivityBottomNavigationBinding;
 import com.google.gson.Gson;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -32,7 +34,6 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
-import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
@@ -52,7 +53,9 @@ import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
+import za.co.woolworths.financial.services.android.util.nav.FragNavSwitchController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavTransactionOptions;
+import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTabHistoryController;
 
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback {
 
@@ -69,6 +72,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private BottomNavigationViewModel bottomNavigationViewModel;
 	private FragNavController mNavController;
 	private String TAG = this.getClass().getSimpleName();
+	private WRewardsFragment wRewardsFragment;
+	private MyAccountsFragment myAccountsFragment;
 
 	@Override
 	public int getLayoutId() {
@@ -97,17 +102,21 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Bundle bundle = getIntent().getExtras();
 		mNavController = FragNavController.newBuilder(savedInstanceState,
 				getSupportFragmentManager(),
 				R.id.frag_container)
 				.fragmentHideStrategy(FragNavController.HIDE)
 				.transactionListener(this)
+				.switchController(FragNavTabHistoryController.UNLIMITED_TAB_HISTORY, new FragNavSwitchController() {
+					@Override
+					public void switchTab(int index, @Nullable FragNavTransactionOptions transactionOptions) {
+						getBottomNavigationById().setCurrentItem(index);
+					}
+				})
 				.eager(true)
 				.rootFragmentListener(this, 5)
 				.build();
 		renderUI();
-
 		mDisposables.add(woolworthsApplication()
 				.bus()
 				.toObservable()
@@ -126,17 +135,23 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 								bundle.putString("str_search_product", searchProduct);
 								gridFragment.setArguments(bundle);
 								pushFragment(gridFragment);
-							} else if (object instanceof AuthenticationState) {
-								AuthenticationState auth = ((AuthenticationState) object);
-								if (auth.getAuthStateTypeDef() == AuthenticationState.SIGN_OUT) {
-									ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
-								}
+							}
+						} else if (object instanceof AuthenticationState) {
+							AuthenticationState auth = ((AuthenticationState) object);
+							if (auth.getAuthStateTypeDef() == AuthenticationState.SIGN_OUT) {
+								ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
 							}
 						}
 					}
 				}));
 
-//		if (bundle != null) {
+		try {
+			switchTab(INDEX_ACCOUNT);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+// Bundle bundle = getIntent().getExtras();
+// if (bundle != null) {
 //			if (!TextUtils.isEmpty(bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT))) {
 //				switchTab(INDEX_ACCOUNT);
 //			} else {
@@ -158,14 +173,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void renderUI() {
 		mToolbar = getToolbar();
 		setActionBar();
-		hideToolbar();
-		getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 		bottomNavigationViewModel = ViewModelProviders.of(this).get(BottomNavigationViewModel.class);
 		bottomNavigationViewModel.setNavigator(this);
 		getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 		bottomNavConfig();
 		slideUpPanelListener();
 		setUpRuntimePermission();
+		getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+		removeToolbar();
 	}
 
 	@Override
@@ -270,11 +285,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
-	public void setCurrentItem(int position) {
-
-	}
-
-	@Override
 	public void hideStatusBar() {
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	}
@@ -303,10 +313,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public void pushFragment(Fragment fragment) {
 		if (mNavController != null) {
-			mNavController.pushFragment(fragment, new FragNavTransactionOptions.Builder()
+
+
+			FragNavTransactionOptions ft = new FragNavTransactionOptions.Builder()
+					.allowStateLoss(true)
 					.customAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
-					.customAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left, R.anim.slide_in_from_left, R.anim.slide_out_to_right)
-					.build());
+					.build();
+
+			mNavController.pushFragment(fragment, ft);
 		}
 	}
 
@@ -340,19 +354,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				case R.id.navigation_cart:
 					MultiClickPreventer.preventMultiClick(getViewDataBinding().wBottomNavigation);
 					openCartActivity();
-
 					return false;
 
 				case R.id.navigation_reward:
 					setToolbarBackgroundColor(R.color.white);
-					setToolbarTitle(getString(R.string.nav_item_wrewards));
 					switchTab(INDEX_REWARD);
 					showToolbar();
 					return true;
 
 				case R.id.navigation_account:
 					setToolbarBackgroundColor(R.color.white);
-					setToolbarTitle(getString(R.string.nav_item_accounts));
 					switchTab(INDEX_ACCOUNT);
 					return true;
 			}
@@ -412,9 +423,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 			case INDEX_CART:
 				return new CartFragment();
 			case INDEX_REWARD:
-				return new WRewardsFragment();
+				wRewardsFragment = new WRewardsFragment();
+				return wRewardsFragment;
 			case INDEX_ACCOUNT:
-				return new MyAccountsFragment();
+				myAccountsFragment = new MyAccountsFragment();
+				return myAccountsFragment;
 		}
 		throw new IllegalStateException("Need to send an index that we know");
 	}
@@ -430,11 +443,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public void hideBottomNavigationMenu() {
 		hideView(getBottomNavigationById());
+		hideView(getViewDataBinding().bottomLine);
 	}
 
 	@Override
 	public void showBottomNavigationMenu() {
 		showView(getBottomNavigationById());
+		showView(getViewDataBinding().bottomLine);
 	}
 
 	@Override
@@ -481,7 +496,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		mNavController.switchTab(number);
 	}
 
-
 	@Override
 	public void PermissionGranted(int request_code) {
 		woolworthsApplication()
@@ -513,12 +527,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (mNavController.getCurrentFrag() instanceof WRewardsFragment) {
-			mNavController.getCurrentFrag().onActivityResult(requestCode, resultCode, data);
-		}
-
-		if (mNavController.getCurrentFrag() instanceof MyAccountsFragment) {
-			mNavController.getCurrentFrag().onActivityResult(requestCode, resultCode, data);
-		}
+		if (wRewardsFragment != null)
+			wRewardsFragment.onActivityResult(requestCode, resultCode, data);
+		if (myAccountsFragment != null)
+			myAccountsFragment.onActivityResult(requestCode, resultCode, data);
 	}
 }

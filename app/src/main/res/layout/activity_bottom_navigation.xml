@@ -38,7 +38,6 @@
                 android:layout_above="@+id/bottom_line"
                 android:layout_alignParentTop="true"
                 android:layout_below="@+id/incToolbar"
-                android:background="@drawable/horizontal_drw"
                 android:fitsSystemWindows="true"
                 />
 
@@ -62,7 +61,8 @@
 
             <include
                 android:id="@+id/incToolbar"
-                layout="@layout/toolbar"/>
+                layout="@layout/toolbar"
+                />
         </RelativeLayout>
 
         <FrameLayout
