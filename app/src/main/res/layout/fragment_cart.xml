@@ -1,80 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
-    <android.support.v4.widget.NestedScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/parentLayout"
+        android:visibility="visible"
+        >
 
-        <LinearLayout
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@color/white">
-
-                <ImageView
-                    android:id="@+id/iconMap"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:src="@drawable/mapview" />
-
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    style="@style/style_cart_delivery_selected"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/iconCaretRight"
-                    android:layout_toRightOf="@+id/iconMap"
-                    android:text="Woodstock, Western Cape" />
-
-                <ImageView
-                    android:id="@+id/iconCaretRight"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="9dp"
-                    android:layout_marginLeft="20dp"
-                    android:src="@drawable/ic_caret_black" />
-
-            </RelativeLayout>
-
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/style_cart_delivery_info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/cart_free_delivery_first_order" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/cartList"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:nestedScrollingEnabled="false"
-                android:scrollbars="none" />
-        </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+                android:orientation="vertical">
 
-    <za.co.woolworths.financial.services.android.ui.views.WButton
-        android:id="@+id/btnAddToCart"
-        style="@style/blackButtonStyle"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_weight="1"
-        android:letterSpacing="0.2"
-        android:text="@string/checkout"
-        app:WButton_font="medium_bold" />
-</RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/locationSelectedLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@color/white"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="9dp">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        style="@style/style_cart_delivery_selected"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/iconCaretRight"
+                        android:drawableLeft="@drawable/mapview"
+                        android:drawablePadding="16dp"
+                        android:gravity="center_vertical"
+                        android:text="Woodstock, Western Cape" />
+
+                    <ImageView
+                        android:id="@+id/iconCaretRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="20dp"
+                        android:src="@drawable/ic_caret_black" />
+
+                </RelativeLayout>
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/style_cart_delivery_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cart_free_delivery_first_order" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/cartList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:nestedScrollingEnabled="false"
+                    android:scrollbars="none"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/txtEmptyStateDesc"
+            style="@style/TableLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/semi_transparent_black"
+            app:WTextView_font="myriadpro_regular"
+            android:layout_centerInParent="true"
+            android:textSize="18sp"
+            android:text="You currently have no items\n in your cart."
+            android:visibility="gone"
+            />
+
+        <za.co.woolworths.financial.services.android.ui.views.WButton
+            android:id="@+id/btnAddToCart"
+            style="@style/blackButtonStyle"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:letterSpacing="0.2"
+            android:text="@string/checkout"
+            app:WButton_font="medium_bold"
+            android:visibility="visible"
+            />
+
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/loadingBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:visibility="gone" />
+
+    <include layout="@layout/no_connection_handler" />
+</FrameLayout>

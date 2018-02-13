@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:fresco="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <LinearLayout
@@ -24,10 +25,15 @@
             android:layout_gravity="center_vertical"
             android:src="@drawable/delete" />
 
-        <ImageView
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/cartProductImage"
             android:layout_width="84dp"
             android:layout_height="84dp"
-            android:background="@color/grey_bg" />
+            android:layout_gravity="center"
+            android:contentDescription="@string/app_name"
+            fresco:fadeDuration="50"
+            fresco:placeholderImage="@drawable/rectangle"
+            fresco:viewAspectRatio="0.5"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,7 +53,9 @@
                 style="@style/style_cart_item_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Product Details" />
+                android:text="Product Details"
+                android:visibility="invisible"
+                />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -55,7 +63,7 @@
 
                 <LinearLayout
                     android:layout_width="40dp"
-                    android:layout_height="30dp"
+                    android:layout_height="32dp"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentStart="true"
                     android:background="@drawable/border_quantity_dropdown"
@@ -64,11 +72,11 @@
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         style="@style/style_cart_item_quantity_value"
+                        android:id="@+id/quantity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginRight="4dp"
-                        android:text="1" />
+                        android:layout_marginRight="4dp" />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -79,13 +87,13 @@
                 </LinearLayout>
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/tvDescription"
+                    android:id="@+id/price"
                     style="@style/style_cart_item_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true"
-                    android:text="R 9.99" />
+                    />
 
             </RelativeLayout>
 
