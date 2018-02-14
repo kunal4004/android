@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
@@ -25,12 +26,19 @@ import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse;
 import za.co.woolworths.financial.services.android.models.rest.shop.GetProvinces;
 import za.co.woolworths.financial.services.android.ui.adapters.ProvinceSelectionAdapter;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
 
 public class ProvinceSelectionFragment extends Fragment implements ProvinceSelectionAdapter.OnItemClick {
 
     public DeliveryLocationSelectionFragmentChange deliveryLocationSelectionFragmentChange;
+
+    private ErrorHandlerView mErrorHandlerView;
+    private View btnRetry;
 
     private ProgressBar loadingProgressBar;
     private RecyclerView provinceList;
@@ -50,6 +58,12 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        RelativeLayout relNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), relNoConnectionLayout);
+        mErrorHandlerView.setMargin(relNoConnectionLayout, 0, 0, 0, 0);
+        btnRetry = view.findViewById(R.id.btnRetry);
+
         loadingProgressBar = view.findViewById(R.id.loadingProgressBar);
         provinceList = view.findViewById(R.id.provinceList);
 
@@ -72,6 +86,7 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
 
     private void loadProvinceItems() {
         toggleLoading(true);
+        mErrorHandlerView.hideErrorHandler();
         getProvincesAsync = getProvinces();
         getProvincesAsync.execute();
     }
@@ -85,9 +100,26 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
             }
 
             @Override
-            public void onFailure(String errorMessage) {
+            public void onFailure(final String errorMessage) {
                 Log.e("SuburbSelectionFragment", "getRegions Error: " + errorMessage);
-                // TODO: show error message
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // hide loading
+                        toggleLoading(false);
+                        btnRetry.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (new ConnectionDetector().isOnline(getActivity())) {
+                                    loadProvinceItems();
+                                }
+                            }
+
+                        });
+                        mErrorHandlerView.networkFailureHandler(errorMessage);
+                    }
+                });
             }
         });
     }
@@ -99,10 +131,39 @@ public class ProvinceSelectionFragment extends Fragment implements ProvinceSelec
                     configureProvinceList(response.regions);
                     break;
                 case 440:
-                    // TODO: do something about this
+                    SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.response.stsParams);
+                    SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
+
+                    // hide loading
+                    toggleLoading(false);
+                    btnRetry.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (new ConnectionDetector().isOnline(getActivity())) {
+                                loadProvinceItems();
+                            }
+                        }
+
+                    });
+                    mErrorHandlerView.networkFailureHandler("");
                     break;
                 default:
-                    // TODO: do something about this
+                    if (response.response != null) {
+                        Utils.alertErrorMessage(getActivity(), response.response.desc);
+
+                        // hide loading
+                        toggleLoading(false);
+                        btnRetry.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (new ConnectionDetector().isOnline(getActivity())) {
+                                    loadProvinceItems();
+                                }
+                            }
+
+                        });
+                        mErrorHandlerView.networkFailureHandler("");
+                    }
                     break;
             }
         } catch (Exception ignored) {
