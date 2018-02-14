@@ -100,12 +100,10 @@ public class WRewardsLoggedOutFragment extends Fragment implements View.OnClickL
 		getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 	}
 
-
 	@Override
 	public void onHiddenChanged(boolean hidden) {
 		super.onHiddenChanged(hidden);
-		if (!hidden) {
+		if (mBottomNavigator != null)
 			mBottomNavigator.removeToolbar();
-		}
 	}
 }

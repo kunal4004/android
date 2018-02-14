@@ -66,4 +66,6 @@ public interface BottomNavigator {
 	void setSelectedIconPosition(int position);
 
 	void switchTab(int number);
+
+	void clearStack();
 }
