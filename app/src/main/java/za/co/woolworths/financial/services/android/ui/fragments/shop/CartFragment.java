@@ -101,11 +101,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	@Override
-	public void onItemDeleteClick(CartProductAdapter.CartProductItemRow itemRow) {
+	public void onItemDeleteClick(String productId) {
 		// Log.i("CartFragment", "Item " + itemRow.productItem.productName + " delete button clicked!");
 
 		// TODO: Make API call to remove item + show loading before removing from list
-		cartProductAdapter.removeItem(itemRow);
+		//cartProductAdapter.removeItem(productId);
 	}
 
 	public boolean toggleEditMode() {
