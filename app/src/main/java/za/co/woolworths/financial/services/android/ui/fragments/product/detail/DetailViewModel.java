@@ -25,8 +25,10 @@ import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
+import za.co.woolworths.financial.services.android.models.dto.TokenValidationResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
+import za.co.woolworths.financial.services.android.models.rest.validate.IdentifyTokenValidation;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
@@ -478,5 +480,33 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 
 	public boolean productLoadFail() {
 		return productLoadFail;
+	}
+
+
+	public IdentifyTokenValidation identifyTokenValidation() {
+		return new IdentifyTokenValidation(new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				if (object != null) {
+					TokenValidationResponse tokenValidationResponse = (TokenValidationResponse) object;
+					if (tokenValidationResponse != null) {
+						switch (tokenValidationResponse.httpCode) {
+							case 200:
+								getNavigator().onSessionTokenValid();
+								break;
+
+							default:
+								getNavigator().onTokenValidationFailure(tokenValidationResponse);
+								break;
+						}
+					}
+				}
+			}
+
+			@Override
+			public void onFailure(String e) {
+				getNavigator().onTokenFailure(e);
+			}
+		});
 	}
 }

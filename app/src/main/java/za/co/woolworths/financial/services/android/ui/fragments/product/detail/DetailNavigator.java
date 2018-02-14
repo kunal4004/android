@@ -9,6 +9,7 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
+import za.co.woolworths.financial.services.android.models.dto.TokenValidationResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 
@@ -91,5 +92,16 @@ public interface DetailNavigator {
 
 	void onPermissionGranted();
 
-	void fetchFromJson();
+	void apiIdentifyTokenValidation();
+
+	void onTokenFailure(String e);
+
+	void onSessionTokenValid();
+
+	void onTokenValidationFailure(TokenValidationResponse tokenValidationResponse);
+
+	void onAddToCartLoad();
+
+	void onAddToCartLoadComplete();
+
 }

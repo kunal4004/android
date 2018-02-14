@@ -295,7 +295,7 @@
     <string name="ssl_error">SSL certificate invalid</string>
     <string name="product_item_found">items found</string>
     <string name="product_size">Size</string>
-    <string name="shop_online_woolies">Shop online</string>
+    <string name="add_to_cart">add to cart</string>
     <string name="add_to_shopping_list">Add to shopping list</string>
     <string name="add_to_list">ADD TO LIST</string>
     <string name="edit">EDIT</string>
