@@ -42,7 +42,11 @@ import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryL
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbSelectionAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
 
 public class SuburbSelectionFragment extends Fragment implements SuburbSelectionAdapter.SuburbSelectionCallback, View.OnTouchListener {
@@ -50,6 +54,9 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
     public Province selectedProvince;
 
     public DeliveryLocationSelectionFragmentChange deliveryLocationSelectionFragmentChange;
+
+    private ErrorHandlerView mErrorHandlerView;
+    private View btnRetry;
 
     private RelativeLayout suburbContentLayout;
     private ProgressBar loadingProgressBar;
@@ -78,6 +85,11 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        RelativeLayout relNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), relNoConnectionLayout);
+        mErrorHandlerView.setMargin(relNoConnectionLayout, 0, 0, 0, 0);
+        btnRetry = view.findViewById(R.id.btnRetry);
 
         suburbContentLayout = view.findViewById(R.id.suburbContentLayout);
         loadingProgressBar = view.findViewById(R.id.loadingProgressBar);
@@ -114,22 +126,40 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 
     private void loadSuburbItems() {
         toggleLoading(true);
+        mErrorHandlerView.hideErrorHandler();
         getSuburbsAsync = getSuburbs(selectedProvince.id);
         getSuburbsAsync.execute();
     }
 
-    private GetSuburbs getSuburbs(String locationId) {
+    private GetSuburbs getSuburbs(final String locationId) {
         return new GetSuburbs(locationId, new OnEventListener() {
             @Override
             public void onSuccess(Object object) {
                 Log.i("SuburbSelectionFragment", "getRegions Succeeded");
-                handleSuburbsResponse(((SuburbsResponse) object));
+                handleSuburbsResponse((SuburbsResponse) object);
             }
 
             @Override
-            public void onFailure(String errorMessage) {
+            public void onFailure(final String errorMessage) {
                 Log.e("SuburbSelectionFragment", "getRegions Error: " + errorMessage);
-                // TODO: show error message
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // hide loading
+                        toggleLoading(false);
+                        btnRetry.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (new ConnectionDetector().isOnline(getActivity())) {
+                                    loadSuburbItems();
+                                }
+                            }
+
+                        });
+                        mErrorHandlerView.networkFailureHandler(errorMessage);
+                    }
+                });
             }
         });
     }
@@ -141,10 +171,39 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
                     configureSuburbList(response.suburbs);
                     break;
                 case 440:
-                    // TODO: do something about this
+                    SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.response.stsParams);
+                    SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
+
+                    // hide loading
+                    toggleLoading(false);
+                    btnRetry.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (new ConnectionDetector().isOnline(getActivity())) {
+                                loadSuburbItems();
+                            }
+                        }
+
+                    });
+                    mErrorHandlerView.networkFailureHandler("");
                     break;
                 default:
-                    // TODO: do something about this
+                    if (response.response != null) {
+                        Utils.alertErrorMessage(getActivity(), response.response.desc);
+
+                        // hide loading
+                        toggleLoading(false);
+                        btnRetry.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (new ConnectionDetector().isOnline(getActivity())) {
+                                    loadSuburbItems();
+                                }
+                            }
+
+                        });
+                        mErrorHandlerView.networkFailureHandler("");
+                    }
                     break;
             }
         } catch (Exception ignored) {
@@ -195,6 +254,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 
     private void setSuburbRequest(final Province province, final Suburb suburb) {
         // TODO: confirm loading when doing this request
+        mErrorHandlerView.hideErrorHandlerLayout();
         toggleLoading(true);
 
         setDeliveryLocationSuburb = new SetDeliveryLocationSuburb(getActivity(), suburb.id, new OnEventListener() {
@@ -205,19 +265,32 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
             }
 
             @Override
-            public void onFailure(String errorMessage) {
+            public void onFailure(final String errorMessage) {
                 Log.e("SuburbSelectionFragment", "setSuburb Error: " + errorMessage);
-                // hide loading
-                toggleLoading(false);
 
-                // TODO: do something
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // hide loading
+                        toggleLoading(false);
+                        btnRetry.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (new ConnectionDetector().isOnline(getActivity())) {
+                                    setSuburbRequest(province, suburb);
+                                }
+                            }
 
+                        });
+                        mErrorHandlerView.networkFailureHandler(errorMessage);
+                    }
+                });
             }
         });
         setDeliveryLocationSuburb.execute();
     }
 
-    private void handleSetSuburbResponse(SetDeliveryLocationSuburbResponse response, Province province, Suburb suburb) {
+    private void handleSetSuburbResponse(SetDeliveryLocationSuburbResponse response, final Province province, final Suburb suburb) {
         try {
             switch (response.httpCode) {
                 case 200:
@@ -226,10 +299,39 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
                     getActivity().finish();
                     break;
                 case 440:
-                    // TODO: do something about this
+                    SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.response.stsParams);
+                    SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
+
+                    // hide loading
+                    toggleLoading(false);
+                    btnRetry.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (new ConnectionDetector().isOnline(getActivity())) {
+                                setSuburbRequest(province, suburb);
+                            }
+                        }
+
+                    });
+                    mErrorHandlerView.networkFailureHandler("");
                     break;
                 default:
-                    // TODO: do something about this
+                    if (response.response != null) {
+                        Utils.alertErrorMessage(getActivity(), response.response.desc);
+
+                        // hide loading
+                        toggleLoading(false);
+                        btnRetry.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (new ConnectionDetector().isOnline(getActivity())) {
+                                    setSuburbRequest(province, suburb);
+                                }
+                            }
+
+                        });
+                        mErrorHandlerView.networkFailureHandler("");
+                    }
                     break;
             }
         } catch (Exception ignored) {
