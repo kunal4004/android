@@ -172,8 +172,11 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 			}
 		} else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 			(WoolworthsApplication.getInstance().getWGlobalState()).setAccountSignInState(true);
+			(WoolworthsApplication.getInstance().getWGlobalState()).setRewardSignInState(true);
 			removeAllChildFragments((AppCompatActivity) getActivity());
 			reloadFragment();
+		} else if (resultCode == 0) {
+			Log.d(TAG, "empty");
 		} else {
 			try {
 				signOut();
