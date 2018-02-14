@@ -386,9 +386,9 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/red"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true">
+            android:layout_alignParentTop="true"
+            android:background="@color/red">
 
             <ImageView
                 android:id="@+id/imClose"
@@ -421,7 +421,7 @@
                     android:layout_marginStart="1dp"
                     android:layout_marginTop="2dp"
                     android:layout_weight=".5"
-                    android:text="@string/shop_online_woolies"/>
+                    android:text="@string/add_to_cart"/>
 
                 <LinearLayout
                     android:id="@+id/llStoreFinder"
