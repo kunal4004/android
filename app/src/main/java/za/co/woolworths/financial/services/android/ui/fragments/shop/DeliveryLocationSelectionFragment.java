@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.gson.Gson;
@@ -33,13 +34,21 @@ import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryL
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.DeliveryLocationAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
+import za.co.woolworths.financial.services.android.util.ConnectionDetector;
+import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
 
 
 public class DeliveryLocationSelectionFragment extends Fragment implements DeliveryLocationAdapter.OnItemClick, View.OnClickListener {
 
     public DeliveryLocationSelectionFragmentChange deliveryLocationSelectionFragmentChange;
+
+    private ErrorHandlerView mErrorHandlerView;
+    private View btnRetry;
+
     private View selectionContentLayout, layoutPreviousSelectedLocations;
     private ProgressBar loadingProgressBar;
     private RecyclerView deliveryLocationHistoryList;
@@ -62,6 +71,12 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        RelativeLayout relNoConnectionLayout = view.findViewById(R.id.no_connection_layout);
+        mErrorHandlerView = new ErrorHandlerView(getActivity(), relNoConnectionLayout);
+        mErrorHandlerView.setMargin(relNoConnectionLayout, 0, 0, 0, 0);
+        btnRetry = view.findViewById(R.id.btnRetry);
+
         selectionContentLayout = view.findViewById(R.id.selectionContentLayout);
         layoutPreviousSelectedLocations = view.findViewById(R.id.layoutPreviousSelectedLocations);
         loadingProgressBar = view.findViewById(R.id.loadingProgressBar);
@@ -141,6 +156,10 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
     @Override
     public void onItemClick(DeliveryLocationHistory location) {
         Log.i("DeliveryLocation", "Location selected: " + location.suburb.name);
+        setSuburb(location);
+    }
+
+    private void setSuburb(final DeliveryLocationHistory location) {
         // TODO: confirm loading when doing this request
         toggleLoading(true);
 
@@ -148,23 +167,37 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
             @Override
             public void onSuccess(Object object) {
                 Log.i("SuburbSelectionFragment", "setSuburb Succeeded");
-                handleSetSuburbResponse((SetDeliveryLocationSuburbResponse) object);
+                handleSetSuburbResponse((SetDeliveryLocationSuburbResponse) object, location);
             }
 
             @Override
-            public void onFailure(String errorMessage) {
+            public void onFailure(final String errorMessage) {
                 Log.e("SuburbSelectionFragment", "setSuburb Error: " + errorMessage);
-                // hide loading
-                toggleLoading(false);
 
-                // TODO: do something
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // hide loading
+                        toggleLoading(false);
+                        btnRetry.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (new ConnectionDetector().isOnline(getActivity())) {
+                                    setSuburb(location);
+                                }
+                            }
+
+                        });
+                        mErrorHandlerView.networkFailureHandler(errorMessage);
+                    }
+                });
 
             }
         });
         setDeliveryLocationSuburb.execute();
     }
 
-    private void handleSetSuburbResponse(SetDeliveryLocationSuburbResponse response) {
+    private void handleSetSuburbResponse(SetDeliveryLocationSuburbResponse response, final DeliveryLocationHistory location) {
         try {
             switch (response.httpCode) {
                 case 200:
@@ -172,10 +205,39 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
                     getActivity().finish();
                     break;
                 case 440:
-                    // TODO: do something about this
+                    SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.response.stsParams);
+                    SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
+
+                    // hide loading
+                    toggleLoading(false);
+                    btnRetry.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (new ConnectionDetector().isOnline(getActivity())) {
+                                setSuburb(location);
+                            }
+                        }
+
+                    });
+                    mErrorHandlerView.networkFailureHandler("");
                     break;
                 default:
-                    // TODO: do something about this
+                    if (response.response != null) {
+                        Utils.alertErrorMessage(getActivity(), response.response.desc);
+
+                        // hide loading
+                        toggleLoading(false);
+                        btnRetry.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (new ConnectionDetector().isOnline(getActivity())) {
+                                    setSuburb(location);
+                                }
+                            }
+
+                        });
+                        mErrorHandlerView.networkFailureHandler("");
+                    }
                     break;
             }
         } catch (Exception ignored) {
