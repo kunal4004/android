@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
@@ -45,7 +44,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.category
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
@@ -74,9 +72,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private ArrayList<String> permissions;
 	private BottomNavigationViewModel bottomNavigationViewModel;
 	private FragNavController mNavController;
-	private String TAG = this.getClass().getSimpleName();
 	private WRewardsFragment wRewardsFragment;
 	private MyAccountsFragment myAccountsFragment;
+	private String TAG = this.getClass().getSimpleName();
 
 	@Override
 	public int getLayoutId() {
@@ -112,9 +110,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		mNavController = FragNavController.newBuilder(savedInstanceState,
 				getSupportFragmentManager(),
 				R.id.frag_container)
-				.fragmentHideStrategy(FragNavController.DETACH_ON_NAVIGATE_HIDE_ON_SWITCH)
+				.fragmentHideStrategy(FragNavController.HIDE)
 				.transactionListener(this)
-				.switchController(FragNavTabHistoryController.Companion.UNIQUE_TAB_HISTORY, new FragNavSwitchController() {
+				.switchController(FragNavTabHistoryController.Companion.UNLIMITED_TAB_HISTORY, new FragNavSwitchController() {
 					@Override
 					public void switchTab(int index, @Nullable FragNavTransactionOptions transactionOptions) {
 						getBottomNavigationById().setCurrentItem(index);
@@ -146,6 +144,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 						} else if (object instanceof AuthenticationState) {
 							AuthenticationState auth = ((AuthenticationState) object);
 							if (auth.getAuthStateTypeDef() == AuthenticationState.SIGN_OUT) {
+								addBadge(INDEX_REWARD, 0);
+								addBadge(INDEX_ACCOUNT, 0);
 								ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
 							}
 						}
@@ -177,11 +177,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		setActionBar();
 		bottomNavigationViewModel = ViewModelProviders.of(this).get(BottomNavigationViewModel.class);
 		bottomNavigationViewModel.setNavigator(this);
-		getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 		bottomNavConfig();
 		slideUpPanelListener();
 		setUpRuntimePermission();
 		getBottomNavigationById().setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+		getBottomNavigationById().setOnNavigationItemReselectedListener(mOnNavigationItemReSelectedListener);
 		removeToolbar();
 	}
 
@@ -346,6 +346,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				case R.id.navigation_today:
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_TODAY);
+					hideToolbar();
 					return true;
 
 				case R.id.navigation_shop:
@@ -361,7 +362,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				case R.id.navigation_reward:
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_REWARD);
-					showToolbar();
 					return true;
 
 				case R.id.navigation_account:
@@ -370,6 +370,41 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					return true;
 			}
 			return false;
+		}
+	};
+
+
+	private BottomNavigationView.OnNavigationItemReselectedListener mOnNavigationItemReSelectedListener
+			= new BottomNavigationView.OnNavigationItemReselectedListener() {
+		@Override
+		public void onNavigationItemReselected(@NonNull MenuItem item) {
+
+			switch (item.getItemId()) {
+				case R.id.navigation_today:
+					Log.e(TAG, "navigation_today");
+					clearStack();
+					break;
+
+				case R.id.navigation_shop:
+					Log.e(TAG, "navigation_shop");
+					clearStack();
+					break;
+
+				case R.id.navigation_cart:
+					Log.e(TAG, "navigation_cart");
+					clearStack();
+					break;
+
+				case R.id.navigation_reward:
+					Log.e(TAG, "navigation_reward");
+					clearStack();
+					break;
+
+				case R.id.navigation_account:
+					Log.e(TAG, "navigation_account");
+					clearStack();
+					break;
+			}
 		}
 	};
 
@@ -382,6 +417,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void onBackPressed() {
 		if (!mNavController.isRootFragment()) {
 			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build());
+		} else {
+
 		}
 	}
 
@@ -496,6 +533,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public void switchTab(int number) {
 		mNavController.switchTab(number);
+	}
+
+	@Override
+	public void clearStack() {
+		if (mNavController != null)
+			mNavController.clearStack(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build());
 	}
 
 	@Override
