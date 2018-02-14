@@ -3,8 +3,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -87,7 +85,6 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		hideToolbar();
 		setTitle(getString(R.string.nav_item_wrewards));
 		mWGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
 		viewPager = getViewDataBinding().viewpager;
@@ -95,7 +92,6 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		fragmentView = getViewDataBinding().fragmentView;
 		tabLayout = getViewDataBinding().tabs;
 		viewPager.setOffscreenPageLimit(3);
-		progressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
 		mRlConnect = getViewDataBinding().incNoConnectionHandler.noConnectionLayout;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), mRlConnect);
 		mErrorHandlerView.setMargin(mRlConnect, 0, 0, 0, 0);
@@ -135,7 +131,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 
 	private void setupTabIcons(int activeVoucherCount) {
 		String[] tabTitle = {getActivity().getString(R.string.overview), getActivity().getString(R.string.vouchers), getActivity().getString(R.string.savings)};
-
+		setTitle(getString(R.string.nav_item_wrewards));
 		for (int i = 0; i < tabTitle.length; i++) {
 			tabLayout.getTabAt(i).setCustomView(prepareTabView(i, tabTitle, activeVoucherCount));
 		}
@@ -183,7 +179,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 					mWGlobalState.setRewardSignInState(true);
 					mWGlobalState.setRewardHasExpired(false);
 					if (response.voucherCollection.vouchers != null) {
-						getBottomNavigator().addBadge(3, response.voucherCollection.vouchers.size());
+						addBadge(BottomNavigationActivity.INDEX_REWARD, response.voucherCollection.vouchers.size());
 					} else {
 						clearVoucherCounter();
 					}
@@ -242,7 +238,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	}
 
 	public void clearVoucherCounter() {
-		getBottomNavigator().addBadge(3, 0);
+		addBadge(3, 0);
 	}
 
 	public void loadCardDetails() {
@@ -306,7 +302,13 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		super.onHiddenChanged(hidden);
 		if (!hidden) {
 			setTitle(getString(R.string.nav_item_wrewards));
-			//showToolbar();
+			hideToolbar();
 		}
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		hideToolbar();
 	}
 }
