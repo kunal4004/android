@@ -1,6 +1,5 @@
 package za.co.woolworths.financial.services.android.ui.fragments.contact_us;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -27,7 +26,6 @@ import za.co.woolworths.financial.services.android.util.Utils;
  */
 
 public class ContactUsFinancialServiceFragment extends Fragment implements View.OnClickListener {
-	public ContactUsFragmentChange contactUsFragmentChange;
 	private static final int REQUEST_CALL = 1;
 	Intent callIntent;
 
@@ -60,23 +58,13 @@ public class ContactUsFinancialServiceFragment extends Fragment implements View.
 	}
 
 	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
-		try {
-			contactUsFragmentChange = (ContactUsFragmentChange) getActivity();
-		} catch (ClassCastException ex) {
-			Log.e("Interface", ex.toString());
-		}
-	}
-
-	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.localCaller:
-				Utils.makeCall(getActivity(),getActivity().getResources().getString(R.string.fs_local_caller_number));
+				Utils.makeCall(getActivity(), getActivity().getResources().getString(R.string.fs_local_caller_number));
 				break;
 			case R.id.internationalCaller:
-				Utils.makeCall(getActivity(),getActivity().getResources().getString(R.string.fs_inter_national_caller_number));
+				Utils.makeCall(getActivity(), getActivity().getResources().getString(R.string.fs_inter_national_caller_number));
 				break;
 			case R.id.blackCrediCardQuery:
 				sendEmail(getActivity().getResources().getString(R.string.email_black_credit_card_query), getActivity().getResources().getString(R.string.txt_black_credit_card_query));
@@ -114,8 +102,6 @@ public class ContactUsFinancialServiceFragment extends Fragment implements View.
 			case REQUEST_CALL:
 				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 					startActivity(callIntent);
-				} else {
-					////
 				}
 		}
 	}
@@ -135,6 +121,18 @@ public class ContactUsFinancialServiceFragment extends Fragment implements View.
 					CustomPopUpWindow.MODAL_LAYOUT.INFO,
 					getActivity().getResources().getString(R.string.contact_us_no_email_error)
 							.replace("email_address", emailId).replace("subject_line", subject));
+		}
+	}
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			if (mBottomNavigator != null) {
+				mBottomNavigator.setTitle(getActivity().getResources().getString(R.string.contact_us_financial_services));
+				mBottomNavigator.displayToolbar();
+				mBottomNavigator.showBackNavigationIcon(true);
+			}
 		}
 	}
 }

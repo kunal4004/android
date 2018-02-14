@@ -79,8 +79,6 @@ public class SupplyExpensesDetailFragment extends CLIFragment implements View.On
 		if (activity instanceof CLIPhase2Activity) {
 			activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		}
-		FragmentUtils fragmentUtils = new FragmentUtils(getActivity());
-		fragmentUtils.hideSoftKeyboard();
 		llMortgagePayment.requestFocus();
 	}
 

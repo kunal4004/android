@@ -255,7 +255,7 @@ public class WGlobalState {
 		this.creditLimit = creditLimit;
 	}
 
-	public boolean setToolbarIsShown() {
+	public boolean toolbarIsShown() {
 		return toolbarIsDisplayed;
 	}
 

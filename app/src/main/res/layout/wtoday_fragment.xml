@@ -3,6 +3,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:clickable="true"
         android:focusable="true"
+        android:layout_alignParentTop="true"
         tools:context="za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment">
 
     <data>

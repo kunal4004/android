@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.awfs.coordination.R;
@@ -19,6 +20,7 @@ import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
@@ -31,6 +33,7 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 
 	private WGlobalState mWGlobalState;
 	private WRewardViewModel mWRewardViewModel;
+	private String TAG = this.getClass().getSimpleName();
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,7 +46,6 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		hideToolbar();
 		initialize();
 	}
 
@@ -98,16 +100,20 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 	}
 
 	public void reloadFragment() {
-		WRewardsFragment fragment = (WRewardsFragment)
-				getFragmentManager().findFragmentById(R.id.frag_container);
-
-		getFragmentManager().beginTransaction()
-				.detach(fragment)
-				.attach(fragment)
-				.commit();
+		try {
+			WRewardsFragment fragment = (WRewardsFragment)
+					getFragmentManager().findFragmentById(R.id.frag_container);
+			getFragmentManager().beginTransaction()
+					.detach(fragment)
+					.attach(fragment)
+					.commit();
+		} catch (ClassCastException ex) {
+			Log.d(TAG, ex.toString());
+		}
 	}
 
 	public void linkSignIn() {
+		hideToolbar();
 		FragmentManager childFragMan = getChildFragmentManager();
 		FragmentTransaction childFragTrans = childFragMan.beginTransaction();
 		WRewardsLoggedinAndLinkedFragment fragmentChild = new WRewardsLoggedinAndLinkedFragment();
@@ -116,6 +122,7 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 	}
 
 	private void notLinkSignIn() {
+		hideToolbar();
 		FragmentManager childFragMan = getChildFragmentManager();
 		FragmentTransaction childFragTrans = childFragMan.beginTransaction();
 		WRewardsLoggedinAndNotLinkedFragment fragmentChild = new WRewardsLoggedinAndNotLinkedFragment();
@@ -124,11 +131,14 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 	}
 
 	private void signOut() {
+		hideToolbar();
 		FragmentManager childFragMan = getChildFragmentManager();
 		FragmentTransaction childFragTrans = childFragMan.beginTransaction();
 		WRewardsLoggedOutFragment fragmentChild = new WRewardsLoggedOutFragment();
 		childFragTrans.add(R.id.content_frame, fragmentChild);
 		childFragTrans.commit();
+		addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
+		addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
 	}
 
 	private void replaceFragment(JWTDecodedModel jwtDecodedModel) {
@@ -162,8 +172,11 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 			}
 		} else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 			(WoolworthsApplication.getInstance().getWGlobalState()).setAccountSignInState(true);
+			(WoolworthsApplication.getInstance().getWGlobalState()).setRewardSignInState(true);
 			removeAllChildFragments((AppCompatActivity) getActivity());
 			reloadFragment();
+		} else if (resultCode == 0) {
+			Log.d(TAG, "empty");
 		} else {
 			try {
 				signOut();
@@ -196,5 +209,17 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 			mWGlobalState.resetPressState();
 		} catch (Exception ignored) {
 		}
+	}
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			hideToolbar();
+			reloadFragment();
+		} else {
+			reloadFragment();
+		}
+		setTitle(getString(R.string.wrewards));
 	}
 }

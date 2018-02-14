@@ -38,6 +38,8 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 		btnClearCart = findViewById(R.id.btnClearCart);
 		btnClearCart.setOnClickListener(this);
 
+		btnEditCart = findViewById(R.id.btnEditCart);
+
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		getSupportActionBar().setTitle(null);
@@ -82,5 +84,13 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 	public void finishActivity() {
 		finish();
 		overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+	}
+
+	public void showEditCart() {
+		btnEditCart.setVisibility(View.VISIBLE);
+	}
+
+	public void hideEditCart() {
+		btnEditCart.setVisibility(View.GONE);
 	}
 }

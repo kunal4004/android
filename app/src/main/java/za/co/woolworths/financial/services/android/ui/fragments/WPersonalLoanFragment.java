@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -35,6 +36,7 @@ import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.rest.CLIGetOfferActive;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.ui.activities.BalanceProtectionActivity;
+import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WTransactionsActivity;
@@ -54,7 +56,7 @@ import za.co.woolworths.financial.services.android.util.controller.IncreaseLimit
 public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCardsFragment implements View.OnClickListener, FragmentLifecycle, NetworkChangeListener {
 
 	public WTextView tvIncreaseLimitDescription, availableBalance, creditLimit, dueDate, minAmountDue, currentBalance, tvViewTransaction, tvIncreaseLimit, tvProtectionInsurance;
-	String productOfferingId;
+	private String productOfferingId;
 	private WoolworthsApplication woolworthsApplication;
 	private ProgressBar mProgressCreditLimit;
 	private WTextView tvApplyNowIncreaseLimit;
@@ -75,6 +77,8 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	private RelativeLayout relBalanceProtection, relViewTransactions;
 	private CLIGetOfferActive cliGetOfferActive;
 	private final CompositeDisposable disposables = new CompositeDisposable();
+	private RelativeLayout rlViewStatement;
+	private AccountsResponse accountsResponse;
 
 	@Nullable
 	@Override
@@ -105,10 +109,11 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 							if (object instanceof BusStation) {
 								BusStation busStation = (BusStation) object;
 								OfferActive offerActive = busStation.getOfferActive();
-								hideCLIView();
 								if (offerActive != null) {
+									hideCLIView();
 									cliOfferStatus(offerActive);
 								} else if (busStation.makeApiCall()) {
+									hideCLIView();
 									personalWasAlreadyRunOnce = false;
 									retryConnect();
 								} else {
@@ -117,6 +122,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 						}
 					}));
 		}
+
 	}
 
 	private void init(View view) {
@@ -124,6 +130,7 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mSharePreferenceHelper = SharePreferenceHelper.getInstance(getActivity());
 		availableBalance = (WTextView) view.findViewById(R.id.available_funds);
 		creditLimit = (WTextView) view.findViewById(R.id.creditLimit);
+		rlViewStatement = (RelativeLayout) view.findViewById(R.id.rlViewStatement);
 		dueDate = (WTextView) view.findViewById(R.id.dueDate);
 		minAmountDue = (WTextView) view.findViewById(R.id.minAmountDue);
 		currentBalance = (WTextView) view.findViewById(R.id.currentBalance);
@@ -153,19 +160,20 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 		mRelFindOutMore.setOnClickListener(this);
 		mRelIncreaseMyLimit.setOnClickListener(this);
 		llIncreaseLimitContainer.setOnClickListener(this);
+		rlViewStatement.setOnClickListener(this);
 		connectionBroadcast = Utils.connectionBroadCast(getActivity(), this);
 	}
 
 	private void setAccountDetails() {
 		boolBroadcastRegistered = true;
 		getActivity().registerReceiver(connectionBroadcast, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
-		AccountsResponse temp = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
+		accountsResponse = new Gson().fromJson(getArguments().getString("accounts"), AccountsResponse.class);
 		onLoadComplete();
 		mErrorHandlerView = new ErrorHandlerView(getActivity());
 		if (!new ConnectionDetector().isOnline(getActivity()))
 			mErrorHandlerView.showToast();
-		if (temp != null)
-			bindData(temp);
+		if (accountsResponse != null)
+			bindData(accountsResponse);
 
 		{
 			if (controllerNotNull())
@@ -224,6 +232,9 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	@Override
 	public void onClick(View v) {
 		MultiClickPreventer.preventMultiClick(v);
+		if (accountsResponse != null) {
+			productOfferingId = Utils.getProductOfferingId(accountsResponse, "PL");
+		}
 		switch (v.getId()) {
 			case R.id.rlViewTransactions:
 			case R.id.tvViewTransaction:
@@ -249,6 +260,14 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 				getActivity().overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 				break;
 
+			case R.id.rlViewStatement:
+				Activity activity = getActivity();
+				if (activity != null) {
+					Intent openStatement = new Intent(getActivity(), StatementActivity.class);
+					startActivity(openStatement);
+					activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+				}
+				break;
 			case R.id.relFindOutMore:
 				if (controllerNotNull())
 					mIncreaseLimitController.intentFindOutMore(getActivity(), offerActive);
@@ -325,18 +344,21 @@ public class WPersonalLoanFragment extends MyAccountCardsActivity.MyAccountCards
 	}
 
 	private void offerActiveResult(OfferActive offerActive) {
-		String messageSummary = TextUtils.isEmpty(offerActive.messageSummary) ? "" : offerActive.messageSummary;
-		if (controllerNotNull()) {
-			if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
-				mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
-				mIncreaseLimitController.disableView(llIncreaseLimitContainer);
-				mIncreaseLimitController.disableView(tvIncreaseLimit);
-			} else {
-				mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
-				mIncreaseLimitController.enableView(llIncreaseLimitContainer);
-				mIncreaseLimitController.enableView(tvIncreaseLimit);
+		try {
+			String messageSummary = TextUtils.isEmpty(offerActive.messageSummary) ? "" : offerActive.messageSummary;
+			if (controllerNotNull()) {
+				if (messageSummary.equalsIgnoreCase(getString(R.string.status_consents))) {
+					mIncreaseLimitController.disableView(mRelIncreaseMyLimit);
+					mIncreaseLimitController.disableView(llIncreaseLimitContainer);
+					mIncreaseLimitController.disableView(tvIncreaseLimit);
+				} else {
+					mIncreaseLimitController.enableView(mRelIncreaseMyLimit);
+					mIncreaseLimitController.enableView(llIncreaseLimitContainer);
+					mIncreaseLimitController.enableView(tvIncreaseLimit);
+				}
+				cliOfferStatus(offerActive);
 			}
-			cliOfferStatus(offerActive);
+		} catch (IllegalStateException ignored) {
 		}
 	}
 

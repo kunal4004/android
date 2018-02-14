@@ -28,7 +28,7 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.SearchHistory;
-import za.co.woolworths.financial.services.android.models.service.event.BusStation;
+import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.PopWindowValidationMessage;
@@ -113,10 +113,12 @@ public class ProductSearchActivity extends AppCompatActivity
 		if (searchProductBrand.length() > 2) {
 			SearchHistory search = new SearchHistory();
 			search.searchedValue = searchProductBrand;
+			LoadState loadState = new LoadState();
 			saveRecentSearch(search);
+			loadState.setSearchProduct(searchProductBrand);
 			(WoolworthsApplication.getInstance())
 					.bus()
-					.send(new BusStation(searchProductBrand));
+					.send(loadState);
 			mEditSearchProduct.setText("");
 			finish();
 			overridePendingTransition(0, 0);

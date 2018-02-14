@@ -38,6 +38,7 @@
             android:layout_width="26dp"
             android:layout_height="26dp"
             android:layout_alignParentEnd="true"
+            android:alpha="0.3"
             android:contentDescription="@string/app_name"
             android:src="@drawable/icon_info" />
     </RelativeLayout>

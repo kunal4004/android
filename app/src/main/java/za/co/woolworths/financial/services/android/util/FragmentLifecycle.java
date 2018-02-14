@@ -1,7 +1,7 @@
 package za.co.woolworths.financial.services.android.util;
 
 public interface FragmentLifecycle {
-	void onPauseFragment();
+    void onPauseFragment();
 
-	void onResumeFragment();
+    void onResumeFragment();
 }

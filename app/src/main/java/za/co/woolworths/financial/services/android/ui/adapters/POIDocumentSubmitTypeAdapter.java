@@ -26,7 +26,7 @@ public class POIDocumentSubmitTypeAdapter extends RecyclerView.Adapter<POIDocume
 
 	private OnSubmitType onSubmitType;
 	private int selectedPosition = -1;
-	private String[] submitTypes = {"Submit Documents Now", "Submit at a Later Date"};
+	private String[] submitTypes = {"Submit USDocuments Now", "Submit at a Later Date"};
 	private int[] icons = {R.drawable.listview, R.drawable.ic_time24};
 
 	public POIDocumentSubmitTypeAdapter(OnSubmitType onSubmitType) {

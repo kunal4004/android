@@ -80,4 +80,15 @@ public class FAQDetailFragment extends BaseFragment<FaqDetailBinding, FAQDetailV
 			}
 		});
 	}
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			showBackNavigationIcon(true);
+			setToolbarBackgroundDrawable(R.drawable.appbar_background);
+			setTitle(getString(R.string.drawer_faq));
+			showToolbar();
+		}
+	}
 }

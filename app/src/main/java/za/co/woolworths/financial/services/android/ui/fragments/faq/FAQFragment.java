@@ -30,6 +30,7 @@ public class FAQFragment extends BaseFragment<FaqFragmentBinding, FAQViewModel> 
 	private FAQRequest mFAQRequest;
 	private ErrorHandlerView mErrorHandlerView;
 	private ProgressBar mProgressBar;
+	private FAQAdapter mFAQAdapter;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,7 +90,7 @@ public class FAQFragment extends BaseFragment<FaqFragmentBinding, FAQViewModel> 
 	public void faqSuccessResponse(List<FAQDetail> faqList) {
 		if (faqList != null) {
 			if (faqList.size() > 0) {
-				FAQAdapter mFAQAdapter = new FAQAdapter(faqList, this);
+				mFAQAdapter = new FAQAdapter(faqList, this);
 				LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 				mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 				getViewDataBinding().faqList.setLayoutManager(mLayoutManager);
@@ -144,5 +145,19 @@ public class FAQFragment extends BaseFragment<FaqFragmentBinding, FAQViewModel> 
 	public void onDetach() {
 		super.onDetach();
 		cancelRequest(mFAQRequest);
+	}
+
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			showBackNavigationIcon(true);
+			setToolbarBackgroundDrawable(R.drawable.appbar_background);
+			setTitle(getString(R.string.drawer_faq));
+			showToolbar();
+			if (mFAQAdapter != null) {
+				mFAQAdapter.resetIndex();
+			}
+		}
 	}
 }
