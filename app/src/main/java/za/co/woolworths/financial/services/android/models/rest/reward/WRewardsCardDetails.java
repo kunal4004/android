@@ -1,10 +1,11 @@
-package za.co.woolworths.financial.services.android.models;
+package za.co.woolworths.financial.services.android.models.rest.reward;
 
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
