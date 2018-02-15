@@ -6,6 +6,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
@@ -92,6 +93,7 @@ public interface DetailNavigator {
 
 	void onPermissionGranted();
 
+	// add item to cart
 	void apiIdentifyTokenValidation();
 
 	void onTokenFailure(String e);
@@ -104,4 +106,13 @@ public interface DetailNavigator {
 
 	void onAddToCartLoadComplete();
 
+	void apiAddItemToCart();
+
+	void addItemToCartResponse(AddItemToCartResponse addItemToCartResponse);
+
+	void onSessionTokenInValid(TokenValidationResponse addItemToCartResponse);
+
+	void onAddItemToCartFailure(AddItemToCartResponse addItemToCartResponse);
+
+	void onAddItemToCartFailure(String error);
 }
