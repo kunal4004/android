@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
@@ -58,6 +59,11 @@ public class ColorFragmentDialog extends Fragment implements StockFinderSizeColo
 
 	@Override
 	public void onUpdate(final ArrayList<OtherSkus> otherSkuList, final String viewType) {
+
+	}
+
+	@Override
+	public void onUpdate(List<Integer> quantityList) {
 
 	}
 }
