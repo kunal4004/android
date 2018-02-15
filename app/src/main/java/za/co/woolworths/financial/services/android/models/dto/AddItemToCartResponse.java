@@ -11,7 +11,7 @@ public class AddItemToCartResponse {
 	public Response response;
 	@SerializedName("data")
 	@Expose
-	public List<Datum> data = null;
+	public List<AddToCartDaTum> data = null;
 	@SerializedName("httpCode")
 	@Expose
 	public Integer httpCode;
