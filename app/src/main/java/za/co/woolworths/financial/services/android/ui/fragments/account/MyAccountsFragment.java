@@ -840,8 +840,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
 	private void messageCounterRequest() {
-		getMessageResponse().execute();
-		getWRewards().execute();
+//		getMessageResponse().execute();
+//		getWRewards().execute();
 	}
 
 	private CLIGetMessageResponse getMessageResponse() {
