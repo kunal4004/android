@@ -38,6 +38,7 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 
 	public interface RecyclerItemSelected {
 		void onRecyclerItemClick(View v, int position, String filterType);
+		void onQuantitySelected(int quantity);
 	}
 
 	private final float LIGHTER_TEXT = 0.3f, NORMAL_TEXT = 1.0f;
