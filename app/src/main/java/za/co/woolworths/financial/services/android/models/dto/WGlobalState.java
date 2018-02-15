@@ -14,6 +14,7 @@ public class WGlobalState {
 
 	private final Context mContext;
 	private boolean toolbarIsDisplayed;
+	private int mSaveButtonClick;
 
 	public WGlobalState(Context context) {
 		this.mContext = context;
@@ -261,5 +262,13 @@ public class WGlobalState {
 
 	public void setToolbarIsDisplayed(boolean toolbarIsDisplayed) {
 		this.toolbarIsDisplayed = toolbarIsDisplayed;
+	}
+
+	public void saveButtonClicked(int saveButtonClick) {
+		this.mSaveButtonClick = saveButtonClick;
+	}
+
+	public int getSaveButtonClick() {
+		return mSaveButtonClick;
 	}
 }
