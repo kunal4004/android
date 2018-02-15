@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
@@ -75,6 +76,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private WRewardsFragment wRewardsFragment;
 	private MyAccountsFragment myAccountsFragment;
 	private String TAG = this.getClass().getSimpleName();
+	private boolean mContinueShopping;
 
 	@Override
 	public int getLayoutId() {
@@ -251,6 +253,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				switch (newState) {
 					case COLLAPSED:
 						showStatusBar();
+						if (mContinueShopping) {
+							Snackbar.make(getBottomNavigationById(), "Item successfully Added", 400).show();
+							mContinueShopping = false;
+						}
 						break;
 
 					case EXPANDED:
@@ -334,6 +340,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public void closeSlideUpPanel() {
 		getSlidingLayout().setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+	}
+
+	@Override
+	public void closeSlideUpPanel(boolean continueShopping) {
+		mContinueShopping = continueShopping;
+		getSlidingLayout().setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+
 	}
 
 	private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -572,9 +585,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (wRewardsFragment != null)
-			wRewardsFragment.onActivityResult(requestCode, resultCode, data);
-		if (myAccountsFragment != null)
-			myAccountsFragment.onActivityResult(requestCode, resultCode, data);
+		switch (getBottomNavigationById().getCurrentItem()) {
+			case 0:
+			case 1:
+			case 2:
+				// prevent firing reward and account api on every activity resume
+				break;
+			default:
+				if (wRewardsFragment != null)
+					wRewardsFragment.onActivityResult(requestCode, resultCode, data);
+				if (myAccountsFragment != null)
+					myAccountsFragment.onActivityResult(requestCode, resultCode, data);
+				break;
+		}
 	}
 }
