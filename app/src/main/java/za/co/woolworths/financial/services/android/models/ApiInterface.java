@@ -744,7 +744,7 @@ public interface ApiInterface {
 			Callback<String> callback);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
-	@GET("/cart/{productId}")
+	@DELETE("/cart/item/{productId}")
 	void removeItemFromCart(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,

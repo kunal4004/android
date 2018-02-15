@@ -86,7 +86,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 		if(itemRow.rowType == CartRowType.HEADER) {
 			CartHeaderViewHolder cartHeaderViewHolder = ((CartHeaderViewHolder) holder);
-			ArrayList<CartProduct> productItems = cartItems.get(position).getCartProducts();
+			ArrayList<CartProduct> productItems = itemRow.productItems;
 			cartHeaderViewHolder.tvHeaderTitle.setText(productItems.size() + " " + itemRow.category.toUpperCase() + " ITEMS");
 		} else if(itemRow.rowType == CartRowType.PRODUCT) {
 			CartItemViewHolder cartItemViewHolder = ((CartItemViewHolder) holder);
@@ -154,7 +154,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		int currentPosition = 0;
 		for(CartItemGroup entry : cartItems) {
 			if(currentPosition == position) {
-				return new CartProductItemRow(CartRowType.HEADER, entry.type, null);
+				return new CartProductItemRow(CartRowType.HEADER, entry.type, null,entry.getCartProducts());
 			}
 
 			// increment position for header
@@ -165,12 +165,12 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			if(position > currentPosition + productCollection.size() - 1) {
 				currentPosition += productCollection.size();
 			} else {
-				return new CartProductItemRow(CartRowType.PRODUCT, entry.type, productCollection.get(position - currentPosition));
+				return new CartProductItemRow(CartRowType.PRODUCT, entry.type, productCollection.get(position - currentPosition),null);
 			}
 
 		}
 		// last row is for prices
-		return new CartProductItemRow(CartRowType.PRICES, null, null);
+		return new CartProductItemRow(CartRowType.PRICES, null, null,null);
 	}
 
 	public boolean toggleEditMode() {
@@ -179,8 +179,9 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		return editMode;
 	}
 
-	public void removeItem(CartProductItemRow itemRow) {
-		productCategoryItems.get(itemRow.category).remove(itemRow.productItem);
+	public void removeItem(ArrayList<CartItemGroup> updatedCartItems,OrderSummary updatedOrderSummer) {
+		this.cartItems=updatedCartItems;
+		this.orderSummary=updatedOrderSummer;
 		notifyDataSetChanged();
 	}
 
@@ -233,11 +234,13 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		public CartRowType rowType;
 		public String category;
 		public CartProduct productItem;
+		public ArrayList<CartProduct> productItems;
 
-		CartProductItemRow (CartRowType rowType, String category, CartProduct productItem) {
+		CartProductItemRow (CartRowType rowType, String category, CartProduct productItem,ArrayList<CartProduct> productItems) {
 			this.rowType = rowType;
 			this.category = category;
 			this.productItem = productItem;
+			this.productItems = productItems;
 		}
 	}
 
