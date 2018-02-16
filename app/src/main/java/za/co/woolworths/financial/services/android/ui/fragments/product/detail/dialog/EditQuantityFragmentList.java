@@ -19,11 +19,11 @@ import za.co.woolworths.financial.services.android.ui.activities.WStockFinderAct
 import za.co.woolworths.financial.services.android.ui.adapters.EditQuantityAdapter;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
 
-public class EditQuantityFragment extends Fragment implements ColorInterface, EditQuantityAdapter.RecyclerViewClickListener {
+public class EditQuantityFragmentList extends Fragment implements ColorInterface, EditQuantityAdapter.RecyclerViewClickListener {
 
 	private RecyclerView rclEditQuantity;
 	private EditQuantityAdapter mEditQuantityAdapter;
-	private EditQuantityFragment mContext;
+	private EditQuantityFragmentList mContext;
 	private WStockFinderActivity.RecyclerItemSelected mRecyclerItemSelected;
 
 	@Override
@@ -49,7 +49,7 @@ public class EditQuantityFragment extends Fragment implements ColorInterface, Ed
 
 	@Override
 	public void onUpdate(final List<Integer> quantityList) {
-		EditQuantityFragment.this.getActivity().runOnUiThread(new Runnable() {
+		EditQuantityFragmentList.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				rclEditQuantity.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
