@@ -25,7 +25,6 @@ import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRespo
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
-import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
@@ -214,10 +213,6 @@ public class WfsApi {
 	public SetDeliveryLocationSuburbResponse setSuburb(String suburbId) {
 		SetDeliveryLocationSuburbRequest request = new SetDeliveryLocationSuburbRequest(suburbId);
 		return mApiInterface.setDeliveryLocationSuburb(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), request);
-	}
-
-	public CartSummaryResponse getCartSummary() {
-		return mApiInterface.getCartSummary(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken());
 	}
 
 	public ProductView productViewRequest(boolean isBarcode, int pageSize, int pageNumber, String product_id) {
