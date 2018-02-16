@@ -23,14 +23,17 @@ import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.TokenValidationResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
+import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.rest.validate.IdentifyTokenValidation;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
@@ -487,7 +490,7 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 	}
 
 
-	public IdentifyTokenValidation identifyTokenValidation() {
+	protected IdentifyTokenValidation identifyTokenValidation() {
 		return new IdentifyTokenValidation(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -514,7 +517,7 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 		});
 	}
 
-	public PostAddItemToCart postAddItemToCart(AddItemToCart addItemToCart) {
+	protected PostAddItemToCart postAddItemToCart(AddItemToCart addItemToCart) {
 		return new PostAddItemToCart(addItemToCart, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {

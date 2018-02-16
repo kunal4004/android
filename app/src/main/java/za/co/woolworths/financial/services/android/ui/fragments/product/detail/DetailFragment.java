@@ -1249,6 +1249,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 				//If the user does not have a suburb id & name stored, the set location from region and suburb process is followed
 				onAddToCartLoadComplete();
 				Intent deliveryLocationSelectionActivity = new Intent(activity, DeliveryLocationSelectionActivity.class);
+				deliveryLocationSelectionActivity.putExtra(DeliveryLocationSelectionActivity.LOAD_PROVINCE, "LOAD_PROVINCE");
 				activity.startActivity(deliveryLocationSelectionActivity);
 				activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
 			}
