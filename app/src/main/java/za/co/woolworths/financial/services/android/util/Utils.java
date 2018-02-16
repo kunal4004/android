@@ -24,7 +24,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
-import com.google.android.gms.iid.InstanceID;
 
 import android.util.Log;
 import android.util.TypedValue;
