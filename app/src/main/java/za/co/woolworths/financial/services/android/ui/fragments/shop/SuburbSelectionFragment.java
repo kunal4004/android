@@ -221,8 +221,10 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 
         scrollbarLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         scrollbarHeight = scrollbarLayout.getMeasuredHeight() - 20; // 20 = top and bottom padding
-        scrollbarItemHeight = scrollbarHeight / suburbAdapter.getHeaderItems().size();
-        scrollbarLayout.setOnTouchListener(this);
+		if (!suburbAdapter.getHeaderItems().isEmpty()) {
+			scrollbarItemHeight = scrollbarHeight / suburbAdapter.getHeaderItems().size();
+		}
+		scrollbarLayout.setOnTouchListener(this);
     }
 
     @Override
