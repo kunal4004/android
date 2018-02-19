@@ -38,7 +38,7 @@ import za.co.woolworths.financial.services.android.models.dto.statement.EmailSta
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.USDocuments;
-import za.co.woolworths.financial.services.android.models.rest.SendUserStatement;
+import za.co.woolworths.financial.services.android.models.rest.statement.SendUserStatement;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.fragments.statement.EmailStatementFragment;

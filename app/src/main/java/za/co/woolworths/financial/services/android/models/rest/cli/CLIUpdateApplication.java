@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.models.rest;
+package za.co.woolworths.financial.services.android.models.rest.cli;
 
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;

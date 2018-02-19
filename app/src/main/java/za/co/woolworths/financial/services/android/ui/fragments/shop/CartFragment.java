@@ -55,6 +55,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private RelativeLayout parentLayout;
 	private ProgressBar pBar;
 	private WTextView txtEmptyStateDesc;
+	private ArrayList<CartItemGroup> cartItems;
+	private OrderSummary orderSummary;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -101,11 +103,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	@Override
-	public void onItemDeleteClick(CartProductAdapter.CartProductItemRow itemRow) {
+	public void onItemDeleteClick(String productId) {
 		// Log.i("CartFragment", "Item " + itemRow.productItem.productName + " delete button clicked!");
 
 		// TODO: Make API call to remove item + show loading before removing from list
-		cartProductAdapter.removeItem(itemRow);
+		removeCartItem(productId);
 	}
 
 	public boolean toggleEditMode() {
@@ -142,7 +144,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			@Override
 			public void onFailure(RetrofitError error) {
-
+				Log.i("result ", "failed");
 			}
 		});
 	}
@@ -230,7 +232,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				CartActivity cartActivity = (CartActivity) activity;
 				cartActivity.showEditCart();
 			}
-			cartProductAdapter = new CartProductAdapter(cartResponse.cartItems, this, cartResponse.orderSummary, getActivity());
+			cartItems=cartResponse.cartItems;
+			orderSummary=cartResponse.orderSummary;
+
+			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity());
 			LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
 			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 			rvCartList.setLayoutManager(mLayoutManager);
@@ -238,6 +243,44 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		} else {
 			btnAddToCart.setVisibility(View.GONE);
 			txtEmptyStateDesc.setVisibility(View.VISIBLE);
+		}
+	}
+
+	public void removeCartItem(String productId)
+	{
+		mWoolWorthsApplication.getAsyncApi().removeCartItem(productId,new CancelableCallback<String>() {
+			@Override
+			public void onSuccess(String s, retrofit.client.Response response) {
+				Log.i("result ", s);
+				CartResponse cartResponse = convertResponseToCartResponseObject(s);
+				if (cartResponse != null) {
+					switch (cartResponse.httpCode) {
+						case 200:
+							updateCart(cartResponse);
+							break;
+						default:
+							break;
+
+					}
+				}
+			}
+
+			@Override
+			public void onFailure(RetrofitError error) {
+				Log.i("result ", "failed");
+			}
+		});
+	}
+
+	public void updateCart(CartResponse cartResponse)
+	{
+		if (cartResponse.cartItems.size() > 0 && cartProductAdapter!=null) {
+			cartItems=cartResponse.cartItems;
+			orderSummary=cartResponse.orderSummary;
+			cartProductAdapter.removeItem(cartItems,orderSummary);
+
+		}else {
+
 		}
 	}
 }

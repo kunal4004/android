@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments;
+package za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
@@ -21,11 +22,11 @@ import za.co.woolworths.financial.services.android.ui.adapters.StockFinderSizeCo
 import za.co.woolworths.financial.services.android.util.ColorInterface;
 
 
-public class ColorFragmentDialog extends Fragment implements StockFinderSizeColorAdapter.RecyclerViewClickListener, ColorInterface {
+public class ColorFragmentList extends Fragment implements StockFinderSizeColorAdapter.RecyclerViewClickListener, ColorInterface {
 
 	private WStockFinderActivity.RecyclerItemSelected mRecyclerItemSelected;
 	public RecyclerView mRecyclerColorList;
-	private ColorFragmentDialog mContext;
+	private ColorFragmentList mContext;
 	private WGlobalState wGlobalState;
 	private ArrayList<OtherSkus> colorSKUList;
 
@@ -53,11 +54,16 @@ public class ColorFragmentDialog extends Fragment implements StockFinderSizeColo
 
 	@Override
 	public void recyclerViewListClicked(View v, int position) {
-		mRecyclerItemSelected.onRecyclerItemClick(v, position, ColorFragmentDialog.this.getActivity().getResources().getString(R.string.color));
+		mRecyclerItemSelected.onRecyclerItemClick(v, position, ColorFragmentList.this.getActivity().getResources().getString(R.string.color));
 	}
 
 	@Override
 	public void onUpdate(final ArrayList<OtherSkus> otherSkuList, final String viewType) {
+
+	}
+
+	@Override
+	public void onUpdate(List<Integer> quantityList) {
 
 	}
 }

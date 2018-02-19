@@ -21,12 +21,17 @@ import java.util.List;
 
 import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
+import za.co.woolworths.financial.services.android.models.dto.TokenValidationResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
+import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
+import za.co.woolworths.financial.services.android.models.rest.validate.IdentifyTokenValidation;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
@@ -41,6 +46,7 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 	private final String INGREDIENTS = "ingredients";
 	private final String PRODUCT = "product";
 	public static final String CLOTHING_PRODUCT = "clothingProducts";
+	public static final String FOOD_PRODUCT = "foodProducts";
 
 	private ProductList defaultProduct;
 	private List<String> AuxiliaryImage;
@@ -478,5 +484,60 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 
 	public boolean productLoadFail() {
 		return productLoadFail;
+	}
+
+
+	protected IdentifyTokenValidation identifyTokenValidation() {
+		return new IdentifyTokenValidation(new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				if (object != null) {
+					TokenValidationResponse tokenValidationResponse = (TokenValidationResponse) object;
+					if (tokenValidationResponse != null) {
+						switch (tokenValidationResponse.httpCode) {
+							case 200:
+								getNavigator().onSessionTokenValid();
+								break;
+
+							default:
+								getNavigator().onSessionTokenInValid(tokenValidationResponse);
+								break;
+						}
+					}
+				}
+			}
+
+			@Override
+			public void onFailure(String e) {
+				getNavigator().onTokenFailure(e);
+			}
+		});
+	}
+
+	protected PostAddItemToCart postAddItemToCart(AddItemToCart addItemToCart) {
+		return new PostAddItemToCart(addItemToCart, new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				if (object != null) {
+					AddItemToCartResponse addItemToCartResponse = (AddItemToCartResponse) object;
+					if (addItemToCartResponse != null) {
+						switch (addItemToCartResponse.httpCode) {
+							case 200:
+								getNavigator().addItemToCartResponse(addItemToCartResponse);
+								break;
+
+							default:
+								getNavigator().onAddItemToCartFailure(addItemToCartResponse);
+								break;
+						}
+					}
+				}
+			}
+
+			@Override
+			public void onFailure(String e) {
+				getNavigator().onAddItemToCartFailure(e);
+			}
+		});
 	}
 }

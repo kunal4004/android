@@ -65,7 +65,6 @@
                             android:layout_alignParentStart="true"
                             android:layout_alignParentTop="true"
                             android:layout_margin="18dp"
-                            android:onClick="@{handlers::navigateToProductSearch}"
                             android:src="@drawable/ic_search"/>
 
                         <LinearLayout
@@ -87,7 +86,6 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_margin="18dp"
-                                android:onClick="@{handlers::navigateToBarcode}"
                                 android:src="@drawable/barcode"/>
 
                         </LinearLayout>
@@ -103,7 +101,6 @@
                             android:hint="@string/product_search_hint"
                             android:inputType="textNoSuggestions"
                             android:maxLines="1"
-                            android:onClick="@{handlers::navigateToProductSearch}"
                             android:paddingLeft="50dp"
                             android:paddingRight="@dimen/default_margin"
                             android:textColor="@color/black"

@@ -31,11 +31,11 @@ public class StockFinderSizeColorAdapter extends RecyclerView.Adapter<StockFinde
 
 	}
 
-	 static class SimpleViewHolder extends RecyclerView.ViewHolder {
+	static class SimpleViewHolder extends RecyclerView.ViewHolder {
 
-		 WTextView productName;
+		WTextView productName;
 
-		 SimpleViewHolder(View view) {
+		SimpleViewHolder(View view) {
 			super(view);
 			productName = (WTextView) view.findViewById(R.id.name);
 		}
@@ -75,6 +75,9 @@ public class StockFinderSizeColorAdapter extends RecyclerView.Adapter<StockFinde
 
 	@Override
 	public int getItemCount() {
-		return mOtherSKu.size();
+		if (mOtherSKu != null)
+			return mOtherSKu.size();
+		else
+			return 0;
 	}
 }

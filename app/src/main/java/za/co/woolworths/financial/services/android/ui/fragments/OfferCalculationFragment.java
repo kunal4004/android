@@ -42,8 +42,8 @@ import za.co.woolworths.financial.services.android.models.dto.Offer;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.rest.CLICreateApplication;
-import za.co.woolworths.financial.services.android.models.rest.CLIUpdateApplication;
+import za.co.woolworths.financial.services.android.models.rest.cli.CLICreateApplication;
+import za.co.woolworths.financial.services.android.models.rest.cli.CLIUpdateApplication;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
@@ -95,7 +95,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 	private EventStatus mEventStatus;
 	private CLIUpdateApplication cliUpdateApplication;
 	private CLICreateApplication createOfferTask;
-	private za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision cliAcceptOfferDecision;
+	private za.co.woolworths.financial.services.android.models.rest.cli.CLIOfferDecision cliAcceptOfferDecision;
 	private LoadState loadState;
 	private final CompositeDisposable disposables = new CompositeDisposable();
 	private int mCreditRequestMax;
@@ -300,7 +300,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 
 	private void cliDelcineOfferRequest(CLIOfferDecision createOfferDecision) {
 		declineOfferInterface.onLoad();
-		za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision cliOfferDecision = new za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision(getActivity(), createOfferDecision, String.valueOf(mObjOffer.cliId), new OnEventListener() {
+		za.co.woolworths.financial.services.android.models.rest.cli.CLIOfferDecision cliOfferDecision = new za.co.woolworths.financial.services.android.models.rest.cli.CLIOfferDecision(getActivity(), createOfferDecision, String.valueOf(mObjOffer.cliId), new OnEventListener() {
 
 			@Override
 			public void onSuccess(Object object) {
@@ -513,7 +513,7 @@ public class OfferCalculationFragment extends CLIFragment implements View.OnClic
 				int newCreditLimitAmount = Utils.numericFieldOnly(tvNewCreditLimitAmount.getText().toString());
 				CLIOfferDecision createOfferDecision = new CLIOfferDecision(woolworthsApplication.getProductOfferingId(), newCreditLimitAmount, true);
 				cliAcceptOfferDecision =
-						new za.co.woolworths.financial.services.android.models.rest.CLIOfferDecision(getActivity(), createOfferDecision, String.valueOf(mCLiId), new OnEventListener() {
+						new za.co.woolworths.financial.services.android.models.rest.cli.CLIOfferDecision(getActivity(), createOfferDecision, String.valueOf(mCLiId), new OnEventListener() {
 							@Override
 							public void onSuccess(Object object) {
 								mObjOffer = ((OfferActive) object);

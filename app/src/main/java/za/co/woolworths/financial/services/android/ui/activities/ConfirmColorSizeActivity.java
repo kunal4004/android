@@ -19,15 +19,28 @@ import java.util.ArrayList;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragmentAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.ColorFragmentDialog;
-import za.co.woolworths.financial.services.android.ui.fragments.SizeFragmentDialog;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ColorFragmentList;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.SizeFragmentList;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.EditQuantityFragmentList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
 import za.co.woolworths.financial.services.android.util.NonSwipeableViewPager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.POST_ADD_ITEM_TO_CART;
+
 public class ConfirmColorSizeActivity extends AppCompatActivity implements View.OnClickListener, WStockFinderActivity.RecyclerItemSelected {
+
+	public static final String SELECT_PAGE = "SELECT_PAGE";
+	public static final String QUANTITY = "quantity";
+	public final String SELECTED_COLOUR = "SELECTED_COLOUR";
+	public final String COLOR_LIST = "COLOR_LIST";
+	public final String OTHERSKU = "OTHERSKU";
+	public final String PRODUCT_HAS_COLOR = "PRODUCT_HAS_COLOR";
+	public final String PRODUCT_HAS_SIZE = "PRODUCT_HAS_SIZE";
 
 	private LinearLayout mRelRootContainer, mRelPopContainer;
 	private ImageView mImCloseIcon, mImBackIcon;
@@ -39,6 +52,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 	private boolean mProductHasColor, mProductHasSize, viewWasClicked;
 	private StockFinderFragmentAdapter mPagerAdapter;
 	private WGlobalState mGlobalState;
+	private String mSelectPage;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,22 +64,29 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		mGlobalState = ((WoolworthsApplication) ConfirmColorSizeActivity.this.getApplication()).getWGlobalState();
 		Bundle mBundle = getIntent().getExtras();
 		if (mBundle != null) {
-			mSelectedColour = mBundle.getString("SELECTED_COLOUR");
-			mColorList = mBundle.getString("COLOR_LIST");
-			mOtherSKU = mBundle.getString("OTHERSKU");
-			mProductHasColor = mBundle.getBoolean("PRODUCT_HAS_COLOR");
-			mProductHasSize = mBundle.getBoolean("PRODUCT_HAS_SIZE");
+			mSelectPage = mBundle.getString(SELECT_PAGE);
+			mSelectedColour = mBundle.getString(SELECTED_COLOUR);
+			mColorList = mBundle.getString(COLOR_LIST);
+			mOtherSKU = mBundle.getString(OTHERSKU);
+			mProductHasColor = mBundle.getBoolean(PRODUCT_HAS_COLOR);
+			mProductHasSize = mBundle.getBoolean(PRODUCT_HAS_SIZE);
 		}
-
 		init();
 		addListener();
 		hideBackIcon();
 		setAnimation();
-		if (mProductHasColor) {
-			selectCurrentPage(0);
-		} else {
-			selectCurrentPage(1);
-			hideBackIcon();
+		switch (mSelectPage) {
+			case QUANTITY:
+				selectCurrentPage(2);
+				break;
+			default:
+				if (mProductHasColor) {
+					selectCurrentPage(0);
+				} else {
+					selectCurrentPage(1);
+					hideBackIcon();
+				}
+				break;
 		}
 	}
 
@@ -81,11 +102,11 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		tvTitle = findViewById(R.id.title);
 		mViewPager = findViewById(R.id.viewPager);
 		mPagerAdapter = new StockFinderFragmentAdapter(getSupportFragmentManager());
-		mPagerAdapter.addFrag(new ColorFragmentDialog(), getString(R.string.color));
-		mPagerAdapter.addFrag(new SizeFragmentDialog(), getString(R.string.size));
+		mPagerAdapter.addFrag(new ColorFragmentList(), getString(R.string.color));
+		mPagerAdapter.addFrag(new SizeFragmentList(), getString(R.string.size));
+		mPagerAdapter.addFrag(new EditQuantityFragmentList(), getString(R.string.edit_quantity));
 		mViewPager.setAdapter(mPagerAdapter);
 		mViewPager.addOnPageChangeListener(pageChangeListener);
-
 		mImCloseIcon = findViewById(R.id.imCloseIcon);
 		mImBackIcon = findViewById(R.id.imBackIcon);
 	}
@@ -138,7 +159,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		}
 	}
 
-	private void dismissSizeColorActivity() {
+	private void dismissQuantityView(final int quantity) {
 		if (!viewWasClicked) { // prevent more than one click
 			viewWasClicked = true;
 			TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
@@ -156,11 +177,44 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					callInStoreFinder();
+					WoolworthsApplication
+							.getInstance()
+							.bus()
+							.send(new ProductState(POST_ADD_ITEM_TO_CART, quantity));
 					dismissLayout();
 				}
 			});
 			mRelRootContainer.startAnimation(animation);
+		}
+	}
+
+	private void dismissSizeColorActivity() {
+		if (mGlobalState.getSaveButtonClick() == DetailFragment.INDEX_STORE_FINDER) {
+			if (!viewWasClicked) { // prevent more than one click
+				viewWasClicked = true;
+				TranslateAnimation animation = new TranslateAnimation(0, 0, 0, mRelRootContainer.getHeight());
+				animation.setFillAfter(true);
+				animation.setDuration(ANIM_DOWN_DURATION);
+				animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+					@Override
+					public void onAnimationStart(Animation animation) {
+					}
+
+					@Override
+					public void onAnimationRepeat(Animation animation) {
+					}
+
+					@Override
+					public void onAnimationEnd(Animation animation) {
+						callInStoreFinder();
+						dismissLayout();
+					}
+				});
+				mRelRootContainer.startAnimation(animation);
+			}
+		} else {
+			dismissQuantityView(1);
 		}
 	}
 
@@ -212,9 +266,18 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 		}
 	}
 
+	@Override
+	public void onQuantitySelected(int quantity) {
+		dismissQuantityView(quantity);
+	}
+
 	private void inStoreFinderUpdate() {
-		callInStoreFinder();
-		closeViewAnimation();
+		if (mGlobalState.getSaveButtonClick() == DetailFragment.INDEX_STORE_FINDER) {
+			callInStoreFinder();
+			closeViewAnimation();
+		} else {
+			dismissQuantityView(1);
+		}
 	}
 
 	private void callInStoreFinder() {
@@ -257,13 +320,23 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 					fragmentToShow.onUpdate(mOtherSKUList, getString(R.string.color));
 				}
 				break;
-
 			case 1:
 				showBackIcon();
 				tvTitle.setText(getString(R.string.confirm_size_desc));
-				ArrayList<OtherSkus> mOtherSizeSKU = Utils.commonSizeList(mSelectedColour, mProductHasColor, getOtherSKUList(mOtherSKU));
+				ArrayList<OtherSkus> mOtherSizeSKU = Utils.commonSizeList(mSelectedColour,
+						mProductHasColor, getOtherSKUList(mOtherSKU));
 				if (fragmentToShow != null) {
 					fragmentToShow.onUpdate(mOtherSizeSKU, getString(R.string.size));
+				}
+				break;
+			case 2:
+				tvTitle.setText(getString(R.string.edit_quantity));
+				if (fragmentToShow != null) {
+					ArrayList list = new ArrayList();
+					for (int number = 0; number < 10; number++) {
+						list.add(number + 1);
+					}
+					fragmentToShow.onUpdate(list);
 				}
 				break;
 		}

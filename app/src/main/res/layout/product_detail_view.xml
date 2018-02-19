@@ -407,7 +407,7 @@
 
                 <LinearLayout
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/fifty_two_dp"
                     android:layout_alignParentBottom="true"
                     android:layout_marginEnd="1dp"
                     android:layout_marginStart="1dp"
@@ -418,21 +418,11 @@
                     android:paddingTop="2dp"
                     android:weightSum="1.0">
 
-                    <za.co.woolworths.financial.services.android.ui.views.WButton
-                        android:id="@+id/btnShopOnlineWoolies"
-                        style="@style/blackButtonStyle"
-                        android:layout_width="0dp"
-                        android:layout_marginBottom="2dp"
-                        android:layout_marginEnd="1dp"
-                        android:layout_marginStart="1dp"
-                        android:layout_marginTop="2dp"
-                        android:layout_weight=".5"
-                        android:text="@string/shop_online_woolies"/>
-
                     <LinearLayout
                         android:id="@+id/llStoreFinder"
                         style="@style/blackButtonStyle"
                         android:layout_width="0dp"
+                        android:layout_height="match_parent"
                         android:layout_marginBottom="2dp"
                         android:layout_marginEnd="1dp"
                         android:layout_marginStart="1dp"
@@ -448,6 +438,7 @@
                             android:layout_alignParentTop="true"
                             android:layout_toEndOf="@+id/mWoolworthsProgressBar"
                             android:layout_weight="1"
+                            android:duplicateParentState="true"
                             android:gravity="center"
                             android:letterSpacing="0.15"
                             android:text="@string/stock_finder_btn_label"
@@ -461,8 +452,50 @@
                             android:id="@+id/mButtonProgress"
                             style="?android:attr/progressBarStyleLarge"
                             android:layout_width="35dp"
-                            android:indeterminateTint="@color/white"
                             android:layout_height="35dp"
+                            android:duplicateParentState="true"
+                            android:indeterminateTint="@color/white"
+                            android:visibility="gone"/>
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/llAddToCart"
+                        style="@style/blackButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginEnd="1dp"
+                        android:layout_marginStart="1dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_weight=".5"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <za.co.woolworths.financial.services.android.ui.views.WTextView
+                            android:id="@+id/tvAddToCart"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentTop="true"
+                            android:layout_toEndOf="@+id/mWoolworthsProgressBar"
+                            android:layout_weight="1"
+                            android:duplicateParentState="true"
+                            android:gravity="center"
+                            android:letterSpacing="0.15"
+                            android:text="@string/add_to_cart"
+                            android:textAllCaps="true"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:visibility="visible"
+                            app:WTextView_font="medium_bold"/>
+
+                        <ProgressBar
+                            android:id="@+id/pbAddToCart"
+                            style="?android:attr/progressBarStyleLarge"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:duplicateParentState="true"
+                            android:indeterminateTint="@color/white"
                             android:visibility="gone"/>
                     </LinearLayout>
                 </LinearLayout>

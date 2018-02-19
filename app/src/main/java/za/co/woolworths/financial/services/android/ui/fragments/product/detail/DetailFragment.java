@@ -46,18 +46,27 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
+import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
+import za.co.woolworths.financial.services.android.models.dto.FormException;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
-import za.co.woolworths.financial.services.android.models.dto.Product;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
+import za.co.woolworths.financial.services.android.models.dto.TokenValidationResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
+import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
+import za.co.woolworths.financial.services.android.models.rest.validate.IdentifyTokenValidation;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
+import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MultipleImageActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigator;
@@ -66,7 +75,6 @@ import za.co.woolworths.financial.services.android.ui.adapters.ProductSizeAdapte
 import za.co.woolworths.financial.services.android.ui.adapters.ProductViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
-import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.DrawImage;
@@ -75,13 +83,19 @@ import za.co.woolworths.financial.services.android.util.FusedLocationSingleton;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecoration;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.POST_ADD_ITEM_TO_CART;
 import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailViewModel.CLOTHING_PRODUCT;
+import static za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailViewModel.FOOD_PRODUCT;
 
 public class DetailFragment extends BaseFragment<ProductDetailViewBinding, DetailViewModel> implements DetailNavigator, ProductViewPagerAdapter.MultipleImageInterface, View.OnClickListener, NetworkChangeListener {
+
+	public static final int INDEX_ADD_TO_CART = 2;
+	public static final int INDEX_STORE_FINDER = 1;
 
 	private CompositeDisposable mDisposables = new CompositeDisposable();
 	private DetailViewModel detailViewModel;
@@ -104,6 +118,9 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 	private ErrorHandlerView mErrorHandlerView;
 	private boolean mFetchFromJson;
 	private String mDefaultProductResponse;
+	private IdentifyTokenValidation mTokenValidationApi;
+	private AddItemToCart mApiAddItemToCart;
+	private PostAddItemToCart mPostAddItemToCart;
 
 	@Override
 	public DetailViewModel getViewModel() {
@@ -145,8 +162,20 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 							onPermissionGranted();
 						} else if (object instanceof ConfirmColorSizeActivity) {
 							startLocationUpdates();
-						} else if (object instanceof Product) {
-
+						} else if (object instanceof ProductState) {
+							ProductState productState = (ProductState) object;
+							if (productState.getState()
+									.equalsIgnoreCase(POST_ADD_ITEM_TO_CART)) {
+								String productId = getViewModel().getProductId();
+								String catalogRefId = productId;
+								//Parse skuId to catalogRefId if productType is of type CLOTHING_PRODUCT
+								if (getViewModel().getProductType().equalsIgnoreCase(CLOTHING_PRODUCT)) {
+									catalogRefId = getGlobalState().getSelectedSKUId();
+								}
+								int quantity = productState.getQuantity();
+								mApiAddItemToCart = new AddItemToCart(productId, catalogRefId, quantity);
+								apiAddItemToCart();
+							}
 						}
 					}
 				}));
@@ -155,6 +184,10 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		getGlobalState().setColorWasPopup(false);
+		getGlobalState().setColorPickerSku(null);
+		getGlobalState().setSizeWasPopup(false);
+		getGlobalState().setSizePickerSku(null);
 		renderView();
 	}
 
@@ -162,12 +195,11 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 	public void renderView() {
 		slideBottomPanel();
 		nestedScrollViewHelper();
-
 		defaultProduct();
 		setUpImageViewPager();
 		getViewDataBinding().imClose.setOnClickListener(this);
 		getViewDataBinding().imClose.bringToFront();
-		getViewDataBinding().btnShopOnlineWoolies.setOnClickListener(this);
+		getViewDataBinding().llAddToCart.setOnClickListener(this);
 		getViewDataBinding().incProductColor.linSize.setOnClickListener(this);
 		getViewDataBinding().incProductColor.linColour.setOnClickListener(this);
 		getViewDataBinding().llStoreFinder.setOnClickListener(this);
@@ -229,7 +261,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 			ProductUtils.gridPriceList(getViewDataBinding().textPrice,
 					getViewDataBinding().textActualPrice, String.valueOf(mDefaultProduct.fromPrice),
 					getViewModel().maxWasPrice(mDefaultProduct.otherSkus));
-		} catch (Exception ex) {
+		} catch (Exception ignored) {
 		}
 
 		//set promotional Images
@@ -319,7 +351,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 
 	@Override
 	public void disableStoreFinder() {
-		setLayoutWeight(getViewDataBinding().btnShopOnlineWoolies, 1.0f);
+		setLayoutWeight(getViewDataBinding().llAddToCart, 1.0f);
 		hideView(getViewDataBinding().llStoreFinder);
 	}
 
@@ -349,8 +381,8 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 		disableStoreFinder();
 
 		//disable shop online button
-		getViewDataBinding().btnShopOnlineWoolies.setAlpha(0.55f);
-		getViewDataBinding().btnShopOnlineWoolies.setEnabled(false);
+		getViewDataBinding().llAddToCart.setAlpha(0.55f);
+		getViewDataBinding().llAddToCart.setEnabled(false);
 
 		// hide color and size view
 		hideView(getViewDataBinding().incProductColor.linProductContainer);
@@ -366,7 +398,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 
 	@Override
 	public void onLoadComplete() {
-		showView(getViewDataBinding().btnShopOnlineWoolies);
+		showView(getViewDataBinding().llAddToCart);
 		hideView(getViewDataBinding().productLoadDot);
 	}
 
@@ -403,13 +435,6 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 				addToShoppingList();
 				break;
 
-			case R.id.btnShopOnlineWoolies:
-				String checkoutLink = getViewModel().getCheckOutLink();
-				if (!isEmpty(checkoutLink)) {
-					Utils.openExternalLink(getBaseActivity(), Utils.addUTMCode(checkoutLink));
-				}
-				break;
-
 			case R.id.linColour:
 				cancelPopWindow(mPSizeWindow);
 				mPColourWindow.showAsDropDown(getViewDataBinding().incProductColor.textSelectColour, -50, -180);
@@ -421,6 +446,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 				break;
 
 			case R.id.llStoreFinder:
+				getGlobalState().saveButtonClicked(INDEX_STORE_FINDER);
 				getViewDataBinding().scrollProductDetail.scrollTo(0, 0);
 				Activity activity = getBaseActivity();
 				if (activity != null) {
@@ -432,6 +458,12 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 					}
 				}
 				break;
+
+			case R.id.llAddToCart:
+				getGlobalState().saveButtonClicked(INDEX_ADD_TO_CART);
+				apiIdentifyTokenValidation();
+				break;
+
 			default:
 				break;
 		}
@@ -588,17 +620,18 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 		if (productList != null) {
 			try {
 				LinearLayout llStoreFinder = getViewDataBinding().llStoreFinder;
-				WButton btnShopOnline = getViewDataBinding().btnShopOnlineWoolies;
+				LinearLayout llAddToCart = getViewDataBinding().llAddToCart;
 				String productType = productList.productType;
 				WGlobalState mcs = WoolworthsApplication.getInstance().getWGlobalState();
-				if ((productType.equalsIgnoreCase("clothingProducts") & mcs.clothingIsEnabled()) || (productType.equalsIgnoreCase("foodProducts") & mcs.isFoodProducts())) {
-					btnShopOnline.setAlpha(1f);
-					btnShopOnline.setEnabled(true);
-					setLayoutWeight(btnShopOnline, 0.5f);
+				if ((productType.equalsIgnoreCase(CLOTHING_PRODUCT) & mcs.clothingIsEnabled())
+						|| (productType.equalsIgnoreCase(FOOD_PRODUCT) & mcs.isFoodProducts())) {
+					llAddToCart.setAlpha(1f);
+					llAddToCart.setEnabled(true);
+					setLayoutWeight(llAddToCart, 0.5f);
 					setLayoutWeight(llStoreFinder, 0.5f);
 					showView(llStoreFinder);
 				} else {
-					setLayoutWeight(btnShopOnline, 1f);
+					setLayoutWeight(llAddToCart, 1f);
 					hideView(llStoreFinder);
 				}
 			} catch (IllegalStateException ex) {
@@ -723,6 +756,10 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 	@Override
 	public void onDetach() {
 		super.onDetach();
+		cancelBackgroundTask();
+	}
+
+	private void cancelBackgroundTask() {
 		if (mDisposables != null && !mDisposables.isDisposed())
 			mDisposables.clear();
 		getGlobalState().setColorWasPopup(false);
@@ -731,6 +768,8 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 		getGlobalState().setSizePickerSku(null);
 		CancelableCallback.cancelAll();
 		cancelRequest(mLocationItemTask);
+		cancelRequest(mTokenValidationApi);
+		cancelRequest(mPostAddItemToCart);
 	}
 
 	private void cancelPopWindow(PopupWindow popupWindow) {
@@ -867,10 +906,6 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 		}
 	}
 
-	@Override
-	public void fetchFromJson() {
-	}
-
 	private boolean productHasColour() {
 		return getColorList().size() > 0;
 	}
@@ -978,7 +1013,14 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 	public void noSizeColorIntent() {
 		getViewDataBinding().scrollProductDetail.scrollTo(0, 0);
 		getGlobalState().setSelectedSKUId(mSkuId);
-		startLocationUpdates();
+		if (getGlobalState().getSaveButtonClick() == INDEX_STORE_FINDER) {
+			startLocationUpdates();
+		} else {
+			WoolworthsApplication
+					.getInstance()
+					.bus()
+					.send(new ProductState(POST_ADD_ITEM_TO_CART, 1));
+		}
 	}
 
 	public void sizeIntent() {
@@ -988,6 +1030,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
+		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
 		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		getBaseActivity().overridePendingTransition(0, 0);
@@ -1000,6 +1043,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra("PRODUCT_HAS_COLOR", false);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
+		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
 		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		getBaseActivity().overridePendingTransition(0, 0);
@@ -1012,6 +1056,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", true);
+		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
 		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		getBaseActivity().overridePendingTransition(0, 0);
@@ -1024,6 +1069,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 		mIntent.putExtra("OTHERSKU", toJson(getViewModel().otherSkuList()));
 		mIntent.putExtra("PRODUCT_HAS_COLOR", true);
 		mIntent.putExtra("PRODUCT_HAS_SIZE", false);
+		mIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, "");
 		mIntent.putExtra("PRODUCT_NAME", getViewModel().getDefaultProduct().productName);
 		startActivityForResult(mIntent, WGlobalState.SYNC_FIND_IN_STORE);
 		getBaseActivity().overridePendingTransition(0, 0);
@@ -1133,13 +1179,156 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 							getViewModel().getProductDetail(getBaseActivity(), defaultProduct.productId, defaultProduct.sku);
 							return;
 						}
-						if (findInStoreLoadFail) {
-							executeLocationItemTask();
-						}
+						executeLocationItemTask();
 					}
 				}
 			});
 		}
+	}
+
+	@Override
+	public void apiIdentifyTokenValidation() {
+		onAddToCartLoad();
+		Activity activity = getBaseActivity();
+		if (activity != null) {
+			//Check if the user has a sessionToken
+			String sessionToken = Utils.getSessionToken(activity);
+			if (isEmpty(sessionToken)) {
+				ScreenManager.presentSSOSignin(activity);
+				onAddToCartLoadComplete();
+			} else {
+				// query the status of the JWT on STS using the the identityTokenValidation endpoint
+				mTokenValidationApi = getViewModel().identifyTokenValidation();
+				mTokenValidationApi.execute();
+			}
+		}
+	}
+
+	@Override
+	public void onTokenFailure(String e) {
+		Activity activity = getBaseActivity();
+		if (activity != null) {
+			activity.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					onLoadComplete();
+				}
+			});
+		}
+	}
+
+	@Override
+	public void onSessionTokenValid() {
+		Activity activity = getBaseActivity();
+		if (activity != null) {
+			//query SQLite for the user’s suburb name and id
+			List<DeliveryLocationHistory> deliveryLocationHistories = Utils.getDeliveryLocationHistory(activity);
+			if (deliveryLocationHistories != null) {
+				DeliveryLocationHistory deliveryLocationHistory = deliveryLocationHistories.get(0);
+				if (deliveryLocationHistory != null) {
+					//user has a valid sessionToken and a delivery location is set.
+					String productType = getViewModel().getProductType();
+					getViewDataBinding().scrollProductDetail.scrollTo(0, 0);
+					switch (productType) {
+						case FOOD_PRODUCT:
+							Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
+							editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
+							activity.startActivity(editQuantityIntent);
+							activity.overridePendingTransition(0, 0);
+							break;
+
+						case CLOTHING_PRODUCT:
+							onPermissionGranted();
+							break;
+
+						default:
+							break;
+					}
+				}
+			} else {
+				//If the user does not have a suburb id & name stored, the set location from region and suburb process is followed
+				onAddToCartLoadComplete();
+				Intent deliveryLocationSelectionActivity = new Intent(activity, DeliveryLocationSelectionActivity.class);
+				deliveryLocationSelectionActivity.putExtra(DeliveryLocationSelectionActivity.LOAD_PROVINCE, "LOAD_PROVINCE");
+				activity.startActivity(deliveryLocationSelectionActivity);
+				activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+			}
+		}
+	}
+
+	@Override
+	public void onSessionTokenInValid(TokenValidationResponse tokenValidationResponse) {
+		onAddToCartLoadComplete();
+	}
+
+	@Override
+	public void onTokenValidationFailure(TokenValidationResponse tokenValidationResponse) {
+		Activity activity = getBaseActivity();
+		if (activity != null) {
+			Response response = tokenValidationResponse.response;
+			if (response != null) {
+				String code = response.code;
+				String desc = response.desc;
+				String stsParams = response.stsParams;
+				Log.e(TAG, "onTokenValidationFailure");
+			}
+		}
+	}
+
+	@Override
+	public void onAddToCartLoad() {
+		hideView(getViewDataBinding().tvAddToCart);
+		showView(getViewDataBinding().pbAddToCart);
+	}
+
+	@Override
+	public void onAddToCartLoadComplete() {
+		hideView(getViewDataBinding().pbAddToCart);
+		showView(getViewDataBinding().tvAddToCart);
+	}
+
+	@Override
+	public void apiAddItemToCart() {
+		mPostAddItemToCart = getViewModel().postAddItemToCart(mApiAddItemToCart);
+		mPostAddItemToCart.execute();
+	}
+
+	@Override
+	public void addItemToCartResponse(AddItemToCartResponse addItemToCartResponse) {
+		Log.d(TAG, addItemToCartResponse.toString());
+		onAddToCartLoadComplete();
+		List<AddToCartDaTum> addToCartList = addItemToCartResponse.data;
+		if (addToCartList != null && addToCartList.size() > 0) {
+			AddToCartDaTum datum = addToCartList.get(0);
+			if (datum != null) {
+				List<FormException> formExceptionList = datum.formexceptions;
+				if (formExceptionList != null) {
+					FormException formException = formExceptionList.get(0);
+					if (formException != null) {
+						Activity activity = getBaseActivity();
+						if (activity != null) {
+							Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, formException.message);
+							return;
+						}
+					}
+				}
+			}
+		}
+
+		if (addToCartList != null) {
+			getBottomNavigator().closeSlideUpPanel(true);
+		}
+	}
+
+	@Override
+	public void onAddItemToCartFailure(String error) {
+		Log.d(TAG, error.toString());
+		onAddToCartLoadComplete();
+	}
+
+	@Override
+	public void onAddItemToCartFailure(AddItemToCartResponse addItemToCartResponse) {
+
 	}
 }
 

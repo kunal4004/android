@@ -18,7 +18,7 @@ import com.awfs.coordination.BR;
 import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.WrewardsLoggedinAndLinkedFragmentBinding;
 
-import za.co.woolworths.financial.services.android.models.WRewardsCardDetails;
+import za.co.woolworths.financial.services.android.models.rest.reward.WRewardsCardDetails;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;

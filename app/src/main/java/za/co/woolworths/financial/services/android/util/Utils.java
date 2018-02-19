@@ -24,7 +24,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
-import com.google.android.gms.iid.InstanceID;
 
 import android.util.Log;
 import android.util.TypedValue;
@@ -70,6 +69,7 @@ import me.leolin.shortcutbadger.ShortcutBadger;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
@@ -912,5 +912,38 @@ public class Utils {
 
 	private static void setProductOfferingId(int productOfferingId) {
 		WoolworthsApplication.getInstance().setProductOfferingId(productOfferingId);
+	}
+
+
+	public static List<DeliveryLocationHistory> getDeliveryLocationHistory(Context context) {
+		List<DeliveryLocationHistory> history = null;
+		try {
+			SessionDao sessionDao = new SessionDao(context, SessionDao.KEY.DELIVERY_LOCATION_HISTORY).get();
+			if (sessionDao.value == null) {
+				history = new ArrayList<>();
+			} else {
+				Gson gson = new Gson();
+				Type type = new TypeToken<List<DeliveryLocationHistory>>() {
+				}.getType();
+				history = gson.fromJson(sessionDao.value, type);
+			}
+		} catch (Exception e) {
+			Log.e("TAG", e.getMessage());
+		}
+		return history;
+	}
+
+
+	public static String getSessionToken(Context context) {
+		try {
+			SessionDao sessionDao = new SessionDao(context, SessionDao.KEY.USER_TOKEN).get();
+			if (sessionDao.value != null && !sessionDao.value.equals("")) {
+				Log.i("SessionToken", sessionDao.value);
+				return sessionDao.value;
+			}
+		} catch (Exception e) {
+			Log.e("TAG", e.getMessage());
+		}
+		return "";
 	}
 }

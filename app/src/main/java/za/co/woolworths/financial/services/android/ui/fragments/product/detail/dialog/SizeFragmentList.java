@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments;
+package za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,24 +12,25 @@ import android.view.ViewGroup;
 import com.awfs.coordination.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.ui.activities.WStockFinderActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderSizeColorAdapter;
 import za.co.woolworths.financial.services.android.util.ColorInterface;
 
-public class SizeFragmentDialog extends Fragment implements StockFinderSizeColorAdapter.RecyclerViewClickListener, ColorInterface {
+public class SizeFragmentList extends Fragment implements StockFinderSizeColorAdapter.RecyclerViewClickListener, ColorInterface {
 
 	private WStockFinderActivity.RecyclerItemSelected mRecyclerItemSelected;
 	private RecyclerView mSizeRecycleView;
-	private SizeFragmentDialog mContext;
+	private SizeFragmentList mContext;
 	private StockFinderSizeColorAdapter stockFinderSizeColorAdapter;
 	private ArrayList<OtherSkus> mOtherSKUList;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View v =  inflater.inflate(R.layout.color_fragment, container, false);
-		return  v;
+		View v = inflater.inflate(R.layout.color_fragment, container, false);
+		return v;
 	}
 
 	@Override
@@ -41,7 +42,7 @@ public class SizeFragmentDialog extends Fragment implements StockFinderSizeColor
 		} catch (ClassCastException ignored) {
 		}
 
-		mSizeRecycleView = (RecyclerView) view.findViewById(R.id.recyclerColorList);
+		mSizeRecycleView = view.findViewById(R.id.recyclerColorList);
 	}
 
 	@Override
@@ -51,7 +52,7 @@ public class SizeFragmentDialog extends Fragment implements StockFinderSizeColor
 
 	@Override
 	public void onUpdate(final ArrayList<OtherSkus> otherSkuList, final String viewType) {
-		SizeFragmentDialog.this.getActivity().runOnUiThread(new Runnable() {
+		SizeFragmentList.this.getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
 				mOtherSKUList = otherSkuList;
@@ -61,6 +62,11 @@ public class SizeFragmentDialog extends Fragment implements StockFinderSizeColor
 				mSizeRecycleView.scrollToPosition(0);
 			}
 		});
+	}
+
+	@Override
+	public void onUpdate(List<Integer> quantityList) {
+
 	}
 
 }
