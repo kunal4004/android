@@ -23,6 +23,7 @@ import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
@@ -31,6 +32,7 @@ import za.co.woolworths.financial.services.android.models.dto.TokenValidationRes
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
+import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
 import za.co.woolworths.financial.services.android.models.rest.validate.IdentifyTokenValidation;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
@@ -54,6 +56,7 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 	private String mProductJson;
 	private boolean productLoadFail = false;
 	private boolean findInStoreLoadFail = false;
+	private boolean addedToCart = true;
 
 	public DetailViewModel() {
 		super();
@@ -77,6 +80,14 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 
 	public ProductList getDefaultProduct() {
 		return defaultProduct;
+	}
+
+	public void setAddedToCart(boolean addedToCart) {
+		this.addedToCart = addedToCart;
+	}
+
+	public boolean getAddToCart() {
+		return addedToCart;
 	}
 
 	public void getProductDetail(final Context context, String productId, String skuId) {
@@ -122,6 +133,7 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 
 	public LocationItemTask locationItemTask(final Context context) {
 		setFindInStoreLoadFail(false);
+		getNavigator().showFindInStoreProgress();
 		return new LocationItemTask(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -192,7 +204,10 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 
 	// return new product list
 	public WProductDetail getProduct() {
-		return newProductDetail;
+		if (newProductDetail != null)
+			return newProductDetail;
+		else
+			return new WProductDetail();
 	}
 
 	//return check out link
@@ -346,7 +361,7 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 		return auxiliarySku;
 	}
 
-	public OtherSkus getDefaultSKUModel() {
+	private OtherSkus getDefaultSKUModel() {
 		if (otherSkuList() != null) {
 			if (otherSkuList().size() > 0) {
 				for (OtherSkus option : otherSkuList()) {
@@ -359,7 +374,7 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 		return new OtherSkus();
 	}
 
-	protected String getImageByWidth(String imageUrl) {
+	private String getImageByWidth(String imageUrl) {
 		Display display = ((WindowManager) WoolworthsApplication.getInstance()
 				.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		Point size = new Point();
@@ -434,7 +449,6 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 		return new OtherSkus();
 	}
 
-
 	public ArrayList<OtherSkus> commonSizeList(boolean productHasColour, String colour) {
 		ArrayList<OtherSkus> commonSizeList = new ArrayList<>();
 
@@ -488,6 +502,8 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 
 
 	protected IdentifyTokenValidation identifyTokenValidation() {
+		setAddedToCart(true);
+		getNavigator().onAddToCartLoad();
 		return new IdentifyTokenValidation(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -499,22 +515,31 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 								getNavigator().onSessionTokenValid();
 								break;
 
+							case 440:
+								if (tokenValidationResponse.response != null)
+									getNavigator().onSessionTokenExpired(tokenValidationResponse.response);
+								break;
+
 							default:
-								getNavigator().onSessionTokenInValid(tokenValidationResponse);
+								getNavigator().otherHttpCode(tokenValidationResponse.response);
 								break;
 						}
 					}
 				}
+				setAddedToCart(true);
 			}
 
 			@Override
 			public void onFailure(String e) {
+				setAddedToCart(false);
 				getNavigator().onTokenFailure(e);
 			}
 		});
 	}
 
 	protected PostAddItemToCart postAddItemToCart(AddItemToCart addItemToCart) {
+		setAddedToCart(true);
+		getNavigator().onAddToCartLoad();
 		return new PostAddItemToCart(addItemToCart, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
@@ -526,17 +551,41 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 								getNavigator().addItemToCartResponse(addItemToCartResponse);
 								break;
 
+							case 440:
+								if (addItemToCartResponse.response != null)
+									getNavigator().onSessionTokenExpired(addItemToCartResponse.response);
+								break;
+
 							default:
-								getNavigator().onAddItemToCartFailure(addItemToCartResponse);
+								if (addItemToCartResponse.response != null)
+									getNavigator().otherHttpCode(addItemToCartResponse.response);
 								break;
 						}
 					}
+					setAddedToCart(true);
 				}
 			}
 
 			@Override
 			public void onFailure(String e) {
+				setAddedToCart(false);
 				getNavigator().onAddItemToCartFailure(e);
+			}
+		});
+	}
+
+	protected SetDeliveryLocationSuburb setSuburb(DeliveryLocationHistory deliveryLocationHistory) {
+		// TODO: confirm loading when doing this request
+
+		return new SetDeliveryLocationSuburb(deliveryLocationHistory.suburb.id, new OnEventListener() {
+			@Override
+			public void onSuccess(Object object) {
+				getNavigator().handleSetSuburbResponse(object);
+			}
+
+			@Override
+			public void onFailure(final String errorMessage) {
+				getNavigator().onTokenFailure(errorMessage);
 			}
 		});
 	}

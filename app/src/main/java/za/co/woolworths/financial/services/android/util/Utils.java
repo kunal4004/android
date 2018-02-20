@@ -27,11 +27,17 @@ import android.text.TextUtils;
 
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.awfs.coordination.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -82,6 +88,7 @@ import za.co.woolworths.financial.services.android.models.dto.statement.SendUser
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
@@ -945,5 +952,27 @@ public class Utils {
 			Log.e("TAG", e.getMessage());
 		}
 		return "";
+	}
+
+	public static void sendBus(Object object) {
+		WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+		if (woolworthsApplication != null) woolworthsApplication.bus().send(object);
+	}
+
+	public static void customToastMessage(BottomNavigationActivity bottomNavigationActivity) {
+		LayoutInflater inflater = bottomNavigationActivity.getLayoutInflater();
+		View layout = inflater.inflate(R.layout.add_to_cart_success, null);
+//		TextView text = (TextView) layout.findViewById(R.id.tvAddToCart);
+//		text.setText("Hello! This is a custom toast!");
+		Toast toast = new Toast(bottomNavigationActivity);
+		toast.setGravity(Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, dp2px(bottomNavigationActivity, 16), dp2px(bottomNavigationActivity, 60));
+		toast.setDuration(Toast.LENGTH_LONG);
+		toast.setView(layout);
+		toast.show();
+	}
+
+	public static int dp2px(Context context, float dpValue) {
+		final float scale = context.getResources().getDisplayMetrics().density;
+		return (int) (dpValue * scale + 0.5f);
 	}
 }

@@ -15,6 +15,7 @@ public class WGlobalState {
 	private final Context mContext;
 	private boolean toolbarIsDisplayed;
 	private int mSaveButtonClick;
+	private boolean determineLocationPopUpEnabled;
 
 	public WGlobalState(Context context) {
 		this.mContext = context;
@@ -270,5 +271,13 @@ public class WGlobalState {
 
 	public int getSaveButtonClick() {
 		return mSaveButtonClick;
+	}
+
+	public boolean determineLocationPopUpEnabled() {
+		return determineLocationPopUpEnabled;
+	}
+
+	public void setDetermineLocationPopUpEnabled(boolean determineLocationPopUpEnabled) {
+		this.determineLocationPopUpEnabled = determineLocationPopUpEnabled;
 	}
 }

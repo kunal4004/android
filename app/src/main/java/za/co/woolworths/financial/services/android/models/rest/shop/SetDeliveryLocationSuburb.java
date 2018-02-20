@@ -16,22 +16,19 @@ import za.co.woolworths.financial.services.android.util.OnEventListener;
 public class SetDeliveryLocationSuburb extends HttpAsyncTask<String, String, SetDeliveryLocationSuburbResponse> {
 
 	private String suburbId;
-	private WoolworthsApplication mWoolworthsApp;
 	private OnEventListener<SetDeliveryLocationSuburbResponse> mCallBack;
 	private Context mContext;
 	public String mException;
 
-	public SetDeliveryLocationSuburb(Context context, String suburbId, OnEventListener callback)
+	public SetDeliveryLocationSuburb(String suburbId, OnEventListener callback)
 	{
-		this.mContext = context;
 		this.suburbId = suburbId;
 		this.mCallBack = callback;
-		this.mWoolworthsApp = ((WoolworthsApplication) ((AppCompatActivity) mContext).getApplication());
 	}
 
 	@Override
 	protected SetDeliveryLocationSuburbResponse httpDoInBackground(String... params) {
-		return mWoolworthsApp.getApi().setSuburb(suburbId);
+		return WoolworthsApplication.getInstance().getApi().setSuburb(suburbId);
 	}
 
 	@Override
