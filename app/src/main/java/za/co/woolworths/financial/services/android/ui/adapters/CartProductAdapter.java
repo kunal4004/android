@@ -114,14 +114,20 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			});
 		} else if(itemRow.rowType == CartRowType.PRICES) {
 			CartPricesViewHolder cartPricesViewHolder = ((CartPricesViewHolder) holder);
-			cartPricesViewHolder.txtBasketCount.setText("Basket - " + orderSummary.getTotalItemsCount() + " items");
-			setPriceValue(cartPricesViewHolder.txtPriceBasketItems, orderSummary.getBasketTotal());
-			setPriceValue(cartPricesViewHolder.txtPriceEstimatedDelivery, orderSummary.getEstimatedDelivery());
+			if(orderSummary!=null) {
+				cartPricesViewHolder.orderSummeryLayout.setVisibility(View.VISIBLE);
+				cartPricesViewHolder.txtBasketCount.setText("Basket - " + orderSummary.getTotalItemsCount() + " items");
+				setPriceValue(cartPricesViewHolder.txtPriceBasketItems, orderSummary.getBasketTotal());
+				setPriceValue(cartPricesViewHolder.txtPriceEstimatedDelivery, orderSummary.getEstimatedDelivery());
 			/*setPriceValue(cartPricesViewHolder.txtPriceDiscounts, cartPriceValues.discounts);
 			setPriceValue(cartPricesViewHolder.txtPriceCompanyDiscount, cartPriceValues.companyDiscounts);
 			setPriceValue(cartPricesViewHolder.txtPriceWRewardsSavings, cartPriceValues.wRewardsSavings);
 			setPriceValue(cartPricesViewHolder.txtPriceOtherDiscount, cartPriceValues.otherDiscount);*/
-			setPriceValue(cartPricesViewHolder.txtPriceTotal, orderSummary.getTotal());
+				setPriceValue(cartPricesViewHolder.txtPriceTotal, orderSummary.getTotal());
+			}
+			else {
+				cartPricesViewHolder.orderSummeryLayout.setVisibility(View.GONE);
+			}
 
 		}
 	}
@@ -185,6 +191,13 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		notifyDataSetChanged();
 	}
 
+	public void clear()
+	{
+		this.cartItems.clear();
+		this.orderSummary=null;
+		notifyDataSetChanged();
+	}
+
 	private class CartHeaderViewHolder extends RecyclerView.ViewHolder {
 		private WTextView tvHeaderTitle;
 
@@ -216,6 +229,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 				txtPriceEstimatedDelivery, txtPriceDiscounts,
 				txtPriceCompanyDiscount, txtPriceWRewardsSavings,
 				txtPriceOtherDiscount, txtPriceTotal;
+		private LinearLayout orderSummeryLayout;
 
 		public CartPricesViewHolder(View view) {
 			super(view);
@@ -227,6 +241,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			txtPriceWRewardsSavings = view.findViewById(R.id.txtPriceWRewardsSavings);
 			txtPriceOtherDiscount = view.findViewById(R.id.txtPriceOtherDiscount);*/
 			txtPriceTotal = view.findViewById(R.id.txtPriceTotal);
+			orderSummeryLayout=view.findViewById(R.id.orderSummeryLayout);
 		}
 	}
 

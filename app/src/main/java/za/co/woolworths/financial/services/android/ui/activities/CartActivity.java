@@ -59,7 +59,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 				finishActivity();
 				break;
 			case R.id.btnClearCart:
-
+				cartFragment.clearAllCartItems();
 				break;
 		}
 	}
@@ -92,5 +92,12 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
 	public void hideEditCart() {
 		btnEditCart.setVisibility(View.GONE);
+	}
+
+	public void resetToolBarIcons()
+	{
+		btnEditCart.setVisibility(View.GONE);
+		btnCloseCart.setVisibility(View.VISIBLE);
+		btnClearCart.setVisibility(View.GONE);
 	}
 }

@@ -129,6 +129,10 @@ public class RetrofitAsyncClient {
 		mApiInterface.removeItemFromCart(getApiId(),getSha1Password(),getOsVersion(),getDeviceModel(),getNetworkCarrier(),getOS(),getOsVersion(),getSessionToken(),productId,callback);
 	}
 
+	public void removeAllCartItems(Callback<String> callback){
+		mApiInterface.removeAllCartItems(getApiId(),getSha1Password(),getOsVersion(),getDeviceModel(),getNetworkCarrier(),getOS(),getOsVersion(),getSessionToken(),callback);
+	}
+
 
 }
 
