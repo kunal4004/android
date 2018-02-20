@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments;
+package za.co.woolworths.financial.services.android.ui.fragments.cli;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
+import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.Utils;

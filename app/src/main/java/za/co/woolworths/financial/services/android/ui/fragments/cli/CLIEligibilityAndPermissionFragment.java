@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments;
+package za.co.woolworths.financial.services.android.ui.fragments.cli;
 
 import android.animation.ObjectAnimator;
 import android.os.Bundle;

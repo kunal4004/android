@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments;
+package za.co.woolworths.financial.services.android.ui.fragments.cli;
 
 import android.app.Activity;
 import android.content.Context;
@@ -25,7 +25,7 @@ import java.util.Locale;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.service.event.BusStation;
-import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
+import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WLoanEditTextView;
 import za.co.woolworths.financial.services.android.util.Utils;

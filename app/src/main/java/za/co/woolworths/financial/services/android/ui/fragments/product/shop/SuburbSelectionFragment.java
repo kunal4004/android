@@ -1,20 +1,17 @@
-package za.co.woolworths.financial.services.android.ui.fragments.shop;
+package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
 
-import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,7 +36,7 @@ import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.rest.shop.GetSuburbs;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
-import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbSelectionAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -48,6 +45,8 @@ import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.binder.DeliveryLocationSelectionFragmentChange;
+
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.USE_MY_LOCATION;
 
 public class SuburbSelectionFragment extends Fragment implements SuburbSelectionAdapter.SuburbSelectionCallback, View.OnTouchListener {
 
@@ -259,7 +258,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		mErrorHandlerView.hideErrorHandlerLayout();
 		toggleLoading(true);
 
-		setDeliveryLocationSuburb = new SetDeliveryLocationSuburb(getActivity(), suburb.id, new OnEventListener() {
+		setDeliveryLocationSuburb = new SetDeliveryLocationSuburb(suburb.id, new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				Log.i("SuburbSelectionFragment", "setSuburb Succeeded");
@@ -298,7 +297,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 				case 200:
 					saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb));
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
-					getActivity().finish();
+					closeActivity();
 					break;
 				case 440:
 					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.response.stsParams);
@@ -340,6 +339,14 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		}
 	}
 
+	private void closeActivity() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			activity.finish();
+			activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+		}
+	}
+
 	private void saveRecentDeliveryLocation(DeliveryLocationHistory historyItem) {
 		List<DeliveryLocationHistory> history = getRecentDeliveryLocations();
 		SessionDao sessionDao = new SessionDao(getContext());
@@ -375,6 +382,9 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 				}
 			}
 		}
+
+		//Trigger api validation token in DetailFragment
+		Utils.sendBus(new ProductState(USE_MY_LOCATION));
 	}
 
 	private List<DeliveryLocationHistory> getRecentDeliveryLocations() {

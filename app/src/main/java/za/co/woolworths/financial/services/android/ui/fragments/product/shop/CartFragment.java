@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments.shop;
+package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -22,21 +22,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Random;
 
 import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
-import za.co.woolworths.financial.services.android.models.dto.CartPriceValues;
 import za.co.woolworths.financial.services.android.models.dto.CartProduct;
 import za.co.woolworths.financial.services.android.models.dto.CartResponse;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.PriceInfo;
-import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;

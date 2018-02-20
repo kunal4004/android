@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments;
+package za.co.woolworths.financial.services.android.ui.fragments.cli;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import android.widget.FrameLayout;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
+import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.controller.CLIStepIndicatorListener;
 

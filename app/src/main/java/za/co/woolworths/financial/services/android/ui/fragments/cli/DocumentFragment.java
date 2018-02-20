@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.fragments;
+package za.co.woolworths.financial.services.android.ui.fragments.cli;
 
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
@@ -44,7 +44,7 @@ import za.co.woolworths.financial.services.android.models.rest.cli.CLIGetDeaBank
 import za.co.woolworths.financial.services.android.models.rest.cli.CLISendEmailRequest;
 import za.co.woolworths.financial.services.android.models.rest.cli.CLIUpdateBankDetails;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
-import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
+import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentAdapter;
 import za.co.woolworths.financial.services.android.ui.adapters.DocumentsAccountTypeAdapter;
