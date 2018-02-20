@@ -158,7 +158,7 @@
             android:theme="@style/Messages">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity"/>
+                android:value="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity"/>
         </activity>
 
         <activity
@@ -247,11 +247,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle"/>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.FindOutMoreActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.cli.FindOutMoreActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FaqStyle"/>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity"
             android:screenOrientation="portrait"
             android:theme="@style/CLI"
             android:windowSoftInputMode="adjustPan"/>
@@ -277,7 +277,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/StoreSearch"/>
         <activity
-            android:name="za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity"
+            android:name="za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity"
             android:label="@string/title_activity_bottom_navigation"
             android:screenOrientation="portrait"
             android:theme="@style/bottomNavigationStyle"/>
