@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.activities.bottom_menu;
+package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;

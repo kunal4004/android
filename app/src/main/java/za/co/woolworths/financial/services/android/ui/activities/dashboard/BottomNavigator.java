@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.activities.bottom_menu;
+package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
@@ -17,8 +17,6 @@ public interface BottomNavigator {
 	SlidingUpPanelLayout getSlidingLayout();
 
 	void closeSlideUpPanel();
-
-	void closeSlideUpPanel(boolean continueShopping);
 
 	void renderUI();
 

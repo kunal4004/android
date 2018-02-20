@@ -1,4 +1,4 @@
-package za.co.woolworths.financial.services.android.ui.activities.bottom_menu;
+package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -10,8 +10,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
@@ -34,6 +34,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
@@ -76,7 +77,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private WRewardsFragment wRewardsFragment;
 	private MyAccountsFragment myAccountsFragment;
 	private String TAG = this.getClass().getSimpleName();
-	private boolean mContinueShopping;
 
 	@Override
 	public int getLayoutId() {
@@ -112,7 +112,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		mNavController = FragNavController.newBuilder(savedInstanceState,
 				getSupportFragmentManager(),
 				R.id.frag_container)
-				.fragmentHideStrategy(FragNavController.HIDE)
+				.fragmentHideStrategy(FragNavController.DETACH_ON_NAVIGATE_HIDE_ON_SWITCH)
 				.transactionListener(this)
 				.switchController(FragNavTabHistoryController.Companion.UNLIMITED_TAB_HISTORY, new FragNavSwitchController() {
 					@Override
@@ -149,6 +149,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 								addBadge(INDEX_REWARD, 0);
 								addBadge(INDEX_ACCOUNT, 0);
 								ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
+							}
+						} else if (object instanceof CartSummaryResponse) {
+							CartSummaryResponse cartSummaryResponse = (CartSummaryResponse) object;
+							if (cartSummaryResponse != null) {
+								// product item successfully added to cart
+								closeSlideUpPanel();
+								addBadge(2, cartSummaryResponse.getAddItemToCartResponse().data.get(0).totalCommerceIteItemCount);
+								Utils.customToastMessage(BottomNavigationActivity.this);
 							}
 						}
 					}
@@ -253,10 +261,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				switch (newState) {
 					case COLLAPSED:
 						showStatusBar();
-						if (mContinueShopping) {
-							Snackbar.make(getBottomNavigationById(), "Item successfully Added", 400).show();
-							mContinueShopping = false;
+						try {
+							FragmentManager fm = getSupportFragmentManager();
+							Fragment fragmentById = fm.findFragmentById(R.id.fragment_bottom_container);
+							//detach detail fragment
+							if (fragmentById instanceof DetailFragment) {
+								DetailFragment detailFragment = (DetailFragment) fragmentById;
+								detailFragment.onDetach();
+							}
+						} catch (ClassCastException e) {
+							// not that fragment
 						}
+
 						break;
 
 					case EXPANDED:
@@ -342,13 +358,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		getSlidingLayout().setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
 	}
 
-	@Override
-	public void closeSlideUpPanel(boolean continueShopping) {
-		mContinueShopping = continueShopping;
-		getSlidingLayout().setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-
-	}
-
 	private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
 			= new BottomNavigationView.OnNavigationItemSelectedListener() {
 		@Override
@@ -430,8 +439,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void onBackPressed() {
 		if (!mNavController.isRootFragment()) {
 			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build());
-		} else {
-
 		}
 	}
 
@@ -458,13 +465,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
-	public void onFragmentTransaction(Fragment fragment, FragNavController.TransactionType transactionType) {
+	public void onFragmentTransaction(Fragment fragment, @NonNull FragNavController.TransactionType transactionType) {
 		// If we have a backstack, show the back button
 		if (getSupportActionBar() != null && mNavController != null) {
 			getSupportActionBar().setDisplayHomeAsUpEnabled(!mNavController.isRootFragment());
 		}
 	}
 
+	@NonNull
 	@Override
 	public Fragment getRootFragment(int index) {
 		switch (index) {
@@ -586,8 +594,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (getBottomNavigationById().getCurrentItem()) {
-			case 0:
 			case 1:
+			case 0:
 			case 2:
 				// prevent firing reward and account api on every activity resume
 				break;
