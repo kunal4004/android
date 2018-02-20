@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigator;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 
 /**
  * Created by W7099877 on 01/12/2016.

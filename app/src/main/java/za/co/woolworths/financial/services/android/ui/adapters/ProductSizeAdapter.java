@@ -1,9 +1,11 @@
 package za.co.woolworths.financial.services.android.ui.adapters;
 
+import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.awfs.coordination.R;
 
@@ -12,7 +14,6 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailNavigator;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.SelectedProductView;
 
 public class ProductSizeAdapter extends RecyclerView.Adapter<ProductSizeAdapter.SimpleViewHolder> {
 	private List<OtherSkus> mProductSizeList;
@@ -28,18 +29,21 @@ public class ProductSizeAdapter extends RecyclerView.Adapter<ProductSizeAdapter.
 	class SimpleViewHolder extends RecyclerView.ViewHolder {
 
 		WTextView productName;
+		LinearLayout llSize;
 
 		SimpleViewHolder(View view) {
 			super(view);
+			llSize = view.findViewById(R.id.llSize);
 			productName = view.findViewById(R.id.name);
 		}
 	}
 
 	@Override
-	public void onBindViewHolder(final SimpleViewHolder holder, final int position) {
+	public void onBindViewHolder(final SimpleViewHolder holder,
+								 @SuppressLint("RecyclerView") final int position) {
 		OtherSkus productSize = mProductSizeList.get(position);
 		holder.productName.setText(productSize.size);
-		holder.itemView.setOnClickListener(new View.OnClickListener() {
+		holder.llSize.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mDetailNavigator.onSizeItemClicked(mProductSizeList.get(position));

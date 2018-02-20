@@ -1,9 +1,12 @@
 package za.co.woolworths.financial.services.android.models.service.event;
 
-
 public class ProductState {
 
-	public static String POST_ADD_ITEM_TO_CART = "POST_ADD_ITEM_TO_CART";
+	public static final String POST_ADD_ITEM_TO_CART = "POST_ADD_ITEM_TO_CART";
+	public static final String DETERMINE_LOCATION_POPUP = "DETERMINE_LOCATION_POPUP";
+	public static final String USE_MY_LOCATION = "USE_MY_LOCATION";
+	public static final String SET_SUBURB = "SET_SUBURB";
+	public static final String SET_SUBURB_API = "SET_SUBURB_API";
 
 	private String state;
 	private int quantity;

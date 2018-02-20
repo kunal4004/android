@@ -18,7 +18,7 @@ import com.awfs.coordination.R;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
-import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigator;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 /**

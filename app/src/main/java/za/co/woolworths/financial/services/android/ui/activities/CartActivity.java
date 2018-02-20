@@ -9,7 +9,7 @@ import android.widget.ImageView;
 
 import com.awfs.coordination.R;
 
-import za.co.woolworths.financial.services.android.ui.fragments.shop.CartFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 

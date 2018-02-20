@@ -51,12 +51,15 @@ import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice
 import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.ui.activities.bottom_menu.BottomNavigationActivity;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.DETERMINE_LOCATION_POPUP;
 
 public class SSOActivity extends WebViewActivity {
 
@@ -289,7 +292,7 @@ public class SSOActivity extends WebViewActivity {
 				this.redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 
                 /*
-                * // Check if sts params were supplied.
+				* // Check if sts params were supplied.
       guard let query = stsParams else {
         break
       }
@@ -386,9 +389,7 @@ public class SSOActivity extends WebViewActivity {
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
 			showProgressBar();
-
 			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) {
-
 				view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
 					@Override
 					public void onReceiveValue(String value) {
@@ -418,9 +419,8 @@ public class SSOActivity extends WebViewActivity {
 							//Trigger Firebase Tag.
 							JWTDecodedModel jwtDecodedModel = Utils.getJWTDecoded(getApplicationContext());
 							Map<String, String> arguments = new HashMap<>();
-							arguments.put("c2_id", (jwtDecodedModel.C2Id != null)? jwtDecodedModel.C2Id : "");
-							Utils.triggerFireBaseEvents(getApplicationContext(),FirebaseAnalytics.Event.LOGIN,arguments);
-
+							arguments.put("c2_id", (jwtDecodedModel.C2Id != null) ? jwtDecodedModel.C2Id : "");
+							Utils.triggerFireBaseEvents(getApplicationContext(), FirebaseAnalytics.Event.LOGIN, arguments);
 							sendRegistrationToServer();//TODO: this should be handled by a listener
 							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
 						} else {
@@ -559,7 +559,7 @@ public class SSOActivity extends WebViewActivity {
 		device.pushNotificationToken = FirebaseInstanceId.getInstance().getToken();
 
 		//Don't update token if pushNotificationToken or appInstanceID NULL
-		if(device.appInstanceId == null || device.pushNotificationToken==null)
+		if (device.appInstanceId == null || device.pushNotificationToken == null)
 			return;
 
 		//Sending Token and app instance Id to App server
@@ -620,14 +620,23 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	public void closeActivity() {
+		// Call the popup message to confirm user location
+		//or set new location in DetailFragment
+		if (mGlobalState.determineLocationPopUpEnabled()) {
+			Utils.sendBus(new ProductState(DETERMINE_LOCATION_POPUP));
+			mGlobalState.setDetermineLocationPopUpEnabled(false);
+		}
 		finish();
 		overridePendingTransition(0, 0);
 	}
 
 	@Override
 	protected void onDestroy() {
-		if (this.webView != null)
+		if (this.webView != null) {
+			// handle  WebView.destroy() called while WebView is still attached to window.
+			this.webView.removeAllViews();
 			this.webView.destroy();
+		}
 		super.onDestroy();
 	}
 
