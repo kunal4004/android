@@ -19,7 +19,7 @@ import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.ui.activities.WConnectionHandlerActivity;
-import za.co.woolworths.financial.services.android.ui.fragments.OfferCalculationFragment;
+import za.co.woolworths.financial.services.android.ui.fragments.cli.OfferCalculationFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.alert.Alerter;

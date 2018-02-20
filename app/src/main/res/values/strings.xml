@@ -608,4 +608,11 @@
     <string name="lets_make_it_easy_for_you">Let us make it easy for you - we can request your latest 3 months bank statements directly from your bank, at no cost to you.</string>
     <string name="statement_send_email_false_desc">Oops, There seems to be a problem. Please try again later. </string>
     <string name="edit_quantity">edit your quantity</string>
+    <string name="delivery_location_title">delivery location</string>
+    <string name="update_my_location">Set new location</string>
+    <string name="set_location_desc">Please set your location.</string>
+    <string name="your_delivery_location_is_set_to">Your delivery location is set to:</string>
+    <string name="confirm_your_location">Confirm location</string>
+    <string name="edit_delivery_location"><u>edit delivery location</u></string>
+    <string name="added_to">added to</string>
 </resources>

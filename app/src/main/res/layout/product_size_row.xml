@@ -14,13 +14,14 @@
         android:id="@+id/linPopUpContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/twenty_six_dp"
-        android:background="@color/white">
+        android:background="@drawable/card_shadow"
+        >
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rclSize"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/ten_dp"
             />
     </FrameLayout>
 </layout>

@@ -106,6 +106,7 @@
     <style name="Messages" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+        <item name="android:windowDisablePreview">true</item>
         <item name="android:homeAsUpIndicator">@drawable/close_24</item>
     </style>
 
@@ -395,7 +396,7 @@
 
     <style name="colorSizeStyle" parent="android:Theme">
         <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:gravity">center|start</item>
         <item name="android:textColor">@color/black</item>
@@ -1198,5 +1199,4 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
     </style>
-
 </resources>
