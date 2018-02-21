@@ -209,7 +209,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public void loadShoppingCart() {
 		pBar.setVisibility(View.VISIBLE);
-		parentLayout.setVisibility(View.GONE);
+		//parentLayout.setVisibility(View.GONE);
 		mWoolWorthsApplication.getAsyncApi().getShoppingCart(new CancelableCallback<String>() {
 			@Override
 			public void onSuccess(String s, retrofit.client.Response response) {

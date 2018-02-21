@@ -14,7 +14,9 @@
 
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -52,13 +54,16 @@
 
                 </RelativeLayout>
 
+                <include
+                    layout="@layout/empty_state_template"/>
+
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/tvFreeDeliveryFirstOrder"
                     style="@style/style_cart_delivery_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/cart_free_delivery_first_order"/>
-
+                
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/cartList"
                     android:layout_width="match_parent"
@@ -71,8 +76,7 @@
         </android.support.v4.widget.NestedScrollView>
 
 
-        <include
-            layout="@layout/empty_state_template"/>
+
 
         <za.co.woolworths.financial.services.android.ui.views.WButton
             android:id="@+id/btnAddToCart"
