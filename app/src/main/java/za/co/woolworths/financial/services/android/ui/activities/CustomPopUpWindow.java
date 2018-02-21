@@ -537,7 +537,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 					if (deliveryLocationHistory != null) {
 						Suburb suburb = deliveryLocationHistory.suburb;
 						if (suburb != null) {
-							tvLocation.setText(deliveryLocationHistory.province.name + ", " + suburb.name);
+							tvLocation.setText(suburb.name + ", " + deliveryLocationHistory.province.name);
 						}
 					}
 				}
