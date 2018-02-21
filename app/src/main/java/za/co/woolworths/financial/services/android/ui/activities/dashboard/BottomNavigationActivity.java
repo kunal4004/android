@@ -54,6 +54,7 @@ import za.co.woolworths.financial.services.android.ui.views.NestedScrollableView
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
+import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
@@ -81,6 +82,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private WRewardsFragment wRewardsFragment;
 	private MyAccountsFragment myAccountsFragment;
 	private String TAG = this.getClass().getSimpleName();
+	private Bundle mBundle;
 
 	@Override
 	public int getLayoutId() {
@@ -113,6 +115,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
+		mBundle = getIntent().getExtras();
 		mNavController = FragNavController.newBuilder(savedInstanceState,
 				getSupportFragmentManager(),
 				R.id.frag_container)
@@ -170,28 +173,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	protected void onResume() {
 		super.onResume();
-//		try {
-//			Bundle bundle = getIntent().getExtras();
-//			if (bundle != null) {
-//				if (!TextUtils.isEmpty(bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT))) {
-//					switchTab(INDEX_ACCOUNT);
-//				} else {
-//					if (bundle != null) {
-//						int mOpenProduct = bundle.getInt("myAccount");
-//						if (mOpenProduct == 1) {
-//							switchTab(INDEX_ACCOUNT);
-//						} else {
-//							switchTab(INDEX_TODAY);
-//						}
-//					} else {
-//						switchTab(INDEX_TODAY);
-//					}
-//				}
-//			}
-//		} catch (Exception ex) {
-//			ex.printStackTrace();
-//		}
-		cartSummaryAPI();
+		if (mBundle != null) {
+			if (!TextUtils.isEmpty(mBundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT))) {
+				getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+				mBundle = null;
+			}
+		}
 	}
 
 	@Override
@@ -614,6 +601,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.e("onActivityResult", String.valueOf(getBottomNavigationById().getCurrentItem()));
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == OPEN_CART_REQUEST) {
 			if (resultCode == RESULT_OK) {

@@ -232,11 +232,6 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		}
 	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
-	}
-
 	public void clearVoucherCounter() {
 		addBadge(3, 0);
 	}
