@@ -8,8 +8,12 @@ import java.util.ArrayList;
 
 public class CartItemGroup {
 
-		public String type;
-		public ArrayList<CartProduct> cartProducts;
+	public String type;
+
+	public String suburbName;
+	public String provinceName;
+
+	public ArrayList<CartProduct> cartProducts;
 
 	public String getType() {
 		return type;
@@ -26,4 +30,5 @@ public class CartItemGroup {
 	public void setCartProducts(ArrayList<CartProduct> cartProducts) {
 		this.cartProducts = cartProducts;
 	}
+
 }
