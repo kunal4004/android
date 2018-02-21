@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.Response;
@@ -98,7 +99,7 @@ public interface DetailNavigator {
 
 	void onTokenFailure(String e);
 
-	void onSessionTokenValid();
+	void onSessionTokenValid(CartSummaryResponse cartSummaryResponse);
 
 	void onAddToCartLoad();
 

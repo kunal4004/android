@@ -49,16 +49,19 @@ import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AddToCartDaTum;
+import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.FormException;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
+import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingList;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
+import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
@@ -1295,14 +1298,20 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 	}
 
 	@Override
-	public void onSessionTokenValid() {
+	public void onSessionTokenValid(CartSummaryResponse cartSummaryResponse) {
 		Activity activity = getBaseActivity();
 		if (activity != null) {
-			//query SQLite for the user’s suburb name and id
-			List<DeliveryLocationHistory> deliveryLocationHistories = Utils.getDeliveryLocationHistory(activity);
-			if (deliveryLocationHistories != null) {
-				DeliveryLocationHistory deliveryLocationHistory = deliveryLocationHistories.get(0);
-				if (deliveryLocationHistory != null) {
+			if (cartSummaryResponse.data != null) {
+				CartSummary cartSummary = cartSummaryResponse.data.get(0);
+				if (!TextUtils.isEmpty(cartSummary.provinceName)) {
+					String suburbId = String.valueOf(cartSummary.suburbId);
+					Province province = new Province();
+					province.name = cartSummary.provinceName;
+					province.id = suburbId;
+					Suburb suburb = new Suburb();
+					suburb.name = cartSummary.suburbName;
+					suburb.id = suburbId;
+					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
 					//user has a valid sessionToken and a delivery location is set.
 					if (getViewModel().getProductType() != null) {
 						getViewDataBinding().scrollProductDetail.scrollTo(0, 0);
@@ -1324,11 +1333,11 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 								break;
 						}
 					}
+				} else {
+					//If the user does not have a suburb id & name stored, the set location from region and suburb process is followed
+					onAddToCartLoadComplete();
+					deliverySelectionIntent(activity);
 				}
-			} else {
-				//If the user does not have a suburb id & name stored, the set location from region and suburb process is followed
-				onAddToCartLoadComplete();
-				deliverySelectionIntent(activity);
 			}
 		}
 	}

@@ -85,6 +85,7 @@ import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
@@ -99,6 +100,7 @@ import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
 import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.USE_MY_LOCATION;
 
 public class Utils {
 
@@ -989,4 +991,60 @@ public class Utils {
 		final float scale = context.getResources().getDisplayMetrics().density;
 		return (int) (dpValue * scale + 0.5f);
 	}
+
+	public static void saveRecentDeliveryLocation(DeliveryLocationHistory historyItem, Context context) {
+		List<DeliveryLocationHistory> history = getRecentDeliveryLocations(context);
+		SessionDao sessionDao = new SessionDao(context);
+		sessionDao.key = SessionDao.KEY.DELIVERY_LOCATION_HISTORY;
+		Gson gson = new Gson();
+		boolean isExist = false;
+		if (history == null) {
+			history = new ArrayList<>();
+			history.add(0, historyItem);
+			String json = gson.toJson(history);
+			sessionDao.value = json;
+			try {
+				sessionDao.save();
+			} catch (Exception e) {
+				Log.e("TAG", e.getMessage());
+			}
+		} else {
+			for (DeliveryLocationHistory item : history) {
+				if (item.suburb.id.equals(historyItem.suburb.id)) {
+					isExist = true;
+				}
+			}
+			if (!isExist) {
+				history.add(0, historyItem);
+				if (history.size() > 5)
+					history.remove(5);
+
+				sessionDao.value = gson.toJson(history);
+				try {
+					sessionDao.save();
+				} catch (Exception e) {
+					Log.e("TAG", e.getMessage());
+				}
+			}
+		}
+	}
+
+	public static List<DeliveryLocationHistory> getRecentDeliveryLocations(Context context) {
+		List<DeliveryLocationHistory> history = null;
+		try {
+			SessionDao sessionDao = new SessionDao(context, SessionDao.KEY.DELIVERY_LOCATION_HISTORY).get();
+			if (sessionDao.value == null) {
+				history = new ArrayList<>();
+			} else {
+				Gson gson = new Gson();
+				Type type = new TypeToken<List<DeliveryLocationHistory>>() {
+				}.getType();
+				history = gson.fromJson(sessionDao.value, type);
+			}
+		} catch (Exception e) {
+			Log.e("TAG", e.getMessage());
+		}
+		return history;
+	}
+
 }

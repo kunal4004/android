@@ -514,7 +514,7 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 					if (cartSummaryResponse != null) {
 						switch (cartSummaryResponse.httpCode) {
 							case 200:
-								getNavigator().onSessionTokenValid();
+								getNavigator().onSessionTokenValid(cartSummaryResponse);
 								break;
 
 							case 440:
