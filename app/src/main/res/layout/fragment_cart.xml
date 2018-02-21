@@ -41,7 +41,7 @@
                         android:drawableLeft="@drawable/mapview"
                         android:drawablePadding="16dp"
                         android:gravity="center_vertical"
-                        android:text="Woodstock, Western Cape"/>
+                        android:text="@string/set_your_delivery_location"/>
 
                     <ImageView
                         android:id="@+id/iconCaretRight"
