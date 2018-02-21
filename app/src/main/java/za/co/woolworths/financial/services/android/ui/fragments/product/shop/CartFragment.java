@@ -1,6 +1,7 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -51,6 +52,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private WTextView txtEmptyStateDesc;
 	private ArrayList<CartItemGroup> cartItems;
 	private OrderSummary orderSummary;
+	private ProgressDialog progressDialog;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -72,6 +74,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		txtEmptyStateDesc = view.findViewById(R.id.txtEmptyStateDesc);
 		mWoolWorthsApplication = ((WoolworthsApplication) getActivity().getApplication());
 		view.findViewById(R.id.locationSelectedLayout).setOnClickListener(this);
+		progressDialog = new ProgressDialog(getActivity());
 
 		Activity activity = getActivity();
 		if (activity != null) {
@@ -108,6 +111,33 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		boolean isEditMode = cartProductAdapter.toggleEditMode();
 		btnAddToCart.setVisibility(isEditMode ? View.GONE : View.VISIBLE);
 		return isEditMode;
+	}
+
+	public void clearAllCartItems()
+	{
+		showProgress();
+		mWoolWorthsApplication.getAsyncApi().removeAllCartItems(new CancelableCallback<String>() {
+			@Override
+			public void onSuccess(String s, retrofit.client.Response response) {
+				Log.i("result ", s);
+				CartResponse cartResponse = convertResponseToCartResponseObject(s);
+				if (cartResponse != null) {
+					switch (cartResponse.httpCode) {
+						case 200:
+							updateCart(cartResponse);
+							break;
+						default:
+							break;
+
+					}
+				}
+			}
+
+			@Override
+			public void onFailure(RetrofitError error) {
+				Log.i("result ", "failed");
+			}
+		});
 	}
 
 	private void locationSelectionClicked() {
@@ -242,6 +272,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public void removeCartItem(String productId)
 	{
+		showProgress();
 		mWoolWorthsApplication.getAsyncApi().removeCartItem(productId,new CancelableCallback<String>() {
 			@Override
 			public void onSuccess(String s, retrofit.client.Response response) {
@@ -274,7 +305,24 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartProductAdapter.removeItem(cartItems,orderSummary);
 
 		}else {
-
+			cartProductAdapter.clear();
+			Activity activity = getActivity();
+			if (activity != null) {
+				CartActivity cartActivity = (CartActivity) activity;
+				cartActivity.resetToolBarIcons();
+			}
+			btnAddToCart.setVisibility(View.GONE);
+			txtEmptyStateDesc.setVisibility(View.VISIBLE);
 		}
+		progressDialog.dismiss();
+	}
+
+	public void showProgress()
+	{
+		progressDialog.setMessage("Removing...");
+		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		progressDialog.setCancelable(false);
+		progressDialog.show();
+
 	}
 }
