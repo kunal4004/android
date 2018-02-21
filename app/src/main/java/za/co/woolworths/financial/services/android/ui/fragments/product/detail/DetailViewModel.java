@@ -410,8 +410,10 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 		// filter by colour
 		ArrayList<OtherSkus> sizeList = new ArrayList<>();
 		for (OtherSkus sku : otherSkuList()) {
-			if (sku.colour.equalsIgnoreCase(otherSku.colour)) {
-				sizeList.add(sku);
+			if (sku.colour != null) {
+				if (sku.colour.equalsIgnoreCase(otherSku.colour)) {
+					sizeList.add(sku);
+				}
 			}
 		}
 
