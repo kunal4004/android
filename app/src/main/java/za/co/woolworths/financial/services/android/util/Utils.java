@@ -610,6 +610,20 @@ public class Utils {
 		mTooltip.show();
 	}
 
+
+	public static void showOneTimePopup(Context context, SessionDao.KEY key, View view) {
+		try {
+			String firstTime = Utils.getSessionDaoValue(context, key);
+			if (firstTime == null) {
+				view.setVisibility(View.VISIBLE);
+			} else {
+				view.setVisibility(View.GONE);
+			}
+			Utils.sessionDaoSave(context, key, "1");
+		} catch (NullPointerException ignored) {
+		}
+	}
+
 	public static void triggerFireBaseEvents(Context mContext, String eventName, Map<String, String> arguments) {
 		FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(mContext);
 
@@ -959,13 +973,13 @@ public class Utils {
 		if (woolworthsApplication != null) woolworthsApplication.bus().send(object);
 	}
 
-	public static void customToastMessage(BottomNavigationActivity bottomNavigationActivity) {
-		LayoutInflater inflater = bottomNavigationActivity.getLayoutInflater();
+	public static void customToastMessage(Activity activity) {
+		LayoutInflater inflater = activity.getLayoutInflater();
 		View layout = inflater.inflate(R.layout.add_to_cart_success, null);
 //		TextView text = (TextView) layout.findViewById(R.id.tvAddToCart);
 //		text.setText("Hello! This is a custom toast!");
-		Toast toast = new Toast(bottomNavigationActivity);
-		toast.setGravity(Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, dp2px(bottomNavigationActivity, 16), dp2px(bottomNavigationActivity, 60));
+		Toast toast = new Toast(activity);
+		toast.setGravity(Gravity.BOTTOM | Gravity.FILL_HORIZONTAL, dp2px(activity, 10), dp2px(activity, 45));
 		toast.setDuration(Toast.LENGTH_LONG);
 		toast.setView(layout);
 		toast.show();

@@ -47,6 +47,7 @@
     <string name="previously_selected_locations">Previously Selected Locations</string>
     <string name="select_your_province">Select your Province</string>
     <string name="select_your_suburb">Select your Suburb</string>
+    <string name="set_your_delivery_location">Select your delivery location</string>
     <string name="submit_query">Submit Query</string>
     <string name="faqs">FAQs</string>
     <string name="sign_out">Sign Out</string>
@@ -615,4 +616,7 @@
     <string name="confirm_your_location">Confirm location</string>
     <string name="edit_delivery_location"><u>edit delivery location</u></string>
     <string name="added_to">added to</string>
+    <string name="empty_cart">EMPTY CART</string>
+    <string name="empty_cart_desc">You currently have no items\nin your cart.</string>
+    <string name="start_shopping">start shopping</string>
 </resources>
