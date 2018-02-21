@@ -12,9 +12,9 @@ import za.co.woolworths.financial.services.android.models.dto.RootCategory;
 public interface CategoryNavigator {
 	void renderUI();
 
-	void navigateToBarcode(View view);
+	void navigateToBarcode();
 
-	void navigateToProductSearch(View view);
+	void navigateToProductSearch();
 
 	void checkCameraPermission();
 

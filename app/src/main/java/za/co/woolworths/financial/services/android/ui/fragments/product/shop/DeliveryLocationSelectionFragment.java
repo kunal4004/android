@@ -1,5 +1,6 @@
 package za.co.woolworths.financial.services.android.ui.fragments.product.shop;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -30,6 +31,7 @@ import za.co.woolworths.financial.services.android.models.dto.Province;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
+import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.ui.adapters.DeliveryLocationAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -195,7 +197,12 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 			switch (response.httpCode) {
 				case 200:
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
-					getActivity().finish();
+					Activity activity = getActivity();
+					if (activity != null) {
+						Utils.sendBus(new CartState(location.suburb.name + ", " + location.province.name));
+						activity.finish();
+						activity.overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
+					}
 					break;
 				case 440:
 					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.response.stsParams);

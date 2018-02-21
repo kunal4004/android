@@ -169,7 +169,6 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 					@Override
 					public void accept(Object object) throws Exception {
 						Activity activity = getActivity();
-
 						if (activity != null) {
 							List<DeliveryLocationHistory> deliveryLocationHistories = Utils.getDeliveryLocationHistory(activity);
 							if (object instanceof DetailFragment) {
@@ -340,50 +339,50 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 
 	@Override
 	public void onSuccessResponse(final WProduct product) {
-		Activity activity = getBaseActivity();
-		if (activity != null) {
-			activity.runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					WProductDetail newProductList = product.product;
-					enableFindInStoreButton(newProductList);
+		WProductDetail newProductList = product.product;
+		enableFindInStoreButton(newProductList);
 
-					if (mFetchFromJson) {
-						getViewModel().setProduct(product.product);
-					}
-					List<OtherSkus> otherSkuList = getViewModel().otherSkuList();
+		if (mFetchFromJson) {
+			getViewModel().setProduct(product.product);
+		}
+		List<OtherSkus> otherSkuList = getViewModel().otherSkuList();
 
-					//display ingredient info
-					getViewModel().displayIngredient();
+		//display ingredient info
+		getViewModel().displayIngredient();
 
-					setProductCode(getViewModel().getProductId());
+		setProductCode(getViewModel().getProductId());
 
-					setProductDescription(getViewModel().getProductDescription(getBaseActivity()));
+		setProductDescription(getViewModel().getProductDescription(getActivity()));
 
-					// use highest sku as default price
-					OtherSkus highestPriceSku = getViewModel().highestSKUPrice(newProductList.fromPrice);
+		// use highest sku as default price
+		OtherSkus highestPriceSku = getViewModel().highestSKUPrice(newProductList.fromPrice);
 
-					setSelectedSize(highestPriceSku);
+		setSelectedSize(highestPriceSku);
 
-					setSelectedTextColor(highestPriceSku);
+		setSelectedTextColor(highestPriceSku);
 
-					setPrice(highestPriceSku);
+		setPrice(highestPriceSku);
 
-					colorSizeContainerVisibility(otherSkuList.size());
+		colorSizeContainerVisibility(otherSkuList.size());
 
-					//set promotional Images
-					ProductUtils.showPromotionalImages(getViewDataBinding().imSave, getViewDataBinding().imReward, getViewDataBinding().imVitality, getViewDataBinding().imVitality, product.product.promotionImages);
+		//set promotional Images
+		ProductUtils.showPromotionalImages(getViewDataBinding().imSave, getViewDataBinding().imReward, getViewDataBinding().imVitality, getViewDataBinding().imVitality, product.product.promotionImages);
 
-					try {
-						setAuxiliaryImages(getViewModel().getAuxiliaryImageList(highestPriceSku));
+		try {
+			setAuxiliaryImages(getViewModel().getAuxiliaryImageList(highestPriceSku));
+		} catch (NullPointerException ex) {
+			ex.printStackTrace();
+		}
+		try {
+			setColorList(getViewModel().commonColorList(highestPriceSku));
+		} catch (NullPointerException ex) {
+			ex.printStackTrace();
+		}
 
-						setColorList(getViewModel().commonColorList(highestPriceSku));
-
-						setSizeList(getViewModel().commonSizeList(highestPriceSku));
-					} catch (NullPointerException ignored) {
-					}
-				}
-			});
+		try {
+			setSizeList(getViewModel().commonSizeList(highestPriceSku));
+		} catch (NullPointerException ex) {
+			ex.printStackTrace();
 		}
 	}
 

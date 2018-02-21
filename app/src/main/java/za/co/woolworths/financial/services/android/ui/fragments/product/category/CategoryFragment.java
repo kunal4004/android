@@ -43,7 +43,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.zxing.QRActivity;
 
 public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding, CategoryViewModel>
-		implements CategoryNavigator, ObservableScrollViewCallbacks {
+		implements CategoryNavigator, ObservableScrollViewCallbacks, View.OnClickListener {
 
 	private static final float HIDE_ALPHA_VALUE = 0;
 	private static final float SHOW_ALPHA_VALUE = 1;
@@ -100,6 +100,9 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 			});
 
 			onRetryConnectionClicked();
+
+			getViewDataBinding().textProductSearch.setOnClickListener(this);
+			getViewDataBinding().llBarcodeScanner.setOnClickListener(this);
 		}
 	}
 
@@ -115,12 +118,12 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	}
 
 	@Override
-	public void navigateToBarcode(View view) {
+	public void navigateToBarcode() {
 		checkCameraPermission();
 	}
 
 	@Override
-	public void navigateToProductSearch(View view) {
+	public void navigateToProductSearch() {
 		Intent openProductSearch = new Intent(getActivity(), ProductSearchActivity.class);
 		startActivity(openProductSearch);
 		getActivity().overridePendingTransition(0, 0);
@@ -336,5 +339,21 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 				}
 			}
 		}, 10);
+	}
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.textProductSearch:
+				navigateToProductSearch();
+				break;
+
+			case R.id.llBarcodeScanner:
+				navigateToBarcode();
+				break;
+
+			default:
+				break;
+		}
 	}
 }

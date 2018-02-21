@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -13,10 +15,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,19 +30,31 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import retrofit.Callback;
 import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
+import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CartProduct;
 import za.co.woolworths.financial.services.android.models.dto.CartResponse;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.PriceInfo;
+import za.co.woolworths.financial.services.android.models.dto.WProduct;
+import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
+import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
+import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.Utils;
 
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener {
@@ -49,18 +66,20 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private WoolworthsApplication mWoolWorthsApplication;
 	private RelativeLayout parentLayout;
 	private ProgressBar pBar;
-	private WTextView txtEmptyStateDesc;
+	private RelativeLayout relEmptyStateHandler;
 	private ArrayList<CartItemGroup> cartItems;
 	private OrderSummary orderSummary;
 	private ProgressDialog progressDialog;
+	private WTextView tvDeliveryLocation;
+	private WTextView tvFreeDeliveryFirstOrder;
+	private CompositeDisposable mDisposables = new CompositeDisposable();
 
 	public CartFragment() {
 		// Required empty public constructor
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.fragment_cart, container, false);
 	}
 
@@ -71,11 +90,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		btnAddToCart = view.findViewById(R.id.btnAddToCart);
 		parentLayout = view.findViewById(R.id.parentLayout);
 		pBar = view.findViewById(R.id.loadingBar);
-		txtEmptyStateDesc = view.findViewById(R.id.txtEmptyStateDesc);
+		relEmptyStateHandler = view.findViewById(R.id.relEmptyStateHandler);
 		mWoolWorthsApplication = ((WoolworthsApplication) getActivity().getApplication());
 		view.findViewById(R.id.locationSelectedLayout).setOnClickListener(this);
+		tvFreeDeliveryFirstOrder = view.findViewById(R.id.tvFreeDeliveryFirstOrder);
+		tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
 		progressDialog = new ProgressDialog(getActivity());
-
+		emptyCartUI(view);
 		Activity activity = getActivity();
 		if (activity != null) {
 			CartActivity cartActivity = (CartActivity) activity;
@@ -83,6 +104,39 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 
 		loadShoppingCart();
+
+		mDisposables.add(WoolworthsApplication.getInstance()
+				.bus()
+				.toObservable()
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(new Consumer<Object>() {
+					@Override
+					public void accept(Object object) throws Exception {
+						if (object != null) {
+							if (object instanceof CartState) {
+								CartState cartState = (CartState) object;
+								if (!TextUtils.isEmpty(cartState.getState())) {
+									tvDeliveryLocation.setText(cartState.getState());
+								}
+							}
+						}
+					}
+				}));
+
+	}
+
+	private void emptyCartUI(View view) {
+		ImageView imgEmpyStateIcon = view.findViewById(R.id.imgEmpyStateIcon);
+		WTextView txtEmptyStateTitle = view.findViewById(R.id.txtEmptyStateTitle);
+		WTextView txtEmptyStateDesc = view.findViewById(R.id.txtEmptyStateDesc);
+		WButton btnGoToProduct = view.findViewById(R.id.btnGoToProduct);
+
+		txtEmptyStateTitle.setText(getString(R.string.empty_cart));
+		txtEmptyStateDesc.setText(getString(R.string.empty_cart_desc));
+		btnGoToProduct.setVisibility(View.VISIBLE);
+		btnGoToProduct.setText(getString(R.string.start_shopping));
+		btnGoToProduct.setOnClickListener(this);
 	}
 
 	@Override
@@ -91,12 +145,22 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			case R.id.locationSelectedLayout:
 				locationSelectionClicked();
 				break;
+			case R.id.btnGoToProduct:
+				Activity activity = getActivity();
+				if (activity != null) {
+					activity.setResult(Activity.RESULT_OK);
+					activity.finish();
+					activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
 	@Override
-	public void onItemClick(View view, int position) {
-		Log.i("CartFragment", "Item #" + position + " clicked!");
+	public void onItemClick(CartProduct cartProduct) {
+		getProductDetail(cartProduct.productId, cartProduct.catalogRefId);
 	}
 
 	@Override
@@ -113,8 +177,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		return isEditMode;
 	}
 
-	public void clearAllCartItems()
-	{
+	public void clearAllCartItems() {
 		showProgress();
 		mWoolWorthsApplication.getAsyncApi().removeAllCartItems(new CancelableCallback<String>() {
 			@Override
@@ -128,7 +191,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							break;
 						default:
 							break;
-
 					}
 				}
 			}
@@ -159,16 +221,29 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						case 200:
 							bindCartData(cartResponse);
 							break;
+
 						default:
 							break;
-
 					}
 				}
 			}
 
 			@Override
-			public void onFailure(RetrofitError error) {
-				Log.i("result ", "failed");
+			public void onFailure(final RetrofitError error) {
+				final Activity activity = getActivity();
+				if (activity != null) {
+					activity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							if (error.getBody().toString().contains("440")) {
+								Utils.sessionDaoSave(activity, SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, null);
+								ScreenManager.presentSSOSignin(activity);
+								activity.finish();
+								activity.overridePendingTransition(0, 0);
+							}
+						}
+					});
+				}
 			}
 		});
 	}
@@ -237,6 +312,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			cartResponse.orderSummary = orderSummary;
 
+			// set delivery location
+			if (dataObject.has("suburbName") && dataObject.has("provinceName")) {
+				tvDeliveryLocation.setText(dataObject.getString("suburbName") + ", " + dataObject.getString("provinceName"));
+			} else {
+				tvDeliveryLocation.setText(getString(R.string.set_your_delivery_location));
+			}
 
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -249,6 +330,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public void bindCartData(CartResponse cartResponse) {
 		parentLayout.setVisibility(View.VISIBLE);
+		Utils.showOneTimePopup(getActivity(), SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, tvFreeDeliveryFirstOrder);
 		if (cartResponse.cartItems.size() > 0) {
 			btnAddToCart.setVisibility(View.VISIBLE);
 			Activity activity = getActivity();
@@ -256,8 +338,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				CartActivity cartActivity = (CartActivity) activity;
 				cartActivity.showEditCart();
 			}
-			cartItems=cartResponse.cartItems;
-			orderSummary=cartResponse.orderSummary;
+			cartItems = cartResponse.cartItems;
+			orderSummary = cartResponse.orderSummary;
 
 			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity());
 			LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -266,14 +348,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			rvCartList.setAdapter(cartProductAdapter);
 		} else {
 			btnAddToCart.setVisibility(View.GONE);
-			txtEmptyStateDesc.setVisibility(View.VISIBLE);
+			relEmptyStateHandler.setVisibility(View.VISIBLE);
 		}
 	}
 
-	public void removeCartItem(String productId)
-	{
+	public void removeCartItem(String productId) {
 		showProgress();
-		mWoolWorthsApplication.getAsyncApi().removeCartItem(productId,new CancelableCallback<String>() {
+		mWoolWorthsApplication.getAsyncApi().removeCartItem(productId, new CancelableCallback<String>() {
 			@Override
 			public void onSuccess(String s, retrofit.client.Response response) {
 				Log.i("result ", s);
@@ -297,14 +378,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		});
 	}
 
-	public void updateCart(CartResponse cartResponse)
-	{
-		if (cartResponse.cartItems.size() > 0 && cartProductAdapter!=null) {
-			cartItems=cartResponse.cartItems;
-			orderSummary=cartResponse.orderSummary;
-			cartProductAdapter.removeItem(cartItems,orderSummary);
+	public void updateCart(CartResponse cartResponse) {
+		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
+			cartItems = cartResponse.cartItems;
+			orderSummary = cartResponse.orderSummary;
+			cartProductAdapter.removeItem(cartItems, orderSummary);
 
-		}else {
+		} else {
 			cartProductAdapter.clear();
 			Activity activity = getActivity();
 			if (activity != null) {
@@ -312,17 +392,90 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				cartActivity.resetToolBarIcons();
 			}
 			btnAddToCart.setVisibility(View.GONE);
-			txtEmptyStateDesc.setVisibility(View.VISIBLE);
+			relEmptyStateHandler.setVisibility(View.VISIBLE);
 		}
 		progressDialog.dismiss();
 	}
 
-	public void showProgress()
-	{
+	public void showProgress() {
 		progressDialog.setMessage("Removing...");
 		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		progressDialog.setCancelable(false);
 		progressDialog.show();
 
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		if (mDisposables != null
+				&& !mDisposables.isDisposed()) {
+			mDisposables.dispose();
+		}
+	}
+
+	private void getProductDetail(final String productId, final String skuId) {
+		final Activity activity = getActivity();
+		if (activity != null) {
+			WoolworthsApplication.getInstance().getAsyncApi()
+					.getProductDetail(productId, skuId, new Callback<String>() {
+						@Override
+						public void success(final String strProduct, retrofit.client.Response response) {
+							final WProduct wProduct = Utils.stringToJson(activity, strProduct);
+							if (wProduct != null) {
+								switch (wProduct.httpCode) {
+									case 200:
+										activity.runOnUiThread(new Runnable() {
+											@Override
+											public void run() {
+												try {
+													ArrayList<WProductDetail> mProductList;
+													WProductDetail productList = wProduct.product;
+													mProductList = new ArrayList<>();
+													if (productList != null) {
+														mProductList.add(productList);
+													}
+													if (mProductList.size() > 0 && mProductList.get(0).productId != null) {
+														GsonBuilder builder = new GsonBuilder();
+														Gson gson = builder.create();
+														DetailFragment detailFragment = new DetailFragment();
+														String strProductList = gson.toJson(mProductList.get(0));
+														Bundle bundle = new Bundle();
+														bundle.putString("strProductList", strProductList);
+														bundle.putString("strProductCategory", mProductList.get(0).productName);
+														bundle.putString("productResponse", strProduct);
+														bundle.putBoolean("fetchFromJson", true);
+														detailFragment.setArguments(bundle);
+														FragmentTransaction transaction = ((AppCompatActivity) activity).getSupportFragmentManager().beginTransaction();
+														transaction.replace(R.id.bottom_Fragment, detailFragment).commit();
+													}
+													CartActivity cartActivity = (CartActivity) activity;
+													cartActivity.slideUpBottomView();
+
+												} catch (Exception ex) {
+													ex.printStackTrace();
+												}
+
+												dismissFragmentDialog();
+											}
+										});
+										break;
+
+									default:
+										dismissFragmentDialog();
+										break;
+								}
+							}
+						}
+
+						@Override
+						public void failure(RetrofitError error) {
+							dismissFragmentDialog();
+						}
+					});
+		}
+	}
+
+	private void dismissFragmentDialog() {
 	}
 }

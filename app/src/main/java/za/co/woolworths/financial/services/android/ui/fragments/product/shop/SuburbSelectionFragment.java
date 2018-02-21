@@ -36,6 +36,7 @@ import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
 import za.co.woolworths.financial.services.android.models.dto.Suburb;
 import za.co.woolworths.financial.services.android.models.rest.shop.GetSuburbs;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
+import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.adapters.SuburbSelectionAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -295,6 +296,7 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 		try {
 			switch (response.httpCode) {
 				case 200:
+					Utils.sendBus(new CartState(suburb.name + ", " + province.name));
 					saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb));
 					// TODO: go back to cart if no items removed from cart, else go to list of removed items
 					closeActivity();
