@@ -2,10 +2,12 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.awfs.coordination.R;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -18,7 +20,6 @@ import za.co.woolworths.financial.services.android.models.dto.CartPriceValues;
 import za.co.woolworths.financial.services.android.models.dto.CartProduct;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
 import za.co.woolworths.financial.services.android.util.WFormatter;
@@ -36,7 +37,8 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	}
 
 	public interface OnItemClick {
-		void onItemClick(View view, int position);
+		void onItemClick(CartProduct cartProduct);
+
 		void onItemDeleteClick(String productId);
 	}
 
@@ -54,20 +56,19 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		this.onItemClick = onItemClick;
 	}*/
 
-	public CartProductAdapter(ArrayList<CartItemGroup> cartItems, OnItemClick onItemClick, OrderSummary orderSummary, Activity mContext)
-	{
-		this.cartItems=cartItems;
-		this.onItemClick=onItemClick;
+	public CartProductAdapter(ArrayList<CartItemGroup> cartItems, OnItemClick onItemClick, OrderSummary orderSummary, Activity mContext) {
+		this.cartItems = cartItems;
+		this.onItemClick = onItemClick;
 		this.orderSummary = orderSummary;
 		drawImage = new DrawImage(mContext);
 	}
 
 	@Override
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		if(viewType == CartRowType.HEADER.value) {
+		if (viewType == CartRowType.HEADER.value) {
 			return new CartHeaderViewHolder(LayoutInflater.from(parent.getContext())
 					.inflate(R.layout.cart_product_header_item, parent, false));
-		} else if(viewType == CartRowType.PRODUCT.value) {
+		} else if (viewType == CartRowType.PRODUCT.value) {
 			return new CartItemViewHolder(LayoutInflater.from(parent.getContext())
 					.inflate(R.layout.cart_product_item, parent, false));
 		} else {
@@ -80,20 +81,19 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 		final CartProductItemRow itemRow = getItemTypeAtPosition(position);
 
-		if(itemRow.rowType == CartRowType.HEADER) {
+		if (itemRow.rowType == CartRowType.HEADER) {
 			CartHeaderViewHolder cartHeaderViewHolder = ((CartHeaderViewHolder) holder);
 			ArrayList<CartProduct> productItems = itemRow.productItems;
 			cartHeaderViewHolder.tvHeaderTitle.setText(productItems.size() + " " + itemRow.category.toUpperCase() + " ITEMS");
-		} else if(itemRow.rowType == CartRowType.PRODUCT) {
+		} else if (itemRow.rowType == CartRowType.PRODUCT) {
 			CartItemViewHolder cartItemViewHolder = ((CartItemViewHolder) holder);
 			final CartProduct productItem = itemRow.productItem;
 			cartItemViewHolder.tvTitle.setText(productItem.getProductDisplayName());
 			cartItemViewHolder.quantity.setText(String.valueOf(productItem.getQuantity()));
 			cartItemViewHolder.price.setText(WFormatter.formatAmount(productItem.getPriceInfo().getAmount()));
-			productImage(cartItemViewHolder.productImage,productItem.internalImageURL);
+			productImage(cartItemViewHolder.productImage, productItem.externalImageURL);
 			cartItemViewHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
-
-			if(this.editMode) {
+			if (this.editMode) {
 				cartItemViewHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -105,12 +105,12 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			cartItemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					//onItemClick.onItemClick(v, holder.getAdapterPosition());
+					onItemClick.onItemClick(productItem);
 				}
 			});
-		} else if(itemRow.rowType == CartRowType.PRICES) {
+		} else if (itemRow.rowType == CartRowType.PRICES) {
 			CartPricesViewHolder cartPricesViewHolder = ((CartPricesViewHolder) holder);
-			if(orderSummary!=null) {
+			if (orderSummary != null) {
 				cartPricesViewHolder.orderSummeryLayout.setVisibility(View.VISIBLE);
 				cartPricesViewHolder.txtBasketCount.setText("Basket - " + orderSummary.getTotalItemsCount() + " items");
 				setPriceValue(cartPricesViewHolder.txtPriceBasketItems, orderSummary.getBasketTotal());
@@ -120,8 +120,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			setPriceValue(cartPricesViewHolder.txtPriceWRewardsSavings, cartPriceValues.wRewardsSavings);
 			setPriceValue(cartPricesViewHolder.txtPriceOtherDiscount, cartPriceValues.otherDiscount);*/
 				setPriceValue(cartPricesViewHolder.txtPriceTotal, orderSummary.getTotal());
-			}
-			else {
+			} else {
 				cartPricesViewHolder.orderSummeryLayout.setVisibility(View.GONE);
 			}
 
@@ -138,7 +137,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		for (CartItemGroup collection : cartItems) {
 			size += collection.getCartProducts().size();
 		}
-		if(editMode) {
+		if (editMode) {
 			// returns sum of headers + product items
 			return size;
 		} else {
@@ -154,9 +153,9 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 	private CartProductItemRow getItemTypeAtPosition(int position) {
 		int currentPosition = 0;
-		for(CartItemGroup entry : cartItems) {
-			if(currentPosition == position) {
-				return new CartProductItemRow(CartRowType.HEADER, entry.type, null,entry.getCartProducts());
+		for (CartItemGroup entry : cartItems) {
+			if (currentPosition == position) {
+				return new CartProductItemRow(CartRowType.HEADER, entry.type, null, entry.getCartProducts());
 			}
 
 			// increment position for header
@@ -164,15 +163,15 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 			ArrayList<CartProduct> productCollection = entry.cartProducts;
 
-			if(position > currentPosition + productCollection.size() - 1) {
+			if (position > currentPosition + productCollection.size() - 1) {
 				currentPosition += productCollection.size();
 			} else {
-				return new CartProductItemRow(CartRowType.PRODUCT, entry.type, productCollection.get(position - currentPosition),null);
+				return new CartProductItemRow(CartRowType.PRODUCT, entry.type, productCollection.get(position - currentPosition), null);
 			}
 
 		}
 		// last row is for prices
-		return new CartProductItemRow(CartRowType.PRICES, null, null,null);
+		return new CartProductItemRow(CartRowType.PRICES, null, null, null);
 	}
 
 	public boolean toggleEditMode() {
@@ -181,16 +180,15 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		return editMode;
 	}
 
-	public void removeItem(ArrayList<CartItemGroup> updatedCartItems,OrderSummary updatedOrderSummer) {
-		this.cartItems=updatedCartItems;
-		this.orderSummary=updatedOrderSummer;
+	public void removeItem(ArrayList<CartItemGroup> updatedCartItems, OrderSummary updatedOrderSummer) {
+		this.cartItems = updatedCartItems;
+		this.orderSummary = updatedOrderSummer;
 		notifyDataSetChanged();
 	}
 
-	public void clear()
-	{
+	public void clear() {
 		this.cartItems.clear();
-		this.orderSummary=null;
+		this.orderSummary = null;
 		notifyDataSetChanged();
 	}
 
@@ -205,7 +203,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	}
 
 	private class CartItemViewHolder extends RecyclerView.ViewHolder {
-		private WTextView tvTitle, tvDescription,quantity,price;
+		private WTextView tvTitle, tvDescription, quantity, price;
 		private ImageView btnDeleteRow;
 		private SimpleDraweeView productImage;
 
@@ -216,7 +214,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			quantity = view.findViewById(R.id.quantity);
 			price = view.findViewById(R.id.price);
 			btnDeleteRow = view.findViewById(R.id.btnDeleteRow);
-			productImage=view.findViewById(R.id.cartProductImage);
+			productImage = view.findViewById(R.id.cartProductImage);
 		}
 	}
 
@@ -237,7 +235,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			txtPriceWRewardsSavings = view.findViewById(R.id.txtPriceWRewardsSavings);
 			txtPriceOtherDiscount = view.findViewById(R.id.txtPriceOtherDiscount);*/
 			txtPriceTotal = view.findViewById(R.id.txtPriceTotal);
-			orderSummeryLayout=view.findViewById(R.id.orderSummeryLayout);
+			orderSummeryLayout = view.findViewById(R.id.orderSummeryLayout);
 		}
 	}
 
@@ -247,7 +245,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		public CartProduct productItem;
 		public ArrayList<CartProduct> productItems;
 
-		CartProductItemRow (CartRowType rowType, String category, CartProduct productItem,ArrayList<CartProduct> productItems) {
+		CartProductItemRow(CartRowType rowType, String category, CartProduct productItem, ArrayList<CartProduct> productItems) {
 			this.rowType = rowType;
 			this.category = category;
 			this.productItem = productItem;
@@ -259,7 +257,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		if (imgUrl != null) {
 			try {
 				imgUrl = imgUrl + "?w=" + 85 + "&q=" + 85;
-				drawImage.displayImage(image, "http://www-win-qa.woolworths.co.za/"+imgUrl);
+				drawImage.displayImage(image, "https://images.woolworthsstatic.co.za/" + imgUrl);
 			} catch (IllegalArgumentException ignored) {
 			}
 		}

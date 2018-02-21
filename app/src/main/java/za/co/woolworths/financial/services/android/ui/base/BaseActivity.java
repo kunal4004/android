@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -178,5 +179,9 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
 	public abstract
 	@LayoutRes
 	int getLayoutId();
+
+	public boolean isEmpty(String value) {
+		return TextUtils.isEmpty(value);
+	}
 }
 

@@ -674,7 +674,9 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	public void onResume() {
 		super.onResume();
 		LocalBroadcastManager.getInstance(getActivity()).registerReceiver(broadcastReceiver, new IntentFilter("UpdateCounter"));
+/*
 		messageCounterRequest();
+*/
 		try {
 			onSessionExpired();
 		} catch (Exception ex) {
@@ -756,8 +758,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			wGlobalState.setAccountSignInState(false);
 			initialize();
 			showLogOutScreen();
-			addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
-			addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
 		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
 			try {
 				wGlobalState.setAccountSignInState(false);
@@ -765,8 +765,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				SessionDao sessionDao = new SessionDao(getActivity(), SessionDao.KEY.USER_TOKEN).get();
 				sessionDao.value = "";
 				sessionDao.save();
-				addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
-				addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
 				new HttpAsyncTask<Void, Void, Void>() {
 
 					@Override
@@ -795,8 +793,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 			}
 			initialize();
 		} else {
-			addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
-			addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
 			//user not signed in
 			if (!wGlobalState.getAccountSignInState()) {
 				this.accounts.clear();
