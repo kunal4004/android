@@ -63,7 +63,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/cart_free_delivery_first_order"/>
-                
+
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/cartList"
                     android:layout_width="match_parent"
@@ -76,22 +76,28 @@
         </android.support.v4.widget.NestedScrollView>
 
 
-
-
-        <za.co.woolworths.financial.services.android.ui.views.WButton
-            android:id="@+id/btnAddToCart"
-            style="@style/blackButtonStyle"
+        <RelativeLayout
+            android:id="@+id/rlCheckOut"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_weight="1"
-            android:letterSpacing="0.2"
-            android:text="@string/checkout"
-            android:visibility="visible"
-            app:WButton_font="medium_bold"
-            />
+            android:background="@color/white"
+            android:gravity="center">
 
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:id="@+id/btnAddToCart"
+                style="@style/blackButtonStyle"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:letterSpacing="0.2"
+                android:text="@string/checkout"
+                android:visibility="visible"
+                app:WButton_font="medium_bold"
+                />
+
+        </RelativeLayout>
     </RelativeLayout>
 
     <ProgressBar

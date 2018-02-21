@@ -73,6 +73,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private WTextView tvDeliveryLocation;
 	private WTextView tvFreeDeliveryFirstOrder;
 	private CompositeDisposable mDisposables = new CompositeDisposable();
+	private RelativeLayout rlCheckOut;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -88,6 +89,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		super.onViewCreated(view, savedInstanceState);
 		rvCartList = view.findViewById(R.id.cartList);
 		btnAddToCart = view.findViewById(R.id.btnAddToCart);
+		rlCheckOut = view.findViewById(R.id.rlCheckOut);
 		parentLayout = view.findViewById(R.id.parentLayout);
 		pBar = view.findViewById(R.id.loadingBar);
 		relEmptyStateHandler = view.findViewById(R.id.relEmptyStateHandler);
@@ -174,7 +176,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public boolean toggleEditMode() {
 		boolean isEditMode = cartProductAdapter.toggleEditMode();
-		btnAddToCart.setVisibility(isEditMode ? View.GONE : View.VISIBLE);
+		rlCheckOut.setVisibility(isEditMode ? View.GONE : View.VISIBLE);
 		return isEditMode;
 	}
 
@@ -210,12 +212,14 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public void loadShoppingCart() {
 		pBar.setVisibility(View.VISIBLE);
+		rlCheckOut.setVisibility(View.GONE);
 		//parentLayout.setVisibility(View.GONE);
 		Utils.showOneTimePopup(getActivity(), SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, tvFreeDeliveryFirstOrder);
 		mWoolWorthsApplication.getAsyncApi().getShoppingCart(new CancelableCallback<String>() {
 			@Override
 			public void onSuccess(String s, retrofit.client.Response response) {
 				pBar.setVisibility(View.GONE);
+				rlCheckOut.setVisibility(View.VISIBLE);
 				Log.i("result ", s);
 				CartResponse cartResponse = convertResponseToCartResponseObject(s);
 				if (cartResponse != null) {
@@ -333,7 +337,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void bindCartData(CartResponse cartResponse) {
 		parentLayout.setVisibility(View.VISIBLE);
 		if (cartResponse.cartItems.size() > 0) {
-			btnAddToCart.setVisibility(View.VISIBLE);
+			rlCheckOut.setVisibility(View.VISIBLE);
 			Activity activity = getActivity();
 			if (activity != null) {
 				CartActivity cartActivity = (CartActivity) activity;
@@ -348,7 +352,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			rvCartList.setLayoutManager(mLayoutManager);
 			rvCartList.setAdapter(cartProductAdapter);
 		} else {
-			btnAddToCart.setVisibility(View.GONE);
+			rlCheckOut.setVisibility(View.GONE);
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
 		}
 	}
@@ -392,7 +396,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				CartActivity cartActivity = (CartActivity) activity;
 				cartActivity.resetToolBarIcons();
 			}
-			btnAddToCart.setVisibility(View.GONE);
+			rlCheckOut.setVisibility(View.GONE);
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
 		}
 		progressDialog.dismiss();
