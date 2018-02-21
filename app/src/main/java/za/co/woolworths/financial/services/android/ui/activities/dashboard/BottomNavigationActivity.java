@@ -41,6 +41,7 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
+import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseActivity;
 import za.co.woolworths.financial.services.android.ui.base.SavedInstanceFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
@@ -621,6 +622,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				Log.e("onActivityResult", "onActivityResult");
 				return;
 			}
+		}else if(resultCode==SSOActivity.SSOActivityResult.SUCCESS.rawValue())
+		{
+			openCartActivity();
 		}
 
 
