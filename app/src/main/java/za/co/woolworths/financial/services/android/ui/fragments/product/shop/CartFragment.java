@@ -118,6 +118,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 								CartState cartState = (CartState) object;
 								if (!TextUtils.isEmpty(cartState.getState())) {
 									tvDeliveryLocation.setText(cartState.getState());
+									loadShoppingCart();
 								}
 							}
 						}
@@ -210,6 +211,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void loadShoppingCart() {
 		pBar.setVisibility(View.VISIBLE);
 		//parentLayout.setVisibility(View.GONE);
+		Utils.showOneTimePopup(getActivity(), SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, tvFreeDeliveryFirstOrder);
 		mWoolWorthsApplication.getAsyncApi().getShoppingCart(new CancelableCallback<String>() {
 			@Override
 			public void onSuccess(String s, retrofit.client.Response response) {
@@ -330,7 +332,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	public void bindCartData(CartResponse cartResponse) {
 		parentLayout.setVisibility(View.VISIBLE);
-		Utils.showOneTimePopup(getActivity(), SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, tvFreeDeliveryFirstOrder);
 		if (cartResponse.cartItems.size() > 0) {
 			btnAddToCart.setVisibility(View.VISIBLE);
 			Activity activity = getActivity();
