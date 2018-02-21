@@ -38,6 +38,7 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 
 	public interface RecyclerItemSelected {
 		void onRecyclerItemClick(View v, int position, String filterType);
+
 		void onQuantitySelected(int quantity);
 	}
 

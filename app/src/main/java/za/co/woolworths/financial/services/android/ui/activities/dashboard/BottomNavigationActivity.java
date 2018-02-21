@@ -34,8 +34,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
+import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
@@ -63,10 +65,12 @@ import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTa
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback {
 
 	public static final int INDEX_TODAY = FragNavController.TAB1;
-	public static final int INDEX_SHOP = FragNavController.TAB2;
+	public static final int INDEX_PRODUCT = FragNavController.TAB2;
 	public static final int INDEX_CART = FragNavController.TAB3;
 	public static final int INDEX_REWARD = FragNavController.TAB4;
 	public static final int INDEX_ACCOUNT = FragNavController.TAB5;
+	public static final int OPEN_CART_REQUEST = 12346;
+	public static final int CART_SIGN_IN = 1234;
 	public static Toolbar mToolbar;
 
 	private final CompositeDisposable mDisposables = new CompositeDisposable();
@@ -154,31 +158,40 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							CartSummaryResponse cartSummaryResponse = (CartSummaryResponse) object;
 							if (cartSummaryResponse != null) {
 								// product item successfully added to cart
+								cartSummaryAPI();
 								closeSlideUpPanel();
-								addBadge(2, cartSummaryResponse.getAddItemToCartResponse().data.get(0).totalCommerceIteItemCount);
 								Utils.customToastMessage(BottomNavigationActivity.this);
 							}
 						}
 					}
 				}));
+	}
 
-// Bundle bundle = getIntent().getExtras();
-// if (bundle != null) {
-//			if (!TextUtils.isEmpty(bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT))) {
-//				switchTab(INDEX_ACCOUNT);
-//			} else {
-//				if (bundle != null) {
-//					int mOpenProduct = bundle.getInt("myAccount");
-//					if (mOpenProduct == 1) {
-//						switchTab(INDEX_ACCOUNT);
+	@Override
+	protected void onResume() {
+		super.onResume();
+//		try {
+//			Bundle bundle = getIntent().getExtras();
+//			if (bundle != null) {
+//				if (!TextUtils.isEmpty(bundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT))) {
+//					switchTab(INDEX_ACCOUNT);
+//				} else {
+//					if (bundle != null) {
+//						int mOpenProduct = bundle.getInt("myAccount");
+//						if (mOpenProduct == 1) {
+//							switchTab(INDEX_ACCOUNT);
+//						} else {
+//							switchTab(INDEX_TODAY);
+//						}
 //					} else {
 //						switchTab(INDEX_TODAY);
 //					}
-//				} else {
-//					switchTab(INDEX_TODAY);
 //				}
 //			}
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
 //		}
+		cartSummaryAPI();
 	}
 
 	@Override
@@ -337,8 +350,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public void pushFragment(Fragment fragment) {
 		if (mNavController != null) {
-
-
 			FragNavTransactionOptions ft = new FragNavTransactionOptions.Builder()
 					.allowStateLoss(true)
 					.customAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
@@ -372,13 +383,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					return true;
 
 				case R.id.navigation_shop:
-					switchTab(INDEX_SHOP);
+					switchTab(INDEX_PRODUCT);
 					Utils.showOneTimePopup(BottomNavigationActivity.this);
 					return true;
 
 				case R.id.navigation_cart:
 					MultiClickPreventer.preventMultiClick(getViewDataBinding().wBottomNavigation);
-					openCartActivity();
+					identifyTokenValidationAPI();
 					return false;
 
 				case R.id.navigation_reward:
@@ -431,7 +442,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	};
 
 	private void openCartActivity() {
-		startActivity(new Intent(this, CartActivity.class));
+		Intent openCartActivity = new Intent(this, CartActivity.class);
+		startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
 		overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay);
 	}
 
@@ -478,7 +490,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		switch (index) {
 			case INDEX_TODAY:
 				return new WTodayFragment();
-			case INDEX_SHOP:
+			case INDEX_PRODUCT:
 				return new CategoryFragment();
 			case INDEX_CART:
 				return new CategoryFragment();
@@ -563,6 +575,16 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
+	public void cartSummaryAPI() {
+		getViewModel().getCartSummary().execute();
+	}
+
+	@Override
+	public void updateCartSummaryBadgeCount(CartSummary cartSummary) {
+		addBadge(INDEX_CART, cartSummary.totalItemsCount);
+	}
+
+	@Override
 	public void PermissionGranted(int request_code) {
 		woolworthsApplication()
 				.bus()
@@ -593,6 +615,15 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == OPEN_CART_REQUEST) {
+			if (resultCode == RESULT_OK) {
+				getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
+				Log.e("onActivityResult", "onActivityResult");
+				return;
+			}
+		}
+
+
 		switch (getBottomNavigationById().getCurrentItem()) {
 			case 1:
 			case 0:
@@ -606,5 +637,40 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					myAccountsFragment.onActivityResult(requestCode, resultCode, data);
 				break;
 		}
+	}
+
+	@Override
+	public void identifyTokenValidationAPI() {
+		if (isEmpty(Utils.getSessionToken(BottomNavigationActivity.this))) {
+			getGlobalState().setDetermineLocationPopUpEnabled(true);
+			ScreenManager.presentSSOSignin(BottomNavigationActivity.this);
+		} else {
+			openCartActivity();
+		}
+	}
+
+	@Override
+	public void onSessionTokenValid() {
+		openCartActivity();
+	}
+
+	@Override
+	public void onSessionTokenExpired(Response response) {
+		ScreenManager.presentSSOSignin(BottomNavigationActivity.this);
+	}
+
+	@Override
+	public void otherHttpCode(Response response) {
+
+	}
+
+	@Override
+	public void cartSummaryInvalidToken() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				addBadge(INDEX_CART, 0);
+			}
+		});
 	}
 }
