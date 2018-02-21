@@ -60,7 +60,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener {
 
 	private RecyclerView rvCartList;
-	private WButton btnAddToCart;
+	private WButton btnCheckOut;
 
 	private CartProductAdapter cartProductAdapter;
 	private WoolworthsApplication mWoolWorthsApplication;
@@ -88,7 +88,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		rvCartList = view.findViewById(R.id.cartList);
-		btnAddToCart = view.findViewById(R.id.btnAddToCart);
+		btnCheckOut = view.findViewById(R.id.btnCheckOut);
 		rlCheckOut = view.findViewById(R.id.rlCheckOut);
 		parentLayout = view.findViewById(R.id.parentLayout);
 		pBar = view.findViewById(R.id.loadingBar);
@@ -422,6 +422,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private void getProductDetail(final String productId, final String skuId) {
 		final Activity activity = getActivity();
 		if (activity != null) {
+			pBar.setVisibility(View.VISIBLE);
 			WoolworthsApplication.getInstance().getAsyncApi()
 					.getProductDetail(productId, skuId, new Callback<String>() {
 						@Override
@@ -482,5 +483,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	private void dismissFragmentDialog() {
+		pBar.setVisibility(View.GONE);
 	}
 }

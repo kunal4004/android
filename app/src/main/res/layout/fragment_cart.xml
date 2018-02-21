@@ -85,7 +85,7 @@
             android:gravity="center">
 
             <za.co.woolworths.financial.services.android.ui.views.WButton
-                android:id="@+id/btnAddToCart"
+                android:id="@+id/btnCheckOut"
                 style="@style/blackButtonStyle"
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="8dp"
