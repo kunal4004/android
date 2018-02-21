@@ -71,7 +71,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public static final int INDEX_REWARD = FragNavController.TAB4;
 	public static final int INDEX_ACCOUNT = FragNavController.TAB5;
 	public static final int OPEN_CART_REQUEST = 12346;
-	public static final int CART_SIGN_IN = 1234;
 	public static Toolbar mToolbar;
 
 	private final CompositeDisposable mDisposables = new CompositeDisposable();
@@ -619,20 +618,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		if (requestCode == OPEN_CART_REQUEST) {
 			if (resultCode == RESULT_OK) {
 				getBottomNavigationById().setCurrentItem(INDEX_PRODUCT);
-				Log.e("onActivityResult", "onActivityResult");
 				return;
 			}
-		}else if(resultCode==SSOActivity.SSOActivityResult.SUCCESS.rawValue())
-		{
-			openCartActivity();
 		}
-
-
 		switch (getBottomNavigationById().getCurrentItem()) {
 			case 1:
 			case 0:
+				break;
 			case 2:
 				// prevent firing reward and account api on every activity resume
+				if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+					openCartActivity();
+				}
 				break;
 			default:
 				if (wRewardsFragment != null)
