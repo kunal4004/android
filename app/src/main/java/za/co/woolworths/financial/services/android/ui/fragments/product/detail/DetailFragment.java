@@ -62,9 +62,9 @@ import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
+import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
-import za.co.woolworths.financial.services.android.models.rest.validate.IdentifyTokenValidation;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
@@ -124,7 +124,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 	private ErrorHandlerView mErrorHandlerView;
 	private boolean mFetchFromJson;
 	private String mDefaultProductResponse;
-	private IdentifyTokenValidation mTokenValidationApi;
+	private GetCartSummary mGetCartSummary;
 	private AddItemToCart mApiAddItemToCart;
 	private PostAddItemToCart mPostAddItemToCart;
 	private List<OtherSkus> mSizeSkuList;
@@ -832,7 +832,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 		getGlobalState().setSizePickerSku(null);
 		CancelableCallback.cancelAll();
 		cancelRequest(mLocationItemTask);
-		cancelRequest(mTokenValidationApi);
+		cancelRequest(mGetCartSummary);
 		cancelRequest(mPostAddItemToCart);
 		cancelRequest(mSuburbLocation);
 	}
@@ -1274,8 +1274,8 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 				onAddToCartLoadComplete();
 			} else {
 				// query the status of the JWT on STS using the the identityTokenValidation endpoint
-				mTokenValidationApi = getViewModel().identifyTokenValidation();
-				mTokenValidationApi.execute();
+				mGetCartSummary = getViewModel().getCartSummary();
+				mGetCartSummary.execute();
 			}
 		}
 	}

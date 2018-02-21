@@ -117,8 +117,8 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							if (object instanceof CartState) {
 								CartState cartState = (CartState) object;
 								if (!TextUtils.isEmpty(cartState.getState())) {
-									tvDeliveryLocation.setText(cartState.getState());
 									loadShoppingCart();
+									tvDeliveryLocation.setText(cartState.getState());
 								}
 							}
 						}

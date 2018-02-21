@@ -23,17 +23,17 @@ import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
 import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.StoreDetails;
-import za.co.woolworths.financial.services.android.models.dto.TokenValidationResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
+import za.co.woolworths.financial.services.android.models.rest.product.GetCartSummary;
 import za.co.woolworths.financial.services.android.models.rest.product.PostAddItemToCart;
 import za.co.woolworths.financial.services.android.models.rest.shop.SetDeliveryLocationSuburb;
-import za.co.woolworths.financial.services.android.models.rest.validate.IdentifyTokenValidation;
 import za.co.woolworths.financial.services.android.ui.base.BaseViewModel;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.LocationItemTask;
@@ -501,27 +501,27 @@ public class DetailViewModel extends BaseViewModel<DetailNavigator> {
 	}
 
 
-	protected IdentifyTokenValidation identifyTokenValidation() {
+	protected GetCartSummary getCartSummary() {
 		setAddedToCart(true);
 		getNavigator().onAddToCartLoad();
-		return new IdentifyTokenValidation(new OnEventListener() {
+		return new GetCartSummary(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				if (object != null) {
-					TokenValidationResponse tokenValidationResponse = (TokenValidationResponse) object;
-					if (tokenValidationResponse != null) {
-						switch (tokenValidationResponse.httpCode) {
+					CartSummaryResponse cartSummaryResponse = (CartSummaryResponse) object;
+					if (cartSummaryResponse != null) {
+						switch (cartSummaryResponse.httpCode) {
 							case 200:
 								getNavigator().onSessionTokenValid();
 								break;
 
 							case 440:
-								if (tokenValidationResponse.response != null)
-									getNavigator().onSessionTokenExpired(tokenValidationResponse.response);
+								if (cartSummaryResponse.response != null)
+									getNavigator().onSessionTokenExpired(cartSummaryResponse.response);
 								break;
 
 							default:
-								getNavigator().otherHttpCode(tokenValidationResponse.response);
+								getNavigator().otherHttpCode(cartSummaryResponse.response);
 								break;
 						}
 					}
