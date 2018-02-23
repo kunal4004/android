@@ -103,7 +103,6 @@ public class SSOActivity extends WebViewActivity {
 
 	private final String state;
 	private final String nonce;
-	public ProgressDialog progressDialog;
 
 	public SSOActivity() {
 		this.state = UUID.randomUUID().toString();
@@ -121,17 +120,6 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	private void instantiateWebView() {
-		progressDialog = new ProgressDialog(SSOActivity.this, R.style.full_screen_dialog) {
-			@Override
-			protected void onCreate(Bundle savedInstanceState) {
-				super.onCreate(savedInstanceState);
-				setContentView(R.layout.sso_progress_dialog);
-				getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-				ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.progressBar1);
-				mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-			}
-		};
-		progressDialog.setCancelable(false);
 		this.webView.setWebViewClient(this.webviewClient);
 		this.webView.getSettings().setUseWideViewPort(true);
 		this.webView.getSettings().setLoadWithOverviewMode(true);
@@ -529,20 +517,11 @@ public class SSOActivity extends WebViewActivity {
 	};
 
 	public void hideProgressBar() {
-		try {
-			if (progressDialog.isShowing()) {
-				progressDialog.dismiss();
-			}
-		} catch (Exception ex) {
-		}
+		toggleLoading(false);
 	}
 
 	public void showProgressBar() {
-		if (progressDialog != null) {
-			if (!progressDialog.isShowing()) {
-				progressDialog.show();
-			}
-		}
+		toggleLoading(true);
 	}
 
 
