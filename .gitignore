@@ -4,4 +4,5 @@ build/*
 .idea/*
 app.iml
 library/*
+app/src/main/assets/containers/GTM-MCMRK3V.json
 .gradle/*
