@@ -130,6 +130,16 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyBscGwCrt-mloCl8JXkqX95r3_gwtRLnk4"/>
 
+        <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+                  android:enabled="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+            </intent-filter>
+        </receiver>
+        <service android:name="com.google.android.gms.analytics.AnalyticsService"
+                 android:enabled="true"
+                 android:exported="false"/>
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity"
             android:screenOrientation="portrait"
@@ -177,6 +187,16 @@
             </intent-filter>
         </service>
         <!-- ./Firebase Notifications -->
+
+        <!-- Used for install referrer tracking-->
+        <service android:name="com.google.android.gms.tagmanager.InstallReferrerService" />
+        <receiver
+            android:name="com.google.android.gms.tagmanager.InstallReferrerReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity"
