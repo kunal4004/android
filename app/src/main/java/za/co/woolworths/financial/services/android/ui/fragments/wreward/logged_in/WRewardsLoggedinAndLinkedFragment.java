@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -19,12 +18,10 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.databinding.WrewardsLoggedinAndLinkedFragmentBinding;
 
 import za.co.woolworths.financial.services.android.models.rest.reward.WRewardsCardDetails;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
-import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.rest.message.CLIGetMessageResponse;
+import za.co.woolworths.financial.services.android.models.rest.message.GetMessage;
 import za.co.woolworths.financial.services.android.models.rest.reward.GetVoucher;
 import za.co.woolworths.financial.services.android.ui.activities.WRewardsErrorFragment;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
@@ -33,11 +30,10 @@ import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsOverviewFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsSavingsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsVouchersFragment;
-import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 /**
@@ -52,7 +48,6 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	private LinearLayout fragmentView;
 	private ErrorHandlerView mErrorHandlerView;
 	private RelativeLayout mRlConnect;
-	private WGlobalState mWGlobalState;
 	public static final int DEFAULT_VOUCHER_COUNT = 0;
 	public boolean isWrewardsCalled;
 	public boolean isCardDetailsCalled;
@@ -60,6 +55,7 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public VoucherResponse voucherResponse;
 	private WRewardLoggedInViewModel wRewardViewModel;
 	private GetVoucher getVoucherAsync;
+	private SessionManager mSessionManager;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,7 +82,10 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		setTitle(getString(R.string.nav_item_wrewards));
-		mWGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
+		Activity activity = getActivity();
+		if (activity != null) {
+			mSessionManager = new SessionManager(activity);
+		}
 		viewPager = getViewDataBinding().viewpager;
 		progressBar = getViewDataBinding().progressBar;
 		fragmentView = getViewDataBinding().fragmentView;
@@ -174,10 +173,11 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 
 	public void handleVoucherResponse(VoucherResponse response) {
 		try {
-			switch (response.httpCode) {
+			int httpCode = response.httpCode;
+			switch (httpCode) {
 				case 200:
-					mWGlobalState.setRewardSignInState(true);
-					mWGlobalState.setRewardHasExpired(false);
+					mSessionManager.setRewardSignInState(true);
+					mSessionManager.setAccountHasExpired(false);
 					if (response.voucherCollection.vouchers != null) {
 						addBadge(BottomNavigationActivity.INDEX_REWARD, response.voucherCollection.vouchers.size());
 					} else {
@@ -190,24 +190,21 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 				case 440:
 					progressBar.setVisibility(View.GONE);
 					fragmentView.setVisibility(View.VISIBLE);
-					clearVoucherCounter();
-					mWGlobalState.setRewardHasExpired(true);
-					mWGlobalState.setRewardSignInState(false);
-					SessionExpiredUtilities.INSTANCE.setAccountSessionExpired(getActivity(), response.response.stsParams);
-					Utils.setBadgeCounter(getActivity(), 0);
-					Intent intent = new Intent();
-					WRewardsFragment mParentFragment = (WRewardsFragment) getParentFragment();
-					if (mParentFragment != null) {
-						mParentFragment.onActivityResult(WRewardsFragment.FRAGMENT_CODE_2, Activity.RESULT_OK, intent);
-					}
-					getFragmentManager().popBackStack();
-					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
+
+					//TODO:: !important Reward session expired popup Message
+//					clearVoucherCounter();
+//					mSessionManager.setAccountHasExpired(false);
+//					mSessionManager.setRewardSignInState(false);
+//					SessionExpiredUtilities.INSTANCE.setWRewardSessionExpired(getActivity(), response.response.stsParams);
+//					Utils.setBadgeCounter(getActivity(), 0);
+//					getFragmentManager().popBackStack();
+//					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
 					break;
 				default:
 					progressBar.setVisibility(View.GONE);
 					fragmentView.setVisibility(View.VISIBLE);
 					clearVoucherCounter();
-					mWGlobalState.setRewardSignInState(false);
+					mSessionManager.setRewardSignInState(false);
 					setupErrorViewPager(viewPager);
 					break;
 			}
@@ -266,8 +263,8 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		super.onDetach();
 	}
 
-	private CLIGetMessageResponse getMessageResponse() {
-		return new CLIGetMessageResponse(new OnEventListener() {
+	private GetMessage getMessageResponse() {
+		return new GetMessage(new OnEventListener() {
 			@Override
 			public void onSuccess(Object object) {
 				try {
@@ -298,6 +295,9 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		if (!hidden) {
 			setTitle(getString(R.string.nav_item_wrewards));
 			hideToolbar();
+		} else {
+			loadReward();
+			loadCardDetails();
 		}
 	}
 

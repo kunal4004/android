@@ -204,7 +204,7 @@ public class MyAccountCardsActivity extends AppCompatActivity
 		pager.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				return mWoolworthsApplication.getWGlobalState().cardGestureIsEnabled();
+				return false;
 			}
 		});
 	}
@@ -367,17 +367,6 @@ public class MyAccountCardsActivity extends AppCompatActivity
 				break;
 			default:
 				break;
-		}
-	}
-
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-
-		if (resultCode == SSOActivity.SSOActivityResult.EXPIRED.rawValue()) {
-			setResult(resultCode);
-			finish();
 		}
 	}
 

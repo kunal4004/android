@@ -125,25 +125,11 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	}
 
 	@Override
-	protected void onStart() {
-		super.onStart();
-		runningActivityState(true);
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		runningActivityState(false);
-	}
-
-	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		if (mStatementUtils != null) {
 			mStatementUtils.cancelRequest(sendUserStatement);
 		}
-		runningActivityState(false);
-
 	}
 
 	private void displayView(MODAL_LAYOUT current_view) {
@@ -328,7 +314,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				if (mWGlobalState.fragmentIsReward()) {
 					tvSessionExpiredDesc.setText(getString(R.string.session_expired_reward_desc));
 				} else {
-					mWGlobalState.setAccountSignInState(false);
 					tvSessionExpiredDesc.setText(getString(R.string.session_expired_account_desc));
 				}
 				WButton mBtnSessionExpiredCancel = findViewById(R.id.btnSECancel);
@@ -895,7 +880,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 
 			case R.id.btnSESignIn:
-				mWGlobalState.setPressState(WGlobalState.ON_SIGN_IN);
 				String mSTSParams = description;
 				if (TextUtils.isEmpty(mSTSParams)) {
 					mSTSParams = "";
@@ -984,19 +968,12 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				@Override
 				public void onAnimationEnd(Animation animation) {
 					mWGlobalState.setNewSTSParams(WGlobalState.EMPTY_FIELD);
-					mWGlobalState.setPressState(WGlobalState.ON_CANCEL);
 					mWGlobalState.setOnBackPressed(false);
 					mWGlobalState.setNewSTSParams("");
 					dismissLayout();
 				}
 			});
 			mRelRootContainer.startAnimation(animation);
-		}
-	}
-
-	private void runningActivityState(boolean state) {
-		if (mWGlobalState != null) {
-			mWGlobalState.setDefaultPopupState(state);
 		}
 	}
 

@@ -7,12 +7,12 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 
-public class CLIGetMessageResponse extends HttpAsyncTask<String, String, MessageResponse> {
+public class GetMessage extends HttpAsyncTask<String, String, MessageResponse> {
 
 	private OnEventListener<MessageResponse> mCallBack;
 	private String mException;
 
-	public CLIGetMessageResponse(OnEventListener callback) {
+	public GetMessage(OnEventListener callback) {
 		mCallBack = callback;
 	}
 

@@ -16,6 +16,7 @@ public class WGlobalState {
 	private boolean toolbarIsDisplayed;
 	private int mSaveButtonClick;
 	private boolean determineLocationPopUpEnabled;
+	private boolean fragmentIsReward;
 
 	public WGlobalState(Context context) {
 		this.mContext = context;
@@ -30,29 +31,13 @@ public class WGlobalState {
 	private boolean clothingProducts, foodProducts;
 	private int startRadius, endRadius, mLatestSelectedPicker;
 
-	private boolean cardGestureIsEnabled, onBackPressed, accountHasExpired, rewardHasExpired,
-			FragmentIsReward, defaultPopupState, colorWasPopup, sizeWasPopup;
-	private String pressState, newSTSParams, storeLocatorJson, selectedSKUId, creditLimit;
+	private boolean onBackPressed, rewardHasExpired,
+			colorWasPopup, sizeWasPopup;
+	private String newSTSParams, storeLocatorJson, selectedSKUId, creditLimit;
 	private List<StoreDetails> storeDetailsArrayList;
 	private ArrayList<OtherSkus> colourSKUArrayList;
 	private OtherSkus colorPopUpValue, sizePopUpValue;
-	public CLIOfferDecision mDeclineDecision;
-
-	public void setAccountSignInState(boolean accountSignInState) {
-		setPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE, accountSignInState);
-	}
-
-	public boolean getAccountSignInState() {
-		return getPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE);
-	}
-
-	public void setRewardSignInState(boolean rewardSignInState) {
-		setPersistentValue(SessionDao.KEY.REWARD_IS_ACTIVE, rewardSignInState);
-	}
-
-	public boolean getRewardSignInState() {
-		return getPersistentValue(SessionDao.KEY.REWARD_IS_ACTIVE);
-	}
+	private CLIOfferDecision mDeclineDecision;
 
 	public boolean getOnBackPressed() {
 		return onBackPressed;
@@ -60,14 +45,6 @@ public class WGlobalState {
 
 	public void setOnBackPressed(boolean pOnBackPressed) {
 		onBackPressed = pOnBackPressed;
-	}
-
-	public boolean cardGestureIsEnabled() {
-		return cardGestureIsEnabled;
-	}
-
-	public void setCardGestureIsEnabled(boolean pCardGestureIsEnabled) {
-		cardGestureIsEnabled = pCardGestureIsEnabled;
 	}
 
 	private void setPersistentValue(SessionDao.KEY key, boolean value) {
@@ -83,22 +60,6 @@ public class WGlobalState {
 		return Boolean.valueOf(value);
 	}
 
-	public boolean accountHasExpired() {
-		return accountHasExpired;
-	}
-
-	public void setAccountHasExpired(boolean pAccountHasExpired) {
-		accountHasExpired = pAccountHasExpired;
-	}
-
-	public String getPressState() {
-		return pressState;
-	}
-
-	public void setPressState(String pPressState) {
-		pressState = pPressState;
-	}
-
 	public boolean rewardHasExpired() {
 		return rewardHasExpired;
 	}
@@ -107,36 +68,12 @@ public class WGlobalState {
 		rewardHasExpired = pRewardHasExpired;
 	}
 
-	public boolean fragmentIsReward() {
-		return FragmentIsReward;
-	}
-
-	public void setFragmentIsReward(boolean pFragmentIsReward) {
-		FragmentIsReward = pFragmentIsReward;
-	}
-
 	public String getNewSTSParams() {
 		return newSTSParams;
 	}
 
 	public void setNewSTSParams(String pNewSTSParams) {
 		newSTSParams = pNewSTSParams;
-	}
-
-	public void resetStsParams() {
-		setNewSTSParams(EMPTY_FIELD);
-	}
-
-	public void resetPressState() {
-		setPressState(EMPTY_FIELD);
-	}
-
-	public boolean getDefaultPopupState() {
-		return defaultPopupState;
-	}
-
-	public void setDefaultPopupState(boolean pDefaultPopupState) {
-		defaultPopupState = pDefaultPopupState;
 	}
 
 	public String getStoreLocatorJson() {
@@ -279,5 +216,13 @@ public class WGlobalState {
 
 	public void setDetermineLocationPopUpEnabled(boolean determineLocationPopUpEnabled) {
 		this.determineLocationPopUpEnabled = determineLocationPopUpEnabled;
+	}
+
+	public boolean fragmentIsReward() {
+		return fragmentIsReward;
+	}
+
+	public void setFragmentIsReward(boolean fragmentIsReward) {
+		this.fragmentIsReward = fragmentIsReward;
 	}
 }

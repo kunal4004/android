@@ -4,7 +4,11 @@ import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableBoolean;
 import android.text.TextUtils;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.rx.SchedulerProvider;
 
@@ -57,6 +61,7 @@ public abstract class BaseViewModel<N> extends ViewModel {
 			return value;
 		}
 	}
+
 	@Override
 	protected void onCleared() {
 		mCompositeDisposable.dispose();
@@ -70,5 +75,14 @@ public abstract class BaseViewModel<N> extends ViewModel {
 				httpAsyncTask.cancel(true);
 			}
 		}
+	}
+
+	public void consumeObservable(Consumer consumer) {
+		mCompositeDisposable.add(WoolworthsApplication.getInstance()
+				.bus()
+				.toObservable()
+				.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(consumer));
 	}
 }

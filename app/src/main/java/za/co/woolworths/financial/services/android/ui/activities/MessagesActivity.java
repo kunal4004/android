@@ -71,8 +71,8 @@ public class MessagesActivity extends AppCompatActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(null);
 		mLayoutManager = new LinearLayoutManager(MessagesActivity.this);
-		messsageListview = (RecyclerView) findViewById(R.id.messsageListView);
-		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
+		messsageListview = findViewById(R.id.messsageListView);
+		swipeRefreshLayout = findViewById(R.id.swipeToRefresh);
 		mErrorHandlerView = new ErrorHandlerView(this, woolWorthsApplication,
 				(RelativeLayout) findViewById(R.id.relEmptyStateHandler),
 				(ImageView) findViewById(R.id.imgEmpyStateIcon),

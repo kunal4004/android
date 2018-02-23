@@ -73,7 +73,6 @@ public class SSOActivity extends WebViewActivity {
 		STATE_MISMATCH(4),
 		NONCE_MISMATCH(5),
 		SUCCESS(6),
-		EXPIRED(7),
 		SIGNED_OUT(8),
 		CHANGE_PASSWORD(9);
 		private int result;
@@ -429,8 +428,6 @@ public class SSOActivity extends WebViewActivity {
 
 						try {
 							if (!TextUtils.isEmpty(mGlobalState.getNewSTSParams())) {
-								mGlobalState.setAccountSignInState(true);
-								mGlobalState.setRewardSignInState(true);
 								mGlobalState.setNewSTSParams("");
 								clearHistory();
 							} else {
@@ -535,7 +532,6 @@ public class SSOActivity extends WebViewActivity {
 		try {
 			if (progressDialog.isShowing()) {
 				progressDialog.dismiss();
-				progressDialog = null;
 			}
 		} catch (Exception ex) {
 		}

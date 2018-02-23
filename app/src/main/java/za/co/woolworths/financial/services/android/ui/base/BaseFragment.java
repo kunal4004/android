@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 
 import com.awfs.coordination.R;
 
+import io.reactivex.disposables.CompositeDisposable;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
@@ -249,6 +250,13 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 		}
 	}
 
+	public void cancelDisposable(CompositeDisposable compositeDisposable) {
+		if (compositeDisposable != null && !compositeDisposable.isDisposed()) {
+			compositeDisposable.clear();
+		}
+
+	}
+
 	public void popFragment() {
 		getBottomNavigator().popFragment();
 	}
@@ -264,4 +272,5 @@ public abstract class BaseFragment<T extends ViewDataBinding, V extends BaseView
 	public void addBadge(int position, int count) {
 		getBottomNavigator().addBadge(position, count);
 	}
+
 }

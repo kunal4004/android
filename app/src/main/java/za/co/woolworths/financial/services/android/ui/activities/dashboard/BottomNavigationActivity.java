@@ -16,7 +16,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -58,11 +57,14 @@ import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.SessionManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.nav.FragNavController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavSwitchController;
 import za.co.woolworths.financial.services.android.util.nav.FragNavTransactionOptions;
 import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTabHistoryController;
+
+import static za.co.woolworths.financial.services.android.util.SessionManager.RELOAD_REWARD;
 
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback {
 
@@ -83,6 +85,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private MyAccountsFragment myAccountsFragment;
 	private String TAG = this.getClass().getSimpleName();
 	private Bundle mBundle;
+	private int currentSection;
 
 	@Override
 	public int getLayoutId() {
@@ -119,7 +122,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		mNavController = FragNavController.newBuilder(savedInstanceState,
 				getSupportFragmentManager(),
 				R.id.frag_container)
-				.fragmentHideStrategy(FragNavController.DETACH_ON_NAVIGATE_HIDE_ON_SWITCH)
+				.fragmentHideStrategy(FragNavController.HIDE)
 				.transactionListener(this)
 				.switchController(FragNavTabHistoryController.Companion.UNLIMITED_TAB_HISTORY, new FragNavSwitchController() {
 					@Override
@@ -168,6 +171,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 						}
 					}
 				}));
+
+		SessionManager sessionManager = new SessionManager(BottomNavigationActivity.this);
+		sessionManager.authenticationState();
 	}
 
 	@Override
@@ -362,29 +368,35 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
 			statusBarColor(R.color.white);
+			MultiClickPreventer.preventMultiClick(getViewDataBinding().wBottomNavigation);
 			switch (item.getItemId()) {
 				case R.id.navigation_today:
+					currentSection = R.id.navigation_today;
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_TODAY);
 					hideToolbar();
 					return true;
 
 				case R.id.navigation_shop:
+					currentSection = R.id.navigation_shop;
 					switchTab(INDEX_PRODUCT);
 					Utils.showOneTimePopup(BottomNavigationActivity.this);
 					return true;
 
 				case R.id.navigation_cart:
-					MultiClickPreventer.preventMultiClick(getViewDataBinding().wBottomNavigation);
+					currentSection = R.id.navigation_cart;
 					identifyTokenValidationAPI();
 					return false;
 
 				case R.id.navigation_reward:
+					currentSection = R.id.navigation_reward;
+					Utils.sendBus(new SessionManager(RELOAD_REWARD));
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_REWARD);
 					return true;
 
 				case R.id.navigation_account:
+					currentSection = R.id.navigation_account;
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_ACCOUNT);
 					return true;
@@ -393,7 +405,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 	};
 
-
 	private BottomNavigationView.OnNavigationItemReselectedListener mOnNavigationItemReSelectedListener
 			= new BottomNavigationView.OnNavigationItemReselectedListener() {
 		@Override
@@ -401,27 +412,22 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 			switch (item.getItemId()) {
 				case R.id.navigation_today:
-					Log.e(TAG, "navigation_today");
 					clearStack();
 					break;
 
 				case R.id.navigation_shop:
-					Log.e(TAG, "navigation_shop");
 					clearStack();
 					break;
 
 				case R.id.navigation_cart:
-					Log.e(TAG, "navigation_cart");
 					clearStack();
 					break;
 
 				case R.id.navigation_reward:
-					Log.e(TAG, "navigation_reward");
 					clearStack();
 					break;
 
 				case R.id.navigation_account:
-					Log.e(TAG, "navigation_account");
 					clearStack();
 					break;
 			}
@@ -601,7 +607,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.e("onActivityResult", String.valueOf(getBottomNavigationById().getCurrentItem()));
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == OPEN_CART_REQUEST) {
 			if (resultCode == RESULT_OK) {
@@ -609,15 +614,21 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				return;
 			}
 		}
+
+		// prevent firing reward and account api on every activity resume
+		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+			switch (currentSection) {
+				case R.id.navigation_cart:
+					openCartActivity();
+					break;
+			}
+		}
+
 		switch (getBottomNavigationById().getCurrentItem()) {
 			case 1:
 			case 0:
 				break;
 			case 2:
-				// prevent firing reward and account api on every activity resume
-				if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-					openCartActivity();
-				}
 				break;
 			default:
 				if (wRewardsFragment != null)

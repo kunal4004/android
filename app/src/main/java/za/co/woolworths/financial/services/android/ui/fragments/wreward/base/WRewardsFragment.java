@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -16,29 +15,26 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.BR;
 import com.awfs.coordination.databinding.WrewardsFragmentBinding;
 
-import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
-import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
-import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedinAndNotLinkedFragment;
-import za.co.woolworths.financial.services.android.util.Utils;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionManager;
 
 public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRewardViewModel> implements WRewardNavigator {
 	public static final int FRAGMENT_CODE_1 = 1;
 	public static final int FRAGMENT_CODE_2 = 2;
 
-	private WGlobalState mWGlobalState;
 	private WRewardViewModel mWRewardViewModel;
 	private String TAG = this.getClass().getSimpleName();
+	private SessionManager mSessionManager;
+	private boolean mRewardSignInState;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mWGlobalState = ((WoolworthsApplication) getActivity().getApplication()).getWGlobalState();
 		mWRewardViewModel = ViewModelProviders.of(this).get(WRewardViewModel.class);
 		mWRewardViewModel.setNavigator(this);
 	}
@@ -65,22 +61,25 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 	}
 
 	public void initialize() {
+		Activity activity = getActivity();
+		if (activity != null) {
+			mSessionManager = new SessionManager(getActivity());
+		}
 		removeAllChildFragments((AppCompatActivity) getActivity());
-		boolean accountSignInState = mWGlobalState.getAccountSignInState();
-		boolean rewardSignInState = mWGlobalState.getRewardSignInState();
-		JWTDecodedModel jwtDecodedModel = Utils.getJWTDecoded(getActivity());
-		if (accountSignInState && rewardSignInState) {
+		boolean accountSignInState = mSessionManager.authenticationState();
+		mRewardSignInState = mSessionManager.getRewardSignInState();
+		if (accountSignInState && mRewardSignInState) {
 			//user is linked and signed in
 			linkSignIn();
-		} else if (accountSignInState && !rewardSignInState) {
+		} else if (accountSignInState && !mRewardSignInState) {
 			// sign in but reward state false
 			//user is not linked
 			//but signed in
-			replaceFragment(jwtDecodedModel);
-		} else if (!accountSignInState && rewardSignInState) {
+			replaceFragment();
+		} else if (!accountSignInState && mRewardSignInState) {
 			// authentication session expired
 			// but reward state true
-			replaceFragment(jwtDecodedModel);
+			replaceFragment();
 		} else {
 			// user is signed out
 			signOut();
@@ -96,19 +95,6 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 					fm.popBackStack();
 				}
 			}
-		}
-	}
-
-	public void reloadFragment() {
-		try {
-			WRewardsFragment fragment = (WRewardsFragment)
-					getFragmentManager().findFragmentById(R.id.frag_container);
-			getFragmentManager().beginTransaction()
-					.detach(fragment)
-					.attach(fragment)
-					.commit();
-		} catch (ClassCastException ex) {
-			Log.d(TAG, ex.toString());
 		}
 	}
 
@@ -137,13 +123,11 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		WRewardsLoggedOutFragment fragmentChild = new WRewardsLoggedOutFragment();
 		childFragTrans.add(R.id.content_frame, fragmentChild);
 		childFragTrans.commit();
-		addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
-		addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
 	}
 
-	private void replaceFragment(JWTDecodedModel jwtDecodedModel) {
-		if (jwtDecodedModel.AtgSession != null) {
-			if (jwtDecodedModel.C2Id != null && !jwtDecodedModel.C2Id.equals("")) {
+	private void replaceFragment() {
+		if (mSessionManager.authenticationState() && mRewardSignInState) {
+			if (mSessionManager.loadSignInView() && mRewardSignInState) {
 				//user is linked and signed in
 				linkSignIn();
 			} else {
@@ -158,23 +142,17 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
-		onSessionExpired();
-	}
-
-	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == FRAGMENT_CODE_1 && resultCode == Activity.RESULT_OK) {
 			try {
-				reloadFragment();
-			} catch (Exception ex) {
+				initialize();
+			} catch (Exception ignored) {
 			}
 		} else if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
-			(WoolworthsApplication.getInstance().getWGlobalState()).setAccountSignInState(true);
-			(WoolworthsApplication.getInstance().getWGlobalState()).setRewardSignInState(true);
+			mSessionManager.setAccountHasExpired(false);
+			mSessionManager.setRewardSignInState(true);
 			removeAllChildFragments((AppCompatActivity) getActivity());
-			reloadFragment();
+			initialize();
 		} else if (resultCode == 0) {
 			Log.d(TAG, "empty");
 		} else {
@@ -185,40 +163,14 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		}
 	}
 
-	private void onSessionExpired() {
-		try {
-			if (!TextUtils.isEmpty(mWGlobalState.getNewSTSParams()) && mWGlobalState.rewardHasExpired()) {
-			} else {
-				if (mWGlobalState.rewardHasExpired()
-						&& (mWGlobalState.getPressState().equalsIgnoreCase
-						(WGlobalState.ON_CANCEL))) {
-				} else if (mWGlobalState.getRewardSignInState()
-						&& (mWGlobalState.getPressState().equalsIgnoreCase
-						(WGlobalState.ON_SIGN_IN))) {
-					mWGlobalState.setRewardHasExpired(false);
-					mWGlobalState.setRewardSignInState(true);
-					mWGlobalState.resetPressState();
-					try {
-						reloadFragment();
-					} catch (Exception ex) {
-					}
-				} else {
-				}
-			}
-			mWGlobalState.setRewardHasExpired(false);
-			mWGlobalState.resetPressState();
-		} catch (Exception ignored) {
-		}
-	}
-
 	@Override
 	public void onHiddenChanged(boolean hidden) {
 		super.onHiddenChanged(hidden);
 		if (!hidden) {
 			hideToolbar();
-			reloadFragment();
+			initialize();
 		} else {
-			reloadFragment();
+			initialize();
 		}
 		setTitle(getString(R.string.wrewards));
 	}

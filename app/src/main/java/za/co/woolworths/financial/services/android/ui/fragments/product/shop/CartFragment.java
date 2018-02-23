@@ -47,6 +47,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
@@ -227,7 +228,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						case 200:
 							bindCartData(cartResponse);
 							break;
-
 						default:
 							break;
 					}
@@ -241,11 +241,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					activity.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
+
+							//TODO:: improve error handling
 							if (error.getBody().toString().contains("440")) {
 								Utils.sessionDaoSave(activity, SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, null);
 								ScreenManager.presentSSOSignin(activity);
 								activity.finish();
 								activity.overridePendingTransition(0, 0);
+							} else {
+								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, error.getBody().toString());
 							}
 						}
 					});
