@@ -184,6 +184,14 @@
           }
         },
         {
+          "client_id": "26127746311-orasve6oq5ueavv7icu8lcln98r0nn7r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.awfs.coordination.staging",
+            "certificate_hash": "4fef70e6eb2bd859b72f534e492e2cb32043a80f"
+          }
+        },
+        {
           "client_id": "26127746311-d28icif4e2p4j1ragui2kt32idvft30a.apps.googleusercontent.com",
           "client_type": 3
         }
