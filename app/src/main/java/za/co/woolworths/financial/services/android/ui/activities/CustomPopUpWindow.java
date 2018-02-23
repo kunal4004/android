@@ -59,9 +59,13 @@ import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
+import za.co.woolworths.financial.services.android.util.SessionManager;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
+
+import static za.co.woolworths.financial.services.android.util.SessionExpiredUtilities.ACCOUNT;
+import static za.co.woolworths.financial.services.android.util.SessionExpiredUtilities.REWARD;
 
 public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener, NetworkChangeListener {
 
@@ -311,7 +315,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = findViewById(R.id.relPopContainer);
 				WTextView tvSessionExpiredDesc = findViewById(R.id.tvSessionExpiredDesc);
-				if (mWGlobalState.fragmentIsReward()) {
+				SessionManager sessionManager = new SessionManager(CustomPopUpWindow.this);
+				if (sessionManager.getSection().equalsIgnoreCase(REWARD)) {
 					tvSessionExpiredDesc.setText(getString(R.string.session_expired_reward_desc));
 				} else {
 					tvSessionExpiredDesc.setText(getString(R.string.session_expired_account_desc));

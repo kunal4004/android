@@ -6,9 +6,9 @@ import android.text.TextUtils;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 
 public class SessionManager {
-
 	private int session;
 	private Context mContext;
 	public static int ACCOUNT_SESSION_EXPIRED = 1;
