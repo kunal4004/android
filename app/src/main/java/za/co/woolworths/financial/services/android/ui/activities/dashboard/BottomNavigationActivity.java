@@ -191,6 +191,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 						}
 					}
 				}));
+
+		badgeCount();
 	}
 
 	@Override
@@ -664,7 +666,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					myAccountsFragment.onActivityResult(requestCode, resultCode, data);
 				break;
 		}
-		badgeCount();
 	}
 
 	private void badgeCount() {
