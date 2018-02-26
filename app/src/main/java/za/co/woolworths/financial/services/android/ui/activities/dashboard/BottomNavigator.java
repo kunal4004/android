@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.util.PermissionUtils;
@@ -72,15 +71,15 @@ public interface BottomNavigator {
 
 	void cartSummaryAPI();
 
-	void updateCartSummaryBadgeCount(CartSummary cartSummary);
+	void updateCartSummaryCount(CartSummary cartSummary);
 
 	void identifyTokenValidationAPI();
 
-	void onSessionTokenValid();
-
-	void onSessionTokenExpired(Response response);
-
-	void otherHttpCode(Response response);
-
 	void cartSummaryInvalidToken();
+
+	int getCurrentStackIndex();
+
+	void updateVoucherCount(int size);
+
+	void updateMessageCount(int unreadCount);
 }

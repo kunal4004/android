@@ -15,13 +15,17 @@ import com.awfs.coordination.R;
 import com.awfs.coordination.BR;
 import com.awfs.coordination.databinding.WrewardsFragmentBinding;
 
+import io.reactivex.functions.Consumer;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedOutFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.logged_in.WRewardsLoggedinAndLinkedFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewardsLoggedinAndNotLinkedFragment;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionManager;
+
+import static za.co.woolworths.financial.services.android.util.SessionManager.REWARD_SESSION_EXPIRED;
 
 public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRewardViewModel> implements WRewardNavigator {
 	public static final int FRAGMENT_CODE_1 = 1;
@@ -37,6 +41,23 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		super.onCreate(savedInstanceState);
 		mWRewardViewModel = ViewModelProviders.of(this).get(WRewardViewModel.class);
 		mWRewardViewModel.setNavigator(this);
+
+		getViewModel().consumeObservable(new Consumer<Object>() {
+			@Override
+			public void accept(Object object) throws Exception {
+				Activity activity = getActivity();
+				if (activity != null) {
+					if (object instanceof SessionManager) {
+						SessionManager sessionManager = (SessionManager) object;
+						if (sessionManager.getState() == REWARD_SESSION_EXPIRED) {
+							addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
+							initialize();
+							SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
+						}
+					}
+				}
+			}
+		});
 	}
 
 	@Override
@@ -168,8 +189,6 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 		super.onHiddenChanged(hidden);
 		if (!hidden) {
 			hideToolbar();
-			initialize();
-		} else {
 			initialize();
 		}
 		setTitle(getString(R.string.wrewards));

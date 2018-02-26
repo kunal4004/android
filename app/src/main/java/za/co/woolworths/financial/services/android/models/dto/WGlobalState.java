@@ -17,6 +17,7 @@ public class WGlobalState {
 	private int mSaveButtonClick;
 	private boolean determineLocationPopUpEnabled;
 	private boolean fragmentIsReward;
+	private String section;
 
 	public WGlobalState(Context context) {
 		this.mContext = context;
@@ -224,5 +225,13 @@ public class WGlobalState {
 
 	public void setFragmentIsReward(boolean fragmentIsReward) {
 		this.fragmentIsReward = fragmentIsReward;
+	}
+
+	public void setSection(String section) {
+		this.section = section;
+	}
+
+	public String getSection() {
+		return section;
 	}
 }

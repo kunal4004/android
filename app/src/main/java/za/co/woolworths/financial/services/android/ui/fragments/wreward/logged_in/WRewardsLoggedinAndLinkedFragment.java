@@ -33,8 +33,10 @@ import za.co.woolworths.financial.services.android.ui.fragments.wreward.WRewards
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.SessionManager;
 import za.co.woolworths.financial.services.android.util.Utils;
+
 
 /**
  * Created by W7099877 on 05/01/2017.
@@ -81,7 +83,6 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		setTitle(getString(R.string.nav_item_wrewards));
 		Activity activity = getActivity();
 		if (activity != null) {
 			mSessionManager = new SessionManager(activity);
@@ -94,8 +95,12 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		mRlConnect = getViewDataBinding().incNoConnectionHandler.noConnectionLayout;
 		mErrorHandlerView = new ErrorHandlerView(getActivity(), mRlConnect);
 		mErrorHandlerView.setMargin(mRlConnect, 0, 0, 0, 0);
-		loadReward();
-		loadCardDetails();
+		if (getCurrentStackIndex() == BottomNavigationActivity.INDEX_REWARD) {
+			setTitle(getString(R.string.nav_item_wrewards));
+			showToolbar();
+			loadReward();
+			loadCardDetails();
+		}
 		view.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -148,7 +153,6 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 		} else {
 			tv_count.setVisibility(View.GONE);
 		}
-
 		return view;
 	}
 
@@ -190,21 +194,18 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 				case 440:
 					progressBar.setVisibility(View.GONE);
 					fragmentView.setVisibility(View.VISIBLE);
-
-					//TODO:: !important Reward session expired popup Message
-//					clearVoucherCounter();
-//					mSessionManager.setAccountHasExpired(false);
-//					mSessionManager.setRewardSignInState(false);
-//					SessionExpiredUtilities.INSTANCE.setWRewardSessionExpired(getActivity(), response.response.stsParams);
-//					Utils.setBadgeCounter(getActivity(), 0);
-//					getFragmentManager().popBackStack();
-//					SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(getActivity());
+					mSessionManager.setRewardSignInState(false);
+					if (response.response != null) {
+						if (response.response.stsParams != null) {
+							SessionExpiredUtilities.INSTANCE.setWRewardSessionExpired(getActivity(), response.response.stsParams);
+						}
+					}
 					break;
 				default:
+					mSessionManager.setRewardSignInState(true);
 					progressBar.setVisibility(View.GONE);
 					fragmentView.setVisibility(View.VISIBLE);
 					clearVoucherCounter();
-					mSessionManager.setRewardSignInState(false);
 					setupErrorViewPager(viewPager);
 					break;
 			}
@@ -287,18 +288,6 @@ public class WRewardsLoggedinAndLinkedFragment extends BaseFragment<WrewardsLogg
 			public void onFailure(String errorMessage) {
 			}
 		});
-	}
-
-	@Override
-	public void onHiddenChanged(boolean hidden) {
-		super.onHiddenChanged(hidden);
-		if (!hidden) {
-			setTitle(getString(R.string.nav_item_wrewards));
-			hideToolbar();
-		} else {
-			loadReward();
-			loadCardDetails();
-		}
 	}
 
 	@Override

@@ -316,7 +316,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelPopContainer = findViewById(R.id.relPopContainer);
 				WTextView tvSessionExpiredDesc = findViewById(R.id.tvSessionExpiredDesc);
 				SessionManager sessionManager = new SessionManager(CustomPopUpWindow.this);
-				if (sessionManager.getSection().equalsIgnoreCase(REWARD)) {
+				if (mWGlobalState.getSection().equalsIgnoreCase(REWARD)) {
 					tvSessionExpiredDesc.setText(getString(R.string.session_expired_reward_desc));
 				} else {
 					tvSessionExpiredDesc.setText(getString(R.string.session_expired_account_desc));

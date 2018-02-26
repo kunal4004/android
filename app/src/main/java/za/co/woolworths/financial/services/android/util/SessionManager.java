@@ -6,7 +6,6 @@ import android.text.TextUtils;
 
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 
 public class SessionManager {
 	private int session;
@@ -15,7 +14,6 @@ public class SessionManager {
 	public static int REWARD_SESSION_EXPIRED = 2;
 	public static int PRODUCT_SESSION_EXPIRED = 3;
 	public static int RELOAD_REWARD = 4;
-	private String section;
 
 	public SessionManager() {
 	}
@@ -78,11 +76,4 @@ public class SessionManager {
 		return session;
 	}
 
-	public void setSection(String section) {
-		this.section = section;
-	}
-
-	public String getSection() {
-		return section;
-	}
 }

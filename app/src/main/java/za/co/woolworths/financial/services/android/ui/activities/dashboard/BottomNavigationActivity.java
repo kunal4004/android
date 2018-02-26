@@ -36,8 +36,8 @@ import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.service.event.AuthenticationState;
+import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.LoadState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
@@ -64,6 +64,9 @@ import za.co.woolworths.financial.services.android.util.nav.FragNavSwitchControl
 import za.co.woolworths.financial.services.android.util.nav.FragNavTransactionOptions;
 import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTabHistoryController;
 
+import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.MESSAGE_COUNT;
+import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
+import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
 import static za.co.woolworths.financial.services.android.util.SessionManager.RELOAD_REWARD;
 
 public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigationBinding, BottomNavigationViewModel> implements BottomNavigator, FragNavController.TransactionListener, FragNavController.RootFragmentListener, PermissionResultCallback {
@@ -156,8 +159,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 						} else if (object instanceof AuthenticationState) {
 							AuthenticationState auth = ((AuthenticationState) object);
 							if (auth.getAuthStateTypeDef() == AuthenticationState.SIGN_OUT) {
-								addBadge(INDEX_REWARD, 0);
-								addBadge(INDEX_ACCOUNT, 0);
 								ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
 							}
 						} else if (object instanceof CartSummaryResponse) {
@@ -168,12 +169,28 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 								closeSlideUpPanel();
 								Utils.customToastMessage(BottomNavigationActivity.this);
 							}
+
+							// call observer to update independent count
+						} else if (object instanceof BadgeState) {
+							BadgeState badgeState = (BadgeState) object;
+							if (badgeState != null) {
+								switch (badgeState.getPosition()) {
+									case CART_COUNT:
+										cartSummaryAPI();
+										break;
+
+									case REWARD_COUNT:
+										getViewModel().getVoucherCount().execute();
+										break;
+
+									case MESSAGE_COUNT:
+										getViewModel().getMessageResponse().execute();
+										break;
+								}
+							}
 						}
 					}
 				}));
-
-		SessionManager sessionManager = new SessionManager(BottomNavigationActivity.this);
-		sessionManager.authenticationState();
 	}
 
 	@Override
@@ -444,6 +461,10 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void onBackPressed() {
 		if (!mNavController.isRootFragment()) {
 			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build());
+		} else {
+			if (mNavController.getCurrentStack().size() > 1) {
+				mNavController.getCurrentStack().pop();
+			}
 		}
 	}
 
@@ -573,11 +594,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
-	public void updateCartSummaryBadgeCount(CartSummary cartSummary) {
-		addBadge(INDEX_CART, cartSummary.totalItemsCount);
-	}
-
-	@Override
 	public void PermissionGranted(int request_code) {
 		woolworthsApplication()
 				.bus()
@@ -617,11 +633,22 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 		// prevent firing reward and account api on every activity resume
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
+			//load count on login success
+			badgeCount();
 			switch (currentSection) {
 				case R.id.navigation_cart:
+					SessionManager sessionManager = new SessionManager(BottomNavigationActivity.this);
+					sessionManager.setAccountHasExpired(false);
+					sessionManager.setRewardSignInState(true);
 					openCartActivity();
 					break;
+				default:
+					break;
 			}
+		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
+			addBadge(INDEX_CART, 0);
+			addBadge(INDEX_ACCOUNT, 0);
+			addBadge(INDEX_REWARD, 0);
 		}
 
 		switch (getBottomNavigationById().getCurrentItem()) {
@@ -637,6 +664,13 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					myAccountsFragment.onActivityResult(requestCode, resultCode, data);
 				break;
 		}
+		badgeCount();
+	}
+
+	private void badgeCount() {
+		getViewModel().getCartSummary().execute();
+		getViewModel().getVoucherCount().execute();
+		getViewModel().getMessageResponse().execute();
 	}
 
 	@Override
@@ -650,21 +684,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	}
 
 	@Override
-	public void onSessionTokenValid() {
-		openCartActivity();
-	}
-
-	@Override
-	public void onSessionTokenExpired(Response response) {
-		ScreenManager.presentSSOSignin(BottomNavigationActivity.this);
-	}
-
-	@Override
-	public void otherHttpCode(Response response) {
-
-	}
-
-	@Override
 	public void cartSummaryInvalidToken() {
 		runOnUiThread(new Runnable() {
 			@Override
@@ -672,5 +691,25 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				addBadge(INDEX_CART, 0);
 			}
 		});
+	}
+
+	@Override
+	public int getCurrentStackIndex() {
+		return mNavController.getCurrentStackIndex();
+	}
+
+	@Override
+	public void updateCartSummaryCount(CartSummary cartSummary) {
+		addBadge(INDEX_CART, cartSummary.totalItemsCount);
+	}
+
+	@Override
+	public void updateVoucherCount(int count) {
+		addBadge(INDEX_REWARD, count);
+	}
+
+	@Override
+	public void updateMessageCount(int unreadCount) {
+		addBadge(INDEX_ACCOUNT, unreadCount);
 	}
 }

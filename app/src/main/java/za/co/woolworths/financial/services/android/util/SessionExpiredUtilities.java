@@ -18,8 +18,7 @@ public enum SessionExpiredUtilities {
 
 
 	public void setAccountSessionExpired(Activity activity, String token) {
-		SessionManager sessionManager = new SessionManager(activity);
-		sessionManager.setSection(ACCOUNT);
+		getGlobalState().setSection(ACCOUNT);
 		Utils.sendBus(new SessionManager(SessionManager.ACCOUNT_SESSION_EXPIRED));
 		onSessionExpired(activity, token);
 		Intent i = new Intent(activity, BottomNavigationActivity.class);
@@ -32,21 +31,19 @@ public enum SessionExpiredUtilities {
 
 	public void setWRewardSessionExpired(Activity activity, String token) {
 		onSessionExpired(activity, token);
-		SessionManager sessionManager = new SessionManager(activity);
-		sessionManager.setSection(REWARD);
-		Utils.sendBus(new SessionManager(SessionManager.REWARD_SESSION_EXPIRED));
+		getGlobalState().setSection(REWARD);
 		Intent i = new Intent(activity, BottomNavigationActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		activity.startActivity(i);
 		activity.overridePendingTransition(0, 0);
+		Utils.sendBus(new SessionManager(SessionManager.REWARD_SESSION_EXPIRED));
 	}
 
 	public void setProductExpired(Activity activity, String token) {
 		onSessionExpired(activity, token);
-		SessionManager sessionManager = new SessionManager(activity);
-		sessionManager.setSection(PRODUCT);
+		getGlobalState().setSection(PRODUCT);
 		Utils.sendBus(new SessionManager(SessionManager.PRODUCT_SESSION_EXPIRED));
 		Intent i = new Intent(activity, BottomNavigationActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -74,4 +71,11 @@ public enum SessionExpiredUtilities {
 		return ((WoolworthsApplication) activity.getApplication()).getWGlobalState();
 	}
 
+	private WGlobalState getGlobalState() {
+		WoolworthsApplication woolworthsApplication = WoolworthsApplication.getInstance();
+		if (woolworthsApplication != null) {
+			return woolworthsApplication.getWGlobalState();
+		}
+		return null;
+	}
 }

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 import za.co.woolworths.financial.services.android.models.dto.CartSummary;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigator;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.CartFragment;
@@ -248,7 +247,7 @@ public class CartActivity extends AppCompatActivity implements BottomNavigator, 
 	}
 
 	@Override
-	public void updateCartSummaryBadgeCount(CartSummary cartSummary) {
+	public void updateCartSummaryCount(CartSummary cartSummary) {
 
 	}
 
@@ -258,22 +257,22 @@ public class CartActivity extends AppCompatActivity implements BottomNavigator, 
 	}
 
 	@Override
-	public void onSessionTokenValid() {
-
-	}
-
-	@Override
-	public void onSessionTokenExpired(Response response) {
-
-	}
-
-	@Override
-	public void otherHttpCode(Response response) {
-
-	}
-
-	@Override
 	public void cartSummaryInvalidToken() {
+
+	}
+
+	@Override
+	public int getCurrentStackIndex() {
+		return 0;
+	}
+
+	@Override
+	public void updateVoucherCount(int size) {
+
+	}
+
+	@Override
+	public void updateMessageCount(int unreadCount) {
 
 	}
 
