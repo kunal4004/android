@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,8 +113,10 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			cartItemViewHolder.llQuantity.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
+					onItemClick.onChangeQuantity(itemRow.productItem.getCommerceId());
 				}
 			});
+
 		} else if (itemRow.rowType == CartRowType.PRICES) {
 			CartPricesViewHolder cartPricesViewHolder = ((CartPricesViewHolder) holder);
 			if (orderSummary != null) {
@@ -271,5 +272,18 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			} catch (IllegalArgumentException ignored) {
 			}
 		}
+	}
+
+	public void changeQuantity(ArrayList<CartItemGroup> cartItems,
+							   OrderSummary orderSummary) {
+		this.cartItems = cartItems;
+		this.orderSummary = orderSummary;
+		notifyDataSetChanged();
+	}
+
+	public void onChangeQuantityComplete() {
+	}
+
+	public void onChangeQuantityLoad() {
 	}
 }

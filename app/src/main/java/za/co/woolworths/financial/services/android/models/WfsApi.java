@@ -288,7 +288,6 @@ public class WfsApi {
 		return mApiInterface.sendUserStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), statement);
 	}
 
-
 	/*
 	@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,

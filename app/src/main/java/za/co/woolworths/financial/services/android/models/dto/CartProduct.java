@@ -5,15 +5,14 @@ package za.co.woolworths.financial.services.android.models.dto;
  */
 
 public class CartProduct {
-		public int quantity;
-		public String productId;
-		public String internalImageURL;
-		public String externalImageURL;
-		public String catalogRefId;
-		public String productDisplayName;
-		public String commerceId;
-		public PriceInfo priceInfo;
-		public String commerceId;
+	public int quantity;
+	public String productId;
+	public String internalImageURL;
+	public String externalImageURL;
+	public String catalogRefId;
+	public String productDisplayName;
+	public PriceInfo priceInfo;
+	public String commerceId;
 
 	public int getQuantity() {
 		return quantity;

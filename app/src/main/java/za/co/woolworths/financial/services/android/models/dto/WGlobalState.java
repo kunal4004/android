@@ -1,40 +1,26 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
-import android.content.Context;
-import android.text.TextUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.util.Utils;
-
-
 public class WGlobalState {
 
-	private final Context mContext;
 	private boolean toolbarIsDisplayed;
 	private int mSaveButtonClick;
 	private boolean determineLocationPopUpEnabled;
-	private boolean fragmentIsReward;
 	private String section;
-
-	public WGlobalState(Context context) {
-		this.mContext = context;
-	}
+	private int navigateFromQuantity;
 
 	public static final String EMPTY_FIELD = "";
-	public static final String ON_CANCEL = "CANCEL";
-	public static final String ON_SIGN_IN = "SIGNIN";
 
 	public static final int SYNC_FIND_IN_STORE = 3401;
 
 	private boolean clothingProducts, foodProducts;
 	private int startRadius, endRadius, mLatestSelectedPicker;
 
-	private boolean onBackPressed, rewardHasExpired,
+	private boolean onBackPressed,
 			colorWasPopup, sizeWasPopup;
-	private String newSTSParams, storeLocatorJson, selectedSKUId, creditLimit;
+	private String newSTSParams, selectedSKUId, creditLimit;
 	private List<StoreDetails> storeDetailsArrayList;
 	private ArrayList<OtherSkus> colourSKUArrayList;
 	private OtherSkus colorPopUpValue, sizePopUpValue;
@@ -48,41 +34,12 @@ public class WGlobalState {
 		onBackPressed = pOnBackPressed;
 	}
 
-	private void setPersistentValue(SessionDao.KEY key, boolean value) {
-		Utils.sessionDaoSave(mContext,
-				key, String.valueOf(value));
-	}
-
-	private boolean getPersistentValue(SessionDao.KEY key) {
-		String value = Utils.getSessionDaoValue(mContext, key);
-		if (TextUtils.isEmpty(value)) {
-			return false;
-		}
-		return Boolean.valueOf(value);
-	}
-
-	public boolean rewardHasExpired() {
-		return rewardHasExpired;
-	}
-
-	public void setRewardHasExpired(boolean pRewardHasExpired) {
-		rewardHasExpired = pRewardHasExpired;
-	}
-
 	public String getNewSTSParams() {
 		return newSTSParams;
 	}
 
 	public void setNewSTSParams(String pNewSTSParams) {
 		newSTSParams = pNewSTSParams;
-	}
-
-	public String getStoreLocatorJson() {
-		return storeLocatorJson;
-	}
-
-	public void setStoreLocatorJson(String storeLocatorJson) {
-		this.storeLocatorJson = storeLocatorJson;
 	}
 
 	public boolean clothingIsEnabled() {
@@ -219,19 +176,19 @@ public class WGlobalState {
 		this.determineLocationPopUpEnabled = determineLocationPopUpEnabled;
 	}
 
-	public boolean fragmentIsReward() {
-		return fragmentIsReward;
-	}
-
-	public void setFragmentIsReward(boolean fragmentIsReward) {
-		this.fragmentIsReward = fragmentIsReward;
-	}
-
 	public void setSection(String section) {
 		this.section = section;
 	}
 
 	public String getSection() {
 		return section;
+	}
+
+	public void navigateFromQuantity(int screen) {
+		this.navigateFromQuantity = screen;
+	}
+
+	public int getNavigateFromQuantity() {
+		return navigateFromQuantity;
 	}
 }

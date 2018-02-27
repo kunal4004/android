@@ -41,8 +41,10 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CartProduct;
 import za.co.woolworths.financial.services.android.models.dto.CartResponse;
+import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.PriceInfo;
+import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
@@ -58,6 +60,8 @@ import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener {
@@ -77,6 +81,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	private WTextView tvFreeDeliveryFirstOrder;
 	private CompositeDisposable mDisposables = new CompositeDisposable();
 	private RelativeLayout rlCheckOut;
+	ChangeQuantity mChangeQuantity;
 
 	public CartFragment() {
 		// Required empty public constructor
@@ -90,6 +95,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		mChangeQuantity = new ChangeQuantity();
 		rvCartList = view.findViewById(R.id.cartList);
 		btnCheckOut = view.findViewById(R.id.btnCheckOut);
 		rlCheckOut = view.findViewById(R.id.rlCheckOut);
@@ -125,6 +131,10 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 								if (!TextUtils.isEmpty(cartState.getState())) {
 									loadShoppingCart();
 									tvDeliveryLocation.setText(cartState.getState());
+								} else if (cartState.getIndexState() == CHANGE_QUANTITY) {
+									int quantity = cartState.getQuantity();
+									executeChangeQuantity(new ChangeQuantity(quantity, mChangeQuantity.getCommerceId()));
+									Log.e("cartState", "cartStageClicked");
 								}
 							}
 						}
@@ -182,15 +192,20 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void onItemDeleteClick(String commerceId) {
 		// Log.i("CartFragment", "Item " + itemRow.productItem.productName + " delete button clicked!");
-
 		// TODO: Make API call to remove item + show loading before removing from list
 		removeCartItem(commerceId);
 	}
 
 	@Override
-	public void onChangeQuantity() {
+	public void onChangeQuantity(String commerceId) {
+		mChangeQuantity.setCommerceId(commerceId);
+		if (mWoolWorthsApplication != null) {
+			WGlobalState wGlobalState = mWoolWorthsApplication.getWGlobalState();
+			if (wGlobalState != null) {
+				wGlobalState.navigateFromQuantity(1);
+			}
+		}
 		Activity activity = getActivity();
-
 		if (activity != null) {
 			Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
 			editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
@@ -513,5 +528,62 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	private void dismissFragmentDialog() {
 		pBar.setVisibility(View.GONE);
+	}
+
+	private void executeChangeQuantity(ChangeQuantity mChangeQuantity) {
+		//TODO:: Handle negative scenario for change quantity
+		onChangeQuantityComplete();
+		mWoolWorthsApplication.getAsyncApi().getChangeQuantity(mChangeQuantity, new CancelableCallback<String>() {
+			@Override
+			public void onSuccess(String s, retrofit.client.Response response) {
+				Log.i("result ", s);
+				CartResponse cartResponse = convertResponseToCartResponseObject(s);
+				if (cartResponse != null) {
+					switch (cartResponse.httpCode) {
+						case 200:
+							changeQuantity(cartResponse);
+							break;
+						default:
+							break;
+
+					}
+				}
+				onChangeQuantityLoad();
+			}
+
+			@Override
+			public void onFailure(RetrofitError error) {
+				onChangeQuantityComplete();
+				Log.i("result ", "failed");
+			}
+		});
+
+	}
+
+	public void changeQuantity(CartResponse cartResponse) {
+		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
+			cartItems = cartResponse.cartItems;
+			orderSummary = cartResponse.orderSummary;
+			cartProductAdapter.changeQuantity(cartItems, orderSummary);
+
+		} else {
+			cartProductAdapter.clear();
+			Activity activity = getActivity();
+			if (activity != null) {
+				CartActivity cartActivity = (CartActivity) activity;
+				cartActivity.resetToolBarIcons();
+			}
+			rlCheckOut.setVisibility(View.GONE);
+			relEmptyStateHandler.setVisibility(View.VISIBLE);
+		}
+		onChangeQuantityComplete();
+	}
+
+	private void onChangeQuantityComplete() {
+		cartProductAdapter.onChangeQuantityComplete();
+	}
+
+	private void onChangeQuantityLoad() {
+		cartProductAdapter.onChangeQuantityLoad();
 	}
 }
