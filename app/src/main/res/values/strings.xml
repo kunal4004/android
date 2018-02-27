@@ -49,7 +49,7 @@
     <string name="why_we_need_location_services">Location Services</string>
     <string name="location_off_message">Location services allow us to provide store information like opening hours, contact details and directions.</string>
     <string name="go_to_settings">ENABLE LOCATION SERVICES</string>
-
+    <string name="off_instantly">OFF INSTANTLY</string>
 
     <string name="nav_item_today">TODAY</string>
     <string name="nw_today_title">W TODAY</string>
