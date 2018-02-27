@@ -50,7 +50,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.D
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
-import za.co.woolworths.financial.services.android.ui.views.FragmentHistory;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
@@ -91,8 +90,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private String TAG = this.getClass().getSimpleName();
 	private Bundle mBundle;
 	private int currentSection;
-
-	private FragmentHistory fragmentHistory;
 
 	@Override
 	public int getLayoutId() {
@@ -140,7 +137,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				.eager(true)
 				.rootFragmentListener(this, 5)
 				.build();
-		fragmentHistory = new FragmentHistory();
 		renderUI();
 		mDisposables.add(woolworthsApplication()
 				.bus()
@@ -400,20 +396,17 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_TODAY);
 					hideToolbar();
-					fragmentHistory.push(INDEX_TODAY);
 					return true;
 
 				case R.id.navigation_shop:
 					currentSection = R.id.navigation_shop;
 					switchTab(INDEX_PRODUCT);
 					Utils.showOneTimePopup(BottomNavigationActivity.this);
-					fragmentHistory.push(INDEX_PRODUCT);
 					return true;
 
 				case R.id.navigation_cart:
 					currentSection = R.id.navigation_cart;
 					identifyTokenValidationAPI();
-					fragmentHistory.push(INDEX_CART);
 					return false;
 
 				case R.id.navigation_reward:
@@ -421,14 +414,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					Utils.sendBus(new SessionManager(RELOAD_REWARD));
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_REWARD);
-					fragmentHistory.push(INDEX_REWARD);
 					return true;
 
 				case R.id.navigation_account:
 					currentSection = R.id.navigation_account;
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_ACCOUNT);
-					fragmentHistory.push(INDEX_ACCOUNT);
 					return true;
 			}
 			return false;
