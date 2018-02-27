@@ -55,7 +55,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.D
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
-import za.co.woolworths.financial.services.android.util.ClickEffectUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -99,8 +98,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		mWoolWorthsApplication = ((WoolworthsApplication) getActivity().getApplication());
 		view.findViewById(R.id.locationSelectedLayout).setOnClickListener(this);
 		btnCheckOut.setOnClickListener(this);
-		ClickEffectUtils clickEffectUtils = new ClickEffectUtils();
-		clickEffectUtils.addClickEffect(btnCheckOut);
 		tvFreeDeliveryFirstOrder = view.findViewById(R.id.tvFreeDeliveryFirstOrder);
 		tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
 		progressDialog = new ProgressDialog(getActivity());
