@@ -36,7 +36,7 @@ public class CartCheckoutActivity extends AppCompatActivity implements View.OnCl
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-			case R.id.btnCheckOut:
+			case R.id.btnCloseCart:
 				onBackPressed();
 				break;
 			default:
@@ -47,5 +47,6 @@ public class CartCheckoutActivity extends AppCompatActivity implements View.OnCl
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
+		overridePendingTransition(R.anim.slide_down_anim, R.anim.stay);
 	}
 }

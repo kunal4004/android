@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -29,6 +30,9 @@ import com.google.gson.Gson;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -91,6 +95,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private Bundle mBundle;
 	private int currentSection;
 
+	LinkedHashMap<Integer, Integer> mFragmentHistory;
+
 	@Override
 	public int getLayoutId() {
 		return R.layout.activity_bottom_navigation;
@@ -123,6 +129,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
 		mBundle = getIntent().getExtras();
+		mFragmentHistory = new LinkedHashMap<>();
 		mNavController = FragNavController.newBuilder(savedInstanceState,
 				getSupportFragmentManager(),
 				R.id.frag_container)
@@ -203,6 +210,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		if (mBundle != null) {
 			if (!TextUtils.isEmpty(mBundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT))) {
 				getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
+				mFragmentHistory.put(INDEX_ACCOUNT, INDEX_ACCOUNT);
 				mBundle = null;
 			}
 		}
@@ -395,12 +403,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					currentSection = R.id.navigation_today;
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_TODAY);
+					mFragmentHistory.put(INDEX_TODAY, INDEX_TODAY);
 					hideToolbar();
 					return true;
 
 				case R.id.navigation_shop:
 					currentSection = R.id.navigation_shop;
 					switchTab(INDEX_PRODUCT);
+					mFragmentHistory.put(INDEX_PRODUCT, INDEX_PRODUCT);
 					Utils.showOneTimePopup(BottomNavigationActivity.this);
 					return true;
 
@@ -414,12 +424,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					Utils.sendBus(new SessionManager(RELOAD_REWARD));
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_REWARD);
+					mFragmentHistory.put(INDEX_REWARD, INDEX_REWARD);
 					return true;
 
 				case R.id.navigation_account:
 					currentSection = R.id.navigation_account;
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_ACCOUNT);
+					mFragmentHistory.put(INDEX_ACCOUNT, INDEX_ACCOUNT);
 					return true;
 			}
 			return false;
@@ -481,7 +493,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	public void onTabTransaction(Fragment fragment, int index) {
-
 		if (index == 2) {
 			return;
 		}
