@@ -49,7 +49,6 @@ import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsA
 import za.co.woolworths.financial.services.android.ui.activities.SSOActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ShoppingListActivity;
 import za.co.woolworths.financial.services.android.ui.activities.UserDetailActivity;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MyAccountOverViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.base.BaseFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.store.StoresNearbyFragment1;
@@ -68,6 +67,8 @@ import za.co.woolworths.financial.services.android.util.WFormatter;
 
 import com.awfs.coordination.BR;
 
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_ACCOUNT;
+import static za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity.INDEX_REWARD;
 import static za.co.woolworths.financial.services.android.util.SessionManager.ACCOUNT_SESSION_EXPIRED;
 
 public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, MyAccountsViewModel> implements View.OnClickListener, ViewPager.OnPageChangeListener, MyAccountsNavigator {
@@ -762,7 +763,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		if (voucherCollection != null) {
 			List<Voucher> voucher = voucherCollection.vouchers;
 			if (!voucher.isEmpty()) {
-				getBottomNavigator().addBadge(BottomNavigationActivity.INDEX_REWARD, voucher.size());
+				getBottomNavigator().addBadge(INDEX_REWARD, voucher.size());
 			}
 		}
 	}
@@ -776,10 +777,10 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 				unreadCount = 0;
 			Utils.setBadgeCounter(getActivity(), unreadCount);
 			messageCounter.setText(String.valueOf(unreadCount));
-			getBottomNavigator().addBadge(BottomNavigationActivity.INDEX_ACCOUNT, unreadCount);
+			getBottomNavigator().addBadge(INDEX_ACCOUNT, unreadCount);
 		} else {
 			Utils.removeBadgeCounter(getActivity());
-			getBottomNavigator().addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
+			getBottomNavigator().addBadge(INDEX_ACCOUNT, 0);
 			hideView(messageCounter);
 		}
 	}
@@ -824,8 +825,8 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	}
 
 	private void removeAllBottomNavigationIconBadgeCount() {
-		addBadge(BottomNavigationActivity.INDEX_REWARD, 0);
-		addBadge(BottomNavigationActivity.INDEX_ACCOUNT, 0);
+		addBadge(INDEX_REWARD, 0);
+		addBadge(INDEX_ACCOUNT, 0);
 	}
 
 	private void onAccSessionExpired(Activity activity) {

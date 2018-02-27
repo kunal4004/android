@@ -2,6 +2,7 @@ package za.co.woolworths.financial.services.android.ui.activities.dashboard;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -49,6 +50,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.D
 import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wreward.base.WRewardsFragment;
 import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFragment;
+import za.co.woolworths.financial.services.android.ui.views.FragmentHistory;
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
@@ -89,6 +91,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private String TAG = this.getClass().getSimpleName();
 	private Bundle mBundle;
 	private int currentSection;
+
+	private FragmentHistory fragmentHistory;
 
 	@Override
 	public int getLayoutId() {
@@ -136,6 +140,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 				.eager(true)
 				.rootFragmentListener(this, 5)
 				.build();
+		fragmentHistory = new FragmentHistory();
 		renderUI();
 		mDisposables.add(woolworthsApplication()
 				.bus()
@@ -159,6 +164,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 						} else if (object instanceof AuthenticationState) {
 							AuthenticationState auth = ((AuthenticationState) object);
 							if (auth.getAuthStateTypeDef() == AuthenticationState.SIGN_OUT) {
+								onSignOut();
 								ScreenManager.presentSSOLogout(BottomNavigationActivity.this);
 							}
 						} else if (object instanceof CartSummaryResponse) {
@@ -394,17 +400,20 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_TODAY);
 					hideToolbar();
+					fragmentHistory.push(INDEX_TODAY);
 					return true;
 
 				case R.id.navigation_shop:
 					currentSection = R.id.navigation_shop;
 					switchTab(INDEX_PRODUCT);
 					Utils.showOneTimePopup(BottomNavigationActivity.this);
+					fragmentHistory.push(INDEX_PRODUCT);
 					return true;
 
 				case R.id.navigation_cart:
 					currentSection = R.id.navigation_cart;
 					identifyTokenValidationAPI();
+					fragmentHistory.push(INDEX_CART);
 					return false;
 
 				case R.id.navigation_reward:
@@ -412,12 +421,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					Utils.sendBus(new SessionManager(RELOAD_REWARD));
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_REWARD);
+					fragmentHistory.push(INDEX_REWARD);
 					return true;
 
 				case R.id.navigation_account:
 					currentSection = R.id.navigation_account;
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_ACCOUNT);
+					fragmentHistory.push(INDEX_ACCOUNT);
 					return true;
 			}
 			return false;
@@ -459,14 +470,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		overridePendingTransition(R.anim.anim_accelerate_in, R.anim.stay);
 	}
 
+	@SuppressLint("RestrictedApi")
 	@Override
 	public void onBackPressed() {
 		if (!mNavController.isRootFragment()) {
 			mNavController.popFragment(new FragNavTransactionOptions.Builder().customAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right).build());
-		} else {
-			if (mNavController.getCurrentStack().size() > 1) {
-				mNavController.getCurrentStack().pop();
-			}
 		}
 	}
 
@@ -642,15 +650,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					SessionManager sessionManager = new SessionManager(BottomNavigationActivity.this);
 					sessionManager.setAccountHasExpired(false);
 					sessionManager.setRewardSignInState(true);
-					openCartActivity();
+					Intent openCartActivity = new Intent(this, CartActivity.class);
+					startActivityForResult(openCartActivity, OPEN_CART_REQUEST);
+					overridePendingTransition(0, 0);
+
 					break;
 				default:
 					break;
 			}
-		} else if (resultCode == SSOActivity.SSOActivityResult.SIGNED_OUT.rawValue()) {
-			addBadge(INDEX_CART, 0);
-			addBadge(INDEX_ACCOUNT, 0);
-			addBadge(INDEX_REWARD, 0);
 		}
 
 		switch (getBottomNavigationById().getCurrentItem()) {
@@ -712,5 +719,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	@Override
 	public void updateMessageCount(int unreadCount) {
 		addBadge(INDEX_ACCOUNT, unreadCount);
+	}
+
+	public void onSignOut() {
+		addBadge(INDEX_CART, 0);
+		addBadge(INDEX_ACCOUNT, 0);
+		addBadge(INDEX_REWARD, 0);
 	}
 }

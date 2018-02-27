@@ -47,6 +47,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
+import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
@@ -54,6 +55,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.detail.D
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
+import za.co.woolworths.financial.services.android.util.ClickEffectUtils;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -96,6 +98,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		relEmptyStateHandler = view.findViewById(R.id.relEmptyStateHandler);
 		mWoolWorthsApplication = ((WoolworthsApplication) getActivity().getApplication());
 		view.findViewById(R.id.locationSelectedLayout).setOnClickListener(this);
+		btnCheckOut.setOnClickListener(this);
+		ClickEffectUtils clickEffectUtils = new ClickEffectUtils();
+		clickEffectUtils.addClickEffect(btnCheckOut);
 		tvFreeDeliveryFirstOrder = view.findViewById(R.id.tvFreeDeliveryFirstOrder);
 		tvDeliveryLocation = view.findViewById(R.id.tvDeliveryLocation);
 		progressDialog = new ProgressDialog(getActivity());
@@ -155,6 +160,15 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 					activity.setResult(Activity.RESULT_OK);
 					activity.finish();
 					activity.overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
+				}
+				break;
+
+			case R.id.btnCheckOut:
+				Activity checkOutActivity = getActivity();
+				if (checkOutActivity != null) {
+					Intent openCheckOutActivity = new Intent(checkOutActivity, CartCheckoutActivity.class);
+					checkOutActivity.startActivity(openCheckOutActivity);
+					checkOutActivity.overridePendingTransition(0, 0);
 				}
 				break;
 			default:

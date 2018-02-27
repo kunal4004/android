@@ -84,6 +84,7 @@ public class QBadgeView extends View implements Badge {
 	protected OnDragStateChangedListener mDragStateChangedListener;
 
 	protected ViewGroup mActivityRoot;
+	private Canvas srcCanvas;
 
 	public QBadgeView(Context context) {
 		this(context, null);
@@ -463,6 +464,7 @@ public class QBadgeView extends View implements Badge {
 
 	private void createClipLayer() {
 		if (mBadgeText == null) {
+			//TODO:: HIDE_BADGE
 			return;
 		}
 		if (!mDrawableBackgroundClip) {
@@ -475,13 +477,14 @@ public class QBadgeView extends View implements Badge {
 		if (mBadgeText.isEmpty() || mBadgeText.length() == 1) {
 			mBitmapClip = Bitmap.createBitmap((int) radius * 2, (int) radius * 2,
 					Bitmap.Config.ARGB_4444);
-			Canvas srcCanvas = new Canvas(mBitmapClip);
+			srcCanvas = new Canvas(mBitmapClip);
 			srcCanvas.drawCircle(srcCanvas.getWidth() / 2f, srcCanvas.getHeight() / 2f,
 					srcCanvas.getWidth() / 2f, mBadgeBackgroundPaint);
+			setVisibility(VISIBLE);
 		} else {
 			mBitmapClip = Bitmap.createBitmap((int) (mBadgeTextRect.width() + mBadgePadding * 2),
 					(int) (mBadgeTextRect.height() + mBadgePadding), Bitmap.Config.ARGB_4444);
-			Canvas srcCanvas = new Canvas(mBitmapClip);
+			srcCanvas = new Canvas(mBitmapClip);
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 				srcCanvas.drawRoundRect(0, 0, srcCanvas.getWidth(), srcCanvas.getHeight(), srcCanvas.getHeight() / 2f,
 						srcCanvas.getHeight() / 2f, mBadgeBackgroundPaint);
@@ -489,6 +492,7 @@ public class QBadgeView extends View implements Badge {
 				srcCanvas.drawRoundRect(new RectF(0, 0, srcCanvas.getWidth(), srcCanvas.getHeight()),
 						srcCanvas.getHeight() / 2f, srcCanvas.getHeight() / 2f, mBadgeBackgroundPaint);
 			}
+			setVisibility(VISIBLE);
 		}
 	}
 

@@ -124,7 +124,6 @@ public class SSOActivity extends WebViewActivity {
 		this.webView.getSettings().setUseWideViewPort(true);
 		this.webView.getSettings().setLoadWithOverviewMode(true);
 		this.webView.getSettings().setDomStorageEnabled(true);
-		this.webView.getSettings().setDomStorageEnabled(true);
 		if (Build.VERSION.SDK_INT >= 21) {
 			this.webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 		}
