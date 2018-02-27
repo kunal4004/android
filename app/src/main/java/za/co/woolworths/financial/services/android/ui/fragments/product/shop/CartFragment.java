@@ -179,11 +179,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	@Override
-	public void onItemDeleteClick(String productId) {
+	public void onItemDeleteClick(String commerceId) {
 		// Log.i("CartFragment", "Item " + itemRow.productItem.productName + " delete button clicked!");
 
 		// TODO: Make API call to remove item + show loading before removing from list
-		removeCartItem(productId);
+		removeCartItem(commerceId);
 	}
 
 	public boolean toggleEditMode() {
@@ -309,6 +309,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						cartProduct.setExternalImageURL(proObject.getString("externalImageURL"));
 						cartProduct.setCatalogRefId(proObject.getString("catalogRefId"));
 						cartProduct.setProductDisplayName(proObject.getString("productDisplayName"));
+						cartProduct.setCommerceId(proObject.getString("id"));
 
 						PriceInfo pInfo = new PriceInfo();
 						pInfo.setAmount(proObject.getJSONObject("priceInfo").getDouble("amount"));
@@ -372,9 +373,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 	}
 
-	public void removeCartItem(String productId) {
+	public void removeCartItem(String commerceId) {
 		showProgress();
-		mWoolWorthsApplication.getAsyncApi().removeCartItem(productId, new CancelableCallback<String>() {
+		mWoolWorthsApplication.getAsyncApi().removeCartItem(commerceId, new CancelableCallback<String>() {
 			@Override
 			public void onSuccess(String s, retrofit.client.Response response) {
 				Log.i("result ", s);
