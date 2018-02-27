@@ -39,7 +39,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	public interface OnItemClick {
 		void onItemClick(CartProduct cartProduct);
 
-		void onItemDeleteClick(String productId);
+		void onItemDeleteClick(String commerceId);
 	}
 
 	private OnItemClick onItemClick;
@@ -97,7 +97,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 				cartItemViewHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						onItemClick.onItemDeleteClick(itemRow.productItem.getProductId());
+						onItemClick.onItemDeleteClick(itemRow.productItem.getCommerceId());
 					}
 				});
 			}

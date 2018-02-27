@@ -125,8 +125,8 @@ public class RetrofitAsyncClient {
 		mApiInterface.getStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), getStatement.getDocId(), getStatement.getProductOfferingId(), getStatement.getDocDesc(), callback);
 	}
 
-	public void removeCartItem(String productId,Callback<String> callback){
-		mApiInterface.removeItemFromCart(getApiId(),getSha1Password(),getOsVersion(),getDeviceModel(),getNetworkCarrier(),getOS(),getOsVersion(),getSessionToken(),productId,callback);
+	public void removeCartItem(String commerceId,Callback<String> callback){
+		mApiInterface.removeItemFromCart(getApiId(),getSha1Password(),getOsVersion(),getDeviceModel(),getNetworkCarrier(),getOS(),getOsVersion(),getSessionToken(),commerceId,callback);
 	}
 
 	public void removeAllCartItems(Callback<String> callback){
