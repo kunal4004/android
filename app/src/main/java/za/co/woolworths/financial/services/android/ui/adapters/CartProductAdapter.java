@@ -39,7 +39,9 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	public interface OnItemClick {
 		void onItemClick(CartProduct cartProduct);
 
-		void onItemDeleteClick(String productId);
+		void onItemDeleteClick(String commerceId);
+
+		void onChangeQuantity(String commerceId);
 	}
 
 	private OnItemClick onItemClick;
@@ -97,7 +99,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 				cartItemViewHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						onItemClick.onItemDeleteClick(itemRow.productItem.getProductId());
+						onItemClick.onItemDeleteClick(itemRow.productItem.getCommerceId());
 					}
 				});
 			}
@@ -106,6 +108,12 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 				@Override
 				public void onClick(View v) {
 					onItemClick.onItemClick(productItem);
+				}
+			});
+
+			cartItemViewHolder.llQuantity.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
 				}
 			});
 		} else if (itemRow.rowType == CartRowType.PRICES) {
@@ -206,6 +214,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 		private WTextView tvTitle, tvDescription, quantity, price;
 		private ImageView btnDeleteRow;
 		private SimpleDraweeView productImage;
+		private LinearLayout llQuantity;
 
 		public CartItemViewHolder(View view) {
 			super(view);
@@ -215,6 +224,7 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			price = view.findViewById(R.id.price);
 			btnDeleteRow = view.findViewById(R.id.btnDeleteRow);
 			productImage = view.findViewById(R.id.cartProductImage);
+			llQuantity = view.findViewById(R.id.llQuantity);
 		}
 	}
 

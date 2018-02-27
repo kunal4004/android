@@ -48,6 +48,7 @@ import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity;
+import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
@@ -179,11 +180,23 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	@Override
-	public void onItemDeleteClick(String productId) {
+	public void onItemDeleteClick(String commerceId) {
 		// Log.i("CartFragment", "Item " + itemRow.productItem.productName + " delete button clicked!");
 
 		// TODO: Make API call to remove item + show loading before removing from list
-		removeCartItem(productId);
+		removeCartItem(commerceId);
+	}
+
+	@Override
+	public void onChangeQuantity() {
+		Activity activity = getActivity();
+
+		if (activity != null) {
+			Intent editQuantityIntent = new Intent(activity, ConfirmColorSizeActivity.class);
+			editQuantityIntent.putExtra(ConfirmColorSizeActivity.SELECT_PAGE, ConfirmColorSizeActivity.QUANTITY);
+			activity.startActivity(editQuantityIntent);
+			activity.overridePendingTransition(0, 0);
+		}
 	}
 
 	public boolean toggleEditMode() {
@@ -309,6 +322,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						cartProduct.setExternalImageURL(proObject.getString("externalImageURL"));
 						cartProduct.setCatalogRefId(proObject.getString("catalogRefId"));
 						cartProduct.setProductDisplayName(proObject.getString("productDisplayName"));
+						cartProduct.setCommerceId(proObject.getString("id"));
 
 						PriceInfo pInfo = new PriceInfo();
 						pInfo.setAmount(proObject.getJSONObject("priceInfo").getDouble("amount"));
@@ -372,9 +386,9 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 	}
 
-	public void removeCartItem(String productId) {
+	public void removeCartItem(String commerceId) {
 		showProgress();
-		mWoolWorthsApplication.getAsyncApi().removeCartItem(productId, new CancelableCallback<String>() {
+		mWoolWorthsApplication.getAsyncApi().removeCartItem(commerceId, new CancelableCallback<String>() {
 			@Override
 			public void onSuccess(String s, retrofit.client.Response response) {
 				Log.i("result ", s);

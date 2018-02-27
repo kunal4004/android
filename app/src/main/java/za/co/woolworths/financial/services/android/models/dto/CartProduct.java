@@ -11,7 +11,9 @@ public class CartProduct {
 		public String externalImageURL;
 		public String catalogRefId;
 		public String productDisplayName;
+		public String commerceId;
 		public PriceInfo priceInfo;
+		public String commerceId;
 
 	public int getQuantity() {
 		return quantity;
@@ -67,5 +69,13 @@ public class CartProduct {
 
 	public void setPriceInfo(PriceInfo priceInfo) {
 		this.priceInfo = priceInfo;
+	}
+
+	public String getCommerceId() {
+		return commerceId;
+	}
+
+	public void setCommerceId(String commerceId) {
+		this.commerceId = commerceId;
 	}
 }

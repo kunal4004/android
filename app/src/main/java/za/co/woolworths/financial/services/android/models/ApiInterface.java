@@ -760,7 +760,7 @@ public interface ApiInterface {
 			@Body AddItemToCart addItemToCart);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
-	@DELETE("/cart/item/{productId}")
+	@DELETE("/cart/item")
 	void removeItemFromCart(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
@@ -770,7 +770,7 @@ public interface ApiInterface {
 			@Header("os") String os,
 			@Header("osVersion") String osVersion,
 			@Header("sessionToken") String sessionToken,
-			@Path("productId") String productId,
+			@Query("commerceId") String commerceId,
 			Callback<String> callback);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})

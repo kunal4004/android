@@ -62,6 +62,7 @@
                 android:layout_height="match_parent">
 
                 <LinearLayout
+                    android:id="@+id/llQuantity"
                     android:layout_width="40dp"
                     android:layout_height="32dp"
                     android:layout_alignParentBottom="true"
@@ -71,18 +72,18 @@
                     android:padding="9dp">
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
-                        style="@style/style_cart_item_quantity_value"
                         android:id="@+id/quantity"
+                        style="@style/style_cart_item_quantity_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:layout_marginRight="4dp" />
+                        android:layout_marginRight="4dp"/>
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/path_3" />
+                        android:src="@drawable/path_3"/>
 
                 </LinearLayout>
 
