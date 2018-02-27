@@ -21,6 +21,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
@@ -35,6 +36,7 @@ public class CheckOutFragment extends Fragment {
 
 	private WebView mWebCheckOut;
 	private String TAG = this.getClass().getSimpleName();
+	private ProgressBar mProgressLayout;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,12 +48,12 @@ public class CheckOutFragment extends Fragment {
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		mWebCheckOut = view.findViewById(R.id.webCheckout);
+		mProgressLayout = view.findViewById(R.id.progressCreditLimit);
 		setWebSetting(mWebCheckOut);
 		Map<String, String> extraHeaders = new HashMap<>();
 		Activity activity = getActivity();
 		if (activity != null) {
 			extraHeaders.put("token", Utils.getSessionToken(activity));
-
 			setWebViewClient();
 			setWebChromeClient();
 			mWebCheckOut.addJavascriptInterface(new MyJavaScriptInterface(activity), "javascript");
@@ -88,6 +90,7 @@ public class CheckOutFragment extends Fragment {
 	}
 
 	private void setWebViewClient() {
+		mProgressLayout.setVisibility(View.VISIBLE);
 		mWebCheckOut.setWebViewClient(new WebViewClient() {
 
 			@Override
@@ -114,6 +117,7 @@ public class CheckOutFragment extends Fragment {
 			}
 
 			public void onPageFinished(WebView view, String url) {
+				mProgressLayout.setVisibility(View.GONE);
 			}
 		});
 	}

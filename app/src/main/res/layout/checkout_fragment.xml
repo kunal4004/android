@@ -4,9 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <WebView
-        android:id="@+id/webCheckout"
+    <FrameLayout
+        android:id="@+id/fmlWebCheckout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+        <WebView
+            android:id="@+id/webCheckout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <include layout="@layout/progress_layout"/>
+    </FrameLayout>
 
 </android.support.constraint.ConstraintLayout>
