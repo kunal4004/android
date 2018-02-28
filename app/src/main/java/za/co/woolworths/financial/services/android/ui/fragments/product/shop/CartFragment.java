@@ -255,6 +255,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			rlCheckOut.setVisibility(View.GONE);
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
 		}
+		updateCartSummary();
 		progressDialog.dismiss();
 	}
 

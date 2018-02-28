@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -59,12 +60,10 @@ import za.co.woolworths.financial.services.android.util.NetworkChangeListener;
 import za.co.woolworths.financial.services.android.util.OnEventListener;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
 import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
-import za.co.woolworths.financial.services.android.util.SessionManager;
 import za.co.woolworths.financial.services.android.util.StatementUtils;
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
-import static za.co.woolworths.financial.services.android.util.SessionExpiredUtilities.ACCOUNT;
 import static za.co.woolworths.financial.services.android.util.SessionExpiredUtilities.REWARD;
 
 public class CustomPopUpWindow extends AppCompatActivity implements View.OnClickListener, NetworkChangeListener {
@@ -85,6 +84,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	private LoadState loadState;
 	private SendUserStatementRequest mSendUserStatementRequest;
 	protected WTextView mTvStatementSendTo;
+	private WButton mBtnSignOutCancel;
+	private WButton mBtnSignOut;
 
 	public enum MODAL_LAYOUT {
 		CONFIDENTIAL, INSOLVENCY, INFO, EMAIL, ERROR, MANDATORY_FIELD,
@@ -166,8 +167,8 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				setContentView(R.layout.sign_out);
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = findViewById(R.id.relPopContainer);
-				WButton mBtnSignOutCancel = findViewById(R.id.btnSignOutCancel);
-				WButton mBtnSignOut = findViewById(R.id.btnSignOut);
+				mBtnSignOutCancel = findViewById(R.id.btnSignOutCancel);
+				mBtnSignOut = findViewById(R.id.btnSignOut);
 				mBtnSignOutCancel.setOnClickListener(this);
 				mBtnSignOut.setOnClickListener(this);
 				mRelPopContainer.setOnClickListener(this);
@@ -315,7 +316,6 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				mRelRootContainer = findViewById(R.id.relContainerRootMessage);
 				mRelPopContainer = findViewById(R.id.relPopContainer);
 				WTextView tvSessionExpiredDesc = findViewById(R.id.tvSessionExpiredDesc);
-				SessionManager sessionManager = new SessionManager(CustomPopUpWindow.this);
 				if (mWGlobalState.getSection().equalsIgnoreCase(REWARD)) {
 					tvSessionExpiredDesc.setText(getString(R.string.session_expired_reward_desc));
 				} else {
@@ -850,6 +850,9 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 			case R.id.btnShopOk:
 			case R.id.btnMandatoryOK:
 			case R.id.btnOk:
+				if (v != mRelPopContainer) {
+					whiteEffectClick(mBtnSignOutCancel);
+				}
 				startExitAnimation();
 				break;
 
@@ -861,6 +864,7 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 				break;
 
 			case R.id.btnSignOut:
+				whiteEffectClick(mBtnSignOut);
 				exitAnimation();
 				break;
 
@@ -1131,5 +1135,10 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 	public void onPause() {
 		super.onPause();
 		unregisterReceiver(mConnectionBroadcast);
+	}
+
+	private void whiteEffectClick(WButton button) {
+		button.setBackgroundColor(Color.BLACK);
+		button.setTextColor(Color.WHITE);
 	}
 }

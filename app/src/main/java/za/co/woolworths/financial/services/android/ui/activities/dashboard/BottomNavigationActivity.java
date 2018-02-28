@@ -371,8 +371,18 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	public void pushFragment(Fragment fragment) {
 		if (mNavController != null) {
 			FragNavTransactionOptions ft = new FragNavTransactionOptions.Builder()
-					.allowStateLoss(true)
 					.customAnimations(R.anim.slide_in_from_right, R.anim.slide_out_to_left)
+					.build();
+
+			mNavController.pushFragment(fragment, ft);
+		}
+	}
+
+	@Override
+	public void pushFragment(Fragment fragment, boolean state) {
+		if (mNavController != null) {
+			FragNavTransactionOptions ft = new FragNavTransactionOptions.Builder()
+					.customAnimations(R.anim.stay, R.anim.stay)
 					.build();
 
 			mNavController.pushFragment(fragment, ft);

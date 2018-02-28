@@ -42,21 +42,6 @@
                 android:fitsSystemWindows="true"
                 >
 
-                <LinearLayout
-                    android:id="@+id/llToast"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/sixteen_dp"
-                    android:layout_marginEnd="@dimen/sixteen_dp"
-                    android:layout_marginStart="@dimen/sixteen_dp"
-                    android:background="@color/black">
-
-                    <include
-                        android:id="@+id/rlAddToCartToast"
-                        layout="@layout/add_to_cart_success"/>
-                </LinearLayout>
-
             </FrameLayout>
 
             <View

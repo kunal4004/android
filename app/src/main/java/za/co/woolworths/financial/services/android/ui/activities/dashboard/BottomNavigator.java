@@ -47,6 +47,8 @@ public interface BottomNavigator {
 
 	void pushFragment(Fragment fragment);
 
+	void pushFragment(Fragment fragment, boolean state);
+
 	void hideBottomNavigationMenu();
 
 	void showBottomNavigationMenu();
