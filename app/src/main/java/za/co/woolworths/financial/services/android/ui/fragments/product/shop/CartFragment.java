@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -20,8 +18,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +30,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import retrofit.Callback;
 import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
@@ -45,8 +40,6 @@ import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.PriceInfo;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
-import za.co.woolworths.financial.services.android.models.dto.WProduct;
-import za.co.woolworths.financial.services.android.models.dto.WProductDetail;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity;
@@ -54,7 +47,6 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.product.detail.DetailFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
@@ -186,7 +178,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	@Override
 	public void onItemClick(CartProduct cartProduct) {
-		getProductDetail(cartProduct.productId, cartProduct.catalogRefId);
 	}
 
 	@Override
@@ -463,80 +454,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 	}
 
-	private void getProductDetail(final String productId, final String skuId) {
-		final Activity activity = getActivity();
-		if (activity != null) {
-			pBar.setVisibility(View.VISIBLE);
-			WoolworthsApplication.getInstance().getAsyncApi()
-					.getProductDetail(productId, skuId, new Callback<String>() {
-						@Override
-						public void success(final String strProduct, retrofit.client.Response response) {
-							final WProduct wProduct = Utils.stringToJson(activity, strProduct);
-							if (wProduct != null) {
-								switch (wProduct.httpCode) {
-									case 200:
-										activity.runOnUiThread(new Runnable() {
-											@Override
-											public void run() {
-												try {
-													ArrayList<WProductDetail> mProductList;
-													WProductDetail productList = wProduct.product;
-													mProductList = new ArrayList<>();
-													if (productList != null) {
-														mProductList.add(productList);
-													}
-													if (mProductList.size() > 0 && mProductList.get(0).productId != null) {
-														GsonBuilder builder = new GsonBuilder();
-														Gson gson = builder.create();
-														DetailFragment detailFragment = new DetailFragment();
-														String strProductList = gson.toJson(mProductList.get(0));
-														Bundle bundle = new Bundle();
-														bundle.putString("strProductList", strProductList);
-														bundle.putString("strProductCategory", mProductList.get(0).productName);
-														bundle.putString("productResponse", strProduct);
-														bundle.putBoolean("fetchFromJson", true);
-														detailFragment.setArguments(bundle);
-														FragmentTransaction transaction = ((AppCompatActivity) activity).getSupportFragmentManager().beginTransaction();
-														transaction.replace(R.id.bottom_Fragment, detailFragment).commit();
-													}
-													CartActivity cartActivity = (CartActivity) activity;
-													cartActivity.slideUpBottomView();
-
-												} catch (Exception ex) {
-													ex.printStackTrace();
-												}
-
-												dismissFragmentDialog();
-											}
-										});
-										break;
-
-									default:
-										dismissFragmentDialog();
-										break;
-								}
-							}
-						}
-
-						@Override
-						public void failure(RetrofitError error) {
-							dismissFragmentDialog();
-						}
-					});
-		}
-	}
-
-	private void dismissFragmentDialog() {
-		pBar.setVisibility(View.GONE);
-	}
-
 	private void executeChangeQuantity(ChangeQuantity mChangeQuantity) {
 		//TODO:: Handle negative scenario for change quantity
 		onChangeQuantityComplete();
 		mWoolWorthsApplication.getAsyncApi().getChangeQuantity(mChangeQuantity, new CancelableCallback<String>() {
 			@Override
 			public void onSuccess(String s, retrofit.client.Response response) {
-				Log.i("result ", s);
+				Log.i("results", s);
 				CartResponse cartResponse = convertResponseToCartResponseObject(s);
 				if (cartResponse != null) {
 					switch (cartResponse.httpCode) {

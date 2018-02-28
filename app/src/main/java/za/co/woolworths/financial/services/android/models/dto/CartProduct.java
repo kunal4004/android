@@ -13,6 +13,7 @@ public class CartProduct {
 	public String productDisplayName;
 	public PriceInfo priceInfo;
 	public String commerceId;
+	private boolean quantityUploading = false;
 
 	public int getQuantity() {
 		return quantity;
@@ -76,5 +77,13 @@ public class CartProduct {
 
 	public void setCommerceId(String commerceId) {
 		this.commerceId = commerceId;
+	}
+
+	public void setQuantityUploading(boolean upload) {
+		this.quantityUploading = upload;
+	}
+
+	public boolean getQuantityUploading() {
+		return quantityUploading;
 	}
 }

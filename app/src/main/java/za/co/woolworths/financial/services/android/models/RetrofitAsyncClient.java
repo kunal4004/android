@@ -137,7 +137,7 @@ public class RetrofitAsyncClient {
 	public void getChangeQuantity(ChangeQuantity changeQuantity, Callback<String> callback) {
 		mApiInterface.changeQuantityRequest(getApiId(), getSha1Password(), getDeviceManufacturer(),
 				getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "",
-				"", getSessionToken(), changeQuantity.getCommerceId(), String.valueOf(changeQuantity.getQuantity()), callback);
+				"", getSessionToken(), changeQuantity.getCommerceId(), changeQuantity, callback);
 	}
 
 }
