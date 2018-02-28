@@ -4,9 +4,11 @@ package za.co.woolworths.financial.services.android.models;
 import retrofit.Callback;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
+import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.Headers;
+import retrofit.http.PATCH;
 import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Path;
@@ -59,6 +61,8 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
+
+import static retrofit.RetrofitError.Kind.HTTP;
 
 public interface ApiInterface {
 
@@ -802,6 +806,7 @@ public interface ApiInterface {
 			@Header("sessionToken") String sessionToken,
 			Callback<String> callback);
 
+
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@PUT("/cart/item/{commerceId}")
 	void changeQuantityRequest(
@@ -816,7 +821,7 @@ public interface ApiInterface {
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sessionToken") String sessionToken,
 			@Path("commerceId") String commerceId,
-			@Body String quantity,
-			Callback<String> callback
-	);
+			@Body ChangeQuantity quantity,
+			Callback<String> callback);
+
 }
