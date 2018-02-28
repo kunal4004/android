@@ -1140,9 +1140,12 @@ public class CustomPopUpWindow extends AppCompatActivity implements View.OnClick
 
 	private void whiteEffectClick(WButton button) {
 		//TODO:: TEST FOR DIFFERENT POPUP
+
 		try {
-			button.setBackgroundColor(Color.BLACK);
-			button.setTextColor(Color.WHITE);
+			if (button != null) {
+				button.setBackgroundColor(Color.BLACK);
+				button.setTextColor(Color.WHITE);
+			}
 		} catch (Exception ex) {
 			Log.e("whiteEffectClick", ex.toString());
 		}
