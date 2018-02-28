@@ -55,12 +55,10 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 
-
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener {
 
 	private RecyclerView rvCartList;
 	private WButton btnCheckOut;
-
 	private CartProductAdapter cartProductAdapter;
 	private WoolworthsApplication mWoolWorthsApplication;
 	private RelativeLayout parentLayout;
@@ -108,7 +106,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 
 		loadShoppingCart();
-
 		mDisposables.add(WoolworthsApplication.getInstance()
 				.bus()
 				.toObservable()
@@ -126,13 +123,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 								} else if (cartState.getIndexState() == CHANGE_QUANTITY) {
 									int quantity = cartState.getQuantity();
 									executeChangeQuantity(new ChangeQuantity(quantity, mChangeQuantity.getCommerceId()));
-									Log.e("cartState", "cartStageClicked");
 								}
 							}
 						}
 					}
 				}));
-
 	}
 
 	private void emptyCartUI(View view) {
@@ -140,7 +135,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		WTextView txtEmptyStateTitle = view.findViewById(R.id.txtEmptyStateTitle);
 		WTextView txtEmptyStateDesc = view.findViewById(R.id.txtEmptyStateDesc);
 		WButton btnGoToProduct = view.findViewById(R.id.btnGoToProduct);
-
 		txtEmptyStateTitle.setText(getString(R.string.empty_cart));
 		txtEmptyStateDesc.setText(getString(R.string.empty_cart_desc));
 		btnGoToProduct.setVisibility(View.VISIBLE);
@@ -481,7 +475,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				Log.i("result ", "failed");
 			}
 		});
-
 	}
 
 	public void changeQuantity(CartResponse cartResponse) {
@@ -489,7 +482,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartItems = cartResponse.cartItems;
 			orderSummary = cartResponse.orderSummary;
 			cartProductAdapter.changeQuantity(cartItems, orderSummary);
-
 		} else {
 			cartProductAdapter.clear();
 			Activity activity = getActivity();
