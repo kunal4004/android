@@ -467,6 +467,7 @@ public class QBadgeView extends View implements Badge {
 			setVisibility(GONE);
 			return;
 		}
+		setVisibility(VISIBLE);
 		if (!mDrawableBackgroundClip) {
 			return;
 		}
