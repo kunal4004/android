@@ -464,7 +464,7 @@ public class QBadgeView extends View implements Badge {
 
 	private void createClipLayer() {
 		if (mBadgeText == null) {
-			//TODO:: HIDE_BADGE
+			setVisibility(GONE);
 			return;
 		}
 		if (!mDrawableBackgroundClip) {
