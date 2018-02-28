@@ -60,31 +60,39 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                    <LinearLayout
-                        android:id="@+id/llQuantity"
-                        android:layout_width="40dp"
+                <LinearLayout
+                    android:id="@+id/llQuantity"
+                    android:layout_width="40dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentStart="true"
+                    android:background="@drawable/border_quantity_dropdown"
+                    android:orientation="horizontal"
+                    android:padding="9dp">
+
+                    <ProgressBar
+                        android:id="@+id/pbQuantity"
+                        android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentStart="true"
-                        android:background="@drawable/border_quantity_dropdown"
-                        android:orientation="horizontal"
-                        android:padding="9dp">
+                        android:indeterminateTint="@color/black"
+                        android:visibility="gone"/>
 
-                        <za.co.woolworths.financial.services.android.ui.views.WTextView
-                            android:id="@+id/quantity"
-                            style="@style/style_cart_item_quantity_value"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginRight="4dp"/>
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/quantity"
+                        style="@style/style_cart_item_quantity_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="4dp"/>
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:src="@drawable/path_3"/>
+                    <ImageView
+                        android:id="@+id/imPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/path_3"/>
 
-                    </LinearLayout>
+                </LinearLayout>
 
                 <za.co.woolworths.financial.services.android.ui.views.WTextView
                     android:id="@+id/price"

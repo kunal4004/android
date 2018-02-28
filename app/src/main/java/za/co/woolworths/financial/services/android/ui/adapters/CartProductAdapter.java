@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -94,11 +95,22 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			cartItemViewHolder.price.setText(WFormatter.formatAmount(productItem.getPriceInfo().getAmount()));
 			productImage(cartItemViewHolder.productImage, productItem.externalImageURL);
 			cartItemViewHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
+			if (productItem.getQuantityUploading()) {
+				cartItemViewHolder.pbQuantity.setVisibility(View.VISIBLE);
+				cartItemViewHolder.quantity.setVisibility(View.GONE);
+				cartItemViewHolder.imPrice.setVisibility(View.GONE);
+			} else {
+				cartItemViewHolder.pbQuantity.setVisibility(View.GONE);
+				cartItemViewHolder.quantity.setVisibility(View.VISIBLE);
+				cartItemViewHolder.imPrice.setVisibility(View.VISIBLE);
+			}
 			if (this.editMode) {
 				cartItemViewHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						onItemClick.onItemDeleteClick(itemRow.productItem.getCommerceId());
+						if (!productItem.getQuantityUploading()) {
+							onItemClick.onItemDeleteClick(itemRow.productItem.getCommerceId());
+						}
 					}
 				});
 			}
@@ -106,14 +118,19 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			cartItemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					onItemClick.onItemClick(productItem);
+					if (!productItem.getQuantityUploading()) {
+						onItemClick.onItemClick(productItem);
+					}
 				}
 			});
 
 			cartItemViewHolder.llQuantity.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					onItemClick.onChangeQuantity(itemRow.productItem.getCommerceId());
+					if (!productItem.getQuantityUploading()) {
+						productItem.setQuantityUploading(true);
+						onItemClick.onChangeQuantity(itemRow.productItem.getCommerceId());
+					}
 				}
 			});
 
@@ -214,8 +231,10 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	private class CartItemViewHolder extends RecyclerView.ViewHolder {
 		private WTextView tvTitle, tvDescription, quantity, price;
 		private ImageView btnDeleteRow;
+		private ImageView imPrice;
 		private SimpleDraweeView productImage;
 		private LinearLayout llQuantity;
+		private ProgressBar pbQuantity;
 
 		public CartItemViewHolder(View view) {
 			super(view);
@@ -226,6 +245,8 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 			btnDeleteRow = view.findViewById(R.id.btnDeleteRow);
 			productImage = view.findViewById(R.id.cartProductImage);
 			llQuantity = view.findViewById(R.id.llQuantity);
+			pbQuantity = view.findViewById(R.id.pbQuantity);
+			imPrice = view.findViewById(R.id.imPrice);
 		}
 	}
 
@@ -267,8 +288,8 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	private void productImage(final SimpleDraweeView image, String imgUrl) {
 		if (imgUrl != null) {
 			try {
-				imgUrl = imgUrl + "?w=" + 85 + "&q=" + 85;
-				drawImage.displayImage(image, "https://images.woolworthsstatic.co.za/" + imgUrl);
+				imgUrl = "https://images.woolworthsstatic.co.za/" + imgUrl + "?w=" + 85 + "&q=" + 85;
+				image.setImageURI(imgUrl);
 			} catch (IllegalArgumentException ignored) {
 			}
 		}
@@ -282,8 +303,20 @@ public class CartProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 	}
 
 	public void onChangeQuantityComplete() {
+		if (cartItems != null) {
+			if (cartItems.size() > 0) {
+				for (CartItemGroup item : cartItems) {
+					ArrayList<CartProduct> cartProduct = item.getCartProducts();
+					for (CartProduct product : cartProduct) {
+						product.setQuantityUploading(false);
+					}
+				}
+			}
+		}
+		notifyDataSetChanged();
 	}
 
 	public void onChangeQuantityLoad() {
+		notifyDataSetChanged();
 	}
 }
