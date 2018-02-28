@@ -6,11 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,17 +25,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.Account;
-import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CartProduct;
 import za.co.woolworths.financial.services.android.models.dto.CartResponse;
@@ -47,6 +41,7 @@ import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.PriceInfo;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity;
@@ -54,15 +49,13 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
-import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
-import za.co.woolworths.financial.services.android.util.CancelableCallback;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
-import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener {
@@ -298,7 +291,12 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			rlCheckOut.setVisibility(View.GONE);
 			relEmptyStateHandler.setVisibility(View.VISIBLE);
 		}
+		updateCartSummary();
 		onChangeQuantityComplete();
+	}
+
+	private void updateCartSummary() {
+		Utils.sendBus(new BadgeState(CART_COUNT, CART_COUNT));
 	}
 
 	private void onChangeQuantityComplete() {
@@ -355,20 +353,20 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 									public void run() {
 
 										//TODO:: improve error handling
-											Utils.sessionDaoSave(activity, SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, null);
-											ScreenManager.presentSSOSignin(activity);
-											activity.finish();
-											activity.overridePendingTransition(0, 0);
+										Utils.sessionDaoSave(activity, SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, null);
+										ScreenManager.presentSSOSignin(activity);
+										activity.finish();
+										activity.overridePendingTransition(0, 0);
 									}
 								});
 							}
 							break;
 						default:
-							if(shoppingCartResponse.response!=null)
+							if (shoppingCartResponse.response != null)
 								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingCartResponse.response.desc);
 							break;
 					}
-					onChangeQuantityLoad();
+					onChangeQuantityComplete();
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -381,7 +379,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			@Override
 			protected void onPreExecute() {
-				onChangeQuantityComplete();
+				cartProductAdapter.onChangeQuantityLoad();
 			}
 
 			@Override
@@ -396,6 +394,16 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			@Override
 			protected ShoppingCartResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+				Activity activity = getActivity();
+				if (activity != null) {
+					activity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							if (cartProductAdapter != null)
+								cartProductAdapter.onChangeQuantityComplete();
+						}
+					});
+				}
 				return new ShoppingCartResponse();
 			}
 
@@ -434,7 +442,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			@Override
 			protected ShoppingCartResponse httpDoInBackground(String... params) {
-				if(commerceId==null)
+				if (commerceId == null)
 					return ((WoolworthsApplication) getActivity().getApplication()).getApi().removeAllCartItems();
 				else
 					return ((WoolworthsApplication) getActivity().getApplication()).getApi().removeCartItem(commerceId);
@@ -467,13 +475,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public CartResponse convertResponseToCartResponseObject(ShoppingCartResponse response) {
 		CartResponse cartResponse = null;
 
-		if (response==null)
+		if (response == null)
 			return null;
 
 		try {
 			cartResponse = new CartResponse();
 			cartResponse.httpCode = response.httpCode;
-			Data data=response.data[0];
+			Data data = response.data[0];
 			JSONObject itemsObject = new JSONObject(new Gson().toJson(data.items));
 			Iterator<String> keys = itemsObject.keys();
 			ArrayList<CartItemGroup> cartItemGroups = new ArrayList<>();
@@ -522,7 +530,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartResponse.orderSummary = data.orderSummary;
 
 			// set delivery location
-			if (data.suburbName!=null && data.provinceName!=null) {
+			if (data.suburbName != null && data.provinceName != null) {
 				tvDeliveryLocation.setText(data.suburbName + ", " + data.provinceName);
 			} else {
 				tvDeliveryLocation.setText(getString(R.string.set_your_delivery_location));
