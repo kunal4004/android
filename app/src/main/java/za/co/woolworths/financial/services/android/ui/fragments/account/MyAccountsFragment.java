@@ -306,21 +306,29 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		}
 
 		//hide content for unavailable products
+		boolean sc = true, cc = true, pl = true;
 		for (String s : unavailableAccounts) {
 			switch (s) {
 				case "SC":
 					applyStoreCardView.setVisibility(View.VISIBLE);
 					linkedStoreCardView.setVisibility(View.GONE);
+					cc = false;
 					break;
 				case "CC":
 					applyCreditCardView.setVisibility(View.VISIBLE);
 					linkedCreditCardView.setVisibility(View.GONE);
+					sc = false;
 					break;
 				case "PL":
 					applyPersonalCardView.setVisibility(View.VISIBLE);
 					linkedPersonalCardView.setVisibility(View.GONE);
+					pl = false;
 					break;
 			}
+		}
+
+		if (!sc && !cc && !pl) {
+			hideView(linkedAccountsLayout);
 		}
 
 		if (unavailableAccounts.size() == 0) {
@@ -818,5 +826,4 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		removeAllBottomNavigationIconBadgeCount();
 		SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(activity);
 	}
-
 }
