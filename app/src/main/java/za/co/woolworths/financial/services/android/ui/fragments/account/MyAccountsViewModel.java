@@ -24,31 +24,6 @@ public class MyAccountsViewModel extends BaseViewModel<MyAccountsNavigator> {
 	}
 
 
-	public GetVoucher getVoucher() {
-		return new GetVoucher(new OnEventListener() {
-			@Override
-			public void onSuccess(Object object) {
-				try {
-					if (object != null) {
-						VoucherResponse voucherResponse = ((VoucherResponse) object);
-						VoucherCollection voucherCollection = voucherResponse.voucherCollection;
-						if (voucherCollection != null) {
-							List<Voucher> voucher = voucherCollection.vouchers;
-							if (!voucher.isEmpty()) {
-								getNavigator().onVoucherResponse(voucherResponse);
-							}
-						}
-					}
-				} catch (IllegalStateException ignored) {
-				}
-			}
-
-			@Override
-			public void onFailure(String errorMessage) {
-			}
-		});
-	}
-
 	public GetMessage getMessageResponse() {
 		return new GetMessage(new OnEventListener() {
 			@Override

@@ -675,7 +675,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		}
 	}
 
-	private void badgeCount() {
+	@Override
+	public void badgeCount() {
 		getViewModel().getCartSummary().execute();
 		getViewModel().getVoucherCount().execute();
 		getViewModel().getMessageResponse().execute();

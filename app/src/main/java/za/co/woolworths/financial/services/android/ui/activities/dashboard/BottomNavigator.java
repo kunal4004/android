@@ -82,4 +82,6 @@ public interface BottomNavigator {
 	void updateVoucherCount(int size);
 
 	void updateMessageCount(int unreadCount);
+
+	void badgeCount();
 }
