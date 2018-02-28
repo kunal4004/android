@@ -57,7 +57,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 				finishActivity();
 				break;
 			case R.id.btnClearCart:
-				cartFragment.clearAllCartItems();
+				cartFragment.removeCartItem(null).execute();
 				break;
 		}
 	}

@@ -118,27 +118,12 @@ public class RetrofitAsyncClient {
 		}
 	}
 
-	public void getShoppingCart(Callback<String> callback) {
-		mApiInterface.getShoppingCart(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), callback);
-	}
 
 	public void getPDFResponse(GetStatement getStatement, Callback<Response> callback) {
 		mApiInterface.getStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), getStatement.getDocId(), getStatement.getProductOfferingId(), getStatement.getDocDesc(), callback);
 	}
 
-	public void removeCartItem(String commerceId, Callback<String> callback) {
-		mApiInterface.removeItemFromCart(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), commerceId, callback);
-	}
 
-	public void removeAllCartItems(Callback<String> callback) {
-		mApiInterface.removeAllCartItems(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), callback);
-	}
-
-	public void getChangeQuantity(ChangeQuantity changeQuantity, Callback<String> callback) {
-		mApiInterface.changeQuantityRequest(getApiId(), getSha1Password(), getDeviceManufacturer(),
-				getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "",
-				"", getSessionToken(), changeQuantity.getCommerceId(), changeQuantity, callback);
-	}
 
 }
 

@@ -51,6 +51,7 @@ import za.co.woolworths.financial.services.android.models.dto.ReadMessagesRespon
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbRequest;
 import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
@@ -738,7 +739,7 @@ public interface ApiInterface {
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@GET("/cart")
-	void getShoppingCart(
+	ShoppingCartResponse getShoppingCart(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,
@@ -746,8 +747,8 @@ public interface ApiInterface {
 			@Header("network") String network,
 			@Header("os") String os,
 			@Header("osVersion") String osVersion,
-			@Header("sessionToken") String sessionToken,
-			Callback<String> callback);
+			@Header("sessionToken") String sessionToken
+			);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@POST("/cart/item")
@@ -766,7 +767,7 @@ public interface ApiInterface {
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@DELETE("/cart/item")
-	void removeItemFromCart(
+	ShoppingCartResponse removeItemFromCart(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,
@@ -775,8 +776,7 @@ public interface ApiInterface {
 			@Header("os") String os,
 			@Header("osVersion") String osVersion,
 			@Header("sessionToken") String sessionToken,
-			@Query("commerceId") String commerceId,
-			Callback<String> callback);
+			@Query("commerceId") String commerceId);
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@GET("/cart/summary")
@@ -795,7 +795,7 @@ public interface ApiInterface {
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@DELETE("/cart/item")
-	void removeAllCartItems(
+	ShoppingCartResponse removeAllCartItems(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,
@@ -803,13 +803,12 @@ public interface ApiInterface {
 			@Header("network") String network,
 			@Header("os") String os,
 			@Header("osVersion") String osVersion,
-			@Header("sessionToken") String sessionToken,
-			Callback<String> callback);
+			@Header("sessionToken") String sessionToken);
 
 
 	@Headers({"Content-Type: application/json", "Accept: application/json", "Media-Type: application/json"})
 	@PUT("/cart/item/{commerceId}")
-	void changeQuantityRequest(
+	ShoppingCartResponse changeQuantityRequest(
 			@Header("apiId") String apiId,
 			@Header("sha1Password") String sha1Password,
 			@Header("deviceVersion") String deviceVersion,
@@ -821,7 +820,6 @@ public interface ApiInterface {
 			@Header("userAgentVersion") String userAgentVersion,
 			@Header("sessionToken") String sessionToken,
 			@Path("commerceId") String commerceId,
-			@Body ChangeQuantity quantity,
-			Callback<String> callback);
+			@Body ChangeQuantity quantity);
 
 }

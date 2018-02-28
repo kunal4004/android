@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +27,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -33,12 +36,16 @@ import io.reactivex.schedulers.Schedulers;
 import retrofit.RetrofitError;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.models.dto.Account;
+import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
 import za.co.woolworths.financial.services.android.models.dto.CartProduct;
 import za.co.woolworths.financial.services.android.models.dto.CartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
+import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
 import za.co.woolworths.financial.services.android.models.dto.PriceInfo;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
@@ -47,10 +54,13 @@ import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSiz
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.DeliveryLocationSelectionActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.CartProductAdapter;
+import za.co.woolworths.financial.services.android.ui.fragments.account.MyAccountsFragment;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.CancelableCallback;
+import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
 import za.co.woolworths.financial.services.android.util.ScreenManager;
+import za.co.woolworths.financial.services.android.util.SessionExpiredUtilities;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
@@ -105,7 +115,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 			cartActivity.hideEditCart();
 		}
 
-		loadShoppingCart();
+		loadShoppingCart().execute();
 		mDisposables.add(WoolworthsApplication.getInstance()
 				.bus()
 				.toObservable()
@@ -118,11 +128,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 							if (object instanceof CartState) {
 								CartState cartState = (CartState) object;
 								if (!TextUtils.isEmpty(cartState.getState())) {
-									loadShoppingCart();
+									loadShoppingCart().execute();
 									tvDeliveryLocation.setText(cartState.getState());
 								} else if (cartState.getIndexState() == CHANGE_QUANTITY) {
 									int quantity = cartState.getQuantity();
-									executeChangeQuantity(new ChangeQuantity(quantity, mChangeQuantity.getCommerceId()));
+									executeChangeQuantity(new ChangeQuantity(quantity, mChangeQuantity.getCommerceId())).execute();
 								}
 							}
 						}
@@ -178,7 +188,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void onItemDeleteClick(String commerceId) {
 		// Log.i("CartFragment", "Item " + itemRow.productItem.productName + " delete button clicked!");
 		// TODO: Make API call to remove item + show loading before removing from list
-		removeCartItem(commerceId);
+		removeCartItem(commerceId).execute();
 	}
 
 	@Override
@@ -205,96 +215,266 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		return isEditMode;
 	}
 
-	public void clearAllCartItems() {
-		showProgress();
-		mWoolWorthsApplication.getAsyncApi().removeAllCartItems(new CancelableCallback<String>() {
-			@Override
-			public void onSuccess(String s, retrofit.client.Response response) {
-				Log.i("result ", s);
-				CartResponse cartResponse = convertResponseToCartResponseObject(s);
-				if (cartResponse != null) {
-					switch (cartResponse.httpCode) {
-						case 200:
-							updateCart(cartResponse);
-							break;
-						default:
-							break;
-					}
-				}
-			}
-
-			@Override
-			public void onFailure(RetrofitError error) {
-				Log.i("result ", "failed");
-			}
-		});
-	}
 
 	private void locationSelectionClicked() {
 		startActivity(new Intent(this.getContext(), DeliveryLocationSelectionActivity.class));
 		this.getActivity().overridePendingTransition(R.anim.slide_up_fast_anim, R.anim.stay);
 	}
 
-	public void loadShoppingCart() {
-		pBar.setVisibility(View.VISIBLE);
-		rlCheckOut.setVisibility(View.GONE);
-		//parentLayout.setVisibility(View.GONE);
-		Utils.showOneTimePopup(getActivity(), SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, tvFreeDeliveryFirstOrder);
-		mWoolWorthsApplication.getAsyncApi().getShoppingCart(new CancelableCallback<String>() {
+
+	public void bindCartData(CartResponse cartResponse) {
+		parentLayout.setVisibility(View.VISIBLE);
+		if (cartResponse.cartItems.size() > 0) {
+			rlCheckOut.setVisibility(View.VISIBLE);
+			Activity activity = getActivity();
+			if (activity != null) {
+				CartActivity cartActivity = (CartActivity) activity;
+				cartActivity.showEditCart();
+			}
+			cartItems = cartResponse.cartItems;
+			orderSummary = cartResponse.orderSummary;
+
+			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity());
+			LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+			rvCartList.setLayoutManager(mLayoutManager);
+			rvCartList.setAdapter(cartProductAdapter);
+		} else {
+			rlCheckOut.setVisibility(View.GONE);
+			relEmptyStateHandler.setVisibility(View.VISIBLE);
+		}
+	}
+
+
+	public void updateCart(CartResponse cartResponse) {
+		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
+			cartItems = cartResponse.cartItems;
+			orderSummary = cartResponse.orderSummary;
+			cartProductAdapter.removeItem(cartItems, orderSummary);
+
+		} else {
+			cartProductAdapter.clear();
+			Activity activity = getActivity();
+			if (activity != null) {
+				CartActivity cartActivity = (CartActivity) activity;
+				cartActivity.resetToolBarIcons();
+			}
+			rlCheckOut.setVisibility(View.GONE);
+			relEmptyStateHandler.setVisibility(View.VISIBLE);
+		}
+		progressDialog.dismiss();
+	}
+
+	public void showProgress() {
+		progressDialog.setMessage("Removing...");
+		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		progressDialog.setCancelable(false);
+		progressDialog.show();
+
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		if (mDisposables != null
+				&& !mDisposables.isDisposed()) {
+			mDisposables.dispose();
+		}
+	}
+
+
+	public void changeQuantity(CartResponse cartResponse) {
+		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
+			cartItems = cartResponse.cartItems;
+			orderSummary = cartResponse.orderSummary;
+			cartProductAdapter.changeQuantity(cartItems, orderSummary);
+		} else {
+			cartProductAdapter.clear();
+			Activity activity = getActivity();
+			if (activity != null) {
+				CartActivity cartActivity = (CartActivity) activity;
+				cartActivity.resetToolBarIcons();
+			}
+			rlCheckOut.setVisibility(View.GONE);
+			relEmptyStateHandler.setVisibility(View.VISIBLE);
+		}
+		onChangeQuantityComplete();
+	}
+
+	private void onChangeQuantityComplete() {
+		cartProductAdapter.onChangeQuantityComplete();
+	}
+
+	private void onChangeQuantityLoad() {
+		cartProductAdapter.onChangeQuantityLoad();
+	}
+
+	private HttpAsyncTask<String, String, ShoppingCartResponse> loadShoppingCart() {
+		return new HttpAsyncTask<String, String, ShoppingCartResponse>() {
+
 			@Override
-			public void onSuccess(String s, retrofit.client.Response response) {
-				pBar.setVisibility(View.GONE);
-				rlCheckOut.setVisibility(View.VISIBLE);
-				Log.i("result ", s);
-				CartResponse cartResponse = convertResponseToCartResponseObject(s);
-				if (cartResponse != null) {
-					switch (cartResponse.httpCode) {
+			protected void onPreExecute() {
+				pBar.setVisibility(View.VISIBLE);
+				rlCheckOut.setVisibility(View.GONE);
+				//parentLayout.setVisibility(View.GONE);
+				Utils.showOneTimePopup(getActivity(), SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, tvFreeDeliveryFirstOrder);
+
+			}
+
+			@Override
+			protected Class<ShoppingCartResponse> httpDoInBackgroundReturnType() {
+				return ShoppingCartResponse.class;
+			}
+
+			@Override
+			protected ShoppingCartResponse httpDoInBackground(String... params) {
+				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getShoppingCart();
+			}
+
+			@Override
+			protected ShoppingCartResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+				return new ShoppingCartResponse();
+			}
+
+			@Override
+			protected void onPostExecute(ShoppingCartResponse shoppingCartResponse) {
+				try {
+					pBar.setVisibility(View.GONE);
+					rlCheckOut.setVisibility(View.VISIBLE);
+					int httpCode = shoppingCartResponse.httpCode;
+					switch (httpCode) {
 						case 200:
+							CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
 							bindCartData(cartResponse);
+							break;
+						case 440:
+							final Activity activity = getActivity();
+							if (activity != null) {
+								activity.runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+
+										//TODO:: improve error handling
+											Utils.sessionDaoSave(activity, SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, null);
+											ScreenManager.presentSSOSignin(activity);
+											activity.finish();
+											activity.overridePendingTransition(0, 0);
+									}
+								});
+							}
+							break;
+						default:
+							if(shoppingCartResponse.response!=null)
+								Utils.displayValidationMessage(getActivity(), CustomPopUpWindow.MODAL_LAYOUT.ERROR, shoppingCartResponse.response.desc);
+							break;
+					}
+					onChangeQuantityLoad();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		};
+	}
+
+	private HttpAsyncTask<String, String, ShoppingCartResponse> executeChangeQuantity(final ChangeQuantity changeQuantity) {
+		return new HttpAsyncTask<String, String, ShoppingCartResponse>() {
+
+			@Override
+			protected void onPreExecute() {
+				onChangeQuantityComplete();
+			}
+
+			@Override
+			protected Class<ShoppingCartResponse> httpDoInBackgroundReturnType() {
+				return ShoppingCartResponse.class;
+			}
+
+			@Override
+			protected ShoppingCartResponse httpDoInBackground(String... params) {
+				return ((WoolworthsApplication) getActivity().getApplication()).getApi().getChangeQuantity(changeQuantity);
+			}
+
+			@Override
+			protected ShoppingCartResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+				return new ShoppingCartResponse();
+			}
+
+			@Override
+			protected void onPostExecute(ShoppingCartResponse shoppingCartResponse) {
+				try {
+					int httpCode = shoppingCartResponse.httpCode;
+					switch (httpCode) {
+						case 200:
+							CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
+							changeQuantity(cartResponse);
+							break;
+						default:
+							onChangeQuantityComplete();
+							break;
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		};
+	}
+
+	public HttpAsyncTask<String, String, ShoppingCartResponse> removeCartItem(final String commerceId) {
+		return new HttpAsyncTask<String, String, ShoppingCartResponse>() {
+
+			@Override
+			protected void onPreExecute() {
+				showProgress();
+			}
+
+			@Override
+			protected Class<ShoppingCartResponse> httpDoInBackgroundReturnType() {
+				return ShoppingCartResponse.class;
+			}
+
+			@Override
+			protected ShoppingCartResponse httpDoInBackground(String... params) {
+				if(commerceId==null)
+					return ((WoolworthsApplication) getActivity().getApplication()).getApi().removeAllCartItems();
+				else
+					return ((WoolworthsApplication) getActivity().getApplication()).getApi().removeCartItem(commerceId);
+			}
+
+			@Override
+			protected ShoppingCartResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
+				return new ShoppingCartResponse();
+			}
+
+			@Override
+			protected void onPostExecute(ShoppingCartResponse shoppingCartResponse) {
+				try {
+					int httpCode = shoppingCartResponse.httpCode;
+					switch (httpCode) {
+						case 200:
+							CartResponse cartResponse = convertResponseToCartResponseObject(shoppingCartResponse);
+							updateCart(cartResponse);
 							break;
 						default:
 							break;
 					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
 			}
-
-			@Override
-			public void onFailure(final RetrofitError error) {
-				final Activity activity = getActivity();
-				if (activity != null) {
-					activity.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-
-							//TODO:: improve error handling
-							if (error.getBody().toString().contains("440")) {
-								Utils.sessionDaoSave(activity, SessionDao.KEY.CART_FIRST_ORDER_FREE_DELIVERY, null);
-								ScreenManager.presentSSOSignin(activity);
-								activity.finish();
-								activity.overridePendingTransition(0, 0);
-							} else {
-								Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.ERROR, error.getBody().toString());
-							}
-						}
-					});
-				}
-			}
-		});
+		};
 	}
 
-	public CartResponse convertResponseToCartResponseObject(String response) {
+	public CartResponse convertResponseToCartResponseObject(ShoppingCartResponse response) {
 		CartResponse cartResponse = null;
 
-		if (TextUtils.isEmpty(response))
+		if (response==null)
 			return null;
 
 		try {
-			JSONObject jsonObject = new JSONObject(response);
 			cartResponse = new CartResponse();
-			cartResponse.httpCode = jsonObject.getInt("httpCode");
-
-			JSONObject dataObject = jsonObject.getJSONArray("data").getJSONObject(0);
-			JSONObject itemsObject = dataObject.getJSONObject("items");
+			cartResponse.httpCode = response.httpCode;
+			Data data=response.data[0];
+			JSONObject itemsObject = new JSONObject(new Gson().toJson(data.items));
 			Iterator<String> keys = itemsObject.keys();
 			ArrayList<CartItemGroup> cartItemGroups = new ArrayList<>();
 			while ((keys.hasNext())) {
@@ -339,17 +519,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 			cartResponse.cartItems = cartItemGroups;
 
-			OrderSummary orderSummary = new OrderSummary();
-			orderSummary.setBasketTotal(dataObject.getJSONObject("orderSummary").getDouble("basketTotal"));
-			orderSummary.setTotal(dataObject.getJSONObject("orderSummary").getDouble("total"));
-			orderSummary.setEstimatedDelivery(dataObject.getJSONObject("orderSummary").getDouble("estimatedDelivery"));
-			orderSummary.setTotalItemsCount(dataObject.getJSONObject("orderSummary").getInt("totalItemsCount"));
-
-			cartResponse.orderSummary = orderSummary;
+			cartResponse.orderSummary = data.orderSummary;
 
 			// set delivery location
-			if (dataObject.has("suburbName") && dataObject.has("provinceName")) {
-				tvDeliveryLocation.setText(dataObject.getString("suburbName") + ", " + dataObject.getString("provinceName"));
+			if (data.suburbName!=null && data.provinceName!=null) {
+				tvDeliveryLocation.setText(data.suburbName + ", " + data.provinceName);
 			} else {
 				tvDeliveryLocation.setText(getString(R.string.set_your_delivery_location));
 			}
@@ -361,145 +535,5 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 		}
 
 		return cartResponse;
-	}
-
-	public void bindCartData(CartResponse cartResponse) {
-		parentLayout.setVisibility(View.VISIBLE);
-		if (cartResponse.cartItems.size() > 0) {
-			rlCheckOut.setVisibility(View.VISIBLE);
-			Activity activity = getActivity();
-			if (activity != null) {
-				CartActivity cartActivity = (CartActivity) activity;
-				cartActivity.showEditCart();
-			}
-			cartItems = cartResponse.cartItems;
-			orderSummary = cartResponse.orderSummary;
-
-			cartProductAdapter = new CartProductAdapter(cartItems, this, orderSummary, getActivity());
-			LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-			mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-			rvCartList.setLayoutManager(mLayoutManager);
-			rvCartList.setAdapter(cartProductAdapter);
-		} else {
-			rlCheckOut.setVisibility(View.GONE);
-			relEmptyStateHandler.setVisibility(View.VISIBLE);
-		}
-	}
-
-	public void removeCartItem(String commerceId) {
-		showProgress();
-		mWoolWorthsApplication.getAsyncApi().removeCartItem(commerceId, new CancelableCallback<String>() {
-			@Override
-			public void onSuccess(String s, retrofit.client.Response response) {
-				Log.i("result ", s);
-				CartResponse cartResponse = convertResponseToCartResponseObject(s);
-				if (cartResponse != null) {
-					switch (cartResponse.httpCode) {
-						case 200:
-							updateCart(cartResponse);
-							break;
-						default:
-							break;
-
-					}
-				}
-			}
-
-			@Override
-			public void onFailure(RetrofitError error) {
-				Log.i("result ", "failed");
-			}
-		});
-	}
-
-	public void updateCart(CartResponse cartResponse) {
-		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
-			cartItems = cartResponse.cartItems;
-			orderSummary = cartResponse.orderSummary;
-			cartProductAdapter.removeItem(cartItems, orderSummary);
-
-		} else {
-			cartProductAdapter.clear();
-			Activity activity = getActivity();
-			if (activity != null) {
-				CartActivity cartActivity = (CartActivity) activity;
-				cartActivity.resetToolBarIcons();
-			}
-			rlCheckOut.setVisibility(View.GONE);
-			relEmptyStateHandler.setVisibility(View.VISIBLE);
-		}
-		progressDialog.dismiss();
-	}
-
-	public void showProgress() {
-		progressDialog.setMessage("Removing...");
-		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		progressDialog.setCancelable(false);
-		progressDialog.show();
-
-	}
-
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		if (mDisposables != null
-				&& !mDisposables.isDisposed()) {
-			mDisposables.dispose();
-		}
-	}
-
-	private void executeChangeQuantity(ChangeQuantity mChangeQuantity) {
-		//TODO:: Handle negative scenario for change quantity
-		onChangeQuantityComplete();
-		mWoolWorthsApplication.getAsyncApi().getChangeQuantity(mChangeQuantity, new CancelableCallback<String>() {
-			@Override
-			public void onSuccess(String s, retrofit.client.Response response) {
-				Log.i("results", s);
-				CartResponse cartResponse = convertResponseToCartResponseObject(s);
-				if (cartResponse != null) {
-					switch (cartResponse.httpCode) {
-						case 200:
-							changeQuantity(cartResponse);
-							break;
-						default:
-							break;
-
-					}
-				}
-				onChangeQuantityLoad();
-			}
-
-			@Override
-			public void onFailure(RetrofitError error) {
-				onChangeQuantityComplete();
-				Log.i("result ", "failed");
-			}
-		});
-	}
-
-	public void changeQuantity(CartResponse cartResponse) {
-		if (cartResponse.cartItems.size() > 0 && cartProductAdapter != null) {
-			cartItems = cartResponse.cartItems;
-			orderSummary = cartResponse.orderSummary;
-			cartProductAdapter.changeQuantity(cartItems, orderSummary);
-		} else {
-			cartProductAdapter.clear();
-			Activity activity = getActivity();
-			if (activity != null) {
-				CartActivity cartActivity = (CartActivity) activity;
-				cartActivity.resetToolBarIcons();
-			}
-			rlCheckOut.setVisibility(View.GONE);
-			relEmptyStateHandler.setVisibility(View.VISIBLE);
-		}
-		onChangeQuantityComplete();
-	}
-
-	private void onChangeQuantityComplete() {
-		cartProductAdapter.onChangeQuantityComplete();
-	}
-
-	private void onChangeQuantityLoad() {
-		cartProductAdapter.onChangeQuantityLoad();
 	}
 }
