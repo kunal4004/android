@@ -16,7 +16,7 @@ import za.co.woolworths.financial.services.android.models.dto.Response;
  */
 
 public class PushNotificationHandler {
-	private static PushNotificationHandler instance;
+	private static PushNotificationHandler instance;//singleton
 
 	public static PushNotificationHandler getInstance() {
 		if (instance == null)

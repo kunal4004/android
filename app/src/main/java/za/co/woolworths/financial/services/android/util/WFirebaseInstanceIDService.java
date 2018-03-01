@@ -8,6 +8,7 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
  */
 
 public class WFirebaseInstanceIDService extends FirebaseInstanceIdService {
+	private static final String TAG = WFirebaseInstanceIDService.class.getSimpleName();
 
 	@Override
 	public void onTokenRefresh() {
