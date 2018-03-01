@@ -103,6 +103,9 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 
 			getViewDataBinding().textProductSearch.setOnClickListener(this);
 			getViewDataBinding().llBarcodeScanner.setOnClickListener(this);
+			getViewDataBinding().imBurgerButtonPressed.setOnClickListener(this);
+			getViewDataBinding().textTBProductSearch.setOnClickListener(this);
+			getViewDataBinding().imTBBarcodeScanner.setOnClickListener(this);
 		}
 	}
 
@@ -191,7 +194,7 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 			@Override
 			public void run() {
 				if (getBottomNavigator() != null) {
-					getBottomNavigator().pushFragment(getViewModel().enterNextFragment(rootCategory));
+					getBottomNavigator().pushFragment(getViewModel().enterNextFragment(rootCategory), true);
 				}
 			}
 		});
@@ -344,10 +347,13 @@ public class CategoryFragment extends BaseFragment<ProductSearchFragmentBinding,
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
+			case R.id.imBurgerButtonPressed:
+			case R.id.textTBProductSearch:
 			case R.id.textProductSearch:
 				navigateToProductSearch();
 				break;
 
+			case R.id.imTBBarcodeScanner:
 			case R.id.llBarcodeScanner:
 				navigateToBarcode();
 				break;

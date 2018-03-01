@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
@@ -32,7 +33,7 @@ import java.util.Map;
 import za.co.woolworths.financial.services.android.ui.fragments.product.shop.communicator.MyJavaScriptInterface;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class CheckOutFragment extends Fragment {
+public class CheckOutFragment extends Fragment implements View.OnTouchListener {
 
 	private WebView mWebCheckOut;
 	private String TAG = this.getClass().getSimpleName();
@@ -56,7 +57,8 @@ public class CheckOutFragment extends Fragment {
 			extraHeaders.put("token", Utils.getSessionToken(activity));
 			setWebViewClient();
 			setWebChromeClient();
-			mWebCheckOut.addJavascriptInterface(new MyJavaScriptInterface(activity), "javascript");
+			mWebCheckOut.setOnTouchListener(this);
+			mWebCheckOut.addJavascriptInterface(new MyJavaScriptInterface(activity), "JSInterface");
 			mWebCheckOut.loadUrl("http://www-win-qa.woolworths.co.za/mcommerce/jsp/checkout-summary.jsp", extraHeaders);
 		}
 	}
@@ -96,14 +98,6 @@ public class CheckOutFragment extends Fragment {
 			@Override
 			public void onLoadResource(WebView view, String url) {
 				super.onLoadResource(view, url);
-				try {
-//					view.loadUrl("javascript:(function() { " +
-//							"var head = document.getElementsByTagName('header')[0];"
-//							+ "head.parentNode.removeChild(head);" +
-//							"})()");
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 			}
 
 			@Override
@@ -118,6 +112,11 @@ public class CheckOutFragment extends Fragment {
 
 			public void onPageFinished(WebView view, String url) {
 				mProgressLayout.setVisibility(View.GONE);
+//				mWebCheckOut.loadUrl("javascript:(function() { " +
+//						"var x = document.getElementsByClassName('heading--1').length;" +
+//						"var content = document.getElementsByTagName('h1')[0].innerHTML; " +
+//						"window.JSInterface.printAddress(content, x);" +
+//						"})()");
 			}
 		});
 	}
@@ -133,8 +132,9 @@ public class CheckOutFragment extends Fragment {
 
 			@Override
 			public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-				Log.e("onJsAlert", String.valueOf(result) + " message " + message + " url " + url);
-				return super.onJsAlert(view, url, message, result);
+				Log.e("onJsAlert", message);
+				result.confirm();
+				return true;
 			}
 
 			@Override
@@ -172,13 +172,10 @@ public class CheckOutFragment extends Fragment {
 			if (param instanceof String) {
 				stringBuilder.append("'");
 			}
-
 		}
 		stringBuilder.append(")}catch(error){console.error(error.message);}");
 		final String call = stringBuilder.toString();
 		Log.i(TAG, "callJavaScript: call=" + call);
-
-
 		view.loadUrl(call);
 	}
 
@@ -191,6 +188,18 @@ public class CheckOutFragment extends Fragment {
 			e.printStackTrace();
 			e.getSuppressed();
 		}
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		if (v.getId() == R.id.webCheckout && event.getAction() == MotionEvent.ACTION_DOWN) {
+//			mWebCheckOut.loadUrl("javascript:(function() { " +
+//					"var title = document.getElementsByTagName('h1')[0];" +
+//					"var type = title.getAttribute('heading--1');" +
+//					"window.JSInterface.printAddress(title, 1);" +
+//					"})()");
+		}
+		return false;
 	}
 
 }

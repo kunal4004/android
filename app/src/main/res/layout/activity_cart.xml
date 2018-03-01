@@ -1,108 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/slideUpPanel"
+    android:id="@+id/activity_cart"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="bottom"
-    app:umanoPanelHeight="0dp"
-    app:umanoParallaxOffset="0dp"
-    app:umanoScrollableView="@+id/scrollProduct"
-    sothree:umanoDragView="@+id/detailsView"
-    sothree:umanoFadeColor="@android:color/transparent"
-    sothree:umanoOverlay="false"
-    sothree:umanoShadowHeight="0dp">
+    android:orientation="vertical"
+    tools:context="za.co.woolworths.financial.services.android.ui.activities.CartActivity">
 
-    <LinearLayout
-        android:id="@+id/activity_cart"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context="za.co.woolworths.financial.services.android.ui.activities.CartActivity">
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/Cart"
+        app:theme="@style/Cart">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:minHeight="?attr/actionBarSize"
-            app:popupTheme="@style/Cart"
-            app:theme="@style/Cart">
+            android:layout_height="match_parent">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/btnEditCart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:letterSpacing="0.2"
+                android:text="@string/edit"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:WTextView_font="medium"/>
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/btnEditCart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="16dp"
-                    android:letterSpacing="0.2"
-                    android:text="@string/edit"
-                    android:textAllCaps="true"
-                    android:textColor="@color/black"
-                    android:textSize="12sp"
-                    app:WTextView_font="medium"/>
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/toolbarText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:letterSpacing="0.2"
+                android:text="@string/cart"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:WTextView_font="medium_bold"/>
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/toolbarText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:letterSpacing="0.2"
-                    android:text="@string/cart"
-                    android:textAllCaps="true"
-                    android:textColor="@color/black"
-                    android:textSize="12sp"
-                    app:WTextView_font="medium_bold"/>
+            <ImageView
+                android:id="@+id/btnCloseCart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16dp"
+                android:src="@drawable/close_24"/>
 
-                <ImageView
-                    android:id="@+id/btnCloseCart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="16dp"
-                    android:src="@drawable/close_24"/>
+            <za.co.woolworths.financial.services.android.ui.views.WTextView
+                android:id="@+id/btnClearCart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16dp"
+                android:letterSpacing="0.2"
+                android:text="@string/remove_all"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:WTextView_font="medium"/>
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
 
-                <za.co.woolworths.financial.services.android.ui.views.WTextView
-                    android:id="@+id/btnClearCart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="16dp"
-                    android:letterSpacing="0.2"
-                    android:text="@string/remove_all"
-                    android:textAllCaps="true"
-                    android:textColor="@color/black"
-                    android:textSize="12sp"
-                    android:visibility="gone"
-                    app:WTextView_font="medium"/>
-            </RelativeLayout>
-        </android.support.v7.widget.Toolbar>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="#1a000000"/>
-
-        <FrameLayout
-            android:id="@+id/content_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#1a000000"/>
 
     <FrameLayout
-        android:id="@+id/bottom_Fragment"
+        android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-</za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout>
+</LinearLayout>

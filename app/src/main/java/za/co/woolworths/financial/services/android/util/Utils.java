@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.internal.BottomNavigationItemView;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -85,11 +86,9 @@ import za.co.woolworths.financial.services.android.models.dto.Transaction;
 import za.co.woolworths.financial.services.android.models.dto.TransactionParentObj;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
-import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.StatementActivity;
 import za.co.woolworths.financial.services.android.ui.activities.WInternalWebPageActivity;
-import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.ui.views.badgeview.Badge;
@@ -100,7 +99,6 @@ import za.co.woolworths.financial.services.android.util.tooltip.ViewTooltip;
 import static android.Manifest.permission_group.STORAGE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
-import static za.co.woolworths.financial.services.android.models.service.event.ProductState.USE_MY_LOCATION;
 
 public class Utils {
 
@@ -865,10 +863,19 @@ public class Utils {
 	}
 
 	public static Badge addBadgeAt(Context context, WBottomNavigationView mBottomNav, int position, int number) {
-		return new QBadgeView(context)
-				.setBadgeNumber(number)
-				.setGravityOffset(15, 2, true)
-				.bindTarget(mBottomNav.getBottomNavigationItemView(position));
+		BottomNavigationItemView bottomNavItem = mBottomNav.getBottomNavigationItemView(position);
+		String tagPosition = "BADGE_POSITION_" + position;
+		QBadgeView badge = ((ViewGroup) bottomNavItem.getParent()).findViewWithTag(tagPosition);
+		if (badge != null) {
+			return badge.setBadgeNumber(number);
+		} else {
+			badge = new QBadgeView(context);
+			badge.setTag(tagPosition);
+			return badge
+					.setBadgeNumber(number)
+					.setGravityOffset(15, 2, true)
+					.bindTarget(mBottomNav.getBottomNavigationItemView(position));
+		}
 	}
 
 //	public static void updateStatusBar(Activity activity, int color) {

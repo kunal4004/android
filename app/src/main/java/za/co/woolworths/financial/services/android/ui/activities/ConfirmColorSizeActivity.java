@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.service.event.CartState;
 import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.adapters.StockFinderFragmentAdapter;
 import za.co.woolworths.financial.services.android.ui.fragments.product.detail.dialog.ColorFragmentList;
@@ -30,6 +31,8 @@ import za.co.woolworths.financial.services.android.util.ColorInterface;
 import za.co.woolworths.financial.services.android.util.NonSwipeableViewPager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
+import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.POST_ADD_ITEM_TO_CART;
 
 public class ConfirmColorSizeActivity extends AppCompatActivity implements View.OnClickListener, WStockFinderActivity.RecyclerItemSelected {
@@ -152,6 +155,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
+					Utils.sendBus(new ProductState(CANCEL_CALL));
 					dismissLayout();
 				}
 			});
@@ -177,10 +181,19 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
-					WoolworthsApplication
-							.getInstance()
-							.bus()
-							.send(new ProductState(POST_ADD_ITEM_TO_CART, quantity));
+					if (mGlobalState != null) {
+						switch (mGlobalState.getNavigateFromQuantity()) {
+							case 1: //cart
+								Utils.sendBus(new CartState(CHANGE_QUANTITY, quantity));
+								mGlobalState.navigateFromQuantity(0);
+								break;
+
+							default:
+								Utils.sendBus(new ProductState(POST_ADD_ITEM_TO_CART, quantity));
+								break;
+
+						}
+					}
 					dismissLayout();
 				}
 			});

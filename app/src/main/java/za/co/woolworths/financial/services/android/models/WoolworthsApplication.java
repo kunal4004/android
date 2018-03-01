@@ -211,7 +211,7 @@ public class WoolworthsApplication extends Application {
 		FirebaseApp.initializeApp(WoolworthsApplication.this);
 		FacebookSdk.sdkInitialize(WoolworthsApplication.this);
 		AppEventsLogger.activateApp(WoolworthsApplication.this);
-		mWGlobalState = new WGlobalState(WoolworthsApplication.this);
+		mWGlobalState = new WGlobalState();
 		updateBankDetail = new UpdateBankDetail();
 		WoolworthsApplication.context = this.getApplicationContext();
 		// set app context

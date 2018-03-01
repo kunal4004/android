@@ -1,18 +1,22 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by W7099877 on 2018/02/08.
  */
 
-public class CartProduct {
-		public int quantity;
-		public String productId;
-		public String internalImageURL;
-		public String externalImageURL;
-		public String catalogRefId;
-		public String productDisplayName;
-		public PriceInfo priceInfo;
-		public String commerceId;
+public class CommerceItem {
+	public int quantity;
+	public String productId;
+	public String internalImageURL;
+	public String externalImageURL;
+	public String catalogRefId;
+	public String productDisplayName;
+	public PriceInfo priceInfo;
+	@SerializedName("id")
+	public String commerceId;
+	private boolean quantityUploading = false;
 
 	public int getQuantity() {
 		return quantity;
@@ -76,5 +80,13 @@ public class CartProduct {
 
 	public void setCommerceId(String commerceId) {
 		this.commerceId = commerceId;
+	}
+
+	public void setQuantityUploading(boolean upload) {
+		this.quantityUploading = upload;
+	}
+
+	public boolean getQuantityUploading() {
+		return quantityUploading;
 	}
 }

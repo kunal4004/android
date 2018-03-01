@@ -38,11 +38,7 @@ import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.Account;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
-import za.co.woolworths.financial.services.android.models.dto.Voucher;
-import za.co.woolworths.financial.services.android.models.dto.VoucherCollection;
-import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.rest.message.GetMessage;
-import za.co.woolworths.financial.services.android.models.rest.reward.GetVoucher;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.activities.MessagesActivity;
 import za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity;
@@ -117,7 +113,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 	private LinearLayout loginUserOptionsLayout;
 	private SessionManager mSessionManager;
 	private GetMessage mGessageResponse;
-	private GetVoucher mGetVoucherCount;
 
 	public MyAccountsFragment() {
 		// Required empty public constructor
@@ -311,21 +306,29 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		}
 
 		//hide content for unavailable products
+		boolean sc = true, cc = true, pl = true;
 		for (String s : unavailableAccounts) {
 			switch (s) {
 				case "SC":
 					applyStoreCardView.setVisibility(View.VISIBLE);
 					linkedStoreCardView.setVisibility(View.GONE);
+					cc = false;
 					break;
 				case "CC":
 					applyCreditCardView.setVisibility(View.VISIBLE);
 					linkedCreditCardView.setVisibility(View.GONE);
+					sc = false;
 					break;
 				case "PL":
 					applyPersonalCardView.setVisibility(View.VISIBLE);
 					linkedPersonalCardView.setVisibility(View.GONE);
+					pl = false;
 					break;
 			}
+		}
+
+		if (!sc && !cc && !pl) {
+			hideView(linkedAccountsLayout);
 		}
 
 		if (unavailableAccounts.size() == 0) {
@@ -683,7 +686,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		super.onDestroy();
 		hideProgressBar();
 		cancelRequest(mGessageResponse);
-		cancelRequest(mGetVoucherCount);
 	}
 
 //	public int getAvailableFundsPercentage(int availableFund, int creditLimit) {
@@ -752,22 +754,6 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		mGessageResponse.execute();
 	}
 
-	private void voucherCounterRequest() {
-		mGetVoucherCount = getViewModel().getVoucher();
-		mGetVoucherCount.execute();
-	}
-
-	@Override
-	public void onVoucherResponse(VoucherResponse voucherResponse) {
-		VoucherCollection voucherCollection = voucherResponse.voucherCollection;
-		if (voucherCollection != null) {
-			List<Voucher> voucher = voucherCollection.vouchers;
-			if (!voucher.isEmpty()) {
-				getBottomNavigator().addBadge(INDEX_REWARD, voucher.size());
-			}
-		}
-	}
-
 	@Override
 	public void onMessageResponse(MessageResponse messageResponse) {
 		if (messageResponse.unreadCount > 0) {
@@ -813,6 +799,7 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		if (resultCode == SSOActivity.SSOActivityResult.SUCCESS.rawValue()) {
 			mSessionManager.setAccountHasExpired(false);
 			mSessionManager.setRewardSignInState(true);
+			getBottomNavigator().badgeCount();
 			if (loadMessageCounter) {
 				messageCounterRequest();
 			} else {
@@ -839,5 +826,4 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 		removeAllBottomNavigationIconBadgeCount();
 		SessionExpiredUtilities.INSTANCE.showSessionExpireDialog(activity);
 	}
-
 }

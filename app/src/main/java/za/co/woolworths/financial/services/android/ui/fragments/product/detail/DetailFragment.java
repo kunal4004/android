@@ -93,6 +93,7 @@ import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecorat
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.DETERMINE_LOCATION_POPUP;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.POST_ADD_ITEM_TO_CART;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SET_SUBURB;
@@ -133,6 +134,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 	private List<OtherSkus> mSizeSkuList;
 	private List<OtherSkus> mSkuColorList;
 	private SetDeliveryLocationSuburb mSuburbLocation;
+	private boolean activate_location_popup = false;
 
 	@Override
 	public DetailViewModel getViewModel() {
@@ -194,11 +196,8 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 										break;
 
 									case DETERMINE_LOCATION_POPUP:
-										if (deliveryLocationHistories != null) {
-											Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.DETERMINE_LOCATION_POPUP, DETERMINE_LOCATION_POPUP);
-										} else {
-											apiIdentifyTokenValidation();
-										}
+										activate_location_popup = true;
+										cartSummaryAPI();
 										break;
 
 									case SET_SUBURB:
@@ -214,6 +213,10 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 											DeliveryLocationHistory deliveryLocationHistory = deliveryLocationHistories.get(0);
 											setSuburbAPI(deliveryLocationHistory);
 										}
+										break;
+
+									case CANCEL_CALL:
+										onAddToCartLoadComplete();
 										break;
 
 									default:
@@ -1277,10 +1280,14 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 				onAddToCartLoadComplete();
 			} else {
 				// query the status of the JWT on STS using the the identityTokenValidation endpoint
-				mGetCartSummary = getViewModel().getCartSummary();
-				mGetCartSummary.execute();
+				cartSummaryAPI();
 			}
 		}
+	}
+
+	private void cartSummaryAPI() {
+		mGetCartSummary = getViewModel().getCartSummary();
+		mGetCartSummary.execute();
 	}
 
 	@Override
@@ -1312,6 +1319,12 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 					suburb.name = cartSummary.suburbName;
 					suburb.id = suburbId;
 					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
+					// show pop up message after login
+					if (activate_location_popup) {
+						Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.DETERMINE_LOCATION_POPUP, DETERMINE_LOCATION_POPUP);
+						activate_location_popup = false;
+						return;
+					}
 					//user has a valid sessionToken and a delivery location is set.
 					if (getViewModel().getProductType() != null) {
 						getViewDataBinding().scrollProductDetail.scrollTo(0, 0);
@@ -1340,6 +1353,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 				}
 			}
 		}
+
 	}
 
 	private void deliverySelectionIntent(Activity activity) {

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--button default background color-->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="0dp"/>
+            <stroke android:width="0.8dp"
+                    android:color="@color/recent_search_bg"/>
+            <solid android:color="@color/white"/>
+        </shape>
+    </item>
+
+    <!--button focused state background color-->
+    <item
+        android:state_focused="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="0dp"/>
+            <solid android:color="@color/black"/>
+        </shape>
+    </item>
+
+    <!--button pressed state background color-->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="0dp"/>
+            <solid android:color="@color/black"/>
+        </shape>
+    </item>
+</selector>

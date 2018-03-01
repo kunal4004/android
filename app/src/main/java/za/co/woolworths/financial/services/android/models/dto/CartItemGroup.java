@@ -13,7 +13,7 @@ public class CartItemGroup {
 	public String suburbName;
 	public String provinceName;
 
-	public ArrayList<CartProduct> cartProducts;
+	public ArrayList<CommerceItem> commerceItems;
 
 	public String getType() {
 		return type;
@@ -23,12 +23,12 @@ public class CartItemGroup {
 		this.type = type;
 	}
 
-	public ArrayList<CartProduct> getCartProducts() {
-		return cartProducts;
+	public ArrayList<CommerceItem> getCommerceItems() {
+		return commerceItems;
 	}
 
-	public void setCartProducts(ArrayList<CartProduct> cartProducts) {
-		this.cartProducts = cartProducts;
+	public void setCommerceItems(ArrayList<CommerceItem> commerceItems) {
+		this.commerceItems = commerceItems;
 	}
 
 }

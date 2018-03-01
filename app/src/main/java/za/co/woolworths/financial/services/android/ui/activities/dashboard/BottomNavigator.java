@@ -47,6 +47,8 @@ public interface BottomNavigator {
 
 	void pushFragment(Fragment fragment);
 
+	void pushFragment(Fragment fragment, boolean state);
+
 	void hideBottomNavigationMenu();
 
 	void showBottomNavigationMenu();
@@ -82,4 +84,6 @@ public interface BottomNavigator {
 	void updateVoucherCount(int size);
 
 	void updateMessageCount(int unreadCount);
+
+	void badgeCount();
 }
