@@ -53,7 +53,6 @@ import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFra
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
-import za.co.woolworths.financial.services.android.util.FragmentHistory;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
@@ -93,8 +92,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private Bundle mBundle;
 	private int currentSection;
 
-	FragmentHistory mFragmentHistory;
-
 	@Override
 	public int getLayoutId() {
 		return R.layout.activity_bottom_navigation;
@@ -127,7 +124,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
 		mBundle = getIntent().getExtras();
-		mFragmentHistory = new FragmentHistory();
 		mNavController = FragNavController.newBuilder(savedInstanceState,
 				getSupportFragmentManager(),
 				R.id.frag_container)
@@ -213,7 +209,6 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		if (mBundle != null) {
 			if (!TextUtils.isEmpty(mBundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT))) {
 				getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
-				mFragmentHistory.push(INDEX_ACCOUNT);
 				mBundle = null;
 			}
 		}
@@ -416,14 +411,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					currentSection = R.id.navigation_today;
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_TODAY);
-					mFragmentHistory.push(INDEX_TODAY);
 					hideToolbar();
 					return true;
 
 				case R.id.navigation_shop:
 					currentSection = R.id.navigation_shop;
 					switchTab(INDEX_PRODUCT);
-					mFragmentHistory.push(INDEX_PRODUCT);
 					Utils.showOneTimePopup(BottomNavigationActivity.this);
 					return true;
 
@@ -437,14 +430,12 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					Utils.sendBus(new SessionManager(RELOAD_REWARD));
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_REWARD);
-					mFragmentHistory.push(INDEX_REWARD);
 					return true;
 
 				case R.id.navigation_account:
 					currentSection = R.id.navigation_account;
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_ACCOUNT);
-					mFragmentHistory.push(INDEX_ACCOUNT);
 					return true;
 			}
 			return false;
