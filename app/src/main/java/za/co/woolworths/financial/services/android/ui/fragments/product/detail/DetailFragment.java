@@ -93,6 +93,7 @@ import za.co.woolworths.financial.services.android.util.SimpleDividerItemDecorat
 import za.co.woolworths.financial.services.android.util.Utils;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.DETERMINE_LOCATION_POPUP;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.POST_ADD_ITEM_TO_CART;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.SET_SUBURB;
@@ -212,6 +213,10 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 											DeliveryLocationHistory deliveryLocationHistory = deliveryLocationHistories.get(0);
 											setSuburbAPI(deliveryLocationHistory);
 										}
+										break;
+
+									case CANCEL_CALL:
+										onAddToCartLoadComplete();
 										break;
 
 									default:

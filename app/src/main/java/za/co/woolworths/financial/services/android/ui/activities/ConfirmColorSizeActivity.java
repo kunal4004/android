@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.util.NonSwipeableViewPager;
 import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
 import static za.co.woolworths.financial.services.android.models.service.event.ProductState.POST_ADD_ITEM_TO_CART;
 
 public class ConfirmColorSizeActivity extends AppCompatActivity implements View.OnClickListener, WStockFinderActivity.RecyclerItemSelected {
@@ -154,6 +155,7 @@ public class ConfirmColorSizeActivity extends AppCompatActivity implements View.
 
 				@Override
 				public void onAnimationEnd(Animation animation) {
+					Utils.sendBus(new ProductState(CANCEL_CALL));
 					dismissLayout();
 				}
 			});
