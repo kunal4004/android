@@ -133,6 +133,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 	private List<OtherSkus> mSizeSkuList;
 	private List<OtherSkus> mSkuColorList;
 	private SetDeliveryLocationSuburb mSuburbLocation;
+	private boolean activate_location_popup = false;
 
 	@Override
 	public DetailViewModel getViewModel() {
@@ -194,11 +195,8 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 										break;
 
 									case DETERMINE_LOCATION_POPUP:
-										if (deliveryLocationHistories != null) {
-											Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.DETERMINE_LOCATION_POPUP, DETERMINE_LOCATION_POPUP);
-										} else {
-											apiIdentifyTokenValidation();
-										}
+										activate_location_popup = true;
+										cartSummaryAPI();
 										break;
 
 									case SET_SUBURB:
@@ -1277,10 +1275,14 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 				onAddToCartLoadComplete();
 			} else {
 				// query the status of the JWT on STS using the the identityTokenValidation endpoint
-				mGetCartSummary = getViewModel().getCartSummary();
-				mGetCartSummary.execute();
+				cartSummaryAPI();
 			}
 		}
+	}
+
+	private void cartSummaryAPI() {
+		mGetCartSummary = getViewModel().getCartSummary();
+		mGetCartSummary.execute();
 	}
 
 	@Override
@@ -1312,6 +1314,12 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 					suburb.name = cartSummary.suburbName;
 					suburb.id = suburbId;
 					Utils.saveRecentDeliveryLocation(new DeliveryLocationHistory(province, suburb), activity);
+					// show pop up message after login
+					if (activate_location_popup) {
+						Utils.displayValidationMessage(activity, CustomPopUpWindow.MODAL_LAYOUT.DETERMINE_LOCATION_POPUP, DETERMINE_LOCATION_POPUP);
+						activate_location_popup = false;
+						return;
+					}
 					//user has a valid sessionToken and a delivery location is set.
 					if (getViewModel().getProductType() != null) {
 						getViewDataBinding().scrollProductDetail.scrollTo(0, 0);
@@ -1340,6 +1348,7 @@ public class DetailFragment extends BaseFragment<ProductDetailViewBinding, Detai
 				}
 			}
 		}
+
 	}
 
 	private void deliverySelectionIntent(Activity activity) {

@@ -113,10 +113,10 @@ public class SSOActivity extends WebViewActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.instantiateWebView();
+		Utils.updateStatusBarBackground(this);
 		mGlobalState = ((WoolworthsApplication) getApplication()).getWGlobalState();
 		mErrorHandlerView = new ErrorHandlerView(SSOActivity.this, (RelativeLayout) findViewById
 				(R.id.no_connection_layout));
-		Utils.updateStatusBarBackground(this, R.color.black);
 	}
 
 	private void instantiateWebView() {
