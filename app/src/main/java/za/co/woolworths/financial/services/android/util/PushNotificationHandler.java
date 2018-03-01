@@ -27,14 +27,21 @@ public class PushNotificationHandler {
 
 	public void sendRegistrationToServer(String token) {
 
+		if (token == null){
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+					sendRegistrationToServer(refreshedToken);
+				}
+			}).start();
+			return;
+		}
+
 		// sending gcm token to server
 		final CreateUpdateDevice device = new CreateUpdateDevice();
 		device.appInstanceId = Utils.getUniqueDeviceID(WoolworthsApplication.getInstance().getApplicationContext());
-
-		if (token == null)
-			device.pushNotificationToken = FirebaseInstanceId.getInstance(FirebaseApp.getInstance()).getToken();
-		else
-			device.pushNotificationToken = token;
+		device.pushNotificationToken = token;
 
 		//Don't update token if pushNotificationToken or appInstanceID NULL
 		if(device.appInstanceId == null || device.pushNotificationToken==null)
