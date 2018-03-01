@@ -6,6 +6,7 @@ public class BadgeState {
 	public static final int CART_COUNT = 0;
 	public static final int REWARD_COUNT = 1;
 	public static final int MESSAGE_COUNT = 2;
+	public static final int CART_COUNT_TEMP = 3;
 	private int position;
 	private int count;
 

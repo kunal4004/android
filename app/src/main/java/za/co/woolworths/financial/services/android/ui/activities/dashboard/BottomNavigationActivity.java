@@ -17,7 +17,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -30,7 +29,6 @@ import com.google.gson.Gson;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -55,6 +53,7 @@ import za.co.woolworths.financial.services.android.ui.fragments.wtoday.WTodayFra
 import za.co.woolworths.financial.services.android.ui.views.NestedScrollableViewHelper;
 import za.co.woolworths.financial.services.android.ui.views.SlidingUpPanelLayout;
 import za.co.woolworths.financial.services.android.ui.views.WBottomNavigationView;
+import za.co.woolworths.financial.services.android.util.FragmentHistory;
 import za.co.woolworths.financial.services.android.util.MultiClickPreventer;
 import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.PermissionResultCallback;
@@ -67,6 +66,7 @@ import za.co.woolworths.financial.services.android.util.nav.FragNavSwitchControl
 import za.co.woolworths.financial.services.android.util.nav.FragNavTransactionOptions;
 import za.co.woolworths.financial.services.android.util.nav.tabhistory.FragNavTabHistoryController;
 
+import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT_TEMP;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.MESSAGE_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.REWARD_COUNT;
@@ -93,7 +93,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	private Bundle mBundle;
 	private int currentSection;
 
-	LinkedHashMap<Integer, Integer> mFragmentHistory;
+	FragmentHistory mFragmentHistory;
 
 	@Override
 	public int getLayoutId() {
@@ -127,7 +127,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
 		mBundle = getIntent().getExtras();
-		mFragmentHistory = new LinkedHashMap<>();
+		mFragmentHistory = new FragmentHistory();
 		mNavController = FragNavController.newBuilder(savedInstanceState,
 				getSupportFragmentManager(),
 				R.id.frag_container)
@@ -182,6 +182,9 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 							BadgeState badgeState = (BadgeState) object;
 							if (badgeState != null) {
 								switch (badgeState.getPosition()) {
+									case CART_COUNT_TEMP:
+										addBadge(INDEX_CART, badgeState.getCount());
+										break;
 									case CART_COUNT:
 										cartSummaryAPI();
 										break;
@@ -192,6 +195,8 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 									case MESSAGE_COUNT:
 										getViewModel().getMessageResponse().execute();
+										break;
+									default:
 										break;
 								}
 							}
@@ -208,7 +213,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 		if (mBundle != null) {
 			if (!TextUtils.isEmpty(mBundle.getString(NotificationUtils.PUSH_NOTIFICATION_INTENT))) {
 				getBottomNavigationById().setCurrentItem(INDEX_ACCOUNT);
-				mFragmentHistory.put(INDEX_ACCOUNT, INDEX_ACCOUNT);
+				mFragmentHistory.push(INDEX_ACCOUNT);
 				mBundle = null;
 			}
 		}
@@ -411,14 +416,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					currentSection = R.id.navigation_today;
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_TODAY);
-					mFragmentHistory.put(INDEX_TODAY, INDEX_TODAY);
+					mFragmentHistory.push(INDEX_TODAY);
 					hideToolbar();
 					return true;
 
 				case R.id.navigation_shop:
 					currentSection = R.id.navigation_shop;
 					switchTab(INDEX_PRODUCT);
-					mFragmentHistory.put(INDEX_PRODUCT, INDEX_PRODUCT);
+					mFragmentHistory.push(INDEX_PRODUCT);
 					Utils.showOneTimePopup(BottomNavigationActivity.this);
 					return true;
 
@@ -432,14 +437,14 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 					Utils.sendBus(new SessionManager(RELOAD_REWARD));
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_REWARD);
-					mFragmentHistory.put(INDEX_REWARD, INDEX_REWARD);
+					mFragmentHistory.push(INDEX_REWARD);
 					return true;
 
 				case R.id.navigation_account:
 					currentSection = R.id.navigation_account;
 					setToolbarBackgroundColor(R.color.white);
 					switchTab(INDEX_ACCOUNT);
-					mFragmentHistory.put(INDEX_ACCOUNT, INDEX_ACCOUNT);
+					mFragmentHistory.push(INDEX_ACCOUNT);
 					return true;
 			}
 			return false;
