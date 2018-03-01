@@ -20,59 +20,9 @@ public class WFirebaseInstanceIDService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
         super.onTokenRefresh();
+
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        // sending reg id to your server
-        sendRegistrationToServer(refreshedToken);
-
+        PushNotificationHandler.getInstance().sendRegistrationToServer(refreshedToken);
     }
-
-    private void sendRegistrationToServer(final String token) {
-        // sending gcm token to server
-        Log.d(TAG, "sendRegistrationToServer: " + token);
-        final CreateUpdateDevice device=new CreateUpdateDevice();
-        device.appInstanceId= Utils.getUniqueDeviceID(getApplicationContext());
-        device.pushNotificationToken=token;
-
-        //Don't update token if pushNotificationToken or appInstanceID NULL
-        if(device.appInstanceId == null || device.pushNotificationToken==null)
-            return;
-
-        //Sending Token and app instance Id to App server
-        //Need to be done after Login
-
-        new HttpAsyncTask<String, String, CreateUpdateDeviceResponse>() {
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-
-            }
-
-            @Override
-            protected CreateUpdateDeviceResponse httpDoInBackground(String... params) {
-                return ((WoolworthsApplication) getApplication()).getApi().getResponseOnCreateUpdateDevice(device);
-            }
-
-            @Override
-            protected Class<CreateUpdateDeviceResponse> httpDoInBackgroundReturnType() {
-                return CreateUpdateDeviceResponse.class;
-            }
-
-            @Override
-            protected CreateUpdateDeviceResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-                CreateUpdateDeviceResponse createUpdateResponse = new CreateUpdateDeviceResponse();
-                createUpdateResponse.response = new Response();
-                return createUpdateResponse;
-            }
-
-            @Override
-            protected void onPostExecute(CreateUpdateDeviceResponse createUpdateResponse) {
-                super.onPostExecute(createUpdateResponse);
-
-
-            }
-        }.execute();
-
-    }
-
 }
 

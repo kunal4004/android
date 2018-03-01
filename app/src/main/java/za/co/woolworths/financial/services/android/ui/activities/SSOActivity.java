@@ -54,6 +54,7 @@ import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
 import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.PushNotificationHandler;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -420,7 +421,7 @@ public class SSOActivity extends WebViewActivity {
 							arguments.put("c2_id", (jwtDecodedModel.C2Id != null)? jwtDecodedModel.C2Id : "");
 							Utils.triggerFireBaseEvents(getApplicationContext(),FirebaseAnalytics.Event.LOGIN,arguments);
 
-							sendRegistrationToServer();//TODO: this should be handled by a listener
+							PushNotificationHandler.getInstance().sendRegistrationToServer(null);
 							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
 						} else {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
@@ -546,53 +547,6 @@ public class SSOActivity extends WebViewActivity {
 				progressDialog.show();
 			}
 		}
-	}
-
-
-	//1. sendRegistrationToServer is created twice: SSOActivity and WFirebaseInstanceIDSService
-	//
-	private void sendRegistrationToServer() {
-		// sending gcm token to server
-		final CreateUpdateDevice device = new CreateUpdateDevice();
-		device.appInstanceId = Utils.getUniqueDeviceID(getApplicationContext());
-		device.pushNotificationToken = FirebaseInstanceId.getInstance().getToken();
-
-		//Don't update token if pushNotificationToken or appInstanceID NULL
-		if(device.appInstanceId == null || device.pushNotificationToken==null)
-			return;
-
-		//Sending Token and app instance Id to App server
-		//Need to be done after Login
-
-		new HttpAsyncTask<String, String, CreateUpdateDeviceResponse>() {
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-			}
-
-			@Override
-			protected CreateUpdateDeviceResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) SSOActivity.this.getApplication()).getApi()
-						.getResponseOnCreateUpdateDevice(device);
-			}
-
-			@Override
-			protected Class<CreateUpdateDeviceResponse> httpDoInBackgroundReturnType() {
-				return CreateUpdateDeviceResponse.class;
-			}
-
-			@Override
-			protected CreateUpdateDeviceResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				CreateUpdateDeviceResponse createUpdateResponse = new CreateUpdateDeviceResponse();
-				createUpdateResponse.response = new Response();
-				return createUpdateResponse;
-			}
-
-			@Override
-			protected void onPostExecute(CreateUpdateDeviceResponse createUpdateResponse) {
-				super.onPostExecute(createUpdateResponse);
-			}
-		}.execute();
 	}
 
 	@Override
