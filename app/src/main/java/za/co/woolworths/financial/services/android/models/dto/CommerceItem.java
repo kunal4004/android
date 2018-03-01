@@ -1,10 +1,12 @@
 package za.co.woolworths.financial.services.android.models.dto;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by W7099877 on 2018/02/08.
  */
 
-public class CartProduct {
+public class CommerceItem {
 	public int quantity;
 	public String productId;
 	public String internalImageURL;
@@ -12,6 +14,7 @@ public class CartProduct {
 	public String catalogRefId;
 	public String productDisplayName;
 	public PriceInfo priceInfo;
+	@SerializedName("id")
 	public String commerceId;
 	private boolean quantityUploading = false;
 

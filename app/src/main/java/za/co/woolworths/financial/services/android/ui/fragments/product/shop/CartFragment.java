@@ -33,7 +33,7 @@ import io.reactivex.schedulers.Schedulers;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.CartItemGroup;
-import za.co.woolworths.financial.services.android.models.dto.CartProduct;
+import za.co.woolworths.financial.services.android.models.dto.CommerceItem;
 import za.co.woolworths.financial.services.android.models.dto.CartResponse;
 import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.Data;
@@ -174,7 +174,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	@Override
-	public void onItemClick(CartProduct cartProduct) {
+	public void onItemClick(CommerceItem commerceItem) {
 	}
 
 	@Override
@@ -501,27 +501,11 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 				JSONArray productsArray = itemsObject.getJSONArray(key);
 				if (productsArray.length() > 0) {
-					ArrayList<CartProduct> productList = new ArrayList<>();
+					ArrayList<CommerceItem> productList = new ArrayList<>();
 					for (int i = 0; i < productsArray.length(); i++) {
-						JSONObject proObject = productsArray.getJSONObject(i);
-						CartProduct cartProduct = new CartProduct();
-						cartProduct.setQuantity(proObject.getInt("quantity"));
-						cartProduct.setProductId(proObject.getString("productId"));
-						cartProduct.setInternalImageURL(proObject.getString("internalImageURL"));
-						cartProduct.setExternalImageURL(proObject.getString("externalImageURL"));
-						cartProduct.setCatalogRefId(proObject.getString("catalogRefId"));
-						cartProduct.setProductDisplayName(proObject.getString("productDisplayName"));
-						cartProduct.setCommerceId(proObject.getString("id"));
-
-						PriceInfo pInfo = new PriceInfo();
-						pInfo.setAmount(proObject.getJSONObject("priceInfo").getDouble("amount"));
-						pInfo.setListPrice(proObject.getJSONObject("priceInfo").getDouble("listPrice"));
-
-						cartProduct.setPriceInfo(pInfo);
-
-						productList.add(cartProduct);
+						productList.add(new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)),CommerceItem.class));
 					}
-					cartItemGroup.setCartProducts(productList);
+					cartItemGroup.setCommerceItems(productList);
 				}
 				cartItemGroups.add(cartItemGroup);
 			}
