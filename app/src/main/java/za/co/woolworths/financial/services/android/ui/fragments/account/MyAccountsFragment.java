@@ -246,10 +246,19 @@ public class MyAccountsFragment extends BaseFragment<MyAccountsFragmentBinding, 
 
 	private void initialize() {
 		changeDefaultView();
-		if (mSessionManager.loadSignInView()) {
-			this.loadAccounts();
+		if (mSessionManager != null) {
+			if (mSessionManager.loadSignInView()) {
+				this.loadAccounts();
+			} else {
+				this.configureSignInNoC2ID();
+			}
 		} else {
-			this.configureSignInNoC2ID();
+			Activity activity = getActivity();
+			if (activity != null) {
+				mSessionManager = new SessionManager(activity);
+				changeDefaultView();
+				configureView();
+			}
 		}
 	}
 

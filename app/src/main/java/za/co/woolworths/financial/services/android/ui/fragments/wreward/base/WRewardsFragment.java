@@ -147,8 +147,8 @@ public class WRewardsFragment extends BaseFragment<WrewardsFragmentBinding, WRew
 	}
 
 	private void replaceFragment() {
-		if (mSessionManager.authenticationState() && mRewardSignInState) {
-			if (mSessionManager.loadSignInView() && mRewardSignInState) {
+		if (mSessionManager.authenticationState()) {
+			if (mSessionManager.isC2IdEnabled() && mRewardSignInState) {
 				//user is linked and signed in
 				linkSignIn();
 			} else {

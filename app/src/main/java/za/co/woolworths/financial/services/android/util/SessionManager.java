@@ -40,6 +40,13 @@ public class SessionManager {
 		return false;
 	}
 
+	public boolean isC2IdEnabled() {
+		if (authenticationState()) {
+			return getJWTDecoded().C2Id != null && !getJWTDecoded().C2Id.equals("");
+		}
+		return false;
+	}
+
 	public void setAccountHasExpired(boolean accountHasExpired) {
 		setPersistentValue(SessionDao.KEY.ACCOUNT_IS_ACTIVE, accountHasExpired);
 	}
