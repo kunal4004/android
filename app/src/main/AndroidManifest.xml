@@ -134,6 +134,8 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyBscGwCrt-mloCl8JXkqX95r3_gwtRLnk4"/>
 
+
+        <!-- Google Analytics -->
         <receiver
             android:name="com.google.android.gms.analytics.AnalyticsReceiver"
             android:enabled="true">
@@ -142,8 +144,6 @@
             </intent-filter>
         </receiver>
 
-
-        <!-- Google Analytics -->
         <receiver android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
                   android:enabled="true"
                   android:exported="true">
