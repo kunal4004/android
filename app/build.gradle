@@ -5,11 +5,11 @@ android {
 
     def major = "5"
     def minor = "5"
-    def fix = "0"
+    def fix = "1"
     def env = System.getenv()
     def job = env['BUILD_NUMBER']
     if (job == null) {
-        job = "141";
+        job = "63";
     }
 
     flavorDimensions "default"

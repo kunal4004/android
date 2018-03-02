@@ -404,7 +404,7 @@ public class SSOActivity extends WebViewActivity {
 							arguments.put("c2_id", (jwtDecodedModel.C2Id != null)? jwtDecodedModel.C2Id : "");
 							Utils.triggerFireBaseEvents(getApplicationContext(),FirebaseAnalytics.Event.LOGIN,arguments);
 
-							NotificationUtils.getInstance().sendRegistrationToServer(null);
+							NotificationUtils.getInstance().sendRegistrationToServer();
 							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
 						} else {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);

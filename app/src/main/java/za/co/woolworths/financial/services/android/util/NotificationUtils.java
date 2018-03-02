@@ -180,19 +180,22 @@ public class NotificationUtils {
         notificationManager.cancelAll();
     }
 
+    public void sendRegistrationToServer(){
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+
+				if (refreshedToken == null){
+					sendRegistrationToServer();
+				}else{
+					sendRegistrationToServer(refreshedToken);
+				}
+			}
+		}).start();
+	}
+
     public void sendRegistrationToServer(String token) {
-
-        if (token == null){
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-                    sendRegistrationToServer(refreshedToken);
-                }
-            }).start();
-            return;
-        }
-
 
         // sending gcm token to server
         final CreateUpdateDevice device = new CreateUpdateDevice();
