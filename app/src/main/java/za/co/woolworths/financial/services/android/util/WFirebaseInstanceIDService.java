@@ -1,5 +1,7 @@
 package za.co.woolworths.financial.services.android.util;
 
+import android.util.Log;
+
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
@@ -15,6 +17,6 @@ public class WFirebaseInstanceIDService extends FirebaseInstanceIdService {
 		super.onTokenRefresh();
 
 		String token = FirebaseInstanceId.getInstance().getToken();
-		PushNotificationHandler.getInstance().sendRegistrationToServer(token);
+		NotificationUtils.getInstance().sendRegistrationToServer(token);
 	}
 }

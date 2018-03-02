@@ -32,7 +32,6 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -47,14 +46,10 @@ import java.util.UUID;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
-import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
-import za.co.woolworths.financial.services.android.util.PushNotificationHandler;
+import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.Utils;
 
@@ -421,7 +416,7 @@ public class SSOActivity extends WebViewActivity {
 							arguments.put("c2_id", (jwtDecodedModel.C2Id != null)? jwtDecodedModel.C2Id : "");
 							Utils.triggerFireBaseEvents(getApplicationContext(),FirebaseAnalytics.Event.LOGIN,arguments);
 
-							PushNotificationHandler.getInstance().sendRegistrationToServer(null);
+							NotificationUtils.getInstance().sendRegistrationToServer(null);
 							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
 						} else {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);

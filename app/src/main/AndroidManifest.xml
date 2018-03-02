@@ -102,22 +102,11 @@
         android:label="@string/app_label"
         android:largeHeap="true"
         android:theme="@style/AppTheme"
-        tools:node="replace">
+        tools:replace="android:label">
 
-        <!-- Firebase Notifications -->
-        <service android:name="za.co.woolworths.financial.services.android.util.WFirebaseMessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
-
-        <service
-            android:name="za.co.woolworths.financial.services.android.util.WFirebaseInstanceIDService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-            </intent-filter>
-        </service>
-        <!-- ./Firebase Notifications -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -310,6 +299,21 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
         </provider>
+        
+        <!-- Firebase Notifications -->
+        <service android:name="za.co.woolworths.financial.services.android.util.WFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="za.co.woolworths.financial.services.android.util.WFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+        <!-- ./Firebase Notifications -->
     </application>
 
 </manifest>
