@@ -17,6 +17,6 @@ public class WFirebaseInstanceIDService extends FirebaseInstanceIdService {
 		super.onTokenRefresh();
 
 		String token = FirebaseInstanceId.getInstance().getToken();
-		NotificationUtils.getInstance().sendRegistrationToServer();
+		NotificationUtils.getInstance().sendRegistrationToServer(token);
 	}
 }
