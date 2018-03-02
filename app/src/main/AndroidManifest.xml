@@ -102,7 +102,12 @@
         android:label="@string/app_label"
         android:largeHeap="true"
         android:theme="@style/AppTheme"
-        tools:node="replace">
+        tools:replace="android:label">
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
@@ -176,29 +181,7 @@
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.LoanWithdrawalConfirmActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/LoanWithdrawal"/>
-        <!-- Firebase Notifications -->
-        <service android:name="za.co.woolworths.financial.services.android.util.WFirebaseMessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
-        <service android:name="za.co.woolworths.financial.services.android.util.WFirebaseInstanceIDService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-            </intent-filter>
-        </service>
-        <!-- ./Firebase Notifications -->
-
-        <!-- Used for install referrer tracking-->
-        <service android:name="com.google.android.gms.tagmanager.InstallReferrerService"/>
-        <receiver
-            android:name="com.google.android.gms.tagmanager.InstallReferrerReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER"/>
-            </intent-filter>
-        </receiver>
+            android:theme="@style/OneAppBaseTheme"/>
 
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.MyAccountCardsActivity"
@@ -324,6 +307,21 @@
             android:noHistory="true"
             android:screenOrientation="portrait"
             android:theme="@style/Cart"/>
+        
+        <!-- Firebase Notifications -->
+        <service android:name="za.co.woolworths.financial.services.android.util.WFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="za.co.woolworths.financial.services.android.util.WFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+        <!-- ./Firebase Notifications -->
     </application>
 
 </manifest>
