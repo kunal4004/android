@@ -497,13 +497,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 				else if (key.contains("home"))
 					cartItemGroup.setType("HOME");
 				else
-					cartItemGroup.setType("OTHERS");
+					cartItemGroup.setType("OTHER");
 
 				JSONArray productsArray = itemsObject.getJSONArray(key);
 				if (productsArray.length() > 0) {
 					ArrayList<CommerceItem> productList = new ArrayList<>();
 					for (int i = 0; i < productsArray.length(); i++) {
-						productList.add(new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)),CommerceItem.class));
+						productList.add(new Gson().fromJson(String.valueOf(productsArray.getJSONObject(i)), CommerceItem.class));
 					}
 					cartItemGroup.setCommerceItems(productList);
 				}
