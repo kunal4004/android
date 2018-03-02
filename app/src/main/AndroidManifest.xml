@@ -163,6 +163,8 @@
                  android:enabled="true"
                  android:exported="false"/>
 
+
+
         <activity
             android:name="za.co.woolworths.financial.services.android.ui.activities.StoreDetailsActivity"
             android:screenOrientation="portrait"
