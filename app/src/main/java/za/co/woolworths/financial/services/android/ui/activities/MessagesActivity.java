@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -277,6 +278,9 @@ public class MessagesActivity extends AppCompatActivity {
 			@Override
 			protected void onPostExecute(ReadMessagesResponse readmessageResponse) {
 				super.onPostExecute(readmessageResponse);
+				if (readmessageResponse != null) {
+					Utils.sendBus(new BadgeState(BadgeState.MESSAGE_COUNT, BadgeState.MESSAGE_COUNT));
+				}
 
 
 			}
