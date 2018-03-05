@@ -44,10 +44,12 @@ import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.Data;
 import za.co.woolworths.financial.services.android.models.dto.DeliveryLocationHistory;
 import za.co.woolworths.financial.services.android.models.dto.OrderSummary;
+import za.co.woolworths.financial.services.android.models.dto.Product;
 import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
 import za.co.woolworths.financial.services.android.models.service.event.BadgeState;
 import za.co.woolworths.financial.services.android.models.service.event.CartState;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
 import za.co.woolworths.financial.services.android.ui.activities.CartActivity;
 import za.co.woolworths.financial.services.android.ui.activities.CartCheckoutActivity;
 import za.co.woolworths.financial.services.android.ui.activities.ConfirmColorSizeActivity;
@@ -65,6 +67,7 @@ import za.co.woolworths.financial.services.android.util.Utils;
 
 import static za.co.woolworths.financial.services.android.models.service.event.BadgeState.CART_COUNT;
 import static za.co.woolworths.financial.services.android.models.service.event.CartState.CHANGE_QUANTITY;
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
 
 public class CartFragment extends Fragment implements CartProductAdapter.OnItemClick, View.OnClickListener, NetworkChangeListener {
 
@@ -172,6 +175,17 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 									int quantity = cartState.getQuantity();
 									executeChangeQuantity(new ChangeQuantity(quantity, mChangeQuantity.getCommerceId())).execute();
 								}
+							} else if (object instanceof ProductState) {
+								ProductState productState = (ProductState) object;
+								switch (productState.getState()) {
+									case CANCEL_CALL: // reset change quantity state value
+										if (cartProductAdapter != null)
+											cartProductAdapter.onPopUpCancel(CANCEL_CALL);
+										break;
+
+									default:
+										break;
+								}
 							}
 						}
 					}
@@ -224,7 +238,6 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 	@Override
 	public void onItemDeleteClick(CommerceItem commerceItem) {
-		// Log.i("CartFragment", "Item " + itemRow.productItem.productName + " delete button clicked!");
 		// TODO: Make API call to remove item + show loading before removing from list
 		removeItemAPI(commerceItem);
 	}
