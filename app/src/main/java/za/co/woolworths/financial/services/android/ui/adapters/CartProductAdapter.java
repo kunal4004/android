@@ -29,6 +29,8 @@ import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.WFormatter;
 
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.CANCEL_CALL;
+
 public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHolder> {
 
 	@Override
@@ -99,7 +101,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				productHolder.btnDeleteRow.setVisibility(this.editMode ? View.VISIBLE : View.GONE);
 
 				// prevent triggering animation on first load
-				if (firstLoadCompleted)
+				if (firstLoadWasCompleted())
 					animateOnDeleteButtonVisibility(productHolder.llCartItems, this.editMode);
 
 				productHolder.swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
@@ -140,7 +142,6 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 					}
 				});
 
-
 				if (commerceItem.getQuantityUploading()) {
 					productHolder.pbQuantity.setVisibility(View.VISIBLE);
 					productHolder.quantity.setVisibility(View.GONE);
@@ -154,9 +155,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 					productHolder.btnDeleteRow.setOnClickListener(new View.OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							if (!commerceItem.getQuantityUploading()) {
-								productHolder.swipeLayout.open(true);
-							}
+							productHolder.swipeLayout.open(true);
 						}
 					});
 
@@ -166,18 +165,16 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				productHolder.llDeleteContainer.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
-						if (!commerceItem.getQuantityUploading()) {
-							try {
+						try {
 //								mItemManger.removeShownLayouts(productHolder.swipeLayout);
 //								cartItems.remove(position);
 //								notifyItemRemoved(position);
 //								int previousSize = cartItems.size();
 //								notifyItemRangeChanged(previousSize, cartItems.size() - previousSize);
 //								mItemManger.closeAllItems();
-								//onItemClick.onItemDeleteClick(commerceItem);
-							} catch (Exception ex) {
-								Log.e("cartItems", ex.toString());
-							}
+							//onItemClick.onItemDeleteClick(commerceItem);
+						} catch (Exception ex) {
+							Log.e("cartItems", ex.toString());
 						}
 					}
 				});
@@ -192,10 +189,8 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 				productHolder.llQuantity.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View view) {
-						if (!commerceItem.getQuantityUploading()) {
-							commerceItem.setQuantityUploading(true);
-							onItemClick.onChangeQuantity(itemRow.productItem.getCommerceId());
-						}
+						commerceItem.setQuantityUploading(true);
+						onItemClick.onChangeQuantity(itemRow.productItem.getCommerceId());
 					}
 				});
 
@@ -285,7 +280,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 	}
 
 	public boolean toggleFirstLoad() {
-		firstLoadCompleted = true;
+		setFirstLoadCompleted(true);
 		return firstLoadCompleted;
 	}
 
@@ -440,5 +435,35 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 		DisplayMetrics dm = new DisplayMetrics();
 		activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
 		return dm.widthPixels / 10;
+	}
+
+	public void onPopUpCancel(String status) {
+		switch (status) {
+			case CANCEL_CALL:
+				for (CartItemGroup cartItemGroup : this.cartItems) {
+					ArrayList<CommerceItem> commerceItemList = cartItemGroup.commerceItems;
+					if (commerceItemList != null) {
+						for (CommerceItem cm : commerceItemList) {
+							cm.setQuantityUploading(false);
+							setFirstLoadCompleted(false);
+						}
+					}
+				}
+				notifyDataSetChanged();
+				break;
+
+			default:
+				break;
+
+		}
+
+	}
+
+	public void setFirstLoadCompleted(boolean firstLoadCompleted) {
+		this.firstLoadCompleted = firstLoadCompleted;
+	}
+
+	public boolean firstLoadWasCompleted() {
+		return firstLoadCompleted;
 	}
 }
