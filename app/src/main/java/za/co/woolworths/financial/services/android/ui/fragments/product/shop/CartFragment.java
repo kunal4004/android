@@ -226,8 +226,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	public void onItemDeleteClick(CommerceItem commerceItem) {
 		// Log.i("CartFragment", "Item " + itemRow.productItem.productName + " delete button clicked!");
 		// TODO: Make API call to remove item + show loading before removing from list
-		HttpAsyncTask<String, String, ShoppingCartResponse> removeCartItem = removeCartItem(commerceItem);
-		removeCartItem.execute();
+		removeItemAPI(commerceItem);
 	}
 
 	@Override
@@ -485,6 +484,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	}
 
 	public HttpAsyncTask<String, String, ShoppingCartResponse> removeCartItem(final CommerceItem commerceItem) {
+		mCommerceItem = commerceItem;
 		return new HttpAsyncTask<String, String, ShoppingCartResponse>() {
 
 			@Override
@@ -514,6 +514,7 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 						@Override
 						public void run() {
 							if (commerceItem == null) {
+								mRemoveItemFailed = true;
 								toggleRemoveItem.onRemoveItem(false);
 							} else {
 								if (cartProductAdapter != null) {
@@ -643,11 +644,19 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 	@Override
 	public void onConnectionChanged() {
 		if (mRemoveItemFailed) {
-			if (cartProductAdapter != null)
-				cartProductAdapter.toggleDeleteSingleItem(mCommerceItem);
-			HttpAsyncTask<String, String, ShoppingCartResponse> removeCartItem = removeCartItem(mCommerceItem);
-			removeCartItem.execute();
+			if (mCommerceItem != null) {
+				if (cartProductAdapter != null)
+					cartProductAdapter.toggleDeleteSingleItem(mCommerceItem);
+				removeItemAPI(mCommerceItem);
+			} else {
+				removeItemAPI(null);
+			}
 			mRemoveItemFailed = false;
 		}
+	}
+
+	private void removeItemAPI(CommerceItem mCommerceItem) {
+		HttpAsyncTask<String, String, ShoppingCartResponse> removeCartItem = removeCartItem(mCommerceItem);
+		removeCartItem.execute();
 	}
 }
