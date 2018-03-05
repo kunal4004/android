@@ -37,6 +37,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.zxing.BarcodeFormat;
@@ -754,7 +755,7 @@ public class Utils {
 		if (deviceID == null) {
 			deviceID = getSessionDaoValue(context, SessionDao.KEY.DEVICE_ID);
 			if (deviceID == null) {
-				deviceID = InstanceID.getInstance(context).getId();
+				deviceID = FirebaseInstanceId.getInstance().getId();
 				sessionDaoSave(context, SessionDao.KEY.DEVICE_ID, deviceID);
 			}
 		}
