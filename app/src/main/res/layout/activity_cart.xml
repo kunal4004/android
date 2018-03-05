@@ -32,7 +32,7 @@
                 android:letterSpacing="0.2"
                 android:text="@string/edit"
                 android:textAllCaps="true"
-                android:textColor="@color/black"
+                android:textColor="@color/black_tv_color_toolbar"
                 android:textSize="12sp"
                 app:WTextView_font="medium"/>
 
@@ -48,13 +48,23 @@
                 android:textSize="12sp"
                 app:WTextView_font="medium_bold"/>
 
+            <ProgressBar
+                android:id="@+id/pbRemoveAllItem"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="@dimen/sixteen_dp"
+                android:indeterminateTint="@color/black"
+                android:visibility="gone"/>
+
             <ImageView
                 android:id="@+id/btnCloseCart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="16dp"
+                android:layout_marginRight="@dimen/sixteen_dp"
                 android:src="@drawable/close_24"/>
 
             <za.co.woolworths.financial.services.android.ui.views.WTextView
@@ -67,7 +77,7 @@
                 android:letterSpacing="0.2"
                 android:text="@string/remove_all"
                 android:textAllCaps="true"
-                android:textColor="@color/black"
+                android:textColor="@color/black_tv_color_toolbar"
                 android:textSize="12sp"
                 android:visibility="gone"
                 app:WTextView_font="medium"/>

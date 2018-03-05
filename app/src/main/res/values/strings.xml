@@ -615,8 +615,10 @@
     <string name="your_delivery_location_is_set_to">Your delivery location is set to:</string>
     <string name="confirm_your_location">Confirm location</string>
     <string name="edit_delivery_location"><u>edit delivery location</u></string>
-    <string name="added_to">added to</string>
+    <string name="added_to">added to </string>
+    <string name="remove_to">item remove from <b>CART</b></string>
     <string name="empty_cart">EMPTY CART</string>
     <string name="empty_cart_desc">You currently have no items\nin your cart.</string>
     <string name="start_shopping">start shopping</string>
+    <string name="delete">delete</string>
 </resources>

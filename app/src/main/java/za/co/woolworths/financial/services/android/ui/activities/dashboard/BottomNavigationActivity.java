@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -117,7 +118,11 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
+		try {
+			super.onRestoreInstanceState(SavedInstanceFragment.getInstance(getFragmentManager()).popData());
+		} catch (NullPointerException ex) {
+			Log.d("onRestoreInstanceState", ex.getMessage());
+		}
 	}
 
 	@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -172,7 +177,7 @@ public class BottomNavigationActivity extends BaseActivity<ActivityBottomNavigat
 								cartSummaryAPI();
 								closeSlideUpPanel();
 								try {
-									PopupWindow popupWindow = Utils.showToast(BottomNavigationActivity.this);
+									PopupWindow popupWindow = Utils.showToast(BottomNavigationActivity.this, getString(R.string.added_to), true);
 									popupWindow.showAtLocation(getBottomNavigationById(), Gravity.BOTTOM, 0, getBottomNavigationById().getHeight() + Utils.dp2px(BottomNavigationActivity.this, 45));
 								} catch (NullPointerException ex) {
 								}

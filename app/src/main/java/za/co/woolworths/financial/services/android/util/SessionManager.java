@@ -35,7 +35,9 @@ public class SessionManager {
 
 	public boolean loadSignInView() {
 		if (authenticationState()) {
-			return getJWTDecoded().C2Id != null && !getJWTDecoded().C2Id.equals("") && !accountHasExpired();
+			if (getJWTDecoded() != null) {
+				return getJWTDecoded().C2Id != null && !getJWTDecoded().C2Id.equals("") && !accountHasExpired();
+			}
 		}
 		return false;
 	}

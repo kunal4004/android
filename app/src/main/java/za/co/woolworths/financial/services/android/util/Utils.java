@@ -24,6 +24,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -1044,7 +1045,7 @@ public class Utils {
 		return history;
 	}
 
-	public static PopupWindow showToast(final Activity activity) {
+	public static PopupWindow showToast(final Activity activity, String message, final boolean viewState) {
 
 		// inflate your xml layout
 		if (activity != null) {
@@ -1052,24 +1053,31 @@ public class Utils {
 			View layout = inflater.inflate(R.layout.add_to_cart_success, null);
 			// set the custom display
 			WTextView tvView = layout.findViewById(R.id.tvView);
+			WTextView tvCart = layout.findViewById(R.id.tvCart);
+			WTextView tvAddToCart = layout.findViewById(R.id.tvAddToCart);
 			// initialize your popupWindow and use your custom layout as the view
 			final PopupWindow pw = new PopupWindow(layout,
 					LinearLayout.LayoutParams.MATCH_PARENT,
 					LinearLayout.LayoutParams.WRAP_CONTENT, true);
 
+			tvView.setVisibility(viewState ? View.VISIBLE : View.GONE);
+			tvAddToCart.setText(message);
+
 			// handle popupWindow click event
 			tvView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					// do anything when popupWindow was clicked
-					if (getSessionToken(activity) != null) {
-						ScreenManager.presentSSOSignin(activity);
-					} else {
-						Intent openCartActivity = new Intent(activity, CartActivity.class);
-						activity.startActivity(openCartActivity);
-						activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+					if (viewState) {
+						// do anything when popupWindow was clicked
+						if (getSessionToken(activity) != null) {
+							ScreenManager.presentSSOSignin(activity);
+						} else {
+							Intent openCartActivity = new Intent(activity, CartActivity.class);
+							activity.startActivity(openCartActivity);
+							activity.overridePendingTransition(R.anim.slide_up_anim, R.anim.stay);
+						}
+						pw.dismiss(); // dismiss the window
 					}
-					pw.dismiss(); // dismiss the window
 				}
 			});
 
