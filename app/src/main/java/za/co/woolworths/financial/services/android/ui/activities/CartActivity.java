@@ -57,7 +57,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 			case R.id.btnEditCart:
 				toggleCartMode();
 				// prevent remove all item progressbar visible
-				onRemoveItem(false);
+				dismissProgress();
 				break;
 			case R.id.btnCloseCart:
 				finishActivity();
@@ -66,6 +66,10 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 				cartFragment.removeCartItem(null).execute();
 				break;
 		}
+	}
+
+	private void dismissProgress() {
+		pbRemoveAllItem.setVisibility(View.GONE);
 	}
 
 	private void toggleCartMode() {
@@ -109,6 +113,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 		pbRemoveAllItem.setVisibility(visibility ? View.VISIBLE : View.GONE);
 		btnClearCart.setVisibility(visibility ? View.GONE : View.VISIBLE);
 		btnCloseCart.setVisibility(visibility ? View.GONE : View.GONE);
+		btnEditCart.setEnabled(visibility ? false : true);
 	}
 
 	@Override
