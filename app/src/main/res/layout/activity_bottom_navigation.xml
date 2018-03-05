@@ -40,9 +40,7 @@
                 android:layout_below="@+id/incToolbar"
                 android:background="@color/white"
                 android:fitsSystemWindows="true"
-                >
-
-            </FrameLayout>
+                />
 
             <View
                 android:id="@+id/bottom_line"

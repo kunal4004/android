@@ -155,7 +155,6 @@ public class SuburbSelectionFragment extends Fragment implements SuburbSelection
 									loadSuburbItems();
 								}
 							}
-
 						});
 						mErrorHandlerView.networkFailureHandler(errorMessage);
 					}

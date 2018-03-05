@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/default_background">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/default_background">
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/selectionContentLayout"
@@ -29,7 +29,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
-                    android:src="@drawable/tick_cli_active" />
+                    android:src="@drawable/tick_cli_active"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
                         style="@style/style_delivery_location_item_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Woodstock, Western Cape" />
+                        android:text="Woodstock, Western Cape"/>
 
                     <za.co.woolworths.financial.services.android.ui.views.WTextView
                         android:id="@+id/tvCurrentLocationDescription"
@@ -52,7 +52,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:text="Western Cape" />
+                        android:text="Western Cape"/>
 
                 </LinearLayout>
 
@@ -64,36 +64,37 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="17dp"
-                    android:src="@drawable/ic_caret_black" />
+                    android:src="@drawable/ic_caret_black"/>
 
             </RelativeLayout>
 
-            <LinearLayout android:id="@+id/layoutPreviousSelectedLocations"
+            <LinearLayout
+                android:id="@+id/layoutPreviousSelectedLocations"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-            <za.co.woolworths.financial.services.android.ui.views.WTextView
-                style="@style/style_cart_header_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="16dp"
-                android:background="@color/white"
-                android:paddingBottom="14dp"
-                android:paddingEnd="24dp"
-                android:paddingStart="24dp"
-                android:paddingTop="16dp"
-                android:text="@string/previously_selected_locations"
-                android:textAllCaps="true" />
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    style="@style/style_cart_header_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/white"
+                    android:paddingBottom="14dp"
+                    android:paddingEnd="24dp"
+                    android:paddingStart="24dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/previously_selected_locations"
+                    android:textAllCaps="true"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/deliveryLocationHistoryList"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:nestedScrollingEnabled="false"
-                android:scrollbars="none" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/deliveryLocationHistoryList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:nestedScrollingEnabled="false"
+                    android:scrollbars="none"/>
 
             </LinearLayout>
 
@@ -106,7 +107,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_centerInParent="true"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <include layout="@layout/no_connection_handler"/>
 

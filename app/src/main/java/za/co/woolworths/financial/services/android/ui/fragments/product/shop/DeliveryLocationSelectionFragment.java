@@ -84,6 +84,14 @@ public class DeliveryLocationSelectionFragment extends Fragment implements Deliv
 
 		configureCurrentLocation();
 		configureLocationHistory();
+		List<DeliveryLocationHistory> deliveryLocationHistory = Utils.getDeliveryLocationHistory(getActivity());
+		if (deliveryLocationHistory != null) {
+			if (deliveryLocationHistory.size() > 0) {
+				deliveryLocationHistory.get(0);
+				tvCurrentLocationTitle.setText(deliveryLocationHistory.get(0).suburb.name);
+				tvCurrentLocationDescription.setText(deliveryLocationHistory.get(0).province.name);
+			}
+		}
 	}
 
 	@Override

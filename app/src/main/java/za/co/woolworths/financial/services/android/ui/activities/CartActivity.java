@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.awfs.coordination.R;
 
@@ -13,12 +14,13 @@ import za.co.woolworths.financial.services.android.ui.fragments.product.shop.Car
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.Utils;
 
-public class CartActivity extends AppCompatActivity implements View.OnClickListener {
+public class CartActivity extends AppCompatActivity implements View.OnClickListener, CartFragment.ToggleRemoveItem {
 
 	private WTextView btnEditCart;
 	private WTextView btnClearCart;
 	private ImageView btnCloseCart;
 	private CartFragment cartFragment;
+	private ProgressBar pbRemoveAllItem;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,8 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
 		btnEditCart = findViewById(R.id.btnEditCart);
 
+		pbRemoveAllItem = findViewById(R.id.pbRemoveAllItem);
+
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		getSupportActionBar().setTitle(null);
@@ -52,6 +56,8 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 		switch (v.getId()) {
 			case R.id.btnEditCart:
 				toggleCartMode();
+				// prevent remove all item progressbar visible
+				dismissProgress();
 				break;
 			case R.id.btnCloseCart:
 				finishActivity();
@@ -60,6 +66,10 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 				cartFragment.removeCartItem(null).execute();
 				break;
 		}
+	}
+
+	private void dismissProgress() {
+		pbRemoveAllItem.setVisibility(View.GONE);
 	}
 
 	private void toggleCartMode() {
@@ -94,6 +104,21 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
 	public void resetToolBarIcons() {
 		btnEditCart.setVisibility(View.GONE);
+		btnCloseCart.setVisibility(View.VISIBLE);
+		btnClearCart.setVisibility(View.GONE);
+	}
+
+	@Override
+	public void onRemoveItem(boolean visibility) {
+		pbRemoveAllItem.setVisibility(visibility ? View.VISIBLE : View.GONE);
+		btnClearCart.setVisibility(visibility ? View.GONE : View.VISIBLE);
+		btnCloseCart.setVisibility(visibility ? View.GONE : View.GONE);
+		btnEditCart.setEnabled(visibility ? false : true);
+	}
+
+	@Override
+	public void onRemoveSuccess() {
+		pbRemoveAllItem.setVisibility(View.GONE);
 		btnCloseCart.setVisibility(View.VISIBLE);
 		btnClearCart.setVisibility(View.GONE);
 	}
