@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/parentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        >
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/locationSelectedLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@color/white"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="9dp">
+
+                    <za.co.woolworths.financial.services.android.ui.views.WTextView
+                        android:id="@+id/tvDeliveryLocation"
+                        style="@style/style_cart_delivery_selected"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/iconCaretRight"
+                        android:drawableLeft="@drawable/mapview"
+                        android:drawablePadding="16dp"
+                        android:gravity="center_vertical"
+                        android:text="@string/set_your_delivery_location"/>
+
+                    <ImageView
+                        android:id="@+id/iconCaretRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="20dp"
+                        android:src="@drawable/ic_caret_black"/>
+
+                </RelativeLayout>
+
+                <include
+                    layout="@layout/empty_state_template"/>
+
+                <za.co.woolworths.financial.services.android.ui.views.WTextView
+                    android:id="@+id/tvFreeDeliveryFirstOrder"
+                    style="@style/style_cart_delivery_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cart_free_delivery_first_order"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/cartList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:nestedScrollingEnabled="false"
+                    android:scrollbars="none"
+                    android:visibility="visible"/>
+
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+
+
+        <RelativeLayout
+            android:id="@+id/rlCheckOut"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:gravity="center">
+
+            <za.co.woolworths.financial.services.android.ui.views.WButton
+                android:id="@+id/btnCheckOut"
+                style="@style/blackButtonStyle"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:letterSpacing="0.2"
+                android:text="@string/checkout"
+                android:visibility="visible"
+                app:WButton_font="medium_bold"
+                />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/loadingBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:indeterminateTint="@color/black"
+        android:visibility="gone"/>
+
+    <include layout="@layout/no_connection_handler"/>
+</FrameLayout>

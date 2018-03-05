@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="za.co.woolworths.financial.services.android.ui.activities.WStoreLocatorActivity">
+
+    <FrameLayout
+        android:id="@+id/stores_container_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/appbar_background"
+        android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/StoreSearch"
+        app:theme="@style/StoreSearch"
+        app:title=" "
+        app:titleTextColor="@color/black">
+
+        <za.co.woolworths.financial.services.android.ui.views.WTextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:letterSpacing="0.2"
+            android:text="@string/stores_nearby"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:WTextView_font="medium_bold" />
+    </android.support.v7.widget.Toolbar>
+
+</FrameLayout>

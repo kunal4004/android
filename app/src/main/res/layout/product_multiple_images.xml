@@ -33,7 +33,7 @@
         android:focusableInTouchMode="false">
 
         <ImageView
-            android:id="@+id/imCloseProduct"
+            android:id="@+id/imClose"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_marginLeft="@dimen/default_margin"

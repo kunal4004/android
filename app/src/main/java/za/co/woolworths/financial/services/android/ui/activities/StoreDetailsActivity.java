@@ -46,7 +46,6 @@ public class StoreDetailsActivity extends AppCompatActivity implements OnMapRead
 	GoogleMap googleMap;
 	public Toolbar toolbar;
 	StoreDetails storeDetails;
-
 	private String TAG = this.getClass().getSimpleName();
 	//Detail page Views
 	LinearLayout detailsLayout;

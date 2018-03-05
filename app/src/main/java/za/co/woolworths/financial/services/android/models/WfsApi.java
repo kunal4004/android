@@ -13,16 +13,21 @@ import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import retrofit.Callback;
 import retrofit.RestAdapter;
 import za.co.wigroup.androidutils.Util;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
 import za.co.woolworths.financial.services.android.models.dto.AccountResponse;
 import za.co.woolworths.financial.services.android.models.dto.AccountsResponse;
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCart;
+import za.co.woolworths.financial.services.android.models.dto.AddItemToCartResponse;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.AuthoriseLoanResponse;
 import za.co.woolworths.financial.services.android.models.dto.BankAccountTypes;
 import za.co.woolworths.financial.services.android.models.dto.CLIEmailResponse;
 import za.co.woolworths.financial.services.android.models.dto.CardDetailsResponse;
+import za.co.woolworths.financial.services.android.models.dto.CartSummaryResponse;
+import za.co.woolworths.financial.services.android.models.dto.ChangeQuantity;
 import za.co.woolworths.financial.services.android.models.dto.ContactUsConfigResponse;
 import za.co.woolworths.financial.services.android.models.dto.CLIOfferDecision;
 import za.co.woolworths.financial.services.android.models.dto.CreateOfferRequest;
@@ -33,6 +38,7 @@ import za.co.woolworths.financial.services.android.models.dto.DeleteMessageRespo
 import za.co.woolworths.financial.services.android.models.dto.FAQ;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanRequest;
 import za.co.woolworths.financial.services.android.models.dto.IssueLoanResponse;
+import za.co.woolworths.financial.services.android.models.dto.LoadProduct;
 import za.co.woolworths.financial.services.android.models.dto.LocationResponse;
 import za.co.woolworths.financial.services.android.models.dto.LoginRequest;
 import za.co.woolworths.financial.services.android.models.dto.LoginResponse;
@@ -41,7 +47,12 @@ import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.OfferActive;
 import za.co.woolworths.financial.services.android.models.dto.ProductView;
 import za.co.woolworths.financial.services.android.models.dto.PromotionsResponse;
+import za.co.woolworths.financial.services.android.models.dto.ProvincesResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
+import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbRequest;
+import za.co.woolworths.financial.services.android.models.dto.SetDeliveryLocationSuburbResponse;
+import za.co.woolworths.financial.services.android.models.dto.ShoppingCartResponse;
+import za.co.woolworths.financial.services.android.models.dto.SuburbsResponse;
 import za.co.woolworths.financial.services.android.models.dto.RootCategories;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementRequest;
 import za.co.woolworths.financial.services.android.models.dto.statement.SendUserStatementResponse;
@@ -53,8 +64,9 @@ import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetail;
 import za.co.woolworths.financial.services.android.models.dto.UpdateBankDetailResponse;
 import za.co.woolworths.financial.services.android.models.dto.VoucherResponse;
 import za.co.woolworths.financial.services.android.models.dto.WProduct;
-import za.co.woolworths.financial.services.android.models.rest.SendUserStatement;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.wigroup.androidutils.Util.getDeviceManufacturer;
 
 public class WfsApi {
 
@@ -191,12 +203,55 @@ public class WfsApi {
 		return mApiInterface.getSubCategory(getOsVersion(), getApiId(), getOS(), getSha1Password(), getDeviceModel(), getNetworkCarrier(), getOsVersion(), "Android", category_id);
 	}
 
+	public ProvincesResponse getProvinces() {
+		return mApiInterface.getProvinces(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken());
+	}
+
+	public CartSummaryResponse getCartSummary() {
+		return mApiInterface.getCartSummary(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken());
+	}
+
+	public SuburbsResponse getSuburbs(String locationId) {
+		return mApiInterface.getSuburbs(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), locationId);
+	}
+
+	public SetDeliveryLocationSuburbResponse setSuburb(String suburbId) {
+		SetDeliveryLocationSuburbRequest request = new SetDeliveryLocationSuburbRequest(suburbId);
+		return mApiInterface.setDeliveryLocationSuburb(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), request);
+	}
+
 	public ProductView productViewRequest(boolean isBarcode, int pageSize, int pageNumber, String product_id) {
 		getMyLocation();
 		if (Utils.isLocationEnabled(mContext)) {
 			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), pageSize, pageNumber, product_id);
 		} else {
 			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), pageSize, pageNumber, product_id);
+		}
+	}
+
+
+	public ProductView productViewRequest(LoadProduct lp) {
+		getMyLocation();
+		if (Utils.isLocationEnabled(mContext)) {
+			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), lp.getPageOffset(), lp.getPageSize(), lp.getProductId());
+		} else {
+			return mApiInterface.getProduct(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), lp.getPageOffset(), lp.getPageSize(), lp.getProductId());
+		}
+	}
+
+	public ProductView getProductSearchList(LoadProduct loadProduct) {
+		getMyLocation();
+		String search_item = "";
+		try {
+			search_item = URLEncoder.encode(loadProduct.getProductId(), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+
+		if (Utils.isLocationEnabled(mContext)) {// should we implement location update here ?
+			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loc.getLatitude(), loc.getLongitude(), loadProduct.isBarcode(), search_item, loadProduct.getPageOffset(), Utils.PAGE_SIZE);
+		} else {
+			return mApiInterface.getProductSearch(getOsVersion(), getDeviceModel(), getOsVersion(), getOS(), getNetworkCarrier(), getApiId(), "", "", getSha1Password(), loadProduct.isBarcode(), search_item, loadProduct.getPageOffset(), Utils.PAGE_SIZE);
 		}
 	}
 
@@ -237,6 +292,40 @@ public class WfsApi {
 	public SendUserStatementResponse sendStatementRequest(SendUserStatementRequest statement) {
 		return mApiInterface.sendUserStatement(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), statement);
 	}
+
+	/*
+	@Header("apiId") String apiId,
+			@Header("sha1Password") String sha1Password,
+			@Header("deviceVersion") String deviceVersion,
+			@Header("deviceModel") String deviceModel,
+			@Header("network") String network,
+			@Header("os") String os,
+			@Header("osVersion") String osVersion,
+			@Header("sessionToken") String sessionToken,
+			@Body AddItemToCart addItemToCart);
+	 */
+	public AddItemToCartResponse addItemToCart(AddItemToCart addToCart) {
+		return mApiInterface.addItemToCart(getApiId(), getSha1Password(), getDeviceManufacturer(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "", "", getSessionToken(), addToCart);
+	}
+
+	public ShoppingCartResponse getShoppingCart() {
+		return mApiInterface.getShoppingCart(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
+	}
+
+	public ShoppingCartResponse getChangeQuantity(ChangeQuantity changeQuantity) {
+		return mApiInterface.changeQuantityRequest(getApiId(), getSha1Password(), getDeviceManufacturer(),
+				getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), "",
+				"", getSessionToken(), changeQuantity.getCommerceId(), changeQuantity);
+	}
+
+	public ShoppingCartResponse removeCartItem(String commerceId) {
+		return mApiInterface.removeItemFromCart(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken(), commerceId);
+	}
+
+	public ShoppingCartResponse removeAllCartItems() {
+		return mApiInterface.removeAllCartItems(getApiId(), getSha1Password(), getOsVersion(), getDeviceModel(), getNetworkCarrier(), getOS(), getOsVersion(), getSessionToken());
+	}
+
 
 	public String getOsVersion() {
 		String osVersion = Util.getOsVersion();
@@ -285,6 +374,7 @@ public class WfsApi {
 		try {
 			SessionDao sessionDao = new SessionDao(mContext, SessionDao.KEY.USER_TOKEN).get();
 			if (sessionDao.value != null && !sessionDao.value.equals("")) {
+				Log.i("SessionToken", sessionDao.value);
 				return sessionDao.value;
 			}
 		} catch (Exception e) {
@@ -307,5 +397,9 @@ public class WfsApi {
 				loc.setLongitude(0);
 
 		}
+	}
+
+	public String setInvalidToken() {
+		return "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSIsImtpZCI6ImEzck1VZ01Gdjl0UGNsTGE2eUYzekFrZnF1RSJ9.eyJpc3MiOiJodHRwczovL3N0c3FhLndvb2x3b3J0aHMuY28uemEvY3VzdG9tZXJpZCIsImF1ZCI6IldXT25lQXBwIiwiZXhwIjoxNTE3NjQ4OTU1LCJuYmYiOjE1MTcyMTY5NTUsIm5vbmNlIjoiMDJFMjZDRTctQzNBNC00ODFFLUE5NUItNUVDM0IxNjI5N0FFIiwiaWF0IjoxNTE3MjE2OTU1LCJzaWQiOiIzN2JlNzAxM2EwNTM0NGIzNGQ0MDA5MmYzNzc4YzgyMSIsInN1YiI6Ijg3MTgyMmJiLThjZTEtNDk4OS1iMWI4LTFiYmY1NGE5MTk1ZiIsImF1dGhfdGltZSI6MTUxNzIxNjk1NCwiaWRwIjoiaWRzcnYiLCJ1cGRhdGVkX2F0IjoiMTUxNzIwOTc1NCIsInRlbmFudCI6ImRlZmF1bHQiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiIzMTM1ZWU3MjQ3NWM0YWFlOTFhNzZkMDQzOGY4MjJjZiIsImVtYWlsIjoidGVzdDIzQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjoiZmFsc2UiLCJuYW1lIjoiTUZJU0hBTkUgTUFSSUEiLCJmYW1pbHlfbmFtZSI6Ik1BSExBTkdVIiwiQXRnSWQiOiIyNjMwMDAwMzMiLCJBdGdTZXNzaW9uIjoie1wiSlNFU1NJT05JRFwiOlwiZGxWQkxWZFZhV2F5ZnNCWEdlRUtrTEFmZmZCRU53V1NzRGlqcWI0MkxUalZfV2hhYlFwcSEtMjA5NjcyOTI1NFwiLFwiX2R5blNlc3NDb25mXCI6XCItNDY4NTQ0NjU5OTcyMDE5MTg5NFwifSIsIkMySWQiOiIyMDg2NzE";
 	}
 }

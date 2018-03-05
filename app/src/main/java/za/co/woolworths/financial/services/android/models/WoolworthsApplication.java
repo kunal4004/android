@@ -211,13 +211,12 @@ public class WoolworthsApplication extends Application {
 		FirebaseApp.initializeApp(WoolworthsApplication.this);
 		FacebookSdk.sdkInitialize(WoolworthsApplication.this);
 		AppEventsLogger.activateApp(WoolworthsApplication.this);
-		mWGlobalState = new WGlobalState(WoolworthsApplication.this);
+		mWGlobalState = new WGlobalState();
 		updateBankDetail = new UpdateBankDetail();
 		WoolworthsApplication.context = this.getApplicationContext();
 		// set app context
 		mContextApplication = getApplicationContext();
-//		Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
-
+		//Crittercism.initialize(getApplicationContext(), getResources().getString(R.string.crittercism_app_id));
 		CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
 				.setDefaultFontPath("fonts/WFutura-medium.ttf")
 				.setFontAttrId(R.attr.fontPath)

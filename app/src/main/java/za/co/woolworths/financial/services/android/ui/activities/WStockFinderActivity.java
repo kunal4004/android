@@ -38,6 +38,8 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 
 	public interface RecyclerItemSelected {
 		void onRecyclerItemClick(View v, int position, String filterType);
+
+		void onQuantitySelected(int quantity);
 	}
 
 	private final float LIGHTER_TEXT = 0.3f, NORMAL_TEXT = 1.0f;
@@ -50,7 +52,7 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 		super.onCreate(savedInstanceState);
 		Utils.updateStatusBarBackground(WStockFinderActivity.this);
 		setContentView(R.layout.stock_finder_activity);
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(null);
@@ -61,14 +63,14 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 			mProductName = mBundle.getString("PRODUCT_NAME");
 		}
 
-		mViewPager = (GoogleMapViewPager) findViewById(R.id.viewpager);
-		final WTextView toolbarTextView = (WTextView) findViewById(R.id.toolbarText);
-		mAppBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
-		WButton btnOnLocationService = (WButton) findViewById(R.id.buttonLocationOn);
-		WButton buttonBackToProducts = (WButton) findViewById(R.id.buttonBackToProducts);
+		mViewPager = findViewById(R.id.viewpager);
+		final WTextView toolbarTextView = findViewById(R.id.toolbarText);
+		mAppBarLayout = findViewById(R.id.appBarLayout);
+		WButton btnOnLocationService = findViewById(R.id.buttonLocationOn);
+		WButton buttonBackToProducts = findViewById(R.id.buttonBackToProducts);
 		buttonBackToProducts.setOnClickListener(this);
 		btnOnLocationService.setOnClickListener(this);
-		WButton btnRetry = (WButton) findViewById(R.id.btnRetry);
+		WButton btnRetry = findViewById(R.id.btnRetry);
 		btnRetry.setOnClickListener(this);
 		toolbarTextView.setText(mProductName);
 
@@ -88,7 +90,7 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 		});
 
 		setupViewPager(mViewPager);
-		tabLayout = (TabLayout) findViewById(R.id.tabs);
+		tabLayout = findViewById(R.id.tabs);
 		tabLayout.setupWithViewPager(mViewPager);
 
 		tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -130,10 +132,10 @@ public class WStockFinderActivity extends AppCompatActivity implements StoreFind
 		View mapView = tabLayout.getTabAt(0).getCustomView();
 		View listView = tabLayout.getTabAt(1).getCustomView();
 
-		imMapView = (ImageView) mapView.findViewById(R.id.tabIcon);
-		tvMapView = (WTextView) mapView.findViewById(R.id.textIcon);
-		imListView = (ImageView) listView.findViewById(R.id.tabIcon);
-		tvListView = (WTextView) listView.findViewById(R.id.textIcon);
+		imMapView = mapView.findViewById(R.id.tabIcon);
+		tvMapView = mapView.findViewById(R.id.textIcon);
+		imListView = listView.findViewById(R.id.tabIcon);
+		tvListView = listView.findViewById(R.id.textIcon);
 
 		tvMapView.setText(getString(R.string.stock_finder_map_view));
 		tvListView.setText(getString(R.string.stock_finder_list_view));

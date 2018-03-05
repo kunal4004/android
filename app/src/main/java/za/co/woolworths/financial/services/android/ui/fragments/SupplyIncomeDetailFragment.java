@@ -21,7 +21,7 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import za.co.woolworths.financial.services.android.ui.activities.CLIPhase2Activity;
+import za.co.woolworths.financial.services.android.ui.activities.cli.CLIPhase2Activity;
 import za.co.woolworths.financial.services.android.ui.activities.CustomPopUpWindow;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WEditTextView;

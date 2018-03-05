@@ -32,6 +32,7 @@ import za.co.woolworths.financial.services.android.models.dto.MessageReadRequest
 import za.co.woolworths.financial.services.android.models.dto.MessageResponse;
 import za.co.woolworths.financial.services.android.models.dto.ReadMessagesResponse;
 import za.co.woolworths.financial.services.android.models.dto.Response;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.MesssagesListAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
@@ -70,8 +71,8 @@ public class MessagesActivity extends AppCompatActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(null);
 		mLayoutManager = new LinearLayoutManager(MessagesActivity.this);
-		messsageListview = (RecyclerView) findViewById(R.id.messsageListView);
-		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
+		messsageListview = findViewById(R.id.messsageListView);
+		swipeRefreshLayout = findViewById(R.id.swipeToRefresh);
 		mErrorHandlerView = new ErrorHandlerView(this, woolWorthsApplication,
 				(RelativeLayout) findViewById(R.id.relEmptyStateHandler),
 				(ImageView) findViewById(R.id.imgEmpyStateIcon),
@@ -319,7 +320,7 @@ public class MessagesActivity extends AppCompatActivity {
 		if (getIntent().hasExtra("fromNotification"))
 			fromNotification = getIntent().getExtras().getBoolean("fromNotification");
 		if (fromNotification) {
-			startActivityForResult(new Intent(MessagesActivity.this, WOneAppBaseActivity.class), 0);
+			startActivityForResult(new Intent(MessagesActivity.this, BottomNavigationActivity.class), 0);
 			finish();
 			overridePendingTransition(R.anim.stay, R.anim.slide_down_anim);
 		} else {

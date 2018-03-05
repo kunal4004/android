@@ -32,7 +32,6 @@ import android.widget.RelativeLayout;
 
 import com.awfs.coordination.R;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -47,15 +46,16 @@ import java.util.UUID;
 import za.co.woolworths.financial.services.android.models.JWTDecodedModel;
 import za.co.woolworths.financial.services.android.models.WoolworthsApplication;
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
-import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDevice;
-import za.co.woolworths.financial.services.android.models.dto.CreateUpdateDeviceResponse;
-import za.co.woolworths.financial.services.android.models.dto.Response;
 import za.co.woolworths.financial.services.android.models.dto.WGlobalState;
+import za.co.woolworths.financial.services.android.models.service.event.ProductState;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.util.ConnectionDetector;
 import za.co.woolworths.financial.services.android.util.ErrorHandlerView;
-import za.co.woolworths.financial.services.android.util.HttpAsyncTask;
+import za.co.woolworths.financial.services.android.util.NotificationUtils;
 import za.co.woolworths.financial.services.android.util.SSORequiredParameter;
 import za.co.woolworths.financial.services.android.util.Utils;
+
+import static za.co.woolworths.financial.services.android.models.service.event.ProductState.DETERMINE_LOCATION_POPUP;
 
 public class SSOActivity extends WebViewActivity {
 
@@ -69,7 +69,6 @@ public class SSOActivity extends WebViewActivity {
 		STATE_MISMATCH(4),
 		NONCE_MISMATCH(5),
 		SUCCESS(6),
-		EXPIRED(7),
 		SIGNED_OUT(8),
 		CHANGE_PASSWORD(9);
 		private int result;
@@ -100,7 +99,6 @@ public class SSOActivity extends WebViewActivity {
 
 	private final String state;
 	private final String nonce;
-	public ProgressDialog progressDialog;
 
 	public SSOActivity() {
 		this.state = UUID.randomUUID().toString();
@@ -111,28 +109,16 @@ public class SSOActivity extends WebViewActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.instantiateWebView();
+		Utils.updateStatusBarBackground(this);
 		mGlobalState = ((WoolworthsApplication) getApplication()).getWGlobalState();
 		mErrorHandlerView = new ErrorHandlerView(SSOActivity.this, (RelativeLayout) findViewById
 				(R.id.no_connection_layout));
-		Utils.updateStatusBarBackground(this, R.color.black);
 	}
 
 	private void instantiateWebView() {
-		progressDialog = new ProgressDialog(SSOActivity.this, R.style.full_screen_dialog) {
-			@Override
-			protected void onCreate(Bundle savedInstanceState) {
-				super.onCreate(savedInstanceState);
-				setContentView(R.layout.sso_progress_dialog);
-				getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-				ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.progressBar1);
-				mProgressBar.getIndeterminateDrawable().setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
-			}
-		};
-		progressDialog.setCancelable(false);
 		this.webView.setWebViewClient(this.webviewClient);
 		this.webView.getSettings().setUseWideViewPort(true);
 		this.webView.getSettings().setLoadWithOverviewMode(true);
-		this.webView.getSettings().setDomStorageEnabled(true);
 		this.webView.getSettings().setDomStorageEnabled(true);
 		if (Build.VERSION.SDK_INT >= 21) {
 			this.webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
@@ -288,7 +274,7 @@ public class SSOActivity extends WebViewActivity {
 				this.redirectURIString = WoolworthsApplication.getSsoRedirectURI();
 
                 /*
-                * // Check if sts params were supplied.
+				* // Check if sts params were supplied.
       guard let query = stsParams else {
         break
       }
@@ -385,9 +371,7 @@ public class SSOActivity extends WebViewActivity {
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
 			super.onPageStarted(view, url, favicon);
 			showProgressBar();
-
 			if (SSOActivity.this.path == Path.SIGNIN || SSOActivity.this.path == Path.REGISTER) {
-
 				view.evaluateJavascript("(function(){return {'content': [document.forms[0].state.value.toString(), document.forms[0].id_token.value.toString()]}})();", new ValueCallback<String>() {
 					@Override
 					public void onReceiveValue(String value) {
@@ -420,7 +404,7 @@ public class SSOActivity extends WebViewActivity {
 							arguments.put("c2_id", (jwtDecodedModel.C2Id != null)? jwtDecodedModel.C2Id : "");
 							Utils.triggerFireBaseEvents(getApplicationContext(),FirebaseAnalytics.Event.LOGIN,arguments);
 
-							sendRegistrationToServer();//TODO: this should be handled by a listener
+							NotificationUtils.getInstance().sendRegistrationToServer();
 							setResult(SSOActivityResult.SUCCESS.rawValue(), intent);
 						} else {
 							setResult(SSOActivityResult.STATE_MISMATCH.rawValue(), intent);
@@ -428,8 +412,6 @@ public class SSOActivity extends WebViewActivity {
 
 						try {
 							if (!TextUtils.isEmpty(mGlobalState.getNewSTSParams())) {
-								mGlobalState.setAccountSignInState(true);
-								mGlobalState.setRewardSignInState(true);
 								mGlobalState.setNewSTSParams("");
 								clearHistory();
 							} else {
@@ -531,68 +513,11 @@ public class SSOActivity extends WebViewActivity {
 	};
 
 	public void hideProgressBar() {
-		try {
-			if (progressDialog.isShowing()) {
-				progressDialog.dismiss();
-				progressDialog = null;
-			}
-		} catch (Exception ex) {
-		}
+		toggleLoading(false);
 	}
 
 	public void showProgressBar() {
-		if (progressDialog != null) {
-			if (!progressDialog.isShowing()) {
-				progressDialog.show();
-			}
-		}
-	}
-
-
-	//1. sendRegistrationToServer is created twice: SSOActivity and WFirebaseInstanceIDSService
-	//
-	private void sendRegistrationToServer() {
-		// sending gcm token to server
-		final CreateUpdateDevice device = new CreateUpdateDevice();
-		device.appInstanceId = Utils.getUniqueDeviceID(getApplicationContext());
-		device.pushNotificationToken = FirebaseInstanceId.getInstance().getToken();
-
-		//Don't update token if pushNotificationToken or appInstanceID NULL
-		if(device.appInstanceId == null || device.pushNotificationToken==null)
-			return;
-
-		//Sending Token and app instance Id to App server
-		//Need to be done after Login
-
-		new HttpAsyncTask<String, String, CreateUpdateDeviceResponse>() {
-			@Override
-			protected void onPreExecute() {
-				super.onPreExecute();
-			}
-
-			@Override
-			protected CreateUpdateDeviceResponse httpDoInBackground(String... params) {
-				return ((WoolworthsApplication) SSOActivity.this.getApplication()).getApi()
-						.getResponseOnCreateUpdateDevice(device);
-			}
-
-			@Override
-			protected Class<CreateUpdateDeviceResponse> httpDoInBackgroundReturnType() {
-				return CreateUpdateDeviceResponse.class;
-			}
-
-			@Override
-			protected CreateUpdateDeviceResponse httpError(String errorMessage, HttpErrorCode httpErrorCode) {
-				CreateUpdateDeviceResponse createUpdateResponse = new CreateUpdateDeviceResponse();
-				createUpdateResponse.response = new Response();
-				return createUpdateResponse;
-			}
-
-			@Override
-			protected void onPostExecute(CreateUpdateDeviceResponse createUpdateResponse) {
-				super.onPostExecute(createUpdateResponse);
-			}
-		}.execute();
+		toggleLoading(true);
 	}
 
 	@Override
@@ -619,20 +544,29 @@ public class SSOActivity extends WebViewActivity {
 	}
 
 	public void closeActivity() {
+		// Call the popup message to confirm user location
+		//or set new location in DetailFragment
+		if (mGlobalState.determineLocationPopUpEnabled()) {
+			Utils.sendBus(new ProductState(DETERMINE_LOCATION_POPUP));
+			mGlobalState.setDetermineLocationPopUpEnabled(false);
+		}
 		finish();
 		overridePendingTransition(0, 0);
 	}
 
 	@Override
 	protected void onDestroy() {
-		if (this.webView != null)
+		if (this.webView != null) {
+			// handle  WebView.destroy() called while WebView is still attached to window.
+			this.webView.removeAllViews();
 			this.webView.destroy();
+		}
 		super.onDestroy();
 	}
 
 	private void clearHistory() {
 		mGlobalState.setOnBackPressed(false);
-		Intent i = new Intent(SSOActivity.this, WOneAppBaseActivity.class);
+		Intent i = new Intent(SSOActivity.this, BottomNavigationActivity.class);
 		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
