@@ -617,13 +617,13 @@ public class CartFragment extends Fragment implements CartProductAdapter.OnItemC
 
 				if (key.contains("default"))
 					cartItemGroup.setType("GENERAL");
-				else if (key.contains("home"))
+				else if (key.contains("homeCommerceItem"))
 					cartItemGroup.setType("HOME");
-				else if (key.contains("food"))
+				else if (key.contains("foodCommerceItem"))
 					cartItemGroup.setType("FOOD");
-				else if (key.contains("cloth"))
+				else if (key.contains("clothingCommerceItem"))
 					cartItemGroup.setType("CLOTHING");
-				else if (key.contains("premiumBrand"))
+				else if (key.contains("premiumBrandCommerceItem"))
 					cartItemGroup.setType("PREMIUM BRAND");
 				else
 					cartItemGroup.setType("OTHER");
