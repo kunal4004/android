@@ -30,7 +30,7 @@
 
         <LinearLayout
             android:id="@+id/llDeleteContainer"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
@@ -38,7 +38,7 @@
                 android:id="@+id/tvDelete"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/four_dp"
+                android:layout_marginEnd="@dimen/eighty_two_dp"
                 android:layout_marginStart="@dimen/seventy_eight_dp"
                 android:gravity="center"
                 android:text="@string/delete"
@@ -47,13 +47,6 @@
                 android:textSize="@dimen/twenty_sp"
                 swipe:WTextView_font="medium"/>
 
-            <ImageView
-                android:id="@+id/imDelete"
-                android:layout_width="@dimen/twenty_four_dp"
-                android:layout_height="@dimen/twenty_four_dp"
-                android:layout_marginEnd="@dimen/eighty_two_dp"
-                android:contentDescription="@string/app_label"
-                android:src="@drawable/close_white"/>
         </LinearLayout>
     </RelativeLayout>
 

@@ -155,6 +155,7 @@ public class CartProductAdapter extends RecyclerSwipeAdapter<RecyclerView.ViewHo
 
 					@Override
 					public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
+						Log.e("SwipeLayout", "onHandRelease");
 						//when user's hand released.
 					}
 				});
