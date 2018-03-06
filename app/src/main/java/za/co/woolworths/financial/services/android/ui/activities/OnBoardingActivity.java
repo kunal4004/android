@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import com.awfs.coordination.R;
 
 import za.co.woolworths.financial.services.android.models.dao.SessionDao;
+import za.co.woolworths.financial.services.android.ui.activities.dashboard.BottomNavigationActivity;
 import za.co.woolworths.financial.services.android.ui.adapters.OnBoardingViewPagerAdapter;
 import za.co.woolworths.financial.services.android.ui.views.WButton;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
@@ -117,7 +118,7 @@ public class OnBoardingActivity extends AppCompatActivity implements ViewPager.O
 	private void navigateToMain() {
 		try {
 			Utils.sessionDaoSave(OnBoardingActivity.this, SessionDao.KEY.ON_BOARDING_SCREEN, "1");
-			startActivityForResult(new Intent(OnBoardingActivity.this, WOneAppBaseActivity.class)
+			startActivityForResult(new Intent(OnBoardingActivity.this, BottomNavigationActivity.class)
 					, 0);
 			finish();
 		} catch (Exception e) {

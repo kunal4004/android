@@ -24,6 +24,7 @@
     <color name="black_desc_opacity_light">#85000000</color>
     <color name="press_bg">#05000000</color>
     <color name="charcoal_grey">#4F5051</color>
+    <color name="bg_overlay">#20000000</color>
 
     <!-- step indicator -->
     <color name="horizontal_line">#10000000</color>

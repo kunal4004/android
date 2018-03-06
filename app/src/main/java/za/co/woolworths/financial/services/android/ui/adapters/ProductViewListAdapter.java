@@ -2,7 +2,6 @@ package za.co.woolworths.financial.services.android.ui.adapters;
 
 
 import android.app.Activity;
-import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
@@ -20,22 +19,24 @@ import java.util.List;
 import za.co.woolworths.financial.services.android.models.dto.OtherSkus;
 import za.co.woolworths.financial.services.android.models.dto.ProductList;
 import za.co.woolworths.financial.services.android.models.dto.PromotionImages;
+import za.co.woolworths.financial.services.android.ui.fragments.product.grid.GridNavigator;
+import za.co.woolworths.financial.services.android.ui.fragments.product.utils.ProductUtils;
 import za.co.woolworths.financial.services.android.ui.views.WTextView;
 import za.co.woolworths.financial.services.android.util.DrawImage;
-import za.co.woolworths.financial.services.android.util.SelectedProductView;
-import za.co.woolworths.financial.services.android.util.WFormatter;
 
 public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewListAdapter.SimpleViewHolder> {
+
 	private final DrawImage drawImage;
 	public Activity mContext;
 	private List<ProductList> mProductList;
-	private SelectedProductView mSelectedProductView;
+
+	private GridNavigator mGridNavigator;
 
 	public ProductViewListAdapter(Activity mContext, List<ProductList> mProductList,
-								  SelectedProductView selectedProductView) {
+								  GridNavigator gridNavigator) {
 		this.mContext = mContext;
 		this.mProductList = mProductList;
-		this.mSelectedProductView = selectedProductView;
+		this.mGridNavigator = gridNavigator;
 		drawImage = new DrawImage(mContext);
 	}
 
@@ -53,15 +54,15 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 
 		SimpleViewHolder(View view) {
 			super(view);
-			tvProductName = (WTextView) view.findViewById(R.id.tvProductName);
-			tvSaveText = (WTextView) view.findViewById(R.id.tvSaveText);
-			tvAmount = (WTextView) view.findViewById(R.id.textAmount);
-			tvWasPrice = (WTextView) view.findViewById(R.id.textWasPrice);
-			imProductImage = (SimpleDraweeView) view.findViewById(R.id.imProduct);
-			imNewImage = (SimpleDraweeView) view.findViewById(R.id.imNewImage);
-			imSave = (SimpleDraweeView) view.findViewById(R.id.imSave);
-			imReward = (SimpleDraweeView) view.findViewById(R.id.imReward);
-			imVitality = (SimpleDraweeView) view.findViewById(R.id.imVitality);
+			tvProductName = view.findViewById(R.id.tvProductName);
+			tvSaveText = view.findViewById(R.id.tvSaveText);
+			tvAmount = view.findViewById(R.id.textAmount);
+			tvWasPrice = view.findViewById(R.id.textWasPrice);
+			imProductImage = view.findViewById(R.id.imProduct);
+			imNewImage = view.findViewById(R.id.imNewImage);
+			imSave = view.findViewById(R.id.imSave);
+			imReward = view.findViewById(R.id.imReward);
+			imVitality = view.findViewById(R.id.imVitality);
 		}
 	}
 
@@ -91,7 +92,7 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 			}
 
 			String fromPrice = String.valueOf(productItem.fromPrice);
-			productPriceList(holder.tvAmount, holder.tvWasPrice,
+			ProductUtils.gridPriceList(holder.tvAmount, holder.tvWasPrice,
 					fromPrice, wasPrice);
 
 			productImage(holder.imProductImage, externalImageRef);
@@ -101,14 +102,14 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mSelectedProductView.onSelectedProduct(v, holder.getAdapterPosition());
+				mGridNavigator.onGridItemSelected(mProductList.get(holder.getAdapterPosition()));
 			}
 		});
 
 		holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View v) {
-				mSelectedProductView.onLongPressState(v, position);
+				//mSelectedProductView.onLongPressState(v, position);
 				return false;
 			}
 		});
@@ -122,23 +123,6 @@ public class ProductViewListAdapter extends RecyclerView.Adapter<ProductViewList
 	@Override
 	public int getItemCount() {
 		return mProductList.size();
-	}
-
-	private void productPriceList(WTextView wPrice, WTextView WwasPrice,
-								  String price, String wasPrice) {
-		if (TextUtils.isEmpty(wasPrice)) {
-			wPrice.setText(WFormatter.formatAmount(price));
-			WwasPrice.setText("");
-		} else {
-			if (wasPrice.equalsIgnoreCase(price)) { //wasPrice equals currentPrice
-				wPrice.setText(WFormatter.formatAmount(price));
-				WwasPrice.setText("");
-			} else {
-				wPrice.setText(WFormatter.formatAmount(wasPrice));
-				wPrice.setPaintFlags(wPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-				WwasPrice.setText(WFormatter.formatAmount(price));
-			}
-		}
 	}
 
 	private void productImage(final SimpleDraweeView image, String imgUrl) {
